@@ -13,17 +13,17 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+from api import views
 from django.conf.urls import url, include
 from rest_framework import routers
 
-from spacelaunchnow.api import views
-
 router = routers.DefaultRouter()
-router.register(r'orbiters', views.OrbiterViewSet)
 router.register(r'launchers', views.LauncherViewSet)
 router.register(r'launcher_details', views.LauncherDetailViewSet)
+router.register(r'orbiters', views.OrbiterViewSet)
+
 
 urlpatterns = [
     url(r'^', include(router.urls)),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]

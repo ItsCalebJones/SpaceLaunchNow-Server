@@ -1,4 +1,4 @@
-#!/home/cjones/github/SpaceLaunchNow/env/bin/python
+#!/Users/cjones/Documents/Development/SpaceLaunchNow_API/env/bin/python2.7
 from django.core import management
 
 if __name__ == "__main__":

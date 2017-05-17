@@ -36,7 +36,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/home/cjones/github/SpaceLaunchNow/env"
+set -gx VIRTUAL_ENV "/Users/cjones/Documents/Development/SpaceLaunchNow_API/env"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

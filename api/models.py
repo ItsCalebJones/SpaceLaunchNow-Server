@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
 from django.db import models
 
 
@@ -10,6 +9,17 @@ class Launcher(models.Model):
     agency = models.CharField(max_length=50, default='Unknown')
     imageURL = models.URLField(blank=True)
     nationURL = models.URLField(blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+class LauncherDetail(models.Model):
+    name = models.CharField(max_length=50)
+    agency = models.CharField(max_length=50, default='Unknown')
+    imageURL = models.URLField(blank=True)
+    nationURL = models.URLField(blank=True)
+    LVInfo = models.CharField(max_length=50, default='Unknown')
 
     def __str__(self):
         return self.name
