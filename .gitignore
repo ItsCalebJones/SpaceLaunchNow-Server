@@ -1,9 +1,5 @@
 *.pyc
 *.iml
+django_logs/**
 env/**
-
 db.sqlite3
-
-*.pyc
-
-*.pyc
