@@ -25,8 +25,6 @@ router.register(r'launchers', views.LauncherViewSet)
 router.register(r'launcher_details', views.LauncherDetailViewSet)
 router.register(r'orbiters', views.OrbiterViewSet)
 
-
-
 urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
