@@ -27,7 +27,7 @@ SECRET_KEY = config.keys['DJANGO_SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8']
+ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8','.spacelaunchnow.me']
 
 REST_FRAMEWORK = {
     'PAGE_SIZE': 10
