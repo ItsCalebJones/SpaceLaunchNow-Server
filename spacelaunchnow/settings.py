@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'api.apps.ApiConfig',
     'rest_framework_docs',
+    'background_task',
 ]
 
 MIDDLEWARE = [

@@ -3,3 +3,4 @@
 django_logs/**
 env/**
 db.sqlite3
+.idea/**
