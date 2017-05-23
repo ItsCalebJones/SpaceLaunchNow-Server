@@ -33,6 +33,25 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
 
 # Application definition
 
@@ -47,6 +66,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'rest_framework_docs',
     'background_task',
+    'bot',
 ]
 
 MIDDLEWARE = [

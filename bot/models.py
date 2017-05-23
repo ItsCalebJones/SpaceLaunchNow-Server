@@ -3,24 +3,36 @@ from django.db import models
 
 class Launch(models.Model):
     id = models.IntegerField(primary_key=True)
-    name = models.CharField()
+    name = models.CharField(max_length=255)
     status = models.IntegerField()
     isonet = models.DateField()
     isostart = models.DateField()
     isoend = models.DateField()
     inhold = models.BooleanField()
+    wasNotifiedTwentyFourHour = models.BooleanField()
+    wasNotifiedOneHour = models.BooleanField()
+    wasNotifiedTenMinutes = models.BooleanField()
+    wasNotifiedDailyDigest = models.BooleanField()
+    last_daily_digest_post = models.DateTimeField()
+    last_twitter_post = models.DateTimeField()
     location = models.ForeignKey(
         'Location',
         on_delete=models.PROTECT
     )
 
+    def reset_notifier(self):
+        self.wasNotifiedTwentyFourHour = False
+        self.wasNotifiedOneHour = False
+        self.wasNotifiedTenMinutes = False
+        self.save()
+
 
 class Location(models.Model):
     id = models.IntegerField(primary_key=True)
-    name = models.CharField()
+    name = models.CharField(max_length=255)
     infoURL = models.URLField()
     wikiURL = models.URLField()
-    countryCode = models.CharField()
+    countryCode = models.CharField(max_length=255)
     pads = models.ForeignKey(
         'Pads',
         on_delete=models.PROTECT
@@ -29,7 +41,7 @@ class Location(models.Model):
 
 class Pads(models.Model):
     id = models.IntegerField(primary_key=True)
-    name = models.CharField()
+    name = models.CharField(max_length=255)
     infoURL = models.URLField()
     wikiURL = models.URLField()
     mapURL = models.URLField()
@@ -43,9 +55,9 @@ class Pads(models.Model):
 
 class Agency(models.Model):
     id = models.IntegerField(primary_key=True)
-    name = models.CharField()
-    abbrev = models.CharField()
-    countryCode = models.CharField()
+    name = models.CharField(max_length=255)
+    abbrev = models.CharField(max_length=255)
+    countryCode = models.CharField(max_length=255)
     type = models.IntegerField()
     infoURL = models.URLField()
     wikiURL = models.URLField()
@@ -57,9 +69,9 @@ class Agency(models.Model):
 
 class Rocket(models.Model):
     id = models.IntegerField(primary_key=True)
-    name = models.CharField()
-    configuration = models.CharField()
-    familyName = models.CharField()
+    name = models.CharField(max_length=255)
+    configuration = models.CharField(max_length=255)
+    familyName = models.CharField(max_length=255)
     wikiURL = models.URLField()
     infoURLs = models.ForeignKey(
         'InfoURLs',
@@ -78,10 +90,10 @@ class Rocket(models.Model):
 
 class Mission(models.Model):
     id = models.IntegerField(primary_key=True)
-    name = models.CharField()
-    description = models.CharField()
+    name = models.CharField(max_length=255)
+    description = models.TextField()
     type = models.IntegerField()
-    typeName = models.CharField()
+    typeName = models.CharField(max_length=255)
 
 
 class InfoURLs(models.Model):
