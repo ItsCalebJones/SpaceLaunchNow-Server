@@ -1,8 +1,8 @@
 import datetime
 
 
-from libraries.launchlibrarysdk import LaunchLibrarySDK
-from libraries.onesignalsdk import OneSignalSdk
+from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
+from bot.libraries.onesignalsdk import OneSignalSdk
 
 from bot.models import Launch
 from bot.utils.util import log, seconds_to_time
