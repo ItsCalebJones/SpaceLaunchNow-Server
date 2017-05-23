@@ -3,10 +3,10 @@ import time
 import datetime
 
 import re
-from apscheduler.schedulers.background import BackgroundScheduler
+from django.core import serializers
+from twitter import *
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.libraries.onesignalsdk import OneSignalSdk
-from bot.models import Launch
 from bot.utils.config import keys
 from bot.utils.util import log, log_error
 
@@ -37,6 +37,10 @@ class DailyDigestServer:
         self.app = response.json()
         assert isinstance(self.app, dict)
         assert self.app['id'] and self.app['name'] and self.app['updated_at'] and self.app['created_at']
+        self.app_auth_key = self.app['basic_auth_key']
+        self.twitter = Twitter(
+            auth=OAuth(keys['TOKEN_KEY'], keys['TOKEN_SECRET'], keys['CONSUMER_KEY'], keys['CONSUMER_SECRET'])
+        )
         self.time_to_next_launch = None
         self.next_launch = None
 
@@ -53,11 +57,11 @@ class DailyDigestServer:
     def check_launch_daily(self):
         launch_data = self.launchLibrary.get_next_launches().json()['launches']
         launches = []
-        for launch_instance in launch_data:
-            launch = Launch(launch_instance)
-            if launch.status == 1 and launch.net_stamp > 0:
+        for launch in launch_data:
+            Launch.ob
+            if launch.status == 1 and launch.isonet > 0:
                 current_time = datetime.datetime.utcnow()
-                launch_time = datetime.datetime.utcfromtimestamp(int(launch.net_stamp))
+                launch_time = datetime.datetime.utcfromtimestamp(int(launch.netstamp))
                 if (launch_time - current_time).total_seconds() < 86400:
                     launches.append(launch)
         self.send_daily_to_twitter(launches)
