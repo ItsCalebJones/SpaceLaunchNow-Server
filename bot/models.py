@@ -1,26 +1,32 @@
 from django.db import models
 
+
 # http://www.django-rest-framework.org/tutorial/1-serialization/
+
 
 class Launch(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255)
-    status = models.IntegerField()
-    netstamp = models.IntegerField()
-    wsstamp = models.IntegerField()
-    westamp = models.IntegerField()
-    isonet = models.DateField()
-    isostart = models.DateField()
-    isoend = models.DateField()
-    inhold = models.BooleanField()
-    wasNotifiedTwentyFourHour = models.BooleanField()
-    wasNotifiedOneHour = models.BooleanField()
-    wasNotifiedTenMinutes = models.BooleanField()
-    wasNotifiedDailyDigest = models.BooleanField()
-    last_daily_digest_post = models.DateTimeField()
-    last_twitter_post = models.DateTimeField()
+    status = models.IntegerField(blank=True)
+    netstamp = models.IntegerField(blank=True, null=True)
+    wsstamp = models.IntegerField(blank=True, null=True)
+    westamp = models.IntegerField(blank=True, null=True)
+    isonet = models.DateField(blank=True, null=True)
+    isostart = models.DateField(blank=True, null=True)
+    isoend = models.DateField(blank=True, null=True)
+    inhold = models.IntegerField(blank=True, null=True)
+    wasNotifiedTwentyFourHour = models.BooleanField(blank=True, default=False)
+    wasNotifiedOneHour = models.BooleanField(blank=True, default=False)
+    wasNotifiedTenMinutes = models.BooleanField(blank=True, default=False)
+    wasNotifiedDailyDigest = models.BooleanField(blank=True, default=False)
+    last_daily_digest_post = models.DateTimeField(blank=True, null=True)
+    last_twitter_post = models.DateTimeField(blank=True, null=True)
     location = models.ForeignKey(
         'Location',
+        on_delete=models.PROTECT
+    )
+    rocket = models.ForeignKey(
+        'Rocket',
         on_delete=models.PROTECT
     )
 
@@ -34,23 +40,23 @@ class Launch(models.Model):
 class Location(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255)
-    infoURL = models.URLField()
-    wikiURL = models.URLField()
+    infoURL = models.URLField(blank=True)
+    wikiURL = models.URLField(blank=True)
     countryCode = models.CharField(max_length=255)
-    pads = models.ForeignKey(
-        'Pads',
-        on_delete=models.PROTECT
-    )
+    # pads = models.ForeignKey(
+    #     'Pads',
+    #     on_delete=models.PROTECT
+    # )
 
 
 class Pads(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255)
-    infoURL = models.URLField()
-    wikiURL = models.URLField()
-    mapURL = models.URLField()
-    latitude = models.FloatField()
-    longitude = models.FloatField()
+    infoURL = models.URLField(blank=True)
+    wikiURL = models.URLField(blank=True)
+    mapURL = models.URLField(blank=True)
+    latitude = models.FloatField(blank=True)
+    longitude = models.FloatField(blank=True)
     agencies = models.ForeignKey(
         'Agency',
         on_delete=models.PROTECT
@@ -59,12 +65,12 @@ class Pads(models.Model):
 
 class Agency(models.Model):
     id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=255)
-    abbrev = models.CharField(max_length=255)
-    countryCode = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, blank=True, default="")
+    abbrev = models.CharField(max_length=255, blank=True, default="")
+    countryCode = models.CharField(max_length=255, blank=True, default="")
     type = models.IntegerField()
-    infoURL = models.URLField()
-    wikiURL = models.URLField()
+    infoURL = models.URLField(blank=True)
+    wikiURL = models.URLField(blank=True)
     infoURLs = models.ForeignKey(
         'InfoURLs',
         on_delete=models.PROTECT
@@ -73,31 +79,32 @@ class Agency(models.Model):
 
 class Rocket(models.Model):
     id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=255)
-    configuration = models.CharField(max_length=255)
-    familyName = models.CharField(max_length=255)
-    wikiURL = models.URLField()
-    infoURLs = models.ForeignKey(
-        'InfoURLs',
-        on_delete=models.PROTECT
-    )
-    imageURL = models.URLField()
-    imageSizes = models.ForeignKey(
-         'ImageSizes',
-         on_delete=models.PROTECT
-    )
-    agencies = models.ForeignKey(
-        'Agency',
-        on_delete=models.PROTECT
-    )
+    name = models.CharField(max_length=255, blank=True, default="")
+    configuration = models.CharField(max_length=255, blank=True, default="")
+    familyName = models.CharField(max_length=255, blank=True, default="")
+    wikiURL = models.URLField(blank=True)
+    # infoURLs = models.ForeignKey(
+    #     'InfoURLs',
+    #     on_delete=models.PROTECT
+    # )
+    # imageURL = models.URLField()
+    # imageSizes = models.ForeignKey(
+    #     'ImageSizes',
+    #     on_delete=models.PROTECT
+    # )
+    # agencies = models.ForeignKey(
+    #     'Agency',
+    #     on_delete=models.PROTECT
+    # )
 
 
 class Mission(models.Model):
     id = models.IntegerField(primary_key=True)
+    launch = models.ForeignKey(Launch, related_name='missions', on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
-    description = models.TextField()
-    type = models.IntegerField()
-    typeName = models.CharField(max_length=255)
+    description = models.TextField(blank=True, default="")
+    type = models.IntegerField(blank=True, null=True)
+    typeName = models.CharField(max_length=255, blank=True, null=True)
 
 
 class InfoURLs(models.Model):

@@ -30,7 +30,8 @@ DEBUG = False
 ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8']
 
 REST_FRAMEWORK = {
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    'DEFAULT_MODEL_SERIALIZER_CLASS': 'drf_toolbox.serializers.ModelSerializer',
 }
 
 LOGGING = {
@@ -65,7 +66,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'api.apps.ApiConfig',
     'rest_framework_docs',
-    'background_task',
     'bot',
 ]
 

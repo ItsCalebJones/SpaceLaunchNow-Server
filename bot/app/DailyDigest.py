@@ -3,7 +3,8 @@ import time
 import datetime
 
 import re
-from django.core import serializers
+from bot.models import Launch, Location
+from bot.serializer import LaunchSerializer
 from twitter import *
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.libraries.onesignalsdk import OneSignalSdk
@@ -55,16 +56,24 @@ class DailyDigestServer:
             self.check_launch_weekly()
 
     def check_launch_daily(self):
-        launch_data = self.launchLibrary.get_next_launches().json()['launches']
+        Launch.objects.all().delete()
+        Location.objects.all().delete()
+        response = self.launchLibrary.get_next_launches()
+        response_json = response.json()
+        launch_data = response_json['launches']
         launches = []
         for launch in launch_data:
-            Launch.ob
-            if launch.status == 1 and launch.isonet > 0:
-                current_time = datetime.datetime.utcnow()
-                launch_time = datetime.datetime.utcfromtimestamp(int(launch.netstamp))
-                if (launch_time - current_time).total_seconds() < 86400:
-                    launches.append(launch)
-        self.send_daily_to_twitter(launches)
+            serializer = LaunchSerializer(data=launch)
+            if serializer.is_valid():
+                launch = serializer.serialize
+                if launch.status == 1 and launch.net_stamp > 0:
+                    current_time = datetime.datetime.utcnow()
+                    launch_time = datetime.datetime.utcfromtimestamp(int(launch.netstamp))
+                    if (launch_time - current_time).total_seconds() < 86400:
+                        launches.append(launch)
+                self.send_daily_to_twitter(launches)
+            else:
+                log(TAG, serializer.errors)
 
     def check_launch_weekly(self):
         launch_data = self.launchLibrary.get_next_launches().json()['launches']
