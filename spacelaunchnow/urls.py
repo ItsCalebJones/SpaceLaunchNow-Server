@@ -14,16 +14,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 
-from api import views
+from api import views as api_views
+from bot import views as bot_views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls import url, include
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register(r'launchers', views.LauncherViewSet)
-router.register(r'launcher_details', views.LauncherDetailViewSet)
-router.register(r'orbiters', views.OrbiterViewSet)
+router.register(r'launchers', api_views.LauncherViewSet)
+router.register(r'launcher_details', api_views.LauncherDetailViewSet)
+router.register(r'orbiters', api_views.OrbiterViewSet)
+router.register(r'launches', bot_views.LaunchViewSet)
+router.register(r'notifications', bot_views.NotificationViewSet)
 
 urlpatterns = [
     url(r'^', include(router.urls)),
