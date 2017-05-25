@@ -28,9 +28,28 @@ SECRET_KEY = config.keys['DJANGO_SECRET_KEY']
 DEBUG = False
 
 ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8','.spacelaunchnow.me']
-
 REST_FRAMEWORK = {
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    'DEFAULT_MODEL_SERIALIZER_CLASS': 'drf_toolbox.serializers.ModelSerializer',
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
 }
 
 
@@ -46,6 +65,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'api.apps.ApiConfig',
     'rest_framework_docs',
+    'bot',
 ]
 
 MIDDLEWARE = [
