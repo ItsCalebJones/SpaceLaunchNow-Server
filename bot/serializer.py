@@ -11,7 +11,6 @@ class NotificationSerializer(serializers.ModelSerializer):
             'last_daily_digest_post', 'last_twitter_post'
         )
 
-
 class RocketSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
 
@@ -19,6 +18,7 @@ class RocketSerializer(serializers.ModelSerializer):
         model = Rocket
         fields = (
             'id', 'name', 'configuration', 'familyName'
+
         )
 
 

@@ -1,7 +1,6 @@
 from django.db import models
 
 
-# http://www.django-rest-framework.org/tutorial/1-serialization/
 class Launch(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255)
