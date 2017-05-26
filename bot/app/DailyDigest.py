@@ -3,12 +3,12 @@ import time
 import datetime
 
 import re
-from bot.models import Launch, Location
-from bot.serializer import LaunchSerializer
 from twitter import *
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.libraries.onesignalsdk import OneSignalSdk
+from bot.models import Notification
 from bot.utils.config import keys
+from bot.utils.deserializer import json_to_model
 from bot.utils.util import log, log_error
 
 AUTH_TOKEN_HERE = keys['AUTH_TOKEN_HERE']
@@ -27,6 +27,14 @@ def run_weekly():
     log(TAG, 'Running Daily Digest - Weekly...')
     daily_digest = DailyDigestServer()
     daily_digest.run(weekly=True)
+
+
+def update_notification_record(launch):
+    notification = Notification.objects.get(launch)
+    notification.last_daily_digest_post(datetime.datetime)
+    notification.last_net_stamp(launch.netstamp)
+    notification.last_net_stamp_timestamp(datetime.datetime)
+    notification.save()
 
 
 class DailyDigestServer:
@@ -57,24 +65,24 @@ class DailyDigestServer:
 
     def check_launch_daily(self):
         response = self.launchLibrary.get_next_launches()
-        response_json = response.json()
-        launch_data = response_json['launches']
-        launches = []
-        for launch in launch_data:
-            serializer = LaunchSerializer(data=launch)
-            if serializer.is_valid():
-                launch = serializer.save()[0]
+        if response.status_code is 200:
+            response_json = response.json()
+            launch_data = response_json['launches']
+            log(TAG, "Found %i launches." % len(launch_data))
+            launches = []
+            for launch in launch_data:
+                launch = json_to_model(launch)
                 launches.append(launch)
-            else:
-                log_error(TAG, serializer.errors)
-        todays_launches = []
-        for launch in launches:
-            if launch.status == 1 and launch.netstamp > 0:
-                current_time = datetime.datetime.utcnow()
-                launch_time = datetime.datetime.utcfromtimestamp(int(launch.netstamp))
-                if (launch_time - current_time).total_seconds() < 86400:
-                    todays_launches.append(launch)
-        self.send_daily_to_twitter(todays_launches)
+            todays_launches = []
+            for launch in launches:
+                if launch.status == 1 and launch.netstamp > 0:
+                    current_time = datetime.datetime.utcnow()
+                    launch_time = datetime.datetime.utcfromtimestamp(int(launch.netstamp))
+                    if (launch_time - current_time).total_seconds() < 86400:
+                        todays_launches.append(launch)
+            self.send_daily_to_twitter(todays_launches)
+        else:
+            log_error(TAG, response.status_code + ' ' + response)
 
     def check_launch_weekly(self):
         launch_data = self.launchLibrary.get_next_launches().json()['launches']
@@ -90,11 +98,10 @@ class DailyDigestServer:
             launch = launches[0]
             current_time = datetime.datetime.utcnow()
             launch_time = datetime.datetime.utcfromtimestamp(int(launch.netstamp))
-            message = "%s %s launching from %s in %s hours." % (header, launch.name, launch.location.name,
-                                                                '{0:g}'.format(float(round(abs
-                                                                                           (launch_time - current_time)
-                                                                                           .total_seconds() / 3600.0))))
+            message = "%s %s launching from %s in %s hours." % (header, launch.name, launch.location.name, '{0:g}'.format(float(round(abs(launch_time - current_time).total_seconds() / 3600.0))))
             self.send_twitter_update(message)
+
+            update_notification_record(launch)
         if len(launches) > 1:
             message = "%s There are %i confirmed launches within the next 24 hours...(1/%i)" % (header,
                                                                                                 len(launches),
@@ -111,6 +118,7 @@ class DailyDigestServer:
                                                                                    .total_seconds() / 3600.0))),
                                                                          index + 1, len(launches) + 1)
                 self.send_twitter_update(message)
+                update_notification_record(launch)
 
     def send_twitter_update(self, message):
         try:
@@ -121,6 +129,6 @@ class DailyDigestServer:
                 else:
                     message = (message[:117] + '...')
             log(TAG, message + " | " + str(len(message)))
-            # self.twitter.statuses.update(status=message)
+            self.twitter.statuses.update(status=message)
         except TwitterHTTPError as e:
             log_error(TAG, str(e) + " - " + message)
