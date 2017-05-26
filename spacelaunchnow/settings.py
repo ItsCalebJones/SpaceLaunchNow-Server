@@ -26,13 +26,15 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECRET_KEY = config.keys['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8','.spacelaunchnow.me']
+ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8', '.spacelaunchnow.me', '127.0.0.1']
 REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
     'DEFAULT_MODEL_SERIALIZER_CLASS': 'drf_toolbox.serializers.ModelSerializer',
 }
+
+LOGIN_REDIRECT_URL = '/'
 
 LOGGING = {
     'version': 1,

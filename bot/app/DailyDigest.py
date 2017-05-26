@@ -56,8 +56,6 @@ class DailyDigestServer:
             self.check_launch_weekly()
 
     def check_launch_daily(self):
-        Launch.objects.all().delete()
-        Location.objects.all().delete()
         response = self.launchLibrary.get_next_launches()
         response_json = response.json()
         launch_data = response_json['launches']
@@ -65,15 +63,18 @@ class DailyDigestServer:
         for launch in launch_data:
             serializer = LaunchSerializer(data=launch)
             if serializer.is_valid():
-                launch = serializer.save()
-                if launch.status == 1 and launch.net_stamp > 0:
-                    current_time = datetime.datetime.utcnow()
-                    launch_time = datetime.datetime.utcfromtimestamp(int(launch.netstamp))
-                    if (launch_time - current_time).total_seconds() < 86400:
-                        launches.append(launch)
-                self.send_daily_to_twitter(launches)
+                launch = serializer.save()[0]
+                launches.append(launch)
             else:
-                log(TAG, serializer.errors)
+                log_error(TAG, serializer.errors)
+        todays_launches = []
+        for launch in launches:
+            if launch.status == 1 and launch.netstamp > 0:
+                current_time = datetime.datetime.utcnow()
+                launch_time = datetime.datetime.utcfromtimestamp(int(launch.netstamp))
+                if (launch_time - current_time).total_seconds() < 86400:
+                    todays_launches.append(launch)
+        self.send_daily_to_twitter(todays_launches)
 
     def check_launch_weekly(self):
         launch_data = self.launchLibrary.get_next_launches().json()['launches']
@@ -88,8 +89,8 @@ class DailyDigestServer:
         if len(launches) == 1:
             launch = launches[0]
             current_time = datetime.datetime.utcnow()
-            launch_time = datetime.datetime.utcfromtimestamp(int(launch.net_stamp))
-            message = "%s %s launching from %s in %s hours." % (header, launch.launch_name, launch.location['name'],
+            launch_time = datetime.datetime.utcfromtimestamp(int(launch.netstamp))
+            message = "%s %s launching from %s in %s hours." % (header, launch.name, launch.location.name,
                                                                 '{0:g}'.format(float(round(abs
                                                                                            (launch_time - current_time)
                                                                                            .total_seconds() / 3600.0))))
@@ -101,9 +102,9 @@ class DailyDigestServer:
             self.send_twitter_update(message)
             for index, launch in enumerate(launches, start=1):
                 current_time = datetime.datetime.utcnow()
-                launch_time = datetime.datetime.utcfromtimestamp(int(launch.net_stamp))
-                message = "%s launching from %s in %s hours. (%i/%i)" % (launch.launch_name,
-                                                                         launch.location['name'],
+                launch_time = datetime.datetime.utcfromtimestamp(int(launch.netstamp))
+                message = "%s launching from %s in %s hours. (%i/%i)" % (launch.name,
+                                                                         launch.location.name,
                                                                          '{0:g}'.format(float(
                                                                              round(abs(
                                                                                  launch_time - current_time)
@@ -120,6 +121,6 @@ class DailyDigestServer:
                 else:
                     message = (message[:117] + '...')
             log(TAG, message + " | " + str(len(message)))
-            self.twitter.statuses.update(status=message)
+            # self.twitter.statuses.update(status=message)
         except TwitterHTTPError as e:
             log_error(TAG, str(e) + " - " + message)
