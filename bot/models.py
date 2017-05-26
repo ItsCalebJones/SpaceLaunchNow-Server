@@ -8,9 +8,6 @@ class Launch(models.Model):
     netstamp = models.IntegerField(blank=True, null=True)
     wsstamp = models.IntegerField(blank=True, null=True)
     westamp = models.IntegerField(blank=True, null=True)
-    isonet = models.DateField(blank=True, null=True)
-    isostart = models.DateField(blank=True, null=True)
-    isoend = models.DateField(blank=True, null=True)
     inhold = models.IntegerField(blank=True, null=True)
     location = models.ForeignKey(
         'Location',
@@ -39,7 +36,7 @@ class Notification(models.Model):
 
 
 class Location(models.Model):
-    id = models.IntegerField(primary_key=True)
+    location_id = models.IntegerField()
     name = models.CharField(max_length=255)
     infoURL = models.URLField(blank=True)
     wikiURL = models.URLField(blank=True)
@@ -51,7 +48,7 @@ class Location(models.Model):
 
 
 class Pads(models.Model):
-    id = models.IntegerField(primary_key=True)
+    pad_id = models.IntegerField()
     name = models.CharField(max_length=255)
     infoURL = models.URLField(blank=True)
     wikiURL = models.URLField(blank=True)
@@ -65,7 +62,7 @@ class Pads(models.Model):
 
 
 class Agency(models.Model):
-    id = models.IntegerField(primary_key=True)
+    agency_id = models.IntegerField()
     name = models.CharField(max_length=255, blank=True, default="")
     abbrev = models.CharField(max_length=255, blank=True, default="")
     countryCode = models.CharField(max_length=255, blank=True, default="")
@@ -79,28 +76,15 @@ class Agency(models.Model):
 
 
 class Rocket(models.Model):
-    id = models.IntegerField(primary_key=True)
+    rocket_id = models.IntegerField()
     name = models.CharField(max_length=255, blank=True, default="")
     configuration = models.CharField(max_length=255, blank=True, default="")
     familyName = models.CharField(max_length=255, blank=True, default="")
     wikiURL = models.URLField(blank=True)
-    # infoURLs = models.ForeignKey(
-    #     'InfoURLs',
-    #     on_delete=models.PROTECT
-    # )
-    # imageURL = models.URLField()
-    # imageSizes = models.ForeignKey(
-    #     'ImageSizes',
-    #     on_delete=models.PROTECT
-    # )
-    # agencies = models.ForeignKey(
-    #     'Agency',
-    #     on_delete=models.PROTECT
-    # )
 
 
 class Mission(models.Model):
-    id = models.IntegerField(primary_key=True)
+    mission_id = models.IntegerField()
     launch = models.ForeignKey(Launch, related_name='missions', on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, default="")

@@ -15,6 +15,6 @@ def start_scheduler():
     # scheduler.add_job(run_weekly, trigger='cron', day_of_week='fri', hour=12, minute=30)
     log(TAG, "Added cronjobs to background scheduler.")
     # Notifications.NotificationServer(scheduler).run()
-    # run_daily()
+    run_daily()
     log(TAG, "Notification Server started.")
 

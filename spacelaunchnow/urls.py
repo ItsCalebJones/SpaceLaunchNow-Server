@@ -21,7 +21,13 @@ from django.conf.urls.static import static
 from django.conf.urls import url, include
 from rest_framework import routers
 
-router = routers.DefaultRouter()
+
+class Router(routers.DefaultRouter):
+    """
+    My API documentation
+    """
+
+router = Router()
 router.register(r'launchers', api_views.LauncherViewSet)
 router.register(r'launcher_details', api_views.LauncherDetailViewSet)
 router.register(r'orbiters', api_views.OrbiterViewSet)

@@ -1,11 +1,15 @@
 {% extends "rest_framework/base.html" %}
 
 {% block bootstrap_theme %}
-    <link rel="stylesheet" href="https://bootswatch.com/flatly/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="https://bootswatch.com/paper/bootstrap.min.css" type="text/css">
 {% endblock %}
 
+{% load i18n %}
+
 {% block branding %}
-    <h3 style="margin: 0 0 20px;">Space Launch Now</h3>
+    <a class="navbar-brand" rel="nofollow" href="https://twitter.com/SpaceLaunchNow">
+        {% trans 'Space Launch Now' %}
+    </a>
 {% endblock %}
 
 {% block bootstrap_navbar_variant %}{% endblock %}
