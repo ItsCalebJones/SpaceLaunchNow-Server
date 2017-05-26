@@ -5,6 +5,7 @@ from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.libraries.onesignalsdk import OneSignalSdk
 
 from bot.models import Launch
+from bot.utils.deserializer import json_to_model
 from bot.utils.util import log, seconds_to_time
 
 DAEMON_SLEEP = 600
@@ -32,12 +33,16 @@ class NotificationServer:
         launch_data = response.json()
         if response.status_code is 200:
             log(TAG, "Found %i launches." % len(launch_data["launches"]))
-            for launches in launch_data["launches"]:
-                launch = Launch(launches)
-                log(TAG, launch.launch_name)
-                if launch.net_stamp > 0:
+            launches = []
+            for launch in launch_data:
+                launch = json_to_model(launch)
+                launches.append(launch)
+            for launch in launches:
+                launch = Launch(launch)
+                log(TAG, launch.name)
+                if launch.netstamp > 0:
                     current_time = datetime.datetime.utcnow()
-                    launch_time = datetime.datetime.utcfromtimestamp(int(launch.net_stamp))
+                    launch_time = datetime.datetime.utcfromtimestamp(int(launch.netstamp))
                     if current_time <= launch_time:
                         diff = int((launch_time - current_time).total_seconds())
                         if self.time_to_next_launch is None:
