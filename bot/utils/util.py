@@ -1,12 +1,19 @@
 import datetime
+# import the logging library
+import logging
+
+# Get an instance of a logger
+logger = logging.getLogger('bot.utils.util')
 
 
 def log(tag, message):
+    logger.debug(message)
     log_message = ('%s - %s: %s' % ('{:%H:%M:%S %m-%d-%Y}'.format(datetime.datetime.now()), tag, message))
     print log_message
 
 
 def log_error(tag, message):
+    logger.error(message)
     log_message = ('ERROR: %s - %s: %s' % ('{:%H:%M:%S %m-%d-%Y}'.format(datetime.datetime.now()), tag, message))
     print log_message
 
