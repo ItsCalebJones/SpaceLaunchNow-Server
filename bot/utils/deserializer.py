@@ -3,6 +3,7 @@ from bot.models import Launch, Notification
 
 
 def json_to_model(data):
+    print data
     id = data['id']
     name = data['name']
     status = data['status']
@@ -16,15 +17,7 @@ def json_to_model(data):
         mission_name = data['missions'][0]['name']
     location_name = data['location']['name']
 
-    if Launch.objects.get(id=id) is None:
-        launch = Launch.objects.create(id=id, name=name, status=status, netstamp=netstamp, wsstamp=wsstamp,
-                                     westamp=westamp,
-                                     inhold=inhold, rocket_name=rocket_name, mission_name=mission_name,
-                                     location_name=location_name)
-        check_notification(launch)
-        return launch
-
-    else:
+    try:
         launch = Launch.objects.get(id=id)
         launch.name = name
         launch.status = status
@@ -38,11 +31,18 @@ def json_to_model(data):
         launch.save()
         check_notification(launch)
         return launch
+    except Launch.DoesNotExist:
+        launch = Launch.objects.create(id=id, name=name, status=status, netstamp=netstamp, wsstamp=wsstamp,
+                                     westamp=westamp,
+                                     inhold=inhold, rocket_name=rocket_name, mission_name=mission_name,
+                                     location_name=location_name)
+        check_notification(launch)
+        return launch
 
 
 def check_notification(launch):
     try:
         if Notification.objects.get(launch=launch) is None:
             Notification.objects.get_or_create(launch=launch)
-    except:
+    except Notification.DoesNotExist:
         Notification.objects.get_or_create(launch=launch)
