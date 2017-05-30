@@ -4,10 +4,13 @@ import datetime
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.libraries.onesignalsdk import OneSignalSdk
 
+from bot.utils.config import keys
 from bot.models import Launch
 from bot.utils.deserializer import json_to_model
 from bot.utils.util import log, seconds_to_time
 
+AUTH_TOKEN_HERE = keys['AUTH_TOKEN_HERE']
+APP_ID = keys['APP_ID']
 DAEMON_SLEEP = 600
 TAG = 'Notification Server'
 
@@ -15,7 +18,7 @@ TAG = 'Notification Server'
 class NotificationServer:
     def __init__(self, scheduler):
         self.onesignal = OneSignalSdk(AUTH_TOKEN_HERE, APP_ID)
-        self.launchLibrary = LaunchLibrarySDK()
+        self.launchLibrary = LaunchLibrarySDK(version='dev')
         response = self.onesignal.get_app(APP_ID)
         assert response.status_code == 200
         self.app = response.json()

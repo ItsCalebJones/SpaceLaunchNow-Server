@@ -30,17 +30,20 @@ def run_weekly():
 
 
 def update_notification_record(launch):
-    notification = Notification.objects.get(launch)
-    notification.last_daily_digest_post(datetime.datetime)
-    notification.last_net_stamp(launch.netstamp)
-    notification.last_net_stamp_timestamp(datetime.datetime)
+    notification = Notification.objects.get(launch=launch)
+    notification.last_daily_digest_post = datetime.datetime.now()
+    notification.last_net_stamp = launch.netstamp
+    notification.last_net_stamp_timestamp = datetime.datetime.now()
+    log(TAG, 'Updating Notification %s to timestamp %s' % (notification.launch.id,
+                                                           notification.last_daily_digest_post
+                                                           .strftime("%A %d. %B %Y")))
     notification.save()
 
 
 class DailyDigestServer:
     def __init__(self):
         self.one_signal = OneSignalSdk(AUTH_TOKEN_HERE, APP_ID)
-        self.launchLibrary = LaunchLibrarySDK()
+        self.launchLibrary = LaunchLibrarySDK(version='dev')
         response = self.one_signal.get_app(APP_ID)
         assert response.status_code == 200
         self.app = response.json()
@@ -79,7 +82,10 @@ class DailyDigestServer:
                     current_time = datetime.datetime.utcnow()
                     launch_time = datetime.datetime.utcfromtimestamp(int(launch.netstamp))
                     if (launch_time - current_time).total_seconds() < 86400:
-                        todays_launches.append(launch)
+                        notification = Notification.objects.get(launch=launch)
+                        last_daily = notification.last_daily_digest_post
+                        if (last_daily.utcnow() - current_time.utcnow()) > 86400:
+                            todays_launches.append(launch)
             self.send_daily_to_twitter(todays_launches)
         else:
             log_error(TAG, response.status_code + ' ' + response)
@@ -98,7 +104,7 @@ class DailyDigestServer:
             launch = launches[0]
             current_time = datetime.datetime.utcnow()
             launch_time = datetime.datetime.utcfromtimestamp(int(launch.netstamp))
-            message = "%s %s launching from %s in %s hours." % (header, launch.name, launch.location.name, '{0:g}'.format(float(round(abs(launch_time - current_time).total_seconds() / 3600.0))))
+            message = "%s %s launching from %s in %s hours." % (header, launch.name, launch.location_name, '{0:g}'.format(float(round(abs(launch_time - current_time).total_seconds() / 3600.0))))
             self.send_twitter_update(message)
 
             update_notification_record(launch)
@@ -129,6 +135,6 @@ class DailyDigestServer:
                 else:
                     message = (message[:117] + '...')
             log(TAG, message + " | " + str(len(message)))
-            self.twitter.statuses.update(status=message)
+            # self.twitter.statuses.update(status=message)
         except TwitterHTTPError as e:
             log_error(TAG, str(e) + " - " + message)
