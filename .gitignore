@@ -4,7 +4,6 @@ django_logs/**
 env/**
 db.sqlite3
 .idea/**
-
-celerybeat.pid
-
+django.log
+celery.log
 celerybeat-schedule
