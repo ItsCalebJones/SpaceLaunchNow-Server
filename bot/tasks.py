@@ -8,7 +8,6 @@ logger = get_task_logger('bot')
 
 TAG = 'Digest Server'
 
-
 @periodic_task(
     run_every=(crontab(minute=0, hour=10,
                        day_of_week='mon-sat')),
@@ -31,3 +30,10 @@ def run_weekly():
     logger.info('Running Daily Digest - Weekly...')
     daily_digest = DailyDigestServer()
     daily_digest.run(weekly=True)
+
+# A periodic task that will run every minute (the symbol "*" means every)
+@periodic_task(run_every=(crontab(hour="*", minute="*", day_of_week="*")))
+def run_daily():
+    logger.info('Running Daily Digest - Daily...')
+    daily_digest = DailyDigestServer()
+    daily_digest.run(daily=True)
