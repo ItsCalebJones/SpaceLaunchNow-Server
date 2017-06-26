@@ -1,5 +1,6 @@
 import requests
-
+from datetime import timedelta
+from django.utils.datetime_safe import datetime
 
 BASE_URL = 'https://launchlibrary.net/'
 headers = {
@@ -14,6 +15,12 @@ class LaunchLibrarySDK(object):
 
     def get_next_launches(self):
         url = self.api_url + '/launch?next=5&mode=verbose'
+        return send_request(url, method='GET', headers=headers)
+
+    def get_next_weeks_launches(self):
+        today = datetime.today().strftime('%Y-%m-%d')
+        next_week = (datetime.now() + timedelta(days=7)).strftime('%Y-%m-%d')
+        url = self.api_url + '/launch/%s/%s?mode=verbose' % (today, next_week)
         return send_request(url, method='GET', headers=headers)
 
     def get_location_by_pad(self, locationId):
