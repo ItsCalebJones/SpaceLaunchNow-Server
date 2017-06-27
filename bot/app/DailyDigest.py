@@ -3,7 +3,7 @@ import pdb
 import re
 import logging
 from django.utils.datetime_safe import datetime, time
-from twitter import Twitter, OAuth
+from twitter import Twitter, OAuth, TwitterHTTPError
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.libraries.onesignalsdk import OneSignalSdk
 from bot.models import Notification
@@ -240,6 +240,6 @@ class DailyDigestServer:
                 else:
                     message = (message[:117] + '...')
             logger.info(message + " | " + str(len(message)))
-            # self.twitter.statuses.update(status=message)
+            self.twitter.statuses.update(status=message)
         except TwitterHTTPError as e:
             logger.error("%s %s" % (str(e), message))
