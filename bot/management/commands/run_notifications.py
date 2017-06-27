@@ -11,8 +11,14 @@ TAG = 'Notification Server'
 class Command(BaseCommand):
     help = 'Run Notifications manually.'
 
+    def add_arguments(self, parser):
+        parser.add_argument('-version', dest="version", type=str)
+        parser.add_argument('-debug', dest="debug", type=bool)
+
     def handle(self, *args, **options):
         logger.info('Running Notifications...')
-        notification = NotificationServer()
+        debug = options['debug']
+        version = options['version']
+        notification = NotificationServer(debug=debug, version=version)
         notification.run()
 

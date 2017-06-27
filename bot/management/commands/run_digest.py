@@ -14,11 +14,15 @@ class Command(BaseCommand):
         feature_parser = parser.add_mutually_exclusive_group(required=False)
         feature_parser.add_argument('--daily', dest='daily', action='store_true')
         feature_parser.add_argument('--weekly', dest='daily', action='store_false')
+        parser.add_argument('-version', dest="version", type=str)
+        parser.add_argument('-debug', dest="debug", type=bool)
         parser.set_defaults(daily=True)
 
     def handle(self, *args, **options):
         logger.info('Running Digest - Daily = %s' % options['daily'])
-        daily_digest = DailyDigestServer()
+        debug = options['debug']
+        version = options['version']
+        daily_digest = DailyDigestServer(debug=debug, version=version)
         if options['daily'] is True:
             daily_digest.run(daily=True)
         elif options['daily'] is False:
