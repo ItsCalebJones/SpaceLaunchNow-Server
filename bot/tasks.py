@@ -3,6 +3,8 @@ from celery.schedules import crontab
 from celery.task import task, periodic_task
 from celery.utils.log import get_task_logger
 
+from bot.app.Notifications import NotificationServer
+
 logger = get_task_logger('bot')
 
 TAG = 'Digest Server'
@@ -30,3 +32,10 @@ def run_weekly():
     logger.info('Task - Running Digest - Weekly...')
     daily_digest = DailyDigestServer()
     daily_digest.run(weekly=True)
+
+
+@periodic_task(run_every=(crontab(hour="*", minute="5", day_of_week="*")))
+def check_next_launch():
+    logger.info('Task - Running Notifications...')
+    notification = NotificationServer()
+    notification.run()
