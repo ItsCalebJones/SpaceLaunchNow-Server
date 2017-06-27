@@ -3,7 +3,7 @@ import pdb
 import re
 import logging
 from django.utils.datetime_safe import datetime, time
-from twitter import *
+from twitter import Twitter, OAuth
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.libraries.onesignalsdk import OneSignalSdk
 from bot.models import Notification

@@ -1,6 +1,7 @@
 import logging
 import pdb
 from django.utils.datetime_safe import datetime
+from twitter import Twitter, OAuth
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.libraries.onesignalsdk import OneSignalSdk
 from bot.utils.config import keys
@@ -19,14 +20,17 @@ logger = logging.getLogger('bot')
 
 class NotificationServer:
     def __init__(self):
-        self.onesignal = OneSignalSdk(AUTH_TOKEN_HERE, APP_ID)
-        self.launchLibrary = LaunchLibrarySDK(version='dev')
-        response = self.onesignal.get_app(APP_ID)
+        self.one_signal = OneSignalSdk(AUTH_TOKEN_HERE, APP_ID)
+        self.launchLibrary = LaunchLibrarySDK()
+        response = self.one_signal.get_app(APP_ID)
         assert response.status_code == 200
         self.app = response.json()
-        self.app_auth_key = self.app['basic_auth_key']
         assert isinstance(self.app, dict)
         assert self.app['id'] and self.app['name'] and self.app['updated_at'] and self.app['created_at']
+        self.app_auth_key = self.app['basic_auth_key']
+        self.twitter = Twitter(
+            auth=OAuth(keys['TOKEN_KEY'], keys['TOKEN_SECRET'], keys['CONSUMER_KEY'], keys['CONSUMER_SECRET'])
+        )
 
     def send_to_twitter(self, message, notification):
         # Need to add actual twitter post here.
@@ -81,8 +85,9 @@ class NotificationServer:
 
     def check_twitter(self, diff, launch):
         notification = Notification.objects.get(launch=launch)
-        pdb.set_trace()
-        if (notification.last_net_stamp - launch.netstamp) > 600 and diff <= 259200:
+        if notification.last_net_stamp is not None\
+                and (notification.last_net_stamp - launch.netstamp) > 600\
+                and diff <= 259200:
             self.netstamp_changed(notification)
         elif diff <= 86400:
             if notification.last_twitter_post is not None:
@@ -125,12 +130,12 @@ class NotificationServer:
         notification.save()
 
     def send_notification(self, launch):
-        self.onesignal.user_auth_key = self.app_auth_key
-        self.onesignal.app_id = APP_ID
+        self.one_signal.user_auth_key = self.app_auth_key
+        self.one_signal.app_id = APP_ID
         logger.info('Creating notification for %s' % launch.launch_name)
 
         # Create a notification
-        contents = '%s launching from %s' % (launch.launch_name, launch.location['name'])
+        contents = '%s launching from %s' % (launch.name, launch.location_name)
         kwargs = dict(
             content_available=True,
             included_segments=['Debug'],
@@ -139,15 +144,16 @@ class NotificationServer:
         )
         url = 'https://launchlibrary.net'
         heading = 'Space Launch Now'
-        response = self.onesignal.create_notification(contents, heading, url, **kwargs)
+        response = self.one_signal.create_notification(contents, heading, url, **kwargs)
         assert response.status_code == 200
+        logger.info('Response received %s %s' % (response.status_code, response.json()))
 
         notification_data = response.json()
         notification_id = notification_data['id']
         assert notification_data['id'] and notification_data['recipients']
 
         # Get the notification
-        response = self.onesignal.get_notification(APP_ID, notification_id, self.app_auth_key)
+        response = self.one_signal.get_notification(APP_ID, notification_id, self.app_auth_key)
         notification_data = response.json()
         assert notification_data['id'] == notification_id
         assert notification_data['contents']['en'] == contents
