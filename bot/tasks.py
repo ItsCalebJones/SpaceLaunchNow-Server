@@ -34,7 +34,7 @@ def run_weekly():
     daily_digest.run(weekly=True)
 
 
-@periodic_task(run_every=(crontab(hour="*", minute="5", day_of_week="*")))
+@periodic_task(run_every=(crontab(minute='*/5')))
 def check_next_launch():
     logger.info('Task - Running Notifications...')
     notification = NotificationServer()
