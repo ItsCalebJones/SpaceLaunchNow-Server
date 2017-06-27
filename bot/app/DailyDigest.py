@@ -3,7 +3,7 @@ import pdb
 import re
 import logging
 from django.utils.datetime_safe import datetime, time
-from twitter import *
+from twitter import Twitter, OAuth
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.libraries.onesignalsdk import OneSignalSdk
 from bot.models import Notification
@@ -112,6 +112,7 @@ class DailyDigestServer:
         this_weeks_confirmed_launches = []
         this_weeks_possible_launches = []
         for launch in self.get_next_weeks_launches():
+            update_notification_record(launch)
             if launch.location_name is None:
                 launch.location_name = 'Unknown'
             if launch.status == 1 and launch.netstamp > 0:
