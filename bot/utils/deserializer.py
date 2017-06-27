@@ -3,7 +3,6 @@ from bot.models import Launch, Notification
 
 
 def json_to_model(data):
-    print data
     id = data['id']
     name = data['name']
     status = data['status']

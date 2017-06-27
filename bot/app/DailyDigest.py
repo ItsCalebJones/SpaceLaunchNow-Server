@@ -42,9 +42,15 @@ def daily_allowed():
 
 
 class DailyDigestServer:
-    def __init__(self):
+    def __init__(self, debug=None, version=None):
         self.one_signal = OneSignalSdk(AUTH_TOKEN_HERE, APP_ID)
-        self.launchLibrary = LaunchLibrarySDK()
+        if version is None:
+            version = '1.2.1'
+        self.launchLibrary = LaunchLibrarySDK(version=version)
+        if debug is None:
+            self.DEBUG = False
+        else:
+            self.DEBUG = debug
         response = self.one_signal.get_app(APP_ID)
         assert response.status_code == 200
         self.app = response.json()
@@ -206,7 +212,8 @@ class DailyDigestServer:
             launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
             message = "%s %s launching from %s in %s hours." % (header, launch.name, launch.location_name,
                                                                 '{0:g}'.format(float(round(abs(
-                                                                    launch_time - current_time).total_seconds() / 3600.0))))
+                                                                    launch_time - current_time)
+                                                                                           .total_seconds() / 3600.0))))
             self.send_twitter_update(message)
 
             update_notification_record(launch)
@@ -230,7 +237,6 @@ class DailyDigestServer:
 
     def send_twitter_update(self, message):
         try:
-            pdb.set_trace()
             if message.endswith(' (1/1)'):
                 message = message[:-6]
             if len(message) > 120:
@@ -239,7 +245,8 @@ class DailyDigestServer:
                     message = (message[:111] + '... ' + end)
                 else:
                     message = (message[:117] + '...')
-            logger.info(message + " | " + str(len(message)))
-            self.twitter.statuses.update(status=message)
+            logger.info('Sending to Twitter | %s | %s' % (message, str(len(message))))
+            if not self.DEBUG:
+                self.twitter.statuses.update(status=message)
         except TwitterHTTPError as e:
             logger.error("%s %s" % (str(e), message))
