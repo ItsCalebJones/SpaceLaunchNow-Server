@@ -36,7 +36,7 @@ def daily_allowed():
     end_date = datetime.today()
     notifications = Notification.objects.filter(last_daily_digest_post__range=(start_date, end_date))
     for notification in notifications:
-	logger.debug('Time since Digest - %s seconds' % (datetime.now() - notification.last_daily_digest_post)
+        logger.debug('Time since Digest - %s seconds' % (datetime.now() - notification.last_daily_digest_post)
                      .total_seconds())
         if (datetime.now() - notification.last_daily_digest_post).total_seconds() < 80000:
             return False
@@ -72,7 +72,7 @@ class DailyDigestServer:
             else:
                 logger.info("Daily already ran, skipping.")
         elif weekly:
-                self.check_launch_weekly()
+            self.check_launch_weekly()
         else:
             logger.error("Both daily and weekly false...ignoring request.")
 
