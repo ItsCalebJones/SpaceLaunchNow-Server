@@ -36,7 +36,9 @@ def daily_allowed():
     end_date = datetime.today()
     notifications = Notification.objects.filter(last_daily_digest_post__range=(start_date, end_date))
     for notification in notifications:
-        if (datetime.now() - notification.last_daily_digest_post).total_seconds() < 86000:
+        logger.debug('Time since Digest - %s seconds' % (datetime.now() - notification.last_daily_digest_post)
+                     .total_seconds())
+        if (datetime.now() - notification.last_daily_digest_post).total_seconds() < 80000:
             return False
     return True
 
