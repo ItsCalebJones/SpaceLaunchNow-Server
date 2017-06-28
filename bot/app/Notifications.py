@@ -120,8 +120,7 @@ class NotificationServer:
             notification.wasNotifiedTenMinutes = True
         notification.save()
 
-    def check_twitter(self, diff, launch):
-        notification = Notification.objects.get(launch=launch)
+    def check_twitter(self, diff, launch, notification):
         if notification.last_net_stamp is not None \
                 and abs(notification.last_net_stamp - launch.netstamp) > 600 \
                 and diff <= 259200:
@@ -136,26 +135,19 @@ class NotificationServer:
                     time_since_last_twitter_update = (datetime.now() - notification.last_twitter_post).total_seconds()
                 logger.info('Seconds since last update on Twitter %d for %s' % (time_since_last_twitter_update,
                                                                                 launch.name))
-
-                if diff >= 3600:
+                if 3600 >= diff > 600:
                     if time_since_last_twitter_update >= 43200:
                         self.send_to_twitter('%s launching from %s in %s' %
                                              (launch.name, launch.location_name, seconds_to_time(diff)),
                                              notification)
-                if diff <= 3600:
-                    if time_since_last_twitter_update >= 43200:
-                        self.send_to_twitter('%s launching from %s in %s' %
-                                             (launch.name, launch.location_name, seconds_to_time(diff)),
-                                             notification)
-
-            else:
-                logger.info('%s has not been posted to Twitter.' % launch.name)
-                self.send_to_twitter('%s launching from %s in %s' % (launch.name, launch.location_name,
-                                                                     seconds_to_time(diff)), notification)
+                elif diff <= 600:
+                    self.send_to_twitter('%s launching from %s in %s' %
+                                         (launch.name, launch.location_name, seconds_to_time(diff)),
+                                         notification)
 
     def check_launch_window(self, diff, launch):
-        self.check_twitter(diff, launch)
         notification = Notification.objects.get(launch=launch)
+        self.check_twitter(diff, launch, notification)
         logger.info('Checking launch window for %s' % notification.launch.name)
 
         # If launch is within 24 hours...
