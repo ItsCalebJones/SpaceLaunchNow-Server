@@ -97,9 +97,11 @@ class NotificationServer:
 
     def netstamp_changed(self, notification, diff):
         logger.info('Netstamp change detected for %s' % notification.launch.name)
-        message = 'LAUNCH UPDATE: %s now launching from %s in %s' % (notification.launch.name,
-                                                                     notification.launch.location_name,
-                                                                     seconds_to_time(diff))
+        date = datetime.fromtimestamp(notification.launch.last_net_stamp)
+        message = 'SCHEDULE UPDATE: %s now launching in %s at %s.' % (notification.launch.name,
+                                                                      seconds_to_time(diff),
+                                                                      date.strftime("%H:%M %Z (%d/%m)")
+)
         self.send_to_twitter(message, notification)
 
         # If launch is within 24 hours...
@@ -121,7 +123,7 @@ class NotificationServer:
         notification.save()
 
     def check_twitter(self, diff, launch, notification):
-        if notification.last_net_stamp is not None \
+        if notification.last_net_stamp is not None or 0 \
                 and abs(notification.last_net_stamp - launch.netstamp) > 600 \
                 and diff <= 259200:
             self.netstamp_changed(notification, diff)
@@ -137,11 +139,11 @@ class NotificationServer:
                                                                                 launch.name))
                 if 3600 >= diff > 600:
                     if time_since_last_twitter_update >= 43200:
-                        self.send_to_twitter('%s launching from %s in %s' %
+                        self.send_to_twitter('%s launching from %s in %s.' %
                                              (launch.name, launch.location_name, seconds_to_time(diff)),
                                              notification)
                 elif diff <= 600:
-                    self.send_to_twitter('%s launching from %s in %s' %
+                    self.send_to_twitter('%s launching from %s in %s.' %
                                          (launch.name, launch.location_name, seconds_to_time(diff)),
                                          notification)
 
