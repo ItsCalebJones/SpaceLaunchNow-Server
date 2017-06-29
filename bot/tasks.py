@@ -38,4 +38,4 @@ def run_weekly():
 def check_next_launch():
     logger.info('Task - Running Notifications...')
     notification = NotificationServer()
-    notification.run()
+    notification.check_next_launch()
