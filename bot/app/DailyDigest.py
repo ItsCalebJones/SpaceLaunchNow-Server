@@ -1,5 +1,5 @@
 from datetime import timedelta
-import pdb
+from num2words import num2words
 import re
 import logging
 from django.utils.datetime_safe import datetime, time
@@ -13,7 +13,7 @@ from bot.utils.deserializer import json_to_model
 # import the logging library
 
 # Get an instance of a logger
-logger = logging.getLogger('bot')
+logger = logging.getLogger('bot.digest')
 
 AUTH_TOKEN_HERE = keys['AUTH_TOKEN_HERE']
 APP_ID = keys['APP_ID']
@@ -149,17 +149,17 @@ class DailyDigestServer:
             self.send_twitter_update(message)
         elif len(confirmed) > 1 and len(possible) == 1:
             message = "%s There are %s launches confirmed with one other possible this week." % (full_header,
-                                                                                                 len(confirmed))
+                                                                                                 num2words(len(confirmed)))
             self.send_twitter_update(message)
         elif len(confirmed) == 1 and len(possible) > 1:
             message = "%s There is one launch confirmed with %s other possible this week." % (full_header,
-                                                                                              len(possible))
+                                                                                              num2words(len(possible)))
             self.send_twitter_update(message)
         elif confirmed > 0 and len(possible) == 0:
-            message = "%s There are %s confirmed launches scheduled this week." % (full_header, len(confirmed))
+            message = "%s There are %s confirmed launches scheduled this week." % (full_header, num2words(len(confirmed)))
             self.send_twitter_update(message)
         elif confirmed == 0 and len(possible) > 0:
-            message = "%s There are %s possible launches scheduled this week." % (full_header, len(possible))
+            message = "%s There are %s possible launches scheduled this week." % (full_header, num2words(len(possible)))
             self.send_twitter_update(message)
 
         if len(confirmed) == 1:
@@ -202,23 +202,26 @@ class DailyDigestServer:
                 self.send_twitter_update(message)
 
     def send_daily_to_twitter(self, launches):
-        logger.info("Size %s" % launches)
-        header = "Daily Digest %s:" % datetime.strftime(datetime.now(), "%-m/%d")
+        logger.debug("Size %s" % len(launches))
+        header = "Daily Digest %s:" % datetime.strftime(datetime.now(), "%m/%d")
         if len(launches) == 0:
+            logger.info("No launches - sending message. ")
             message = "%s There are currently no launches confirmed Go for Launch within the next 24 hours." % header
             self.send_twitter_update(message)
         if len(launches) == 1:
             launch = launches[0]
             current_time = datetime.utcnow()
             launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
+            logger.info("One launch - sending message. ")
             message = "%s %s launching from %s in %s hours." % (header, launch.name, launch.location_name,
                                                                 '{0:g}'.format(float(round(abs(
                                                                     launch_time - current_time)
-                                                                                           .total_seconds() / 3600.0))))
+                                                                    .total_seconds() / 3600.0))))
             self.send_twitter_update(message)
 
             update_notification_record(launch)
         if len(launches) > 1:
+            logger.info("More then one launch - sending summary first. ")
             message = "%s There are %i confirmed launches within the next 24 hours...(1/%i)" % (header,
                                                                                                 len(launches),
                                                                                                 len(launches) + 1)
@@ -231,7 +234,7 @@ class DailyDigestServer:
                                                                          '{0:g}'.format(float(
                                                                              round(abs(
                                                                                  launch_time - current_time)
-                                                                                   .total_seconds() / 3600.0))),
+                                                                                .total_seconds() / 3600.0))),
                                                                          index + 1, len(launches) + 1)
                 self.send_twitter_update(message)
                 update_notification_record(launch)

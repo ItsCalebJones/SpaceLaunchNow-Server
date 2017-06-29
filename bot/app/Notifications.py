@@ -16,7 +16,7 @@ DAEMON_SLEEP = 600
 TAG = 'Notification Server'
 
 # Get an instance of a logger
-logger = logging.getLogger('bot')
+logger = logging.getLogger('bot.notifications')
 
 
 class NotificationServer:
@@ -41,20 +41,21 @@ class NotificationServer:
 
     def send_to_twitter(self, message, notification):
         # Need to add actual twitter post here.
-        try:
-            if message.endswith(' (1/1)'):
-                message = message[:-6]
-            if len(message) > 120:
-                end = message[-5:]
-                if re.search("([1-9]*/[1-9])", end):
-                    message = (message[:111] + '... ' + end)
-                else:
-                    message = (message[:117] + '...')
+
+        if message.endswith(' (1/1)'):
+            message = message[:-6]
+        if len(message) > 120:
+            end = message[-5:]
+            if re.search("([1-9]*/[1-9])", end):
+                message = (message[:111] + '... ' + end)
+            else:
+                message = (message[:117] + '...')
+        if not self.DEBUG:
             logger.info('Sending to Twitter | %s | %s' % (message, str(len(message))))
-            if not self.DEBUG:
+            try:
                 self.twitter.statuses.update(status=message)
-        except TwitterHTTPError as e:
-            logger.error("%s %s" % (str(e), message))
+            except TwitterHTTPError as e:
+                logger.error("%s %s" % (str(e), message))
 
         notification.last_twitter_post = datetime.now()
         notification.last_net_stamp = notification.launch.netstamp
@@ -85,7 +86,6 @@ class NotificationServer:
             logger.error(response.status_code + ' ' + response)
 
     def check_next_launch(self):
-        # Now that we have models loop through to find launches.
         for launch in self.get_next_launches():
             if launch.netstamp > 0:
                 current_time = datetime.utcnow()
@@ -182,8 +182,8 @@ class NotificationServer:
         )
         url = 'https://launchlibrary.net'
         heading = 'Space Launch Now'
-        logger.debug(contents)
         if not self.DEBUG:
+            logger.debug('Sending notification - %s' % contents)
             response = self.one_signal.create_notification(contents, heading, url, **kwargs)
             assert response.status_code == 200
             logger.info('Response received %s %s' % (response.status_code, response.json()))
@@ -197,7 +197,3 @@ class NotificationServer:
             notification_data = response.json()
             assert notification_data['id'] == notification_id
             assert notification_data['contents']['en'] == contents
-
-    def run(self):
-        """The daemon's main loop for doing work"""
-        self.check_next_launch()
