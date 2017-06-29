@@ -101,6 +101,7 @@ class NotificationServer:
         message = 'SCHEDULE UPDATE: %s now launching in %s at %s.' % (launch.name,
                                                                       seconds_to_time(diff),
                                                                       date.strftime("%H:%M %Z (%d/%m)"))
+        launch.save()
         self.send_to_twitter(message, notification)
 
         # If launch is within 24 hours...
