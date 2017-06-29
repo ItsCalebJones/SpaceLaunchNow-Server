@@ -210,6 +210,8 @@ class DailyDigestServer:
             self.send_twitter_update(message)
         if len(launches) == 1:
             launch = launches[0]
+            if len(launch.name) > 30:
+                launch.name = launch.name.split(" |")[0]
             current_time = datetime.utcnow()
             launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
             logger.info("One launch - sending message. ")
@@ -225,9 +227,12 @@ class DailyDigestServer:
             message = "%s There are %i confirmed launches within the next 24 hours...(1/%i)" % (header,
                                                                                                 len(launches),
                                                                                                 len(launches) + 1)
+
             self.send_twitter_update(message)
             for index, launch in enumerate(launches, start=1):
                 current_time = datetime.utcnow()
+                if len(launch.name) > 30:
+                    launch.name = launch.name.split(" |")[0]
                 launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
                 message = "%s launching from %s in %s hours. (%i/%i)" % (launch.name,
                                                                          launch.location.name,
