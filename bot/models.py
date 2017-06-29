@@ -20,8 +20,9 @@ class Notification(models.Model):
     wasNotifiedOneHour = models.BooleanField(blank=True, default=False)
     wasNotifiedTenMinutes = models.BooleanField(blank=True, default=False)
     wasNotifiedDailyDigest = models.BooleanField(blank=True, default=False)
-    last_daily_digest_post = models.DateTimeField(blank=True, null=True)
+    last_daily_digest_analysis = models.DateTimeField(blank=True, null=True)
     last_twitter_post = models.DateTimeField(blank=True, null=True)
     last_net_stamp = models.IntegerField(blank=True, null=True)
     last_net_stamp_timestamp = models.DateTimeField(blank=True, null=True)
+
 

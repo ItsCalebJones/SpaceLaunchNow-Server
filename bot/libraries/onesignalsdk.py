@@ -17,9 +17,12 @@ The 'App REST API Key' is under the "Application Settings" page under the "API K
 """
 import re
 import json
+
+import logging
 import requests
 
-from bot.utils.util import log
+# Get an instance of a logger
+logger = logging.getLogger('bot')
 
 BASE_URL = 'https://onesignal.com/api/'
 
@@ -510,8 +513,8 @@ class OneSignalSdk(object):
 
         api_url = self.api_url + "/notifications"
         data = json.dumps(data)
-        log("OneSignal SDK",  'URL: %s' % api_url)
-        log("OneSignal SDK", 'DATA: %s' % data)
+        logger.info('URL: %s' % api_url)
+        logger.info('DATA: %s' % data)
         return send_request(api_url, method='POST', headers=self.get_headers(), data=data)
 
     def get_notification(self, app_id, notification_id, app_auth_key):

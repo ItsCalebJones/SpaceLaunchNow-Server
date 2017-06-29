@@ -50,8 +50,8 @@ class NotificationServer:
                 message = (message[:111] + '... ' + end)
             else:
                 message = (message[:117] + '...')
+        logger.info('Sending to Twitter | %s | %s | DEBUG %s' % (message, str(len(message)), self.DEBUG))
         if not self.DEBUG:
-            logger.info('Sending to Twitter | %s | %s' % (message, str(len(message))))
             try:
                 self.twitter.statuses.update(status=message)
             except TwitterHTTPError as e:
@@ -95,13 +95,12 @@ class NotificationServer:
                     logger.info('%s in %s hours' % (launch.name, (diff / 60) / 60))
                     self.check_launch_window(diff, launch)
 
-    def netstamp_changed(self, notification, diff):
-        logger.info('Netstamp change detected for %s' % notification.launch.name)
-        date = datetime.fromtimestamp(notification.launch.last_net_stamp)
-        message = 'SCHEDULE UPDATE: %s now launching in %s at %s.' % (notification.launch.name,
+    def netstamp_changed(self, launch, notification, diff):
+        logger.info('Netstamp change detected for %s' % launch.name)
+        date = datetime.fromtimestamp(launch.netstamp)
+        message = 'SCHEDULE UPDATE: %s now launching in %s at %s.' % (launch.name,
                                                                       seconds_to_time(diff),
-                                                                      date.strftime("%H:%M %Z (%d/%m)")
-)
+                                                                      date.strftime("%H:%M %Z (%d/%m)"))
         self.send_to_twitter(message, notification)
 
         # If launch is within 24 hours...
@@ -126,7 +125,7 @@ class NotificationServer:
         if notification.last_net_stamp is not None or 0 \
                 and abs(notification.last_net_stamp - launch.netstamp) > 600 \
                 and diff <= 259200:
-            self.netstamp_changed(notification, diff)
+            self.netstamp_changed(launch, notification, diff)
         elif diff <= 86400:
             if notification.last_twitter_post is not None:
                 if notification.last_daily_digest_post is not None:
