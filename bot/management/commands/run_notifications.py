@@ -13,11 +13,17 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('-version', dest="version", type=str)
-        parser.add_argument('-debug', dest="debug", type=bool)
+        parser.add_argument('-debug', '-d', dest="debug", type=bool, const=True, nargs='?')
 
     def handle(self, *args, **options):
         logger.info('Running Notifications...')
         debug = options['debug']
+        while debug is None:
+            response = raw_input('Continue in production mode? (Y/N) ')
+            if response == "Y":
+                debug = False
+            if response == "N":
+                debug = True
         version = options['version']
         notification = NotificationServer(debug=debug, version=version)
         notification.check_next_launch()

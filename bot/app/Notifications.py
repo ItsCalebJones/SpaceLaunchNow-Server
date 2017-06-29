@@ -123,9 +123,7 @@ class NotificationServer:
         notification.save()
 
     def check_twitter(self, diff, launch, notification):
-        if notification.last_net_stamp is not None or 0 \
-                and abs(notification.last_net_stamp - launch.netstamp) > 600 \
-                and diff <= 259200:
+        if (notification.last_net_stamp is not None or 0) and abs(notification.last_net_stamp - launch.netstamp) > 600 and diff <= 259200:
             self.netstamp_changed(launch, notification, diff)
         elif diff <= 86400:
             if notification.last_twitter_post is not None:
