@@ -75,7 +75,7 @@ class NotificationServer:
             launches = []
             for launch in launch_data:
                 launch = json_to_model(launch)
-                if len(launch.location_name) > 10:
+                if len(launch.location_name) > 20:
                     launch.location_name = launch.location_name.split(", ")[0]
                 else:
                     launch.location_name = launch.location_name
