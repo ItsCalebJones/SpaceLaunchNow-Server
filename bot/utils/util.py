@@ -32,8 +32,8 @@ def seconds_to_time(seconds):
     minutes = seconds // seconds_in_minute
     seconds -= minutes * seconds_in_minute
     if days > 0:
-        return "{0:.0f} days, {1:.0f} hours, {2:.0f} minutes".format(days, hours, minutes, seconds)
+        return "{0:.0f} days, {1:.0f} hours".format(days, hours)
     elif hours > 0:
-        return "{0:.0f} hours, {1:.0f} minutes".format(hours, minutes, seconds)
+        return "{0:.0f} hours, {1:.0f} minutes".format(hours, minutes)
     elif minutes > 0:
-        return "{0:.0f} minutes".format(minutes, seconds)
+        return "{0:.0f} minutes".format(minutes)
