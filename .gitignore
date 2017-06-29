@@ -9,3 +9,4 @@ celery.log
 celerybeat-schedule
 bot/utils/config.py
 celerybeat.pid
+*.log

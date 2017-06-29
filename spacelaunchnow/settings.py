@@ -17,7 +17,6 @@ from spacelaunchnow import config
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_ROOT = os.path.normpath(os.path.join(BASE_DIR, 'staticfiles'))
-	
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Quick-start development settings - unsuitable for production
@@ -41,31 +40,44 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-            'standard': {
-                'format': '%(asctime)s %(levelname)s [%(name)s: %(module)s %(lineno)s] - %(message)s',
-                'datefmt': '%m-%d-%Y %H:%M:%S'
+        'standard': {
         },
     },
     'handlers': {
-        'file': {
+        'django_default': {
             'class': 'logging.FileHandler',
-            'filename': 'django.log',
+            'filename': 'log/django.log',
             'formatter': 'standard'
         },
         'console': {
             'class': 'logging.StreamHandler',
             'formatter': 'standard'
         },
+        'digest': {
+            'class': 'logging.FileHandler',
+            'filename': 'log/bot/daily_digest.log',
+            'formatter': 'standard'
+        },
+        'notifications': {
+            'class': 'logging.FileHandler',
+            'filename': 'log/bot/notification.log',
+            'formatter': 'standard'
+        }
     },
     'loggers': {
         'django': {
-            'handlers': ['file', 'console'],
+            'handlers': ['django_default', 'console'],
             'propagate': True,
         },
-        'bot': {
-            'handlers': ['file'],
+        'bot.digest': {
+            'handlers': ['django_default', 'digest'],
             'level': 'DEBUG',
-            'propagate': False,
+            'propagate': True,
+        },
+        'bot.notifications': {
+            'handlers': ['django_default', 'notifications'],
+            'level': 'DEBUG',
+            'propagate': True,
         }
     },
 }

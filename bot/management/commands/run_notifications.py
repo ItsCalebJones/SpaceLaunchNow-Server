@@ -20,5 +20,4 @@ class Command(BaseCommand):
         debug = options['debug']
         version = options['version']
         notification = NotificationServer(debug=debug, version=version)
-        notification.run()
-
+        notification.check_next_launch()
