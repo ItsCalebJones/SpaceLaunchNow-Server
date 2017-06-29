@@ -7,8 +7,9 @@ class NotificationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Notification
         fields = (
-            'launch', 'url', 'wasNotifiedTwentyFourHour', 'wasNotifiedOneHour', 'wasNotifiedTenMinutes', 'wasNotifiedDailyDigest',
-            'last_daily_digest_post', 'last_twitter_post', 'last_net_stamp', 'last_net_stamp_timestamp'
+            'launch', 'url', 'wasNotifiedTwentyFourHour', 'wasNotifiedOneHour', 'wasNotifiedTenMinutes',
+            'wasNotifiedDailyDigest', 'last_daily_digest_analysis', 'last_twitter_post', 'last_net_stamp',
+            'last_net_stamp_timestamp'
         )
         extra_kwargs = {
             'id': {'read_only': False},
@@ -50,3 +51,4 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_object(self):
         return self.model(self.validated_data)
+

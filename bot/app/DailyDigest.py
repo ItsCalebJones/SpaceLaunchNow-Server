@@ -22,24 +22,26 @@ DAEMON_SLEEP = 6000
 
 def update_notification_record(launch):
     notification = Notification.objects.get(launch=launch)
-    notification.last_daily_digest_post = datetime.now()
+    notification.last_daily_digest_analysis = datetime.now()
     notification.last_net_stamp = launch.netstamp
     notification.last_net_stamp_timestamp = datetime.now()
     logger.info('Updating Notification %s to timestamp %s' % (notification.launch.id,
-                                                              notification.last_daily_digest_post
-                                                              .strftime("%A %d. %B %Y")))
+                                                              notification.last_daily_digest_analysis
+                                                              .strftime("%A %d %B %Y")))
     notification.save()
 
 
 def daily_allowed():
     start_date = datetime.today() - timedelta(1)
     end_date = datetime.today()
-    notifications = Notification.objects.filter(last_daily_digest_post__range=(start_date, end_date))
-    if any((datetime.now() - notification.last_daily_digest_post).total_seconds() < 40000
-           for notification in notifications):
-        return False
-    else:
-        return True
+    notifications = Notification.objects.filter(last_daily_digest_analysis__range=(start_date, end_date))
+    for notification in notifications:
+        logger.debug('Seconds since analysed: %s' % int((datetime.now() - notification
+                                                         .last_daily_digest_analysis)
+                                                        .total_seconds()))
+        if (datetime.now() - notification.last_daily_digest_analysis).total_seconds() < 40000:
+            return False
+    return True
 
 
 class DailyDigestServer:
@@ -113,6 +115,7 @@ class DailyDigestServer:
                 launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
                 if (launch_time - current_time).total_seconds() < 86400:
                     todays_launches.append(launch)
+            update_notification_record(launch)
         self.send_daily_to_twitter(todays_launches)
 
     def check_launch_weekly(self):
@@ -129,7 +132,7 @@ class DailyDigestServer:
         self.send_weekly_to_twitter(this_weeks_possible_launches, this_weeks_confirmed_launches)
 
     def send_weekly_to_twitter(self, possible, confirmed):
-        logger.info("Total launches found - %s" % (len(possible) + len(confirmed)))
+        logger.info("Total launches found - confirmed: %s possible: %s" % (len(possible), len(confirmed)))
         full_header = "This Week in SpaceFlight:"
         compact_header = "TWSF:"
         total = (len(possible) + len(confirmed))
@@ -149,21 +152,28 @@ class DailyDigestServer:
             self.send_twitter_update(message)
         elif len(confirmed) > 1 and len(possible) == 1:
             message = "%s There are %s launches confirmed with one other possible this week." % (full_header,
-                                                                                                 num2words(len(confirmed)))
+                                                                                                 num2words(
+                                                                                                     len(confirmed)))
             self.send_twitter_update(message)
         elif len(confirmed) == 1 and len(possible) > 1:
             message = "%s There is one launch confirmed with %s other possible this week." % (full_header,
                                                                                               num2words(len(possible)))
             self.send_twitter_update(message)
         elif confirmed > 0 and len(possible) == 0:
-            message = "%s There are %s confirmed launches scheduled this week." % (full_header, num2words(len(confirmed)))
+            message = "%s There are %s confirmed launches scheduled this week." % (full_header,
+                                                                                   num2words(len(confirmed)))
             self.send_twitter_update(message)
         elif confirmed == 0 and len(possible) > 0:
-            message = "%s There are %s possible launches scheduled this week." % (full_header, num2words(len(possible)))
+            message = "%s There are %s possible launches scheduled this week." % (full_header,
+                                                                                  num2words(len(possible)))
             self.send_twitter_update(message)
 
         if len(confirmed) == 1:
             launch = confirmed[0]
+            if len(launch.location_name) > 10:
+                launch.location_name = launch.location_name.split(", ")[0]
+            else:
+                launch.location_name = launch.location_name
             day = datetime.fromtimestamp(int(launch.netstamp)).strftime("%A")
             message = "%s %s launching from %s on %s. (1/%i)" % (compact_header, launch.name, launch.location_name, day,
                                                                  total)
@@ -218,10 +228,9 @@ class DailyDigestServer:
             message = "%s %s launching from %s in %s hours." % (header, launch.name, launch.location_name,
                                                                 '{0:g}'.format(float(round(abs(
                                                                     launch_time - current_time)
-                                                                    .total_seconds() / 3600.0))))
+                                                                                           .total_seconds() / 3600.0))))
             self.send_twitter_update(message)
 
-            update_notification_record(launch)
         if len(launches) > 1:
             logger.info("More then one launch - sending summary first. ")
             message = "%s There are %i confirmed launches within the next 24 hours...(1/%i)" % (header,
@@ -239,10 +248,9 @@ class DailyDigestServer:
                                                                          '{0:g}'.format(float(
                                                                              round(abs(
                                                                                  launch_time - current_time)
-                                                                                .total_seconds() / 3600.0))),
+                                                                                   .total_seconds() / 3600.0))),
                                                                          index + 1, len(launches) + 1)
                 self.send_twitter_update(message)
-                update_notification_record(launch)
 
     def send_twitter_update(self, message):
         try:
@@ -254,7 +262,7 @@ class DailyDigestServer:
                     message = (message[:111] + '... ' + end)
                 else:
                     message = (message[:117] + '...')
-            logger.info('Sending to Twitter | %s | %s' % (message, str(len(message))))
+            logger.info('Sending to Twitter | %s | %s | DEBUG %s' % (message, str(len(message)), self.DEBUG))
             if not self.DEBUG:
                 self.twitter.statuses.update(status=message)
         except TwitterHTTPError as e:
