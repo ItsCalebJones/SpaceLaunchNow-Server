@@ -127,8 +127,8 @@ class NotificationServer:
             self.netstamp_changed(launch, notification, diff)
         elif diff <= 86400:
             if notification.last_twitter_post is not None:
-                if notification.last_daily_digest_post is not None:
-                    time_since_digest = (datetime.now() - notification.last_daily_digest_post).total_seconds()
+                if notification.last_daily_digest_analysis is not None:
+                    time_since_digest = (datetime.now() - notification.last_daily_digest_analysis).total_seconds()
                     time_since_twitter = (datetime.now() - notification.last_twitter_post).total_seconds()
                     time_since_last_twitter_update = min(time_since_digest, time_since_twitter)
                 else:
