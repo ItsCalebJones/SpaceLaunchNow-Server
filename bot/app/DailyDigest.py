@@ -38,7 +38,7 @@ def daily_allowed():
     for notification in notifications:
         logger.debug('Seconds since analysed: %s' % int((datetime.now() - notification
                                                          .last_daily_digest_analysis)
-                                                        .total_seconds()))
+            .total_seconds()))
         if (datetime.now() - notification.last_daily_digest_analysis).total_seconds() < 40000:
             return False
     return True
@@ -228,7 +228,7 @@ class DailyDigestServer:
             message = "%s %s launching from %s in %s hours." % (header, launch.name, launch.location_name,
                                                                 '{0:g}'.format(float(round(abs(
                                                                     launch_time - current_time)
-                                                                                           .total_seconds() / 3600.0))))
+                                                                    .total_seconds() / 3600.0))))
             self.send_twitter_update(message)
 
         if len(launches) > 1:
@@ -244,11 +244,11 @@ class DailyDigestServer:
                     launch.name = launch.name.split(" |")[0]
                 launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
                 message = "%s launching from %s in %s hours. (%i/%i)" % (launch.name,
-                                                                         launch.location.name,
+                                                                         launch.location_name,
                                                                          '{0:g}'.format(float(
                                                                              round(abs(
                                                                                  launch_time - current_time)
-                                                                                   .total_seconds() / 3600.0))),
+                                                                                 .total_seconds() / 3600.0))),
                                                                          index + 1, len(launches) + 1)
                 self.send_twitter_update(message)
 
