@@ -8,7 +8,7 @@ class NotificationSerializer(serializers.HyperlinkedModelSerializer):
         model = Notification
         fields = (
             'launch', 'url', 'wasNotifiedTwentyFourHour', 'wasNotifiedOneHour', 'wasNotifiedTenMinutes',
-            'wasNotifiedDailyDigest', 'last_daily_digest_analysis', 'last_twitter_post', 'last_net_stamp',
+            'wasNotifiedDailyDigest', 'last_twitter_post', 'last_net_stamp',
             'last_net_stamp_timestamp'
         )
         extra_kwargs = {
