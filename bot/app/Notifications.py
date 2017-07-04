@@ -128,23 +128,19 @@ class NotificationServer:
             self.netstamp_changed(launch, notification, diff)
         elif diff <= 86400:
             if notification.last_twitter_post is not None:
-                if notification.last_daily_digest_analysis is not None:
-                    time_since_digest = (datetime.now() - notification.last_daily_digest_analysis).total_seconds()
-                    time_since_twitter = (datetime.now() - notification.last_twitter_post).total_seconds()
-                    time_since_last_twitter_update = min(time_since_digest, time_since_twitter)
-                else:
-                    time_since_last_twitter_update = (datetime.now() - notification.last_twitter_post).total_seconds()
-                logger.info('Seconds since last update on Twitter %d for %s' % (time_since_last_twitter_update,
+                time_since_twitter = (datetime.now() - notification.last_twitter_post).total_seconds()
+                logger.info('Seconds since last update on Twitter %d for %s' % (time_since_twitter,
                                                                                 launch.name))
                 if 3600 >= diff > 600:
-                    if time_since_last_twitter_update >= 43200:
+                    if time_since_twitter >= 43200:
                         self.send_to_twitter('%s launching from %s in %s.' %
                                              (launch.name, launch.location_name, seconds_to_time(diff)),
                                              notification)
                 elif diff <= 600:
-                    self.send_to_twitter('%s launching from %s in %s.' %
-                                         (launch.name, launch.location_name, seconds_to_time(diff)),
-                                         notification)
+                    if time_since_twitter >= 600:
+                        self.send_to_twitter('%s launching from %s in %s.' %
+                                             (launch.name, launch.location_name, seconds_to_time(diff)),
+                                             notification)
 
     def check_launch_window(self, diff, launch):
         notification = Notification.objects.get(launch=launch)

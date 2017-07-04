@@ -3,10 +3,11 @@ from num2words import num2words
 import re
 import logging
 from django.utils.datetime_safe import datetime, time
+import pytz
 from twitter import Twitter, OAuth, TwitterHTTPError
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.libraries.onesignalsdk import OneSignalSdk
-from bot.models import Notification
+from bot.models import Notification, DailyDigestRecord
 from bot.utils.config import keys
 from bot.utils.deserializer import json_to_model
 
@@ -22,26 +23,18 @@ DAEMON_SLEEP = 6000
 
 def update_notification_record(launch):
     notification = Notification.objects.get(launch=launch)
-    notification.last_daily_digest_analysis = datetime.now()
     notification.last_net_stamp = launch.netstamp
     notification.last_net_stamp_timestamp = datetime.now()
-    logger.info('Updating Notification %s to timestamp %s' % (notification.launch.id,
-                                                              notification.last_daily_digest_analysis
+    logger.info('Updating Notification %s to timestamp %s' % (notification.launch.name,
+                                                              datetime.fromtimestamp(notification.launch.netstamp)
                                                               .strftime("%A %d %B %Y")))
     notification.save()
 
 
-def daily_allowed():
-    start_date = datetime.today() - timedelta(1)
-    end_date = datetime.today()
-    notifications = Notification.objects.filter(last_daily_digest_analysis__range=(start_date, end_date))
-    for notification in notifications:
-        logger.debug('Seconds since analysed: %s' % int((datetime.now() - notification
-                                                         .last_daily_digest_analysis)
-            .total_seconds()))
-        if (datetime.now() - notification.last_daily_digest_analysis).total_seconds() < 40000:
-            return False
-    return True
+def create_daily_digest_record(launches, messages):
+    DailyDigestRecord.objects.create(timestamp=datetime.now(),
+                                     messages=messages,
+                                     count=len(launches))
 
 
 class DailyDigestServer:
@@ -68,10 +61,7 @@ class DailyDigestServer:
 
     def run(self, daily=False, weekly=False):
         if daily:
-            if daily_allowed():
-                self.check_launch_daily()
-            else:
-                logger.info("Daily already ran, skipping.")
+            self.check_launch_daily()
         elif weekly:
             self.check_launch_weekly()
         else:
@@ -83,10 +73,18 @@ class DailyDigestServer:
         if response.status_code is 200:
             response_json = response.json()
             launch_data = response_json['launches']
-            logger.info("Found %i launches." % len(launch_data))
+            logger.info("Found %i launches" % len(launch_data))
+            logger.debug("DATA: %s" % launch_data)
             launches = []
             for launch in launch_data:
                 launch = json_to_model(launch)
+                if launch.location_name is None:
+                    launch.location_name = 'Unknown'
+                if len(launch.name) > 30:
+                    launch.name = launch.name.split(" |")[0]
+                if len(launch.location_name) > 20:
+                    launch.location_name = launch.location_name.split(", ")[0]
+                launch.save()
                 launches.append(launch)
             return launches
         else:
@@ -108,23 +106,24 @@ class DailyDigestServer:
             logger.error(response.status_code + ' ' + response)
 
     def check_launch_daily(self):
-        todays_launches = []
+        confirmed_launches = []
+        possible_launches = []
+        current_time = datetime.utcnow()
         for launch in self.get_next_launches():
-            if launch.status == 1 and launch.netstamp > 0:
-                current_time = datetime.utcnow()
-                launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
-                if (launch_time - current_time).total_seconds() < 86400:
-                    todays_launches.append(launch)
             update_notification_record(launch)
-        self.send_daily_to_twitter(todays_launches)
+            if launch.netstamp > 0 and (datetime.utcfromtimestamp(int(launch.netstamp)) - current_time)\
+                    .total_seconds() < 172800:
+                if launch.status == 1:
+                    confirmed_launches.append(launch)
+                elif launch.status == 2:
+                    possible_launches.append(launch)
+        self.send_daily_to_twitter(possible=possible_launches, confirmed=confirmed_launches)
 
     def check_launch_weekly(self):
         this_weeks_confirmed_launches = []
         this_weeks_possible_launches = []
         for launch in self.get_next_weeks_launches():
             update_notification_record(launch)
-            if launch.location_name is None:
-                launch.location_name = 'Unknown'
             if launch.status == 1 and launch.netstamp > 0:
                 this_weeks_confirmed_launches.append(launch)
             elif launch.status == 0 or launch.netstamp == 0:
@@ -132,7 +131,7 @@ class DailyDigestServer:
         self.send_weekly_to_twitter(this_weeks_possible_launches, this_weeks_confirmed_launches)
 
     def send_weekly_to_twitter(self, possible, confirmed):
-        logger.info("Total launches found - confirmed: %s possible: %s" % (len(possible), len(confirmed)))
+        logger.info("Total launches found - confirmed: %s possible: %s" % (len(confirmed), len(possible)))
         full_header = "This Week in SpaceFlight:"
         compact_header = "TWSF:"
         total = (len(possible) + len(confirmed))
@@ -159,35 +158,28 @@ class DailyDigestServer:
             message = "%s There is one launch confirmed with %s other possible this week." % (full_header,
                                                                                               num2words(len(possible)))
             self.send_twitter_update(message)
-        elif confirmed > 0 and len(possible) == 0:
+        elif len(confirmed) > 0 and len(possible) == 0:
             message = "%s There are %s confirmed launches scheduled this week." % (full_header,
                                                                                    num2words(len(confirmed)))
             self.send_twitter_update(message)
-        elif confirmed == 0 and len(possible) > 0:
+        elif len(confirmed) == 0 and len(possible) > 0:
             message = "%s There are %s possible launches scheduled this week." % (full_header,
                                                                                   num2words(len(possible)))
             self.send_twitter_update(message)
 
         if len(confirmed) == 1:
             launch = confirmed[0]
-            if len(launch.location_name) > 10:
-                launch.location_name = launch.location_name.split(", ")[0]
-            else:
-                launch.location_name = launch.location_name
-            day = datetime.fromtimestamp(int(launch.netstamp)).strftime("%A")
+            day = datetime.fromtimestamp(int(launch.netstamp)).replace(tzinfo=pytz.UTC).strftime("%A")
             message = "%s %s launching from %s on %s. (1/%i)" % (compact_header, launch.name, launch.location_name, day,
                                                                  total)
             self.send_twitter_update(message)
         elif len(confirmed) > 1:
             for index, launch in enumerate(confirmed, start=1):
-                if len(launch.location_name) > 10:
-                    location_name = launch.location_name.split(", ")[0]
-                else:
-                    location_name = launch.location_name
                 message = "%s %s launching from %s on %s. (%i/%i)" % (compact_header, launch.name,
-                                                                      location_name,
+                                                                      launch.location_name,
                                                                       datetime
                                                                       .fromtimestamp(int(launch.netstamp))
+                                                                      .replace(tzinfo=pytz.UTC)
                                                                       .strftime("%A"),
                                                                       index,
                                                                       total)
@@ -200,28 +192,26 @@ class DailyDigestServer:
             self.send_twitter_update(message)
         elif len(possible) > 1:
             for index, launch in enumerate(possible, start=1):
-                if len(launch.location_name) > 10:
-                    location_name = launch.location_name.split(", ")[0]
-                else:
-                    location_name = launch.location_name
                 message = "%s %s might be launching from %s. (%i/%i)" % (compact_header,
                                                                          launch.name,
-                                                                         location_name,
+                                                                         launch.location_name,
                                                                          index + len(confirmed),
                                                                          total)
                 self.send_twitter_update(message)
 
-    def send_daily_to_twitter(self, launches):
-        logger.debug("Size %s" % len(launches))
+    def send_daily_to_twitter(self, possible, confirmed):
+        logger.debug("Confirmed count - %s | Possible Count - %s" % (len(confirmed), len(possible)))
         header = "Daily Digest %s:" % datetime.strftime(datetime.now(), "%m/%d")
-        if len(launches) == 0:
+        messages = "MESSAGES SENT TO TWITTER: \n"
+        if len(confirmed) == 0 and len(possible) == 0:
             logger.info("No launches - sending message. ")
-            message = "%s There are currently no launches confirmed Go for Launch within the next 24 hours." % header
+            message = "%s There are currently no launches scheduled within the next 48 hours." % header
+
+            messages = messages + message + "\n"
             self.send_twitter_update(message)
-        if len(launches) == 1:
-            launch = launches[0]
-            if len(launch.name) > 30:
-                launch.name = launch.name.split(" |")[0]
+        if len(confirmed) == 1 and len(possible) == 0:
+            launch = confirmed[0]
+
             current_time = datetime.utcnow()
             launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
             logger.info("One launch - sending message. ")
@@ -229,28 +219,114 @@ class DailyDigestServer:
                                                                 '{0:g}'.format(float(round(abs(
                                                                     launch_time - current_time)
                                                                     .total_seconds() / 3600.0))))
+            messages = messages + message + "\n"
             self.send_twitter_update(message)
 
-        if len(launches) > 1:
+        if len(confirmed) == 0 and len(possible) == 1:
+            launch = possible[0]
+
+            logger.info("One launch - sending message. ")
+            date = datetime.utcfromtimestamp(launch.netstamp).replace(tzinfo=pytz.UTC)
+            message = "%s %s might be launching from %s on %s." % (header, launch.name, launch.location_name,
+                                                                   date.strftime("%A at %H:%S %Z"))
+            messages = messages + message + "\n"
+            self.send_twitter_update(message)
+
+        if len(confirmed) == 1 and len(possible) == 1:
+            possible_launch = possible[0]
+            confirmed_launch = confirmed[0]
+
+            logger.info("One launch possible - sending message. ")
+            date = datetime.utcfromtimestamp(launch.netstamp).replace(tzinfo=pytz.UTC)
+            message = "%s %s might be launching from %s on %s." % (header, possible_launch.name,
+                                                                   possible_launch.location_name,
+                                                                   date.strftime("%A at %H:%S %Z"))
+            messages = messages + message + "\n"
+            self.send_twitter_update(message)
+
+            current_time = datetime.utcnow()
+            launch_time = datetime.utcfromtimestamp(int(confirmed_launch.netstamp))
+            logger.info("One launch confirmed - sending message. ")
+            message = "%s %s launching from %s in %s hours." % (
+                header, confirmed_launch.name, confirmed_launch.location_name,
+                '{0:g}'.format(float(round(abs(launch_time - current_time).total_seconds() / 3600.0))))
+            messages = messages + message + "\n"
+            self.send_twitter_update(message)
+
+        if len(confirmed) > 1 and len(possible) == 0:
             logger.info("More then one launch - sending summary first. ")
-            message = "%s There are %i confirmed launches within the next 24 hours...(1/%i)" % (header,
-                                                                                                len(launches),
-                                                                                                len(launches) + 1)
-
+            message = "%s There are %i confirmed launches within the next 48 hours...(1/%i)" % (header,
+                                                                                                len(confirmed),
+                                                                                                len(confirmed) + 1)
+            messages = messages + message + "\n"
             self.send_twitter_update(message)
-            for index, launch in enumerate(launches, start=1):
+            for index, launch in enumerate(confirmed, start=1):
                 current_time = datetime.utcnow()
-                if len(launch.name) > 30:
-                    launch.name = launch.name.split(" |")[0]
+
                 launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
                 message = "%s launching from %s in %s hours. (%i/%i)" % (launch.name,
                                                                          launch.location_name,
                                                                          '{0:g}'.format(float(
                                                                              round(abs(
                                                                                  launch_time - current_time)
-                                                                                 .total_seconds() / 3600.0))),
-                                                                         index + 1, len(launches) + 1)
+                                                                                   .total_seconds() / 3600.0))),
+                                                                         index + 1, len(confirmed) + 1)
+                messages = messages + message + "\n"
                 self.send_twitter_update(message)
+
+        if len(confirmed) == 0 and len(possible) > 1:
+            logger.info("More then one launch - sending summary first. ")
+            message = "%s There are %s possible launches within the next 48 hours...(1/%i)" % (header,
+                                                                                               num2words(len(possible)),
+                                                                                               len(possible) + 1)
+            messages = messages + message + "\n"
+            self.send_twitter_update(message)
+            for index, launch in enumerate(possible, start=1):
+                date = datetime.utcfromtimestamp(launch.netstamp).replace(tzinfo=pytz.UTC)
+                message = "%s might be launching from %s on %s. (%i/%i)" % (launch.name,
+                                                                            launch.location_name,
+                                                                            date.strftime("%A at %H:%S %Z"),
+                                                                            index + 1, len(possible) + 1)
+                messages = messages + message + "\n"
+                self.send_twitter_update(message)
+
+        if len(confirmed) > 1 and len(possible) > 1:
+            total = confirmed + possible
+            logger.info("More then one launch - sending summary first. ")
+            message = "%s There are %i possible and %i confirmed launches within the next 48 hours." % (header,
+                                                                                                        num2words(len(
+                                                                                                            possible)),
+                                                                                                        num2words(len(
+                                                                                                            confirmed)))
+            messages = messages + message + "\n"
+            self.send_twitter_update(message)
+
+            # Possible launches
+            for index, launch in enumerate(possible, start=1):
+                message = "%s might be launching from %s on %s. (%i/%i)" % (launch.name,
+                                                                            launch.location_name,
+                                                                            datetime.fromtimestamp(launch
+                                                                                                   .launch.netstamp)
+                                                                            .strftime("%A at %H:%S %Z"),
+                                                                            index, len(total))
+                messages = messages + message + "\n"
+                self.send_twitter_update(message)
+
+            # Confirmed launches
+            for index, launch in enumerate(confirmed, start=1):
+                current_time = datetime.utcnow()
+
+                launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
+                message = "%s launching from %s in %s hours. (%i/%i)" % (launch.name,
+                                                                         launch.location_name,
+                                                                         '{0:g}'.format(float(
+                                                                             round(abs(
+                                                                                 launch_time - current_time)
+                                                                                .total_seconds() / 3600.0))),
+                                                                         possible + index, len(total))
+                messages = messages + message + "\n"
+                self.send_twitter_update(message)
+        create_daily_digest_record(confirmed, messages)
 
     def send_twitter_update(self, message):
         try:
