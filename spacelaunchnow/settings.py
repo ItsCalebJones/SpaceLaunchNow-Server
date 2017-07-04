@@ -72,12 +72,12 @@ LOGGING = {
             'propagate': True,
         },
         'bot.digest': {
-            'handlers': ['django_default', 'digest'],
+            'handlers': ['django_default', 'digest', 'console'],
             'level': 'DEBUG',
             'propagate': True,
         },
         'bot.notifications': {
-            'handlers': ['django_default', 'notifications'],
+            'handlers': ['django_default', 'notifications', 'console'],
             'level': 'DEBUG',
             'propagate': True,
         }

@@ -1,4 +1,4 @@
-from bot.models import Launch, Notification
+from bot.models import Launch, Notification, DailyDigestRecord
 from rest_framework import serializers
 
 
@@ -17,13 +17,21 @@ class NotificationSerializer(serializers.HyperlinkedModelSerializer):
         }
 
 
+class DailyDigestRecordSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = DailyDigestRecord
+        fields = (
+            'url', 'timestamp', 'messages', 'count'
+        )
+
+
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Launch
         fields = (
-            'id', 'name', 'url', 'status',
-            'netstamp', 'wsstamp', 'westamp',
-            'location_name', 'rocket_name', 'mission_name'
+            'id', 'name', 'url', 'status', 'netstamp', 'wsstamp', 'westamp', 'location_name', 'rocket_name',
+            'mission_name'
         )
 
     def create(self, validated_data):

@@ -7,8 +7,8 @@ from django.shortcuts import render
 # Create your views here.
 from rest_framework import viewsets, permissions
 
-from bot.models import Launch, Notification
-from bot.serializer import LaunchSerializer, NotificationSerializer
+from bot.models import Launch, Notification, DailyDigestRecord
+from bot.serializer import LaunchSerializer, NotificationSerializer, DailyDigestRecordSerializer
 
 
 class LaunchViewSet(viewsets.ModelViewSet):
@@ -26,4 +26,13 @@ class NotificationViewSet(viewsets.ModelViewSet):
     """
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+class DailyDigestRecordViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Records to be viewed or edited.
+    """
+    queryset = DailyDigestRecord.objects.all()
+    serializer_class = DailyDigestRecordSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
