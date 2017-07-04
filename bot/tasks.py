@@ -12,7 +12,7 @@ TAG = 'Digest Server'
 
 @periodic_task(
     run_every=(crontab(minute=0, hour=10,
-                       day_of_week='mon-sun')),
+                       day_of_week='mon,tue,wed,fri,sat,sun')),
     name="run_daily",
     ignore_result=True
 )
@@ -23,8 +23,8 @@ def run_daily():
 
 
 @periodic_task(
-    run_every=(crontab(minute=0, hour=8,
-                       day_of_week='mon')),
+    run_every=(crontab(minute=0, hour=10,
+                       day_of_week='mon,thu')),
     name="run_weekly",
     ignore_result=True
 )

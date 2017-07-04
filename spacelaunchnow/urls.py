@@ -33,6 +33,8 @@ router.register(r'launcher_details', api_views.LauncherDetailViewSet)
 router.register(r'orbiters', api_views.OrbiterViewSet)
 router.register(r'launches', bot_views.LaunchViewSet)
 router.register(r'notifications', bot_views.NotificationViewSet)
+router.register(r'records', bot_views.DailyDigestRecordViewSet)
+
 
 urlpatterns = [
     url(r'^', include(router.urls)),

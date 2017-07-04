@@ -1,6 +1,7 @@
 import re
 
 from django.utils.datetime_safe import datetime
+import pytz
 from twitter import Twitter, OAuth, TwitterHTTPError
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.libraries.onesignalsdk import OneSignalSdk
@@ -97,7 +98,7 @@ class NotificationServer:
 
     def netstamp_changed(self, launch, notification, diff):
         logger.info('Netstamp change detected for %s' % launch.name)
-        date = datetime.fromtimestamp(launch.netstamp)
+        date = datetime.fromtimestamp(launch.netstamp).replace(tzinfo=pytz.UTC)
         message = 'SCHEDULE UPDATE: %s now launching in %s at %s.' % (launch.name,
                                                                       seconds_to_time(diff),
                                                                       date.strftime("%H:%M %Z (%d/%m)"))
