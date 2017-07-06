@@ -30,4 +30,5 @@ class DailyDigestRecord(models.Model):
     timestamp = models.DateTimeField(blank=True, null=True)
     messages = models.TextField(max_length=1048, blank=True, null=True)
     count = models.IntegerField(null=True)
+    data = models.TextField(max_length=4096, blank=True, null=True)
 

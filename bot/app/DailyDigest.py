@@ -8,6 +8,7 @@ from twitter import Twitter, OAuth, TwitterHTTPError
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.libraries.onesignalsdk import OneSignalSdk
 from bot.models import Notification, DailyDigestRecord
+from bot.serializer import DailyDigestRecordSerializer
 from bot.utils.config import keys
 from bot.utils.deserializer import json_to_model
 
@@ -31,10 +32,15 @@ def update_notification_record(launch):
     notification.save()
 
 
-def create_daily_digest_record(launches, messages):
+def create_daily_digest_record(total, messages, launches):
+    data = []
+    for launch in launches:
+        serializer = DailyDigestRecordSerializer(launch)
+        data.append(serializer.data)
     DailyDigestRecord.objects.create(timestamp=datetime.now(),
                                      messages=messages,
-                                     count=len(launches))
+                                     count=total,
+                                     data=data)
 
 
 class DailyDigestServer:
@@ -326,7 +332,8 @@ class DailyDigestServer:
                                                                          possible + index, len(total))
                 messages = messages + message + "\n"
                 self.send_twitter_update(message)
-        create_daily_digest_record(confirmed, messages)
+
+        create_daily_digest_record(len(confirmed) + len(possible), messages, confirmed + possible)
 
     def send_twitter_update(self, message):
         try:
