@@ -43,7 +43,7 @@ def create_daily_digest_record(total, messages, launches):
                                      data=data)
 
 
-class DailyDigestServer:
+class DigestServer:
     def __init__(self, debug=None, version=None):
         self.one_signal = OneSignalSdk(AUTH_TOKEN_HERE, APP_ID)
         if version is None:
