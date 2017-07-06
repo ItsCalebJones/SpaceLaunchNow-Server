@@ -22,7 +22,7 @@ class DailyDigestRecordSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = DailyDigestRecord
         fields = (
-            'url', 'timestamp', 'messages', 'count'
+            'url', 'timestamp', 'messages', 'count', 'data'
         )
 
 
