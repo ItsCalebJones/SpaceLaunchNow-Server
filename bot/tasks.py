@@ -1,9 +1,9 @@
-from bot.app.DailyDigest import DailyDigestServer
+from bot.app.digest import DigestServer
 from celery.schedules import crontab
-from celery.task import task, periodic_task
+from celery.task import periodic_task
 from celery.utils.log import get_task_logger
 
-from bot.app.Notifications import NotificationServer
+from bot.app.notifications import NotificationServer
 
 logger = get_task_logger('bot')
 
@@ -18,7 +18,7 @@ TAG = 'Digest Server'
 )
 def run_daily():
     logger.info('Task - Running Digest - Daily...')
-    daily_digest = DailyDigestServer()
+    daily_digest = DigestServer()
     daily_digest.run(daily=True)
 
 
@@ -30,7 +30,7 @@ def run_daily():
 )
 def run_weekly():
     logger.info('Task - Running Digest - Weekly...')
-    daily_digest = DailyDigestServer()
+    daily_digest = DigestServer()
     daily_digest.run(weekly=True)
 
 

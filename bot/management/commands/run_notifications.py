@@ -1,7 +1,7 @@
 from django.core.management import BaseCommand
 from celery.utils.log import get_task_logger
 
-from bot.app.Notifications import NotificationServer
+from bot.app.notifications import NotificationServer
 
 logger = get_task_logger('bot')
 

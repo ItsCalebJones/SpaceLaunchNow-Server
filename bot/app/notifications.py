@@ -182,8 +182,10 @@ class NotificationServer:
         if not self.DEBUG:
             logger.debug('Sending notification - %s' % contents)
             response = self.one_signal.create_notification(contents, heading, url, **kwargs)
-            assert response.status_code == 200
-            logger.info('Response received %s %s' % (response.status_code, response.json()))
+            if response.status_code == 200:
+                logger.info('Response received %s %s' % (response.status_code, response.json()))
+            else:
+                logger.error(response.text)
 
             notification_data = response.json()
             notification_id = notification_data['id']
