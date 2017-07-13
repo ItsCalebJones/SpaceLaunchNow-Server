@@ -11,16 +11,17 @@ def json_to_model(data):
     westamp = data['westamp']
     inhold = data['inhold']
     rocket_name = data['rocket']['name']
+    location_name = data['location']['name']
     mission_name = "Unknown"
     if len(data['missions']) > 0:
         mission_name = data['missions'][0]['name']
-    if launch.location_name is None:
-        launch.location_name = 'Unknown'
-    if len(launch.name) > 30:
-        launch.name = launch.name.split(" |")[0]
-    if len(launch.location_name) > 20:
-        launch.location_name = launch.location_name.split(", ")[0]
-    location_name = data['location']['name']
+    if location_name is None:
+        location_name = 'Unknown'
+    if len(name) > 30:
+        name = name.split(" |")[0]
+    if len(location_name) > 20:
+        location_name = location_name.split(", ")[0]
+
 
     try:
         launch = Launch.objects.get(id=id)
