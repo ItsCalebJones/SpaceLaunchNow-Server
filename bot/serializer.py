@@ -21,9 +21,7 @@ class DailyDigestRecordSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = DailyDigestRecord
-        fields = (
-            'url', 'timestamp', 'messages', 'count', 'data'
-        )
+        fields = '__all__'
 
 
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):
