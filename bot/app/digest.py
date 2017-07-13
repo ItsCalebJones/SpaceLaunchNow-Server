@@ -106,6 +106,7 @@ class DigestServer:
             launches = []
             for launch in launch_data:
                 launch = json_to_model(launch)
+                launch.save()
                 launches.append(launch)
             return launches
         else:

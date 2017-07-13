@@ -14,6 +14,12 @@ def json_to_model(data):
     mission_name = "Unknown"
     if len(data['missions']) > 0:
         mission_name = data['missions'][0]['name']
+    if launch.location_name is None:
+        launch.location_name = 'Unknown'
+    if len(launch.name) > 30:
+        launch.name = launch.name.split(" |")[0]
+    if len(launch.location_name) > 20:
+        launch.location_name = launch.location_name.split(", ")[0]
     location_name = data['location']['name']
 
     try:
