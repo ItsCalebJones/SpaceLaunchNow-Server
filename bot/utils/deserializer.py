@@ -22,7 +22,6 @@ def json_to_model(data):
     if len(location_name) > 20:
         location_name = location_name.split(", ")[0]
 
-
     try:
         launch = Launch.objects.get(id=id)
         launch.name = name
@@ -39,9 +38,9 @@ def json_to_model(data):
         return launch
     except Launch.DoesNotExist:
         launch = Launch.objects.create(id=id, name=name, status=status, netstamp=netstamp, wsstamp=wsstamp,
-                                     westamp=westamp,
-                                     inhold=inhold, rocket_name=rocket_name, mission_name=mission_name,
-                                     location_name=location_name)
+                                       westamp=westamp,
+                                       inhold=inhold, rocket_name=rocket_name, mission_name=mission_name,
+                                       location_name=location_name)
         check_notification(launch)
         return launch
 

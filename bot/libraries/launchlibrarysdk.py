@@ -17,6 +17,10 @@ class LaunchLibrarySDK(object):
         url = self.api_url + '/launch?next=5&mode=verbose'
         return send_request(url, method='GET', headers=headers)
 
+    def get_next_launch(self):
+        url = self.api_url + '/launch?next=1&mode=verbose'
+        return send_request(url, method='GET', headers=headers)
+
     def get_next_weeks_launches(self):
         today = datetime.today().strftime('%Y-%m-%d')
         next_week = (datetime.now() + timedelta(days=7)).strftime('%Y-%m-%d')

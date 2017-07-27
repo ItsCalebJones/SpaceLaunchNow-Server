@@ -1,3 +1,4 @@
+import json
 from datetime import timedelta
 from num2words import num2words
 import re
@@ -35,8 +36,8 @@ def update_notification_record(launch):
 def create_daily_digest_record(total, messages, launches):
     data = []
     for launch in launches:
-        serializer = DailyDigestRecordSerializer(launch)
-        data.append(serializer.data)
+        launch_json = json.dumps(launch, default=lambda o: o.__dict__)
+        data.append(launch_json)
     DailyDigestRecord.objects.create(timestamp=datetime.now(),
                                      messages=messages,
                                      count=total,
@@ -84,15 +85,21 @@ class DigestServer:
             launches = []
             for launch in launch_data:
                 launch = json_to_model(launch)
-                if launch.location_name is None:
-                    launch.location_name = 'Unknown'
-                if len(launch.name) > 30:
-                    launch.name = launch.name.split(" |")[0]
-                if len(launch.location_name) > 20:
-                    launch.location_name = launch.location_name.split(", ")[0]
                 launch.save()
                 launches.append(launch)
             return launches
+        else:
+            logger.error(response.status_code + ' ' + response)
+
+    def get_next_launch(self):
+        response = self.launchLibrary.get_next_launch()
+        if response.status_code is 200:
+            response_json = response.json()
+            launch_data = response_json['launches']
+            logger.info("Found %i launches" % len(launch_data))
+            logger.debug("DATA: %s" % launch_data)
+            for launch in launch_data:
+                return json_to_model(launch)
         else:
             logger.error(response.status_code + ' ' + response)
 
@@ -212,10 +219,19 @@ class DigestServer:
         messages = "MESSAGES SENT TO TWITTER: \n"
         if len(confirmed) == 0 and len(possible) == 0:
             logger.info("No launches - sending message. ")
+
             message = "%s There are currently no launches scheduled within the next 48 hours." % header
 
             messages = messages + message + "\n"
             self.send_twitter_update(message)
+            launch = self.get_next_launch()
+            current_time = datetime.utcnow()
+            launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
+            logger.info("One launch - sending message. ")
+            message = "%s %s launching from %s in %s hours." % (header, launch.name, launch.location_name,
+                                                                '{0:g}'.format(float(round(abs(
+                                                                    launch_time - current_time)
+                                                                    .total_seconds() / 3600.0))))
         if len(confirmed) == 1 and len(possible) == 0:
             launch = confirmed[0]
 
