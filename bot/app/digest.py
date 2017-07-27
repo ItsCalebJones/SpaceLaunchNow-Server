@@ -1,18 +1,20 @@
 import json
 from datetime import timedelta
+from djcelery.tests.req import RequestFactory
 from num2words import num2words
 import re
 import logging
 from django.utils.datetime_safe import datetime, time
 import pytz
+from rest_framework.renderers import JSONRenderer
 from twitter import Twitter, OAuth, TwitterHTTPError
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.libraries.onesignalsdk import OneSignalSdk
 from bot.models import Notification, DailyDigestRecord
-from bot.serializer import DailyDigestRecordSerializer
+from bot.serializer import LaunchSerializer
 from bot.utils.config import keys
 from bot.utils.deserializer import json_to_model
-
+from rest_framework.request import Request
 # import the logging library
 
 # Get an instance of a logger
@@ -35,6 +37,7 @@ def update_notification_record(launch):
 
 def create_daily_digest_record(total, messages, launches):
     data = []
+
     for launch in launches:
         launch_json = json.dumps(launch, default=lambda o: o.__dict__)
         data.append(launch_json)
@@ -125,7 +128,7 @@ class DigestServer:
         current_time = datetime.utcnow()
         for launch in self.get_next_launches():
             update_notification_record(launch)
-            if launch.netstamp > 0 and (datetime.utcfromtimestamp(int(launch.netstamp)) - current_time)\
+            if launch.netstamp > 0 and (datetime.utcfromtimestamp(int(launch.netstamp)) - current_time) \
                     .total_seconds() < 172800:
                 if launch.status == 1:
                     confirmed_launches.append(launch)
@@ -241,7 +244,7 @@ class DigestServer:
             message = "%s %s launching from %s in %s hours." % (header, launch.name, launch.location_name,
                                                                 '{0:g}'.format(float(round(abs(
                                                                     launch_time - current_time)
-                                                                    .total_seconds() / 3600.0))))
+                                                                                           .total_seconds() / 3600.0))))
             messages = messages + message + "\n"
             self.send_twitter_update(message)
 
@@ -345,7 +348,7 @@ class DigestServer:
                                                                          '{0:g}'.format(float(
                                                                              round(abs(
                                                                                  launch_time - current_time)
-                                                                                .total_seconds() / 3600.0))),
+                                                                                   .total_seconds() / 3600.0))),
                                                                          possible + index, len(total))
                 messages = messages + message + "\n"
                 self.send_twitter_update(message)
