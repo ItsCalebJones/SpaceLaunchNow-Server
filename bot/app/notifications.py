@@ -175,7 +175,8 @@ class NotificationServer:
             content_available=True,
             included_segments=['Debug'],
             isAndroid=True,
-            data={"silent": True}
+            data={"silent": True,
+                  "background": True}
         )
         url = 'https://launchlibrary.net'
         heading = 'Space Launch Now'
