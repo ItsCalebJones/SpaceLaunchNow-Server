@@ -13,7 +13,7 @@ from bot.libraries.onesignalsdk import OneSignalSdk
 from bot.models import Notification, DailyDigestRecord
 from bot.serializer import LaunchSerializer
 from bot.utils.config import keys
-from bot.utils.deserializer import json_to_model
+from bot.utils.deserializer import launch_json_to_model
 from rest_framework.request import Request
 # import the logging library
 
@@ -87,7 +87,7 @@ class DigestServer:
             logger.debug("DATA: %s" % launch_data)
             launches = []
             for launch in launch_data:
-                launch = json_to_model(launch)
+                launch = launch_json_to_model(launch)
                 launch.save()
                 launches.append(launch)
             return launches
@@ -102,7 +102,7 @@ class DigestServer:
             logger.info("Found %i launches" % len(launch_data))
             logger.debug("DATA: %s" % launch_data)
             for launch in launch_data:
-                return json_to_model(launch)
+                return launch_json_to_model(launch)
         else:
             logger.error(response.status_code + ' ' + response)
 
@@ -115,7 +115,7 @@ class DigestServer:
             logger.info("Found %i launches." % len(launch_data))
             launches = []
             for launch in launch_data:
-                launch = json_to_model(launch)
+                launch = launch_json_to_model(launch)
                 launch.save()
                 launches.append(launch)
             return launches

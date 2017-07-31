@@ -27,17 +27,18 @@ class Router(routers.DefaultRouter):
     My API documentation
     """
 
-router = Router()
-router.register(r'launchers', api_views.LauncherViewSet)
-router.register(r'launcher_details', api_views.LauncherDetailViewSet)
-router.register(r'orbiters', api_views.OrbiterViewSet)
-router.register(r'launches', bot_views.LaunchViewSet)
-router.register(r'notifications', bot_views.NotificationViewSet)
-router.register(r'records', bot_views.DailyDigestRecordViewSet)
+v1_router = Router()
+v1_router.register(r'launchers', api_views.LauncherViewSet)
+v1_router.register(r'launcher_details', api_views.LauncherDetailViewSet)
+v1_router.register(r'orbiters', api_views.OrbiterViewSet)
+v1_router.register(r'launches', bot_views.LaunchViewSet)
+v1_router.register(r'notifications', bot_views.NotificationViewSet)
+v1_router.register(r'records', bot_views.DailyDigestRecordViewSet)
 
 
 urlpatterns = [
-    url(r'^', include(router.urls)),
+    url(r'^v1/', include(v1_router.urls, namespace='v1')),
+    url(r'^v2/', include(v1_router.urls, namespace='v2')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^docs/', include('rest_framework_docs.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
