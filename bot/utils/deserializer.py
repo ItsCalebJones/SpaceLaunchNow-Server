@@ -2,7 +2,7 @@ import bot
 from bot.models import Launch, Notification
 
 
-def json_to_model(data):
+def launch_json_to_model(data):
     id = data['id']
     name = data['name']
     status = data['status']

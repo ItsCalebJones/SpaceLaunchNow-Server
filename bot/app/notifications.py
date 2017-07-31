@@ -7,7 +7,7 @@ from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.libraries.onesignalsdk import OneSignalSdk
 from bot.utils.config import keys
 from bot.models import Notification
-from bot.utils.deserializer import json_to_model
+from bot.utils.deserializer import launch_json_to_model
 from bot.utils.util import seconds_to_time
 import logging
 
@@ -75,7 +75,7 @@ class NotificationServer:
             launch_data = response_json['launches']
             launches = []
             for launch in launch_data:
-                launch = json_to_model(launch)
+                launch = launch_json_to_model(launch)
                 if len(launch.location_name) > 20:
                     launch.location_name = launch.location_name.split(", ")[0]
                 else:
@@ -124,6 +124,7 @@ class NotificationServer:
         notification.save()
 
     def check_twitter(self, diff, launch, notification):
+        logger.info('Diff - %d for %s' % (diff, launch))
         if (notification.last_net_stamp is not None or 0) and abs(notification.last_net_stamp - launch.netstamp) > 600 and diff <= 259200:
             self.netstamp_changed(launch, notification, diff)
         elif diff <= 86400:
@@ -133,14 +134,16 @@ class NotificationServer:
                                                                                 launch.name))
                 if 3600 >= diff > 600:
                     if time_since_twitter >= 43200:
-                        self.send_to_twitter('%s launching from %s in %s.' %
-                                             (launch.name, launch.location_name, seconds_to_time(diff)),
-                                             notification)
+                        message = '%s launching from %s in %s.' % (launch.name, launch.location_name,
+                                                                   seconds_to_time(diff))
+                        logger.info(message)
+                        self.send_to_twitter(message, notification)
                 elif diff <= 600:
                     if time_since_twitter >= 600:
-                        self.send_to_twitter('%s launching from %s in %s.' %
-                                             (launch.name, launch.location_name, seconds_to_time(diff)),
-                                             notification)
+                        message = '%s launching from %s in %s.' % (launch.name, launch.location_name,
+                                                                   seconds_to_time(diff))
+                        logger.info(message)
+                        self.send_to_twitter(message, notification)
 
     def check_launch_window(self, diff, launch):
         notification = Notification.objects.get(launch=launch)

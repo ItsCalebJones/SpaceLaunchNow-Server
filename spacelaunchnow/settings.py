@@ -30,8 +30,9 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8', '.spacelaunchnow.me', '127.0.0.1']
 REST_FRAMEWORK = {
-    'PAGE_SIZE': 5,
+    'PAGE_SIZE': 100,
     'DEFAULT_MODEL_SERIALIZER_CLASS': 'drf_toolbox.serializers.ModelSerializer',
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
 }
 
 LOGIN_REDIRECT_URL = '/'
