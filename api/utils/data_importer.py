@@ -32,6 +32,10 @@ class importer:
         url = "http://calebjones.me/app/launchers"
         return self.get_response_from_url(url)
 
+    def get_launcher_details(self):
+        url = "http://calebjones.me/app/vehicle"
+        return self.get_response_from_url(url)
+
     def get_response_from_url(self, url):
         method = getattr(requests, 'get')
         return method(url=url, data=None, headers=headers)
@@ -42,6 +46,9 @@ class importer:
     def launcher(self):
         return self.parse_json(self.get_launchers().text)
 
+    def launcher_details(self):
+        return self.parse_json(self.get_launcher_details().text)
+
 
 def main():
     orbiters = importer().orbiter()
@@ -51,6 +58,10 @@ def main():
     launchers = importer().launcher()
     for item in launchers['items']:
         api.utils.deserializer.launcher_json_to_model(item)
+
+    launcher_details = importer().launcher_details()
+    for item in launcher_details['vehicles']:
+        api.utils.deserializer.launch_detail_to_model(item)
 
 if __name__ == "__main__":
     main()
