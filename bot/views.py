@@ -16,8 +16,12 @@ class LaunchViewSet(viewsets.ModelViewSet):
     API endpoint that allows Launcher to be viewed or edited.
     """
     queryset = Launch.objects.all()
-    serializer_class = LaunchSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_serializer_class(self):
+        if self.request.version == 'v1':
+            return LaunchSerializer
+        return LaunchSerializer
 
 
 class NotificationViewSet(viewsets.ModelViewSet):
@@ -25,8 +29,12 @@ class NotificationViewSet(viewsets.ModelViewSet):
     API endpoint that allows Launcher to be viewed or edited.
     """
     queryset = Notification.objects.all()
-    serializer_class = NotificationSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_serializer_class(self):
+        if self.request.version == 'v1':
+            return NotificationSerializer
+        return NotificationSerializer
 
 
 class DailyDigestRecordViewSet(viewsets.ModelViewSet):
@@ -36,3 +44,8 @@ class DailyDigestRecordViewSet(viewsets.ModelViewSet):
     queryset = DailyDigestRecord.objects.all()
     serializer_class = DailyDigestRecordSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_serializer_class(self):
+        if self.request.version == 'v1':
+            return DailyDigestRecordSerializer
+        return DailyDigestRecordSerializer

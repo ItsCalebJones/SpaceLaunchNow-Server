@@ -1,13 +1,15 @@
+import json
 import re
 
 from django.utils.datetime_safe import datetime
+import datetime as dtime
 import pytz
 from twitter import Twitter, OAuth, TwitterHTTPError
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.libraries.onesignalsdk import OneSignalSdk
 from bot.utils.config import keys
 from bot.models import Notification
-from bot.utils.deserializer import json_to_model
+from bot.utils.deserializer import launch_json_to_model
 from bot.utils.util import seconds_to_time
 import logging
 
@@ -18,6 +20,13 @@ TAG = 'Notification Server'
 
 # Get an instance of a logger
 logger = logging.getLogger('bot.notifications')
+
+
+def json_default(value):
+    if isinstance(value, dtime.date):
+        return dict(year=value.year, month=value.month, day=value.day)
+    else:
+        return value.__dict__
 
 
 class NotificationServer:
@@ -75,7 +84,7 @@ class NotificationServer:
             launch_data = response_json['launches']
             launches = []
             for launch in launch_data:
-                launch = json_to_model(launch)
+                launch = launch_json_to_model(launch)
                 if len(launch.location_name) > 20:
                     launch.location_name = launch.location_name.split(", ")[0]
                 else:
@@ -124,23 +133,46 @@ class NotificationServer:
         notification.save()
 
     def check_twitter(self, diff, launch, notification):
-        if (notification.last_net_stamp is not None or 0) and abs(notification.last_net_stamp - launch.netstamp) > 600 and diff <= 259200:
+        logger.info('Diff - %d for %s' % (diff, launch.name,))
+        logger.debug('LAUNCH DATA: %s', json.dumps(launch, default=lambda o: o.__dict__))
+        logger.debug('NOTIFICAITON DATA: %s', json.dumps(notification, default=json_default))
+        if (notification.last_net_stamp is not None or 0) and abs(
+                        notification.last_net_stamp - launch.netstamp) > 600 and diff <= 259200:
             self.netstamp_changed(launch, notification, diff)
-        elif diff <= 86400:
-            if notification.last_twitter_post is not None:
-                time_since_twitter = (datetime.now() - notification.last_twitter_post).total_seconds()
-                logger.info('Seconds since last update on Twitter %d for %s' % (time_since_twitter,
-                                                                                launch.name))
-                if 3600 >= diff > 600:
-                    if time_since_twitter >= 43200:
-                        self.send_to_twitter('%s launching from %s in %s.' %
-                                             (launch.name, launch.location_name, seconds_to_time(diff)),
-                                             notification)
-                elif diff <= 600:
-                    if time_since_twitter >= 600:
-                        self.send_to_twitter('%s launching from %s in %s.' %
-                                             (launch.name, launch.location_name, seconds_to_time(diff)),
-                                             notification)
+        elif notification.last_twitter_post is not None:
+            time_since_twitter = (datetime.now() - notification.last_twitter_post).total_seconds()
+            logger.info('Seconds since last update on Twitter %d for %s' % (time_since_twitter,
+                                                                            launch.name))
+            if diff <= 86400 and notification.wasNotifiedTwentyFourHour is False:
+                message = '%s launching from %s in %s.' % (launch.name, launch.location_name,
+                                                           seconds_to_time(diff))
+                logger.info(message)
+                self.send_to_twitter(message, notification)
+            if 3600 >= diff > 600 and time_since_twitter >= 43200 and notification.wasNotifiedOneHour is False:
+                message = '%s launching from %s in %s.' % (launch.name, launch.location_name,
+                                                           seconds_to_time(diff))
+                logger.info(message)
+                self.send_to_twitter(message, notification)
+            elif diff <= 600 and (time_since_twitter >= 600) and notification.wasNotifiedOneHour is False:
+                message = '%s launching from %s in %s.' % (launch.name, launch.location_name,
+                                                           seconds_to_time(diff))
+                logger.info(message)
+                self.send_to_twitter(message, notification)
+        elif notification.last_twitter_post is None and diff <= 86400:
+            message = '%s launching from %s in %s.' % (launch.name, launch.location_name,
+                                                       seconds_to_time(diff))
+            logger.info(message)
+            self.send_to_twitter(message, notification)
+            if 3600 >= diff > 600:
+                message = '%s launching from %s in %s.' % (launch.name, launch.location_name,
+                                                           seconds_to_time(diff))
+                logger.info(message)
+                self.send_to_twitter(message, notification)
+            elif diff <= 600:
+                message = '%s launching from %s in %s.' % (launch.name, launch.location_name,
+                                                           seconds_to_time(diff))
+                logger.info(message)
+                self.send_to_twitter(message, notification)
 
     def check_launch_window(self, diff, launch):
         notification = Notification.objects.get(launch=launch)
