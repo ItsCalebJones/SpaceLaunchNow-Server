@@ -5,17 +5,21 @@ from rest_framework import serializers
 class LauncherSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Launcher
-        fields = ('id', 'url', 'name', 'agency', 'imageURL', 'nationURL')
-
-
-class LauncherDetailSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = LauncherDetail
-        fields = ('id', 'url', 'name', 'agency', 'imageURL', 'nationURL', 'LVInfo')
+        fields = ('id', 'url', 'name', 'agency', 'image_url', 'nation_url')
 
 
 class OrbiterSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Orbiter
-        fields = ('id', 'url', 'name', 'agency', 'history', 'details', 'imageURL', 'nationURL', 'wikiLink')
+        fields = ('id', 'url', 'name', 'agency', 'history', 'details', 'image_url', 'nation_url',
+                  'wiki_link')
+
+
+class LauncherDetailSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = LauncherDetail
+        fields = ('id', 'url', 'name', 'description', 'family', 's_family', 'manufacturer',
+                  'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
+                  'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust', 'vehicle_class',
+                  'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url')
 
