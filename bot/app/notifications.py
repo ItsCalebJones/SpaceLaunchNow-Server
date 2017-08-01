@@ -136,96 +136,100 @@ class NotificationServer:
         logger.info('Diff - %d for %s' % (diff, launch.name,))
         logger.debug('LAUNCH DATA: %s', json.dumps(launch, default=lambda o: o.__dict__))
         logger.debug('NOTIFICAITON DATA: %s', json.dumps(notification, default=json_default))
-        if (notification.last_net_stamp is not None or 0) and abs(
-                        notification.last_net_stamp - launch.netstamp) > 600 and diff <= 259200:
+        if (notification.last_net_stamp is not None or 0)\
+                and abs(notification.last_net_stamp - launch.netstamp) > 600\
+                and diff <= 259200:
             self.netstamp_changed(launch, notification, diff)
         elif notification.last_twitter_post is not None:
             time_since_twitter = (datetime.now() - notification.last_twitter_post).total_seconds()
             logger.info('Seconds since last update on Twitter %d for %s' % (time_since_twitter,
                                                                             launch.name))
             if diff <= 86400 and notification.wasNotifiedTwentyFourHour is False:
-                message = '%s launching from %s in %s.' % (launch.name, launch.location_name,
-                                                           seconds_to_time(diff))
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_name,
+                                                                seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
-            if 3600 >= diff > 600 and time_since_twitter >= 43200 and notification.wasNotifiedOneHour is False:
-                message = '%s launching from %s in %s.' % (launch.name, launch.location_name,
-                                                           seconds_to_time(diff))
+            elif 3600 >= diff > 600 and time_since_twitter >= 43200 and notification.wasNotifiedOneHour is False:
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_name,
+                                                                seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
             elif diff <= 600 and (time_since_twitter >= 600) and notification.wasNotifiedOneHour is False:
-                message = '%s launching from %s in %s.' % (launch.name, launch.location_name,
-                                                           seconds_to_time(diff))
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_name,
+                                                                seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
-        elif notification.last_twitter_post is None and diff <= 86400:
-            message = '%s launching from %s in %s.' % (launch.name, launch.location_name,
-                                                       seconds_to_time(diff))
-            logger.info(message)
-            self.send_to_twitter(message, notification)
-            if 3600 >= diff > 600:
-                message = '%s launching from %s in %s.' % (launch.name, launch.location_name,
-                                                           seconds_to_time(diff))
+        elif notification.last_twitter_post is None:
+            if diff <= 86400:
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_name,
+                                                                seconds_to_time(diff))
+                logger.info(message)
+                self.send_to_twitter(message, notification)
+            elif 3600 >= diff > 600:
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_name,
+                                                                seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
             elif diff <= 600:
-                message = '%s launching from %s in %s.' % (launch.name, launch.location_name,
-                                                           seconds_to_time(diff))
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_name,
+                                                                seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
 
-    def check_launch_window(self, diff, launch):
-        notification = Notification.objects.get(launch=launch)
-        self.check_twitter(diff, launch, notification)
-        logger.info('Checking launch window for %s' % notification.launch.name)
 
-        # If launch is within 24 hours...
-        if 86400 >= diff > 3600 and not notification.wasNotifiedTwentyFourHour:
-            logger.info('Launch is within 24 hours, sending notifications.')
-            self.send_notification(launch)
-            notification.wasNotifiedTwentyFourHour = True
-        elif 3600 >= diff > 600 and not notification.wasNotifiedOneHour:
-            logger.info('Launch is within one hour, sending notifications.')
-            self.send_notification(launch)
-            notification.wasNotifiedOneHour = True
-        elif diff <= 600 and not notification.wasNotifiedTenMinutes:
-            logger.info('Launch is within ten minutes, sending notifications.')
-            self.send_notification(launch)
-            notification.wasNotifiedTenMinutes = True
+def check_launch_window(self, diff, launch):
+    notification = Notification.objects.get(launch=launch)
+    self.check_twitter(diff, launch, notification)
+    logger.info('Checking launch window for %s' % notification.launch.name)
+
+    # If launch is within 24 hours...
+    if 86400 >= diff > 3600 and not notification.wasNotifiedTwentyFourHour:
+        logger.info('Launch is within 24 hours, sending notifications.')
+        self.send_notification(launch)
+        notification.wasNotifiedTwentyFourHour = True
+    elif 3600 >= diff > 600 and not notification.wasNotifiedOneHour:
+        logger.info('Launch is within one hour, sending notifications.')
+        self.send_notification(launch)
+        notification.wasNotifiedOneHour = True
+    elif diff <= 600 and not notification.wasNotifiedTenMinutes:
+        logger.info('Launch is within ten minutes, sending notifications.')
+        self.send_notification(launch)
+        notification.wasNotifiedTenMinutes = True
+    else:
+        logger.info('%s does not meet notification criteria.' % notification.launch.name)
+    notification.save()
+
+
+def send_notification(self, launch):
+    self.one_signal.user_auth_key = self.app_auth_key
+    self.one_signal.app_id = APP_ID
+    logger.info('Creating notification for %s' % launch.name)
+
+    # Create a notification
+    contents = '%s launching from %s' % (launch.name, launch.location_name)
+    kwargs = dict(
+        content_available=True,
+        included_segments=['Debug'],
+        isAndroid=True,
+        data={"silent": True,
+              "background": True}
+    )
+    url = 'https://launchlibrary.net'
+    heading = 'Space Launch Now'
+    if not self.DEBUG:
+        logger.debug('Sending notification - %s' % contents)
+        response = self.one_signal.create_notification(contents, heading, url, **kwargs)
+        if response.status_code == 200:
+            logger.info('Response received %s %s' % (response.status_code, response.json()))
         else:
-            logger.info('%s does not meet notification criteria.' % notification.launch.name)
-        notification.save()
+            logger.error(response.text)
 
-    def send_notification(self, launch):
-        self.one_signal.user_auth_key = self.app_auth_key
-        self.one_signal.app_id = APP_ID
-        logger.info('Creating notification for %s' % launch.name)
+        notification_data = response.json()
+        notification_id = notification_data['id']
+        assert notification_data['id'] and notification_data['recipients']
 
-        # Create a notification
-        contents = '%s launching from %s' % (launch.name, launch.location_name)
-        kwargs = dict(
-            content_available=True,
-            included_segments=['Debug'],
-            isAndroid=True,
-            data={"silent": True,
-                  "background": True}
-        )
-        url = 'https://launchlibrary.net'
-        heading = 'Space Launch Now'
-        if not self.DEBUG:
-            logger.debug('Sending notification - %s' % contents)
-            response = self.one_signal.create_notification(contents, heading, url, **kwargs)
-            if response.status_code == 200:
-                logger.info('Response received %s %s' % (response.status_code, response.json()))
-            else:
-                logger.error(response.text)
-
-            notification_data = response.json()
-            notification_id = notification_data['id']
-            assert notification_data['id'] and notification_data['recipients']
-
-            # Get the notification
-            response = self.one_signal.get_notification(APP_ID, notification_id, self.app_auth_key)
-            notification_data = response.json()
-            assert notification_data['id'] == notification_id
-            assert notification_data['contents']['en'] == contents
+        # Get the notification
+        response = self.one_signal.get_notification(APP_ID, notification_id, self.app_auth_key)
+        notification_data = response.json()
+        assert notification_data['id'] == notification_id
+        assert notification_data['contents']['en'] == contents
