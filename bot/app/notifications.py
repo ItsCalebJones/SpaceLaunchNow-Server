@@ -176,60 +176,58 @@ class NotificationServer:
                 logger.info(message)
                 self.send_to_twitter(message, notification)
 
+    def check_launch_window(self, diff, launch):
+        notification = Notification.objects.get(launch=launch)
+        self.check_twitter(diff, launch, notification)
+        logger.info('Checking launch window for %s' % notification.launch.name)
 
-def check_launch_window(self, diff, launch):
-    notification = Notification.objects.get(launch=launch)
-    self.check_twitter(diff, launch, notification)
-    logger.info('Checking launch window for %s' % notification.launch.name)
-
-    # If launch is within 24 hours...
-    if 86400 >= diff > 3600 and not notification.wasNotifiedTwentyFourHour:
-        logger.info('Launch is within 24 hours, sending notifications.')
-        self.send_notification(launch)
-        notification.wasNotifiedTwentyFourHour = True
-    elif 3600 >= diff > 600 and not notification.wasNotifiedOneHour:
-        logger.info('Launch is within one hour, sending notifications.')
-        self.send_notification(launch)
-        notification.wasNotifiedOneHour = True
-    elif diff <= 600 and not notification.wasNotifiedTenMinutes:
-        logger.info('Launch is within ten minutes, sending notifications.')
-        self.send_notification(launch)
-        notification.wasNotifiedTenMinutes = True
-    else:
-        logger.info('%s does not meet notification criteria.' % notification.launch.name)
-    notification.save()
-
-
-def send_notification(self, launch):
-    self.one_signal.user_auth_key = self.app_auth_key
-    self.one_signal.app_id = APP_ID
-    logger.info('Creating notification for %s' % launch.name)
-
-    # Create a notification
-    contents = '%s launching from %s' % (launch.name, launch.location_name)
-    kwargs = dict(
-        content_available=True,
-        included_segments=['Debug'],
-        isAndroid=True,
-        data={"silent": True,
-              "background": True}
-    )
-    url = 'https://launchlibrary.net'
-    heading = 'Space Launch Now'
-    if not self.DEBUG:
-        logger.debug('Sending notification - %s' % contents)
-        response = self.one_signal.create_notification(contents, heading, url, **kwargs)
-        if response.status_code == 200:
-            logger.info('Response received %s %s' % (response.status_code, response.json()))
+        # If launch is within 24 hours...
+        if 86400 >= diff > 3600 and not notification.wasNotifiedTwentyFourHour:
+            logger.info('Launch is within 24 hours, sending notifications.')
+            self.send_notification(launch)
+            notification.wasNotifiedTwentyFourHour = True
+        elif 3600 >= diff > 600 and not notification.wasNotifiedOneHour:
+            logger.info('Launch is within one hour, sending notifications.')
+            self.send_notification(launch)
+            notification.wasNotifiedOneHour = True
+        elif diff <= 600 and not notification.wasNotifiedTenMinutes:
+            logger.info('Launch is within ten minutes, sending notifications.')
+            self.send_notification(launch)
+            notification.wasNotifiedTenMinutes = True
         else:
-            logger.error(response.text)
+            logger.info('%s does not meet notification criteria.' % notification.launch.name)
+        notification.save()
 
-        notification_data = response.json()
-        notification_id = notification_data['id']
-        assert notification_data['id'] and notification_data['recipients']
+    def send_notification(self, launch):
+        self.one_signal.user_auth_key = self.app_auth_key
+        self.one_signal.app_id = APP_ID
+        logger.info('Creating notification for %s' % launch.name)
 
-        # Get the notification
-        response = self.one_signal.get_notification(APP_ID, notification_id, self.app_auth_key)
-        notification_data = response.json()
-        assert notification_data['id'] == notification_id
-        assert notification_data['contents']['en'] == contents
+        # Create a notification
+        contents = '%s launching from %s' % (launch.name, launch.location_name)
+        kwargs = dict(
+            content_available=True,
+            included_segments=['Debug'],
+            isAndroid=True,
+            data={"silent": True,
+                  "background": True}
+        )
+        url = 'https://launchlibrary.net'
+        heading = 'Space Launch Now'
+        if not self.DEBUG:
+            logger.debug('Sending notification - %s' % contents)
+            response = self.one_signal.create_notification(contents, heading, url, **kwargs)
+            if response.status_code == 200:
+                logger.info('Response received %s %s' % (response.status_code, response.json()))
+            else:
+                logger.error(response.text)
+
+            notification_data = response.json()
+            notification_id = notification_data['id']
+            assert notification_data['id'] and notification_data['recipients']
+
+            # Get the notification
+            response = self.one_signal.get_notification(APP_ID, notification_id, self.app_auth_key)
+            notification_data = response.json()
+            assert notification_data['id'] == notification_id
+            assert notification_data['contents']['en'] == contents
