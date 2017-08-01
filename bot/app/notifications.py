@@ -2,6 +2,7 @@ import json
 import re
 
 from django.utils.datetime_safe import datetime
+import datetime as dtime
 import pytz
 from twitter import Twitter, OAuth, TwitterHTTPError
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
@@ -19,6 +20,13 @@ TAG = 'Notification Server'
 
 # Get an instance of a logger
 logger = logging.getLogger('bot.notifications')
+
+
+def json_default(value):
+    if isinstance(value, dtime.date):
+        return dict(year=value.year, month=value.month, day=value.day)
+    else:
+        return value.__dict__
 
 
 class NotificationServer:
@@ -127,7 +135,7 @@ class NotificationServer:
     def check_twitter(self, diff, launch, notification):
         logger.info('Diff - %d for %s' % (diff, launch.name, ))
         logger.debug('LAUNCH DATA: %s', json.dumps(launch, default=lambda o: o.__dict__))
-        logger.debug('NOTIFICAITON DATA: %s', json.dumps(notification, default=lambda o: o.__dict__))
+        logger.debug('NOTIFICAITON DATA: %s', json.dumps(notification, default=json_default))
         if (notification.last_net_stamp is not None or 0) and abs(notification.last_net_stamp - launch.netstamp) > 600 and diff <= 259200:
             self.netstamp_changed(launch, notification, diff)
         elif diff <= 86400:
