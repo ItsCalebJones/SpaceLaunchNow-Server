@@ -1,3 +1,4 @@
+import json
 import re
 
 from django.utils.datetime_safe import datetime
@@ -124,7 +125,9 @@ class NotificationServer:
         notification.save()
 
     def check_twitter(self, diff, launch, notification):
-        logger.info('Diff - %d for %s' % (diff, launch))
+        logger.info('Diff - %d for %s' % (diff, launch.name, ))
+        logger.debug('LAUNCH DATA: %s', json.dumps(launch, default=lambda o: o.__dict__))
+        logger.debug('NOTIFICAITON DATA: %s', json.dumps(notification, default=lambda o: o.__dict__))
         if (notification.last_net_stamp is not None or 0) and abs(notification.last_net_stamp - launch.netstamp) > 600 and diff <= 259200:
             self.netstamp_changed(launch, notification, diff)
         elif diff <= 86400:
