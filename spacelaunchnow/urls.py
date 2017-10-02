@@ -16,6 +16,7 @@ Including another URLconf
 
 from api import views as api_views
 from bot import views as bot_views
+from landing import views as landing_views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls import url, include
@@ -41,4 +42,6 @@ urlpatterns = [
     url(r'^v2/', include(v1_router.urls, namespace='v2')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^docs/', include('rest_framework_docs.urls')),
+    url(r'^launch/next', landing_views.index, name='launch_next'),
+    # url(r'^launch/(?P<pk>\d+)/$', landing_views.index, name='launch_detail'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
