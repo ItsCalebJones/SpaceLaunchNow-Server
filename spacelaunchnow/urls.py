@@ -43,5 +43,6 @@ urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^docs/', include('rest_framework_docs.urls')),
     url(r'^$', landing_views.index, name='index'),
+    url(r'^next/', landing_views.next_launch, name='next'),
     # url(r'^launch/(?P<pk>\d+)/$', landing_views.index, name='launch_detail'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -141,6 +141,70 @@ body {
           #mainNav.navbar-shrink .navbar-nav > li.nav-item > a.nav-link:focus:hover {
             color: #F05F40; } }
 
+#indexNav {
+  border-color: rgba(34, 34, 34, 0.05);
+  background-color: white;
+  font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+  -webkit-transition: all 0.2s;
+  -moz-transition: all 0.2s;
+  transition: all 0.2s; }
+  #indexNav .navbar-brand {
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #F05F40;
+    font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif; }
+    #indexNav .navbar-brand:focus, #indexNav .navbar-brand:hover {
+      color: #f05f40; }
+  #indexNav .navbar-toggle {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #222222; }
+  #indexNav .navbar-nav > li.nav-item > a.nav-link:focus,
+  #indexNav .navbar-nav > li.nav-item > a.nav-link {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #222222; }
+    #indexNav .navbar-nav > li.nav-item > a.nav-link:focus:hover,
+    #indexNav .navbar-nav > li.nav-item > a.nav-link:hover {
+      color: #F05F40; }
+    #indexNav .navbar-nav > li.nav-item > a.nav-link:focus.active,
+    #indexNav .navbar-nav > li.nav-item > a.nav-link.active {
+      color: #F05F40 !important;
+      background-color: transparent; }
+      #indexNav .navbar-nav > li.nav-item > a.nav-link:focus.active:hover,
+      #indexNav .navbar-nav > li.nav-item > a.nav-link.active:hover {
+        background-color: transparent; }
+  @media (min-width: 992px) {
+    #indexNav {
+      border-color: rgba(255, 255, 255, 0.3);
+      background-color: transparent; }
+      #indexNav .navbar-brand {
+        color: rgba(255, 255, 255, 0.7); }
+        #indexNav .navbar-brand:focus, #indexNav .navbar-brand:hover {
+          color: white; }
+      #indexNav .navbar-nav > li.nav-item > a.nav-link,
+      #indexNav .navbar-nav > li.nav-item > a.nav-link:focus {
+        color: rgba(255, 255, 255, 0.7); }
+        #indexNav .navbar-nav > li.nav-item > a.nav-link:hover,
+        #indexNav .navbar-nav > li.nav-item > a.nav-link:focus:hover {
+          color: white; }
+      #indexNav.navbar-shrink-alt {
+        border-color: rgba(34, 34, 34, 0.05);
+        background-color: #F05F40; }
+        #indexNav.navbar-shrink-alt .navbar-brand {
+          font-size: 16px;
+          color: white; }
+          #indexNav.navbar-shrink-alt .navbar-brand:focus, #indexNav.navbar-shrink-alt .navbar-brand:hover {
+            color: white; }
+        #indexNav.navbar-shrink-alt .navbar-nav > li.nav-item > a.nav-link,
+        #indexNav.navbar-shrink-alt .navbar-nav > li.nav-item > a.nav-link:focus {
+          color: white; }
+          #indexNav.navbar-shrink-alt .navbar-nav > li.nav-item > a.nav-link:hover,
+          #indexNav.navbar-shrink-alt .navbar-nav > li.nav-item > a.nav-link:focus:hover {
+            color: rgba(255, 255, 255, 0.7);; } }
+
 header.masthead {
   position: relative;
   width: 100%;
