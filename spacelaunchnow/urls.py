@@ -42,6 +42,6 @@ urlpatterns = [
     url(r'^v2/', include(v1_router.urls, namespace='v2')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^docs/', include('rest_framework_docs.urls')),
-    url(r'^launch/next', landing_views.index, name='launch_next'),
+    url(r'^$', landing_views.index, name='index'),
     # url(r'^launch/(?P<pk>\d+)/$', landing_views.index, name='launch_detail'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
