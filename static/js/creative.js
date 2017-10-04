@@ -26,12 +26,27 @@
     offset: 48
   });
 
+    // Activate scrollspy to add active class to navbar items on scroll
+  $('body').scrollspy({
+    target: '#indexNav',
+    offset: 48
+  });
+
   // Collapse the navbar when page is scrolled
   $(window).scroll(function() {
     if ($("#mainNav").offset().top > 100) {
       $("#mainNav").addClass("navbar-shrink");
     } else {
       $("#mainNav").removeClass("navbar-shrink");
+    }
+  });
+
+  // Collapse the navbar when page is scrolled
+  $(window).scroll(function() {
+    if ($("#indexNav").offset().top > 100) {
+      $("#indexNav").addClass("navbar-shrink-alt");
+    } else {
+      $("#indexNav").removeClass("navbar-shrink-alt");
     }
   });
 

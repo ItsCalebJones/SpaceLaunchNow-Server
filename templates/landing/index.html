@@ -1,8 +1,52 @@
 {% extends "_layouts/base.html" %}
 {% load staticfiles%}
 {% block content %}
-<!-- This code is taken from http://getbootstrap.com/examples/jumbotron/ -->
 
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">Space Launch Now</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+                data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="/next">Next Launch</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger">|</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="#about">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="#services">Features</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="#portfolio">Launches</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="#contact">Contact</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger">|</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="/v1">API</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="https://launchlibrary.net/1.2/docs/api.html">Launch Library</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
 <header class="masthead">
     <div class="header-content">
@@ -34,19 +78,22 @@
 
                 <h2 class="section-heading text-white">Launch Tracking</h2>
 
-                <p class="text-faded">Track launches from all the major launch providers like SpaceX, ULA, and Orbital/ATK as well as
+                <p class="text-faded">Track launches from all the major launch providers like SpaceX, ULA, and
+                    Orbital/ATK as well as
                     international launches from NASA, ROSCOSMOS, JAXA and ESA.</p>
                 <hr class="light">
 
                 <h2 class="section-heading text-white">Science Missions</h2>
 
-                <p class="text-faded">Follow along with resupply missions to the International Space Station, commercial satellite launches
+                <p class="text-faded">Follow along with resupply missions to the International Space Station, commercial
+                    satellite launches
                     from providers like IRIDIUM and science missions like ExoMars!</p>
                 <hr class="light">
 
-               <h2 class="section-heading text-white">Vehicle Information</h2>
+                <h2 class="section-heading text-white">Vehicle Information</h2>
 
-                <p class="text-faded">Get to know all the vehicles that take us to orbit such as the Soyuz, Atlas, Delta, Ariane, Proton
+                <p class="text-faded">Get to know all the vehicles that take us to orbit such as the Soyuz, Atlas,
+                    Delta, Ariane, Proton
                     and Falcon launch vehicle families.</p>
                 <hr class="light">
 
@@ -110,96 +157,99 @@
     <div class="container-fluid">
         <div class="row no-gutter popup-gallery">
             <div class="col-lg-4 col-sm-6">
-                <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/1.jpg' %}">
-                    <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/1.jpg' %}" alt="">
+                <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/nasa_full.jpg' %}">
+                    <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/nasa.jpg' %}" alt="">
 
                     <div class="portfolio-box-caption">
                         <div class="portfolio-box-caption-content">
                             <div class="project-category text-faded">
-                                Category
+                                NASA
                             </div>
                             <div class="project-name">
-                                Project Name
+                                Space Shuttle (Retired)<br>
+                                <small>SLS</small>
                             </div>
                         </div>
                     </div>
                 </a>
             </div>
             <div class="col-lg-4 col-sm-6">
-                <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/2.jpg' %}">
-                    <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/2.jpg' %}" alt="">
+                <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/spacex_full.jpg' %}">
+                    <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/spacex.jpg' %}" alt="">
 
                     <div class="portfolio-box-caption">
                         <div class="portfolio-box-caption-content">
                             <div class="project-category text-faded">
-                                Category
+                                SpaceX
                             </div>
                             <div class="project-name">
-                                Project Name
+                                Falcon 9 <br>
+                                <small>Falcon Heavy / BFR</small>
                             </div>
                         </div>
                     </div>
                 </a>
             </div>
             <div class="col-lg-4 col-sm-6">
-                <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/3.jpg' %}">
-                    <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/3.jpg' %}" alt="">
+                <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/ula_full.jpg' %}">
+                    <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/ula.jpg' %}" alt="">
 
                     <div class="portfolio-box-caption">
                         <div class="portfolio-box-caption-content">
                             <div class="project-category text-faded">
-                                Category
+                                ULA
                             </div>
                             <div class="project-name">
-                                Project Name
+                                Delta IV / Atlas <br>
+                                <small>Vulcan</small>
                             </div>
                         </div>
                     </div>
                 </a>
             </div>
             <div class="col-lg-4 col-sm-6">
-                <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/4.jpg' %}">
-                    <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/4.jpg' %}" alt="">
+                <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/Indian_full.jpg' %}">
+                    <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/Indian.jpg' %}" alt="">
 
                     <div class="portfolio-box-caption">
                         <div class="portfolio-box-caption-content">
                             <div class="project-category text-faded">
-                                Category
+                                ISRO
                             </div>
                             <div class="project-name">
-                                Project Name
+                                PSLV / GSLV
                             </div>
                         </div>
                     </div>
                 </a>
             </div>
             <div class="col-lg-4 col-sm-6">
-                <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/5.jpg' %}">
-                    <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/5.jpg' %}" alt="">
+                <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/roscosmos_full.jpg' %}">
+                    <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/roscosmos.jpg' %}" alt="">
 
                     <div class="portfolio-box-caption">
                         <div class="portfolio-box-caption-content">
                             <div class="project-category text-faded">
-                                Category
+                                Roscosmos
                             </div>
                             <div class="project-name">
-                                Project Name
+                                Soyuz
                             </div>
                         </div>
                     </div>
                 </a>
             </div>
             <div class="col-lg-4 col-sm-6">
-                <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/6.jpg' %}">
-                    <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/6.jpg' %}" alt="">
+                <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/CISA_full.jpg' %}">
+                    <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/CISA.jpg' %}" alt="">
 
                     <div class="portfolio-box-caption">
                         <div class="portfolio-box-caption-content">
                             <div class="project-category text-faded">
-                                Category
+                                CNSA
                             </div>
                             <div class="project-name">
-                                Project Name
+                                Long March
                             </div>
                         </div>
                     </div>

@@ -1,0 +1,112 @@
+{% extends "_layouts/base.html" %}
+{% load staticfiles%}
+{% block content %}
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light fixed-top navbar-shrink-alt" id="indexNav">
+    <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="/">Space Launch Now</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+                data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+
+            <ul class="navbar-nav ml-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="/next">Next Launch</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger">|</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="/#about">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="/#services">Features</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="/#portfolio">Launches</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="/#contact">Contact</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger">|</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="/v1">API</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="https://launchlibrary.net/1.2/docs/api.html">Launch
+                        Library</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Page Content -->
+<div class="container" style="margin-top:64px">
+
+    <div class="row">
+
+        <!-- Post Content Column -->
+        <div class="col-lg-8">
+
+            <!-- Title -->
+            <h1 class="mt-4">Atlas V 421 | NROL-52</h1>
+
+            <!-- Author -->
+            <p class="lead">
+                <small>No Earlier Then</small>
+                <br> October 5, 2017 08:07:00
+            </p>
+
+            <hr>
+
+            <!-- Date/Time -->
+            <h3>Launch Window</h3>
+            <p>Open: October 5, 2017 07:30:00 UTC</p>
+            <p>Close: October 5, 2017 09:00:00 UTC</p>
+            <hr>
+
+            <!-- Preview Image -->
+            <img class="img-fluid rounded" src="https:\\s3.amazonaws.com/launchlibrary/RocketImages/placeholder_720.png"
+                 alt="">
+
+            <hr>
+            <h4>Mission -
+                <small>NROL-52</small>
+            </h4>
+
+            <!-- Post Content -->
+            <p class="lead">Government\Top Secret</p>
+            <p>Classified payload for the U.S. National Reconnaissance Office.</p>
+
+
+            <hr>
+        </div>
+
+        <!-- Sidebar Widgets Column -->
+        <div class="col-md-4">
+            <!-- Categories Widget -->
+            <div class="card my-2">
+                <a class="twitter-timeline" href="https://twitter.com/SpaceLaunchNow?ref_src=twsrc%5Etfw">Tweets by
+                    SpaceLaunchNow</a>
+                <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!-- /.row -->
+
+</div>
+<!-- /.container -->
+{% endblock %}
+
