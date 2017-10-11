@@ -171,7 +171,7 @@ body {
       color: #F05F40; }
     #indexNav .navbar-nav > li.nav-item > a.nav-link:focus.active,
     #indexNav .navbar-nav > li.nav-item > a.nav-link.active {
-      color: #F05F40 !important;
+      color: #222222;
       background-color: transparent; }
       #indexNav .navbar-nav > li.nav-item > a.nav-link:focus.active:hover,
       #indexNav .navbar-nav > li.nav-item > a.nav-link.active:hover {

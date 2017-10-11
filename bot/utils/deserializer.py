@@ -10,6 +10,9 @@ def launch_json_to_model(data):
     wsstamp = data['wsstamp']
     westamp = data['westamp']
     inhold = data['inhold']
+    img_url = None
+    if 'placeholder' not in data['rocket']['imageURL']:
+        img_url = data['rocket']['imageURL']
     rocket_name = data['rocket']['name']
     location_name = data['location']['name']
     mission_name = "Unknown"
@@ -25,6 +28,7 @@ def launch_json_to_model(data):
     try:
         launch = Launch.objects.get(id=id)
         launch.name = name
+        launch.img_url = img_url
         launch.status = status
         launch.netstamp = netstamp
         launch.wsstamp = wsstamp
