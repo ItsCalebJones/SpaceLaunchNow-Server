@@ -28,7 +28,7 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Launch
         fields = (
-            'id', 'name', 'url', 'status', 'netstamp', 'wsstamp', 'westamp', 'location_name', 'rocket_name',
+            'id', 'name', 'url', 'img_url', 'status', 'netstamp', 'wsstamp', 'westamp', 'location_name', 'rocket_name',
             'mission_name'
         )
 
@@ -44,6 +44,7 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     def update(self, instance, validated_data):
         instance.id = validated_data.get('id', instance.id)
         instance.name = validated_data.get('name', instance.name)
+        instance.img_url = validated_data.get('img_url', instance.img_url)
         instance.status = validated_data.get('status', instance.status)
         instance.netstamp = validated_data.get('netstamp', instance.netstamp)
         instance.wsstamp = validated_data.get('wsstamp', instance.wsstamp)

@@ -4,6 +4,7 @@ from django.db import models
 class Launch(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255)
+    img_url = models.CharField(max_length=255, blank=True, null=True)
     status = models.IntegerField(blank=True)
     netstamp = models.IntegerField(blank=True, null=True)
     wsstamp = models.IntegerField(blank=True, null=True)
