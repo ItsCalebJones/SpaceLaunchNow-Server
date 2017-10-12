@@ -10,8 +10,13 @@ class Launch(models.Model):
     wsstamp = models.IntegerField(blank=True, null=True)
     westamp = models.IntegerField(blank=True, null=True)
     inhold = models.IntegerField(blank=True, null=True)
+    net = models.CharField(max_length=255, null=True)
+    windowend = models.CharField(max_length=255, null=True)
+    windowstart = models.CharField(max_length=255, null=True)
     rocket_name = models.CharField(max_length=255, blank=True, default="")
     mission_name = models.CharField(max_length=255, blank=True, default="")
+    mission_description = models.CharField(max_length=2048, blank=True, default="")
+    mission_type = models.CharField(max_length=255, blank=True, default="")
     location_name = models.CharField(max_length=255, blank=True, default="")
 
 
