@@ -1,6 +1,7 @@
 {% extends "_layouts/base.html" %}
 {% load staticfiles%}
 {% block content %}
+{% load embed_video_tags %}
 
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-light fixed-top navbar-shrink-alt" id="indexNav">
@@ -42,14 +43,14 @@
         </div>
     </div>
 </nav>
-
-<div class="jumbotron jumbotron-fluid" style="background-image: url('{{ launch.img_url }}');margin-top:50px">
-    <div class="container">
-        <h1>{{ launch.name }}</h1>
-        <h2 class="subheading">{{ launch.name }}</h2>
-        <span class="meta">Posted by
-                <a href="#">Start Bootstrap</a>
-                on August 24, 2017</span>
+<div class="container">
+    <div class="jumbotron jumbotron-billboard" style="margin_top:64px">
+        <div class="img" style="background: #000 url({{ launch.img_url }}) center center;"></div>
+        <div class="container">
+            <h1>{{ launch.name }}</h1>
+            <h2 class="subheading">{{ launch.mission_name }}</h2>
+            <span class="meta">NET: {{ launch.net }}</span>
+        </div>
     </div>
 </div>
 <!-- Page Content -->
@@ -61,12 +62,12 @@
         <div class="col-lg-8">
 
             <!-- Title -->
-            <h1 class="mt-4">{{ launch.name }}</h1>
-
-            <!-- Author -->
-            <p class="lead">
-                <br> October 5, 2017 08:07:00
-            </p>
+            {% for url in youtube_urls %}
+            <h1 class="mt-4">Watch Here</h1>
+            {% video url as my_video %}
+                    {% video my_video 'medium' %}
+                {% endvideo %}
+            {% endfor %}
 
             <hr>
 
@@ -76,14 +77,13 @@
             <p>Close: October 5, 2017 09:00:00 UTC</p>
             <hr>
 
-            <hr>
-            <h4>Mission -
-                <small>NROL-52</small>
+            <h4>Mission
+                <small>{{ launch.mission_name }}</small>
             </h4>
 
             <!-- Post Content -->
-            <p class="lead">Government\Top Secret</p>
-            <p>Classified payload for the U.S. National Reconnaissance Office.</p>
+            <p class="lead">{{ launch.mission_type }}</p>
+            <p>{{ launch.mission_description}}</p>
 
 
             <hr>
