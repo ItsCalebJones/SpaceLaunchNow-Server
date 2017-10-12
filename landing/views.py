@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.http import Http404
 from django.shortcuts import render
 
 
@@ -26,6 +27,45 @@ def next_launch(request):
         for url in _vids:
             if 'youtube' in url.vid_url:
                 youtube_urls.append(url.vid_url)
-        return render(request, 'next/next.html', {'launch': launch, 'youtube_urls': youtube_urls})
+        return render(request, 'next/launch_page.html', {'launch': launch, 'youtube_urls': youtube_urls})
     else:
-        return render(request, 'next/next.html', )
+        return render(request, 'next/launch_page.html', )
+
+
+# Create your views here.
+def launch_by_id(request, pk):
+    youtube_urls = []
+    launchLibrary = LaunchLibrarySDK(version='1.2.1')
+    response = launchLibrary.get_launch_by_id(pk)
+    if response.status_code is 200:
+        response_json = response.json()
+        launch_data = response_json['launches']
+        launch = launch_json_to_model(launch_data[0])
+        _vids = launch.vid_urls.all()
+        for url in _vids:
+            if 'youtube' in url.vid_url:
+                youtube_urls.append(url.vid_url)
+        return render(request, 'next/launch_page.html', {'launch': launch, 'youtube_urls': youtube_urls})
+    else:
+        raise Http404
+
+
+# Create your views here.
+def launches(request,):
+    launchLibrary = LaunchLibrarySDK()
+    query = request.GET.get('q')
+    if query is not None:
+        response = launchLibrary.get_next_launches(search=query)
+    else:
+        response = launchLibrary.get_next_launches()
+    if response.status_code is 200:
+        response_json = response.json()
+        launch_data = response_json['launches']
+        _launches = []
+        for launch in launch_data:
+            launch = launch_json_to_model(launch)
+            launch.save()
+            _launches.append(launch)
+        return render(request, 'next/launches.html', {'launches': _launches})
+    else:
+        raise Http404
