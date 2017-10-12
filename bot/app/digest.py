@@ -18,7 +18,6 @@ from bot.models import Notification, DailyDigestRecord
 from bot.serializer import LaunchSerializer
 from bot.utils.config import keys
 from bot.utils.deserializer import launch_json_to_model
-from rest_framework.request import Request
 # import the logging library
 
 # Get an instance of a logger

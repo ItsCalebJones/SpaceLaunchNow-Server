@@ -1,5 +1,4 @@
-import bot
-from bot.models import Launch, Notification
+from bot.models import Launch, Notification, VidURLs
 
 
 def launch_json_to_model(data):
@@ -13,11 +12,19 @@ def launch_json_to_model(data):
     img_url = None
     if 'placeholder' not in data['rocket']['imageURL']:
         img_url = data['rocket']['imageURL']
+    net = data['net']
+    window_end = data['windowend']
+    window_start = data['windowstart']
+    vid_urls = data['vidURLs']
     rocket_name = data['rocket']['name']
     location_name = data['location']['name']
     mission_name = "Unknown"
+    mission_type = ""
+    mission_description = ""
     if len(data['missions']) > 0:
         mission_name = data['missions'][0]['name']
+        mission_type = data['missions'][0]['typeName']
+        mission_description = data['missions'][0]['description']
     if location_name is None:
         location_name = 'Unknown'
     if len(name) > 30:
@@ -36,15 +43,27 @@ def launch_json_to_model(data):
         launch.inhold = inhold
         launch.rocket_name = rocket_name
         launch.mission_name = mission_name
+        launch.mission_description = mission_description
+        launch.mission_type = mission_type
         launch.location_name = location_name
+        launch.net = net
+        launch.window_end = window_end
+        launch.window_start = window_start
         launch.save()
+
+        launch.vid_urls.all().delete()
+        for url in vid_urls:
+            VidURLs.objects.create(vid_url=url, launch=launch)
         check_notification(launch)
         return launch
     except Launch.DoesNotExist:
         launch = Launch.objects.create(id=id, name=name, status=status, netstamp=netstamp, wsstamp=wsstamp,
-                                       westamp=westamp,
-                                       inhold=inhold, rocket_name=rocket_name, mission_name=mission_name,
-                                       location_name=location_name)
+                                       westamp=westamp, inhold=inhold, rocket_name=rocket_name,
+                                       mission_name=mission_name, location_name=location_name, img_url=img_url, net=net,
+                                       window_start=window_start, window_end=window_end,
+                                       mission_description=mission_description, mission_type=mission_type)
+        for url in vid_urls:
+            VidURLs.objects.create(vid_url=url, launch=launch)
         check_notification(launch)
         return launch
 
