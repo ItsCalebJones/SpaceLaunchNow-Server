@@ -11,13 +11,22 @@ class Launch(models.Model):
     westamp = models.IntegerField(blank=True, null=True)
     inhold = models.IntegerField(blank=True, null=True)
     net = models.CharField(max_length=255, null=True)
-    windowend = models.CharField(max_length=255, null=True)
-    windowstart = models.CharField(max_length=255, null=True)
+    window_end = models.CharField(max_length=255, null=True)
+    window_start = models.CharField(max_length=255, null=True)
     rocket_name = models.CharField(max_length=255, blank=True, default="")
     mission_name = models.CharField(max_length=255, blank=True, default="")
     mission_description = models.CharField(max_length=2048, blank=True, default="")
     mission_type = models.CharField(max_length=255, blank=True, default="")
     location_name = models.CharField(max_length=255, blank=True, default="")
+
+
+class VidURLs(models.Model):
+    vid_url = models.URLField(max_length=200)
+    launch = models.ForeignKey(Launch, related_name='vid_urls', on_delete=models.CASCADE)
+
+    def __unicode__(self):
+        return '%s' % self.vid_url
+
 
 
 class Notification(models.Model):
