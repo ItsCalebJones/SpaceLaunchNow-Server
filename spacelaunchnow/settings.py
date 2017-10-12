@@ -103,6 +103,7 @@ INSTALLED_APPS = [
     'rest_framework_docs',
     'bot',
     'djcelery',
+    'embed_video',
 ]
 
 MIDDLEWARE = [
