@@ -281,13 +281,13 @@ class DigestServer:
             confirmed_launch = confirmed[0]
 
             logger.info("One launch possible - sending message. ")
-            date = datetime.utcfromtimestamp(launch.netstamp).replace(tzinfo=pytz.UTC)
+            date = datetime.utcfromtimestamp(possible_launch.netstamp).replace(tzinfo=pytz.UTC)
             message = "%s %s might be launching from %s on %s." % (header, possible_launch.name,
                                                                    possible_launch.location_name,
                                                                    date.strftime("%A at %H:%S %Z"))
             messages = messages + message + "\n"
-            if launch.img_url is not None:
-                self.send_twitter_update(message, image=self.get_image_id(launch.img_url))
+            if possible_launch.img_url is not None:
+                self.send_twitter_update(message, image=self.get_image_id(possible_launch.img_url))
             else:
                 self.send_twitter_update(message)
 
@@ -298,7 +298,7 @@ class DigestServer:
                 header, confirmed_launch.name, confirmed_launch.location_name,
                 '{0:g}'.format(float(round(abs(launch_time - current_time).total_seconds() / 3600.0))))
             messages = messages + message + "\n"
-            if launch.img_url is not None:
+            if confirmed_launch.img_url is not None:
                 self.send_twitter_update(message, image=self.get_image_id(confirmed_launch.img_url))
             else:
                 self.send_twitter_update(message)
