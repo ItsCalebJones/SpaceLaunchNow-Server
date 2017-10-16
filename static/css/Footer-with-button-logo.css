@@ -76,12 +76,16 @@
     color: #0077e2;
 }
 
-#myFooter .google:hover {
-    color: #ef1a1a;
+#myFooter .reddit:hover {
+    color: #ff4500;
 }
 
 #myFooter .twitter:hover {
     color: #00aced;
+}
+
+#myFooter .github:hover {
+    color: #4078c0;
 }
 
 #myFooter .btn {

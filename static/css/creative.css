@@ -582,7 +582,7 @@ header.masthead .header-content .header-content-inner p {
 
 .jumbotron-billboard .img {
     margin-bottom: 0px;
-    opacity: 0.7;
+    opacity: 0.9;
     color: #fff;
     background: #000 url("../img/header.jpg") center center;
     width: 100%;
@@ -609,4 +609,22 @@ header.masthead .header-content .header-content-inner p {
     color: white;
     font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
 
+}
+
+//medium+ screen sizes
+@media (min-width:992px) {
+    .desktop-only {
+        display:block !important;
+    }
+}
+
+//small screen sizes
+@media (max-width: 991px) {
+    .mobile-only {
+        display:block !important;
+    }
+
+    .desktop-only {
+        display:none !important;
+    }
 }
