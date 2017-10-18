@@ -1,8 +1,9 @@
 {% extends "_layouts/base.html" %}
 {% load staticfiles%}
-{% block content %}
 {% load embed_video_tags %}
-
+{% block extrahead %}
+{% endblock %}
+{% block content %}
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-light fixed-top navbar-shrink-alt" id="indexNav">
     <div class="container">
@@ -48,8 +49,11 @@
         {% endif %}
         <div class="container">
             <h1>{{ launch.mission_name }}</h1>
+
             <h2 class="subheading">{{ launch.rocket_name }}</h2>
             <span class="meta">NET: {{ launch.net }}</span>
+
+        <div class="countdown" style="margin-top:10em;"></div>
         </div>
     </div>
 </div>
@@ -57,6 +61,7 @@
 <div class="container">
 
     <div class="row">
+
 
         <!-- Post Content Column -->
         <div class="col-lg-8">
@@ -66,12 +71,15 @@
             </h2>
             <!-- Post Content -->
             <p class="lead">{{ launch.mission_type }}</p>
+
             <p>{{ launch.mission_description}}</p>
             <hr>
 
             <!-- Date/Time -->
             <h3>Launch Window</h3>
+
             <p>Open: {{ launch.window_start}}</p>
+
             <p>Close: {{ launch.window_end }}</p>
 
             <hr>
@@ -104,7 +112,7 @@
                    href="https://twitter.com/SpaceLaunchNow?ref_src=twsrc%5Etfw"
                    data-tweet-limit="5"
                    data-show-replies="true"
-                >Tweets by
+                        >Tweets by
                     SpaceLaunchNow</a>
                 <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
             </div>
@@ -123,5 +131,24 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+
+			var clock;
+
+            // Grab the current date
+            var currentDate = new Date();
+
+            // Set some date in the past. In this case, it's always been since Jan 1
+            var futureDate  = new Date("{{ launch.net }}");
+
+            // Calculate the difference in seconds between the future and current date
+            var diff = futureDate.getTime() / 1000 - currentDate.getTime() / 1000;
+
+            // Instantiate a coutdown FlipClock
+            clock = $('.countdown').FlipClock(diff, {
+                clockFace: 'DailyCounter'
+            });
+
+</script>
 {% endblock %}
 

@@ -28,6 +28,13 @@
     <link href="{% static  'css/creative.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static  'css/Footer-with-button-logo.css' %}">
 
+    <link rel="stylesheet" href="{% static  'compiled/flipclock.css' %}">
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+    <script src="{% static  'compiled/flipclock.js' %}"></script>
+    {% block extrahead %}
+    {% endblock %}
 </head>
 
 <body id="page-top">
@@ -35,49 +42,49 @@
 {% block content %}
 {% endblock %}
 
-    <footer id="myFooter">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-3">
-                    <h2 class="logo"><a href="#"> LOGO </a></h2>
-                </div>
-                <div class="col-sm-2">
-                    <h5>Get started</h5>
-                    <ul>
-                        <li><a href="#">Home</a></li>
-                        <li><a href="#">Sign up</a></li>
-                        <li><a href="#">Downloads</a></li>
-                    </ul>
-                </div>
-                <div class="col-sm-2">
-                    <h5>About us</h5>
-                    <ul>
-                        <li><a href="#">Company Information</a></li>
-                        <li><a href="#">App</a></li>
-                        <li><a href="#">Reviews</a></li>
-                    </ul>
-                </div>
-                <div class="col-sm-2">
-                    <h5>Support</h5>
-                    <ul>
-                        <li><a href="#">Discord</a></li>
-                        <li><a href="#">Reddit</a></li>
-                    </ul>
-                </div>
-                <div class="col-sm-3">
-                    <div class="social-networks">
-                        <a href="#" class="twitter"><i class="fa fa-twitter"></i></a>
-                        <a href="#" class="facebook"><i class="fa fa-facebook"></i></a>
-                        <a href="#" class="google"><i class="fa fa-reddit"></i></a>
-                    </div>
+<footer id="myFooter">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3">
+                <h2 class="logo"><a href="#"> LOGO </a></h2>
+            </div>
+            <div class="col-sm-2">
+                <h5>Get started</h5>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Sign up</a></li>
+                    <li><a href="#">Downloads</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-2">
+                <h5>About us</h5>
+                <ul>
+                    <li><a href="#">Company Information</a></li>
+                    <li><a href="#">App</a></li>
+                    <li><a href="#">Reviews</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-2">
+                <h5>Support</h5>
+                <ul>
+                    <li><a href="#">Discord</a></li>
+                    <li><a href="#">Reddit</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-3">
+                <div class="social-networks">
+                    <a href="#" class="twitter"><i class="fa fa-twitter"></i></a>
+                    <a href="#" class="facebook"><i class="fa fa-facebook"></i></a>
+                    <a href="#" class="google"><i class="fa fa-reddit"></i></a>
                 </div>
             </div>
         </div>
-        <div class="footer-copyright">
-            <p>© 2016 Copyright Text | Powered by <a href="https://launchlibrary.net/docs/1.2.1/api.html">Launch
-                        Library</a></p>
-        </div>
-    </footer>
+    </div>
+    <div class="footer-copyright">
+        <p>© 2016 Copyright Text | Powered by <a href="https://launchlibrary.net/docs/1.2.1/api.html">Launch
+            Library</a></p>
+    </div>
+</footer>
 <!-- Bootstrap core JavaScript -->
 <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
 <script src="{% static  'vendor/popper/popper.min.js' %}"></script>
