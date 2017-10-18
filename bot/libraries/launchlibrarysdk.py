@@ -9,20 +9,19 @@ headers = {
 
 
 class LaunchLibrarySDK(object):
-    def __init__(self, version='1.2.1'):
+    def __init__(self, version='1.2.2'):
         self.api_url = BASE_URL + version
 
     def get_next_launches(self, number_launches=5, search=None):
         if search is None:
-            url = self.api_url + '/launch?startdate=%s&mode=verbose&limit=%d' % (
-                datetime.today().strftime('%Y-%m-%d'), number_launches)
+            url = self.api_url + '/launch/next/%d?mode=verbose&tbdtime=0&tbddate=0' % number_launches
         else:
-            url = self.api_url + '/launch?startdate=%s&mode=verbose&limit=%d&name=%s' % (
-                datetime.today().strftime('%Y-%m-%d'), number_launches, search)
+            url = self.api_url + '/launch/next/%d?mode=verbose&name=%s&tbdtime=0&tbddate=0' %\
+                                 (number_launches, search)
         return send_request(url, method='GET', headers=headers)
 
     def get_next_launch(self):
-        url = self.api_url + '/launch?next=1&mode=verbose'
+        url = self.api_url + '/launch/next/1&mode=verbose'
         return send_request(url, method='GET', headers=headers)
 
     def get_next_weeks_launches(self):
