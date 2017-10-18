@@ -7,7 +7,13 @@
 <meta property="og:type" content="website"/>
 <meta property="og:description" content="{{ launch.mission_description }}"/>
 <meta property="og:url" content="https://spacelaunchnow.me/launch/{{launch.id}}"/>
-<meta property="og:image" content="https://spacelaunchnow.me/static/img/ic_launcher.png"/>
+{% if launch.img_url %}
+<meta property="og:image" content="{{ launch.img_url }}"/>
+{% else %}
+<meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
+<meta property="og:image:width" content="3000" />
+<meta property="og:image:height" content="2000" />
+{% endif %}
 {% endblock %}
 {% block content %}
 <!-- Navigation -->
