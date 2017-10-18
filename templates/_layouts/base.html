@@ -11,6 +11,7 @@
 
     <title>Space Launch Now</title>
 
+    <link rel="shortcut icon" href="{%  static 'img/favicon.ico' %}">
     <!-- Bootstrap core CSS -->
     <link href="{% static  'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
 
@@ -46,42 +47,53 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-3">
-                <h2 class="logo"><a href="#"> LOGO </a></h2>
+
+                <div class="logo">
+                    <img style='width:80%;' alt='Get it on Google Play'
+                         src="{% static  'img/ic_launcher.png' %}"/></a>
+                </div>
+
             </div>
             <div class="col-sm-2">
-                <h5>Get started</h5>
+                <h5>About Me</h5>
                 <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Sign up</a></li>
-                    <li><a href="#">Downloads</a></li>
+                    <li><a href="http://calebjones.me/">Blog</a></li>
+                    <li><a href="https://twitter.com/koun7erfit">Twitter</a></li>
+                    <li><a href="https://go.twitch.tv/koun7erfit">Twitch</a></li>
                 </ul>
             </div>
             <div class="col-sm-2">
-                <h5>About us</h5>
+                <h5>Other</h5>
                 <ul>
-                    <li><a href="#">Company Information</a></li>
-                    <li><a href="#">App</a></li>
-                    <li><a href="#">Reviews</a></li>
+                    <li><a href="https://play.google.com/store/apps/dev?id=7111684947714289915">Apps</a></li>
+                    <li><a href="https://play.google.com/store/apps/details?id=me.calebjones.pubgtracker">PUBG Stat Tracker</a></li>
+                    <li><a href="https://play.google.com/store/apps/details?id=me.calebjones.blogsite">The Jones Theory</a></li>
+
                 </ul>
             </div>
             <div class="col-sm-2">
                 <h5>Support</h5>
                 <ul>
-                    <li><a href="#">Discord</a></li>
-                    <li><a href="#">Reddit</a></li>
+
+                    <li><a href="https://www.reddit.com/r/spacelaunchnow/">Reddit</a></li>
+                    <li><a href="mailto:support@calebjones.me">Email</a></li>
+                    <li><a href="https://discord.gg/chaQsQW">LL - Discord</a></li>
                 </ul>
             </div>
             <div class="col-sm-3">
                 <div class="social-networks">
-                    <a href="#" class="twitter"><i class="fa fa-twitter"></i></a>
-                    <a href="#" class="facebook"><i class="fa fa-facebook"></i></a>
-                    <a href="#" class="google"><i class="fa fa-reddit"></i></a>
+                    <a href="https://twitter.com/SpaceLaunchNow" class="twitter"><i class="fa fa-twitter"></i></a>
+                    <a href="https://www.facebook.com/spacelaunchnow/" class="facebook"><i
+                            class="fa fa-facebook"></i></a>
+                    <a href="https://www.reddit.com/r/spacelaunchnow/" class="reddit"><i class="fa fa-reddit"></i></a>
+                    <a href="https://www.reddit.com/r/spacelaunchnow/" class="github"><i class="fa fa-github"></i></a>
+
                 </div>
             </div>
         </div>
     </div>
     <div class="footer-copyright">
-        <p>© 2016 Copyright Text | Powered by <a href="https://launchlibrary.net/docs/1.2.1/api.html">Launch
+        <p>© 2017 Copyright | Powered by <a href="https://launchlibrary.net/docs/1.2.1/api.html">Launch
             Library</a></p>
     </div>
 </footer>

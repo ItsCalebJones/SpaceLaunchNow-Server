@@ -27,6 +27,8 @@
                     <a class="nav-link js-scroll-trigger active" href="/launches">Launches</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link twitter" href="https://twitter.com/SpaceLaunchNow"><i class="fa fa-twitter"></i></a>
+                </li>
 
                 <li class="nav-item">
                     <a class="nav-link js-scroll-trigger" href="/v1">API</a>
@@ -46,22 +48,22 @@
         </h1>
     </div>
     <!--<div class="row">-->
-        <!--<div class="container" style="margin-bottom: 10px">-->
-            <!--&lt;!&ndash; Provides extra visual weight and identifies the primary action in a set of buttons &ndash;&gt;-->
-            <!--<a href="/" class="btn btn-primary">All</a>-->
-            <!--<a href="?q=spx" class="btn btn-primary">SpaceX</a>-->
-            <!--<a href="/" class="btn btn-primary">ULA</a>-->
-            <!--<a href="/" class="btn btn-primary">NASA</a>-->
-            <!--<a href="/" class="btn btn-primary">ROSCOSMOS</a>-->
-            <!--<a href="/" class="btn btn-primary">CASC</a>-->
-            <!--<a href="/" class="btn btn-primary">ISRO</a>-->
-        <!--</div>-->
+    <!--<div class="container" style="margin-bottom: 10px">-->
+    <!--&lt;!&ndash; Provides extra visual weight and identifies the primary action in a set of buttons &ndash;&gt;-->
+    <!--<a href="/" class="btn btn-primary">All</a>-->
+    <!--<a href="?q=spx" class="btn btn-primary">SpaceX</a>-->
+    <!--<a href="/" class="btn btn-primary">ULA</a>-->
+    <!--<a href="/" class="btn btn-primary">NASA</a>-->
+    <!--<a href="/" class="btn btn-primary">ROSCOSMOS</a>-->
+    <!--<a href="/" class="btn btn-primary">CASC</a>-->
+    <!--<a href="/" class="btn btn-primary">ISRO</a>-->
+    <!--</div>-->
     <!--</div>-->
 
     <div class="row">
 
         <!-- Post Content Column -->
-        <div class="col-lg-8">
+        <div class="col-lg-8" style="margin-top: 8px">
             <ul class="list-group">
                 {% if launches|length > 0 %}
                 {% for launch in launches %}
@@ -93,12 +95,12 @@
         </div>
 
         <!-- Sidebar Widgets Column -->
-        <div class="col-md-4">
+        <div class="col-md-4 desktop-only">
             <!-- Categories Widget -->
-            <div class="card my-2">
-                <a class="twitter-timeline"
+            <div class="card my-2 desktop-only">
+                <a class="twitter-timeline desktop-only"
                    href="https://twitter.com/SpaceLaunchNow?ref_src=twsrc%5Etfw"
-                   data-tweet-limit="5"
+                   data-tweet-limit="8"
                    data-show-replies="true"
                 >Tweets by
                     SpaceLaunchNow</a>
