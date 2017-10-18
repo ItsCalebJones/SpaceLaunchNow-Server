@@ -36,7 +36,6 @@ v1_router.register(r'launches', bot_views.LaunchViewSet)
 v1_router.register(r'notifications', bot_views.NotificationViewSet)
 v1_router.register(r'records', bot_views.DailyDigestRecordViewSet)
 
-
 urlpatterns = [
     url(r'^v1/', include(v1_router.urls, namespace='v1')),
     url(r'^v2/', include(v1_router.urls, namespace='v2')),
