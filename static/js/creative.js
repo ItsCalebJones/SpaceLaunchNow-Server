@@ -19,18 +19,20 @@
   $('.js-scroll-trigger').click(function() {
     $('.navbar-collapse').collapse('hide');
   });
-
+if ($('#mainNav').length) {
   // Activate scrollspy to add active class to navbar items on scroll
   $('body').scrollspy({
     target: '#mainNav',
     offset: 48
   });
-
+}
+if ($('#mainNav').length) {
     // Activate scrollspy to add active class to navbar items on scroll
   $('body').scrollspy({
     target: '#indexNav',
     offset: 48
   });
+ }
 
 if ($('#mainNav').length) {
   // Collapse the navbar when page is scrolled
@@ -43,16 +45,16 @@ if ($('#mainNav').length) {
   });
 }
 
-if ($('#indexNav').length) {
-       // Collapse the navbar when page is scrolled
-  $(window).scroll(function() {
-    if ($("#indexNav").offset().top > 100) {
-      $("#indexNav").addClass("navbar-shrink-alt");
-    } else {
-      $("#indexNav").removeClass("navbar-shrink-alt");
-    }
-  });
-}
+//if ($('#indexNav').length) {
+//       // Collapse the navbar when page is scrolled
+//  $(window).scroll(function() {
+//    if ($("#indexNav").offset().top > 100) {
+//      $("#indexNav").addClass("navbar-shrink-alt");
+//    } else {
+//      $("#indexNav").removeClass("navbar-shrink-alt");
+//    }
+//  });
+//}
 
   // Scroll reveal calls
   window.sr = ScrollReveal();
