@@ -16,7 +16,7 @@ Including another URLconf
 
 from api import views as api_views
 from bot import views as bot_views
-from landing import views as landing_views
+from web import views as landing_views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls import url, include
