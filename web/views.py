@@ -11,7 +11,7 @@ from bot.utils.deserializer import launch_json_to_model
 
 
 def index(request):
-    return render(request, 'landing/index.html',)
+    return render(request, 'web/index.html',)
 
 
 # Create your views here.
@@ -27,9 +27,9 @@ def next_launch(request):
         for url in _vids:
             if 'youtube' in url.vid_url:
                 youtube_urls.append(url.vid_url)
-        return render(request, 'next/launch_page.html', {'launch': launch, 'youtube_urls': youtube_urls})
+        return render(request, 'web/launch_page.html', {'launch': launch, 'youtube_urls': youtube_urls})
     else:
-        return render(request, 'next/launch_page.html', )
+        return render(request, 'web/launch_page.html', )
 
 
 # Create your views here.
@@ -45,7 +45,7 @@ def launch_by_id(request, pk):
         for url in _vids:
             if 'youtube' in url.vid_url:
                 youtube_urls.append(url.vid_url)
-        return render(request, 'next/launch_page.html', {'launch': launch, 'youtube_urls': youtube_urls})
+        return render(request, 'web/launch_page.html', {'launch': launch, 'youtube_urls': youtube_urls})
     else:
         raise Http404
 
@@ -66,6 +66,6 @@ def launches(request,):
             launch = launch_json_to_model(launch)
             launch.save()
             _launches.append(launch)
-        return render(request, 'next/launches.html', {'launches': _launches})
+        return render(request, 'web/launches.html', {'launches': _launches})
     else:
         raise Http404

@@ -32,6 +32,7 @@
     offset: 48
   });
 
+if ($('#mainNav').length) {
   // Collapse the navbar when page is scrolled
   $(window).scroll(function() {
     if ($("#mainNav").offset().top > 100) {
@@ -40,8 +41,10 @@
       $("#mainNav").removeClass("navbar-shrink");
     }
   });
+}
 
-  // Collapse the navbar when page is scrolled
+if ($('#indexNav').length) {
+       // Collapse the navbar when page is scrolled
   $(window).scroll(function() {
     if ($("#indexNav").offset().top > 100) {
       $("#indexNav").addClass("navbar-shrink-alt");
@@ -49,6 +52,7 @@
       $("#indexNav").removeClass("navbar-shrink-alt");
     }
   });
+}
 
   // Scroll reveal calls
   window.sr = ScrollReveal();
