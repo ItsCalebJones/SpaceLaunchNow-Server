@@ -1,13 +1,20 @@
-# SpaceLaunchNow-Server
-A Django-based Twitter bot and REST API endpoint for serving additional data to Space Launch Now users.
+# SpaceLaunchNow Server
+A Django-based Twitter bot, REST API endpoint, and website for [Space Launch Now]().
 
 ## Installation
 
-TODO: Describe the installation process
+### Get Django and the Frontend Running
+Suggest using a Linux or MacOS device however can be ran with Windows.
 
-## Usage
+1. Download/Extract and navigate to the correct directory.
+2. Run: `$ pip install -r requirements.txt` to install required Python packages.
+3. Initiate the DB with `python manage.py runmigrations`
+4. Run the server - `python manage.py runserver`
+5. Open a browser and navigate to 127.0.0.1:8000
 
-TODO: Write usage instructions
+### Twitter Bot - (Advanced: Requires ActiveMQ and Django-Celery)
+TODO - Fill this out.
+
 
 ## Contributing
 
@@ -17,14 +24,20 @@ TODO: Write usage instructions
 4. Push to the branch: `git push origin my-new-feature`
 5. Submit a pull request :D
 
-## History
+## Versioning
 
-TODO: Write history
+We use [SemVer](http://semver.org/) for versioning.
 
-## Credits
+## Authors
 
-TODO: Write credits
+* **Caleb Jones** - *Initial work* - [ItsCalebJones](https://github.com/ItsCalebJones)
+
+See also the list of [contributors](https://github.com/itscalebjones/SpaceLaunchNow-Server/contributors) who participated in this project.
 
 ## License
 
-TODO: Write license
+This project is licensed under the Apache License - see the [LICENSE.md](LICENSE.md) file for details
+
+## Acknowledgments
+
+* The wonderful devs and librarians over at [Launch Library](https://launchlibrary.net/)
