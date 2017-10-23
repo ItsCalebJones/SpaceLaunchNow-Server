@@ -55,9 +55,9 @@ def launches(request,):
     launchLibrary = LaunchLibrarySDK()
     query = request.GET.get('q')
     if query is not None:
-        response = launchLibrary.get_next_launches(search=query)
+        response = launchLibrary.get_next_launch(count=5)
     else:
-        response = launchLibrary.get_next_launches()
+        response = launchLibrary.get_next_launch(count=5)
     if response.status_code is 200:
         response_json = response.json()
         launch_data = response_json['launches']

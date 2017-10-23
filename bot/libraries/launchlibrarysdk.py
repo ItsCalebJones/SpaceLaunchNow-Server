@@ -9,22 +9,31 @@ headers = {
 
 
 class LaunchLibrarySDK(object):
+    # Latest stable Version stored.
     def __init__(self, version='1.2.2'):
         self.api_url = BASE_URL + version
 
-    def get_next_launches(self, number_launches=5, search=None):
-        if search is None:
-            url = self.api_url + '/launch/next/%d?mode=verbose&tbdtime=0&tbddate=0' % number_launches
+    def get_next_launch(self, tbd=False, agency=None, launch_service_provider=None, count=1):
+        """
+        Builds a URL and fetches response from LL
+        :param agency: Pass the ID of an Agency to get launches for that agency (Rocket, Location, or Mission agency)
+        :param launch_service_provider: Pass the ID of a LSP to get launches for that provider
+        :param count: The number of launch objects to fetch.
+        :return: Returns a HTTP Response object
+        """
+        if tbd:
+            url = self.api_url + '/launch/next/%d?mode=verbose' % count
         else:
-            url = self.api_url + '/launch/next/%d?mode=verbose&name=%s&tbdtime=0&tbddate=0' %\
-                                 (number_launches, search)
-        return send_request(url, method='GET', headers=headers)
-
-    def get_next_launch(self):
-        url = self.api_url + '/launch/next/1&mode=verbose'
+            url = self.api_url + '/launch/next/%d?mode=verbose&tbdtime=0&tbddate=0' % count
+        # if agency:
+        #     url = url + getLSP
         return send_request(url, method='GET', headers=headers)
 
     def get_next_weeks_launches(self):
+        """
+        Sends a request using `requests` module.
+        :return: Returns a HTTP Response object
+        """
         today = datetime.today().strftime('%Y-%m-%d')
         next_week = (datetime.now() + timedelta(days=7)).strftime('%Y-%m-%d')
         url = self.api_url + '/launch/%s/%s?mode=verbose' % (today, next_week)
