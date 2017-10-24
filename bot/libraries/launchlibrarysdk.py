@@ -39,12 +39,12 @@ class LaunchLibrarySDK(object):
         url = self.api_url + '/launch/%s/%s?mode=verbose' % (today, next_week)
         return send_request(url, method='GET', headers=headers)
 
-    def get_location_by_pad(self, locationId):
-        url = '%s/pad/%i?fields=name' % (self.api_url, locationId)
+    def get_location_by_pad(self, location_id):
+        url = '%s/pad/%i?fields=name' % (self.api_url, location_id)
         return send_request(url, method='GET', headers=headers)
 
-    def get_launch_by_id(self, id):
-        url = self.api_url + '/launch/%s?mode=verbose' % id
+    def get_launch_by_id(self, launch_id):
+        url = self.api_url + '/launch/%s?mode=verbose' % launch_id
         return send_request(url, method='GET', headers=headers)
 
 
