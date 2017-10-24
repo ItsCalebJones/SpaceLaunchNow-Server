@@ -1,5 +1,6 @@
 import json
 import re
+from django.core import serializers
 
 from django.utils.datetime_safe import datetime
 import datetime as dtime
@@ -210,7 +211,10 @@ class NotificationServer:
             included_segments=['Debug'],
             isAndroid=True,
             data={"silent": True,
-                  "background": True}
+                  "background": True,
+                  "launch_id": launch.id,
+                  "launch_image": launch.img_url,
+                  "launch_"}
         )
         url = 'https://launchlibrary.net'
         heading = 'Space Launch Now'
