@@ -2,6 +2,8 @@ from django.core.management import BaseCommand
 from celery.utils.log import get_task_logger
 
 from bot.app.notifications import NotificationServer
+from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
+from bot.utils.deserializer import launch_json_to_model
 
 logger = get_task_logger('bot')
 
@@ -14,6 +16,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('-version', dest="version", type=str)
         parser.add_argument('-debug', '-d', dest="debug", type=bool, const=True, nargs='?')
+        parser.add_argument('-test_notification', '-n', dest="notification", type=bool, const=False, nargs='?')
 
     def handle(self, *args, **options):
         logger.info('Running Notifications...')
@@ -26,4 +29,22 @@ class Command(BaseCommand):
                 debug = True
         version = options['version']
         notification = NotificationServer(debug=debug, version=version)
-        notification.check_next_launch()
+        library = LaunchLibrarySDK()
+        if notification:
+            response = library.get_next_launch()
+            if response.status_code is 200:
+                response_json = response.json()
+                launch_data = response_json['launches']
+                for launch in launch_data:
+                    launch = launch_json_to_model(launch)
+                    if len(launch.location_name) > 20:
+                        launch.location_name = launch.location_name.split(", ")[0]
+                    else:
+                        launch.location_name = launch.location_name
+                    notification.send_notification(launch)
+            else:
+                logger.error(response.status_code + ' ' + response)
+
+        else:
+            notification.check_next_launch()
+
