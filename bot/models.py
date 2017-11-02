@@ -1,6 +1,41 @@
 from django.db import models
 
 
+class Location(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255, blank=True, default="")
+    country_code = models.CharField(max_length=255, blank=True, default="")
+
+
+class Pad(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255, blank=True, default="")
+    info_url = models.URLField()
+    wiki_url = models.URLField()
+    map_url = models.URLField()
+
+
+class Rocket(models.Model):
+    id = models.IntegerField(primary_key=True)
+    imageURL = models.URLField()
+    name = models.CharField(max_length=255, blank=True, default="")
+    configuration = models.CharField(max_length=255, blank=True, default="")
+    family_name = models.CharField(max_length=255, blank=True, default="")
+
+
+class Agency(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255, blank=True, default="")
+    country_code = models.CharField(max_length=255, blank=True, default="")
+    abbrev = models.CharField(max_length=255, blank=True, default="")
+    type = models.IntegerField(blank=True, null=True)
+    info_url = models.URLField()
+    wiki_url = models.URLField()
+    pads = models.ManyToManyField(Pad)
+    locations = models.ManyToManyField(Location)
+    rockets = models.ManyToManyField(Rocket)
+
+
 class Launch(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255)
@@ -13,13 +48,20 @@ class Launch(models.Model):
     net = models.CharField(max_length=255, null=True)
     window_end = models.CharField(max_length=255, null=True)
     window_start = models.CharField(max_length=255, null=True)
-    rocket_name = models.CharField(max_length=255, blank=True, default="")
-    mission_name = models.CharField(max_length=255, blank=True, default="")
-    mission_description = models.CharField(max_length=2048, blank=True, default="")
-    mission_type = models.CharField(max_length=255, blank=True, default="")
-    location_name = models.CharField(max_length=255, blank=True, default="")
-    lsp_id = models.IntegerField(blank=True, null=True)
-    lsp_name = models.CharField(max_length=255, blank=True, default="")
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, null=True)
+
+
+class LSP(Agency):
+    launches = models.ManyToManyField(Launch)
+    super
+
+
+class Mission(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255, blank=True, default="")
+    description = models.CharField(max_length=2048, blank=True, default="")
+    type = models.IntegerField(blank=True, null=True)
+    type_name = models.CharField(max_length=255, blank=True, default="")
 
 
 class VidURLs(models.Model):
