@@ -31,6 +31,11 @@ def launch_json_to_model(data):
         name = name.split(" |")[0]
     if len(location_name) > 20:
         location_name = location_name.split(", ")[0]
+    lsp_id = None
+    lsp_name = ""
+    if 'lsp' in data:
+        lsp_id = data['lsp']['id']
+        lsp_name = data['lsp']['name']
 
     try:
         launch = Launch.objects.get(id=id)
@@ -49,6 +54,8 @@ def launch_json_to_model(data):
         launch.net = net
         launch.window_end = window_end
         launch.window_start = window_start
+        launch.lsp_id = lsp_id
+        launch.lsp_name = lsp_name
         launch.save()
 
         launch.vid_urls.all().delete()
@@ -61,7 +68,8 @@ def launch_json_to_model(data):
                                        westamp=westamp, inhold=inhold, rocket_name=rocket_name,
                                        mission_name=mission_name, location_name=location_name, img_url=img_url, net=net,
                                        window_start=window_start, window_end=window_end,
-                                       mission_description=mission_description, mission_type=mission_type)
+                                       mission_description=mission_description, mission_type=mission_type,
+                                       lsp_id=lsp_id, lsp_name=lsp_name)
         for url in vid_urls:
             VidURLs.objects.create(vid_url=url, launch=launch)
         check_notification(launch)

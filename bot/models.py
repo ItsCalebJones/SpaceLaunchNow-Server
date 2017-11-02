@@ -18,6 +18,8 @@ class Launch(models.Model):
     mission_description = models.CharField(max_length=2048, blank=True, default="")
     mission_type = models.CharField(max_length=255, blank=True, default="")
     location_name = models.CharField(max_length=255, blank=True, default="")
+    lsp_id = models.IntegerField(blank=True, null=True)
+    lsp_name = models.CharField(max_length=255, blank=True, default="")
 
 
 class VidURLs(models.Model):
@@ -26,7 +28,6 @@ class VidURLs(models.Model):
 
     def __unicode__(self):
         return '%s' % self.vid_url
-
 
 
 class Notification(models.Model):
