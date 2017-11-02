@@ -99,7 +99,7 @@
 
             <h2 class="mt-4">Watch the Launch</h2>
             <!-- Title -->
-            {% if youtube_urls|length > 1 %}
+            {% if youtube_urls|length > 0 %}
             {% for url in youtube_urls %}
             {% video url as my_video %}
             {% video my_video 'medium' %}
