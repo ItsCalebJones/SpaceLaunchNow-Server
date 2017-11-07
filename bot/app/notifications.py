@@ -205,9 +205,13 @@ class NotificationServer:
 
         # Create a notification
         contents = '%s launching from %s' % (launch.name, launch.location_set.all()[0].name)
+        if self.DEBUG:
+            segments = ['Debug']
+        else:
+            segments = ['Notifications_Enabled', 'Debug']
         kwargs = dict(
             content_available=True,
-            included_segments=['Debug'],
+            included_segments=segments,
             isAndroid=True,
             data={"silent": True,
                   "background": True,

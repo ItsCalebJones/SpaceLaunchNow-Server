@@ -127,7 +127,7 @@ class DigestServer:
                 launches.append(launch)
             return launches
         else:
-            logger.error(response.status_code + ' ' + response)
+            logger.error(str(response.status_code) + ' ' + response.text)
 
     def check_launch_daily(self):
         confirmed_launches = []
@@ -146,13 +146,16 @@ class DigestServer:
     def check_launch_weekly(self):
         this_weeks_confirmed_launches = []
         this_weeks_possible_launches = []
-        for launch in self.get_next_weeks_launches():
-            update_notification_record(launch)
-            if launch.status == 1 and launch.netstamp > 0:
-                this_weeks_confirmed_launches.append(launch)
-            elif launch.status == 0 or launch.netstamp == 0:
-                this_weeks_possible_launches.append(launch)
-        self.send_weekly_to_twitter(this_weeks_possible_launches, this_weeks_confirmed_launches)
+        try:
+            for launch in self.get_next_weeks_launches():
+                update_notification_record(launch)
+                if launch.status == 1 and launch.netstamp > 0:
+                    this_weeks_confirmed_launches.append(launch)
+                elif launch.status == 0 or launch.netstamp == 0:
+                    this_weeks_possible_launches.append(launch)
+            self.send_weekly_to_twitter(this_weeks_possible_launches, this_weeks_confirmed_launches)
+        except TypeError as e:
+            logger.error(e)
 
     def send_weekly_to_twitter(self, possible, confirmed):
         logger.info("Total launches found - confirmed: %s possible: %s" % (len(confirmed), len(possible)))
