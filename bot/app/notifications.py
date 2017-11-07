@@ -10,7 +10,7 @@ from bot.libraries.onesignalsdk import OneSignalSdk
 from bot.utils.config import keys
 from bot.models import Notification
 from bot.utils.deserializer import launch_json_to_model
-from bot.utils.util import seconds_to_time
+from bot.utils.util import seconds_to_time, get_segments
 import logging
 
 AUTH_TOKEN_HERE = keys['AUTH_TOKEN_HERE']
@@ -205,41 +205,44 @@ class NotificationServer:
 
         # Create a notification
         contents = '%s launching from %s' % (launch.name, launch.location_set.all()[0].name)
+        include_segments = get_segments(launch)
+        exclude_segments = []
         if self.DEBUG:
-            segments = ['Debug']
-        else:
-            segments = ['Notifications_Enabled', 'Debug']
+            exclude_segments = ['Production']
         kwargs = dict(
             content_available=True,
-            included_segments=segments,
+            included_segments=include_segments,
+            exclude_segments=exclude_segments,
             isAndroid=True,
             data={"silent": True,
                   "background": True,
                   "launch_id": launch.id,
                   "launch_name": launch.name,
-                  "launch_image": launch.rocket_set.all()[0].imageURL,
+                  "launch_image": launch.rocket_set.first().imageURL,
                   "launch_net": launch.net,
-                  "launch_location": launch.location_set.all()[0].name,
-                  "launch_lsp": launch.lsp_set.all()[0].id,
-                  "launch_rocket_agency": launch.rocket_set.all()[0].agency_set.all()[0].id,
-                  "launch_location_agency": launch.location_set.all()[0].pad_set.all()[0].agency_set.all()[0].id}
+                  "launch_location": launch.location_set.first().name
+                  }
         )
         url = 'https://spacelaunchnow.me/launch/%d/' % launch.id
         heading = 'Space Launch Now'
-        if not self.DEBUG:
-            logger.debug('Sending notification - %s' % contents)
-            response = self.one_signal.create_notification(contents, heading, url, **kwargs)
-            if response.status_code == 200:
-                logger.info('Response received %s %s' % (response.status_code, response.json()))
-            else:
-                logger.error(response.text)
+        logger.debug('Sending notification - %s' % contents)
+        response = self.one_signal.create_notification(contents, heading, url, **kwargs)
+        if response.status_code == 200:
+            logger.info('Notification Sent -  Status: %s Response: %s' % (response.status_code, response.json()))
+        else:
+            logger.error(response.text)
 
-            notification_data = response.json()
-            notification_id = notification_data['id']
-            assert notification_data['id'] and notification_data['recipients']
+        notification_data = response.json()
+        notification_id = notification_data['id']
+        assert notification_data['id'] and notification_data['recipients']
 
-            # Get the notification
-            response = self.one_signal.get_notification(APP_ID, notification_id, self.app_auth_key)
-            notification_data = response.json()
-            assert notification_data['id'] == notification_id
-            assert notification_data['contents']['en'] == contents
+        # Get the notification
+        response = self.one_signal.get_notification(APP_ID, notification_id, self.app_auth_key)
+        if response.status_code == 200:
+            logger.info('Notification Status: %s Content: %s' % (response.status_code, response.json()))
+        else:
+            logger.error(response.text)
+        notification_data = response.json()
+        assert notification_data['id'] == notification_id
+        assert notification_data['contents']['en'] == contents
+
