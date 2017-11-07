@@ -30,8 +30,8 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Launch
         fields = (
-            'id', 'name', 'url', 'img_url', 'status', 'netstamp', 'wsstamp', 'westamp', 'location_name', 'rocket_name',
-            'mission_name', 'mission_description', 'mission_type', 'net', 'window_start', 'window_end', 'vid_urls'
+            'id', 'name', 'url', 'status', 'netstamp', 'wsstamp', 'westamp', 'net', 'window_start', 'window_end',
+            'vid_urls'
         )
 
     def create(self, validated_data):
@@ -46,16 +46,10 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     def update(self, instance, validated_data):
         instance.id = validated_data.get('id', instance.id)
         instance.name = validated_data.get('name', instance.name)
-        instance.img_url = validated_data.get('img_url', instance.img_url)
         instance.status = validated_data.get('status', instance.status)
         instance.netstamp = validated_data.get('netstamp', instance.netstamp)
         instance.wsstamp = validated_data.get('wsstamp', instance.wsstamp)
         instance.westamp = validated_data.get('westamp', instance.westamp)
-        instance.location_name = validated_data.get('location_name', instance.location_name)
-        instance.rocket_name = validated_data.get('rocket_name', instance.rocket_name)
-        instance.mission_name = validated_data.get('mission_name', instance.mission_name)
-        instance.mission_description = validated_data.get('mission_description', instance.mission_description)
-        instance.mission_type = validated_data.get('mission_type', instance.mission_type)
         instance.save()
 
         return instance

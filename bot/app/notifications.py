@@ -33,7 +33,7 @@ class NotificationServer:
     def __init__(self, debug=None, version=None):
         self.one_signal = OneSignalSdk(AUTH_TOKEN_HERE, APP_ID)
         if version is None:
-            version = '1.2.1'
+            version = '1.3'
         self.launchLibrary = LaunchLibrarySDK(version=version)
         if debug is None:
             self.DEBUG = False
@@ -85,10 +85,10 @@ class NotificationServer:
             launches = []
             for launch in launch_data:
                 launch = launch_json_to_model(launch)
-                if len(launch.location_name) > 20:
-                    launch.location_name = launch.location_name.split(", ")[0]
+                if len(launch.location_set.all()[0].name) > 20:
+                    launch.location_set.all()[0].name = launch.location_set.all()[0].name.split(", ")[0]
                 else:
-                    launch.location_name = launch.location_name
+                    launch.location_set.all()[0].name = launch.location_set.all()[0].name
                 launch.save()
                 launches.append(launch)
             return launches
@@ -145,33 +145,33 @@ class NotificationServer:
             logger.info('Seconds since last update on Twitter %d for %s' % (time_since_twitter,
                                                                             launch.name))
             if diff <= 86400 and notification.wasNotifiedTwentyFourHour is False:
-                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_name,
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_set.all()[0].name,
                                                                 seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
             elif 3600 >= diff > 600 and time_since_twitter >= 43200 and notification.wasNotifiedOneHour is False:
-                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_name,
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_set.all()[0].name,
                                                                 seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
             elif diff <= 600 and (time_since_twitter >= 600) and notification.wasNotifiedOneHour is False:
-                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_name,
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_set.all()[0].name,
                                                                 seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
         elif notification.last_twitter_post is None:
             if diff <= 86400:
-                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_name,
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_set.all()[0].name,
                                                                 seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
             elif 3600 >= diff > 600:
-                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_name,
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_set.all()[0].name,
                                                                 seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
             elif diff <= 600:
-                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_name,
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_set.all()[0].name,
                                                                 seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
@@ -204,7 +204,7 @@ class NotificationServer:
         logger.info('Creating notification for %s' % launch.name)
 
         # Create a notification
-        contents = '%s launching from %s' % (launch.name, launch.location_name)
+        contents = '%s launching from %s' % (launch.name, launch.location_set.all()[0].name)
         kwargs = dict(
             content_available=True,
             included_segments=['Debug'],
@@ -213,9 +213,12 @@ class NotificationServer:
                   "background": True,
                   "launch_id": launch.id,
                   "launch_name": launch.name,
-                  "launch_image": launch.img_url,
+                  "launch_image": launch.rocket_set.all()[0].imageURL,
                   "launch_net": launch.net,
-                  "launch_location": launch.location_name}
+                  "launch_location": launch.location_set.all()[0].name,
+                  "launch_lsp": launch.lsp_set.all()[0].id,
+                  "launch_rocket_agency": launch.rocket_set.all()[0].agency_set.all()[0].id,
+                  "launch_location_agency": launch.location_set.all()[0].pad_set.all()[0].agency_set.all()[0].id}
         )
         url = 'https://spacelaunchnow.me/launch/%d/' % launch.id
         heading = 'Space Launch Now'

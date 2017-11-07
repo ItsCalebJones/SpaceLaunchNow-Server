@@ -17,7 +17,7 @@ def index(request):
 # Create your views here.
 def next_launch(request):
     youtube_urls = []
-    launchLibrary = LaunchLibrarySDK(version='1.2.2')
+    launchLibrary = LaunchLibrarySDK()
     response = launchLibrary.get_next_launch()
     if response.status_code is 200:
         response_json = response.json()
@@ -35,7 +35,7 @@ def next_launch(request):
 # Create your views here.
 def launch_by_id(request, pk):
     youtube_urls = []
-    launchLibrary = LaunchLibrarySDK(version='1.2.1')
+    launchLibrary = LaunchLibrarySDK()
     response = launchLibrary.get_launch_by_id(pk)
     if response.status_code is 200:
         response_json = response.json()
