@@ -29,7 +29,7 @@ class Command(BaseCommand):
                 debug = True
         version = options['version']
         notification = NotificationServer(debug=debug, version=version)
-        library = LaunchLibrarySDK()
+        library = LaunchLibrarySDK(version=version)
         if notification:
             response = library.get_next_launch()
             if response.status_code is 200:
@@ -37,10 +37,6 @@ class Command(BaseCommand):
                 launch_data = response_json['launches']
                 for launch in launch_data:
                     launch = launch_json_to_model(launch)
-                    if len(launch.location_name) > 20:
-                        launch.location_name = launch.location_name.split(", ")[0]
-                    else:
-                        launch.location_name = launch.location_name
                     notification.send_notification(launch)
             else:
                 logger.error(response.status_code + ' ' + response)

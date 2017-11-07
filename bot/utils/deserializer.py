@@ -1,79 +1,42 @@
-from bot.models import Launch, Notification, VidURLs
+from bot.models import Launch, Notification, VidURLs, Pad, Location, Rocket, Mission, LSP, Agency
 
 
 def launch_json_to_model(data):
     id = data['id']
     name = data['name']
+    if len(name) > 30:
+        name = name.split(" |")[0]
     status = data['status']
     netstamp = data['netstamp']
     wsstamp = data['wsstamp']
     westamp = data['westamp']
     inhold = data['inhold']
-    img_url = None
-    if 'placeholder' not in data['rocket']['imageURL']:
-        img_url = data['rocket']['imageURL']
     net = data['net']
     window_end = data['windowend']
     window_start = data['windowstart']
     vid_urls = data['vidURLs']
-    rocket_name = data['rocket']['name']
-    location_name = data['location']['name']
-    mission_name = "Unknown"
-    mission_type = ""
-    mission_description = ""
-    if len(data['missions']) > 0:
-        mission_name = data['missions'][0]['name']
-        mission_type = data['missions'][0]['typeName']
-        mission_description = data['missions'][0]['description']
-    if location_name is None:
-        location_name = 'Unknown'
-    if len(name) > 30:
-        name = name.split(" |")[0]
-    if len(location_name) > 20:
-        location_name = location_name.split(", ")[0]
-    lsp_id = None
-    lsp_name = ""
-    if 'lsp' in data:
-        lsp_id = data['lsp']['id']
-        lsp_name = data['lsp']['name']
 
-    try:
-        launch = Launch.objects.get(id=id)
-        launch.name = name
-        launch.img_url = img_url
-        launch.status = status
-        launch.netstamp = netstamp
-        launch.wsstamp = wsstamp
-        launch.westamp = westamp
-        launch.inhold = inhold
-        launch.rocket_name = rocket_name
-        launch.mission_name = mission_name
-        launch.mission_description = mission_description
-        launch.mission_type = mission_type
-        launch.location_name = location_name
-        launch.net = net
-        launch.window_end = window_end
-        launch.window_start = window_start
-        launch.lsp_id = lsp_id
-        launch.lsp_name = lsp_name
-        launch.save()
+    launch, created = Launch.objects.get_or_create(id=id)
+    launch.name = name
+    launch.status = status
+    launch.netstamp = netstamp
+    launch.wsstamp = wsstamp
+    launch.westamp = westamp
+    launch.inhold = inhold
+    launch.net = net
+    launch.window_end = window_end
+    launch.window_start = window_start
+    launch.save()
 
-        launch.vid_urls.all().delete()
-        for url in vid_urls:
-            VidURLs.objects.create(vid_url=url, launch=launch)
-        check_notification(launch)
-        return launch
-    except Launch.DoesNotExist:
-        launch = Launch.objects.create(id=id, name=name, status=status, netstamp=netstamp, wsstamp=wsstamp,
-                                       westamp=westamp, inhold=inhold, rocket_name=rocket_name,
-                                       mission_name=mission_name, location_name=location_name, img_url=img_url, net=net,
-                                       window_start=window_start, window_end=window_end,
-                                       mission_description=mission_description, mission_type=mission_type,
-                                       lsp_id=lsp_id, lsp_name=lsp_name)
-        for url in vid_urls:
-            VidURLs.objects.create(vid_url=url, launch=launch)
-        check_notification(launch)
-        return launch
+    launch.vid_urls.all().delete()
+    for url in vid_urls:
+        VidURLs.objects.create(vid_url=url, launch=launch)
+    get_location(launch, data)
+    get_rocket(launch, data)
+    get_mission(launch, data)
+    get_lsp(launch, data)
+    check_notification(launch)
+    return launch
 
 
 def check_notification(launch):
@@ -82,3 +45,66 @@ def check_notification(launch):
             Notification.objects.get_or_create(launch=launch)
     except Notification.DoesNotExist:
         Notification.objects.get_or_create(launch=launch)
+
+
+def get_location(launch, data):
+    if 'location' in data:
+        location, created = Location.objects.get_or_create(id=data['location']['id'])
+        if len(data['location']['name']) > 20:
+            location.name = data['location']['name'].split(", ")[0]
+        else:
+            location.name = data['location']['name']
+        location.country_code = data['location']['countryCode']
+        location.launch.add(launch)
+        location.save()
+
+        if len(data['location']['pads']) > 0:
+            pad, created = Pad.objects.get_or_create(id=data['location']['pads'][0]['id'], location=location)
+            pad.name = data['location']['pads'][0]['name']
+            pad.map_url = data['location']['pads'][0]['mapURL']
+            pad.save()
+            if len(data['location']['pads'][0]['agencies']) > 0:
+                agency, created = Agency.objects.get_or_create(id=data['location']['pads'][0]['agencies'][0]['id'])
+                agency.name = data['location']['pads'][0]['agencies'][0]['name']
+                agency.abbrev = data['location']['pads'][0]['agencies'][0]['abbrev']
+                agency.country_code = data['location']['pads'][0]['agencies'][0]['countryCode']
+                agency.pads.add(pad)
+                agency.save()
+
+
+def get_rocket(launch, data):
+    if 'rocket' in data:
+        rocket, created = Rocket.objects.get_or_create(id=data['rocket']['id'])
+        rocket.name = data['rocket']['name']
+        rocket.family_name = data['rocket']['familyname']
+        rocket.configuration = data['rocket']['configuration']
+        rocket.imageURL = data['rocket']['imageURL']
+        rocket.launches.add(launch)
+        rocket.save()
+        if len(data['rocket']['agencies']) > 0:
+            agency, created = Agency.objects.get_or_create(id=data['rocket']['agencies'][0]['id'])
+            agency.name = data['rocket']['agencies'][0]['name']
+            agency.abbrev = data['rocket']['agencies'][0]['abbrev']
+            agency.country_code = data['rocket']['agencies'][0]['countryCode']
+            agency.rockets.add(rocket)
+            agency.save()
+
+
+def get_mission(launch, data):
+    if len(data['missions']) > 0:
+        mission, created = Mission.objects.get_or_create(id=data['missions'][0]['id'], launch=launch)
+        mission.name = data['missions'][0]['name']
+        mission.type = data['missions'][0]['type']
+        mission.type_name = data['missions'][0]['typeName']
+        mission.description = data['missions'][0]['description']
+        mission.save()
+
+
+def get_lsp(launch, data):
+    if 'lsp' in data:
+        lsp, created = LSP.objects.get_or_create(id=data['lsp']['id'])
+        lsp.name = data['lsp']['name']
+        lsp.country_code = data['lsp']['countryCode']
+        lsp.abbrev = data['lsp']['abbrev']
+        lsp.launches.add(launch)
+        lsp.save()
