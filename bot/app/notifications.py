@@ -126,7 +126,7 @@ class NotificationServer:
             notification.wasNotifiedTwentyFourHour = True
             notification.wasNotifiedTenMinutes = False
         elif diff <= 600:
-            logger.info('Launch is within ten minutes hour.')
+            logger.info('Launch is within ten minutes.')
             notification.wasNotifiedOneHour = True
             notification.wasNotifiedTwentyFourHour = True
             notification.wasNotifiedTenMinutes = True
@@ -223,10 +223,10 @@ class NotificationServer:
                   "launch_location": launch.location_set.first().name
                   }
         )
-        url = 'https://spacelaunchnow.me/launch/%d/' % launch.id
+        # url = 'https://spacelaunchnow.me/launch/%d/' % launch.id
         heading = 'Space Launch Now'
         logger.debug('Sending notification - %s' % contents)
-        response = self.one_signal.create_notification(contents, heading, url, **kwargs)
+        response = self.one_signal.create_notification(contents, heading, **kwargs)
         if response.status_code == 200:
             logger.info('Notification Sent -  Status: %s Response: %s' % (response.status_code, response.json()))
         else:
