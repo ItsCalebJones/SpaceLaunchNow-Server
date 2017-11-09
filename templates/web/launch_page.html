@@ -3,7 +3,7 @@
 {% load embed_video_tags %}
 {% block extrahead %}
 <meta property="fb:app_id" content="746774215504127"/>
-<meta property="og:title" content="{{ launch.name}} - {{launch.mission_name}}"/>
+<meta property="og:title" content="{{ launch.name}} - {{launch.mission_set.0.name}}"/>
 <meta property="og:type" content="website"/>
 <meta property="og:description" content="{{ launch.mission_description }}"/>
 <meta property="og:url" content="https://spacelaunchnow.me/launch/{{launch.id}}/"/>
@@ -53,7 +53,7 @@
 <div class="container" style="margin-top:64px">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/launches">Launches</a></li>
-        <li class="breadcrumb-item active"><a>{{ launch.mission_name}}</a></li>
+        <li class="breadcrumb-item active"><a>{{ launch.mission_set.all.0.name}}</a></li>
     </ol>
     <div class="jumbotron jumbotron-billboard">
         {% if launch.img_url %}
@@ -62,9 +62,9 @@
         <div class="img"></div>
         {% endif %}
         <div class="container">
-            <h1>{{ launch.mission_name }}</h1>
+            <h1>{{ launch.mission_set.all.0.name }}</h1>
 
-            <h2 class="subheading">{{ launch.rocket_name }}</h2>
+            <h2 class="subheading">{{ launch.rocket_set.all.0.name }} - {{ launch.rocket_set.all.0.agency_set.all.0.name }}</h2>
             <span class="meta">NET: {{ launch.net }}</span>
             <div class="countdown" style="margin-top:10em;"></div>
         </div>
@@ -78,15 +78,17 @@
 
         <!-- Post Content Column -->
         <div class="col-lg-8">
-
+            {% with mission=launch.mission_set.all.0%}
             <h2>Mission
-                <small>{{ launch.mission_name }}</small>
+                <small>{{ mission.name }}</small>
             </h2>
             <!-- Post Content -->
-            <p class="lead">{{ launch.mission_type }}</p>
+            <p class="lead">Type: {{ mission.type_name }}</p>
 
-            <p>{{ launch.mission_description}}</p>
+            <p>{{ mission.description}}</p>
             <hr>
+
+            {% endwith %}
 
             <!-- Date/Time -->
             <h3>Launch Window</h3>

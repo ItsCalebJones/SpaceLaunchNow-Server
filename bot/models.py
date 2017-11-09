@@ -13,6 +13,8 @@ class Launch(models.Model):
     net = models.CharField(max_length=255, null=True)
     window_end = models.CharField(max_length=255, null=True)
     window_start = models.CharField(max_length=255, null=True)
+    # added = models.DateTimeField(auto_now_add=True)
+    # updated = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return self.name
@@ -20,6 +22,7 @@ class Launch(models.Model):
     class Meta:
         verbose_name = 'Launch'
         verbose_name_plural = 'Launches'
+
 
 class Location(models.Model):
     id = models.IntegerField(primary_key=True)
