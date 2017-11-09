@@ -1,6 +1,9 @@
 import requests
+import logging
 from datetime import timedelta
 from django.utils.datetime_safe import datetime
+
+logger = logging.getLogger('bot.notifications')
 
 BASE_URL = 'https://launchlibrary.net/'
 headers = {
@@ -10,8 +13,11 @@ headers = {
 
 class LaunchLibrarySDK(object):
     # Latest stable Version stored.
-    def __init__(self, version='1.2.2'):
-        self.api_url = BASE_URL + version
+    def __init__(self, version='1.3'):
+        if version is None:
+            version = '1.3'
+        self.version = version
+        self.api_url = BASE_URL + self.version
 
     def get_next_launch(self, tbd=False, agency=None, launch_service_provider=None, count=1):
         """
@@ -21,10 +27,9 @@ class LaunchLibrarySDK(object):
         :param count: The number of launch objects to fetch.
         :return: Returns a HTTP Response object
         """
-        if tbd:
-            url = self.api_url + '/launch/next/%d?mode=verbose' % count
-        else:
-            url = self.api_url + '/launch/next/%d?mode=verbose&tbdtime=0&tbddate=0' % count
+
+        url = self.api_url + '/launch/next/%d?mode=verbose&tbdtime=0&tbddate=0' % count
+
         # if agency:
         #     url = url + getLSP
         return send_request(url, method='GET', headers=headers)

@@ -3,9 +3,9 @@ from django.db import models
 
 class Launch(models.Model):
     id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, blank=True)
     img_url = models.CharField(max_length=255, blank=True, null=True)
-    status = models.IntegerField(blank=True)
+    status = models.IntegerField(blank=True, null=True)
     netstamp = models.IntegerField(blank=True, null=True)
     wsstamp = models.IntegerField(blank=True, null=True)
     westamp = models.IntegerField(blank=True, null=True)
@@ -13,11 +13,58 @@ class Launch(models.Model):
     net = models.CharField(max_length=255, null=True)
     window_end = models.CharField(max_length=255, null=True)
     window_start = models.CharField(max_length=255, null=True)
-    rocket_name = models.CharField(max_length=255, blank=True, default="")
-    mission_name = models.CharField(max_length=255, blank=True, default="")
-    mission_description = models.CharField(max_length=2048, blank=True, default="")
-    mission_type = models.CharField(max_length=255, blank=True, default="")
-    location_name = models.CharField(max_length=255, blank=True, default="")
+
+
+class Location(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255, blank=True, default="")
+    country_code = models.CharField(max_length=255, blank=True, default="")
+    launch = models.ManyToManyField(Launch, blank=True)
+
+
+class Pad(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255, blank=True, default="")
+    info_url = models.URLField(blank=True)
+    wiki_url = models.URLField(blank=True)
+    map_url = models.URLField(blank=True)
+    location = models.ForeignKey(Location, blank=True, on_delete=models.CASCADE)
+
+
+class Rocket(models.Model):
+    id = models.IntegerField(primary_key=True)
+    imageURL = models.URLField()
+    name = models.CharField(max_length=255, blank=True, default="")
+    configuration = models.CharField(max_length=255, blank=True, default="")
+    family_name = models.CharField(max_length=255, blank=True, default="")
+    launches = models.ManyToManyField(Launch, blank=True)
+
+
+class Agency(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255, blank=True, default="")
+    country_code = models.CharField(max_length=255, blank=True, default="")
+    abbrev = models.CharField(max_length=255, blank=True, default="")
+    type = models.IntegerField(blank=True, null=True)
+    info_url = models.URLField(blank=True)
+    wiki_url = models.URLField(blank=True)
+    pads = models.ManyToManyField(Pad, blank=True)
+    locations = models.ManyToManyField(Location, blank=True)
+    rockets = models.ManyToManyField(Rocket, blank=True)
+
+
+class LSP(Agency):
+    launches = models.ManyToManyField(Launch, blank=True)
+    super
+
+
+class Mission(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255, blank=True, default="")
+    description = models.CharField(max_length=2048, blank=True, default="")
+    type = models.IntegerField(blank=True, null=True)
+    type_name = models.CharField(max_length=255, blank=True, default="")
+    launch = models.ForeignKey(Launch, blank=True, on_delete=models.CASCADE)
 
 
 class VidURLs(models.Model):
@@ -26,7 +73,6 @@ class VidURLs(models.Model):
 
     def __unicode__(self):
         return '%s' % self.vid_url
-
 
 
 class Notification(models.Model):
