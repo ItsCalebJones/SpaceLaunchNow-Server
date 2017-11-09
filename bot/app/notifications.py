@@ -10,7 +10,7 @@ from bot.libraries.onesignalsdk import OneSignalSdk
 from bot.utils.config import keys
 from bot.models import Notification
 from bot.utils.deserializer import launch_json_to_model
-from bot.utils.util import seconds_to_time
+from bot.utils.util import seconds_to_time, get_segments
 import logging
 
 AUTH_TOKEN_HERE = keys['AUTH_TOKEN_HERE']
@@ -33,7 +33,7 @@ class NotificationServer:
     def __init__(self, debug=None, version=None):
         self.one_signal = OneSignalSdk(AUTH_TOKEN_HERE, APP_ID)
         if version is None:
-            version = '1.2.1'
+            version = '1.3'
         self.launchLibrary = LaunchLibrarySDK(version=version)
         if debug is None:
             self.DEBUG = False
@@ -85,10 +85,10 @@ class NotificationServer:
             launches = []
             for launch in launch_data:
                 launch = launch_json_to_model(launch)
-                if len(launch.location_name) > 20:
-                    launch.location_name = launch.location_name.split(", ")[0]
+                if len(launch.location_set.all()[0].name) > 20:
+                    launch.location_set.all()[0].name = launch.location_set.all()[0].name.split(", ")[0]
                 else:
-                    launch.location_name = launch.location_name
+                    launch.location_set.all()[0].name = launch.location_set.all()[0].name
                 launch.save()
                 launches.append(launch)
             return launches
@@ -126,7 +126,7 @@ class NotificationServer:
             notification.wasNotifiedTwentyFourHour = True
             notification.wasNotifiedTenMinutes = False
         elif diff <= 600:
-            logger.info('Launch is within ten minutes hour.')
+            logger.info('Launch is within ten minutes.')
             notification.wasNotifiedOneHour = True
             notification.wasNotifiedTwentyFourHour = True
             notification.wasNotifiedTenMinutes = True
@@ -145,33 +145,33 @@ class NotificationServer:
             logger.info('Seconds since last update on Twitter %d for %s' % (time_since_twitter,
                                                                             launch.name))
             if diff <= 86400 and notification.wasNotifiedTwentyFourHour is False:
-                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_name,
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_set.all()[0].name,
                                                                 seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
             elif 3600 >= diff > 600 and time_since_twitter >= 43200 and notification.wasNotifiedOneHour is False:
-                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_name,
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_set.all()[0].name,
                                                                 seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
             elif diff <= 600 and (time_since_twitter >= 600) and notification.wasNotifiedOneHour is False:
-                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_name,
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_set.all()[0].name,
                                                                 seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
         elif notification.last_twitter_post is None:
             if diff <= 86400:
-                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_name,
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_set.all()[0].name,
                                                                 seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
             elif 3600 >= diff > 600:
-                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_name,
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_set.all()[0].name,
                                                                 seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
             elif diff <= 600:
-                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_name,
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_set.all()[0].name,
                                                                 seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
@@ -204,30 +204,45 @@ class NotificationServer:
         logger.info('Creating notification for %s' % launch.name)
 
         # Create a notification
-        contents = '%s launching from %s' % (launch.name, launch.location_name)
+        contents = '%s launching from %s' % (launch.name, launch.location_set.all()[0].name)
+        include_segments = get_segments(launch)
+        exclude_segments = []
+        if self.DEBUG:
+            exclude_segments = ['Production']
         kwargs = dict(
             content_available=True,
-            included_segments=['Debug'],
+            included_segments=include_segments,
+            exclude_segments=exclude_segments,
             isAndroid=True,
             data={"silent": True,
-                  "background": True}
+                  "background": True,
+                  "launch_id": launch.id,
+                  "launch_name": launch.name,
+                  "launch_image": launch.rocket_set.first().imageURL,
+                  "launch_net": launch.net,
+                  "launch_location": launch.location_set.first().name
+                  }
         )
-        url = 'https://launchlibrary.net'
+        # url = 'https://spacelaunchnow.me/launch/%d/' % launch.id
         heading = 'Space Launch Now'
-        if not self.DEBUG:
-            logger.debug('Sending notification - %s' % contents)
-            response = self.one_signal.create_notification(contents, heading, url, **kwargs)
-            if response.status_code == 200:
-                logger.info('Response received %s %s' % (response.status_code, response.json()))
-            else:
-                logger.error(response.text)
+        logger.debug('Sending notification - %s' % contents)
+        response = self.one_signal.create_notification(contents, heading, **kwargs)
+        if response.status_code == 200:
+            logger.info('Notification Sent -  Status: %s Response: %s' % (response.status_code, response.json()))
+        else:
+            logger.error(response.text)
 
-            notification_data = response.json()
-            notification_id = notification_data['id']
-            assert notification_data['id'] and notification_data['recipients']
+        notification_data = response.json()
+        notification_id = notification_data['id']
+        assert notification_data['id'] and notification_data['recipients']
 
-            # Get the notification
-            response = self.one_signal.get_notification(APP_ID, notification_id, self.app_auth_key)
-            notification_data = response.json()
-            assert notification_data['id'] == notification_id
-            assert notification_data['contents']['en'] == contents
+        # Get the notification
+        response = self.one_signal.get_notification(APP_ID, notification_id, self.app_auth_key)
+        if response.status_code == 200:
+            logger.info('Notification Status: %s Content: %s' % (response.status_code, response.json()))
+        else:
+            logger.error(response.text)
+        notification_data = response.json()
+        assert notification_data['id'] == notification_id
+        assert notification_data['contents']['en'] == contents
+

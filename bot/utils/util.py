@@ -39,3 +39,44 @@ def seconds_to_time(seconds):
         return "{0:.0f} hours, {1:.0f} minutes".format(hours, minutes)
     elif minutes > 0:
         return "{0:.0f} minutes".format(minutes)
+
+
+def get_segments(launch):
+    location_agency_id = 0
+    rocket_agency_id = 0
+    location_id = 0
+    segments = ['ALL-Filter']
+    if launch.location_set.first() is not None:
+        location_id = launch.location_set.first().id
+        if launch.location_set.first().pad_set.first() is not None:
+            pad_id = launch.location_set.first().pad_set.first().id
+            if launch.location_set.first().pad_set.first().agency_set.first() is not None:
+                location_agency_id = launch.location_set.first().pad_set.first().agency_set.first().id
+    if launch.rocket_set.first() is not None:
+        rocket_id = launch.rocket_set.first().id
+        if launch.rocket_set.first().agency_set.first() is not None:
+            rocket_agency_id = launch.rocket_set.first().agency_set.first().id
+    lsp_id = launch.lsp_set.first().id
+
+    if lsp_id == 44 or location_agency_id == 44 or rocket_agency_id == 44:
+        segments.append('NASA')
+    if lsp_id == 115 or location_agency_id == 115 or rocket_agency_id == 115:
+        segments.append('Arianespace')
+    if lsp_id == 121 or location_agency_id == 121 or rocket_agency_id == 121:
+        segments.append('SpaceX')
+    if lsp_id == 124 or location_agency_id == 124 or rocket_agency_id == 124:
+        segments.append('ULA')
+    if lsp_id == 111 or location_agency_id == 111 or rocket_agency_id == 111 or location_agency_id == 163 \
+            or rocket_agency_id == 163 or location_agency_id == 63 or rocket_agency_id == 63:
+        segments.append('Roscosmos')
+    if lsp_id == 88 or location_agency_id == 88 or rocket_agency_id == 88:
+        segments.append('CASC')
+    if location_id == 17:
+        segments.append('KSC')
+    if location_id == 17:
+        segments.append('Cape')
+    if location_id == 11:
+        segments.append('Ples')
+    if location_id == 11:
+        segments.append('Van')
+    return segments
