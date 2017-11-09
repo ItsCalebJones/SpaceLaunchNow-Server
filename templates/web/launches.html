@@ -84,7 +84,7 @@
                             <h3>{{ launch.name }}<br>
                                 <small><i>{{ launch.net }}</i></small>
                             </h3>
-                            <p>{{ launch.mission_description }}</p>
+                            <p>{{ launch.mission_set.all.0.description }}</p>
                             <a class="btn btn-primary" href="/launch/{{ launch.id}}">Explore</a>
                         </div>
                     </div>

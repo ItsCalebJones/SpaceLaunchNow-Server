@@ -78,7 +78,11 @@ def get_rocket(launch, data):
         rocket.name = data['rocket']['name']
         rocket.family_name = data['rocket']['familyname']
         rocket.configuration = data['rocket']['configuration']
-        rocket.imageURL = data['rocket']['imageURL']
+        if 'placeholder' not in data['rocket']['imageURL']:
+            rocket.imageURL = data['rocket']['imageURL']
+            if rocket.imageURL is not None:
+                launch.img_url = rocket.imageURL
+                launch.save()
         rocket.launches.add(launch)
         rocket.save()
         if len(data['rocket']['agencies']) > 0:
