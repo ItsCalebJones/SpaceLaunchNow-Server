@@ -14,6 +14,10 @@ class Launcher(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = 'Launcher'
+        verbose_name_plural = 'Launchers'
+
 
 class Orbiter(models.Model):
     name = models.CharField(max_length=200)
@@ -26,6 +30,10 @@ class Orbiter(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = 'Orbiter'
+        verbose_name_plural = 'Orbiters'
 
 
 class LauncherDetail(models.Model):
@@ -53,3 +61,7 @@ class LauncherDetail(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = 'Launcher Detail'
+        verbose_name_plural = 'Launcher Details'
