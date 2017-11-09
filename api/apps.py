@@ -6,3 +6,5 @@ from django.apps import AppConfig
 
 class ApiConfig(AppConfig):
     name = 'api'
+    verbose_name = 'Mobile API'
+    icon = '<i class="material-icons">flag</i>'
