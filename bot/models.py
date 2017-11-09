@@ -14,12 +14,25 @@ class Launch(models.Model):
     window_end = models.CharField(max_length=255, null=True)
     window_start = models.CharField(max_length=255, null=True)
 
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Launch'
+        verbose_name_plural = 'Launches'
 
 class Location(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255, blank=True, default="")
     country_code = models.CharField(max_length=255, blank=True, default="")
     launch = models.ManyToManyField(Launch, blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Location'
+        verbose_name_plural = 'Locations'
 
 
 class Pad(models.Model):
@@ -30,6 +43,13 @@ class Pad(models.Model):
     map_url = models.URLField(blank=True)
     location = models.ForeignKey(Location, blank=True, on_delete=models.CASCADE)
 
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Pad'
+        verbose_name_plural = 'Pads'
+
 
 class Rocket(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -38,6 +58,13 @@ class Rocket(models.Model):
     configuration = models.CharField(max_length=255, blank=True, default="")
     family_name = models.CharField(max_length=255, blank=True, default="")
     launches = models.ManyToManyField(Launch, blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Rocket'
+        verbose_name_plural = 'Rockets'
 
 
 class Agency(models.Model):
@@ -52,10 +79,21 @@ class Agency(models.Model):
     locations = models.ManyToManyField(Location, blank=True)
     rockets = models.ManyToManyField(Rocket, blank=True)
 
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Agency'
+        verbose_name_plural = 'Agencies'
+
 
 class LSP(Agency):
     launches = models.ManyToManyField(Launch, blank=True)
     super
+
+    class Meta:
+        verbose_name = 'LSP'
+        verbose_name_plural = 'LSPs'
 
 
 class Mission(models.Model):
@@ -66,6 +104,13 @@ class Mission(models.Model):
     type_name = models.CharField(max_length=255, blank=True, default="")
     launch = models.ForeignKey(Launch, blank=True, on_delete=models.CASCADE)
 
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Mission'
+        verbose_name_plural = 'Missions'
+
 
 class VidURLs(models.Model):
     vid_url = models.URLField(max_length=200)
@@ -73,6 +118,10 @@ class VidURLs(models.Model):
 
     def __unicode__(self):
         return '%s' % self.vid_url
+
+    class Meta:
+        verbose_name = 'Video URL'
+        verbose_name_plural = 'Video URLs'
 
 
 class Notification(models.Model):
@@ -85,6 +134,12 @@ class Notification(models.Model):
     last_net_stamp = models.IntegerField(blank=True, null=True)
     last_net_stamp_timestamp = models.DateTimeField(blank=True, null=True)
 
+    def __unicode__(self):
+        return self.launch.name
+
+    class Meta:
+        verbose_name = 'Notification'
+        verbose_name_plural = 'Notifications'
 
 class DailyDigestRecord(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -93,3 +148,9 @@ class DailyDigestRecord(models.Model):
     count = models.IntegerField(null=True)
     data = models.TextField(max_length=4096, blank=True, null=True)
 
+    def __unicode__(self):
+        return self.id
+
+    class Meta:
+        verbose_name = 'Daily Digest - Record'
+        verbose_name_plural = 'Daily Digest - Records'
