@@ -85,10 +85,10 @@ class NotificationServer:
             launches = []
             for launch in launch_data:
                 launch = launch_json_to_model(launch)
-                if len(launch.location_set.all()[0].name) > 20:
-                    launch.location_set.all()[0].name = launch.location_set.all()[0].name.split(", ")[0]
+                if len(launch.location_set.first().name) > 20:
+                    launch.location_set.first().name = launch.location_set.first().name.split(", ")[0]
                 else:
-                    launch.location_set.all()[0].name = launch.location_set.all()[0].name
+                    launch.location_set.first().name = launch.location_set.first().name
                 launch.save()
                 launches.append(launch)
             return launches
@@ -145,33 +145,33 @@ class NotificationServer:
             logger.info('Seconds since last update on Twitter %d for %s' % (time_since_twitter,
                                                                             launch.name))
             if diff <= 86400 and notification.wasNotifiedTwentyFourHour is False:
-                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_set.all()[0].name,
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_set.first().name, launch.location_set.first().name,
                                                                 seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
             elif 3600 >= diff > 600 and time_since_twitter >= 43200 and notification.wasNotifiedOneHour is False:
-                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_set.all()[0].name,
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_set.first().name, launch.location_set.first().name,
                                                                 seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
             elif diff <= 600 and (time_since_twitter >= 600) and notification.wasNotifiedOneHour is False:
-                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_set.all()[0].name,
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_set.first().name, launch.location_set.first().name,
                                                                 seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
         elif notification.last_twitter_post is None:
             if diff <= 86400:
-                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_set.all()[0].name,
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_set.first().name, launch.location_set.first().name,
                                                                 seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
             elif 3600 >= diff > 600:
-                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_set.all()[0].name,
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_set.first().name, launch.location_set.first().name,
                                                                 seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
             elif diff <= 600:
-                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_name, launch.location_set.all()[0].name,
+                message = '%s | %s launching from %s in %s.' % (launch.name, launch.mission_set.first().name, launch.location_set.first().name,
                                                                 seconds_to_time(diff))
                 logger.info(message)
                 self.send_to_twitter(message, notification)
@@ -204,7 +204,7 @@ class NotificationServer:
         logger.info('Creating notification for %s' % launch.name)
 
         # Create a notification
-        contents = '%s launching from %s' % (launch.name, launch.location_set.all()[0].name)
+        contents = '%s launching from %s' % (launch.name, launch.location_set.first().name)
         include_segments = get_segments(launch)
         exclude_segments = []
         if self.DEBUG:
