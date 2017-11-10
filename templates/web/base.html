@@ -1,0 +1,116 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Space Launch Now</title>
+
+    <link rel="shortcut icon" href="{%  static 'img/favicon.ico' %}">
+    <!-- Bootstrap core CSS -->
+    <link href="{% static  'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Custom fonts for this template -->
+    <link href="{% static  'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+          rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic'
+          rel='stylesheet' type='text/css'>
+
+    <!-- Plugin CSS -->
+    <link href="{% static  'vendor/magnific-popup/magnific-popup.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static  'css/creative.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static  'css/Footer-with-button-logo.css' %}">
+
+    <link rel="stylesheet" href="{% static  'compiled/flipclock.css' %}">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+    <script src="{% static  'compiled/flipclock.js' %}"></script>
+    {% block extrahead %}
+    {% endblock %}
+</head>
+
+<body id="page-top">
+
+{% block content %}
+{% endblock %}
+
+<footer id="myFooter">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3">
+
+                <div class="logo">
+                    <img style='width:80%;' alt='Get it on Google Play'
+                         src="{% static  'img/ic_launcher.png' %}"/></a>
+                </div>
+
+            </div>
+            <div class="col-sm-2">
+                <h5>About Me</h5>
+                <ul>
+                    <li><a href="http://calebjones.me/">Blog</a></li>
+                    <li><a href="https://twitter.com/koun7erfit">Twitter</a></li>
+                    <li><a href="https://go.twitch.tv/koun7erfit">Twitch</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-2">
+                <h5>Other</h5>
+                <ul>
+                    <li><a href="https://play.google.com/store/apps/dev?id=7111684947714289915">Apps</a></li>
+                    <li><a href="https://play.google.com/store/apps/details?id=me.calebjones.pubgtracker">PUBG Stat Tracker</a></li>
+                    <li><a href="https://play.google.com/store/apps/details?id=me.calebjones.blogsite">The Jones Theory</a></li>
+
+                </ul>
+            </div>
+            <div class="col-sm-2">
+                <h5>Support</h5>
+                <ul>
+
+                    <li><a href="https://www.reddit.com/r/spacelaunchnow/">Reddit</a></li>
+                    <li><a href="mailto:support@calebjones.me">Email</a></li>
+                    <li><a href="https://discord.gg/chaQsQW">LL - Discord</a></li>
+                </ul>
+            </div>
+            <div class="col-sm-3">
+                <div class="social-networks">
+                    <a href="https://twitter.com/SpaceLaunchNow" class="twitter"><i class="fa fa-twitter"></i></a>
+                    <a href="https://www.facebook.com/spacelaunchnow/" class="facebook"><i
+                            class="fa fa-facebook"></i></a>
+                    <a href="https://www.reddit.com/r/spacelaunchnow/" class="reddit"><i class="fa fa-reddit"></i></a>
+                    <a href="https://www.reddit.com/r/spacelaunchnow/" class="github"><i class="fa fa-github"></i></a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-copyright">
+        <p>© 2017 Copyright | Powered by <a href="https://launchlibrary.net/docs/1.2.1/api.html">Launch
+            Library</a></p>
+    </div>
+</footer>
+<!-- Bootstrap core JavaScript -->
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static  'vendor/popper/popper.min.js' %}"></script>
+<script src="{% static  'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+
+<!-- Plugin JavaScript -->
+<script src="{% static  'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+<script src="{% static  'vendor/scrollreveal/scrollreveal.min.js' %}"></script>
+<script src="{% static  'vendor/magnific-popup/jquery.magnific-popup.min.js' %}"></script>
+
+<!-- Custom scripts for this template -->
+<script src="{% static  'js/creative.js' %}"></script>
+
+</body>
+
+</html>
+
