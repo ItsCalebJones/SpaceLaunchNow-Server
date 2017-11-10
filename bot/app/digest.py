@@ -1,5 +1,9 @@
 import json
+import os
+import urllib
 from datetime import timedelta
+
+import requests
 from djcelery.tests.req import RequestFactory
 from num2words import num2words
 import re
@@ -14,7 +18,6 @@ from bot.models import Notification, DailyDigestRecord
 from bot.serializer import LaunchSerializer
 from bot.utils.config import keys
 from bot.utils.deserializer import launch_json_to_model
-from rest_framework.request import Request
 # import the logging library
 
 # Get an instance of a logger
@@ -51,7 +54,7 @@ class DigestServer:
     def __init__(self, debug=None, version=None):
         self.one_signal = OneSignalSdk(AUTH_TOKEN_HERE, APP_ID)
         if version is None:
-            version = '1.2.1'
+            version = '1.3'
         self.launchLibrary = LaunchLibrarySDK(version=version)
         if debug is None:
             self.DEBUG = False
@@ -66,6 +69,10 @@ class DigestServer:
         self.twitter = Twitter(
             auth=OAuth(keys['TOKEN_KEY'], keys['TOKEN_SECRET'], keys['CONSUMER_KEY'], keys['CONSUMER_SECRET'])
         )
+        self.twitter_upload = Twitter(domain='upload.twitter.com',
+                                      auth=OAuth(keys['TOKEN_KEY'], keys['TOKEN_SECRET'], keys['CONSUMER_KEY'],
+                                                 keys['CONSUMER_SECRET'])
+        )
         self.time_to_next_launch = None
         self.next_launch = None
 
@@ -79,7 +86,7 @@ class DigestServer:
 
     def get_next_launches(self):
         logger.info("Daily Digest running...")
-        response = self.launchLibrary.get_next_launches()
+        response = self.launchLibrary.get_next_launch(count=5)
         if response.status_code is 200:
             response_json = response.json()
             launch_data = response_json['launches']
@@ -120,7 +127,7 @@ class DigestServer:
                 launches.append(launch)
             return launches
         else:
-            logger.error(response.status_code + ' ' + response)
+            logger.error(str(response.status_code) + ' ' + response.text)
 
     def check_launch_daily(self):
         confirmed_launches = []
@@ -139,13 +146,16 @@ class DigestServer:
     def check_launch_weekly(self):
         this_weeks_confirmed_launches = []
         this_weeks_possible_launches = []
-        for launch in self.get_next_weeks_launches():
-            update_notification_record(launch)
-            if launch.status == 1 and launch.netstamp > 0:
-                this_weeks_confirmed_launches.append(launch)
-            elif launch.status == 0 or launch.netstamp == 0:
-                this_weeks_possible_launches.append(launch)
-        self.send_weekly_to_twitter(this_weeks_possible_launches, this_weeks_confirmed_launches)
+        try:
+            for launch in self.get_next_weeks_launches():
+                update_notification_record(launch)
+                if launch.status == 1 and launch.netstamp > 0:
+                    this_weeks_confirmed_launches.append(launch)
+                elif launch.status == 0 or launch.netstamp == 0:
+                    this_weeks_possible_launches.append(launch)
+            self.send_weekly_to_twitter(this_weeks_possible_launches, this_weeks_confirmed_launches)
+        except TypeError as e:
+            logger.error(e)
 
     def send_weekly_to_twitter(self, possible, confirmed):
         logger.info("Total launches found - confirmed: %s possible: %s" % (len(confirmed), len(possible)))
@@ -187,34 +197,46 @@ class DigestServer:
         if len(confirmed) == 1:
             launch = confirmed[0]
             day = datetime.fromtimestamp(int(launch.netstamp)).replace(tzinfo=pytz.UTC).strftime("%A")
-            message = "%s %s launching from %s on %s. (1/%i)" % (compact_header, launch.name, launch.location_name, day,
+            message = "%s %s launching from %s on %s. (1/%i)" % (compact_header, launch.name, launch.location_set.all()[0].name, day,
                                                                  total)
-            self.send_twitter_update(message)
+            if launch.rocket_set.all()[0].imageURL is not None:
+                self.send_twitter_update(message, image=self.get_image_id(launch.rocket_set.all()[0].imageURL))
+            else:
+                self.send_twitter_update(message)
         elif len(confirmed) > 1:
             for index, launch in enumerate(confirmed, start=1):
                 message = "%s %s launching from %s on %s. (%i/%i)" % (compact_header, launch.name,
-                                                                      launch.location_name,
+                                                                      launch.location_set.all()[0].name,
                                                                       datetime
                                                                       .fromtimestamp(int(launch.netstamp))
                                                                       .replace(tzinfo=pytz.UTC)
                                                                       .strftime("%A"),
                                                                       index,
                                                                       total)
-                self.send_twitter_update(message)
+                if launch.rocket_set.all()[0].imageURL is not None:
+                    self.send_twitter_update(message, image=self.get_image_id(launch.rocket_set.all()[0].imageURL))
+                else:
+                    self.send_twitter_update(message)
         if len(possible) == 1:
             launch = possible[0]
             message = "%s %s might launch this week from %s. (%i/%i)" % (compact_header, launch.name,
-                                                                         launch.location_name,
+                                                                         launch.location_set.all()[0].name,
                                                                          len(confirmed) + 1, total)
-            self.send_twitter_update(message)
+            if launch.rocket_set.all()[0].imageURL is not None:
+                self.send_twitter_update(message, image=self.get_image_id(launch.rocket_set.all()[0].imageURL))
+            else:
+                self.send_twitter_update(message)
         elif len(possible) > 1:
             for index, launch in enumerate(possible, start=1):
                 message = "%s %s might be launching from %s. (%i/%i)" % (compact_header,
                                                                          launch.name,
-                                                                         launch.location_name,
+                                                                         launch.location_set.all()[0].name,
                                                                          index + len(confirmed),
                                                                          total)
-                self.send_twitter_update(message)
+                if launch.rocket_set.all()[0].imageURL is not None:
+                    self.send_twitter_update(message, image=self.get_image_id(launch.rocket_set.all()[0].imageURL))
+                else:
+                    self.send_twitter_update(message)
 
     def send_daily_to_twitter(self, possible, confirmed):
         logger.debug("Confirmed count - %s | Possible Count - %s" % (len(confirmed), len(possible)))
@@ -227,57 +249,62 @@ class DigestServer:
 
             messages = messages + message + "\n"
             self.send_twitter_update(message)
-            launch = self.get_next_launch()
-            current_time = datetime.utcnow()
-            launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
-            logger.info("One launch - sending message. ")
-            message = "%s %s launching from %s in %s hours." % (header, launch.name, launch.location_name,
-                                                                '{0:g}'.format(float(round(abs(
-                                                                    launch_time - current_time)
-                                                                    .total_seconds() / 3600.0))))
+
         if len(confirmed) == 1 and len(possible) == 0:
             launch = confirmed[0]
 
             current_time = datetime.utcnow()
             launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
             logger.info("One launch - sending message. ")
-            message = "%s %s launching from %s in %s hours." % (header, launch.name, launch.location_name,
+            message = "%s %s launching from %s in %s hours." % (header, launch.name, launch.location_set.all()[0].name,
                                                                 '{0:g}'.format(float(round(abs(
                                                                     launch_time - current_time)
                                                                                            .total_seconds() / 3600.0))))
             messages = messages + message + "\n"
-            self.send_twitter_update(message)
+            if launch.rocket_set.all()[0].imageURL is not None:
+                self.send_twitter_update(message, image=self.get_image_id(launch.rocket_set.all()[0].imageURL))
+            else:
+                self.send_twitter_update(message)
 
         if len(confirmed) == 0 and len(possible) == 1:
             launch = possible[0]
 
             logger.info("One launch - sending message. ")
             date = datetime.utcfromtimestamp(launch.netstamp).replace(tzinfo=pytz.UTC)
-            message = "%s %s might be launching from %s on %s." % (header, launch.name, launch.location_name,
+            message = "%s %s might be launching from %s on %s." % (header, launch.name, launch.location_set.all()[0].name,
                                                                    date.strftime("%A at %H:%S %Z"))
             messages = messages + message + "\n"
-            self.send_twitter_update(message)
+            if launch.rocket_set.all()[0].imageURL is not None:
+                self.send_twitter_update(message, image=self.get_image_id(launch.rocket_set.all()[0].imageURL))
+            else:
+                self.send_twitter_update(message)
 
         if len(confirmed) == 1 and len(possible) == 1:
             possible_launch = possible[0]
             confirmed_launch = confirmed[0]
 
             logger.info("One launch possible - sending message. ")
-            date = datetime.utcfromtimestamp(launch.netstamp).replace(tzinfo=pytz.UTC)
+            date = datetime.utcfromtimestamp(possible_launch.netstamp).replace(tzinfo=pytz.UTC)
             message = "%s %s might be launching from %s on %s." % (header, possible_launch.name,
-                                                                   possible_launch.location_name,
+                                                                   possible_launch.location_set.all()[0].name,
                                                                    date.strftime("%A at %H:%S %Z"))
             messages = messages + message + "\n"
-            self.send_twitter_update(message)
+            if possible_launch.rocket_set.all()[0].imageURL is not None:
+                self.send_twitter_update(message, image=self.get_image_id(possible_launch.rocket_set.all()[0].imageURL))
+            else:
+                self.send_twitter_update(message)
 
             current_time = datetime.utcnow()
             launch_time = datetime.utcfromtimestamp(int(confirmed_launch.netstamp))
             logger.info("One launch confirmed - sending message. ")
             message = "%s %s launching from %s in %s hours." % (
-                header, confirmed_launch.name, confirmed_launch.location_name,
+                header, confirmed_launch.name, confirmed_launch.location_set.all()[0].name,
                 '{0:g}'.format(float(round(abs(launch_time - current_time).total_seconds() / 3600.0))))
             messages = messages + message + "\n"
-            self.send_twitter_update(message)
+            if confirmed_launch.rocket_set.all()[0].imageURL is not None:
+                self.send_twitter_update(message, image=self.get_image_id(confirmed_launch.rocket_set.all()[0].imageURL))
+            else:
+                self.send_twitter_update(message)
 
         if len(confirmed) > 1 and len(possible) == 0:
             logger.info("More then one launch - sending summary first. ")
@@ -291,14 +318,17 @@ class DigestServer:
 
                 launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
                 message = "%s launching from %s in %s hours. (%i/%i)" % (launch.name,
-                                                                         launch.location_name,
+                                                                         launch.location_set.all()[0].name,
                                                                          '{0:g}'.format(float(
                                                                              round(abs(
                                                                                  launch_time - current_time)
                                                                                    .total_seconds() / 3600.0))),
                                                                          index + 1, len(confirmed) + 1)
                 messages = messages + message + "\n"
-                self.send_twitter_update(message)
+                if launch.rocket_set.all()[0].imageURL is not None:
+                        self.send_twitter_update(message, image=self.get_image_id(launch.rocket_set.all()[0].imageURL))
+                else:
+                    self.send_twitter_update(message)
 
         if len(confirmed) == 0 and len(possible) > 1:
             logger.info("More then one launch - sending summary first. ")
@@ -310,11 +340,14 @@ class DigestServer:
             for index, launch in enumerate(possible, start=1):
                 date = datetime.utcfromtimestamp(launch.netstamp).replace(tzinfo=pytz.UTC)
                 message = "%s might be launching from %s on %s. (%i/%i)" % (launch.name,
-                                                                            launch.location_name,
+                                                                            launch.location_set.all()[0].name,
                                                                             date.strftime("%A at %H:%S %Z"),
                                                                             index + 1, len(possible) + 1)
                 messages = messages + message + "\n"
-                self.send_twitter_update(message)
+                if launch.rocket_set.all()[0].imageURL is not None:
+                        self.send_twitter_update(message, image=self.get_image_id(launch.rocket_set.all()[0].imageURL))
+                else:
+                    self.send_twitter_update(message)
 
         if len(confirmed) > 1 and len(possible) > 1:
             total = confirmed + possible
@@ -330,13 +363,16 @@ class DigestServer:
             # Possible launches
             for index, launch in enumerate(possible, start=1):
                 message = "%s might be launching from %s on %s. (%i/%i)" % (launch.name,
-                                                                            launch.location_name,
+                                                                            launch.location_set.all()[0].name,
                                                                             datetime.fromtimestamp(launch
                                                                                                    .launch.netstamp)
                                                                             .strftime("%A at %H:%S %Z"),
                                                                             index, len(total))
                 messages = messages + message + "\n"
-                self.send_twitter_update(message)
+                if launch.rocket_set.all()[0].imageURL is not None:
+                        self.send_twitter_update(message, image=self.get_image_id(launch.rocket_set.all()[0].imageURL))
+                else:
+                    self.send_twitter_update(message)
 
             # Confirmed launches
             for index, launch in enumerate(confirmed, start=1):
@@ -344,18 +380,33 @@ class DigestServer:
 
                 launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
                 message = "%s launching from %s in %s hours. (%i/%i)" % (launch.name,
-                                                                         launch.location_name,
+                                                                         launch.location_set.all()[0].name,
                                                                          '{0:g}'.format(float(
                                                                              round(abs(
                                                                                  launch_time - current_time)
                                                                                    .total_seconds() / 3600.0))),
                                                                          possible + index, len(total))
                 messages = messages + message + "\n"
-                self.send_twitter_update(message)
+                if launch.rocket_set.all()[0].imageURL is not None:
+                        self.send_twitter_update(message, image=self.get_image_id(launch.rocket_set.all()[0].imageURL))
+                else:
+                    self.send_twitter_update(message)
 
         create_daily_digest_record(len(confirmed) + len(possible), messages, confirmed + possible)
 
-    def send_twitter_update(self, message):
+    def get_image_id(self, url):
+        filename = 'temp.jpg'
+        request = requests.get(url, stream=True)
+        if request.status_code == 200:
+            with open(filename, 'wb') as image:
+                for chunk in request:
+                    image.write(chunk)
+            with open("temp.jpg", "rb") as imageFile:
+                image_data = imageFile.read()
+            os.remove(filename)
+            return self.twitter_upload.media.upload(media=image_data)["media_id_string"]
+
+    def send_twitter_update(self, message, image=None):
         try:
             if message.endswith(' (1/1)'):
                 message = message[:-6]
@@ -367,6 +418,11 @@ class DigestServer:
                     message = (message[:117] + '...')
             logger.info('Sending to Twitter | %s | %s | DEBUG %s' % (message, str(len(message)), self.DEBUG))
             if not self.DEBUG:
-                self.twitter.statuses.update(status=message)
+                if image is None:
+                    logger.debug('No image - sending to twitter.')
+                    self.twitter.statuses.update(status=message)
+                else:
+                    logger.debug('Image found - sending to twitter with media.')
+                    self.twitter.statuses.update(status=message, media_ids='%s' % image)
         except TwitterHTTPError as e:
             logger.error("%s %s" % (str(e), message))

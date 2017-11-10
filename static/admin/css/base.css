@@ -365,15 +365,15 @@ table thead th.sorted .sortoptions a.sortremove {
     background-position: 0 0;
 }
 
-table thead th.sorted .sortoptions a.sortremove:after {
-    content: '\\';
-    position: absolute;
-    top: -6px;
-    left: 3px;
-    font-weight: 200;
-    font-size: 18px;
-    color: #999;
-}
+/*table thead th.sorted .sortoptions a.sortremove:after {*/
+    /*content: "\\";*/
+    /*position: absolute;*/
+    /*top: -6px;*/
+    /*left: 3px;*/
+    /*font-weight: 200;*/
+    /*font-size: 18px;*/
+    /*color: #999;*/
+/*}*/
 
 table thead th.sorted .sortoptions a.sortremove:focus:after,
 table thead th.sorted .sortoptions a.sortremove:hover:after {

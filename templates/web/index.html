@@ -1,0 +1,293 @@
+{% extends "web/base.html" %}
+{% load staticfiles%}
+{% block content %}
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">Space Launch Now</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+                data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+
+            <ul class="navbar-nav ml-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/next">Next</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/launches">Launches</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link twitter" href="https://twitter.com/SpaceLaunchNow"><i class="fa fa-twitter"></i></a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/v1">API</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<header class="masthead">
+    <div class="header-content">
+        <div class="header-content-inner">
+            <h1 id="homeHeading">Space Launch Now</h1>
+
+            <h2>A Spaceflight Tracker</h2>
+            <hr>
+            <p>Meet <b>Space Launch Now</b> the best resource for keeping up to date on all of your favorite spaceflight
+                missions from around the world.</p>
+            <a class="btn btn-primary btn-xl" href="/next">What's Launching Next?</a>
+            </a>
+        </div>
+    </div>
+</header>
+
+<section class="bg-primary" id="about">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="section-heading text-white">Never miss another launch!</h1>
+                <hr class="light">
+
+                <p class="text-faded">Follow along with the world of spaceflight as humanity continues its exploration
+                    of the solar system. We track every orbital launch and even the occasional
+                    experimental test flight.</p>
+                </br>
+                </br>
+
+                <h2 class="section-heading text-white">Launch Tracking</h2>
+
+                <p class="text-faded">Track launches from all the major launch providers like SpaceX, ULA, and
+                    Orbital/ATK as well as
+                    international launches from NASA, ROSCOSMOS, JAXA and ESA.</p>
+                <hr class="light">
+
+                <h2 class="section-heading text-white">Science Missions</h2>
+
+                <p class="text-faded">Follow along with resupply missions to the International Space Station, commercial
+                    satellite launches
+                    from providers like IRIDIUM and science missions like ExoMars!</p>
+                <hr class="light">
+
+                <h2 class="section-heading text-white">Vehicle Information</h2>
+
+                <p class="text-faded">Get to know all the vehicles that take us to orbit such as the Soyuz, Atlas,
+                    Delta, Ariane, Proton
+                    and Falcon launch vehicle families.</p>
+                <hr class="light">
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="services">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2 class="section-heading">Top Features</h2>
+                <hr class="primary">
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6 text-center">
+                <div class="service-box">
+                    <i class="fa fa-4x fa-bell text-primary sr-icons"></i>
+
+                    <h3>Notifications</h3>
+
+                    <p class="text-muted">Follow the launches only you care about.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 text-center">
+                <div class="service-box">
+                    <i class="fa fa-4x fa-history text-primary sr-icons"></i>
+
+                    <h3>Spaceflight History</h3>
+
+                    <p class="text-muted">View the history of spaceflight back to the first manned spaceflight.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 text-center">
+                <div class="service-box">
+                    <i class="fa fa-4x fa-moon-o text-primary sr-icons"></i>
+
+                    <h3>Day/Night Theme</h3>
+
+                    <p class="text-muted">Automatically switch between Day/Night theme.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 text-center">
+                <div class="service-box">
+                    <i class="fa fa-4x fa-clock-o text-primary sr-icons"></i>
+
+                    <h3>Android Wear</h3>
+
+                    <p class="text-muted">A full Android Wear watch face with countdown timer.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="p-0" id="portfolio">
+    <div class="container-fluid">
+        <div class="row no-gutter popup-gallery">
+            <div class="col-lg-4 col-sm-6">
+                <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/nasa_full.jpg' %}">
+                    <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/nasa.jpg' %}" alt="">
+
+                    <div class="portfolio-box-caption">
+                        <div class="portfolio-box-caption-content">
+                            <div class="project-category text-faded">
+                                NASA
+                            </div>
+                            <div class="project-name">
+                                Space Shuttle (Retired)<br>
+                                <small>SLS</small>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-4 col-sm-6">
+                <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/spacex_full.jpg' %}">
+                    <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/spacex.jpg' %}" alt="">
+
+                    <div class="portfolio-box-caption">
+                        <div class="portfolio-box-caption-content">
+                            <div class="project-category text-faded">
+                                SpaceX
+                            </div>
+                            <div class="project-name">
+                                Falcon 9 <br>
+                                <small>Falcon Heavy / BFR</small>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-4 col-sm-6">
+                <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/ula_full.jpg' %}">
+                    <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/ula.jpg' %}" alt="">
+
+                    <div class="portfolio-box-caption">
+                        <div class="portfolio-box-caption-content">
+                            <div class="project-category text-faded">
+                                ULA
+                            </div>
+                            <div class="project-name">
+                                Delta IV / Atlas <br>
+                                <small>Vulcan</small>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-4 col-sm-6">
+                <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/Indian_full.jpg' %}">
+                    <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/Indian.jpg' %}" alt="">
+
+                    <div class="portfolio-box-caption">
+                        <div class="portfolio-box-caption-content">
+                            <div class="project-category text-faded">
+                                ISRO
+                            </div>
+                            <div class="project-name">
+                                PSLV / GSLV
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-4 col-sm-6">
+                <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/roscosmos_full.jpg' %}">
+                    <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/roscosmos.jpg' %}" alt="">
+
+                    <div class="portfolio-box-caption">
+                        <div class="portfolio-box-caption-content">
+                            <div class="project-category text-faded">
+                                Roscosmos
+                            </div>
+                            <div class="project-name">
+                                Soyuz
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-4 col-sm-6">
+                <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/CISA_full.jpg' %}">
+                    <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/CISA.jpg' %}" alt="">
+
+                    <div class="portfolio-box-caption">
+                        <div class="portfolio-box-caption-content">
+                            <div class="project-category text-faded">
+                                CNSA
+                            </div>
+                            <div class="project-name">
+                                Long March
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="call-to-action bg-dark">
+    <div class="container text-center">
+        <h2>Free Download Now!</h2>
+
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <a href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+                    <img style='width:80%;' alt='Get it on Google Play'
+                         src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section id="contact">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="section-heading">Let's Get In Touch!</h2>
+                <hr class="primary">
+                <p>Enjoying the app? Have questions? Feel free to reach out!</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 ml-auto text-center">
+                <i class="fa fa-reddit-alien fa-3x sr-contact"></i>
+
+                <p>
+                    <a href='https://www.reddit.com/r/spacelaunchnow/'>/r/spacelaunchnow</a>
+                </p>
+            </div>
+            <div class="col-lg-4 mr-auto text-center">
+                <i class="fa fa-envelope-o fa-3x sr-contact"></i>
+
+                <p>
+                    <a href="mailto:support@calebjones.me">support@calebjones.me</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

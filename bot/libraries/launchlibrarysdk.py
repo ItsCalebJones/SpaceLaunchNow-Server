@@ -1,6 +1,9 @@
 import requests
+import logging
 from datetime import timedelta
 from django.utils.datetime_safe import datetime
+
+logger = logging.getLogger('bot.notifications')
 
 BASE_URL = 'https://launchlibrary.net/'
 headers = {
@@ -9,26 +12,44 @@ headers = {
 
 
 class LaunchLibrarySDK(object):
+    # Latest stable Version stored.
+    def __init__(self, version='1.3'):
+        if version is None:
+            version = '1.3'
+        self.version = version
+        self.api_url = BASE_URL + self.version
 
-    def __init__(self, version='1.2'):
-        self.api_url = BASE_URL + version
+    def get_next_launch(self, tbd=False, agency=None, launch_service_provider=None, count=1):
+        """
+        Builds a URL and fetches response from LL
+        :param agency: Pass the ID of an Agency to get launches for that agency (Rocket, Location, or Mission agency)
+        :param launch_service_provider: Pass the ID of a LSP to get launches for that provider
+        :param count: The number of launch objects to fetch.
+        :return: Returns a HTTP Response object
+        """
 
-    def get_next_launches(self):
-        url = self.api_url + '/launch?next=5&mode=verbose'
-        return send_request(url, method='GET', headers=headers)
+        url = self.api_url + '/launch/next/%d?mode=verbose&tbdtime=0&tbddate=0' % count
 
-    def get_next_launch(self):
-        url = self.api_url + '/launch?next=1&mode=verbose'
+        # if agency:
+        #     url = url + getLSP
         return send_request(url, method='GET', headers=headers)
 
     def get_next_weeks_launches(self):
+        """
+        Sends a request using `requests` module.
+        :return: Returns a HTTP Response object
+        """
         today = datetime.today().strftime('%Y-%m-%d')
         next_week = (datetime.now() + timedelta(days=7)).strftime('%Y-%m-%d')
         url = self.api_url + '/launch/%s/%s?mode=verbose' % (today, next_week)
         return send_request(url, method='GET', headers=headers)
 
-    def get_location_by_pad(self, locationId):
-        url = '%s/pad/%i?fields=name' % (self.api_url, locationId)
+    def get_location_by_pad(self, location_id):
+        url = '%s/pad/%i?fields=name' % (self.api_url, location_id)
+        return send_request(url, method='GET', headers=headers)
+
+    def get_launch_by_id(self, launch_id):
+        url = self.api_url + '/launch/%s?mode=verbose' % launch_id
         return send_request(url, method='GET', headers=headers)
 
 

@@ -25,11 +25,13 @@ class DailyDigestRecordSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):
+    vid_urls = serializers.StringRelatedField(many=True)
+
     class Meta:
         model = Launch
         fields = (
-            'id', 'name', 'url', 'status', 'netstamp', 'wsstamp', 'westamp', 'location_name', 'rocket_name',
-            'mission_name'
+            'id', 'name', 'url', 'status', 'netstamp', 'wsstamp', 'westamp', 'net', 'window_start', 'window_end',
+            'vid_urls'
         )
 
     def create(self, validated_data):
@@ -48,9 +50,6 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
         instance.netstamp = validated_data.get('netstamp', instance.netstamp)
         instance.wsstamp = validated_data.get('wsstamp', instance.wsstamp)
         instance.westamp = validated_data.get('westamp', instance.westamp)
-        instance.location_name = validated_data.get('location_name', instance.location_name)
-        instance.rocket_name = validated_data.get('rocket_name', instance.rocket_name)
-        instance.mission_name = validated_data.get('mission_name', instance.mission_name)
         instance.save()
 
         return instance
