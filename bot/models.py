@@ -144,6 +144,7 @@ class Notification(models.Model):
         verbose_name = 'Notification'
         verbose_name_plural = 'Notifications'
 
+
 class DailyDigestRecord(models.Model):
     id = models.IntegerField(primary_key=True)
     timestamp = models.DateTimeField(blank=True, null=True)
