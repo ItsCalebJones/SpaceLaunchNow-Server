@@ -55,7 +55,21 @@ class AgencyAdmin(admin.ModelAdmin):
         return "\n".join([a.name for a in obj.rockets.all()])
     show_rockets.short_description = 'Rockets'
 
+
 @admin.register(models.Mission)
 class MissionAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">assignment</i>'
     list_display = ('id', 'name', 'type_name', 'launch')
+
+
+@admin.register(models.Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">notifications</i>'
+    list_display = ('launch', 'wasNotifiedTwentyFourHour', 'wasNotifiedOneHour', 'wasNotifiedTenMinutes',
+                    'wasNotifiedDailyDigest', 'last_twitter_post')
+
+
+@admin.register(models.DailyDigestRecord)
+class DailyDigestRecordAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">history</i>'
+    list_display = ('id', 'timestamp', 'messages', 'count', 'data')

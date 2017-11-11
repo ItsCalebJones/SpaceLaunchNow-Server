@@ -4,8 +4,6 @@ from bot.models import Launch, Notification, VidURLs, Pad, Location, Rocket, Mis
 def launch_json_to_model(data):
     id = data['id']
     name = data['name']
-    if len(name) > 30:
-        name = name.split(" |")[0]
     status = data['status']
     netstamp = data['netstamp']
     wsstamp = data['wsstamp']
