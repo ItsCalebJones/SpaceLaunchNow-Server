@@ -70,3 +70,7 @@ def launches(request,):
         return render(request, 'web/launches.html', {'launches': _launches})
     else:
         raise Http404
+
+
+def launches_redirect(request,):
+    return redirect('launches')
