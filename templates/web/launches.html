@@ -1,5 +1,17 @@
 {% extends "web/base.html" %}
 {% load staticfiles%}
+
+{% block extrahead %}
+<meta property="fb:app_id" content="746774215504127"/>
+<meta property="og:title" content="Space Launch Now - Next Launches"/>
+<meta property="og:type" content="website"/>
+<meta property="og:description" content="Meet Space Launch Now the best resource for keeping up to date on all of your favorite spaceflight missions from around the world."/>
+<meta property="og:url" content="https://spacelaunchnow.me/launch/"/>
+<meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
+<meta property="og:image:width" content="3000" />
+<meta property="og:image:height" content="2000" />
+{% endblock %}
+
 {% block content %}
 {% load embed_video_tags %}
 
@@ -24,7 +36,7 @@
                     <a class="nav-link js-scroll-trigger " href="/next">Next</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger active" href="/launches">Launches</a>
+                    <a class="nav-link js-scroll-trigger active" href="/launch/">Launches</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link twitter" href="https://twitter.com/SpaceLaunchNow"><i class="fa fa-twitter"></i></a>

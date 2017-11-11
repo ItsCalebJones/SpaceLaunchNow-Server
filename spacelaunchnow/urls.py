@@ -46,5 +46,5 @@ urlpatterns = [
     url(r'^$', landing_views.index, name='index'),
     url(r'^next/', landing_views.next_launch, name='next'),
     url(r'^launch/(?P<pk>\d+)/$', landing_views.launch_by_id, name='launch_by_id'),
-    url(r'^launches/$', landing_views.launches, name='launches'),
+    url(r'^launch/$', landing_views.launches, name='launches'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
