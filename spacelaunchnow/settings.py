@@ -107,6 +107,7 @@ INSTALLED_APPS = [
     'material',
     'material.admin',
     'django.contrib.admin',
+    'django_user_agents',
 
 ]
 
@@ -189,3 +190,7 @@ CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
+
+# Name of cache backend to cache user agents. If it not specified default
+# cache alias will be used. Set to `None` to disable caching.
+USER_AGENTS_CACHE = None
