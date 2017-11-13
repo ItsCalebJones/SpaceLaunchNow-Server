@@ -91,8 +91,9 @@
             <h2 class="subheading">{{ launch.lsp_set.all.0.name }} - {{ launch.rocket_set.all.0.name }}</h2>
             {% endif %}
             <span class="meta">NET: {{ launch.net }}</span>
-
+            {% if not request.user_agent.is_mobile %}
             <div class="countdown" style="margin-top:10em;"></div>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -130,7 +131,12 @@
             {% if youtube_urls|length > 0 %}
             {% for url in youtube_urls %}
             {% video url as my_video %}
-            {% video my_video 'medium' %}
+            {% if request.user_agent.is_mobile %}
+                {% video my_video 'small' %}
+            {% else %}
+                {% video my_video 'medium' %}
+            {% endif %}
+
             {% endvideo %}
             {% endfor %}
             {% else %}
