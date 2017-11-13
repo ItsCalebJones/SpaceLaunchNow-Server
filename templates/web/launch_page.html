@@ -1,5 +1,6 @@
 {% extends "web/base.html" %}
 {% load staticfiles%}
+{% load user_agents %}
 {% load embed_video_tags %}
 {% block extrahead %}
 <meta property="fb:app_id" content="746774215504127"/>
@@ -132,7 +133,7 @@
             {% for url in youtube_urls %}
             {% video url as my_video %}
             {% if request|is_mobile %}
-                {% video my_video 'small' %}
+                {% video my_video '85% x 25%' %}
             {% else %}
                 {% video my_video 'medium' %}
             {% endif %}
