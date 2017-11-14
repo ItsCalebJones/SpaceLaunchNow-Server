@@ -468,7 +468,7 @@ class OneSignalSdk(object):
         return send_request(url, headers=headers, method='POST')
 
     def create_notification(self, contents=None, heading='', url='',
-                            included_segments=('All',), app_id=None, player_ids=None, **kwargs):
+                            included_segments=None, app_id=None, player_ids=None, excluded_segments=None, **kwargs):
         """
         Creates a notification by sending a notification to https://onesignal.com/api/v1/notifications
         :param heading: push notification heading / title
@@ -503,10 +503,10 @@ class OneSignalSdk(object):
         else:
             data['headings'] = {'en': heading}
 
-        if player_ids and isinstance(player_ids, (list, tuple)):
-            data['include_player_ids'] = player_ids
-        elif isinstance(included_segments, (list, tuple)) and len(included_segments):
+        if isinstance(included_segments, (list, tuple)) and len(included_segments):
             data['included_segments'] = included_segments
+        if isinstance(excluded_segments, (list, tuple)) and len(excluded_segments):
+            data['excluded_segments'] = excluded_segments
 
         if kwargs:
             data.update(kwargs)
