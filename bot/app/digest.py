@@ -213,8 +213,8 @@ class DigestServer:
                                                                       .strftime("%A"),
                                                                       index,
                                                                       total)
-                if launch.rocket_set.all()[0].imageURL is not None:
-                    self.send_twitter_update(message, image=self.get_image_id(launch.rocket_set.all()[0].imageURL))
+                if launch.rocket_set.first().imageURL is not None and launch.rocket_set.first().imageURL is not '':
+                    self.send_twitter_update(message, image=self.get_image_id(launch.rocket_set.first().imageURL))
                 else:
                     self.send_twitter_update(message)
         if len(possible) == 1:
