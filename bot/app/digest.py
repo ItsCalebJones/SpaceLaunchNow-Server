@@ -421,11 +421,13 @@ class DigestServer:
                     message = (message[:277] + '...')
             logger.info('Sending to Twitter | %s | %s | DEBUG %s' % (message, str(len(message)), self.DEBUG))
             if not self.DEBUG:
-                if image is None:
-                    logger.debug('No image - sending to twitter.')
-                    self.twitter.statuses.update(status=message)
-                else:
-                    logger.debug('Image found - sending to twitter with media.')
-                    self.twitter.statuses.update(status=message, media_ids='%s' % image)
+                # if image is None:
+                #     logger.debug('No image - sending to twitter.')
+                #     self.twitter.statuses.update(status=message)
+                # else:
+                #     logger.debug('Image found - sending to twitter with media.')
+                #     self.twitter.statuses.update(status=message, media_ids='%s' % image)
+                logger.debug('No image - sending to twitter.')
+                self.twitter.statuses.update(status=message)
         except TwitterHTTPError as e:
             logger.error("%s %s" % (str(e), message))
