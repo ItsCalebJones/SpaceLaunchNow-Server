@@ -16,7 +16,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('-version', dest="version", type=str)
         parser.add_argument('-debug', '-d', dest="debug", type=bool, const=True, nargs='?')
-        parser.add_argument('-test_notification', '-n', dest="notification", type=bool, const=False, nargs='?')
+        parser.add_argument('-test_notification', '-n', dest="test_notification", type=bool, const=False, nargs='?')
 
     def handle(self, *args, **options):
         logger.info('Running Notifications...')
@@ -28,16 +28,18 @@ class Command(BaseCommand):
             if response == "N":
                 debug = True
         version = options['version']
+        test_notification = options['test_notification']
         notification = NotificationServer(debug=debug, version=version)
         library = LaunchLibrarySDK(version=version)
-        if notification:
+        if test_notification:
             response = library.get_next_launch()
             if response.status_code is 200:
                 response_json = response.json()
                 launch_data = response_json['launches']
                 for launch in launch_data:
                     launch = launch_json_to_model(launch)
-                    notification.send_notification(launch)
+                    # TODO pass in parameter for setting the notification_type
+                    notification.send_notification(launch, 'test')
             else:
                 logger.error(response.status_code + ' ' + response)
 

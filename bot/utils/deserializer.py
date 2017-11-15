@@ -48,10 +48,7 @@ def check_notification(launch):
 def get_location(launch, data):
     if 'location' in data and data['location'] is not None:
         location, created = Location.objects.get_or_create(id=data['location']['id'])
-        if len(data['location']['name']) > 20:
-            location.name = data['location']['name'].split(", ")[0]
-        else:
-            location.name = data['location']['name']
+        location.name = data['location']['name']
         location.country_code = data['location']['countryCode']
         location.launch.add(launch)
         location.save()
@@ -81,6 +78,7 @@ def get_rocket(launch, data):
             if rocket.imageURL is not None:
                 launch.img_url = rocket.imageURL
                 launch.save()
+
         rocket.launches.add(launch)
         rocket.save()
         if len(data['rocket']['agencies']) > 0:
