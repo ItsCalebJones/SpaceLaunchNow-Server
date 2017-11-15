@@ -122,6 +122,8 @@ class NotificationServer:
         message = 'SCHEDULE UPDATE: %s now launching in %s at %s.' % (launch.name,
                                                                       seconds_to_time(diff),
                                                                       date.strftime("%H:%M %Z (%d/%m)"))
+        notification.last_net_stamp = notification.launch.netstamp
+        notification.last_net_stamp_timestamp = datetime.now()
         launch.save()
         self.send_to_twitter(message, notification)
         self.send_notification(launch, 'netstampChanged')
