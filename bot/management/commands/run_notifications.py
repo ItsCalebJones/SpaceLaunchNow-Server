@@ -38,7 +38,7 @@ class Command(BaseCommand):
                 launch_data = response_json['launches']
                 for launch in launch_data:
                     launch = launch_json_to_model(launch)
-                    notification.send_notification(launch)
+                    notification.send_notification(launch, 'test')
             else:
                 logger.error(response.status_code + ' ' + response)
 
