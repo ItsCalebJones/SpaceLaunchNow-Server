@@ -104,7 +104,7 @@ class NotificationServer:
                 launches.append(launch)
             return launches
         else:
-            logger.error(response.status_code + ' ' + response)
+            logger.error("%d %s" % (response.status_code, response))
 
     def check_next_launch(self):
         for launch in self.get_next_launches():
@@ -117,7 +117,7 @@ class NotificationServer:
                     self.check_launch_window(diff, launch)
 
     def netstamp_changed(self, launch, notification, diff):
-        logger.info('Netstamp change detected for %s' % launch.name)
+        logger.info('Netstamp change detected for %s - now launching in %d seconds.' % (launch.name, diff))
         date = datetime.fromtimestamp(launch.netstamp).replace(tzinfo=pytz.UTC)
         message = 'SCHEDULE UPDATE: %s now launching in %s at %s.' % (launch.name,
                                                                       seconds_to_time(diff),
@@ -125,8 +125,11 @@ class NotificationServer:
         notification.last_net_stamp = notification.launch.netstamp
         notification.last_net_stamp_timestamp = datetime.now()
         launch.save()
-        self.send_to_twitter(message, notification)
-        self.send_notification(launch, 'netstampChanged')
+        if diff >= 86400:
+            self.send_to_twitter(message, notification)
+        elif diff < 86400:
+            self.send_to_twitter(message, notification)
+            self.send_notification(launch, 'netstampChanged')
 
         # If launch is within 24 hours...
         if 86400 >= diff > 3600:
@@ -142,11 +145,9 @@ class NotificationServer:
             logger.info('Launch is within one hour, resetting Ten minute notifications.')
             notification.wasNotifiedOneHour = True
             notification.wasNotifiedTwentyFourHour = True
-            notification.wasNotifiedTenMinutes = False
 
             notification.wasNotifiedOneHourTwitter = True
             notification.wasNotifiedTwentyFourHourTwitter = True
-            notification.wasNotifiedTenMinutesTwitter = False
         elif diff <= 600:
             logger.info('Launch is within ten minutes.')
             notification.wasNotifiedOneHour = True
@@ -156,16 +157,21 @@ class NotificationServer:
             notification.wasNotifiedOneHourTwitter = True
             notification.wasNotifiedTwentyFourHourTwitter = True
             notification.wasNotifiedTenMinutesTwitter = True
+        elif diff >= 86400:
+            notification.wasNotifiedTwentyFourHour = False
+            notification.wasNotifiedOneHour = False
+            notification.wasNotifiedTenMinutes = False
+
+            notification.wasNotifiedTwentyFourHourTwitter = False
+            notification.wasNotifiedOneHourTwitter = False
+            notification.wasNotifiedTenMinutesTwitter = False
         notification.save()
 
     def check_twitter(self, diff, launch, notification):
         logger.info('Diff - %d for %s' % (diff, launch.name,))
         logger.debug('LAUNCH DATA: %s', serializers.serialize('json', [launch, ]))
         logger.debug('NOTIFICATION DATA: %s', serializers.serialize('json', [notification, ]))
-        if notification.last_net_stamp is not None or 0:
-                if abs(notification.last_net_stamp - launch.netstamp) > 600 and diff <= 259200:
-                    self.netstamp_changed(launch, notification, diff)
-        elif notification.last_twitter_post is not None:
+        if notification.last_twitter_post is not None:
             time_since_twitter = (datetime.now() - notification.last_twitter_post).total_seconds()
             logger.info('Seconds since last update on Twitter %d for %s' % (time_since_twitter,
                                                                             launch.name))
@@ -209,24 +215,28 @@ class NotificationServer:
 
     def check_launch_window(self, diff, launch):
         notification = Notification.objects.get(launch=launch)
-        self.check_twitter(diff, launch, notification)
-        logger.info('Checking launch window for %s' % notification.launch.name)
+        if notification.last_net_stamp is not None or 0:
+            if abs(notification.last_net_stamp - launch.netstamp) > 600:
+                self.netstamp_changed(launch, notification, diff)
+            else:
+                self.check_twitter(diff, launch, notification)
+                logger.info('Checking launch window for %s' % notification.launch.name)
 
-        # If launch is within 24 hours...
-        if 86400 >= diff > 3600 and not notification.wasNotifiedTwentyFourHour:
-            logger.info('Launch is within 24 hours, sending notifications.')
-            self.send_notification(launch, 'twentyFourHour')
-            notification.wasNotifiedTwentyFourHour = True
-        elif 3600 >= diff > 600 and not notification.wasNotifiedOneHour:
-            logger.info('Launch is within one hour, sending notifications.')
-            self.send_notification(launch, 'oneHour')
-            notification.wasNotifiedOneHour = True
-        elif diff <= 600 and not notification.wasNotifiedTenMinutes:
-            logger.info('Launch is within ten minutes, sending notifications.')
-            self.send_notification(launch, 'tenMinute')
-            notification.wasNotifiedTenMinutes = True
-        else:
-            logger.info('%s does not meet notification criteria.' % notification.launch.name)
+                # If launch is within 24 hours...
+                if 86400 >= diff > 3600 and not notification.wasNotifiedTwentyFourHour:
+                    logger.info('Launch is within 24 hours, sending notifications.')
+                    self.send_notification(launch, 'twentyFourHour')
+                    notification.wasNotifiedTwentyFourHour = True
+                elif 3600 >= diff > 600 and not notification.wasNotifiedOneHour:
+                    logger.info('Launch is within one hour, sending notifications.')
+                    self.send_notification(launch, 'oneHour')
+                    notification.wasNotifiedOneHour = True
+                elif diff <= 600 and not notification.wasNotifiedTenMinutes:
+                    logger.info('Launch is within ten minutes, sending notifications.')
+                    self.send_notification(launch, 'tenMinute')
+                    notification.wasNotifiedTenMinutes = True
+                else:
+                    logger.info('%s does not meet notification criteria.' % notification.launch.name)
         notification.save()
 
     def send_notification(self, launch, notification_type):

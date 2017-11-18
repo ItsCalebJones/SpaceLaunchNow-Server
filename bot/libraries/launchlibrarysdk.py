@@ -27,8 +27,10 @@ class LaunchLibrarySDK(object):
         :param count: The number of launch objects to fetch.
         :return: Returns a HTTP Response object
         """
-
-        url = self.api_url + '/launch/next/%d?mode=verbose&tbdtime=0&tbddate=0' % count
+        if 'dev' not in self.version:
+            url = self.api_url + '/launch/next/%d?mode=verbose&tbdtime=0&tbddate=0' % count
+        else:
+            url = self.api_url + '/launch/next/%d?mode=verbose' % count
 
         # if agency:
         #     url = url + getLSP
