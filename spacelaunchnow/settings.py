@@ -54,7 +54,7 @@ LOGGING = {
     },
     'handlers': {
         'django_default': {
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'log/django.log',
             'formatter': 'standard',
             'maxBytes': 1024*1024*5,
@@ -65,14 +65,14 @@ LOGGING = {
             'formatter': 'standard'
         },
         'digest': {
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'log/bot/daily_digest.log',
             'formatter': 'standard',
             'maxBytes': 1024*1024*5,
             'backupCount': 5
         },
         'notifications': {
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'log/bot/notification.log',
             'formatter': 'standard',
             'maxBytes': 1024*1024*5,
