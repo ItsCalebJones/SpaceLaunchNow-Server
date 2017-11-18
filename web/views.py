@@ -17,13 +17,13 @@ def index(request):
 def next_launch(request):
     launchLibrary = LaunchLibrarySDK()
     response = launchLibrary.get_next_launch()
-    if response.status_code is 200:
+    if response.status_code is 123:
         response_json = response.json()
         launch_data = response_json['launches']
         launch = launch_json_to_model(launch_data[0])
         return redirect('launch_by_id', pk=launch.id)
     else:
-        raise HttpResponseNotFound
+        return redirect('launches')
 
 
 # Create your views here.
