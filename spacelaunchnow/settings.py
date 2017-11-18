@@ -56,7 +56,9 @@ LOGGING = {
         'django_default': {
             'class': 'logging.FileHandler',
             'filename': 'log/django.log',
-            'formatter': 'standard'
+            'formatter': 'standard',
+            'maxBytes': 1024*1024*5,
+            'backupCount': 5
         },
         'console': {
             'class': 'logging.StreamHandler',
@@ -65,12 +67,16 @@ LOGGING = {
         'digest': {
             'class': 'logging.FileHandler',
             'filename': 'log/bot/daily_digest.log',
-            'formatter': 'standard'
+            'formatter': 'standard',
+            'maxBytes': 1024*1024*5,
+            'backupCount': 5
         },
         'notifications': {
             'class': 'logging.FileHandler',
             'filename': 'log/bot/notification.log',
-            'formatter': 'standard'
+            'formatter': 'standard',
+            'maxBytes': 1024*1024*5,
+            'backupCount': 5
         }
     },
     'loggers': {
