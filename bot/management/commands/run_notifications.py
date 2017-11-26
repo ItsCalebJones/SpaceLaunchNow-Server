@@ -3,6 +3,7 @@ from celery.utils.log import get_task_logger
 
 from bot.app.notifications import NotificationServer
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
+from bot.models import Notification
 from bot.utils.deserializer import launch_json_to_model
 
 logger = get_task_logger('bot')
@@ -38,8 +39,9 @@ class Command(BaseCommand):
                 launch_data = response_json['launches']
                 for launch in launch_data:
                     launch = launch_json_to_model(launch)
+                    notification_obj = Notification.objects.get(launch=launch)
                     # TODO pass in parameter for setting the notification_type
-                    notification.send_notification(launch, 'test')
+                    notification.send_notification(launch, 'test', notification_obj)
             else:
                 logger.error(response.status_code + ' ' + response)
 
