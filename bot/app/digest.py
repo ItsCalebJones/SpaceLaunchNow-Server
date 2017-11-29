@@ -203,7 +203,7 @@ class DigestServer:
                 compact_header, launch.name, launch.location_set.all()[0].name, day,
                 total)
             if launch.img_url is not None and launch.img_url is not '':
-                self.send_twitter_update(message, image=self.get_image_id(launch.img_url))
+                self.send_twitter_update(message)
             else:
                 self.send_twitter_update(message)
         elif len(confirmed) > 1:
@@ -217,7 +217,7 @@ class DigestServer:
                                                                       index,
                                                                       total)
                 if launch.img_url is not None and launch.img_url is not '':
-                    self.send_twitter_update(message, image=self.get_image_id(launch.img_url))
+                    self.send_twitter_update(message)
                 else:
                     self.send_twitter_update(message)
         if len(possible) == 1:
@@ -226,7 +226,7 @@ class DigestServer:
                                                                          launch.location_set.all()[0].name,
                                                                          len(confirmed) + 1, total)
             if launch.img_url is not None and launch.img_url is not '':
-                self.send_twitter_update(message, image=self.get_image_id(launch.img_url))
+                self.send_twitter_update(message)
             else:
                 self.send_twitter_update(message)
         elif len(possible) > 1:
@@ -237,7 +237,7 @@ class DigestServer:
                                                                          index + len(confirmed),
                                                                          total)
                 if launch.img_url is not None and launch.img_url is not '':
-                    self.send_twitter_update(message, image=self.get_image_id(launch.img_url))
+                    self.send_twitter_update(message)
                 else:
                     self.send_twitter_update(message)
 
@@ -265,7 +265,7 @@ class DigestServer:
                 'https://spacelaunchnow.me/launch/%s' % launch.id)
             messages = messages + message + "\n"
             if launch.img_url is not None and launch.img_url is not '':
-                self.send_twitter_update(message, image=self.get_image_id(launch.img_url))
+                self.send_twitter_update(message)
             else:
                 self.send_twitter_update(message)
 
@@ -279,7 +279,7 @@ class DigestServer:
                 date.strftime("%A at %H:%S %Z"))
             messages = messages + message + "\n"
             if launch.img_url is not None and launch.img_url is not '':
-                self.send_twitter_update(message, image=self.get_image_id(launch.img_url))
+                self.send_twitter_update(message)
             else:
                 self.send_twitter_update(message)
 
@@ -294,7 +294,7 @@ class DigestServer:
                                                                    date.strftime("%A at %H:%S %Z"))
             messages = messages + message + "\n"
             if possible_launch.img_url is not None and possible_launch.img_url is not '':
-                self.send_twitter_update(message, image=self.get_image_id(possible_launch.img_url))
+                self.send_twitter_update(message)
             else:
                 self.send_twitter_update(message)
 
@@ -307,7 +307,7 @@ class DigestServer:
                 'https://spacelaunchnow.me/launch/%s' % launch.id)
             messages = messages + message + "\n"
             if confirmed_launch.img_url is not None and confirmed_launch.img_url is not '':
-                self.send_twitter_update(message, image=self.get_image_id(confirmed_launch.img_url))
+                self.send_twitter_update(message)
             else:
                 self.send_twitter_update(message)
 
@@ -330,7 +330,7 @@ class DigestServer:
                     'https://spacelaunchnow.me/launch/%s' % launch.id)
                 messages = messages + message + "\n"
                 if launch.img_url is not None:
-                    self.send_twitter_update(message, image=self.get_image_id(launch.img_url))
+                    self.send_twitter_update(message)
                 else:
                     self.send_twitter_update(message)
 
@@ -349,7 +349,7 @@ class DigestServer:
                                                                             index + 1, len(possible) + 1)
                 messages = messages + message + "\n"
                 if launch.img_url is not None and launch.img_url is not '':
-                    self.send_twitter_update(message, image=self.get_image_id(launch.img_url))
+                    self.send_twitter_update(message)
                 else:
                     self.send_twitter_update(message)
 
@@ -374,7 +374,7 @@ class DigestServer:
                                                                             index, len(total))
                 messages = messages + message + "\n"
                 if launch.img_url is not None and launch.img_url is not '':
-                    self.send_twitter_update(message, image=self.get_image_id(launch.img_url))
+                    self.send_twitter_update(message)
                 else:
                     self.send_twitter_update(message)
 
@@ -390,25 +390,13 @@ class DigestServer:
                     possible + index, len(total), 'https://spacelaunchnow.me/launch/%s' % launch.id)
                 messages = messages + message + "\n"
                 if launch.img_url is not None and launch.img_url is not '':
-                    self.send_twitter_update(message, image=self.get_image_id(launch.img_url))
+                    self.send_twitter_update(message)
                 else:
                     self.send_twitter_update(message)
 
         create_daily_digest_record(len(confirmed) + len(possible), messages, confirmed + possible)
 
-    def get_image_id(self, url):
-        filename = 'temp.jpg'
-        request = requests.get(url, stream=True)
-        if request.status_code == 200:
-            with open(filename, 'wb') as image:
-                for chunk in request:
-                    image.write(chunk)
-            with open("temp.jpg", "rb") as imageFile:
-                image_data = imageFile.read()
-            os.remove(filename)
-            return self.twitter_upload.media.upload(media=image_data)["media_id_string"]
-
-    def send_twitter_update(self, message, image=None):
+    def send_twitter_update(self, message):
         try:
             if message.endswith(' (1/1)'):
                 message = message[:-6]
@@ -421,13 +409,7 @@ class DigestServer:
                     message = (message[:277] + '...')
             logger.info('Sending to Twitter | %s | %s | DEBUG %s' % (message, str(len(message)), self.DEBUG))
             if not self.DEBUG:
-                # if image is None:
-                #     logger.debug('No image - sending to twitter.')
-                #     self.twitter.statuses.update(status=message)
-                # else:
-                #     logger.debug('Image found - sending to twitter with media.')
-                #     self.twitter.statuses.update(status=message, media_ids='%s' % image)
-                logger.debug('No image - sending to twitter.')
+                logger.debug('Sending to twitter - message: %s' % message)
                 self.twitter.statuses.update(status=message)
         except TwitterHTTPError as e:
             logger.error("%s %s" % (str(e), message))
