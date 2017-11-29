@@ -57,7 +57,7 @@ class NotificationServer:
             auth=OAuth(keys['TOKEN_KEY'], keys['TOKEN_SECRET'], keys['CONSUMER_KEY'], keys['CONSUMER_SECRET'])
         )
 
-    def send_to_twitter(self, message, notification, image=None):
+    def send_to_twitter(self, message, notification):
         try:
             if message.endswith(' (1/1)'):
                 message = message[:-6]
@@ -70,14 +70,8 @@ class NotificationServer:
                     message = (message[:277] + '...')
             logger.info('Sending to Twitter | %s | %s | DEBUG %s' % (message, str(len(message)), self.DEBUG))
             if not self.DEBUG:
-                # if image is None:
-                #     logger.debug('No image - sending to twitter.')
-                #     self.twitter.statuses.update(status=message)
-                # else:
-                #     logger.debug('Image found - sending to twitter with media.')
-                #     self.twitter.statuses.update(status=message, media_ids='%s' % image)
-                logger.debug('Image found - sending to twitter with media.')
-                self.twitter.statuses.update(status=message, media_ids='%s' % image)
+                logger.debug('Sending to twitter - message: %s' % message)
+                self.twitter.statuses.update(status=message)
 
             notification.last_twitter_post = datetime.now()
             notification.last_net_stamp = notification.launch.netstamp
@@ -218,25 +212,25 @@ class NotificationServer:
         if notification.last_net_stamp is not None or 0:
             if abs(notification.last_net_stamp - launch.netstamp) > 600:
                 self.netstamp_changed(launch, notification, diff)
-            else:
-                self.check_twitter(diff, launch, notification)
-                logger.info('Checking launch window for %s' % notification.launch.name)
+        else:
+            self.check_twitter(diff, launch, notification)
+            logger.info('Checking launch window for %s' % notification.launch.name)
 
-                # If launch is within 24 hours...
-                if 86400 >= diff > 3600 and not notification.wasNotifiedTwentyFourHour:
-                    logger.info('Launch is within 24 hours, sending notifications.')
-                    self.send_notification(launch, 'twentyFourHour', notification)
-                    notification.wasNotifiedTwentyFourHour = True
-                elif 3600 >= diff > 600 and not notification.wasNotifiedOneHour:
-                    logger.info('Launch is within one hour, sending notifications.')
-                    self.send_notification(launch, 'oneHour', notification)
-                    notification.wasNotifiedOneHour = True
-                elif diff <= 600 and not notification.wasNotifiedTenMinutes:
-                    logger.info('Launch is within ten minutes, sending notifications.')
-                    self.send_notification(launch, 'tenMinute', notification)
-                    notification.wasNotifiedTenMinutes = True
-                else:
-                    logger.info('%s does not meet notification criteria.' % notification.launch.name)
+            # If launch is within 24 hours...
+            if 86400 >= diff > 3600 and not notification.wasNotifiedTwentyFourHour:
+                logger.info('Launch is within 24 hours, sending notifications.')
+                self.send_notification(launch, 'twentyFourHour', notification)
+                notification.wasNotifiedTwentyFourHour = True
+            elif 3600 >= diff > 600 and not notification.wasNotifiedOneHour:
+                logger.info('Launch is within one hour, sending notifications.')
+                self.send_notification(launch, 'oneHour', notification)
+                notification.wasNotifiedOneHour = True
+            elif diff <= 600 and not notification.wasNotifiedTenMinutes:
+                logger.info('Launch is within ten minutes, sending notifications.')
+                self.send_notification(launch, 'tenMinute', notification)
+                notification.wasNotifiedTenMinutes = True
+            else:
+                logger.info('%s does not meet notification criteria.' % notification.launch.name)
         notification.save()
 
     def send_notification(self, launch, notification_type, notification):
