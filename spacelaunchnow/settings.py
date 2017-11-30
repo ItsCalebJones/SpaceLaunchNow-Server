@@ -39,6 +39,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 100,
     'DEFAULT_MODEL_SERIALIZER_CLASS': 'drf_toolbox.serializers.ModelSerializer',
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 }
 
 LOGIN_REDIRECT_URL = '/'
@@ -114,7 +115,7 @@ INSTALLED_APPS = [
     'material.admin',
     'django.contrib.admin',
     'django_user_agents',
-
+    'django_filters'
 ]
 
 MIDDLEWARE = [
