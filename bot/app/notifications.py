@@ -116,14 +116,16 @@ class NotificationServer:
         message = 'SCHEDULE UPDATE: %s now launching in %s at %s.' % (launch.name,
                                                                       seconds_to_time(diff),
                                                                       date.strftime("%H:%M %Z (%d/%m)"))
+
+        old_diff = datetime.utcfromtimestamp(int(notification.last_net_stamp)) - datetime.now()
+        if old_diff < 86400:
+            logger.info('Netstamp Changed and within window - sending mobile notification.')
+            self.send_notification(launch, 'netstampChanged')
+        self.send_to_twitter(message, notification)
+
         notification.last_net_stamp = notification.launch.netstamp
         notification.last_net_stamp_timestamp = datetime.now()
         launch.save()
-        if diff >= 86400:
-            self.send_to_twitter(message, notification)
-        elif diff < 86400:
-            self.send_to_twitter(message, notification)
-            self.send_notification(launch, 'netstampChanged')
 
         # If launch is within 24 hours...
         if 86400 >= diff > 3600:
