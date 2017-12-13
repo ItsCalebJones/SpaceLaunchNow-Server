@@ -23,8 +23,8 @@ class Launcher(models.Model):
 class Agency(models.Model):
     agency = models.CharField(max_length=200, primary_key=True)
     description = models.CharField(max_length=2048, default='')
-    launchers = models.CharField(max_length=500, default='')
-    orbiters = models.CharField(max_length=500, default='')
+    launchers = models.CharField(max_length=500, default='', blank=True)
+    orbiters = models.CharField(max_length=500, default='', blank=True)
     image_url = models.URLField(blank=True)
     nation_url = models.URLField(blank=True)
 
