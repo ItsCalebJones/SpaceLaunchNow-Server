@@ -10,8 +10,8 @@ class LauncherSerializer(serializers.HyperlinkedModelSerializer):
 
 class LauncherModelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Launcher
-        fields = ('id', 'url', 'name', 'agency', 'image_url', 'nation_url')
+        model = LauncherDetail
+        fields = ('id', 'url', 'name', 'description', 'agency', 'variant', 'image_url', 'info_url', 'wiki_url')
 
 
 class OrbiterSerializer(serializers.HyperlinkedModelSerializer):
@@ -25,7 +25,7 @@ class OrbiterModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Launcher
         fields = ('id', 'url', 'name', 'agency', 'image_url', 'nation_url')
-        
+
 
 class AgencySerializer(serializers.HyperlinkedModelSerializer):
     launcher_list = LauncherModelSerializer(many=True, read_only=True)
