@@ -24,7 +24,7 @@ class LauncherDetailViewSet(viewsets.ModelViewSet):
     serializer_class = LauncherDetailSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
-    filter_fields = ('family', 'manufacturer', 'name')
+    filter_fields = ('family', 'agency', 'name')
 
 
 class OrbiterViewSet(viewsets.ModelViewSet):
