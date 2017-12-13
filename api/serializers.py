@@ -18,7 +18,7 @@ class OrbiterSerializer(serializers.HyperlinkedModelSerializer):
 class LauncherDetailSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = LauncherDetail
-        fields = ('id', 'url', 'name', 'description', 'family', 's_family', 'manufacturer',
+        fields = ('id', 'url', 'name', 'description', 'family', 's_family', 'agency',
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust', 'vehicle_class',
                   'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url')
