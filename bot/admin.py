@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from coreschema import Boolean
 from django.contrib import admin
+from django.db.models import F, Case, BooleanField, When
+
+from bot.models import Notification
 from . import models
+
 
 @admin.register(models.Launch)
 class LaunchAdmin(admin.ModelAdmin):
@@ -65,8 +70,9 @@ class MissionAdmin(admin.ModelAdmin):
 @admin.register(models.Notification)
 class NotificationAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">notifications</i>'
-    list_display = ('launch', 'wasNotifiedTwentyFourHour', 'wasNotifiedOneHour', 'wasNotifiedTenMinutes',
-                    'wasNotifiedDailyDigest', 'last_twitter_post')
+    list_display = ('launch', 'last_net_stamp', 'last_twitter_post', 'last_notification_sent',
+                    'last_notification_recipient_count', 'days_to_launch')
+    readonly_fields = ('days_to_launch',)
 
 
 @admin.register(models.DailyDigestRecord)

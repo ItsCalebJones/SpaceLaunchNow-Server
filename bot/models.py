@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.functions import datetime
+from pytz import utc
 
 
 class Launch(models.Model):
@@ -144,6 +146,21 @@ class Notification(models.Model):
 
     def __unicode__(self):
         return self.launch.name
+
+    def days_to_launch(self):
+        if self.last_net_stamp:
+            now = datetime.datetime.utcnow().replace(tzinfo=utc)
+            diff = datetime.datetime.fromtimestamp(self.last_net_stamp, tz=utc) - now
+            return diff.days
+
+    def is_future(self):
+        if self.last_net_stamp is not None or 0:
+            now = datetime.datetime.utcnow().replace(tzinfo=utc)
+            diff = datetime.datetime.fromtimestamp(self.last_net_stamp, tz=utc) - now
+            if diff.total_seconds() > 0:
+                return True
+        return False
+    is_future.boolean = True
 
     class Meta:
         verbose_name = 'Notification'

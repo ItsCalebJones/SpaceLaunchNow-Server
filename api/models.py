@@ -15,13 +15,31 @@ class Launcher(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = 'Launcher'
-        verbose_name_plural = 'Launchers'
+        verbose_name = 'Launcher (Legacy)'
+        verbose_name_plural = 'Launchers (Legacy)'
+
+
+# Create your models here.
+class Agency(models.Model):
+    agency = models.CharField(max_length=200, primary_key=True)
+    description = models.CharField(max_length=2048, default='')
+    launchers = models.CharField(max_length=500, default='')
+    orbiters = models.CharField(max_length=500, default='')
+    image_url = models.URLField(blank=True)
+    nation_url = models.URLField(blank=True)
+
+    def __str__(self):
+        return self.agency
+
+    class Meta:
+        verbose_name = 'Agency'
+        verbose_name_plural = 'Agencies'
 
 
 class Orbiter(models.Model):
     name = models.CharField(max_length=200)
     agency = models.CharField(max_length=200, default='Unknown')
+    launch_agency = models.ForeignKey(Agency, blank=True, null=True)
     history = models.CharField(max_length=1000, default='')
     details = models.CharField(max_length=1000, default='')
     image_url = models.URLField(blank=True)
@@ -38,10 +56,12 @@ class Orbiter(models.Model):
 
 class LauncherDetail(models.Model):
     name = models.CharField(max_length=200)
+    active = models.BooleanField(default=True)
     description = models.CharField(max_length=200, default='', blank=True)
     family = models.CharField(max_length=200, default='', blank=True)
     s_family = models.CharField(max_length=200, default='', blank=True)
-    manufacturer = models.CharField(max_length=200, default='', blank=True)
+    agency = models.CharField(max_length=200, default='', blank=True)
+    launch_agency = models.ForeignKey(Agency, blank=True, null=True)
     variant = models.CharField(max_length=200, default='', blank=True)
     alias = models.CharField(max_length=200, default='', blank=True)
     min_stage = models.IntegerField(blank=True, null=True)
