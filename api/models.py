@@ -39,7 +39,7 @@ class Agency(models.Model):
 class Orbiter(models.Model):
     name = models.CharField(max_length=200)
     agency = models.CharField(max_length=200, default='Unknown')
-    launch_agency = models.ForeignKey(Agency, blank=True, null=True)
+    launch_agency = models.ForeignKey(Agency, related_name='orbiter_list', blank=True, null=True)
     history = models.CharField(max_length=1000, default='')
     details = models.CharField(max_length=1000, default='')
     image_url = models.URLField(blank=True)
@@ -48,6 +48,9 @@ class Orbiter(models.Model):
 
     def __str__(self):
         return self.name
+
+    def __unicode__(self):
+        return '%s' % self.name
 
     class Meta:
         verbose_name = 'Orbiter'
@@ -61,7 +64,7 @@ class LauncherDetail(models.Model):
     family = models.CharField(max_length=200, default='', blank=True)
     s_family = models.CharField(max_length=200, default='', blank=True)
     agency = models.CharField(max_length=200, default='', blank=True)
-    launch_agency = models.ForeignKey(Agency, blank=True, null=True)
+    launch_agency = models.ForeignKey(Agency, related_name='launcher_list', blank=True, null=True)
     variant = models.CharField(max_length=200, default='', blank=True)
     alias = models.CharField(max_length=200, default='', blank=True)
     min_stage = models.IntegerField(blank=True, null=True)
@@ -81,6 +84,9 @@ class LauncherDetail(models.Model):
 
     def __str__(self):
         return self.name
+
+    def __unicode__(self):
+        return '%s' % self.name
 
     class Meta:
         verbose_name = 'Launcher Detail'

@@ -1,4 +1,4 @@
-from api.models import Launcher, Orbiter, LauncherDetail
+from api.models import Launcher, Orbiter, LauncherDetail, Agency
 from rest_framework import serializers
 
 
@@ -6,6 +6,15 @@ class LauncherSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Launcher
         fields = ('id', 'url', 'name', 'agency', 'image_url', 'nation_url')
+
+
+class AgencySerializer(serializers.HyperlinkedModelSerializer):
+    launcher_list = serializers.StringRelatedField(many=True)
+    orbiter_list = serializers.StringRelatedField(many=True)
+
+    class Meta:
+        model = Agency
+        fields = ('url', 'agency', 'launchers', 'orbiters', 'launcher_list', 'orbiter_list', 'description', 'image_url', 'nation_url')
 
 
 class OrbiterSerializer(serializers.HyperlinkedModelSerializer):
