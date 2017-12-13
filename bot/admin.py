@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from coreschema import Boolean
 from django.contrib import admin
-from django.db.models import F, Case, BooleanField, When
-
-from bot.models import Notification
 from . import models
 
 

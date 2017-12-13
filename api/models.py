@@ -57,7 +57,7 @@ class Orbiter(models.Model):
 class LauncherDetail(models.Model):
     name = models.CharField(max_length=200)
     active = models.BooleanField(default=True)
-    description = models.CharField(max_length=200, default='', blank=True)
+    description = models.CharField(max_length=2048, default='', blank=True)
     family = models.CharField(max_length=200, default='', blank=True)
     s_family = models.CharField(max_length=200, default='', blank=True)
     agency = models.CharField(max_length=200, default='', blank=True)
