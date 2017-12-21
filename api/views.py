@@ -1,5 +1,4 @@
 import django_filters
-from django_filters.rest_framework import DjangoFilterBackend
 from api.models import Launcher, LauncherDetail, Orbiter, Agency
 
 from api.serializers import OrbiterSerializer, LauncherSerializer, LauncherDetailSerializer, AgencySerializer
@@ -33,7 +32,7 @@ class LauncherDetailViewSet(viewsets.ModelViewSet):
     serializer_class = LauncherDetailSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
-    filter_fields = ('family', 'agency', 'name', 'launch_agency__agency')
+    filter_fields = ('family', 'agency', 'name', 'launch_agency__agency', 'full_name',)
 
 
 class OrbiterViewSet(viewsets.ModelViewSet):
