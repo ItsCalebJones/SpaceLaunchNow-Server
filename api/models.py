@@ -64,6 +64,7 @@ class LauncherDetail(models.Model):
     family = models.CharField(max_length=200, default='', blank=True)
     s_family = models.CharField(max_length=200, default='', blank=True)
     agency = models.CharField(max_length=200, default='', blank=True)
+    full_name = models.CharField(max_length=200, default='', blank=True)
     launch_agency = models.ForeignKey(Agency, related_name='launcher_list', blank=True, null=True)
     variant = models.CharField(max_length=200, default='', blank=True)
     alias = models.CharField(max_length=200, default='', blank=True)
