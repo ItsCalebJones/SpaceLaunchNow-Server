@@ -57,6 +57,7 @@ class OneSignalSdk(object):
 
     def create_notification(self, contents=None, heading='', url='',
                             included_segments=None, excluded_segments=None, **kwargs):
+
         """
         Creates a notification by sending a notification to https://onesignal.com/api/v1/notifications
         :param heading: push notification heading / title

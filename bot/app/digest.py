@@ -1,13 +1,11 @@
-from django.core import serializers
-
-from num2words import num2words
 import re
 import logging
-from django.utils.datetime_safe import datetime
 import pytz
+from django.core import serializers
+from num2words import num2words
+from django.utils.datetime_safe import datetime, time
 from twitter import Twitter, OAuth, TwitterHTTPError
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
-from bot.libraries.onesignalsdk import OneSignalSdk
 from bot.models import Notification, DailyDigestRecord
 from bot.utils.config import keys
 from bot.utils.deserializer import launch_json_to_model
@@ -49,6 +47,7 @@ def create_daily_digest_record(total, messages, launches):
 
 class DigestServer:
     def __init__(self, debug=None, version=None):
+
         if version is None:
             version = '1.3'
         self.launchLibrary = LaunchLibrarySDK(version=version)
@@ -56,11 +55,13 @@ class DigestServer:
             self.DEBUG = False
         else:
             self.DEBUG = debug
+
         self.twitter = Twitter(
             auth=OAuth(token_key, token_secret, consumer_key, consumer_secret)
         )
         self.twitter_upload = Twitter(domain='upload.twitter.com',
                                       auth=OAuth(token_key, token_secret, consumer_key, consumer_secret))
+
         self.time_to_next_launch = None
         self.next_launch = None
 
@@ -398,7 +399,9 @@ class DigestServer:
             if not self.DEBUG:
                 logger.debug('Sending to twitter - message: %s' % message)
                 self.twitter.statuses.update(status=message)
+
             if self.DEBUG:
                 self.twitter.direct_messages.new(user="koun7erfit", text=message)
+
         except TwitterHTTPError as e:
             logger.error("%s %s" % (str(e), message))

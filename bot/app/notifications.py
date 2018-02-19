@@ -1,4 +1,3 @@
-import json
 import re
 from django.core import serializers
 
@@ -285,6 +284,7 @@ class NotificationServer:
 
                 # Get the notification
                 response = self.one_signal.get_notification(notification_id)
+
                 if response.status_code == 200:
                     logger.info('Notification Status: %s Content: %s' % (response.status_code, response.json()))
                 else:
