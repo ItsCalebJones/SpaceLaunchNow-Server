@@ -1,22 +1,13 @@
-import json
-import os
-import urllib
-from datetime import timedelta
-from django.core import serializers
 
-import requests
-from djcelery.tests.req import RequestFactory
-from num2words import num2words
 import re
 import logging
-from django.utils.datetime_safe import datetime, time
 import pytz
-from rest_framework.renderers import JSONRenderer
+from django.core import serializers
+from num2words import num2words
+from django.utils.datetime_safe import datetime, time
 from twitter import Twitter, OAuth, TwitterHTTPError
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
-from bot.libraries.onesignalsdk import OneSignalSdk
 from bot.models import Notification, DailyDigestRecord
-from bot.serializer import LaunchSerializer
 from bot.utils.config import keys
 from bot.utils.deserializer import launch_json_to_model
 # import the logging library
@@ -27,6 +18,11 @@ logger = logging.getLogger('bot.digest')
 AUTH_TOKEN_HERE = keys['AUTH_TOKEN_HERE']
 APP_ID = keys['APP_ID']
 DAEMON_SLEEP = 6000
+
+token_key = keys['TOKEN_KEY']
+token_secret = keys['TOKEN_SECRET']
+consumer_key = keys['CONSUMER_KEY']
+consumer_secret = keys['CONSUMER_SECRET']
 
 
 def update_notification_record(launch):
@@ -53,7 +49,7 @@ def create_daily_digest_record(total, messages, launches):
 
 class DigestServer:
     def __init__(self, debug=None, version=None):
-        self.one_signal = OneSignalSdk(AUTH_TOKEN_HERE, APP_ID)
+
         if version is None:
             version = '1.3'
         self.launchLibrary = LaunchLibrarySDK(version=version)
@@ -61,19 +57,13 @@ class DigestServer:
             self.DEBUG = False
         else:
             self.DEBUG = debug
-        response = self.one_signal.get_app(APP_ID)
-        assert response.status_code == 200
-        self.app = response.json()
-        assert isinstance(self.app, dict)
-        assert self.app['id'] and self.app['name'] and self.app['updated_at'] and self.app['created_at']
-        self.app_auth_key = self.app['basic_auth_key']
+
         self.twitter = Twitter(
-            auth=OAuth(keys['TOKEN_KEY'], keys['TOKEN_SECRET'], keys['CONSUMER_KEY'], keys['CONSUMER_SECRET'])
+            auth=OAuth(token_key, token_secret, consumer_key, consumer_secret)
         )
         self.twitter_upload = Twitter(domain='upload.twitter.com',
-                                      auth=OAuth(keys['TOKEN_KEY'], keys['TOKEN_SECRET'], keys['CONSUMER_KEY'],
-                                                 keys['CONSUMER_SECRET'])
-                                      )
+                                      auth=OAuth(token_key, token_secret, consumer_key, consumer_secret))
+
         self.time_to_next_launch = None
         self.next_launch = None
 
@@ -411,5 +401,8 @@ class DigestServer:
             if not self.DEBUG:
                 logger.debug('Sending to twitter - message: %s' % message)
                 self.twitter.statuses.update(status=message)
+            if self.DEBUG:
+                self.twitter.direct_messages.new(user="koun7erfit", text=message)
+
         except TwitterHTTPError as e:
             logger.error("%s %s" % (str(e), message))

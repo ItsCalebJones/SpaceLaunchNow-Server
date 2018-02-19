@@ -1,4 +1,3 @@
-import json
 import re
 from django.core import serializers
 
@@ -47,12 +46,6 @@ class NotificationServer:
             self.DEBUG = False
         else:
             self.DEBUG = debug
-        response = self.one_signal.get_app(APP_ID)
-        assert response.status_code == 200
-        self.app = response.json()
-        assert isinstance(self.app, dict)
-        assert self.app['id'] and self.app['name'] and self.app['updated_at'] and self.app['created_at']
-        self.app_auth_key = self.app['basic_auth_key']
         self.twitter = Twitter(
             auth=OAuth(keys['TOKEN_KEY'], keys['TOKEN_SECRET'], keys['CONSUMER_KEY'], keys['CONSUMER_SECRET'])
         )
@@ -241,8 +234,6 @@ class NotificationServer:
         notification.save()
 
     def send_notification(self, launch, notification_type, notification):
-        self.one_signal.user_auth_key = self.app_auth_key
-        self.one_signal.app_id = APP_ID
         logger.info('Creating notification for %s' % launch.name)
 
         # Create a notification
@@ -292,7 +283,8 @@ class NotificationServer:
                 notification.save()
 
                 # Get the notification
-                response = self.one_signal.get_notification(APP_ID, notification_id, self.app_auth_key)
+                response = self.one_signal.get_notification(notification_id)
+
                 if response.status_code == 200:
                     logger.info('Notification Status: %s Content: %s' % (response.status_code, response.json()))
                 else:
