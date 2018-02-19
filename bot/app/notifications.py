@@ -271,6 +271,7 @@ class NotificationServer:
         if time_since_last_notification is not None and time_since_last_notification.total_seconds() < 600:
             logger.info('Cannot send notification - too soon since last notification!')
         else:
+            logger.info('Notification Data - %s' % kwargs)
             response = self.one_signal.create_notification(contents, heading, **kwargs)
             if response.status_code == 200:
                 logger.info('Notification Sent -  Status: %s Response: %s' % (response.status_code, response.json()))
