@@ -279,6 +279,7 @@ class NotificationServer:
             logger.info(topics_and_segments)
             result = push_service.notify_topic_subscribers(data_message=kwargs['data'], condition=topic_condition,
                                                            time_to_live=86400)
+            logger.info(result)
             response = self.one_signal.create_notification(contents, heading, **kwargs)
             if response.status_code == 200:
                 logger.info('Notification Sent -  Status: %s Response: %s' % (response.status_code, response.json()))
