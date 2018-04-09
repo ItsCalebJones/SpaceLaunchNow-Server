@@ -41,7 +41,74 @@ def seconds_to_time(seconds):
         return "{0:.0f} minutes".format(minutes)
 
 
-def get_segments(launch):
+def get_fcm_topics_and_onesignal_segments(launch, production=False):
+    location_agency_id = 0
+    rocket_agency_id = 0
+    location_id = 0
+    segments = ['ALL-Filter']
+    if production:
+        topics = "'production' in topics"
+    else:
+        topics = "'debug' in topics"
+
+    if launch.location_set.first() is not None:
+        location_id = launch.location_set.first().id
+        if launch.location_set.first().pad_set.first() is not None:
+            pad_id = launch.location_set.first().pad_set.first().id
+            if launch.location_set.first().pad_set.first().agency_set.first() is not None:
+                location_agency_id = launch.location_set.first().pad_set.first().agency_set.first().id
+    if launch.rocket_set.first() is not None:
+        rocket_id = launch.rocket_set.first().id
+        if launch.rocket_set.first().agency_set.first() is not None:
+            rocket_agency_id = launch.rocket_set.first().agency_set.first().id
+    lsp_id = launch.lsp_set.first().id
+
+    if lsp_id == 44 or location_agency_id == 44 or rocket_agency_id == 44:
+        topics = topics + " && ('all' in topics || 'nasa' in topics)"
+        segments.append('Nasa')
+        return {'segments': segments, 'topics': topics}
+    if lsp_id == 115 or location_agency_id == 115 or rocket_agency_id == 115:
+        topics = topics + " && ('all' in topics || 'arianespace' in topics)"
+        segments.append('Arianespace')
+        return {'segments': segments, 'topics': topics}
+    if lsp_id == 121 or location_agency_id == 121 or rocket_agency_id == 121:
+        topics = topics + " && ('all' in topics || 'spacex' in topics)"
+        segments.append('SpaceX')
+        return {'segments': segments, 'topics': topics}
+    if lsp_id == 124 or location_agency_id == 124 or rocket_agency_id == 124:
+        topics = topics + " && ('all' in topics || 'ula' in topics)"
+        segments.append('ULA')
+        return {'segments': segments, 'topics': topics}
+    if lsp_id == 111 or location_agency_id == 111 or rocket_agency_id == 111 or location_agency_id == 163 \
+            or rocket_agency_id == 163 or location_agency_id == 63 or rocket_agency_id == 63:
+        topics = topics + " && ('all' in topics || 'roscosmos' in topics)"
+        segments.append('Roscosmos')
+        return {'segments': segments, 'topics': topics}
+    if lsp_id == 88 or location_agency_id == 88 or rocket_agency_id == 88:
+        topics = topics + " && ('all' in topics || 'casc' in topics)"
+        segments.append('CASC')
+        return {'segments': segments, 'topics': topics}
+    if location_id == 17:
+        topics = topics + " && ('all' in topics || 'ksc' in topics)"
+        segments.append('KSC')
+        return {'segments': segments, 'topics': topics}
+    if location_id == 17:
+        topics = topics + " && ('all' in topics || 'cape' in topics)"
+        segments.append('Cape')
+        return {'segments': segments, 'topics': topics}
+    if location_id == 11:
+        topics = topics + " && ('all' in topics || 'plex' in topics)"
+        segments.append('Ples')
+        return {'segments': segments, 'topics': topics}
+    if location_id == 11:
+        topics = topics + " && ('all' in topics || 'van' in topics)"
+        segments.append('Van')
+        return {'segments': segments, 'topics': topics}
+    topics = topics + " && 'all' in topics"
+    return {'segments': segments, 'topics': topics}
+
+
+def get_onesignal_segments(launch):
     location_agency_id = 0
     rocket_agency_id = 0
     location_id = 0

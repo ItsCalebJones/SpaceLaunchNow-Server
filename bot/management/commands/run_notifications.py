@@ -33,7 +33,7 @@ class Command(BaseCommand):
         notification = NotificationServer(debug=debug, version=version)
         library = LaunchLibrarySDK(version=version)
         if test_notification:
-            response = library.get_next_launch()
+            response = library.get_next_launch(launch_service_provider="spx")
             if response.status_code is 200:
                 response_json = response.json()
                 launch_data = response_json['launches']
