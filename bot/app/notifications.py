@@ -241,9 +241,9 @@ class NotificationServer:
         contents = '%s launching from %s' % (launch.name, launch.location_set.first().name)
         topics_and_segments = get_fcm_topics_and_onesignal_segments(launch)
         include_segments = topics_and_segments['segments']
-        exclude_segments = []
+        exclude_segments = ['firebase']
         if self.DEBUG:
-            exclude_segments = ['Production']
+            exclude_segments.append('Production')
         if len(launch.vid_urls.all()) > 0:
             webcast = True
         else:
@@ -277,7 +277,8 @@ class NotificationServer:
             push_service = FCMNotification(api_key=keys['FCM_KEY'])
             topic_condition = topics_and_segments['topics']
             logger.info(topics_and_segments)
-            result = push_service.notify_topic_subscribers(data_message=kwargs['data'], condition=topic_condition)
+            result = push_service.notify_topic_subscribers(data_message=kwargs['data'], condition=topic_condition,
+                                                           time_to_live=86400)
             response = self.one_signal.create_notification(contents, heading, **kwargs)
             if response.status_code == 200:
                 logger.info('Notification Sent -  Status: %s Response: %s' % (response.status_code, response.json()))
