@@ -13,13 +13,13 @@ headers = {
 
 class LaunchLibrarySDK(object):
     # Latest stable Version stored.
-    def __init__(self, version='1.3'):
+    def __init__(self, version='1.4'):
         if version is None:
-            version = '1.3'
+            version = '1.4'
         self.version = version
         self.api_url = BASE_URL + self.version
 
-    def get_next_launch(self, tbd=False, agency=None, launch_service_provider=None, count=1):
+    def get_next_launch(self, tbd=False, launch_service_provider=None, count=1):
         """
         Builds a URL and fetches response from LL
         :param agency: Pass the ID of an Agency to get launches for that agency (Rocket, Location, or Mission agency)
@@ -32,8 +32,8 @@ class LaunchLibrarySDK(object):
         else:
             url = self.api_url + '/launch/next/%d?mode=verbose' % count
 
-        # if agency:
-        #     url = url + getLSP
+        if launch_service_provider:
+            url = url + "&lsp=" + launch_service_provider
         return send_request(url, method='GET', headers=headers)
 
     def get_next_weeks_launches(self):
