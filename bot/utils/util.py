@@ -41,12 +41,12 @@ def seconds_to_time(seconds):
         return "{0:.0f} minutes".format(minutes)
 
 
-def get_fcm_topics_and_onesignal_segments(launch, production=False):
+def get_fcm_topics_and_onesignal_segments(launch, debug=False):
     location_agency_id = 0
     rocket_agency_id = 0
     location_id = 0
     segments = ['ALL-Filter']
-    if production:
+    if not debug:
         topics = "'production' in topics"
     else:
         topics = "'debug' in topics"
