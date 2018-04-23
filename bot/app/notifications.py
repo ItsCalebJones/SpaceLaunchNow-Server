@@ -239,7 +239,7 @@ class NotificationServer:
 
         # Create a notification
         contents = '%s launching from %s' % (launch.name, launch.location_set.first().name)
-        topics_and_segments = get_fcm_topics_and_onesignal_segments(launch)
+        topics_and_segments = get_fcm_topics_and_onesignal_segments(launch, debug=self.DEBUG)
         include_segments = topics_and_segments['segments']
         exclude_segments = ['firebase']
         if self.DEBUG:

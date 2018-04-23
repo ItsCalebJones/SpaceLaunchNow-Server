@@ -1,3 +1,4 @@
+
 import re
 import logging
 import pytz
@@ -17,6 +18,7 @@ logger = logging.getLogger('bot.digest')
 AUTH_TOKEN_HERE = keys['AUTH_TOKEN_HERE']
 APP_ID = keys['APP_ID']
 DAEMON_SLEEP = 6000
+
 token_key = keys['TOKEN_KEY']
 token_secret = keys['TOKEN_SECRET']
 consumer_key = keys['CONSUMER_KEY']
@@ -399,7 +401,6 @@ class DigestServer:
             if not self.DEBUG:
                 logger.debug('Sending to twitter - message: %s' % message)
                 self.twitter.statuses.update(status=message)
-
             if self.DEBUG:
                 self.twitter.direct_messages.new(user="koun7erfit", text=message)
 
