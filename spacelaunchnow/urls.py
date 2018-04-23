@@ -35,8 +35,6 @@ v1_router.register(r'orbiters', api_views.OrbiterViewSet)
 v1_router.register(r'agency', api_views.AgencyViewSet)
 v1_router.register(r'launcher_details', api_views.LauncherDetailViewSet)
 v1_router.register(r'launches', bot_views.LaunchViewSet)
-v1_router.register(r'notifications', bot_views.NotificationViewSet)
-v1_router.register(r'records', bot_views.DailyDigestRecordViewSet)
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
