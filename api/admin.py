@@ -20,13 +20,6 @@ class AgencyAdmin(admin.ModelAdmin):
     list_filter = ('agency',)
 
 
-@admin.register(models.Launcher)
-class LauncherAdmin(admin.ModelAdmin):
-    icon = '<i class="material-icons">account_balance</i>'
-    list_display = ('name', 'agency')
-    list_filter = ('agency',)
-
-
 @admin.register(models.Orbiter)
 class OrbiterAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">account_balance</i>'

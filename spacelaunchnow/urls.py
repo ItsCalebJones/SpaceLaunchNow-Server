@@ -30,16 +30,20 @@ class Router(routers.DefaultRouter):
     """
 
 v1_router = Router()
-v1_router.register(r'launchers', api_views.LauncherViewSet)
 v1_router.register(r'orbiters', api_views.OrbiterViewSet)
 v1_router.register(r'agency', api_views.AgencyViewSet)
 v1_router.register(r'launcher_details', api_views.LauncherDetailViewSet)
-v1_router.register(r'launches', bot_views.LaunchViewSet)
+v1_router.register(r'launchers', api_views.LauncherDetailViewSet)
+
+v2_router = Router()
+v2_router.register(r'orbiters', api_views.OrbiterViewSet)
+v2_router.register(r'agency', api_views.AgencyViewSet)
+v2_router.register(r'launchers', api_views.LauncherDetailViewSet)
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^v1/', include(v1_router.urls, namespace='v1')),
-    url(r'^v2/', include(v1_router.urls, namespace='v2')),
+    url(r'^2.0.0/', include(v2_router.urls, namespace='v2')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^docs/', include('rest_framework_docs.urls')),
     url(r'^$', landing_views.index, name='index'),

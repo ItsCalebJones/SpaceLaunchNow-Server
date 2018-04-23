@@ -1,18 +1,9 @@
 import django_filters
-from api.models import Launcher, LauncherDetail, Orbiter, Agency
+from api.models import LauncherDetail, Orbiter, Agency
 
-from api.serializers import OrbiterSerializer, LauncherSerializer, LauncherDetailSerializer, AgencySerializer
+from api.serializers import OrbiterSerializer, LauncherDetailSerializer, AgencySerializer
 from rest_framework import viewsets
 from rest_framework import permissions
-
-
-class LauncherViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows Launcher to be viewed or edited.
-    """
-    queryset = Launcher.objects.all()
-    serializer_class = LauncherSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
 class AgencyViewSet(viewsets.ModelViewSet):
