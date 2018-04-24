@@ -13,7 +13,7 @@ django-embed-video==1.1.2
 django-filter==1.1.0
 django-material==1.1.1
 django-user-agents==0.3.2
-djangorestframework==3.6.3
+djangorestframework==3.8.2
 djangorestframework-bulk==0.2.1
 drf-toolbox==0.1.7
 drfdocs==0.0.11

@@ -27,7 +27,8 @@ class AgencySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Agency
-        fields = ('url', 'agency', 'launchers', 'orbiters', 'launcher_list', 'orbiter_list', 'description', 'image_url', 'nation_url')
+        fields = ('url', 'agency', 'launchers', 'orbiters', 'launcher_list', 'orbiter_list', 'description', 'image_url',
+                  'nation_url')
 
 
 class LauncherDetailSerializer(serializers.HyperlinkedModelSerializer):

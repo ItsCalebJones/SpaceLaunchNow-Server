@@ -14,13 +14,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 
-from api import views as api_views
-from web import views as landing_views
 from django.conf import settings
-from django.contrib import admin
-from django.conf.urls.static import static
 from django.conf.urls import url, include
+from django.conf.urls.static import static
+from django.contrib import admin
 from rest_framework import routers
+from api.v2.router import api_urlpatterns as api_v2
+from api.v1.router import api_urlpatterns as api_v1
+from web import views as landing_views
 
 
 class Router(routers.DefaultRouter):
@@ -28,22 +29,13 @@ class Router(routers.DefaultRouter):
     My API documentation
     """
 
-v1_router = Router()
-v1_router.register(r'orbiters', api_views.OrbiterViewSet)
-v1_router.register(r'agency', api_views.AgencyViewSet)
-v1_router.register(r'launcher_details', api_views.LauncherDetailViewSet)
-v1_router.register(r'launchers', api_views.LauncherDetailViewSet)
 
-v2_router = Router()
-v2_router.register(r'orbiters', api_views.OrbiterViewSet)
-v2_router.register(r'agency', api_views.AgencyViewSet)
-v2_router.register(r'launchers', api_views.LauncherDetailViewSet)
 
 urlpatterns = [
     url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^v1/', include(v1_router.urls, namespace='v1')),
-    url(r'^2.0.0/', include(v2_router.urls, namespace='v2')),
+    url(r'^v1/', include(api_v1, namespace='v1')),
+    url(r'^v2/', include(api_v2, namespace='v2')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^docs/', include('rest_framework_docs.urls')),
     url(r'^$', landing_views.index, name='index'),
