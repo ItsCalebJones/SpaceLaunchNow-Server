@@ -50,6 +50,8 @@ REST_FRAMEWORK = {
     },
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication'
     )
 }
 
@@ -69,7 +71,7 @@ LOGGING = {
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'log/django.log',
             'formatter': 'standard',
-            'maxBytes': 1024*1024*5,
+            'maxBytes': 1024 * 1024 * 5,
             'backupCount': 5
         },
         'console': {
@@ -80,14 +82,14 @@ LOGGING = {
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'log/bot/daily_digest.log',
             'formatter': 'standard',
-            'maxBytes': 1024*1024*5,
+            'maxBytes': 1024 * 1024 * 5,
             'backupCount': 5
         },
         'notifications': {
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'log/bot/notification.log',
             'formatter': 'standard',
-            'maxBytes': 1024*1024*5,
+            'maxBytes': 1024 * 1024 * 5,
             'backupCount': 5
         }
     },
