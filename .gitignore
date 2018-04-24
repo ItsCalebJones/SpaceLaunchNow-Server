@@ -10,3 +10,5 @@ celerybeat-schedule
 bot/utils/config.py
 celerybeat.pid
 *.log
+
+spacelaunchnow/config.py

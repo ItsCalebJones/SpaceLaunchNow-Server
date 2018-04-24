@@ -1,32 +1,32 @@
 import django_filters
-from api.models import Launcher, LauncherDetail, Orbiter, Agency
+from api.models import LauncherDetail, Orbiter, Agency
 
-from api.serializers import OrbiterSerializer, LauncherSerializer, LauncherDetailSerializer, AgencySerializer
+from api.v2.serializers import OrbiterSerializer, LauncherDetailSerializer, AgencySerializer
 from rest_framework import viewsets
 from rest_framework import permissions
 
 
-class LauncherViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows Launcher to be viewed or edited.
-    """
-    queryset = Launcher.objects.all()
-    serializer_class = LauncherSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
-
 class AgencyViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows Launcher to be viewed or edited.
+    API endpoint that allows Launcher to be viewed.
+
+    GET:
+    Return a list of all the existing users.
     """
     queryset = Agency.objects.all()
     serializer_class = AgencySerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
-class LauncherDetailViewSet(viewsets.ModelViewSet):
+class LaunchersViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows groups to be viewed or edited.
+    API endpoint that allows Launchers to be viewed.
+
+    GET:
+    Return a list of all the existing launchers.
+
+    FILTERS:
+    'family', 'agency', 'name', 'launch_agency__agency', 'full_name'
     """
     queryset = LauncherDetail.objects.all()
     serializer_class = LauncherDetailSerializer
@@ -37,7 +37,10 @@ class LauncherDetailViewSet(viewsets.ModelViewSet):
 
 class OrbiterViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows groups to be viewed or edited.
+    API endpoint that allows Orbiters to be viewed.
+
+    GET:
+    Return a list of all the existing orbiters.
     """
     queryset = Orbiter.objects.all()
     serializer_class = OrbiterSerializer
