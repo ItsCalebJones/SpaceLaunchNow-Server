@@ -32,7 +32,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECRET_KEY = config.keys['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8', '.spacelaunchnow.me', '127.0.0.1', 'spacelaunchnow.me']
 REST_FRAMEWORK = {
@@ -212,3 +212,11 @@ CELERY_TIMEZONE = 'UTC'
 # Name of cache backend to cache user agents. If it not specified default
 # cache alias will be used. Set to `None` to disable caching.
 USER_AGENTS_CACHE = None
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False
+DEFAULT_FROM_EMAIL = 'Webmaster <webmaster@spacelaunchnow.me>'
