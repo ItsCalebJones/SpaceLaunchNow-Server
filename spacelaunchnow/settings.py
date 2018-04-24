@@ -32,7 +32,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECRET_KEY = config.keys['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8', '.spacelaunchnow.me', '127.0.0.1', 'spacelaunchnow.me']
 REST_FRAMEWORK = {
@@ -122,8 +122,7 @@ INSTALLED_APPS = [
     'bot',
     'djcelery',
     'embed_video',
-    'material',
-    'material.admin',
+    'jet',
     'django.contrib.admin',
     'django_user_agents',
     'django_filters',

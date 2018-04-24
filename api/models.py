@@ -4,22 +4,10 @@ from __future__ import unicode_literals
 from django.db import models
 
 
-# Create your models here.
-class Launcher(models.Model):
-    name = models.CharField(max_length=200)
-    agency = models.CharField(max_length=200, default='Unknown')
-    image_url = models.URLField(blank=True)
-    nation_url = models.URLField(blank=True)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = 'Launcher (Legacy)'
-        verbose_name_plural = 'Launchers (Legacy)'
-
-
-# Create your models here.
+# The Agency object is meant to define a agency that operates launchers and orbiters.
+#
+# Example: SpaceX has Falcon 9 Launchers and Dragon orbiters
+#
 class Agency(models.Model):
     agency = models.CharField(max_length=200, primary_key=True)
     description = models.CharField(max_length=2048, default='')
@@ -32,10 +20,15 @@ class Agency(models.Model):
         return self.agency
 
     class Meta:
+        ordering = ['agency']
         verbose_name = 'Agency'
         verbose_name_plural = 'Agencies'
 
 
+# The Orbiter object is meant to define spacecraft (past and present) that are human-rated for spaceflight.
+#
+# Example: Dragon, Orion, etc.
+# TODO Add 'in use / capability' fields.
 class Orbiter(models.Model):
     name = models.CharField(max_length=200)
     agency = models.CharField(max_length=200, default='Unknown')
@@ -53,10 +46,17 @@ class Orbiter(models.Model):
         return '%s' % self.name
 
     class Meta:
+        ordering = ['name']
         verbose_name = 'Orbiter'
         verbose_name_plural = 'Orbiters'
 
 
+# The LauncherDetail object is meant to define orbital class launch vehicles (past and present).
+#
+# Example: Falcon 9, Saturn V, etc.
+# TODO Add 'in use / capability' fields.
+# TODO Deprecate the 'agency' string field now that its linked to launch_agency.
+# TODO Rename back to 'Launcher' now that legacy launcher is deprecated and no longer in use.
 class LauncherDetail(models.Model):
     name = models.CharField(max_length=200)
     active = models.BooleanField(default=True)
@@ -90,5 +90,6 @@ class LauncherDetail(models.Model):
         return '%s' % self.name
 
     class Meta:
+        ordering = ['name']
         verbose_name = 'Launcher Detail'
         verbose_name_plural = 'Launcher Details'

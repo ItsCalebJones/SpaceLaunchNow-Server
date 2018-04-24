@@ -7,14 +7,12 @@ from . import models
 
 @admin.register(models.Launch)
 class LaunchAdmin(admin.ModelAdmin):
-    icon = '<i class="material-icons">view_agenda</i>'
     list_display = ('id', 'name', 'status', 'inhold', 'net')
     list_select_related = True
 
 
 @admin.register(models.Location)
 class LocationAdmin(admin.ModelAdmin):
-    icon = '<i class="material-icons">location_on</i>'
     list_display = ('id', 'name', 'country_code', 'show_launches')
     list_select_related = True
 
@@ -24,14 +22,12 @@ class LocationAdmin(admin.ModelAdmin):
 
 @admin.register(models.Pad)
 class PadAdmin(admin.ModelAdmin):
-    icon = '<i class="material-icons">my_location</i>'
     list_display = ('id', 'name', 'location')
     list_select_related = True
 
 
 @admin.register(models.Rocket)
 class RocketAdmin(admin.ModelAdmin):
-    icon = '<i class="material-icons">navigation</i>'
     list_display = ('id', 'name', 'configuration', 'show_launches')
 
     def show_launches(self, obj):
@@ -41,7 +37,6 @@ class RocketAdmin(admin.ModelAdmin):
 
 @admin.register(models.Agency)
 class AgencyAdmin(admin.ModelAdmin):
-    icon = '<i class="material-icons">business</i>'
     list_display = ('id', 'name', 'type', 'show_pads', 'show_locations', 'show_rockets')
 
     def show_pads(self, obj):
@@ -59,13 +54,11 @@ class AgencyAdmin(admin.ModelAdmin):
 
 @admin.register(models.Mission)
 class MissionAdmin(admin.ModelAdmin):
-    icon = '<i class="material-icons">assignment</i>'
     list_display = ('id', 'name', 'type_name', 'launch')
 
 
 @admin.register(models.Notification)
 class NotificationAdmin(admin.ModelAdmin):
-    icon = '<i class="material-icons">notifications</i>'
     list_display = ('launch', 'last_net_stamp', 'last_twitter_post', 'last_notification_sent',
                     'last_notification_recipient_count', 'days_to_launch')
     readonly_fields = ('days_to_launch',)
@@ -73,5 +66,4 @@ class NotificationAdmin(admin.ModelAdmin):
 
 @admin.register(models.DailyDigestRecord)
 class DailyDigestRecordAdmin(admin.ModelAdmin):
-    icon = '<i class="material-icons">history</i>'
     list_display = ('id', 'timestamp', 'messages', 'count', 'data')
