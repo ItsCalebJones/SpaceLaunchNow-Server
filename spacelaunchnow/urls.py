@@ -15,7 +15,6 @@ Including another URLconf
 """
 
 from api import views as api_views
-from bot import views as bot_views
 from web import views as landing_views
 from django.conf import settings
 from django.contrib import admin
@@ -41,6 +40,7 @@ v2_router.register(r'agency', api_views.AgencyViewSet)
 v2_router.register(r'launchers', api_views.LauncherDetailViewSet)
 
 urlpatterns = [
+    url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
     url(r'^admin/', include(admin.site.urls)),
     url(r'^v1/', include(v1_router.urls, namespace='v1')),
     url(r'^2.0.0/', include(v2_router.urls, namespace='v2')),

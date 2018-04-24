@@ -22,7 +22,7 @@ STATICFILES_DIRS = (
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Quick-start development settings - unsuitable for production
@@ -122,8 +122,7 @@ INSTALLED_APPS = [
     'bot',
     'djcelery',
     'embed_video',
-    'material',
-    'material.admin',
+    'jet',
     'django.contrib.admin',
     'django_user_agents',
     'django_filters',
