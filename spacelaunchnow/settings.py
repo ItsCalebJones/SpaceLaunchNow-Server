@@ -50,6 +50,8 @@ REST_FRAMEWORK = {
     },
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
+	'rest_framework.authentication.BasicAuthentication',
+    	'rest_framework.authentication.SessionAuthentication'
     )
 }
 
@@ -216,7 +218,7 @@ USER_AGENTS_CACHE = None
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 25
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_USER = None
+EMAIL_HOST_PASSWORD = None
 EMAIL_USE_TLS = False
 DEFAULT_FROM_EMAIL = 'Webmaster <webmaster@spacelaunchnow.me>'
