@@ -23,6 +23,9 @@ class Agency(models.Model):
     def __str__(self):
         return self.agency
 
+    def __unicode__(self):
+        return u'%s' % self.agency
+
     class Meta:
         ordering = ['agency']
         verbose_name = 'Agency'
@@ -47,7 +50,7 @@ class Orbiter(models.Model):
         return self.name
 
     def __unicode__(self):
-        return '%s' % self.name
+        return u'%s' % self.name
 
     class Meta:
         ordering = ['name']
@@ -91,7 +94,7 @@ class LauncherDetail(models.Model):
         return self.name
 
     def __unicode__(self):
-        return '%s' % self.name
+        return u'%s' % self.name
 
     class Meta:
         ordering = ['name']
