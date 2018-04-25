@@ -40,7 +40,8 @@ Additional labels for pre-release and build metadata are available as extensions
 
 ## Authors
 
-* **Caleb Jones** - *Initial work* - [ItsCalebJones](https://github.com/ItsCalebJones)
+* **Caleb Jones**           - *Initial work*    - [ItsCalebJones](https://github.com/ItsCalebJones)
+* **Jacques Rascagneres **  - *Contributer*     - [JRascagneres](https://github.com/JRascagneres)
 
 See also the list of [contributors](https://github.com/itscalebjones/SpaceLaunchNow-Server/contributors) who participated in this project.
 
