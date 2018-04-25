@@ -12,7 +12,7 @@ def getDataEnter():
             agencyObj.save()
             print ("Updated " + agency['name'])
         else:
-            Agency.objects.get_or_create(agency=agency['name'], launch_library_id=agency['id'])
+            Agency.objects.create(agency=agency['name'], launch_library_id=agency['id'])
             print ("Added " + agency['name'])
 
 
