@@ -13,4 +13,4 @@ celerybeat.pid
 *.log
 venv/**
 spacelaunchnow/config.py
-
+assets/**

@@ -13,7 +13,7 @@ class AgencyViewSet(viewsets.ModelViewSet):
     GET:
     Return a list of all the existing users.
     """
-    queryset = Agency.objects.all()
+    queryset = Agency.objects.filter(featured=True).distinct()
     serializer_class = AgencySerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
