@@ -131,8 +131,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken'
 ]
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -216,3 +214,11 @@ CELERY_TIMEZONE = 'UTC'
 # Name of cache backend to cache user agents. If it not specified default
 # cache alias will be used. Set to `None` to disable caching.
 USER_AGENTS_CACHE = None
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = None
+EMAIL_HOST_PASSWORD = None
+EMAIL_USE_TLS = False
+DEFAULT_FROM_EMAIL = 'Webmaster <webmaster@spacelaunchnow.me>'
