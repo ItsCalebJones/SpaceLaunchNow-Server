@@ -15,6 +15,9 @@ class Agency(models.Model):
     orbiters = models.CharField(max_length=500, default='', blank=True)
     image_url = models.URLField(blank=True)
     nation_url = models.URLField(blank=True)
+    ceo = models.CharField(max_length=200, blank=True)
+    founding_year = models.CharField(blank=True, default='', max_length=20)
+    logo_url = models.URLField(blank=True);
 
     def __str__(self):
         return self.agency
