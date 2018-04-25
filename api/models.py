@@ -19,6 +19,7 @@ class Agency(models.Model):
     founding_year = models.CharField(blank=True, default='', max_length=20)
     logo_url = models.URLField(blank=True)
     launch_library_id = models.IntegerField(blank=True, default=-1)
+    featured = models.BooleanField(default=False)
 
     def __str__(self):
         return self.agency
