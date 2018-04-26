@@ -9,7 +9,7 @@ from django.db import models
 # Example: SpaceX has Falcon 9 Launchers and Dragon orbiters
 #
 class Agency(models.Model):
-    agency = models.CharField(max_length=200, primary_key=True)
+    agency = models.CharField(max_length=200)
     description = models.CharField(max_length=2048, default='', blank=True)
     launchers = models.CharField(max_length=500, default='', blank=True)
     orbiters = models.CharField(max_length=500, default='', blank=True)
