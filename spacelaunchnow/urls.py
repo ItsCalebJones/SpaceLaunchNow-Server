@@ -19,7 +19,7 @@ from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.contrib import admin
 from rest_framework import routers
-from api.v2.router import api_urlpatterns as api_v2
+from api.v200.router import api_urlpatterns as api_v2
 from api.v1.router import api_urlpatterns as api_v1
 from web import views as landing_views
 
@@ -35,7 +35,7 @@ urlpatterns = [
     url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
     url(r'^admin/', include(admin.site.urls)),
     url(r'^v1/', include(api_v1, namespace='v1')),
-    url(r'^v2/', include(api_v2, namespace='v2')),
+    url(r'^2.0.0/', include(api_v2, namespace='v200')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^docs/', include('rest_framework_docs.urls')),
     url(r'^$', landing_views.index, name='index'),

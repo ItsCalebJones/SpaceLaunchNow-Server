@@ -7,13 +7,13 @@ def get_data():
     results = requests.get("http://launchlibrary.net/1.3/agency?limit=1000")
     agencies = results.json()['agencies']
     for agency in agencies:
-        if Agency.objects.filter(agency=agency['name']).exists():
-            obj = Agency.objects.get(agency=agency['name'])
+        if Agency.objects.filter(name=agency['name']).exists():
+            obj = Agency.objects.get(name=agency['name'])
             obj.launch_library_id = agency['id']
             obj.save()
             print ("Updated " + agency['name'])
         else:
-            Agency.objects.create(agency=agency['name'], launch_library_id=agency['id'])
+            Agency.objects.create(name=agency['name'], launch_library_id=agency['id'])
             print ("Added " + agency['name'])
 
 

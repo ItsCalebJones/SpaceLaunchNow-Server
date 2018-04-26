@@ -8,29 +8,48 @@ from django.db import models
 #
 # Example: SpaceX has Falcon 9 Launchers and Dragon orbiters
 #
+from django.template.defaultfilters import truncatechars
+
+
 class Agency(models.Model):
-    agency = models.CharField(max_length=200)
-    description = models.CharField(max_length=2048, default='', blank=True)
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=200)
+    description = models.CharField(max_length=2048, blank=True, null=True, default=None)
     launchers = models.CharField(max_length=500, default='', blank=True)
     orbiters = models.CharField(max_length=500, default='', blank=True)
-    image_url = models.URLField(blank=True)
-    nation_url = models.URLField(blank=True)
-    ceo = models.CharField(max_length=200, blank=True)
-    founding_year = models.CharField(blank=True, default='', max_length=20)
-    logo_url = models.URLField(blank=True)
+    image_url = models.URLField(blank=True, null=True, default=None)
+    nation_url = models.URLField(blank=True, null=True, default=None)
+    ceo = models.CharField(max_length=200, null=True, default=None)
+    founding_year = models.CharField(blank=True, null=True, default=None, max_length=20)
+    logo_url = models.URLField(blank=True, null=True, default=None)
     launch_library_id = models.IntegerField(blank=True, null=True, default=None)
     featured = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.agency
+        return self.name
 
     def __unicode__(self):
-        return u'%s' % self.agency
+        return u'%s' % self.name
 
     class Meta:
-        ordering = ['agency']
+        ordering = ['name', 'featured', ]
         verbose_name = 'Agency'
         verbose_name_plural = 'Agencies'
+
+    @property
+    def short_description(self):
+        return truncatechars(self.description, 50)
+
+    @property
+    def short_name(self):
+        return truncatechars(self.name, 25)
+
+    @property
+    def launch_library_url(self):
+        if self.launch_library_id:
+            return "https://launchlibrary.net/1.3/agency/%s" % self.launch_library_id
+        else:
+            return None
 
 
 # The Orbiter object is meant to define spacecraft (past and present) that are human-rated for spaceflight.

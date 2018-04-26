@@ -27,10 +27,15 @@ class OrbiterModelSerializer(serializers.ModelSerializer):
 class AgencySerializer(serializers.HyperlinkedModelSerializer):
     launcher_list = LauncherModelSerializer(many=True, read_only=True)
     orbiter_list = OrbiterModelSerializer(many=True, read_only=True)
+    agency = serializers.SerializerMethodField('get_alternate_name')
 
     class Meta:
         model = Agency
-        fields = ('url', 'agency', 'launchers', 'orbiters', 'launcher_list', 'orbiter_list', 'description', 'image_url', 'nation_url')
+        fields = ('url', 'agency', 'launchers', 'orbiters', 'launcher_list', 'orbiter_list', 'description', 'image_url',
+                  'nation_url')
+
+    def get_alternate_name(self, obj):
+        return obj.name
 
 
 class LauncherDetailSerializer(serializers.HyperlinkedModelSerializer):
