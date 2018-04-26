@@ -19,7 +19,7 @@ class Agency(models.Model):
     orbiters = models.CharField(max_length=500, default='', blank=True)
     image_url = models.URLField(blank=True, null=True, default=None)
     nation_url = models.URLField(blank=True, null=True, default=None)
-    ceo = models.CharField(max_length=200, null=True, default=None)
+    ceo = models.CharField(max_length=200, blank=True, null=True, default=None)
     founding_year = models.CharField(blank=True, null=True, default=None, max_length=20)
     logo_url = models.URLField(blank=True, null=True, default=None)
     launch_library_id = models.IntegerField(blank=True, null=True, default=None)
