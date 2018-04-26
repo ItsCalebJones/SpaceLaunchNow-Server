@@ -1,0 +1,25 @@
+{% extends "rest_framework_docs/base.html" %}
+
+{% block style %}
+    <link rel="stylesheet" href="https://bootswatch.com/3/paper/bootstrap.min.css" type="text/css">
+{% endblock %}
+
+{% block title %}Space Launch Now - Docs{% endblock %}
+{% block logo %}<a class="navbar-brand" href="/v2">Space Launch Now</a>{% endblock %}
+
+{% block github_badge %}{% endblock %}
+
+{% block apps_menu %}
+    <a role="button" href="/docs" class="btn btn-default navbar-btn">Docs!</a>
+{% endblock %}
+
+{% block jumbotron %}
+<div class="jumbotron">
+    <h1>API Documentation</h1>
+    <h3>Official Documentation of the Space Launch Now Public API.</h3>
+    <p>View the Changelog on <a href="https://github.com/ItsCalebJones/SpaceLaunchNow-Server/releases">GitHub</a></p>
+    <b>Latest: </b> Version 2.0.0
+</div>
+{% endblock %}
+
+{% block footer %}<div class="footer">Copyright © 2018 - Space Launch Now</div>{% endblock %}

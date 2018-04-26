@@ -14,7 +14,8 @@ TAG = 'Digest Server'
     run_every=(crontab(minute=0, hour=12,
                        day_of_week='mon-sun')),
     name="run_daily",
-    ignore_result=True
+    ignore_result=True,
+    options={"expires": 3600}
 )
 def run_daily():
     logger.info('Task - Running Digest - Daily...')
@@ -26,7 +27,8 @@ def run_daily():
     run_every=(crontab(minute=0, hour=12,
                        day_of_week='mon')),
     name="run_weekly",
-    ignore_result=True
+    ignore_result=True,
+    options={"expires": 3600}
 )
 def run_weekly():
     logger.info('Task - Running Digest - Weekly...')
@@ -34,7 +36,7 @@ def run_weekly():
     daily_digest.run(weekly=True)
 
 
-@periodic_task(run_every=(crontab(minute='*/1')))
+@periodic_task(run_every=(crontab(minute='*/1')), options={"expires": 60})
 def check_next_launch():
     logger.info('Task - Running Notifications...')
     notification = NotificationServer()

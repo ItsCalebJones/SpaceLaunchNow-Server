@@ -13,7 +13,7 @@ class AgencyViewSet(viewsets.ModelViewSet):
     GET:
     Return a list of all the existing users.
     """
-    queryset = Agency.objects.all()
+    queryset = Agency.objects.filter(featured=True).distinct()
     serializer_class = AgencySerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
@@ -32,7 +32,7 @@ class LauncherDetailViewSet(viewsets.ModelViewSet):
     serializer_class = LauncherDetailSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
-    filter_fields = ('family', 'agency', 'name', 'launch_agency__agency', 'full_name',)
+    filter_fields = ('family', 'agency', 'name', 'launch_agency__name', 'full_name',)
 
 
 class OrbiterViewSet(viewsets.ModelViewSet):
