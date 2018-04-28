@@ -9,12 +9,13 @@ from spacelaunchnow.storage_backends import LogoStorage
 # Example: SpaceX has Falcon 9 Launchers and Dragon orbiters
 #
 from django.template.defaultfilters import truncatechars
-import os
+import urllib
 
 
-def image_path(self, filename):
+def image_path(instance, filename):
     ext = filename.split('.')[-1]
-    name = "%s.%s" % ('name', ext)
+    clean_name = urllib.quote(instance.name, '')
+    name = "%s.%s" % (str(clean_name), ext)
     return name
 
 class Agency(models.Model):
@@ -28,7 +29,7 @@ class Agency(models.Model):
     nation_url = models.URLField(blank=True, null=True, default=None)
     ceo = models.CharField(max_length=200, blank=True, null=True, default=None)
     founding_year = models.CharField(blank=True, null=True, default=None, max_length=20)
-    logo_url = models.FileField(default=None, storage=LogoStorage(), upload_to=image_path)
+    logo_url = models.FileField(default=None, storage=LogoStorage(), upload_to=image_path, null=True, blank=True)
     launch_library_id = models.IntegerField(blank=True, null=True, default=None)
     featured = models.BooleanField(default=False)
 
