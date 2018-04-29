@@ -105,6 +105,8 @@ LOGGING = {
     },
 }
 
+CORS_ORIGIN_ALLOW_ALL=True
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -124,10 +126,11 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework.authtoken',
     'storages',
-
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -235,8 +238,11 @@ AWS_S3_OBJECT_PARAMETERS = {
 AWS_LOCATION = 'static'
 STATIC_URL_AWS = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
 
+MEDIA_LOCATION = 'media'
+
 STATICFILES_LOCATION = 'static'
 STATICFILES_STORAGE = 'custom_storages.StaticStorage'
 
-LOGO_LOCATION = 'media'  # type: str
+LOGO_LOCATION = MEDIA_LOCATION + '/logo'  # type: str
 LOGO_STORAGE = 'spacelaunchnow.storage_backends.LogoStorage'
+
