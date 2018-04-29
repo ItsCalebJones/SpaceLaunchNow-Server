@@ -221,6 +221,7 @@ DEFAULT_FROM_EMAIL = 'Webmaster <webmaster@spacelaunchnow.me>'
 
 
 # AWS Storage Information
+
 AWS_STORAGE_BUCKET_NAME = 'spacelaunchnow-public-static'
 AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 AWS_ACCESS_KEY_ID = config.AWS_ACCESS_KEY_ID
@@ -228,6 +229,7 @@ AWS_SECRET_ACCESS_KEY = config.AWS_SECRET_ACCESS_KEY
 
 AWS_S3_OBJECT_PARAMETERS = {
    'CacheControl': 'max-age=86400',
+
 }
 
 AWS_LOCATION = 'static'
@@ -236,5 +238,5 @@ STATIC_URL_AWS = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
 STATICFILES_LOCATION = 'static'
 STATICFILES_STORAGE = 'custom_storages.StaticStorage'
 
-MEDIAFILES_LOCATION = 'media'
-DEFAULT_FILE_STORAGE = 'custom_storages.MediaStorage'
+LOGO_LOCATION = 'media'  # type: str
+LOGO_STORAGE = 'spacelaunchnow.storage_backends.LogoStorage'

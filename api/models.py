@@ -2,13 +2,21 @@
 from __future__ import unicode_literals
 
 from django.db import models
-
+from custom_storages import LogoStorage
 
 # The Agency object is meant to define a agency that operates launchers and orbiters.
 #
 # Example: SpaceX has Falcon 9 Launchers and Dragon orbiters
 #
 from django.template.defaultfilters import truncatechars
+import urllib
+
+
+def image_path(instance, filename):
+    ext = filename.split('.')[-1]
+    clean_name = urllib.quote(instance.name, '')
+    name = "%s.%s" % (str(clean_name), ext)
+    return name
 
 
 class Agency(models.Model):
@@ -19,9 +27,9 @@ class Agency(models.Model):
     orbiters = models.CharField(max_length=500, default='', blank=True)
     image_url = models.URLField(blank=True, null=True, default=None)
     nation_url = models.URLField(blank=True, null=True, default=None)
-    ceo = models.CharField(max_length=200, null=True, default=None)
+    ceo = models.CharField(max_length=200, blank=True, null=True, default=None)
     founding_year = models.CharField(blank=True, null=True, default=None, max_length=20)
-    logo_url = models.URLField(blank=True, null=True, default=None)
+    logo_url = models.FileField(default=None, storage=LogoStorage(), upload_to=image_path, null=True, blank=True)
     launch_library_id = models.IntegerField(blank=True, null=True, default=None)
     featured = models.BooleanField(default=False)
 
