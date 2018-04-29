@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
 from django.db import models
 from custom_storages import LogoStorage
 
@@ -13,9 +14,10 @@ import urllib
 
 
 def image_path(instance, filename):
-    ext = filename.split('.')[-1]
-    clean_name = urllib.quote(instance.name, '')
-    name = "%s.%s" % (str(clean_name), ext)
+    filename, file_extension = os.path.splitext(filename)
+    clean_name = urllib.quote(instance.name.encode('utf8'))
+    clean_name = "%s_%s" % (clean_name, str(instance.id))
+    name = "%s%s" % (str(clean_name), file_extension)
     return name
 
 
