@@ -22,10 +22,10 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config.keys['DJANGO_SECRET_KEY']
+SECRET_KEY = config.DJANGO_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config.DEBUG
 
 ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8', '.spacelaunchnow.me', '127.0.0.1', 'spacelaunchnow.me']
 REST_FRAMEWORK = {
@@ -105,7 +105,6 @@ LOGGING = {
     },
 }
 
-CORS_ORIGIN_ALLOW_ALL=True
 
 # Application definition
 INSTALLED_APPS = [
@@ -126,11 +125,9 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework.authtoken',
     'storages',
-    'corsheaders',
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -225,17 +222,31 @@ DEFAULT_FROM_EMAIL = 'Webmaster <webmaster@spacelaunchnow.me>'
 
 # AWS Storage Information
 
-AWS_STORAGE_BUCKET_NAME = 'spacelaunchnow-public-static'
-AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+AWS_STORAGE_BUCKET_NAME = config.STORAGE_BUCKET_NAME
+
+# Not using CloudFront?
+# S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+# Using CloudFront?
+# S3_CUSTOM_DOMAIN = CLOUDFRONT_DOMAIN
+AWS_S3_CUSTOM_DOMAIN = config.S3_CUSTOM_DOMAIN
+
+# Static URL always ends in /
+STATIC_URL = config.S3_CUSTOM_DOMAIN + "/"
+
+# If not using CloudFront, leave None in config.
+CLOUDFRONT_DOMAIN = config.CLOUDFRONT_DOMAIN
+CLOUDFRONT_ID = config.CLOUDFRONT_ID
+
 AWS_ACCESS_KEY_ID = config.AWS_ACCESS_KEY_ID
 AWS_SECRET_ACCESS_KEY = config.AWS_SECRET_ACCESS_KEY
 
+
+AWS_LOCATION = 'static'
 AWS_S3_OBJECT_PARAMETERS = {
    'CacheControl': 'max-age=86400',
 
 }
 
-AWS_LOCATION = 'static'
 STATIC_URL_AWS = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
 
 MEDIA_LOCATION = 'media'
