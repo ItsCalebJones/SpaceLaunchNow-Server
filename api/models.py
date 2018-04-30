@@ -1,14 +1,24 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
 from django.db import models
-
+from custom_storages import LogoStorage, AgencyImageStorage, OrbiterImageStorage, LauncherImageStorage, AgencyNationStorage
 
 # The Agency object is meant to define a agency that operates launchers and orbiters.
 #
 # Example: SpaceX has Falcon 9 Launchers and Dragon orbiters
 #
 from django.template.defaultfilters import truncatechars
+import urllib
+
+
+def image_path(instance, filename):
+    filename, file_extension = os.path.splitext(filename)
+    clean_name = urllib.quote(urllib.quote(instance.name.encode('utf8')), '')
+    clean_name = "%s_%s" % (clean_name, str(instance.id))
+    name = "%s%s" % (str(clean_name), file_extension)
+    return name
 
 
 class Agency(models.Model):
@@ -17,11 +27,15 @@ class Agency(models.Model):
     description = models.CharField(max_length=2048, blank=True, null=True, default=None)
     launchers = models.CharField(max_length=500, default='', blank=True)
     orbiters = models.CharField(max_length=500, default='', blank=True)
-    image_url = models.URLField(blank=True, null=True, default=None)
-    nation_url = models.URLField(blank=True, null=True, default=None)
+    legacy_image_url = models.URLField(blank=True, null=True, default=None)
+    image_url = models.FileField(default=None, storage=AgencyImageStorage(), upload_to=image_path, null=True,
+                                 blank=True)
+    legacy_nation_url = models.URLField(blank=True, null=True, default=None)
+    nation_url = models.FileField(default=None, storage=AgencyNationStorage(), upload_to=image_path, null=True,
+                                 blank=True)
     ceo = models.CharField(max_length=200, blank=True, null=True, default=None)
     founding_year = models.CharField(blank=True, null=True, default=None, max_length=20)
-    logo_url = models.URLField(blank=True, null=True, default=None)
+    logo_url = models.FileField(default=None, storage=LogoStorage(), upload_to=image_path, null=True, blank=True)
     launch_library_id = models.IntegerField(blank=True, null=True, default=None)
     featured = models.BooleanField(default=False)
 
@@ -62,8 +76,12 @@ class Orbiter(models.Model):
     launch_agency = models.ForeignKey(Agency, related_name='orbiter_list', blank=True, null=True)
     history = models.CharField(max_length=1000, default='')
     details = models.CharField(max_length=1000, default='')
-    image_url = models.URLField(blank=True)
-    nation_url = models.URLField(blank=True)
+    legacy_image_url = models.URLField(blank=True)
+    image_url = models.FileField(default=None, storage=OrbiterImageStorage(), upload_to=image_path, null=True,
+                                 blank=True)
+    legacy_nation_url = models.URLField(blank=True)
+    nation_url = models.FileField(default=None, storage=AgencyNationStorage(), upload_to=image_path, null=True,
+                                  blank=True)
     wiki_link = models.URLField(blank=True)
 
     def __str__(self):
@@ -106,7 +124,9 @@ class LauncherDetail(models.Model):
     vehicle_class = models.CharField(max_length=200, default='', blank=True)
     apogee = models.CharField(max_length=200, default='', blank=True)
     vehicle_range = models.CharField(max_length=200, default='', blank=True)
-    image_url = models.CharField(max_length=200, default='', blank=True)
+    legacy_image_url = models.CharField(max_length=200, default='', blank=True)
+    image_url = models.FileField(default=None, storage=LauncherImageStorage(), upload_to=image_path, null=True,
+                                 blank=True)
     info_url = models.CharField(max_length=200, default='', blank=True)
     wiki_url = models.CharField(max_length=200, default='', blank=True)
 

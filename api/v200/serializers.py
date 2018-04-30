@@ -5,20 +5,21 @@ from rest_framework import serializers
 class LauncherModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = LauncherDetail
-        fields = ('id', 'url', 'name', 'description', 'agency', 'variant', 'image_url', 'info_url', 'wiki_url')
+        fields = ('id', 'url', 'name', 'description', 'agency', 'variant',  'image_url',
+                  'info_url', 'wiki_url')
 
 
 class OrbiterSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Orbiter
-        fields = ('id', 'url', 'name', 'agency', 'history', 'details', 'image_url', 'nation_url',
-                  'wiki_link')
+        fields = ('id', 'url', 'name', 'agency', 'history', 'details', 'image_url',
+                  'legacy_nation_url', 'nation_url', 'wiki_link')
 
 
 class OrbiterModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Orbiter
-        fields = ('id', 'url', 'name', 'agency', 'image_url', 'nation_url')
+        fields = ('id', 'url', 'name', 'agency', 'image_url', 'legacy_nation_url', 'nation_url')
 
 
 class AgencySerializer(serializers.HyperlinkedModelSerializer):
@@ -27,9 +28,9 @@ class AgencySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Agency
-        fields = ('url', 'name', 'launchers', 'orbiters', 'launcher_list', 'orbiter_list', 'description', 'image_url',
-                  'nation_url', 'ceo', 'founding_year', 'logo_url', 'launch_library_url', 'launch_library_id',
-                  'featured')
+        fields = ('url', 'name', 'featured', 'launchers', 'orbiters', 'launcher_list', 'orbiter_list', 'description',
+                  'legacy_image_url', 'image_url', 'legacy_nation_url', 'nation_url', 'ceo', 'founding_year', 'logo_url',
+                  'launch_library_url', 'launch_library_id')
 
 
 class LauncherDetailSerializer(serializers.HyperlinkedModelSerializer):
@@ -39,4 +40,3 @@ class LauncherDetailSerializer(serializers.HyperlinkedModelSerializer):
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust', 'vehicle_class',
                   'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url')
-

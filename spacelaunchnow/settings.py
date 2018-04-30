@@ -16,23 +16,16 @@ import os
 from spacelaunchnow import config
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.11/howto/static-files/
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config.keys['DJANGO_SECRET_KEY']
+SECRET_KEY = config.DJANGO_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config.DEBUG
 
 ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8', '.spacelaunchnow.me', '127.0.0.1', 'spacelaunchnow.me']
 REST_FRAMEWORK = {
@@ -112,6 +105,7 @@ LOGGING = {
     },
 }
 
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -129,7 +123,8 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django_user_agents',
     'django_filters',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -155,10 +150,15 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'spacelaunchnow.context_processor.ga_tracking_id',
+                'spacelaunchnow.context_processor.use_google_analytics'
             ],
         },
     },
 ]
+
+
+USE_GA = not config.DEBUG
 
 WSGI_APPLICATION = 'spacelaunchnow.wsgi.application'
 
@@ -203,6 +203,8 @@ USE_L10N = True
 
 USE_TZ = False
 
+GA_TRACKING_ID = config.GOOGLE_ANALYTICS_TRACKING_ID
+
 # CELERY STUFF
 BROKER_URL = "amqp://spacelaunchnow:spacelaunchnow@localhost:5672/vhost_spacelaunchnow"
 CELERY_ACCEPT_CONTENT = ['json']
@@ -223,3 +225,53 @@ EMAIL_HOST_USER = None
 EMAIL_HOST_PASSWORD = None
 EMAIL_USE_TLS = False
 DEFAULT_FROM_EMAIL = 'Webmaster <webmaster@spacelaunchnow.me>'
+
+
+# AWS Storage Information
+
+AWS_STORAGE_BUCKET_NAME = config.STORAGE_BUCKET_NAME
+
+# Not using CloudFront?
+# S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+# Using CloudFront?
+# S3_CUSTOM_DOMAIN = CLOUDFRONT_DOMAIN
+AWS_S3_CUSTOM_DOMAIN = config.S3_CUSTOM_DOMAIN
+
+# Static URL always ends in /
+STATIC_URL = config.S3_CUSTOM_DOMAIN + "/"
+
+# If not using CloudFront, leave None in config.
+CLOUDFRONT_DOMAIN = config.CLOUDFRONT_DOMAIN
+CLOUDFRONT_ID = config.CLOUDFRONT_ID
+
+AWS_ACCESS_KEY_ID = config.AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY = config.AWS_SECRET_ACCESS_KEY
+
+
+AWS_LOCATION = 'static'
+AWS_S3_OBJECT_PARAMETERS = {
+   'CacheControl': 'max-age=86400',
+
+}
+
+STATIC_URL_AWS = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
+
+MEDIA_LOCATION = 'media'
+
+STATICFILES_LOCATION = 'static'
+STATICFILES_STORAGE = 'custom_storages.StaticStorage'
+
+LOGO_LOCATION = MEDIA_LOCATION + '/logo'  # type: str
+LOGO_STORAGE = 'spacelaunchnow.storage_backends.LogoStorage'
+
+AGENCY_IMAGE_LOCATION = MEDIA_LOCATION + '/agency_images' #type: str
+AGENCY_IMAGE_STORAGE = 'spacelaunchnow.storage_backends.AgencyImageStorage'
+
+AGENCY_NATION_LOCATION = MEDIA_LOCATION + '/agency_nation' #type: str
+AGENCY_NATION_STORAGE = 'spacelaunchnow.storage_backends.AgencyNationStorage'
+
+ORBITER_IMAGE_LOCATION = MEDIA_LOCATION + '/orbiter_images' #type: str
+ORBITER_IMAGE_STORAGE = 'spacelaunchnow.storage_backends.OrbiterImageStorage'
+
+LAUNCHER_IMAGE_LOCATION = MEDIA_LOCATION + '/launcher_images' #type: str
+LAUNCHER_IMAGE_STORAGE = 'spacelaunchnow.storage_backends.LauncherImageStorage'
