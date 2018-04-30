@@ -246,3 +246,14 @@ STATICFILES_STORAGE = 'custom_storages.StaticStorage'
 LOGO_LOCATION = MEDIA_LOCATION + '/logo'  # type: str
 LOGO_STORAGE = 'spacelaunchnow.storage_backends.LogoStorage'
 
+AGENCY_IMAGE_LOCATION = MEDIA_LOCATION + '/agency_images' #type: str
+AGENCY_IMAGE_STORAGE = 'spacelaunchnow.storage_backends.AgencyImageStorage'
+
+AGENCY_NATION_LOCATION = MEDIA_LOCATION + '/agency_nation' #type: str
+AGENCY_NATION_STORAGE = 'spacelaunchnow.storage_backends.AgencyNationStorage'
+
+ORBITER_IMAGE_LOCATION = MEDIA_LOCATION + '/orbiter_images' #type: str
+ORBITER_IMAGE_STORAGE = 'spacelaunchnow.storage_backends.OrbiterImageStorage'
+
+LAUNCHER_IMAGE_LOCATION = MEDIA_LOCATION + '/launcher_images' #type: str
+LAUNCHER_IMAGE_STORAGE = 'spacelaunchnow.storage_backends.LauncherImageStorage'
