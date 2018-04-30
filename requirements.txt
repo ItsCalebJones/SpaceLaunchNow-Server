@@ -44,4 +44,5 @@ django-jet==1.0.6
 google-api-python-client==1.4.1
 boto3==1.7.10
 django-storages==1.6.6
+djangorestframework-queryfields==1.0.0
 git+https://github.com/ItsCalebJones/django-rest-framework-docs.git
