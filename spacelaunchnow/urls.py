@@ -29,8 +29,6 @@ class Router(routers.DefaultRouter):
     My API documentation
     """
 
-
-
 urlpatterns = [
     url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
     url(r'^admin/', include(admin.site.urls)),

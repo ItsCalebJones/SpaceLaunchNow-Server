@@ -3,6 +3,7 @@ from rest_framework import permissions
 from rest_framework import viewsets
 
 from api.models import LauncherDetail, Orbiter, Agency
+from api.permission import HasGroupPermission
 from api.v1.serializers import OrbiterSerializer, LauncherDetailSerializer, AgencySerializer
 
 
@@ -15,7 +16,14 @@ class AgencyViewSet(viewsets.ModelViewSet):
     """
     queryset = Agency.objects.filter(featured=True).distinct()
     serializer_class = AgencySerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = [HasGroupPermission]
+    permission_groups = {
+        'create': ['Developers'],  # Developers can POST
+        'destroy': ['Developers'],  # Developers can DELETE
+        'partial_update': ['Contributors', 'Developers'],  # Designers and Developers can PATCH
+        'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
+        'list': ['_Public']
+    }
 
 
 class LauncherDetailViewSet(viewsets.ModelViewSet):
@@ -30,7 +38,14 @@ class LauncherDetailViewSet(viewsets.ModelViewSet):
     """
     queryset = LauncherDetail.objects.all()
     serializer_class = LauncherDetailSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = [HasGroupPermission]
+    permission_groups = {
+        'create': ['Developers'],  # Developers can POST
+        'destroy': ['Developers'],  # Developers can DELETE
+        'partial_update': ['Contributors', 'Developers'],  # Designers and Developers can PATCH
+        'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
+        'list': ['_Public']
+    }
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
     filter_fields = ('family', 'agency', 'name', 'launch_agency__name', 'full_name',)
 
@@ -44,4 +59,11 @@ class OrbiterViewSet(viewsets.ModelViewSet):
     """
     queryset = Orbiter.objects.all()
     serializer_class = OrbiterSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = [HasGroupPermission]
+    permission_groups = {
+        'create': ['Developers'],  # Developers can POST
+        'destroy': ['Developers'],  # Developers can DELETE
+        'partial_update': ['Contributors', 'Developers'],  # Designers and Developers can PATCH
+        'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
+        'list': ['_Public']
+    }
