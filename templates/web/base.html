@@ -38,6 +38,11 @@
     <script src="{% static  'compiled/flipclock.js' %}"></script>
     {% block extrahead %}
     {% endblock %}
+    {% block ga %}
+        {% if use_google_analytics %}
+            {% include "web/snippets/google_analytics.html" with ga_tracking_id=ga_tracking_id %}
+        {% endif %}
+    {% endblock ga %}
 </head>
 
 <body id="page-top">
@@ -45,11 +50,6 @@
 {% block content %}
 {% endblock %}
 
-{% block ga %}
-    {% if use_google_analytics %}
-        {% include "web/snippets/google_analytics.html" with ga_tracking_id=ga_tracking_id %}
-    {% endif %}
-{% endblock ga %}
 
 <footer id="myFooter">
     <div class="container">
