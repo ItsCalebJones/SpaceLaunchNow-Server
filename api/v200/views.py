@@ -2,11 +2,12 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from api.models import LauncherDetail, Orbiter, Agency
+from api.models import LauncherDetail, Orbiter, Agency, Events
 
-from api.v200.serializers import OrbiterSerializer, LauncherDetailSerializer, AgencySerializer
+from api.v200.serializers import OrbiterSerializer, LauncherDetailSerializer, AgencySerializer, EventsSerializer
 from rest_framework import viewsets
 from rest_framework import permissions
+from datetime import datetime
 
 
 class AgencyViewSet(viewsets.ModelViewSet):
@@ -69,4 +70,17 @@ class OrbiterViewSet(viewsets.ModelViewSet):
     """
     queryset = Orbiter.objects.all()
     serializer_class = OrbiterSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+class EventViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Events to be viewed.
+
+    GET:
+    Return a list of future Events
+    """
+    now = datetime.now()
+    queryset = Events.objects.filter(date__gte=now)
+    serializer_class = EventsSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)

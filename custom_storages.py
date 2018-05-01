@@ -12,10 +12,12 @@ class LogoStorage(S3Boto3Storage):
     location = settings.LOGO_LOCATION
     file_overwrite = True
 
+
 class AgencyImageStorage(S3Boto3Storage):
 
     location = settings.AGENCY_IMAGE_LOCATION
     file_overwrite = True
+
 
 class AgencyNationStorage(S3Boto3Storage):
 
@@ -32,4 +34,10 @@ class OrbiterImageStorage(S3Boto3Storage):
 class LauncherImageStorage(S3Boto3Storage):
 
     location = settings.LAUNCHER_IMAGE_LOCATION
+    file_overwrite = True
+
+
+class EventImageStorage(S3Boto3Storage):
+
+    location = settings.EVENT_IMAGE_LOCATION
     file_overwrite = True
