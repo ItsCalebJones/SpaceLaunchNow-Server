@@ -91,6 +91,21 @@ img::-moz-selection {
     background: transparent;
 }
 
+.card-img-custom {
+    width: 100%;
+    height: 30vw;
+    object-fit: cover;
+}
+
+.relative {
+    position: relative;
+}
+.badge.top-right {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+}
+
 body {
     -webkit-tap-highlight-color: #222222;
 }

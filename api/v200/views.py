@@ -2,6 +2,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 
+from api.models import LauncherDetail, Orbiter, Agency, Events
+
+from api.v200.serializers import OrbiterSerializer, LauncherDetailSerializer, AgencySerializer, EventsSerializer
+from rest_framework import viewsets
+from rest_framework import permissions
+from datetime import datetime
 from api.models import LauncherDetail, Orbiter, Agency
 from api.permission import HasGroupPermission
 
@@ -88,6 +94,25 @@ class OrbiterViewSet(ModelViewSet):
         'destroy': ['Developers'],  # Developers can POST
         'partial_update': ['Contributors', 'Developers'],  # Designers and Developers can PATCH
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
-        'list': ['_Public']
-        # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
+        'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
+    }
+
+
+class EventViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Events to be viewed.
+
+    GET:
+    Return a list of future Events
+    """
+    now = datetime.now()
+    queryset = Events.objects.filter(date__gte=now)
+    serializer_class = EventsSerializer
+    permission_classes = [HasGroupPermission]
+    permission_groups = {
+        'create': ['Developers'],  # Developers can POST
+        'destroy': ['Developers'],  # Developers can POST
+        'partial_update': ['Contributors', 'Developers'],  # Designers and Developers can PATCH
+        'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
+        'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }

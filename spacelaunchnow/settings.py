@@ -275,3 +275,6 @@ ORBITER_IMAGE_STORAGE = 'spacelaunchnow.storage_backends.OrbiterImageStorage'
 
 LAUNCHER_IMAGE_LOCATION = MEDIA_LOCATION + '/launcher_images' #type: str
 LAUNCHER_IMAGE_STORAGE = 'spacelaunchnow.storage_backends.LauncherImageStorage'
+
+EVENT_IMAGE_LOCATION = MEDIA_LOCATION + '/event_images' #type: str
+EVENT_IMAGE_STORAGE = 'spacelaunchnow.storage_backends.EventImageStorage'
