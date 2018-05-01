@@ -5,7 +5,11 @@
 <html lang="en">
 
 <head>
-
+    {% block ga %}
+        {% if use_google_analytics %}
+            {% include "web/snippets/google_analytics.html" with ga_tracking_id=ga_tracking_id %}
+        {% endif %}
+    {% endblock ga %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
@@ -38,11 +42,6 @@
     <script src="{% static  'compiled/flipclock.js' %}"></script>
     {% block extrahead %}
     {% endblock %}
-    {% block ga %}
-        {% if use_google_analytics %}
-            {% include "web/snippets/google_analytics.html" with ga_tracking_id=ga_tracking_id %}
-        {% endif %}
-    {% endblock ga %}
 </head>
 
 <body id="page-top">
