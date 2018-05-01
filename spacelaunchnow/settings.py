@@ -39,8 +39,8 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.UserRateThrottle'
     ),
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '100/day',
-        'user': '1000/day'
+        'anon': '20/sec',
+        'user': '200/sec'
     },
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
@@ -150,10 +150,15 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'spacelaunchnow.context_processor.ga_tracking_id',
+                'spacelaunchnow.context_processor.use_google_analytics'
             ],
         },
     },
 ]
+
+
+USE_GA = not config.DEBUG
 
 WSGI_APPLICATION = 'spacelaunchnow.wsgi.application'
 
@@ -197,6 +202,8 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = False
+
+GA_TRACKING_ID = config.GOOGLE_ANALYTICS_TRACKING_ID
 
 # CELERY STUFF
 BROKER_URL = "amqp://spacelaunchnow:spacelaunchnow@localhost:5672/vhost_spacelaunchnow"
