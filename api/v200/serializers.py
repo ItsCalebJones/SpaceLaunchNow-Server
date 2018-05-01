@@ -1,3 +1,4 @@
+from api.models import Orbiter, LauncherDetail, Agency, Events
 from drf_queryfields import QueryFieldsMixin
 
 from api.models import Orbiter, LauncherDetail, Agency
@@ -31,8 +32,8 @@ class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer)
     class Meta:
         model = Agency
         fields = ('url', 'name', 'featured', 'launchers', 'orbiters', 'launcher_list', 'orbiter_list', 'description',
-                  'legacy_image_url', 'image_url', 'legacy_nation_url', 'nation_url', 'ceo', 'founding_year', 'logo_url',
-                  'launch_library_url', 'launch_library_id')
+                  'legacy_image_url', 'image_url', 'legacy_nation_url', 'nation_url', 'ceo', 'founding_year',
+                  'logo_url', 'launch_library_url', 'launch_library_id')
 
 
 class LauncherDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
@@ -42,3 +43,9 @@ class LauncherDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSer
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust', 'vehicle_class',
                   'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url')
+
+
+class EventsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Events
+        fields = ('id', 'name', 'description', 'location', 'feature_image', 'date')
