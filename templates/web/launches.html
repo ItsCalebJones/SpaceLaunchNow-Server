@@ -75,55 +75,51 @@
         <li class="breadcrumb-item active">Launches</a></li>
     </ol>
     <div class="page-header" style="margin-bottom: 32px">
-        <h1>Upcoming Launches
-
-        </h1>
+        <h1>Upcoming Spaceflight Launches</h1>
     </div>
-    <!--<div class="row">-->
-    <!--<div class="container" style="margin-bottom: 10px">-->
-    <!--&lt;!&ndash; Provides extra visual weight and identifies the primary action in a set of buttons &ndash;&gt;-->
-    <!--<a href="/" class="btn btn-primary">All</a>-->
-    <!--<a href="?q=spx" class="btn btn-primary">SpaceX</a>-->
-    <!--<a href="/" class="btn btn-primary">ULA</a>-->
-    <!--<a href="/" class="btn btn-primary">NASA</a>-->
-    <!--<a href="/" class="btn btn-primary">ROSCOSMOS</a>-->
-    <!--<a href="/" class="btn btn-primary">CASC</a>-->
-    <!--<a href="/" class="btn btn-primary">ISRO</a>-->
-    <!--</div>-->
-    <!--</div>-->
+    <div class="row">
+        <div class="container" style="margin-bottom: 10px">
+            <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
+            <a href="/launch" class="btn btn-primary">All Confirmed</a>
+            <a href="?q=spx" class="btn btn-primary">SpaceX</a>
+            <a href="?q=ula" class="btn btn-primary">ULA</a>
+            <a href="?q=NASA" class="btn btn-primary">NASA</a>
+            <a href="?q=RFSA" class="btn btn-primary">ROSCOSMOS</a>
+            <a href="?q=ASA" class="btn btn-primary">Arianespace</a>
+            <a href="?q=CASC" class="btn btn-primary">CASC</a>
+            <a href="?q=ISRO" class="btn btn-primary">ISRO</a>
+        </div>
+    </div>
 
     <div class="row">
 
         <!-- Post Content Column -->
-        <div class="col-lg-8" style="margin-top: 8px">
-            <ul class="list-group">
-                {% if launches|length > 0 %}
+        <div class="col-lg-8">
+            {% if launches|length > 0 %}
                 {% for launch in launches %}
-                <li class="list-group-item">
-                    <div class="row">
-                        <div class="col-md-4">
-                            {% if launch.img_url %}
-                            <img class="img-fluid rounded mb-3 mb-md-0" width="250" height="auto"
-                                 src="{{ launch.img_url }}"
-                                 alt="">
-                            {% else %}
-                            <img class="img-fluid imgrounded mb-3 mb-md-0" width="250" height="auto"
-                                 src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
-                            {% endif %}
-
+                    <div class="card text-left" style="margin-top: 12px">
+                        {% if launch.img_url %}
+                        <div class="media">
+                            <a class="relative" href="/launch/{{ launch.id}}">
+                                <img class="card-img-custom" src="{{ launch.img_url }}" alt="">
+                                <span class="badge badge-danger top-right">{{launch.lsp_set.first.name}}</span>
+                          </a>
                         </div>
-                        <div class="col-md-8">
-                            <h3>{{ launch.name }}<br>
-                                <small><i>{{ launch.net }}</i></small>
-                            </h3>
-                            <p>{{ launch.mission_set.all.0.description }}</p>
+                        {% else %}
+                            <img class="card-img-custom" src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png" alt="">
+                        {% endif %}
+                            <div class="card-header">
+                                <h4 class="card-title">{{ launch.name }}</h4>
+                                <i>{{ launch.net }}</i><br>
+                            </div>
+                        <div class="card-body">
+                            <p class="card-text">{{ launch.mission_set.all.0.description }}</p>
+                            <hr/>
                             <a class="btn btn-primary" href="/launch/{{ launch.id}}">Explore</a>
-                        </div>
+                      </div>
                     </div>
-                </li>
                 {% endfor %}
-                {% endif %}
-            </ul>
+            {% endif %}
         </div>
 
         <!-- Sidebar Widgets Column -->
@@ -131,11 +127,10 @@
             <!-- Categories Widget -->
             <div class="card my-2 desktop-only">
                 <a class="twitter-timeline desktop-only"
-                   href="https://twitter.com/SpaceLaunchNow?ref_src=twsrc%5Etfw"
+                   href="https://twitter.com/SpaceLaunchNow/lists/space-launch-news"
                    data-tweet-limit="8"
                    data-show-replies="true"
-                >Tweets by
-                    SpaceLaunchNow</a>
+                >Tweets from https://twitter.com/SpaceLaunchNow/lists/space-launch-news</a>
                 <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
             </div>
         </div>

@@ -27,7 +27,7 @@ class LaunchLibrarySDK(object):
         :param count: The number of launch objects to fetch.
         :return: Returns a HTTP Response object
         """
-        if 'dev' not in self.version:
+        if tbd:
             url = self.api_url + '/launch/next/%d?mode=verbose&tbdtime=0&tbddate=0' % count
         else:
             url = self.api_url + '/launch/next/%d?mode=verbose' % count
