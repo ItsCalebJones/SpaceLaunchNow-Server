@@ -1,4 +1,4 @@
-from api.models import Orbiter, Launcher, LauncherDetail
+from api.models import Orbiter, Launcher, Launcher
 
 
 def launcher_json_to_model(data):
@@ -67,7 +67,7 @@ def launch_detail_to_model(data):
     except KeyError as e:
         wiki_url = ""
 
-    LauncherDetail.objects.create(
+    Launcher.objects.create(
         name=name,
         description=description,
         family=family,
