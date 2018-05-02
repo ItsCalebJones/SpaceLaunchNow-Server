@@ -16,6 +16,8 @@ Including another URLconf
 
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.views.generic import TemplateView
+
 from api.v200.router import api_urlpatterns as api_v2
 from api.v1.router import api_urlpatterns as api_v1
 from web import views as landing_views
@@ -32,7 +34,7 @@ urlpatterns = [
     url(r'^next/', landing_views.next_launch, name='next'),
     url(r'^launch/(?P<pk>\d+)/$', landing_views.launch_by_id, name='launch_by_id'),
     url(r'^launch/$', landing_views.launches, name='launches'),
-
+    url(r'^privacy', TemplateView.as_view(template_name='web/privacy.html'), name='privacy'),
     # Changing Password
     url('^', include('django.contrib.auth.urls')),
 ]
