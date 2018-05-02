@@ -1,22 +1,22 @@
-from api.models import Orbiter, LauncherDetail, Agency, Events
+from api.models import Orbiter, Launcher, Agency, Events
 from drf_queryfields import QueryFieldsMixin
 
-from api.models import Orbiter, LauncherDetail, Agency
+from api.models import Orbiter, Launcher, Agency
 from rest_framework import serializers
 
 
 class LauncherModelSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     class Meta:
-        model = LauncherDetail
+        model = Launcher
         fields = ('id', 'url', 'name', 'description', 'agency', 'variant',  'image_url',
-                  'info_url', 'wiki_url')
+                  'info_url', 'wiki_url', 'in_use', 'capability')
 
 
 class OrbiterSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Orbiter
         fields = ('id', 'url', 'name', 'agency', 'history', 'details', 'image_url',
-                  'legacy_nation_url', 'nation_url', 'wiki_link')
+                  'legacy_nation_url', 'nation_url', 'wiki_link', 'in_use', 'capability')
 
 
 class OrbiterModelSerializer(QueryFieldsMixin, serializers.ModelSerializer):
@@ -31,14 +31,14 @@ class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer)
 
     class Meta:
         model = Agency
-        fields = ('url', 'name', 'featured', 'launchers', 'orbiters', 'launcher_list', 'orbiter_list', 'description',
-                  'legacy_image_url', 'image_url', 'legacy_nation_url', 'nation_url', 'ceo', 'founding_year',
-                  'logo_url', 'launch_library_url', 'launch_library_id')
+        fields = ('id', 'url', 'name', 'featured', 'launchers', 'orbiters', 'launcher_list', 'orbiter_list',
+                  'description', 'legacy_image_url', 'image_url', 'legacy_nation_url', 'nation_url', 'ceo',
+                  'founding_year', 'logo_url', 'launch_library_url', 'launch_library_id')
 
 
 class LauncherDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = LauncherDetail
+        model = Launcher
         fields = ('id', 'url', 'name', 'description', 'family', 's_family', 'full_name', 'agency',
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust', 'vehicle_class',

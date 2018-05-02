@@ -70,7 +70,6 @@ class Agency(models.Model):
 # The Orbiter object is meant to define spacecraft (past and present) that are human-rated for spaceflight.
 #
 # Example: Dragon, Orion, etc.
-# TODO Add 'in use / capability' fields.
 class Orbiter(models.Model):
     name = models.CharField(max_length=200)
     agency = models.CharField(max_length=200, default='Unknown')
@@ -83,6 +82,8 @@ class Orbiter(models.Model):
     legacy_nation_url = models.URLField(blank=True)
     nation_url = models.FileField(default=None, storage=AgencyNationStorage(), upload_to=image_path, null=True,
                                   blank=True)
+    in_use = models.BooleanField(default=True)
+    capability = models.CharField(max_length=2048, default='')
     wiki_link = models.URLField(blank=True)
 
     def __str__(self):
@@ -100,10 +101,8 @@ class Orbiter(models.Model):
 # The LauncherDetail object is meant to define orbital class launch vehicles (past and present).
 #
 # Example: Falcon 9, Saturn V, etc.
-# TODO Add 'in use / capability' fields.
 # TODO Deprecate the 'agency' string field now that its linked to launch_agency.
-# TODO Rename back to 'Launcher' now that legacy launcher is deprecated and no longer in use.
-class LauncherDetail(models.Model):
+class Launcher(models.Model):
     name = models.CharField(max_length=200)
     active = models.BooleanField(default=True)
     description = models.CharField(max_length=2048, default='', blank=True)
@@ -128,6 +127,8 @@ class LauncherDetail(models.Model):
     legacy_image_url = models.CharField(max_length=200, default='', blank=True)
     image_url = models.FileField(default=None, storage=LauncherImageStorage(), upload_to=image_path, null=True,
                                  blank=True)
+    in_use = models.BooleanField(default=True)
+    capability = models.CharField(max_length=2048, default='')
     info_url = models.CharField(max_length=200, default='', blank=True)
     wiki_url = models.CharField(max_length=200, default='', blank=True)
 
