@@ -1,4 +1,4 @@
-from api.models import Orbiter, Launcher, Launcher
+from api.models import Orbiter, Launcher
 
 
 def launcher_json_to_model(data):

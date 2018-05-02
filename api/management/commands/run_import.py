@@ -1,7 +1,7 @@
 from django.core.management import BaseCommand
 from celery.utils.log import get_task_logger
 import api.utils.data_importer as importer
-from api.models import Launcher, Orbiter, Launcher
+from api.models import Launcher, Orbiter
 
 logger = get_task_logger('bot')
 
