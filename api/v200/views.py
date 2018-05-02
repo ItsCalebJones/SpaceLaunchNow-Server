@@ -2,13 +2,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from api.models import LauncherDetail, Orbiter, Agency, Events
+from api.models import Launcher, Orbiter, Agency, Events
 
 from api.v200.serializers import OrbiterSerializer, LauncherDetailSerializer, AgencySerializer, EventsSerializer
 from rest_framework import viewsets
 from rest_framework import permissions
 from datetime import datetime
-from api.models import LauncherDetail, Orbiter, Agency
+from api.models import Launcher, Orbiter, Agency
 from api.permission import HasGroupPermission
 
 from api.v200.serializers import OrbiterSerializer, LauncherDetailSerializer, AgencySerializer
@@ -65,7 +65,7 @@ class LaunchersViewSet(ModelViewSet):
     Get all Launchers with the Agency with name NASA.
     Example - /2.0.0/launchers/?launch_agency__name=NASA
     """
-    queryset = LauncherDetail.objects.all()
+    queryset = Launcher.objects.all()
     serializer_class = LauncherDetailSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {

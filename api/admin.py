@@ -6,7 +6,7 @@ from django.contrib import admin
 from . import models
 
 
-@admin.register(models.LauncherDetail)
+@admin.register(models.Launcher)
 class LauncherDetailAdmin(admin.ModelAdmin):
     list_display = ('name', 'active',  'variant', 'family', 'full_name',   'agency', 'launch_agency', 'leo_capacity',
                     'gto_capacity')
