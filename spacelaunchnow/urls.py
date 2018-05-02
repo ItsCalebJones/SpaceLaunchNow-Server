@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^launch/(?P<pk>\d+)/$', landing_views.launch_by_id, name='launch_by_id'),
     url(r'^launch/$', landing_views.launches, name='launches'),
     url(r'^privacy', TemplateView.as_view(template_name='web/privacy.html'), name='privacy'),
+    url(r'^tos', TemplateView.as_view(template_name='web/tos.html'), name='tos'),
     # Changing Password
     url('^', include('django.contrib.auth.urls')),
 ]
