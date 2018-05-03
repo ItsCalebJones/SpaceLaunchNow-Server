@@ -112,6 +112,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'rest_framework',
     'api.apps.ApiConfig',
     'rest_framework_docs',
@@ -125,7 +126,11 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework.authtoken',
     'storages',
+    "pinax.blog",
+    "pinax.images",
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
