@@ -105,7 +105,6 @@ LOGGING = {
     },
 }
 
-
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -119,7 +118,8 @@ INSTALLED_APPS = [
     'bot',
     'djcelery',
     'embed_video',
-    'jet',
+    'material',
+    'material.admin',
     'django.contrib.admin',
     'django_user_agents',
     'django_filters',
