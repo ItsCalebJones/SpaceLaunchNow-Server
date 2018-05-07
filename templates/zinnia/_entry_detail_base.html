@@ -1,0 +1,99 @@
+{% load comments i18n zinnia %}
+<div class="dropdown-divider"></div>
+<article id="entry-{{ object.pk }}" class="hentry{% if object.featured %} featured{% endif %}" itemscope itemtype="http://schema.org/Article">
+  {% block entry-header %}
+  <header class="entry-header">
+    {% block entry-title %}
+    <div class="pb-2 mt-4 mb-2 border-bottom">
+      <h1 class="entry-title font-weight-light" itemprop="name" >
+        <a href="{{ object.get_absolute_url }}" title="{{ object.title }}" rel="bookmark" itemprop="url">{{ object.title|widont }}</a>
+      </h1>
+    </div>
+    {% endblock entry-title %}
+  </header>
+  {% endblock entry-header %}
+
+  {% block entry-body %}
+  <div class="entry-body">
+    {% block entry-word-count %}
+    <meta itemprop="wordCount" content="{{ object.word_count }}" />
+    {% endblock entry-word-count %}
+
+    {% block entry-image %}
+    {% if object.image %}
+    <div class="entry-image">
+      {% if continue_reading %}
+      <a href="{{ object.get_absolute_url }}" title="{{ object.title }}" rel="bookmark">
+        {% endif %}
+          <div class="dropdown-divider"></div>
+        <div class="card card-block rounded bg-info">
+         <figure class="figure">
+          <img src="{{ object.image.url }}" alt="{{ object.image_caption|default:object.title }}" itemprop="contentUrl" class="figure-img img-fluid"/>
+          {% if object.image_caption %}
+
+            <figcaption class="figure-caption text-center text-white">{{ object.image_caption }}</figcaption>
+
+          {% endif %}
+         </figure>
+          </div>
+          <div class="dropdown-divider"></div>
+        {% if continue_reading %}
+      </a>
+      {% endif %}
+    </div>
+    {% endif %}
+    {% endblock entry-image %}
+    <hr>
+    {% block entry-lead %}
+
+    {% if not continue_reading and object.lead %}
+    <div class="entry-summary" itemprop="headline">
+      {{ object.html_lead|safe }}
+    </div>
+      <div class="dropdown-divider"></div>
+    {% endif %}
+    {% endblock entry-lead %}
+
+    {% block entry-content %}
+    <div class="entry-content" itemprop="articleBody">
+      {{ object_content|safe }}
+    </div>
+    {% endblock entry-content %}
+
+    {% block continue-reading %}
+    {% if continue_reading and object_content.has_more %}
+    <p class="continue-reading">
+      <a href="{{ object.get_absolute_url }}"
+         title="{% blocktrans with object=object.title percent=object_content.remaining_percent|floatformat:0 %}{{ percent }}% of {{ object }} still remains to read.{% endblocktrans %}"
+         rel="bookmark" itemprop="url">
+        {% trans "Continue reading" %}
+      </a>
+    </p>
+    {% endif %}
+    {% endblock continue-reading %}
+  </div>
+  {% endblock entry-body %}
+<div class="dropdown-divider"></div>
+  {% block entry-footer %}
+  <footer class="entry-footer">
+    {% block entry-tags %}
+    <ul class="entry-tags">
+      {% for tag in object.tags_list %}
+      <li><a href="{% url 'zinnia:tag_detail' tag %}"
+         title="{% blocktrans %}Show all entries tagged by {{ tag }}{% endblocktrans %}"
+         rel="tag" itemprop="articleSection">{{ tag }}</a></li>
+      {% endfor %}
+    </ul>
+    {% endblock entry-tags %}
+  </footer>
+  {% endblock entry-footer %}
+
+    {% block admin-tools %}
+    {% if perms.zinnia.change_entry %}
+      <a class="text-white text-center card card-block rounded bg-primary" href="{% url 'admin:zinnia_entry_change' object.pk %}" title="{% trans 'Edit the entry' %}">
+        {% trans "Edit this entry" %}
+      </a>
+    {% endif %}
+    {% endblock admin-tools %}
+</article>
+<div class="dropdown-divider"></div>
