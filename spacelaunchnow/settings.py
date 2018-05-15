@@ -237,12 +237,12 @@ CELERY_TIMEZONE = 'UTC'
 USER_AGENTS_CACHE = None
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'localhost'
-EMAIL_PORT = 25
-EMAIL_HOST_USER = None
-EMAIL_HOST_PASSWORD = None
-EMAIL_USE_TLS = False
-DEFAULT_FROM_EMAIL = 'Webmaster <webmaster@spacelaunchnow.me>'
+EMAIL_HOST = config.EMAIL_HOST
+EMAIL_PORT = config.EMAIL_PORT
+EMAIL_HOST_USER = config.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = config.EMAIL_HOST_PASSWORD
+EMAIL_USE_TLS = config.EMAIL_HOST_TLS
+DEFAULT_FROM_EMAIL = config.EMAIL_FROM_EMAIL
 
 
 # AWS Storage Information

@@ -16,6 +16,8 @@ Including another URLconf
 
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.views.generic import TemplateView
+
 from api.v200.router import api_urlpatterns as api_v2
 from api.v1.router import api_urlpatterns as api_v1
 from web import views as landing_views
@@ -32,6 +34,10 @@ urlpatterns = [
     url(r'^launch/$', landing_views.launches, name='launches'),
     url(r'^news/', include('zinnia.urls')),
     url(r'^comments/', include('django_comments.urls')),
+    url(r'^app/privacy', TemplateView.as_view(template_name='web/app/privacy.html'), name='privacy'),
+    url(r'^app/tos', TemplateView.as_view(template_name='web/app/tos.html'), name='tos'),
+    url(r'^site/privacy', TemplateView.as_view(template_name='web/site/privacy.html'), name='privacy'),
+    url(r'^site/tos', TemplateView.as_view(template_name='web/site/tos.html'), name='tos'),
     # Changing Password
     url('^', include('django.contrib.auth.urls')),
 ]
