@@ -275,11 +275,20 @@ class NotificationServer:
         else:
             logger.info('Notification Data - %s' % kwargs)
             push_service = FCMNotification(api_key=keys['FCM_KEY'])
-            topic_condition = topics_and_segments['topics']
+            android_topics = topics_and_segments['topics']
+            flutter_topics = get_fcm_topics_and_onesignal_segments(launch, debug=self.DEBUG, flutter=True)['topics']
             logger.info(topics_and_segments)
-            result = push_service.notify_topic_subscribers(data_message=kwargs['data'], condition=topic_condition,
-                                                           time_to_live=86400)
-            logger.info(result)
+            android_result = push_service.notify_topic_subscribers(data_message=kwargs['data'],
+                                                                   condition=android_topics,
+                                                                   time_to_live=86400,)
+
+            flutter_result = push_service.notify_topic_subscribers(data_message=kwargs['data'],
+                                                                   condition=flutter_topics,
+                                                                   time_to_live=86400,
+                                                                   message_title=launch.name,
+                                                                   message_body=contents)
+            logger.info(android_result)
+            logger.info(flutter_result)
             response = self.one_signal.create_notification(contents, heading, **kwargs)
             if response.status_code == 200:
                 logger.info('Notification Sent -  Status: %s Response: %s' % (response.status_code, response.json()))
