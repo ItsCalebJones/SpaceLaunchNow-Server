@@ -105,7 +105,6 @@ LOGGING = {
     },
 }
 
-
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -113,19 +112,27 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'rest_framework',
     'api.apps.ApiConfig',
     'rest_framework_docs',
     'bot',
     'djcelery',
     'embed_video',
-    'jet',
+    'material',
+    'material.admin',
     'django.contrib.admin',
     'django_user_agents',
     'django_filters',
     'rest_framework.authtoken',
     'storages',
+    'django_comments',
+    'mptt',
+    'tagging',
+    'zinnia',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -135,6 +142,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'spacelaunchnow.urls'
@@ -151,12 +159,20 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'spacelaunchnow.context_processor.ga_tracking_id',
-                'spacelaunchnow.context_processor.use_google_analytics'
+                'spacelaunchnow.context_processor.use_google_analytics',
+                'zinnia.context_processors.version',  # Optional
             ],
         },
     },
 ]
 
+ZINNIA_ENTRY_CONTENT_TEMPLATES = [
+  ('zinnia/_short_entry_detail.html', 'Short entry template'),
+]
+
+ZINNIA_ENTRY_DETAIL_TEMPLATES = [
+    ('zinnia/fullwidth_entry_detail.html', 'Fullwidth template'),
+]
 
 USE_GA = not config.DEBUG
 
@@ -189,6 +205,8 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+ZINNIA_MARKUP_LANGUAGE = 'markdown'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
@@ -262,19 +280,24 @@ STATICFILES_LOCATION = 'static'
 STATICFILES_STORAGE = 'custom_storages.StaticStorage'
 
 LOGO_LOCATION = MEDIA_LOCATION + '/logo'  # type: str
-LOGO_STORAGE = 'spacelaunchnow.storage_backends.LogoStorage'
+LOGO_STORAGE = 'custom_storages.LogoStorage'
+
+DEFAULT_LOCATION = MEDIA_LOCATION + '/default'  # type: str
+DEFAULT_STORAGE = 'custom_storages.DefaultStorage'
 
 AGENCY_IMAGE_LOCATION = MEDIA_LOCATION + '/agency_images' #type: str
-AGENCY_IMAGE_STORAGE = 'spacelaunchnow.storage_backends.AgencyImageStorage'
+AGENCY_IMAGE_STORAGE = 'custom_storages.AgencyImageStorage'
 
 AGENCY_NATION_LOCATION = MEDIA_LOCATION + '/agency_nation' #type: str
-AGENCY_NATION_STORAGE = 'spacelaunchnow.storage_backends.AgencyNationStorage'
+AGENCY_NATION_STORAGE = 'custom_storages.AgencyNationStorage'
 
 ORBITER_IMAGE_LOCATION = MEDIA_LOCATION + '/orbiter_images' #type: str
-ORBITER_IMAGE_STORAGE = 'spacelaunchnow.storage_backends.OrbiterImageStorage'
+ORBITER_IMAGE_STORAGE = 'custom_storages.OrbiterImageStorage'
 
 LAUNCHER_IMAGE_LOCATION = MEDIA_LOCATION + '/launcher_images' #type: str
-LAUNCHER_IMAGE_STORAGE = 'spacelaunchnow.storage_backends.LauncherImageStorage'
+LAUNCHER_IMAGE_STORAGE = 'custom_storages.LauncherImageStorage'
 
 EVENT_IMAGE_LOCATION = MEDIA_LOCATION + '/event_images' #type: str
-EVENT_IMAGE_STORAGE = 'spacelaunchnow.storage_backends.EventImageStorage'
+EVENT_IMAGE_STORAGE = 'custom_storages.EventImageStorage'
+
+DEFAULT_FILE_STORAGE = DEFAULT_STORAGE

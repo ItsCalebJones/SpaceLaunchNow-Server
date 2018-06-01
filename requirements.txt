@@ -6,12 +6,11 @@ celery==3.1.25
 coreapi==2.3.0
 coreschema==0.0.4
 dict.sorted==1.0.0
-Django==1.11.1
+Django==1.11.4
 django-celery==3.2.1
 django-compat==1.0.14
 django-embed-video==1.1.2
 django-filter==1.1.0
-django-material==1.1.1
 django-user-agents==0.3.2
 djangorestframework==3.8.2
 djangorestframework-bulk==0.2.1
@@ -45,4 +44,5 @@ google-api-python-client==1.4.1
 boto3==1.7.10
 django-storages==1.6.6
 djangorestframework-queryfields==1.0.0
+pinax-blog==7.0.4
 git+https://github.com/ItsCalebJones/django-rest-framework-docs.git
