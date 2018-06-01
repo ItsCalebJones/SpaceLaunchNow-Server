@@ -278,6 +278,9 @@ class NotificationServer:
             android_topics = topics_and_segments['topics']
             flutter_topics = get_fcm_topics_and_onesignal_segments(launch, debug=self.DEBUG, flutter=True)['topics']
             logger.info(topics_and_segments)
+            android_result = push_service.notify_topic_subscribers(data_message=kwargs['data'],
+                                                                   condition=android_topics,
+                                                                   time_to_live=86400,)
 
             flutter_result = push_service.notify_topic_subscribers(data_message=kwargs['data'],
                                                                    condition=flutter_topics,
