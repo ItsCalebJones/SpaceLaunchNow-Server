@@ -1,5 +1,5 @@
 from django.core.management import BaseCommand
-from bot.app.digest import DigestServer
+from bot.app.digest.digest import DigestServer
 from celery.utils.log import get_task_logger
 
 logger = get_task_logger('bot')
