@@ -1,8 +1,4 @@
-import logging
-import logging
-
 import pytz
-from django.utils.datetime_safe import datetime
 from num2words import num2words
 
 from bot.app.digest.sender import send_twitter_update

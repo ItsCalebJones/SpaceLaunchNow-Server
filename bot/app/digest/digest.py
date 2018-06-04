@@ -1,18 +1,9 @@
-
-import re
 import logging
-import pytz
-from django.core import serializers
-from num2words import num2words
-from django.utils.datetime_safe import datetime, time
-from twitter import Twitter, OAuth, TwitterHTTPError
 
 import bot.app.digest.daily as daily_check
 import bot.app.digest.weekly as weekly_check
-from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
-from bot.models import Notification, DailyDigestRecord
 from bot.utils.config import keys
-from bot.utils.deserializer import launch_json_to_model
+
 # import the logging library
 
 # Get an instance of a logger
