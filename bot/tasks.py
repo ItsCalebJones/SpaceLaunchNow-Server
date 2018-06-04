@@ -1,4 +1,4 @@
-from bot.app.digest import DigestServer
+from bot.app.digest.digest import DigestServer
 from celery.schedules import crontab
 from celery.task import periodic_task
 from celery.utils.log import get_task_logger
