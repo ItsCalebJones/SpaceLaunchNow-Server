@@ -58,7 +58,7 @@ def build_topics(topic_header, topics_set):
     return topics
 
 
-def get_fcm_topics_and_onesignal_segments(launch, debug=False, flutter=False):
+def get_fcm_topics_and_onesignal_segments(launch, debug=False, flutter=False, notification_type=None):
     location_agency_id = 0
     rocket_agency_id = 0
     location_id = 0
@@ -66,9 +66,9 @@ def get_fcm_topics_and_onesignal_segments(launch, debug=False, flutter=False):
     topics_set = ['all']
     if flutter:
         if not debug:
-            topic_header = "'flutter_production' in topics"
+            topic_header = "'flutter_production' in topics && %s in topics" % notification_type
         else:
-            topic_header = "'flutter_debug' in topics"
+            topic_header = "'flutter_debug' in topics && %s in topics" % notification_type
     else:
         if not debug:
             topic_header = "'production' in topics"

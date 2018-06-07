@@ -276,7 +276,10 @@ class NotificationServer:
             logger.info('Notification Data - %s' % kwargs)
             push_service = FCMNotification(api_key=keys['FCM_KEY'])
             android_topics = topics_and_segments['topics']
-            flutter_topics = get_fcm_topics_and_onesignal_segments(launch, debug=self.DEBUG, flutter=True)['topics']
+            flutter_topics = get_fcm_topics_and_onesignal_segments(launch,
+                                                                   debug=self.DEBUG,
+                                                                   flutter=True,
+                                                                   notification_type=notification_type)['topics']
             logger.info(topics_and_segments)
             android_result = push_service.notify_topic_subscribers(data_message=kwargs['data'],
                                                                    condition=android_topics,
