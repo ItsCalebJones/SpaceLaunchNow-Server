@@ -64,11 +64,12 @@ def get_fcm_topics_and_onesignal_segments(launch, debug=False, flutter=False, no
     location_id = 0
     segments = ['ALL-Filter']
     topics_set = ['all']
+    notification_type = 'tenMinutes'
     if flutter:
         if not debug:
-            topic_header = "'flutter_production' in topics && %s in topics" % notification_type
+            topic_header = "'flutter_production' in topics && '%s' in topics" % notification_type
         else:
-            topic_header = "'flutter_debug' in topics && %s in topics" % notification_type
+            topic_header = "'flutter_debug' in topics && '%s' in topics" % notification_type
     else:
         if not debug:
             topic_header = "'production' in topics"
@@ -109,9 +110,6 @@ def get_fcm_topics_and_onesignal_segments(launch, debug=False, flutter=False, no
     if location_id == 16:
         topics_set.append('ksc')
         segments.append('KSC')
-    if location_id == 16:
-        topics_set.append('cape')
-        segments.append('Cape')
     if location_id == 11:
         topics_set.append('ples')
         segments.append('Ples')

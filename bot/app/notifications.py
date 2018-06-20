@@ -280,6 +280,7 @@ class NotificationServer:
                                                                    debug=self.DEBUG,
                                                                    flutter=True,
                                                                    notification_type=notification_type)['topics']
+            logger.info("Flutter Topics: %s" % flutter_topics)
             logger.info(topics_and_segments)
             android_result = push_service.notify_topic_subscribers(data_message=kwargs['data'],
                                                                    condition=android_topics,
