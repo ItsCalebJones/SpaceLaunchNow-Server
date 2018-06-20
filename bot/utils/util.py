@@ -64,7 +64,6 @@ def get_fcm_topics_and_onesignal_segments(launch, debug=False, flutter=False, no
     location_id = 0
     segments = ['ALL-Filter']
     topics_set = ['all']
-    notification_type = 'tenMinutes'
     if flutter:
         if not debug:
             topic_header = "'flutter_production' in topics && '%s' in topics" % notification_type
