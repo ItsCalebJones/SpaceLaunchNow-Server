@@ -82,7 +82,7 @@ rsa==3.4.2
 s3transfer==0.1.13
 simplejson==3.10.0
 six==1.10.0
-twitter==1.17.1
+twitter==1.18.0
 tzlocal==1.4
 ua-parser==0.7.3
 Unidecode==1.0.22
