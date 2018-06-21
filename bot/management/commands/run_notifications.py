@@ -41,7 +41,7 @@ class Command(BaseCommand):
                     launch = launch_json_to_model(launch)
                     notification_obj = Notification.objects.get(launch=launch)
                     # TODO pass in parameter for setting the notification_type
-                    notification.send_notification(launch, 'test', notification_obj)
+                    notification.send_notification(launch, 'oneHour', notification_obj)
             else:
                 logger.error(response.status_code + ' ' + response)
 

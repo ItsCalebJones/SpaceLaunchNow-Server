@@ -228,7 +228,7 @@ class NotificationServer:
             notification.wasNotifiedOneHour = True
         elif diff <= 600 and not notification.wasNotifiedTenMinutes:
             logger.info('Launch is within ten minutes, sending notifications.')
-            self.send_notification(launch, 'tenMinute', notification)
+            self.send_notification(launch, 'tenMinutes', notification)
             notification.wasNotifiedTenMinutes = True
         else:
             logger.info('%s does not meet notification criteria.' % notification.launch.name)
