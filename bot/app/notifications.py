@@ -237,8 +237,27 @@ class NotificationServer:
     def send_notification(self, launch, notification_type, notification):
         logger.info('Creating notification for %s' % launch.name)
 
+        if notification_type == 'netstampChanged':
+            launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
+            contents = 'UPDATE: Now launching on %s at %s.' % (launch_time.strftime("%A, %B %d"),
+                                                               launch_time.strftime("%H:%M UTC"))
+        elif notification_type == 'tenMinutes':
+            contents = '%s launching from %s in ten minutes.' % (launch.rocket_set.first().name,
+                                                                 launch.location_set.first().name)
+        elif notification_type == 'twentyFourHour':
+            contents = '%s launching from %s in 24 hours.' % (launch.rocket_set.first().name,
+                                                              launch.location_set.first().name)
+        elif notification_type == 'oneHour':
+            contents = '%s launching from %s in one hour' % (launch.rocket_set.first().name,
+                                                             launch.location_set.first().name)
+        else:
+            launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
+            contents = '%s launching from %s on %s at %s.' % (launch.rocket_set.first().name,
+                                                              launch.location_set.first().name,
+                                                              launch_time.strftime("%A, %B %d"),
+                                                              launch_time.strftime("%H:%M UTC"))
+
         # Create a notification
-        contents = '%s launching from %s' % (launch.name, launch.location_set.first().name)
         topics_and_segments = get_fcm_topics_and_onesignal_segments(launch, debug=self.DEBUG)
         include_segments = topics_and_segments['segments']
         exclude_segments = ['firebase']
