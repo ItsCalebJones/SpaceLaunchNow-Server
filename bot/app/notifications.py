@@ -239,23 +239,21 @@ class NotificationServer:
 
         if notification_type == 'netstampChanged':
             launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
-            contents = 'UPDATE: Now launching on %s at %s.' % (launch_time.strftime("%A, %B %d"),
+            contents = 'UPDATE: New launch attempt scheduled on %s at %s.' % (launch_time.strftime("%A, %B %d"),
                                                                launch_time.strftime("%H:%M UTC"))
         elif notification_type == 'tenMinutes':
-            contents = '%s launching from %s in ten minutes.' % (launch.rocket_set.first().name,
-                                                                 launch.location_set.first().name)
+            contents = 'Launch attempt  from %s in ten minutes.' % launch.location_set.first().name
         elif notification_type == 'twentyFourHour':
-            contents = '%s launching from %s in 24 hours.' % (launch.rocket_set.first().name,
-                                                              launch.location_set.first().name)
+            contents = 'Launch attempt from %s in 24 hours.' % launch.location_set.first().name
         elif notification_type == 'oneHour':
-            contents = '%s launching from %s in one hour' % (launch.rocket_set.first().name,
-                                                             launch.location_set.first().name)
+            contents = 'Launch attempt from %s in one hour.' % launch.location_set.first().name
+
         else:
             launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
-            contents = '%s launching from %s on %s at %s.' % (launch.rocket_set.first().name,
-                                                              launch.location_set.first().name,
-                                                              launch_time.strftime("%A, %B %d"),
-                                                              launch_time.strftime("%H:%M UTC"))
+            contents = 'Launch attempt from %s on %s at %s.' % (launch.location_set.first().name,
+                                                                launch_time.strftime("%A, %B %d"),
+                                                                launch_time.strftime("%H:%M UTC"))
+
 
         # Create a notification
         topics_and_segments = get_fcm_topics_and_onesignal_segments(launch, debug=self.DEBUG)
@@ -303,7 +301,7 @@ class NotificationServer:
             logger.info(topics_and_segments)
             android_result = push_service.notify_topic_subscribers(data_message=kwargs['data'],
                                                                    condition=android_topics,
-                                                                   time_to_live=86400,)
+                                                                   time_to_live=86400, )
 
             flutter_result = push_service.notify_topic_subscribers(data_message=kwargs['data'],
                                                                    condition=flutter_topics,
@@ -336,6 +334,3 @@ class NotificationServer:
                 assert notification_data['contents']['en'] == contents
             else:
                 logger.error(response.text)
-
-
-
