@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 
 import os
+
+from datetime import datetime
 from django.db import models
 from custom_storages import LogoStorage, AgencyImageStorage, OrbiterImageStorage, LauncherImageStorage, \
     AgencyNationStorage, EventImageStorage
@@ -17,7 +19,7 @@ import urllib
 def image_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
     clean_name = urllib.quote(urllib.quote(instance.name.encode('utf8')), '')
-    clean_name = "%s_%s" % (clean_name, str(instance.id))
+    clean_name = "%s_%s" % (clean_name, datetime.now().strftime("%Y%m%d%H%M%S"))
     name = "%s%s" % (str(clean_name), file_extension)
     return name
 
