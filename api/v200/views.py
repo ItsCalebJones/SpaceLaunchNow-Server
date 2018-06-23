@@ -4,14 +4,12 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 
 from api.models import Launcher, Orbiter, Agency, Events
 
-from api.v200.serializers import OrbiterSerializer, LauncherDetailSerializer, AgencySerializer, EventsSerializer
+from api.v200.serializers import OrbiterSerializer, LauncherDetailSerializer, AgencyHyperlinkedSerializer, \
+     EventsSerializer
 from rest_framework import viewsets
-from rest_framework import permissions
 from datetime import datetime
 from api.models import Launcher, Orbiter, Agency
 from api.permission import HasGroupPermission
-
-from api.v200.serializers import OrbiterSerializer, LauncherDetailSerializer, AgencySerializer
 
 
 class AgencyViewSet(ModelViewSet):
@@ -34,7 +32,14 @@ class AgencyViewSet(ModelViewSet):
 
     """
     queryset = Agency.objects.all()
-    serializer_class = AgencySerializer
+    serializer_class = AgencyHyperlinkedSerializer
+
+    # # taken directly from the docs for generic APIViews
+    # def get_serializer_class(self):
+    #     if self.request.query_params.has_key("detailed"):
+    #         return AgencyModelSerializer
+    #     return AgencyHyperlinkedSerializer
+
     permission_classes = [HasGroupPermission]
     permission_groups = {
         'create': ['Developers'],  # Developers can POST
