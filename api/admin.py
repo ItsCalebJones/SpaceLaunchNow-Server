@@ -8,7 +8,7 @@ from . import models
 
 @admin.register(models.Launcher)
 class LauncherDetailAdmin(admin.ModelAdmin):
-    list_display = ('name', 'active',  'variant', 'family', 'full_name',   'agency', 'launch_agency', 'leo_capacity',
+    list_display = ('name', 'active',  'variant', 'family', 'full_name', 'launch_agency', 'leo_capacity',
                     'gto_capacity')
     list_filter = ('family', 'agency',)
 

@@ -4,8 +4,8 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 
 from api.models import Launcher, Orbiter, Agency, Events
 
-from api.v200.serializers import OrbiterSerializer, LauncherDetailSerializer, AgencyHyperlinkedSerializer, \
-     EventsSerializer
+from api.v201.serializers import OrbiterDetailSerializer, LauncherDetailSerializer, AgencySerializer, \
+     EventsSerializer, AgencyDetailedSerializer
 from rest_framework import viewsets
 from datetime import datetime
 from api.models import Launcher, Orbiter, Agency
@@ -20,8 +20,8 @@ class AgencyViewSet(ModelViewSet):
     Return a list of all the existing users.
 
     FILTERS:
-    Fields - 'featured', 'launch_library_id'
-    Example - /2.0.0/agencies/?featured=true&launch_library_id=44
+    Parameters - 'featured', 'launch_library_id', 'detailed'
+    Example - /2.0.0/agencies/?featured=true&launch_library_id=44&detailed
 
     SEARCH EXAMPLE:
     /2.0.0/agencies/?search=nasa
@@ -32,13 +32,14 @@ class AgencyViewSet(ModelViewSet):
 
     """
     queryset = Agency.objects.all()
-    serializer_class = AgencyHyperlinkedSerializer
+    # serializer_class = AgencySerializer
 
-    # # taken directly from the docs for generic APIViews
-    # def get_serializer_class(self):
-    #     if self.request.query_params.has_key("detailed"):
-    #         return AgencyModelSerializer
-    #     return AgencyHyperlinkedSerializer
+    # taken directly from the docs for generic APIViews
+    def get_serializer_class(self):
+        print(self.request.query_params.keys())
+        if self.request.query_params.has_key("detailed"):
+            return AgencyDetailedSerializer
+        return AgencySerializer
 
     permission_classes = [HasGroupPermission]
     permission_groups = {
@@ -92,7 +93,7 @@ class OrbiterViewSet(ModelViewSet):
     Return a list of all the existing orbiters.
     """
     queryset = Orbiter.objects.all()
-    serializer_class = OrbiterSerializer
+    serializer_class = OrbiterDetailSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
         'create': ['Developers'],  # Developers can POST
