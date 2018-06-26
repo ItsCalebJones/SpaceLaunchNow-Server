@@ -1,4 +1,3 @@
-import pytz
 from django.db import models
 from django.db.models.functions import datetime
 from pytz import utc
@@ -12,9 +11,9 @@ class Launch(models.Model):
     netstamp = models.IntegerField(blank=True, null=True)
     wsstamp = models.IntegerField(blank=True, null=True)
     westamp = models.IntegerField(blank=True, null=True)
-    net = models.DateTimeField(max_length=255, null=True, default=datetime.timezone.tzinfo)
-    window_end = models.DateTimeField(max_length=255, null=True, default=datetime.timezone.tzinfo)
-    window_start = models.DateTimeField(max_length=255, null=True, default=datetime.timezone.tzinfo)
+    net = models.DateTimeField(max_length=255, null=True)
+    window_end = models.DateTimeField(max_length=255, null=True)
+    window_start = models.DateTimeField(max_length=255, null=True)
     isostart = models.CharField(max_length=255, blank=True, null=True)
     isoend = models.CharField(max_length=255, blank=True, null=True)
     isonet = models.CharField(max_length=255, blank=True, null=True)

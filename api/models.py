@@ -154,7 +154,7 @@ class Events(models.Model):
     description = models.CharField(max_length=2048, default='', blank=True)
     location = models.CharField(max_length=100, default='', blank=True)
     feature_image = models.FileField(storage=EventImageStorage(), default=None, null=True, blank=True, upload_to=image_path)
-    date = models.DateTimeField(default=datetime.timezone.tzinfo)
+    date = models.DateTimeField()
 
     def __str__(self):
         return self.name
