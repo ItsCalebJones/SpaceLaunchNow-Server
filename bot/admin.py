@@ -13,12 +13,9 @@ class LaunchAdmin(admin.ModelAdmin):
 
 @admin.register(models.Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'country_code', 'show_launches')
+    list_display = ('id', 'name', 'country_code',)
     list_select_related = True
 
-    def show_launches(self, obj):
-        return "\n".join([a.name for a in obj.launches.all()])
-    show_launches.short_description = 'Launches'
 
 @admin.register(models.Pad)
 class PadAdmin(admin.ModelAdmin):
@@ -28,11 +25,7 @@ class PadAdmin(admin.ModelAdmin):
 
 @admin.register(models.Rocket)
 class RocketAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'configuration', 'show_launches')
-
-    def show_launches(self, obj):
-        return "\n".join([a.name for a in obj.launches.all()])
-    show_launches.short_description = 'Launches'
+    list_display = ('id', 'name', 'configuration',)
 
 
 @admin.register(models.Agency)
@@ -54,7 +47,7 @@ class AgencyAdmin(admin.ModelAdmin):
 
 @admin.register(models.Mission)
 class MissionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'type_name', 'launch')
+    list_display = ('id', 'name', 'type_name')
 
 
 @admin.register(models.Notification)

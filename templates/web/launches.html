@@ -105,7 +105,7 @@
                         <div class="media">
                             <a class="relative" href="/launch/{{ launch.id}}">
                                 <img class="card-img-custom" src="{{ launch.img_url }}" alt="">
-                                <span class="badge badge-danger top-right">{{launch.lsp_set.first.name}}</span>
+                                <span class="badge badge-danger top-right">{{launch.lsp.name}}</span>
                           </a>
                         </div>
                         {% else %}
@@ -116,7 +116,7 @@
                                 <i>{{ launch.net }}</i><br>
                             </div>
                         <div class="card-body">
-                            <p class="card-text">{{ launch.mission_set.all.0.description }}</p>
+                            <p class="card-text">{{ launch.mission.description }}</p>
                             <hr/>
                             <a class="btn btn-primary" href="/launch/{{ launch.id}}">Explore</a>
                       </div>

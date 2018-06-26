@@ -52,7 +52,6 @@ class AgencyViewSet(ModelViewSet):
     search_fields = ('^name',)
     ordering_fields = ('id', 'name', 'featured', 'launch_library_id',)
 
-
 class LaunchersViewSet(ModelViewSet):
     """
     API endpoint that allows Launchers to be viewed.
@@ -102,7 +101,7 @@ class OrbiterViewSet(ModelViewSet):
     }
 
 
-class EventViewSet(viewsets.ModelViewSet):
+class EventViewSet(ModelViewSet):
     """
     API endpoint that allows Events to be viewed.
 
@@ -122,15 +121,16 @@ class EventViewSet(viewsets.ModelViewSet):
     }
 
 
-class UpcomingLaunchViewSet(viewsets.ModelViewSet):
+class LaunchViewSet(ModelViewSet):
     """
-    API endpoint that allows Events to be viewed.
+    API endpoint that returns all Launch objects.
 
     GET:
-    Return a list of future Events
+    Return a list of all Launch objects.
     """
     now = datetime.now()
-    queryset = Launch.objects.exclude(net__isnull=True)
+    queryset = Launch.objects.all()
+    queryset.order_by('net')
     serializer_class = LaunchSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
@@ -140,17 +140,21 @@ class UpcomingLaunchViewSet(viewsets.ModelViewSet):
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filter_fields = ('name', 'rocket__name', 'lsp__name', 'status', 'tbddate', 'tbdtime')
+    search_fields = ('$name', '$rocket__name', '$lsp__name')
+    ordering_fields = ('id', 'name', 'net',)
 
 
-class PreviousLaunchViewSet(viewsets.ModelViewSet):
+class UpcomingLaunchViewSet(ModelViewSet):
     """
-    API endpoint that allows Events to be viewed.
+    API endpoint that returns future Launch objects.
 
     GET:
-    Return a list of future Events
+    Return a list of future Launches
     """
     now = datetime.now()
-    queryset = Launch.objects.filter(net__lte=now)
+    queryset = Launch.objects.filter(net__gte=now).all()
     serializer_class = LaunchSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
@@ -160,3 +164,32 @@ class PreviousLaunchViewSet(viewsets.ModelViewSet):
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filter_fields = ('name', 'rocket__name', 'lsp__name', 'status', 'tbddate', 'tbdtime')
+    search_fields = ('$name', '$rocket__name', '$lsp__name')
+    ordering_fields = ('id', 'name', 'net',)
+
+
+class PreviousLaunchViewSet(ModelViewSet):
+    """
+    API endpoint that returns previous Launch objects.
+
+    GET:
+    Return a list of previous Launches
+    """
+    now = datetime.now()
+    queryset = Launch.objects.filter(net__lte=now).all()
+    serializer_class = LaunchSerializer
+    permission_classes = [HasGroupPermission]
+    permission_groups = {
+        'create': ['Developers'],  # Developers can POST
+        'destroy': ['Developers'],  # Developers can POST
+        'partial_update': ['Contributors', 'Developers'],  # Designers and Developers can PATCH
+        'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
+        'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
+    }
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filter_fields = ('name', 'rocket__name', 'lsp__name', 'status', 'tbddate', 'tbdtime')
+    search_fields = ('$name', '$rocket__name', '$lsp__name')
+    ordering_fields = ('id', 'name', 'net',)
+

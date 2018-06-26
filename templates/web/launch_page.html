@@ -81,7 +81,7 @@
 <div class="container">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/launch/">Launches</a></li>
-        <li class="breadcrumb-item active"><a>{{ launch.mission_set.all.0.name}}</a></li>
+        <li class="breadcrumb-item active"><a>{{ launch.mission.name}}</a></li>
     </ol>
     <div class="jumbotron jumbotron-billboard">
         {% if launch.img_url %}
@@ -90,11 +90,8 @@
         <div class="img"></div>
         {% endif %}
         <div class="container">
-            <h1>{{ launch.mission_set.all.0.name }}</h1>
-            {% if launch.rocket_set.all.0.agency_set.all.0.name  %}
-            <h2 class="subheading">{{ launch.rocket_set.all.0.agency_set.all.0.name }} - {{ launch.rocket_set.all.0.name }}</h2>
-            {% else %}
-            <h2 class="subheading">{{ launch.lsp_set.all.0.name }} - {{ launch.rocket_set.all.0.name }}</h2>
+            <h1>{{ launch.mission.name }}</h1>
+            <h2 class="subheading">{{ launch.lsp.name }} - {{ launch.rocket.name }}</h2>
             {% endif %}
             <span class="meta">NET: {{ launch.net }}</span>
             {% if not request|is_mobile %}
@@ -111,7 +108,7 @@
 
         <!-- Post Content Column -->
         <div class="col-lg-8">
-            {% with mission=launch.mission_set.all.0%}
+            {% with mission=launch.mission%}
             <h2>Mission
                 <small>{{ mission.name }}</small>
             </h2>

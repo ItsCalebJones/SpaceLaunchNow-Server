@@ -4,41 +4,10 @@ from django.db.models.functions import datetime
 from pytz import utc
 
 
-class Launch(models.Model):
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=255, blank=True)
-    img_url = models.CharField(max_length=255, blank=True, null=True)
-    status = models.IntegerField(blank=True, null=True)
-    netstamp = models.IntegerField(blank=True, null=True)
-    wsstamp = models.IntegerField(blank=True, null=True)
-    westamp = models.IntegerField(blank=True, null=True)
-    net = models.DateTimeField(max_length=255, null=True, default=datetime.timezone.tzinfo)
-    window_end = models.DateTimeField(max_length=255, null=True, default=datetime.timezone.tzinfo)
-    window_start = models.DateTimeField(max_length=255, null=True, default=datetime.timezone.tzinfo)
-    isostart = models.CharField(max_length=255, blank=True, null=True)
-    isoend = models.CharField(max_length=255, blank=True, null=True)
-    isonet = models.CharField(max_length=255, blank=True, null=True)
-    inhold = models.NullBooleanField(blank=True, null=True)
-    tbdtime = models.NullBooleanField(blank=True, null=True)
-    tbddate = models.NullBooleanField(blank=True, null=True)
-    probability = models.IntegerField(blank=True, null=True)
-    holdreason = models.CharField(max_length=255, blank=True)
-    failreason = models.CharField(max_length=255, blank=True)
-    hashtag = models.CharField(max_length=255, blank=True)
-
-    def __unicode__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = 'Launch'
-        verbose_name_plural = 'Launches'
-
-
 class Location(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255, blank=True, default="")
     country_code = models.CharField(max_length=255, blank=True, default="")
-    launch = models.ManyToManyField(Launch, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -54,7 +23,7 @@ class Pad(models.Model):
     info_url = models.URLField(blank=True)
     wiki_url = models.URLField(blank=True)
     map_url = models.URLField(blank=True)
-    location = models.ForeignKey(Location, blank=True, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, related_name="pads", blank=True, on_delete=models.CASCADE)
 
     def __unicode__(self):
         return self.name
@@ -70,7 +39,6 @@ class Rocket(models.Model):
     name = models.CharField(max_length=255, blank=True, default="")
     configuration = models.CharField(max_length=255, blank=True, default="")
     family_name = models.CharField(max_length=255, blank=True, default="")
-    launches = models.ManyToManyField(Launch, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -101,7 +69,6 @@ class Agency(models.Model):
 
 
 class LSP(Agency):
-    launches = models.ManyToManyField(Launch, blank=True)
     super
 
     class Meta:
@@ -115,7 +82,6 @@ class Mission(models.Model):
     description = models.CharField(max_length=2048, blank=True, default="")
     type = models.IntegerField(blank=True, null=True)
     type_name = models.CharField(max_length=255, blank=True, default="")
-    launch = models.ForeignKey(Launch, blank=True, on_delete=models.CASCADE)
 
     def __unicode__(self):
         return self.name
@@ -123,6 +89,40 @@ class Mission(models.Model):
     class Meta:
         verbose_name = 'Mission'
         verbose_name_plural = 'Missions'
+
+
+class Launch(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255, blank=True)
+    img_url = models.CharField(max_length=255, blank=True, null=True)
+    status = models.IntegerField(blank=True, null=True)
+    netstamp = models.IntegerField(blank=True, null=True)
+    wsstamp = models.IntegerField(blank=True, null=True)
+    westamp = models.IntegerField(blank=True, null=True)
+    net = models.DateTimeField(max_length=255, null=True)
+    window_end = models.DateTimeField(max_length=255, null=True)
+    window_start = models.DateTimeField(max_length=255, null=True)
+    isostart = models.CharField(max_length=255, blank=True, null=True)
+    isoend = models.CharField(max_length=255, blank=True, null=True)
+    isonet = models.CharField(max_length=255, blank=True, null=True)
+    inhold = models.NullBooleanField(blank=True, null=True)
+    tbdtime = models.NullBooleanField(blank=True, null=True)
+    tbddate = models.NullBooleanField(blank=True, null=True)
+    probability = models.IntegerField(blank=True, null=True)
+    holdreason = models.CharField(max_length=255, blank=True, null=True)
+    failreason = models.CharField(max_length=255, blank=True, null=True)
+    hashtag = models.CharField(max_length=255, blank=True, null=True)
+    lsp = models.ForeignKey(LSP, related_name='lsp', null=True, on_delete=models.CASCADE)
+    rocket = models.ForeignKey(Rocket, related_name='rocket', null=True, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, related_name='location', null=True, on_delete=models.CASCADE)
+    mission = models.ForeignKey(Mission, related_name='mission', null=True, on_delete=models.CASCADE)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Launch'
+        verbose_name_plural = 'Launches'
 
 
 class VidURLs(models.Model):
