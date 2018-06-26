@@ -6,6 +6,8 @@ from drf_queryfields import QueryFieldsMixin
 from api.models import Orbiter, Launcher, Agency
 from rest_framework import serializers
 
+from bot.models import *
+
 
 class LauncherSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -68,3 +70,36 @@ class EventsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Events
         fields = ('id', 'name', 'description', 'location', 'feature_image', 'date')
+
+
+class RocketSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Rocket
+        fields = ('id', 'name', 'imageURL', 'family_name')
+
+
+class LocationSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Location
+        fields = ('id', 'name', 'country_code')
+
+
+class LSPSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = LSP
+        fields = ('id', 'name', 'country_code', 'abbrev', 'type', 'info_url', 'wiki_url')
+
+
+class LaunchSerializer(serializers.HyperlinkedModelSerializer):
+    location = LocationSerializer(many=False, read_only=True)
+    rocket = RocketSerializer(many=False, read_only=True)
+    lsp = LSPSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = Launch
+        fields = ('id', 'name', 'img_url', 'status', 'netstamp', 'wsstamp', 'westamp', 'net', 'window_end',
+                  'window_start', 'isonet', 'isostart', 'isoend', 'inhold', 'tbdtime', 'tbddate', 'probability',
+                  'holdreason', 'failreason', 'hashtag', 'location', 'rocket', 'lsp')

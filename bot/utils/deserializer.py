@@ -1,3 +1,5 @@
+import datetime
+
 from bot.models import Launch, Notification, VidURLs, Pad, Location, Rocket, Mission, LSP, Agency
 
 
@@ -21,9 +23,9 @@ def launch_json_to_model(data):
     launch.wsstamp = wsstamp
     launch.westamp = westamp
     launch.inhold = inhold
-    launch.net = net
-    launch.window_end = window_end
-    launch.window_start = window_start
+    launch.net = datetime.datetime.strptime(net, '%B %d, %Y %H:%M:%S %Z')
+    launch.window_end = datetime.datetime.strptime(window_end, '%B %d, %Y %H:%M:%S %Z')
+    launch.window_start = datetime.datetime.strptime(window_start, '%B %d, %Y %H:%M:%S %Z')
     launch.save()
 
     launch.vid_urls.all().delete()

@@ -210,6 +210,7 @@ ZINNIA_MARKUP_LANGUAGE = 'markdown'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
+DATETIME_INPUT_FORMATS = '%B %-d, %Y %H:%M:%S %Z'
 
 LANGUAGE_CODE = 'en-us'
 
@@ -219,7 +220,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False
+USE_TZ = True
 
 GA_TRACKING_ID = config.GOOGLE_ANALYTICS_TRACKING_ID
 

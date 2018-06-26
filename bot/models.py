@@ -1,3 +1,4 @@
+import pytz
 from django.db import models
 from django.db.models.functions import datetime
 from pytz import utc
@@ -11,12 +12,19 @@ class Launch(models.Model):
     netstamp = models.IntegerField(blank=True, null=True)
     wsstamp = models.IntegerField(blank=True, null=True)
     westamp = models.IntegerField(blank=True, null=True)
-    inhold = models.IntegerField(blank=True, null=True)
-    net = models.CharField(max_length=255, null=True)
-    window_end = models.CharField(max_length=255, null=True)
-    window_start = models.CharField(max_length=255, null=True)
-    # added = models.DateTimeField(auto_now_add=True)
-    # updated = models.DateTimeField(auto_now=True)
+    net = models.DateTimeField(max_length=255, null=True, default=datetime.timezone.tzinfo)
+    window_end = models.DateTimeField(max_length=255, null=True, default=datetime.timezone.tzinfo)
+    window_start = models.DateTimeField(max_length=255, null=True, default=datetime.timezone.tzinfo)
+    isostart = models.CharField(max_length=255, blank=True, null=True)
+    isoend = models.CharField(max_length=255, blank=True, null=True)
+    isonet = models.CharField(max_length=255, blank=True, null=True)
+    inhold = models.NullBooleanField(blank=True, null=True)
+    tbdtime = models.NullBooleanField(blank=True, null=True)
+    tbddate = models.NullBooleanField(blank=True, null=True)
+    probability = models.IntegerField(blank=True, null=True)
+    holdreason = models.CharField(max_length=255, blank=True)
+    failreason = models.CharField(max_length=255, blank=True)
+    hashtag = models.CharField(max_length=255, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -127,6 +135,18 @@ class VidURLs(models.Model):
     class Meta:
         verbose_name = 'Video URL'
         verbose_name_plural = 'Video URLs'
+
+
+class InfoURLs(models.Model):
+    info_url = models.URLField(max_length=200)
+    launch = models.ForeignKey(Launch, related_name='info_urls', on_delete=models.CASCADE)
+
+    def __unicode__(self):
+        return '%s' % self.info_url
+
+    class Meta:
+        verbose_name = 'Info URL'
+        verbose_name_plural = 'Info URLs'
 
 
 class Notification(models.Model):
