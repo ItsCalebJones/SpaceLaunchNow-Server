@@ -275,8 +275,9 @@ AWS_S3_OBJECT_PARAMETERS = {
 STATIC_URL_AWS = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
 
 MEDIA_LOCATION = 'media'
-
-STATICFILES_LOCATION = 'static'
+PROJECT_PATH = os.path.abspath(os.path.dirname(__name__))
+STATICFILES_DIRS = [os.path.join(PROJECT_PATH, 'static')]
+STATICFILES_LOCATION = 'static/home'
 STATICFILES_STORAGE = 'custom_storages.StaticStorage'
 
 LOGO_LOCATION = MEDIA_LOCATION + '/logo'  # type: str
