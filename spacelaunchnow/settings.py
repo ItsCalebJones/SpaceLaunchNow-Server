@@ -210,7 +210,6 @@ ZINNIA_MARKUP_LANGUAGE = 'markdown'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
-DATETIME_INPUT_FORMATS = '%B %-d, %Y %H:%M:%S %Z'
 
 LANGUAGE_CODE = 'en-us'
 

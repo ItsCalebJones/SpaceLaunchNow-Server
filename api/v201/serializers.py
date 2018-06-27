@@ -69,37 +69,53 @@ class AgencyDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSer
 class EventsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Events
-        fields = ('id', 'name', 'description', 'location', 'feature_image', 'date')
+        fields = ('id', 'url', 'name', 'description', 'location', 'feature_image', 'date')
 
 
-class RocketSerializer(serializers.HyperlinkedModelSerializer):
+class RocketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Rocket
         fields = ('id', 'name', 'imageURL', 'family_name')
 
 
-class LocationSerializer(serializers.HyperlinkedModelSerializer):
+class PadSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Pad
+        fields = ('id', 'name', 'info_url', 'wiki_url', 'map_url')
+
+
+class LocationSerializer(serializers.ModelSerializer):
+    pads = PadSerializer(many=True, read_only=True)
 
     class Meta:
         model = Location
-        fields = ('id', 'name', 'country_code')
+        fields = ('id', 'name', 'country_code', 'pads')
 
 
-class LSPSerializer(serializers.HyperlinkedModelSerializer):
+class LSPSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LSP
         fields = ('id', 'name', 'country_code', 'abbrev', 'type', 'info_url', 'wiki_url')
 
 
+class MissionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Mission
+        fields = ('id', 'name', 'description', 'type', 'type_name')
+
+
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True)
     rocket = RocketSerializer(many=False, read_only=True)
     lsp = LSPSerializer(many=False, read_only=True)
+    mission = MissionSerializer(many=False, read_only=True)
 
     class Meta:
         model = Launch
-        fields = ('id', 'name', 'img_url', 'status', 'netstamp', 'wsstamp', 'westamp', 'net', 'window_end',
+        fields = ('id', 'url', 'name', 'img_url', 'status', 'netstamp', 'wsstamp', 'westamp', 'net', 'window_end',
                   'window_start', 'isonet', 'isostart', 'isoend', 'inhold', 'tbdtime', 'tbddate', 'probability',
-                  'holdreason', 'failreason', 'hashtag', 'location', 'rocket', 'lsp')
+                  'holdreason', 'failreason', 'hashtag', 'rocket', 'mission', 'lsp', 'location')
