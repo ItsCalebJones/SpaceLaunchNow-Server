@@ -23,20 +23,31 @@
     enable_page_level_ads: true
   });
 
+
+
+
+
+
+
+
+
 </script>
 {% endblock %}
 
 {% block navigation %}
-<nav class="navbar navbar-expand-lg navbar-light fixed-top navbar-shrink-alt" id="indexNav">
+<nav class="navbar bg-primary fixed-top navbar-expand-lg">
     <div class="container">
-        <a class="navbar-brand js-scroll-trigger" href="/">Space Launch Now</a>
-        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
-                data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
-                aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <div class="navbar-translate">
+            <a class="navbar-brand" href="#page-top"><b>Space Launch Now</b></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
 
-        <div class="collapse navbar-collapse" id="navbarResponsive">
+        <div class="collapse navbar-collapse">
 
             <ul class="navbar-nav ml-auto">
 
@@ -50,7 +61,7 @@
                     <a class="nav-link js-scroll-trigger" href="/launch/">Launches</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link twitter" href="https://twitter.com/SpaceLaunchNow"><i class="fa fa-twitter"></i></a>
+                    <a class="nav-link twitter" href="https://twitter.com/SpaceLaunchNow"><i class="fab fa-twitter"></i></a>
                 </li>
 
                 <li class="nav-item">
@@ -76,110 +87,124 @@
     <script>
     (adsbygoogle = window.adsbygoogle || []).push({});
 
+
+
+
+
+
+
+
+
     </script>
-</div>
-<div class="container">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/launch/">Launches</a></li>
-        <li class="breadcrumb-item active"><a>{{ launch.mission_set.all.0.name}}</a></li>
-    </ol>
-    <div class="jumbotron jumbotron-billboard">
-        {% if launch.img_url %}
-        <div class="img" style="background: #000 url({{ launch.img_url }}) center center;"></div>
-        {% else %}
-        <div class="img"></div>
-        {% endif %}
-        <div class="container">
-            <h1>{{ launch.mission_set.all.0.name }}</h1>
-            {% if launch.rocket_set.all.0.agency_set.all.0.name  %}
-            <h2 class="subheading">{{ launch.rocket_set.all.0.agency_set.all.0.name }} - {{ launch.rocket_set.all.0.name }}</h2>
-            {% else %}
-            <h2 class="subheading">{{ launch.lsp_set.all.0.name }} - {{ launch.rocket_set.all.0.name }}</h2>
-            {% endif %}
-            <span class="meta">NET: {{ launch.net }}</span>
-            {% if not request|is_mobile %}
-            <div class="countdown" style="margin-top:10em;"></div>
-            {% endif %}
-        </div>
-    </div>
 </div>
 <!-- Page Content -->
 <div class="container">
-
-    <div class="row">
-
-
-        <!-- Post Content Column -->
-        <div class="col-lg-8">
-            {% with mission=launch.mission_set.all.0%}
-            <h2>Mission
-                <small>{{ mission.name }}</small>
-            </h2>
-            <!-- Post Content -->
-            <p class="lead">Type: {{ mission.type_name }}</p>
-
-            <p>{{ mission.description}}</p>
-            <hr>
-
-            {% endwith %}
-
-            <!-- Date/Time -->
-            <h3>Launch Window</h3>
-
-            <p>Open: {{ launch.window_start}}</p>
-
-            <p>Close: {{ launch.window_end }}</p>
-
-            <hr>
-
-            <h2 class="mt-4">Watch the Launch</h2>
-            <!-- Title -->
-            {% if youtube_urls|length > 0 %}
-            {% for url in youtube_urls %}
-            {% video url as my_video %}
-            {% if request|is_mobile %}
-                {% video my_video '85% x 25%' %}
+    <nav aria-label="breadcrumb" role="navigation">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/launch/">Launches</a></li>
+            <li class="breadcrumb-item active"><a>{{ launch.mission_set.all.0.name}}</a></li>
+        </ol>
+    </nav>
+    {% if launch.img_url %}
+    <div class="jumbotron jumbotron-billboard" style="background: #000 url({{ launch.img_url }}) no-repeat center center; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;">
+    {% else %}
+    <div class="jumbotron jumbotron-billboard">
+    {% endif %}
+        <div class="container">
+            <h1 class="title text-white" style="text-shadow: 2px 2px #3c3838;">{{ launch.mission_set.all.0.name }}</h1>
+            {% if launch.rocket_set.all.0.agency_set.all.0.name %}
+            <h2 class="subheading text-white" style="text-shadow: 2px 2px #3c3838;">{{ launch.rocket_set.all.0.agency_set.all.0.name }} - {{ launch.rocket_set.all.0.name }}</h2>
             {% else %}
-                {% video my_video 'medium' %}
+            <h2 class="subheading text-white" style="text-shadow: 2px 2px #3c3838;">{{ launch.lsp_set.all.0.name }} - {{ launch.rocket_set.all.0.name }}</h2>
             {% endif %}
-
-            {% endvideo %}
-            {% endfor %}
-            {% else %}
-            <p>Check back later for live embedded streams.</p>
+            <h4 class="subheading text-white" style="text-shadow: 2px 2px #3c3838;">NET: {{ launch.net }}</h4>
+            {% if not request|is_mobile %}
+            <h1 class="text-white" style="text-shadow: 2px 2px #3c3838;" id="countdown">L - 00 : 00 : 00 : 00</h1>
             {% endif %}
-            {% if launch.vid_urls.count > 0 %}
-            <h4>Links</h4>
-            {% for url in launch.vid_urls.all %}
-            <a href="{{url.vid_url}}">{{url.vid_url}}</a><br>
-            {% endfor %}
-            {% endif %}
-
         </div>
+    </div>
 
-        <!-- Sidebar Widgets Column -->
-        <div class="col-md-4">
-            <div class="container">
-                <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                <!-- Space Launch Now -->
-                <ins class="adsbygoogle"
-                     style="display:block"
-                     data-ad-client="ca-pub-9824528399164059"
-                     data-ad-slot="8772606898"
-                     data-ad-format="auto"></ins>
-                <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
+    <div class="main">
+        <div class="row">
+            <!-- Post Content Column -->
+            <div class="card col-lg-8">
+                {% with mission=launch.mission_set.all.0%}
+                <div class="card-header card-header-danger">
+                    <h2>Mission
+                        <small style="color:#eaeaea;">{{ mission.name }}</small>
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">Type: {{ mission.type_name }}</h3>
+                    <hr>
+                    <p>{{ mission.description}}</p>
 
-                </script>
+                    {% endwith %}
+
+                    <!-- Date/Time -->
+                    <h3 class="mt-4 card-title">Launch Vehicle</h3>
+                    <hr>
+                    {% with rocket=launch.rocket_set.all.0 %}
+                    <h4>Name: {{ rocket.name }}</h4>
+
+                    <p>Configuration: {{  rocket.configuration}}</p>
+
+                    <p>Family: {{ rocket.family }}</p>
+                    {% endwith %}
+
+                    <!-- Date/Time -->
+                    <h3 class="mt-4 card-title">Launch Window</h3>
+                    <hr>
+                    <p>NET: {{ launch.net }}</p>
+
+                    <p>Open: {{ launch.window_start}}</p>
+
+                    <p>Close: {{ launch.window_end }}</p>
+
+
+                    <h3 class="mt-4 card-title">Watch the Launch</h3>
+                    <hr>
+                    <!-- Title -->
+                    {% if youtube_urls|length > 0 %}
+                    {% for url in youtube_urls %}
+                    {% video url as my_video %}
+                    {% if request|is_mobile %}
+                    {% video my_video '85% x 25%' %}
+                    {% else %}
+                    {% video my_video 'medium' %}
+                    {% endif %}
+
+                    {% endvideo %}
+                    {% endfor %}
+                    {% else %}
+                    <p>Check back later for live embedded streams.</p>
+                    {% endif %}
+                    {% if launch.vid_urls.count > 0 %}
+                    <h3 class="mt-4 card-title">Links</h3>
+                    <hr>
+                    <h4>Videos</h4>
+                    {% for url in launch.vid_urls.all %}
+                    <a href="{{url.vid_url}}">{{url.vid_url}}</a><br>
+                    {% endfor %}
+                    <h4>Information</h4>
+                    {% for url in launch.info_urls.all %}
+                    <a href="{{url.info_url}}">{{url.info_url}}</a><br>
+                    {% endfor %}
+                    {% endif %}
+                </div>
             </div>
-            <!-- Categories Widget -->
-            <div class="card my-2 desktop-only">
-                <a class="twitter-timeline desktop-only"
-                   href="https://twitter.com/SpaceLaunchNow/lists/space-launch-news"
-                   data-tweet-limit="8"
-                   data-show-replies="true"
-                >Tweets from https://twitter.com/SpaceLaunchNow/lists/space-launch-news</a>
-                <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+            <!-- Sidebar Widgets Column -->
+            <div class="col-md-4">
+                <!-- Categories Widget -->
+                <div class="card desktop-only">
+                    <a class="twitter-timeline desktop-only"
+                       href="https://twitter.com/SpaceLaunchNow/lists/space-launch-news"
+                       data-tweet-limit="5"
+                       data-show-replies="true"
+                    >Tweets from https://twitter.com/SpaceLaunchNow/lists/space-launch-news</a>
+                    <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+                </div>
             </div>
         </div>
     </div>
@@ -196,6 +221,14 @@
     <script>
     (adsbygoogle = window.adsbygoogle || []).push({});
 
+
+
+
+
+
+
+
+
     </script>
 </div>
 <div class="call-to-action bg-dark">
@@ -209,24 +242,51 @@
         </div>
     </div>
 </div>
-<script type="text/javascript">
+<script>
+// Set the date we're counting down to
+var countDownDate = new Date("{{ launch.net }}").getTime();
 
-    var clock;
+// Update the count down every 1 second
+var x = setInterval(function() {
 
-    // Grab the current date
-    var currentDate = new Date();
+  // Get todays date and time
+  var now = new Date().getTime();
 
-    // Set some date in the past. In this case, it's always been since Jan 1
-    var futureDate = new Date("{{ launch.net }}");
+  // Find the distance between now an the count down date
+  var distance = countDownDate - now;
 
-    // Calculate the difference in seconds between the future and current date
-    var diff = futureDate.getTime() / 1000 - currentDate.getTime() / 1000;
+  // Time calculations for days, hours, minutes and seconds
+  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    // Instantiate a coutdown FlipClock
-    clock = $('.countdown').FlipClock(diff, {
-        clockFace: 'DailyCounter',
-        countdown: true
-    });
+  if (days <= 9){
+    days = "0" + days
+  }
+  if (hours <= 9){
+    hours = "0" + hours
+  }
+  if (minutes <= 9){
+    minutes = "0" + minutes
+  }
+  if (seconds <= 9){
+    seconds = "0" + seconds
+  }
+  // Display the result in the element with id="demo"
+  document.getElementById("countdown").innerHTML = "L - " + days + " : " + hours + " : "
+  + minutes + " : " + seconds;
+
+  // If the count down is finished, write some text
+  if (distance < 0) {
+    clearInterval(x);
+    document.getElementById("demo").innerHTML = "EXPIRED";
+  }
+}, 1000);
+
+
+
+
 
 
 </script>

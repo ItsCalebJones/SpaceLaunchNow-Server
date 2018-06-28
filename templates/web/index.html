@@ -19,10 +19,11 @@
 <nav class="navbar navbar-transparent navbar-color-on-scroll bg-primary fixed-top navbar-expand-lg">
     <div class="container">
         <div class="navbar-translate">
-            <a class="navbar-brand" href="#page-top">Space Launch Now</a>
-            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
-                    data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+            <a class="navbar-brand" href="#page-top"><b>Space Launch Now</b></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false"
                     aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
                 <span class="navbar-toggler-icon"></span>
             </button>
         </div>
@@ -42,7 +43,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link twitter" href="https://twitter.com/SpaceLaunchNow"><i
-                            class="fa fa-twitter"></i></a>
+                            class="fab fa-twitter"></i></a>
                 </li>
 
                 <li class="nav-item">
@@ -55,247 +56,251 @@
 {% endblock %}
 
 {% block content %}
-<div class="page-header header-filter clear-filter purple-filter" data-parallax="true"
-     style="background-image: url('./assets/img/bg2.jpg');">
+<div class="page-header header-filter" data-parallax="true"
+     style="background-image: url('https://firebasestorage.googleapis.com/v0/b/space-launch-now.appspot.com/o/16072049543_53f7db3aa5_b.jpg?alt=media&token=2b9d5907-7c3a-4af9-9b85-f0a200d9d04b');">
     <div class="container">
         <div class="row">
-            <div class="col-md-8 ml-auto mr-auto">
-                <div class="brand">
-                    <h1 id="homeHeading">Space Launch Now</h1>
+            <div class="col-md-8 ml-auto mx-auto mr-auto  text-center">
+                <div class="profile">
+                    <div class="avatar">
+                        <img src="https://firebasestorage.googleapis.com/v0/b/space-launch-now.appspot.com/o/fb_profile.png?alt=media&token=be63157e-4948-4f56-b8a1-ac42832382b5"
+                             alt="Circle Image"
+                             class="img-raised rounded-circle img-fluid mx-auto"
+                             style="max-width: 35%">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 ml-auto mr-auto">
+                <div class="name text-center">
+                    <h1 class="title">Space Launch Now</h1>
 
                     <h2>A Spaceflight Tracker</h2>
+
+                </div>
+                <div class="col-md-8 ml-auto mr-auto text-center">
                     <hr>
                     <p>Meet <b>Space Launch Now</b> the best resource for keeping up to date on all of your favorite
-                        spaceflight
-                        missions from around the world.</p>
-                    <a class="btn btn-primary btn-xl" href="/next">What's Launching Next?</a>
-                    </a>
+                        spaceflight missions from around the world.</p>
+                    <hr>
+                    <div class="row justify-content-center align-self-center">
+                        <div class="col-sm-5 text-center">
+                            <a href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+                                <img style='width:80%;' alt='Get it on Google Play'
+                                     src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
+                        </div>
+                        <div class="col-sm-5 text-center">
+                            <a href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+                                <img style='width:80%;' alt='Get it on Google Play'
+                                     src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <div class="main main-raised">
-    <section class="bg-primary" id="about">
+    <div class="profile-content">
         <div class="container">
+            <br>
+            <hr class="light">
             <div class="row">
-                <div class="col-lg-8 mx-auto text-center">
-                    <h1 class="section-heading text-white">Never miss another launch!</h1>
+                <div class="col-lg-12 ml-auto mr-auto text-center">
+                    <h1 class="title">Never miss another SpaceX launch!</h1>
                     <hr class="light">
+                    <div class="col-md-6 ml-auto mr-auto text-center">
 
-                    <p class="text-faded">Follow along with the world of spaceflight as humanity continues its
-                        exploration
-                        of the solar system. We track every orbital launch and even the occasional
-                        experimental test flight.</p>
+                        <h3 class="text-faded">Follow along with the world of spaceflight as humanity continues its
+                            exploration
+                            of the solar system. We track every orbital launch and even the occasional
+                            experimental test flight.</h3>
 
-                    <div class="col-lg-8 mx-auto text-center">
-                        <a href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-                            <img style='width:80%;' alt='Get it on Google Play'
-                                 src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
+                        <a class="btn btn-primary btn-xl center-block" href="/next">What's Launching Next?</a>
+
                     </div>
-                    <br>
-
-                    <h2 class="section-heading text-white">Launch Tracking</h2>
-
-                    <p class="text-faded">Track launches from all the major launch providers like SpaceX, ULA, and
-                        Orbital/ATK as well as
-                        international launches from NASA, ROSCOSMOS, JAXA and ESA.</p>
-                    <hr class="light">
-
-                    <h2 class="section-heading text-white">Science Missions</h2>
-
-                    <p class="text-faded">Follow along with resupply missions to the International Space Station,
-                        commercial
-                        satellite launches
-                        from providers like IRIDIUM and science missions like ExoMars!</p>
-                    <hr class="light">
-
-                    <h2 class="section-heading text-white">Vehicle Information</h2>
-
-                    <p class="text-faded">Get to know all the vehicles that take us to orbit such as the Soyuz, Atlas,
-                        Delta, Ariane, Proton
-                        and Falcon launch vehicle families.</p>
-                    <hr class="light">
-
                 </div>
             </div>
-        </div>
-    </section>
-
-    <section id="services">
-        <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <h2 class="section-heading">Top Features</h2>
                     <hr class="primary">
                 </div>
             </div>
-        </div>
-        <div class="container">
             <div class="row">
-                <div class="col-lg-3 col-md-6 text-center">
-                    <div class="service-box">
-                        <i class="fa fa-4x fa-bell text-primary sr-icons"></i>
-
-                        <h3>Notifications</h3>
-
-                        <p class="text-muted">Follow the launches only you care about.</p>
+                <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
+                    <div class="card card-nav-tabs">
+                        <i class="card-header card-header-danger fa fa-4x fa-bell text-center sr-icons"></i>
+                        <div class="card-body">
+                            <h4 class="card-title">Notifications</h4>
+                            <p>Get notified for launches from all the major launch providers like SpaceX, ULA, and
+                                Orbital/ATK as well as
+                                international launches from NASA, ROSCOSMOS, JAXA and ESA.</p>
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6 text-center">
-                    <div class="service-box">
-                        <i class="fa fa-4x fa-history text-primary sr-icons"></i>
-
-                        <h3>Spaceflight History</h3>
-
-                        <p class="text-muted">View the history of spaceflight back to the first manned spaceflight.</p>
+                <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
+                    <div class="card card-nav-tabs">
+                        <i class="card-header card-header-danger fa fa-4x fa-history text-center sr-icons"></i>
+                        <div class="card-body">
+                            <h4 class="card-title">Mission Information</h4>
+                            <p class="text-faded">Learn about resupply missions to the International Space Station,
+                                commercial satellite launches from providers like IRIDIUM and science missions like
+                                ExoMars!</p>
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6 text-center">
-                    <div class="service-box">
-                        <i class="fa fa-4x fa-moon-o text-primary sr-icons"></i>
-
-                        <h3>Day/Night Theme</h3>
-
-                        <p class="text-muted">Automatically switch between Day/Night theme.</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
+                    <div class="card card-nav-tabs">
+                        <i class="card-header card-header-danger fa fa-4x fa-moon text-center sr-icons"></i>
+                        <div class="card-body">
+                            <h4 class="card-title">Day/Night Themes</h4>
+                            <p class="text-faded">Get to know all the vehicles that take us to orbit such as the Soyuz,
+                                Atlas, Delta, Ariane, Proton and Falcon launch vehicle families.</p>
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6 text-center">
-                    <div class="service-box">
-                        <i class="fa fa-4x fa-clock-o text-primary sr-icons"></i>
+                <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
+                    <div class="card card-nav-tabs">
+                        <i class="card-header card-header-danger fa fa-4x fa-clock text-center sr-icons"></i>
+                        <div class="card-body">
+                            <h4 class="card-title">Launch Countdowns</h4>
+                            <p class="text-faded">Follow every launch with a live countdown, either on the web,
+                                in a widget or in the app! Watch live as spaceflight events occur around the world.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
+                    <div class="card card-nav-tabs">
+                        <i class="card-header card-header-danger fa fa-4x fa-space-shuttle text-center sr-icons"></i>
+                        <div class="card-body">
+                            <h4 class="card-title">Launch Vehicles</h4>
+                            <p class="text-faded">Get to know all the vehicles that take us to orbit such as the
+                                Soyuz,
+                                Atlas,
+                                Delta, Ariane, Proton
+                                and Falcon launch vehicle families.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
+                    <div class="card card-nav-tabs">
+                        <i class="card-header card-header-danger fa fa-4x fa-stopwatch text-center sr-icons"></i>
+                        <div class="card-body">
+                            <h4 class="card-title">Android Wear OS</h4>
+                            <p class="text-faded">A standalone Wear OS application to get all the information you
+                                need
+                                on the go, including watchface and Wear OS complications to use on your favorite
+                                watchface.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr class="light">
+            <h2 class="text-center">Launch Vehicles</h2>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
+                    <div class="card">
+                        <a class="card-img-top" href="{% static  'img/portfolio/fullsize/nasa_full.jpg' %}">
+                            <img class="card-img-top" src="{% static  'img/portfolio/thumbnails/nasa.jpg' %}" alt="">
+                        </a>
+                        <div class="card-body">
+                            <h4 class="card-title">NASA</h4>
+                            <p class="card-text"> Space Shuttle (Retired)<br>
+                                SLS</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
+                    <div class="card">
+                        <a href="{% static  'img/portfolio/fullsize/spacex_full.jpg' %}">
+                            <img class="card-img-top" src="{% static  'img/portfolio/thumbnails/spacex.jpg' %}" alt="">
+                        </a>
+                        <div class="card-body">
+                            <h4 class="card-title">SpaceX</h4>
+                            <p class="card-text">Falcon 9 <br>
+                                Falcon Heavy <br>
+                                BFR</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
+                    <div class="card">
+                        <a href="{% static  'img/portfolio/fullsize/ula_full.jpg' %}">
+                            <img class="card-img-top" src="{% static  'img/portfolio/thumbnails/ula.jpg' %}" alt="">
+                        </a>
+                        <div class="card-body">
+                            <h4 class="card-title">ULA</h4>
+                            <p class="card-text">Delta IV <br>
+                                Atlas <br>
+                                Vulcan</p>
+                        </div>
+                    </div>
 
-                        <h3>Android Wear</h3>
+                </div>
+                <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
+                    <div class="card">
+                        <a href="{% static  'img/portfolio/fullsize/Indian_full.jpg' %}">
+                            <img class="card-img-top" src="{% static  'img/portfolio/thumbnails/Indian.jpg' %}" alt="">
+                        </a>
+                        <div class="card-body">
+                            <h4 class="card-title">ISRO</h4>
+                            <p class="card-text">PSLV <br>
+                                GSLV <br></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
+                    <div class="card">
+                        <a href="{% static  'img/portfolio/fullsize/roscosmos_full.jpg' %}">
+                            <img class="card-img-top" src="{% static  'img/portfolio/thumbnails/roscosmos.jpg' %}"
+                                 alt="">
+                        </a>
+                        <div class="card-body">
+                            <h4 class="card-title">Roscosmos</h4>
+                            <p class="card-text">Soyuz <br>
+                                GSLV <br></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
+                    <div class="card">
+                        <a href="{% static  'img/portfolio/fullsize/CISA_full.jpg' %}">
+                            <img class="img-fluid rounded" src="{% static  'img/portfolio/thumbnails/CISA.jpg' %}"
+                                 alt="">
+                        </a>
 
-                        <p class="text-muted">A full Android Wear watch face with countdown timer.</p>
+                        <div class="card-body">
+                            <h4 class="card-title">CNSA</h4>
+                            <p class="card-text">Long March</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+        <div class="call-to-action bg-dark">
+            <div class="container text-center">
+                <br>
+                <h2 class="text-white">Free Download Now!</h2>
 
-    <section class="p-0" id="portfolio">
-        <div class="container-fluid">
-            <div class="row no-gutter popup-gallery">
-                <div class="col-lg-4 col-sm-6">
-                    <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/nasa_full.jpg' %}">
-                        <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/nasa.jpg' %}" alt="">
-
-                        <div class="portfolio-box-caption">
-                            <div class="portfolio-box-caption-content">
-                                <div class="project-category text-faded">
-                                    NASA
-                                </div>
-                                <div class="project-name">
-                                    Space Shuttle (Retired)<br>
-                                    <small>SLS</small>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-lg-4 col-sm-6">
-                    <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/spacex_full.jpg' %}">
-                        <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/spacex.jpg' %}" alt="">
-
-                        <div class="portfolio-box-caption">
-                            <div class="portfolio-box-caption-content">
-                                <div class="project-category text-faded">
-                                    SpaceX
-                                </div>
-                                <div class="project-name">
-                                    Falcon 9 <br>
-                                    <small>Falcon Heavy / BFR</small>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-lg-4 col-sm-6">
-                    <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/ula_full.jpg' %}">
-                        <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/ula.jpg' %}" alt="">
-
-                        <div class="portfolio-box-caption">
-                            <div class="portfolio-box-caption-content">
-                                <div class="project-category text-faded">
-                                    ULA
-                                </div>
-                                <div class="project-name">
-                                    Delta IV / Atlas <br>
-                                    <small>Vulcan</small>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-lg-4 col-sm-6">
-                    <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/Indian_full.jpg' %}">
-                        <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/Indian.jpg' %}" alt="">
-
-                        <div class="portfolio-box-caption">
-                            <div class="portfolio-box-caption-content">
-                                <div class="project-category text-faded">
-                                    ISRO
-                                </div>
-                                <div class="project-name">
-                                    PSLV / GSLV
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-lg-4 col-sm-6">
-                    <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/roscosmos_full.jpg' %}">
-                        <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/roscosmos.jpg' %}" alt="">
-
-                        <div class="portfolio-box-caption">
-                            <div class="portfolio-box-caption-content">
-                                <div class="project-category text-faded">
-                                    Roscosmos
-                                </div>
-                                <div class="project-name">
-                                    Soyuz
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-lg-4 col-sm-6">
-                    <a class="portfolio-box" href="{% static  'img/portfolio/fullsize/CISA_full.jpg' %}">
-                        <img class="img-fluid" src="{% static  'img/portfolio/thumbnails/CISA.jpg' %}" alt="">
-
-                        <div class="portfolio-box-caption">
-                            <div class="portfolio-box-caption-content">
-                                <div class="project-category text-faded">
-                                    CNSA
-                                </div>
-                                <div class="project-name">
-                                    Long March
-                                </div>
-                            </div>
-                        </div>
-                    </a>
+                <div class="row">
+                    <div class="col-lg-8 mx-auto text-center">
+                        <a href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+                            <img style='width:80%;' alt='Get it on Google Play'
+                                 src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
-</div>
-
-<div class="call-to-action bg-dark">
-    <div class="container text-center">
-        <h2>Free Download Now!</h2>
-
-        <div class="row">
-            <div class="col-lg-8 mx-auto text-center">
-                <a href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-                    <img style='width:80%;' alt='Get it on Google Play'
-                         src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<section id="contact">
-    <div class="container">
         <div class="row">
             <div class="col-lg-8 mx-auto text-center">
                 <h2 class="section-heading">Let's Get In Touch!</h2>
@@ -305,17 +310,17 @@
         </div>
         <div class="row">
             <div class="col-lg-4 text-center">
-                <i class="fa fa-reddit-alien fa-3x sr-contact"></i>
+                <i class="fab fa-reddit fa-3x sr-contact"></i>
 
                 <p>
                     <a href='https://www.reddit.com/r/spacelaunchnow/'>/r/spacelaunchnow</a>
                 </p>
             </div>
             <div class="col-lg-4 text-center">
-                <i class="fa fa-envelope-o fa-3x sr-contact"></i>
+                <i class="fa fa-envelope fa-3x sr-contact"></i>
 
                 <p>
-                    <a href="mailto:support@calebjones.me">support@calebjones.me</a>
+                    <a href="mailto:support@spacelaunchnow.me">support@calebjones.me</a>
                 </p>
             </div>
             <div class="col-lg-4 text-center">
@@ -327,6 +332,8 @@
             </div>
         </div>
     </div>
-</section>
+</div>
+</div>
+
 
 {% endblock %}

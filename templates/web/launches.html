@@ -5,34 +5,37 @@
 <meta property="fb:app_id" content="746774215504127"/>
 <meta property="og:title" content="Space Launch Now - Next Launches"/>
 <meta property="og:type" content="website"/>
-<meta property="og:description" content="Meet Space Launch Now the best resource for keeping up to date on all of your favorite spaceflight missions from around the world."/>
+<meta property="og:description"
+      content="Meet Space Launch Now the best resource for keeping up to date on all of your favorite spaceflight missions from around the world."/>
 <meta property="og:url" content="https://spacelaunchnow.me/launch/"/>
 <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
-<meta property="og:image:width" content="3000" />
-<meta property="og:image:height" content="2000" />
-
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<meta property="og:image:width" content="3000"/>
+<meta property="og:image:height" content="2000"/>
 <script>
   (adsbygoogle = window.adsbygoogle || []).push({
     google_ad_client: "ca-pub-9824528399164059",
     enable_page_level_ads: true
   });
+
 </script>
+<link rel="stylesheet" href="your-path/social-share-kit.css" type="text/css">
 {% endblock %}
 
 
-
 {% block navigation %}
-<nav class="navbar navbar-expand-lg navbar-light fixed-top navbar-shrink-alt" id="indexNav">
+<nav class="navbar bg-primary fixed-top navbar-expand-lg">
     <div class="container">
-        <a class="navbar-brand js-scroll-trigger" href="/">Space Launch Now</a>
-        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
-                data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
-                aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <div class="navbar-translate">
+            <a class="navbar-brand" href="#page-top"><b>Space Launch Now</b></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
 
-        <div class="collapse navbar-collapse" id="navbarResponsive">
+        <div class="collapse navbar-collapse">
 
             <ul class="navbar-nav ml-auto">
 
@@ -46,7 +49,7 @@
                     <a class="nav-link js-scroll-trigger active" href="/launch/">Launches</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link twitter" href="https://twitter.com/SpaceLaunchNow"><i class="fa fa-twitter"></i></a>
+                    <a class="nav-link twitter" href="https://twitter.com/SpaceLaunchNow"><i class="fab fa-twitter"></i></a>
                 </li>
 
                 <li class="nav-item">
@@ -61,7 +64,7 @@
 {% block content %}
 {% load embed_video_tags %}
 <!-- Page Content -->
-    <div class="container" style="margin-top:64px;margin-bottom: 16px">
+<div class="container" style="margin-top:64px;margin-bottom: 16px">
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <!-- Space Launch Now -->
     <ins class="adsbygoogle"
@@ -71,57 +74,60 @@
          data-ad-format="auto"></ins>
     <script>
     (adsbygoogle = window.adsbygoogle || []).push({});
+
     </script>
-        </div>
+</div>
 <div class="container">
     <ol class="breadcrumb">
         <li class="breadcrumb-item active">Launches</a></li>
     </ol>
-    <div class="page-header" style="margin-bottom: 32px">
-        <h1>Upcoming Spaceflight Launches</h1>
-    </div>
+    <h1 class="title">Upcoming Spaceflight Launches</h1>
+    <hr>
     <div class="row">
         <div class="container" style="margin-bottom: 10px">
             <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
-            <a href="/launch" class="btn btn-primary">All Confirmed</a>
-            <a href="?q=spx" class="btn btn-primary">SpaceX</a>
-            <a href="?q=ula" class="btn btn-primary">ULA</a>
-            <a href="?q=NASA" class="btn btn-primary">NASA</a>
-            <a href="?q=RFSA" class="btn btn-primary">ROSCOSMOS</a>
-            <a href="?q=ASA" class="btn btn-primary">Arianespace</a>
-            <a href="?q=CASC" class="btn btn-primary">CASC</a>
-            <a href="?q=ISRO" class="btn btn-primary">ISRO</a>
+            <a href="/launch" class="btn btn-primary btn-round">All Confirmed</a>
+            <a href="?q=spx" class="btn btn-primary btn-round">SpaceX</a>
+            <a href="?q=ula" class="btn btn-primary btn-round">ULA</a>
+            <a href="?q=NASA" class="btn btn-primary btn-round">NASA</a>
+            <a href="?q=RFSA" class="btn btn-primary btn-round">ROSCOSMOS</a>
+            <a href="?q=ASA" class="btn btn-primary btn-round">Arianespace</a>
+            <a href="?q=CASC" class="btn btn-primary btn-round">CASC</a>
+            <a href="?q=ISRO" class="btn btn-primary btn-round">ISRO</a>
         </div>
     </div>
 
     <div class="row">
-
         <!-- Post Content Column -->
-        <div class="col-lg-8">
+        <div class="col-lg-8 ml-auto">
             {% if launches|length > 0 %}
-                {% for launch in launches %}
-                    <div class="card text-left" style="margin-top: 12px">
-                        {% if launch.img_url %}
-                        <div class="media">
-                            <a class="relative" href="/launch/{{ launch.id}}">
-                                <img class="card-img-custom" src="{{ launch.img_url }}" alt="">
-                                <span class="badge badge-danger top-right">{{launch.lsp_set.first.name}}</span>
-                          </a>
-                        </div>
-                        {% else %}
-                            <img class="card-img-custom" src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png" alt="">
-                        {% endif %}
-                            <div class="card-header">
-                                <h4 class="card-title">{{ launch.name }}</h4>
-                                <i>{{ launch.net }}</i><br>
-                            </div>
-                        <div class="card-body">
-                            <p class="card-text">{{ launch.mission_set.all.0.description }}</p>
-                            <hr/>
-                            <a class="btn btn-primary" href="/launch/{{ launch.id}}">Explore</a>
-                      </div>
-                    </div>
-                {% endfor %}
+            {% for launch in launches %}
+            <div class="card text-left" style="margin-top: 12px">
+                {% if launch.img_url %}
+                <div class="media">
+                    <a class="relative" href="/launch/{{ launch.id}}">
+                        <img class="card-img" src="{{ launch.img_url }}" alt="">
+                    </a>
+                </div>
+                {% else %}
+                <img class="card-img" src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png"
+                     alt="">
+                {% endif %}
+                <div class="card-header card-header-info">
+                    <h4 class="card-title">{{ launch.name }}</h4>
+                    <i>{{ launch.net }}</i><br>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{ launch.mission_set.all.0.description }}</p>
+                    <span class="badge badge-danger top-right">{{launch.lsp_set.first.name}}</span>
+                    <hr/>
+                    <row>
+                        <a class="btn btn-primary" href="/launch/{{ launch.id}}">Explore</a>
+                        <a class="btn btn-danger" href="/launch/{{ launch.id}}">Share</a>
+                    </row>
+                </div>
+            </div>
+            {% endfor %}
             {% endif %}
         </div>
 
@@ -131,7 +137,7 @@
             <div class="card my-2 desktop-only">
                 <a class="twitter-timeline desktop-only"
                    href="https://twitter.com/SpaceLaunchNow/lists/space-launch-news"
-                   data-tweet-limit="8"
+                   data-tweet-limit="15"
                    data-show-replies="true"
                 >Tweets from https://twitter.com/SpaceLaunchNow/lists/space-launch-news</a>
                 <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
@@ -149,6 +155,7 @@
          data-ad-format="auto"></ins>
     <script>
     (adsbygoogle = window.adsbygoogle || []).push({});
+
     </script>
 </div>
 <div class="call-to-action bg-dark">
