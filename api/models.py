@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 import os
 
-from datetime import datetime
+from django.db.models.functions import datetime
 from django.db import models
 from custom_storages import LogoStorage, AgencyImageStorage, OrbiterImageStorage, LauncherImageStorage, \
     AgencyNationStorage, EventImageStorage
@@ -145,8 +145,8 @@ class Launcher(models.Model):
         verbose_name = 'Launcher Detail'
         verbose_name_plural = 'Launcher Details'
 
+
 # The Events object is meant to define events (past and present).
-#
 # Example: Blue Origin Launches, ISS Crew returns, etc.
 class Events(models.Model):
     id = models.AutoField(primary_key=True)
