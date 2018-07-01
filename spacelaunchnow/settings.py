@@ -130,7 +130,6 @@ INSTALLED_APPS = [
     'mptt',
     'tagging',
     'zinnia',
-    'easy_timezones',
 ]
 
 SITE_ID = 1
@@ -143,7 +142,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'easy_timezones.middleware.EasyTimezoneMiddleware',
 ]
 
 GEOIP_DATABASE = 'GeoLiteCity.dat'
