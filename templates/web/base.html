@@ -25,8 +25,8 @@
           integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
 
     <!-- CSS Files -->
-    <link href="{% static  'material_kit/css/material-kit.css' %}" rel="stylesheet">
     <link href="{% static  'material_kit/css/spacelaunchnow.css' %}" rel="stylesheet">
+    <link href="{% static  'material_kit/css/material-kit.css' %}" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
@@ -44,6 +44,23 @@
 {% block content %}
 {% endblock %}
 <!--  End Modal -->
+<br>
+<div class="call-to-action bg-dark">
+    <div class="container text-center">
+        <div class="row text-center">
+            <div class="col-sm-6 text-center">
+                <a href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+                    <img style="width:100%" alt='Get it on Google Play'
+                         src="{% static 'img/en_get.svg' %}"/></a>
+            </div>
+            <div class="col-sm-6 text-center">
+                <a href='#'>
+                    <img style="margin:5%; width:88%;" alt='Get it on the App Store'
+                         src="{% static 'img/app_store.svg' %}"/></a>
+            </div>
+        </div>
+    </div>
+</div>
 <footer class="footer" data-background-color="black">
     <div class="container">
         <nav class="float-left">
@@ -116,6 +133,8 @@
         }, 1000);
       }
     }
+
+
 
 </script>
 </body>

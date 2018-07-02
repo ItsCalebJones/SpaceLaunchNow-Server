@@ -2,129 +2,117 @@
 {% load staticfiles %}
 
 {% block extrahead %}
-    <meta property="fb:app_id" content="746774215504127"/>
-    <meta property="og:title" content="Space Launch Now"/>
-    <meta property="og:type" content="website"/>
-    <meta property="og:description"
-          content="Meet Space Launch Now the best resource for keeping up to date on all of your favorite spaceflight missions from around the world."/>
-    <meta property="og:url" content="https://spacelaunchnow.me/"/>
-    <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
-    <meta property="og:image:width" content="3000"/>
-    <meta property="og:image:height" content="2000"/>
+<meta property="fb:app_id" content="746774215504127"/>
+<meta property="og:title" content="Space Launch Now"/>
+<meta property="og:type" content="website"/>
+<meta property="og:description"
+      content="Meet Space Launch Now the best resource for keeping up to date on all of your favorite spaceflight missions from around the world."/>
+<meta property="og:url" content="https://spacelaunchnow.me/"/>
+<meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
+<meta property="og:image:width" content="3000"/>
+<meta property="og:image:height" content="2000"/>
+<link rel="stylesheet"
+      href="https://raw.githubusercontent.com/kremalicious/appstorebadges/master/dist/appstorebadges.min.css">
 {% endblock %}
 
 
 {% block navigation %}
-    <!-- Navigation -->
-    <nav class="navbar navbar-transparent navbar-color-on-scroll bg-primary fixed-top navbar-expand-lg">
-        <div class="container">
-            <div class="navbar-translate">
-                <a class="navbar-brand" href="#page-top"><b>Space Launch Now</b></a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false"
-                        aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                    <span class="navbar-toggler-icon"></span>
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-            </div>
-
-            <div class="collapse navbar-collapse">
-
-                <ul class="navbar-nav ml-auto">
-
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/next">Next</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/launch">Launches</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link twitter" href="https://twitter.com/SpaceLaunchNow"><i
-                                class="fab fa-twitter"></i></a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="/v1">API</a>
-                    </li>
-                </ul>
-            </div>
+<!-- Navigation -->
+<nav class="navbar navbar-transparent navbar-color-on-scroll bg-primary fixed-top navbar-expand-lg">
+    <div class="container">
+        <div class="navbar-translate">
+            <a class="navbar-brand" href="#page-top"><b>Space Launch Now</b></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+            </button>
         </div>
-    </nav>
+
+        <div class="collapse navbar-collapse">
+
+            <ul class="navbar-nav ml-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/next">Next</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/launch">Launches</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link twitter" href="https://twitter.com/SpaceLaunchNow"><i
+                            class="fab fa-twitter"></i></a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/v1">API</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 {% endblock %}
 
 {% block content %}
+<div class="profile-page">
     <div class="page-header header-filter" data-parallax="true"
          style="background-image: url('https://firebasestorage.googleapis.com/v0/b/space-launch-now.appspot.com/o/16072049543_53f7db3aa5_b.jpg?alt=media&token=2b9d5907-7c3a-4af9-9b85-f0a200d9d04b');">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8 ml-auto mx-auto mr-auto  text-center">
-                    <div class="profile">
-                        <div class="avatar">
-                            <img src="https://firebasestorage.googleapis.com/v0/b/space-launch-now.appspot.com/o/fb_profile.png?alt=media&token=be63157e-4948-4f56-b8a1-ac42832382b5"
-                                 alt="Circle Image"
-                                 class="img-raised rounded-circle img-fluid mx-auto"
-                                 style="max-width: 35%">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12 ml-auto mr-auto">
-                    <div class="name text-center">
-                        <h1 class="title">Space Launch Now</h1>
-
-                        <h2>A Spaceflight Tracker</h2>
-
-                    </div>
-                    <div class="col-md-8 ml-auto mr-auto text-center">
-                        <hr>
-                        <p>Meet <b>Space Launch Now</b> the best resource for keeping up to date on all of your favorite
-                            spaceflight missions from around the world.</p>
-                        <hr>
-                        <div class="row justify-content-center align-self-center">
-                            <div class="col-sm-5 text-center">
-                                <a href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-                                    <img style='width:80%;' alt='Get it on Google Play'
-                                         src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
-                            </div>
-                            <div class="col-sm-5 text-center">
-                                <a href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-                                    <img style='width:80%;' alt='Get it on Google Play'
-                                         src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
     <div class="main main-raised">
         <div class="profile-content">
             <div class="container">
-                <br>
-                <hr class="light">
                 <div class="row">
-                    <div class="col-lg-12 ml-auto mr-auto text-center">
-                        <h1 class="title">Never miss another SpaceX launch!</h1>
-                        <hr class="light">
-                        <div class="col-md-10 ml-auto mr-auto text-center">
-
-                            <h3 class="text-faded">Follow along with the world of spaceflight as humanity continues its
-                                exploration
-                                of the solar system. We track every orbital launch and even the occasional
-                                experimental test flight.</h3>
-
-                            <a class="btn btn-primary btn-raised btn-lg center-block" href="/next">What's Launching
-                                Next?</a>
-
+                    <div class="col-lg-12 ml-auto mr-auto">
+                        <div class="profile">
+                            <div class="avatar ">
+                                <img src="https://firebasestorage.googleapis.com/v0/b/space-launch-now.appspot.com/o/fb_profile.png?alt=media&token=be63157e-4948-4f56-b8a1-ac42832382b5"
+                                     alt="Circle Image"
+                                     class="img-raised rounded-circle img-fluid "
+                                     style="max-width: 35%">
+                            </div>
+                            <div class="name text-center">
+                                <h1 class="title">Space Launch Now</h1>
+                                <h2>A Spaceflight Tracker</h2>
+                                <hr>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <div class="row" style=>
+                    <div class="col-lg-12 ml-auto mr-auto text-center">
+                        <h2 class="title">Never miss another spaceflight launch!</h2>
+                    </div>
+                </div>
+                <div class="col-md-10 ml-auto mr-auto text-center">
+
+                    <h3 class="text-faded">Follow along with the world of spaceflight as humanity
+                        continues
+                        its
+                        exploration
+                        of the solar system. We track every orbital launch and even the occasional
+                        experimental test flight.</h3>
+
+                </div>
                 <div class="row">
                     <div class="col-lg-12 text-center">
+                        <div class="row justify-content-center">
+                            <div class="col-sm-6 text-center">
+                                <a href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+                                    <img style="width:100%" alt='Get it on Google Play'
+                                         src="{% static 'img/en_get.svg' %}"/></a>
+                            </div>
+                            <div class="col-sm-6 text-center">
+                                <a href='#'>
+                                    <img style="margin:5%; width:88%;" alt='Get it on the App Store'
+                                         src="{% static 'img/app_store.svg' %}"/></a>
+                            </div>
+                        </div>
+
+                        <hr>
                         <h2 class="section-heading">Top Features</h2>
                         <hr class="primary">
                     </div>
@@ -204,6 +192,7 @@
                         </div>
                     </div>
                 </div>
+                <h2 class="section-heading text-center">Watch Live</h2>
                 <hr class="light">
                 <div class="container">
                     <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
@@ -233,7 +222,8 @@
                                      alt="ISRO">
                             </div>
                             <div class="carousel-item">
-                                <img class="d-block w-100" src="{% static  'img/portfolio/fullsize/roscosmos_full.jpg' %}"
+                                <img class="d-block w-100"
+                                     src="{% static  'img/portfolio/fullsize/roscosmos_full.jpg' %}"
                                      alt="Roscosmos">
                             </div>
                             <div class="carousel-item">
@@ -254,54 +244,50 @@
                     </div>
                     <br>
                 </div>
-            </div>
-            <div class="call-to-action bg-dark">
-                <div class="container text-center">
-                    <br>
-                    <h2 class="text-white">Free Download Now!</h2>
-
-                    <div class="row">
-                        <div class="col-lg-8 mx-auto text-center">
-                            <a href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-                                <img style='width:80%;' alt='Get it on Google Play'
-                                     src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
-                        </div>
+                <div class="row text-center">
+                    <div class="col-md-10 ml-auto mr-auto text-center">
+                        <a class="btn btn-primary btn-raised btn-lg center-block" href="/next">What's
+                            Launching
+                            Next?</a>
                     </div>
                 </div>
             </div>
+            <br>
+            <br>
             <div class="row">
-                <div class="col-lg-8 mx-auto text-center">
+                <div class="col-md-10 mx-auto text-center">
                     <h2 class="section-heading">Let's Get In Touch!</h2>
                     <hr class="primary">
-                    <p>Enjoying the app? Have questions? Feel free to reach out!</p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-4 text-center">
-                    <i class="fab fa-reddit fa-3x sr-contact"></i>
+                    <h3>Enjoying the app? Have questions? Feel free to reach out!</h3>
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <i class="fab fa-reddit fa-3x sr-contact"></i>
 
-                    <p>
-                        <a href='https://www.reddit.com/r/spacelaunchnow/'>/r/spacelaunchnow</a>
-                    </p>
-                </div>
-                <div class="col-lg-4 text-center">
-                    <i class="fa fa-envelope fa-3x sr-contact"></i>
+                            <p>
+                                <a href='https://www.reddit.com/r/spacelaunchnow/'>/r/spacelaunchnow</a>
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fa fa-envelope fa-3x sr-contact"></i>
 
-                    <p>
-                        <a href="mailto:support@spacelaunchnow.me">support@calebjones.me</a>
-                    </p>
-                </div>
-                <div class="col-lg-4 text-center">
-                    <i class="fa fa-comments fa-3x sr-contact"></i>
+                            <p>
+                                <a href="mailto:support@spacelaunchnow.me">support@calebjones.me</a>
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fa fa-comments fa-3x sr-contact"></i>
 
-                    <p>
-                        <a href='https://discord.gg/WVfzEDW'>Discord</a>
-                    </p>
+                            <p>
+                                <a href='https://discord.gg/WVfzEDW'>Discord</a>
+                            </p>
+                        </div>
+                    </div>
+                    <hr>
+                    <br>
                 </div>
             </div>
         </div>
     </div>
-    </div>
-
+</div>
 
 {% endblock %}
