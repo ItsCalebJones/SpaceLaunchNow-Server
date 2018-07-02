@@ -19,7 +19,23 @@ import urllib
 def image_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
     clean_name = urllib.quote(urllib.quote(instance.name.encode('utf8')), '')
-    clean_name = "%s_%s" % (clean_name, datetime.now().strftime("%Y%m%d%H%M%S"))
+    clean_name = "%s_image_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
+    name = "%s%s" % (str(clean_name), file_extension)
+    return name
+
+
+def nation_path(instance, filename):
+    filename, file_extension = os.path.splitext(filename)
+    clean_name = urllib.quote(urllib.quote(instance.name.encode('utf8')), '')
+    clean_name = "%s_nation_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
+    name = "%s%s" % (str(clean_name), file_extension)
+    return name
+
+
+def logo_path(instance, filename):
+    filename, file_extension = os.path.splitext(filename)
+    clean_name = urllib.quote(urllib.quote(instance.name.encode('utf8')), '')
+    clean_name = "%s_logo_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
     name = "%s%s" % (str(clean_name), file_extension)
     return name
 
@@ -34,11 +50,11 @@ class Agency(models.Model):
     image_url = models.FileField(default=None, storage=AgencyImageStorage(), upload_to=image_path, null=True,
                                  blank=True)
     legacy_nation_url = models.URLField(blank=True, null=True, default=None)
-    nation_url = models.FileField(default=None, storage=AgencyNationStorage(), upload_to=image_path, null=True,
+    nation_url = models.FileField(default=None, storage=AgencyNationStorage(), upload_to=nation_path, null=True,
                                   blank=True)
     ceo = models.CharField(max_length=200, blank=True, null=True, default=None)
     founding_year = models.CharField(blank=True, null=True, default=None, max_length=20)
-    logo_url = models.FileField(default=None, storage=LogoStorage(), upload_to=image_path, null=True, blank=True)
+    logo_url = models.FileField(default=None, storage=LogoStorage(), upload_to=logo_path, null=True, blank=True)
     launch_library_id = models.IntegerField(blank=True, null=True, default=None)
     featured = models.BooleanField(default=False)
 

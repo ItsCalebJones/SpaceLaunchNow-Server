@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect
 # Create your views here.
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.utils.deserializer import launch_json_to_model
+from api.models import Agency as SLNAgency
 
 
 def index(request):
@@ -42,13 +43,28 @@ def launch_by_id(request, pk, launch=None):
             raise Http404
 
 
+def get_launch_status(launch):
+    return {
+        1: 'Go for Launch',
+        2: 'Launch is NO-GO',
+        3: 'Successful Launch',
+        4: 'Launch Failed',
+        5: 'Unplanned Hold',
+        6: 'In Flight',
+        7: 'Partial Failure',
+    }[launch.status]
+
+
 def create_launch_view(request, launch):
     youtube_urls = []
     vids = launch.vid_urls.all()
+    status = get_launch_status(launch)
+    agency = SLNAgency.objects.get(launch_library_id=launch.lsp.id)
     for url in vids:
         if 'youtube' in url.vid_url:
             youtube_urls.append(url.vid_url)
-    return render(request, 'web/launch_page.html', {'launch': launch, 'youtube_urls': youtube_urls})
+    return render(request, 'web/launch_page.html', {'launch': launch, 'youtube_urls': youtube_urls, 'status': status,
+                                                    'agency': agency})
 
 
 # Create your views here.
@@ -67,7 +83,7 @@ def launches(request,):
             launch = launch_json_to_model(launch)
             launch.save()
             _launches.append(launch)
-        return render(request, 'web/launches.html', {'launches': _launches})
+        return render(request, 'web/launches.html', {'launches': _launches, 'query': query})
     else:
         raise Http404
 

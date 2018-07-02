@@ -19,9 +19,9 @@ class Location(models.Model):
 class Pad(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255, blank=True, default="")
-    info_url = models.URLField(blank=True)
-    wiki_url = models.URLField(blank=True)
-    map_url = models.URLField(blank=True)
+    info_url = models.URLField(blank=True, null=True)
+    wiki_url = models.URLField(blank=True, null=True)
+    map_url = models.URLField(blank=True, null=True)
     location = models.ForeignKey(Location, related_name="pads", blank=True, on_delete=models.CASCADE)
 
     def __unicode__(self):
@@ -53,8 +53,8 @@ class Agency(models.Model):
     country_code = models.CharField(max_length=255, blank=True, default="")
     abbrev = models.CharField(max_length=255, blank=True, default="")
     type = models.IntegerField(blank=True, null=True)
-    info_url = models.URLField(blank=True)
-    wiki_url = models.URLField(blank=True)
+    info_url = models.URLField(blank=True, null=True)
+    wiki_url = models.URLField(blank=True, null=True)
     pads = models.ManyToManyField(Pad, blank=True)
     locations = models.ManyToManyField(Location, blank=True)
     rockets = models.ManyToManyField(Rocket, blank=True)

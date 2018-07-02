@@ -71,14 +71,14 @@
     <div class="row">
         <div class="container" style="margin-bottom: 10px">
             <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
-            <a href="/launch" class="btn btn-primary btn-round">All</a>
-            <a href="?q=spx" class="btn btn-primary btn-round">SpaceX</a>
-            <a href="?q=ula" class="btn btn-primary btn-round">ULA</a>
-            <a href="?q=NASA" class="btn btn-primary btn-round">NASA</a>
-            <a href="?q=RFSA" class="btn btn-primary btn-round">ROSCOSMOS</a>
-            <a href="?q=ASA" class="btn btn-primary btn-round">Arianespace</a>
-            <a href="?q=CASC" class="btn btn-primary btn-round">CASC</a>
-            <a href="?q=ISRO" class="btn btn-primary btn-round">ISRO</a>
+            <a href="/launch" class="btn btn-round {% if query %} btn-link{% else %} btn-primary {% endif %}">All</a>
+            <a href="?q=spx" class="btn btn-round {% if query == 'spx' %} btn-primary{% else %} btn-link {% endif %}">SpaceX</a>
+            <a href="?q=ula" class="btn btn-round {% if query == 'ula' %} btn-primary{% else %} btn-link {% endif %}">ULA</a>
+            <a href="?q=NASA" class="btn btn-round {% if query == 'NASA' %} btn-primary{% else %} btn-link {% endif %}">NASA</a>
+            <a href="?q=RFSA" class="btn btn-round {% if query == 'RFSA' %} btn-primary{% else %} btn-link {% endif %}">ROSCOSMOS</a>
+            <a href="?q=ASA" class="btn btn-round {% if query == 'ASA' %} btn-primary{% else %} btn-link {% endif %}">Arianespace</a>
+            <a href="?q=CASC" class="btn btn-round {% if query == 'CASC' %} btn-primary{% else %} btn-link {% endif %}">CASC</a>
+            <a href="?q=ISRO" class="btn btn-round {% if query == 'spx' %} btn-primary{% else %} btn-link {% endif %}">ISRO</a>
         </div>
     </div>
     <hr>
@@ -103,23 +103,33 @@
             {% if launches|length > 0 %}
             {% for launch in launches %}
             <div class="card text-left" style="margin-top: 12px">
-                {% if launch.img_url %}
                 <div class="media">
                     <a class="relative" href="/launch/{{ launch.id}}">
-                        <img class="card-img" src="{{ launch.img_url }}" alt="">
+                        <img class="card-img" src="https://maps.googleapis.com/maps/api/staticmap?center={{ launch.location.name }}&scale=2&zoom=7&size=720x300&maptype=roadmap&key=AIzaSyBkjvMIaP-KQrHWJ_aFndxsNS7KbDPu9Zw&markers=color:red%|{{launch.location.name}}" alt="">
+
                     </a>
                 </div>
-                {% else %}
-                <img class="card-img" src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png"
-                     alt="">
-                {% endif %}
                 <div class="card-header card-header-info">
+                    {% if launch.img_url %}
+                    <img class="img-raised rounded-circle img-fluid text-center" src="{{ launch.img_url}}" style="max-width: 35%;overflow: hidden;margin: -100px 0 0 0;width: 125px;height: 125px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                    {% else %}
+                    <img class="img-raised rounded-circle img-fluid text-center" src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png" style="max-width: 35%;overflow: hidden;margin: -100px 0 0 0;width: 125px;height: 125px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                    {% endif %}
                     <h4 class="card-title">{{ launch.name }}</h4>
+                    {{launch.lsp.name}} | {{ launch.lsp.country_code}}<br>
+                    {% if launch.hashtag %}
+                    {{launch.hashtag}}<br>
+                    {% endif %}
                     <i>{{ launch.net }}</i><br>
                 </div>
                 <div class="card-body">
-                    <p class="card-text">{{ launch.mission_set.all.0.description }}</p>
-                    <span class="badge badge-danger">{{launch.lsp_set.first.name}}</span>
+                    {% if launch.mission %}
+                    <h5 class="card-text">{{ launch.mission.type_name }}</h5>
+                    <p class="card-text">{{ launch.mission.description }}</p>
+                    {% else %}
+                    <h5 class="card-text">Unknown Mission</h5>
+                    <p class="card-text">There are no mission or payload details available for this launch.</p>
+                    {% endif %}
                     <hr/>
                     <row>
                         <a class="btn btn-primary" href="/launch/{{ launch.id}}">Explore</a>

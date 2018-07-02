@@ -4,93 +4,96 @@
 {% load embed_video_tags %}
 {% load tz %}
 {% block extrahead %}
-    <meta property="fb:app_id" content="746774215504127"/>
-    <meta property="og:title" content="{{ launch.name }} - {{ launch.mission_set.0.name }}"/>
-    <meta property="og:type" content="website"/>
-    <meta property="og:description" content="{{ launch.mission_description }}"/>
-    <meta property="og:url" content="https://spacelaunchnow.me/launch/{{ launch.id }}/"/>
-    {% if launch.img_url %}
-        <meta property="og:image" content="{{ launch.img_url }}"/>
-    {% else %}
-        <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
-        <meta property="og:image:width" content="3000"/>
-        <meta property="og:image:height" content="2000"/>
-    {% endif %}
+<meta property="fb:app_id" content="746774215504127"/>
+<meta property="og:title" content="{{ launch.name }} - {{ launch.mission_set.0.name }}"/>
+<meta property="og:type" content="website"/>
+<meta property="og:description" content="{{ launch.mission_description }}"/>
+<meta property="og:url" content="https://spacelaunchnow.me/launch/{{ launch.id }}/"/>
+{% if launch.img_url %}
+<meta property="og:image" content="{{ launch.img_url }}"/>
+{% else %}
+<meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
+<meta property="og:image:width" content="3000"/>
+<meta property="og:image:height" content="2000"/>
+{% endif %}
 
-    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <script>
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
         (adsbygoogle = window.adsbygoogle || []).push({
             google_ad_client: "ca-pub-9824528399164059",
             enable_page_level_ads: true
         });
 
 
-    </script>
+
+
+
+</script>
 {% endblock %}
 
 {% block navigation %}
-    <!-- Navigation -->
-    <nav class="navbar navbar-transparent navbar-color-on-scroll bg-primary fixed-top navbar-expand-lg">
-        <div class="container">
-            <div class="navbar-translate">
-                <a class="navbar-brand" href="#page-top"><b>Space Launch Now</b></a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false"
-                        aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                    <span class="navbar-toggler-icon"></span>
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-            </div>
-            <div class="collapse navbar-collapse">
-
-                <ul class="navbar-nav ml-auto">
-
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/next">Next</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/launch">Launches</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link twitter" href="https://twitter.com/SpaceLaunchNow"><i
-                                class="fab fa-twitter"></i></a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="/v1">API</a>
-                    </li>
-                </ul>
-            </div>
+<!-- Navigation -->
+<nav class="navbar navbar-transparent navbar-color-on-scroll bg-primary fixed-top navbar-expand-lg">
+    <div class="container">
+        <div class="navbar-translate">
+            <a class="navbar-brand" href="#page-top"><b>Space Launch Now</b></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+            </button>
         </div>
-    </nav>
+        <div class="collapse navbar-collapse">
+
+            <ul class="navbar-nav ml-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/next">Next</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/launch">Launches</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link twitter" href="https://twitter.com/SpaceLaunchNow"><i
+                            class="fab fa-twitter"></i></a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/v1">API</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 {% endblock %}
 
 {% block content %}
-    {% if launch.img_url %}
-    <div class="page-header header-filter" data-parallax="true"
-         style="background-image: url({{ launch.img_url }});">
+{% if launch.img_url %}
+<div class="page-header header-filter" data-parallax="true"
+     style="background-image: url({{ launch.img_url }});">
     {% else %}
     <div class="page-header header-filter" data-parallax="true"
          style="background-image: url('https://firebasestorage.googleapis.com/v0/b/space-launch-now.appspot.com/o/16072049543_53f7db3aa5_b.jpg?alt=media&token=2b9d5907-7c3a-4af9-9b85-f0a200d9d04b');">
-    {% endif %}
+        {% endif %}
         <div class="container">
             <div class="row">
                 <div class="col-md-8 ml-auto mx-auto mr-auto text-center">
                     <div class="profile">
                         <div class="avatar">
-                            {% if launch.lsp.img_url %}
-                                <img src="{{ launch.lsp.img_url }}"
-                                     alt="Circle Image"
-                                     class="img-raised rounded-circle img-fluid mx-auto"
-                                     style="max-width: 35%">
+                            {% if agency.logo_url %}
+                            <img src="{{ agency.logo_url.url }}"
+                                 alt="Circle Image"
+                                 class="img-raised rounded-circle img-fluid mx-auto"
+                                 style="background: white; object-fit:contain; width: 300px; height: 300px; margin: 10px;">
                             {% else %}
-                                <img src="https://firebasestorage.googleapis.com/v0/b/space-launch-now.appspot.com/o/fb_profile.png?alt=media&token=be63157e-4948-4f56-b8a1-ac42832382b5"
-                                     alt="Circle Image"
-                                     class="img-raised rounded-circle img-fluid mx-auto"
-                                     style="max-width: 35%">
+                            <img src="https://firebasestorage.googleapis.com/v0/b/space-launch-now.appspot.com/o/fb_profile.png?alt=media&token=be63157e-4948-4f56-b8a1-ac42832382b5"
+                                 alt="Circle Image"
+                                 class="img-raised rounded-circle img-fluid mx-auto"
+                                 style="max-width: 35%">
                             {% endif %}
                         </div>
                     </div>
@@ -98,9 +101,21 @@
             </div>
             <div class="row">
                 <div class="col-lg-12 ml-auto mr-auto text-center">
-                    <h1 class="title text-white" style="text-shadow: 1px 1px #3c3838;" id="countdown">L - 00 : 00 : 00 : 00</h1>
+                    <h1 class="title text-white" style="text-shadow: 1px 1px #3c3838;" id="countdown">L - 00 : 00 : 00 :
+                        00</h1>
 
                     <h2 class="text-white" id="date" style="text-shadow: 1px 1px #3c3838;">{{ launch.net}}</h2>
+                    <span class="badge badge-pill badge-primary">{{ status }}</span>
+                    <span class="badge badge-pill badge-primary">{{ launch.lsp.name }}</span>
+                    {% if launch.location.name %}
+                    <span class="badge badge-pill badge-primary">{{ launch.location.name }}</span>
+                     {% endif %}
+                    {% if launch.probability > 0 %}
+                    <span class="badge badge-pill badge-primary">{{ launch.probability }}</span>
+                     {% endif %}
+                    {% if launch.hashtag %}
+                    <span class="badge badge-pill badge-primary">{{ launch.hashtag }}</span>
+                     {% endif %}
                 </div>
             </div>
         </div>
@@ -111,13 +126,17 @@
             <div class="row ">
                 <!-- Post Content Column -->
                 <div class="col-lg-12 text-center">
-                        <div class="card-header card-header-danger text-center">
+                    <div class="card-header card-header-danger text-center">
+                        {% if launch.mission %}
                         <h1 class="title text-white">{{ launch.mission.name }}</h1>
+                        {% else %}
+                        <h1 class="title text-white">{{ launch.name }}</h1>
+                        {% endif %}
                         <h2 class="subheading text-white">{{ launch.lsp.name }} - {{ launch.rocket.name }}</h2>
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row justify-content-center">
                 <!-- Post Content Column -->
                 <div class="col-md-4">
                     <div class="info">
@@ -125,14 +144,15 @@
                         <h3 class="card-title">Launch Vehicle</h3>
                         <hr>
                         {% with rocket=launch.rocket %}
-                            <h4>{{ rocket.name }}</h4>
+                        <h4>{{ rocket.name }}</h4>
 
-                            <p>Configuration: {{ rocket.configuration }}</p>
+                        <p>Configuration: {{ rocket.configuration }}</p>
 
-                            <p>Family: {{ rocket.family }}</p>
+                        <p>Family: {{ rocket.family }}</p>
                         {% endwith %}
                     </div>
                 </div>
+                {% if launch.mission %}
                 <div class="col-md-4">
                     <div class="info">
                         <!-- Date/Time -->
@@ -141,6 +161,7 @@
                         <p>{{ launch.mission.description }}</p>
                     </div>
                 </div>
+                {% endif %}
                 <div class="col-md-4">
                     <div class="info">
                         <!-- Date/Time -->
@@ -154,6 +175,23 @@
                     </div>
                 </div>
             </div>
+            <div class="row text-center">
+                <div class="container">
+                    <h3 class="text-center"><b>{{ launch.location.name }}</b></h3>
+                    <h4 class="text-center">{{ launch.location.pads.all.first.name }}</h4>
+                    <hr>
+                    <div class="col-lg-12">
+                        <iframe
+                                width="100%"
+                                height="500"
+                                frameborder="0" style="border:0"
+                                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBkjvMIaP-KQrHWJ_aFndxsNS7KbDPu9Zw
+    &q={{ launch.location.name }}&zoom=10" allowfullscreen>
+
+                        </iframe>
+                    </div>
+                </div>
+            </div>
 
             <div class="row text-center">
                 <div class="container">
@@ -162,31 +200,31 @@
                         <hr>
                         <!-- Title -->
                         {% if youtube_urls|length > 0 %}
-                            {% for url in youtube_urls %}
-                                {% video url as my_video %}
-                                    <div class="videoWrapper">
-                                    {% if request|is_mobile %}
-                                        {% video my_video '85% x 25%' %}
-                                    {% else %}
-                                        {% video my_video '100% x 100%' %}
-                                    {% endif %}
-                                    </div>
-                                    <br>
-                                {% endvideo %}
-                            {% endfor %}
+                        {% for url in youtube_urls %}
+                        {% video url as my_video %}
+                        <div class="videoWrapper">
+                            {% if request|is_mobile %}
+                            {% video my_video '85% x 25%' %}
+                            {% else %}
+                            {% video my_video '100% x 100%' %}
+                            {% endif %}
+                        </div>
+                        <br>
+                        {% endvideo %}
+                        {% endfor %}
                         {% else %}
-                            <p>Check back later for live embedded streams.</p>
+                        <p>Check back later for live embedded streams.</p>
                         {% endif %}
                         <h3 class="mt-4 card-title">Links</h3>
                         <hr>
                         <h4>Videos</h4>
                         {% for url in launch.vid_urls.all %}
-                            <a href="{{ url.vid_url }}">{{ url.vid_url }}</a><br>
+                        <a href="{{ url.vid_url }}">{{ url.vid_url }}</a><br>
 
                         {% endfor %}
                         <h4>Information</h4>
                         {% for i_url in launch.info_urls.all %}
-                            <a href="{{ i_url.info_url }}">{{ i_url.info_url }}</a><br>
+                        <a href="{{ i_url.info_url }}">{{ i_url.info_url }}</a><br>
                         {% endfor %}
                     </div>
                 </div>
@@ -206,10 +244,13 @@
             (adsbygoogle = window.adsbygoogle || []).push({});
 
 
+
+
+
         </script>
     </div>
-        <script src="{% static 'material_kit/js/dateFormat.js' %}" type="text/javascript"></script>
-        <script>
+    <script src="{% static 'material_kit/js/dateFormat.js' %}" type="text/javascript"></script>
+    <script>
         var countDownDate = new Date({{launch.netstamp}}*1000);
         document.getElementById("date").innerHTML = dateFormat(countDownDate, "mmmm dS, h:MM Z");
         // Set the date we're counting down to
@@ -257,6 +298,9 @@
         }
 
 
+
+
+
     </script>
-        {% endblock %}
+    {% endblock %}
 
