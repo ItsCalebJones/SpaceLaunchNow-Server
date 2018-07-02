@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.db.models import Q
 from django.http import Http404, HttpResponseNotFound
 from django.shortcuts import render, redirect
 
 # Create your views here.
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
+from bot.models import Launch
 from bot.utils.deserializer import launch_json_to_model
 from api.models import Agency as SLNAgency
 
@@ -60,11 +62,15 @@ def create_launch_view(request, launch):
     vids = launch.vid_urls.all()
     status = get_launch_status(launch)
     agency = SLNAgency.objects.get(launch_library_id=launch.lsp.id)
+    launches_good = Launch.objects.filter(lsp=launch.lsp, status=3)
+    launches_bad = Launch.objects.filter(lsp=launch.lsp, status=4)
+    launches_pending = Launch.objects.filter(Q(lsp=launch.lsp) & Q(Q(status=1) | Q(status=2)))
+    launches = {'good': launches_good, 'bad': launches_bad, 'pending': launches_pending}
     for url in vids:
         if 'youtube' in url.vid_url:
             youtube_urls.append(url.vid_url)
     return render(request, 'web/launch_page.html', {'launch': launch, 'youtube_urls': youtube_urls, 'status': status,
-                                                    'agency': agency})
+                                                    'agency': agency, 'launches': launches})
 
 
 # Create your views here.
