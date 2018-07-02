@@ -1,12 +1,11 @@
-from rest_framework.relations import HyperlinkedRelatedField, PrimaryKeyRelatedField
+from rest_framework.relations import HyperlinkedRelatedField
 
-from api.models import Orbiter, Launcher, Agency, Events
 from drf_queryfields import QueryFieldsMixin
 
-from api.models import Orbiter, Launcher, Agency
+from api.models import Orbiter, Launcher, Agency, Events
 from rest_framework import serializers
 
-from bot.models import *
+from bot.models import Launch, Pad, Rocket, LSP, Location, Mission
 
 
 class LauncherSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
