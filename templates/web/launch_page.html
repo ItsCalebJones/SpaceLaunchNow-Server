@@ -30,6 +30,12 @@
 
 
 
+
+
+
+
+
+
 </script>
 {% endblock %}
 
@@ -94,7 +100,7 @@
                     <span class="badge badge-pill badge-primary">{{ launch.location.name }}</span>
                     {% endif %}
                     {% if launch.probability > 0 %}
-                    <span class="badge badge-pill badge-primary">{{ launch.probability }}</span>
+                    <span class="badge badge-pill badge-primary">Probability: {{ launch.probability }}%</span>
                     {% endif %}
                     {% if launch.hashtag %}
                     <span class="badge badge-pill badge-primary">{{ launch.hashtag }}</span>
@@ -197,26 +203,8 @@
         </div>
         <div class="row text-center">
             <div class="container">
-                <h3 class="text-center"><b>{{ launch.location.name }}</b></h3>
-                <h4 class="text-center">{{ launch.location.pads.all.first.name }}</h4>
-                <hr>
                 <div class="col-lg-12">
-                    <iframe
-                            width="100%"
-                            height="500"
-                            frameborder="0" style="border:0"
-                            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBkjvMIaP-KQrHWJ_aFndxsNS7KbDPu9Zw
-    &q={{ launch.location.name }}&zoom=10" allowfullscreen>
-
-                    </iframe>
-                </div>
-            </div>
-        </div>
-
-        <div class="row text-center">
-            <div class="container">
-                <div class="col-lg-12">
-                    <h3 class="text-center"><b>Watch the Launch</b></h3>
+                    <h3 class="text-center card-title"><b>Watch the Launch</b></h3>
                     <hr>
                     <!-- Title -->
                     {% if youtube_urls|length > 0 %}
@@ -235,6 +223,29 @@
                     {% else %}
                     <p>Check back later for live embedded streams.</p>
                     {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row text-center">
+            <div class="container">
+                <h3 class="text-center card-title"><b>{{ launch.location.name }}</b></h3>
+                <h4 class="text-center">{{ launch.location.pads.all.first.name }}</h4>
+                <hr>
+                <div class="col-lg-12">
+                    <iframe
+                            width="100%"
+                            height="500"
+                            frameborder="0" style="border:0"
+                            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBkjvMIaP-KQrHWJ_aFndxsNS7KbDPu9Zw
+    &q={{ launch.location.name }}&zoom=10" allowfullscreen>
+
+                    </iframe>
+                </div>
+            </div>
+        </div>
+        <div class="row text-center">
+            <div class="container">
+                <div class="col-lg-12">
                     <h3 class="mt-4 card-title">Links</h3>
                     <hr>
                     <h4>Videos</h4>
@@ -246,6 +257,8 @@
                     {% for i_url in launch.info_urls.all %}
                     <a href="{{ i_url.info_url }}">{{ i_url.info_url }}</a><br>
                     {% endfor %}
+                    <hr>
+                    <br>
                 </div>
             </div>
         </div>
@@ -262,13 +275,6 @@
          data-ad-format="auto"></ins>
     <script>
             (adsbygoogle = window.adsbygoogle || []).push({});
-
-
-
-
-
-
-
     </script>
 </div>
 <script src="{% static 'material_kit/js/dateFormat.js' %}" type="text/javascript"></script>
@@ -318,6 +324,12 @@
                 }
             }, 1000);
         }
+
+
+
+
+
+
 
 
 
