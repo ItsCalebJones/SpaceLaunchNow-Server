@@ -20,6 +20,7 @@
     padding-top: 25px;
     height: 0;
 }
+
 .videoWrapper iframe {
     position: absolute;
     top: 0;
@@ -28,14 +29,12 @@
     height: 100%;
 }
 
-//medium+ screen sizes
 @media (min-width:992px) {
     .desktop-only {
         display:block !important;
     }
 }
 
-//small screen sizes
 @media (max-width: 991px) {
     .mobile-only {
         display:block !important;
@@ -44,4 +43,10 @@
     .desktop-only {
         display:none !important;
     }
+}
+
+@media (min-width: 1700px) {
+  .container {
+      max-width: 1600px;
+  }
 }
