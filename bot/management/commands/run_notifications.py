@@ -1,7 +1,7 @@
 from django.core.management import BaseCommand
 from celery.utils.log import get_task_logger
 
-from bot.app.notifications import NotificationServer
+from bot.app.sync import LaunchLibrarySync
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.models import Notification
 from bot.utils.deserializer import launch_json_to_model
@@ -30,7 +30,7 @@ class Command(BaseCommand):
                 debug = True
         version = options['version']
         test_notification = options['test_notification']
-        notification = NotificationServer(debug=debug, version=version)
+        notification = LaunchLibrarySync(debug=debug, version=version)
         library = LaunchLibrarySDK(version=version)
         if test_notification:
             response = library.get_next_launch(launch_service_provider="spx")

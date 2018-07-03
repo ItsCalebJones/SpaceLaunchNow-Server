@@ -21,9 +21,9 @@ class LaunchRepository:
             version = '1.3'
         self.launchLibrary = LaunchLibrarySDK(version=version)
 
-    def get_next_launches(self):
+    def get_next_launches(self, count=5):
         logger.info("Daily Digest running...")
-        response = self.launchLibrary.get_next_launch(count=5)
+        response = self.launchLibrary.get_next_launch(count=count)
         if response.status_code is 200:
             response_json = response.json()
             launch_data = response_json['launches']
@@ -51,6 +51,22 @@ class LaunchRepository:
             logger.error(response.status_code + ' ' + response)
 
     def get_next_weeks_launches(self):
+        logger.info("Weekly Digest running...")
+        response = self.launchLibrary.get_next_weeks_launches()
+        if response.status_code is 200:
+            response_json = response.json()
+            launch_data = response_json['launches']
+            logger.info("Found %i launches." % len(launch_data))
+            launches = []
+            for launch in launch_data:
+                launch = launch_json_to_model(launch)
+                launch.save()
+                launches.append(launch)
+            return launches
+        else:
+            logger.error(str(response.status_code) + ' ' + response.text)
+
+    def get_previous_launches(self):
         logger.info("Weekly Digest running...")
         response = self.launchLibrary.get_next_weeks_launches()
         if response.status_code is 200:

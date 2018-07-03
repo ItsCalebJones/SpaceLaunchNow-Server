@@ -5,6 +5,8 @@ from django.utils.datetime_safe import datetime
 import datetime as dtime
 import pytz
 from twitter import Twitter, OAuth, TwitterHTTPError
+
+from bot.app.repository.launches_repository import LaunchRepository
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.libraries.onesignalsdk import OneSignalSdk
 from bot.utils.config import keys
@@ -37,12 +39,12 @@ def get_message(launch, diff):
                                                         'https://spacelaunchnow.me/launch/%s' % launch.id)
 
 
-class NotificationServer:
+class LaunchLibrarySync:
     def __init__(self, debug=None, version=None):
         self.one_signal = OneSignalSdk(AUTH_TOKEN_HERE, APP_ID)
         if version is None:
             version = '1.3'
-        self.launchLibrary = LaunchLibrarySDK(version=version)
+        self.repository = LaunchRepository(version=version)
         if debug is None:
             self.DEBUG = False
         else:
@@ -51,51 +53,8 @@ class NotificationServer:
             auth=OAuth(keys['TOKEN_KEY'], keys['TOKEN_SECRET'], keys['CONSUMER_KEY'], keys['CONSUMER_SECRET'])
         )
 
-    def send_to_twitter(self, message, notification):
-        try:
-            if message.endswith(' (1/1)'):
-                message = message[:-6]
-            if len(message) > 280:
-                end = message[-5:]
-
-                if re.search("([1-9]*/[1-9])", end):
-                    message = (message[:271] + '... ' + end)
-                else:
-                    message = (message[:277] + '...')
-            logger.info('Sending to Twitter | %s | %s | DEBUG %s' % (message, str(len(message)), self.DEBUG))
-            if not self.DEBUG:
-                logger.debug('Sending to twitter - message: %s' % message)
-                self.twitter.statuses.update(status=message)
-
-            notification.last_twitter_post = datetime.now()
-            notification.last_net_stamp = notification.launch.netstamp
-            notification.last_net_stamp_timestamp = datetime.now()
-            logger.info('Updating Notification %s to timestamp %s' % (notification.launch.id,
-                                                                      notification.last_twitter_post
-                                                                      .strftime("%A %d. %B %Y")))
-
-            notification.save()
-        except TwitterHTTPError as e:
-            logger.error("%s %s" % (str(e), message))
-
-    def get_next_launches(self):
-        logger.info("Getting next launches...")
-        response = self.launchLibrary.get_next_launch(count=5)
-        if response.status_code is 200:
-            response_json = response.json()
-            launch_data = response_json['launches']
-            launches = []
-            for launch in launch_data:
-                launch = launch_json_to_model(launch)
-                launch.location_set.first().name = launch.location_set.first().name
-                launch.save()
-                launches.append(launch)
-            return launches
-        else:
-            logger.error("%d %s" % (response.status_code, response))
-
     def check_next_launch(self):
-        for launch in self.get_next_launches():
+        for launch in self.repository.get_next_launches(count=10):
             if launch.netstamp > 0:
                 current_time = datetime.utcnow()
                 launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
@@ -233,6 +192,33 @@ class NotificationServer:
         else:
             logger.info('%s does not meet notification criteria.' % notification.launch.name)
         notification.save()
+
+    def send_to_twitter(self, message, notification):
+        try:
+            if message.endswith(' (1/1)'):
+                message = message[:-6]
+            if len(message) > 280:
+                end = message[-5:]
+
+                if re.search("([1-9]*/[1-9])", end):
+                    message = (message[:271] + '... ' + end)
+                else:
+                    message = (message[:277] + '...')
+            logger.info('Sending to Twitter | %s | %s | DEBUG %s' % (message, str(len(message)), self.DEBUG))
+            if not self.DEBUG:
+                logger.debug('Sending to twitter - message: %s' % message)
+                self.twitter.statuses.update(status=message)
+
+            notification.last_twitter_post = datetime.now()
+            notification.last_net_stamp = notification.launch.netstamp
+            notification.last_net_stamp_timestamp = datetime.now()
+            logger.info('Updating Notification %s to timestamp %s' % (notification.launch.id,
+                                                                      notification.last_twitter_post
+                                                                      .strftime("%A %d. %B %Y")))
+
+            notification.save()
+        except TwitterHTTPError as e:
+            logger.error("%s %s" % (str(e), message))
 
     def send_notification(self, launch, notification_type, notification):
         logger.info('Creating notification for %s' % launch.name)
