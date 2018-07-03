@@ -49,7 +49,7 @@ body {
   line-height: 1.5;
   color: #212529;
   text-align: left;
-  background-color: #fafafa;
+  background-color: #f1f1f1;
 }
 
 [tabindex="-1"]:focus {
@@ -8590,7 +8590,7 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 body {
-  background-color: #FFFFFF;
+  background-color: #f1f1f1;
 }
 
 a:focus {
@@ -9887,7 +9887,7 @@ fieldset[disabled][disabled] .btn.btn-raised, .btn.btn-raised.disabled, .btn.btn
 }
 
 body {
-  background-color: #fff;
+  background-color: #f1f1f1;
   color: #3C4858;
   font-weight: 300;
 }

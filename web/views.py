@@ -61,7 +61,10 @@ def create_launch_view(request, launch):
     youtube_urls = []
     vids = launch.vid_urls.all()
     status = get_launch_status(launch)
-    agency = SLNAgency.objects.get(launch_library_id=launch.lsp.id)
+    try:
+        agency = SLNAgency.objects.get(launch_library_id=launch.lsp.id)
+    except SLNAgency.DoesNotExist:
+        agency = None
     launches_good = Launch.objects.filter(lsp=launch.lsp, status=3)
     launches_bad = Launch.objects.filter(lsp=launch.lsp, status=4)
     launches_pending = Launch.objects.filter(Q(lsp=launch.lsp) & Q(Q(status=1) | Q(status=2)))

@@ -89,13 +89,17 @@
         {% endif %}
         <div class="container">
             <div class="row">
-                <div class="col-lg-12 ml-auto mr-auto text-center">
-                    <h1 class="title text-white" style="text-shadow: 1px 1px #3c3838;" id="countdown">L - 00 : 00 : 00 :
-                        00</h1>
-
-                    <h2 class="text-white" id="date" style="text-shadow: 1px 1px #3c3838;">{{ launch.net}}</h2>
-                    <span class="badge badge-pill badge-primary">{{ status }}</span>
+                <div class="col-lg-10 ml-auto mr-auto text-center">
+                    <h1 class="title text-white">{{ launch.rocket.name }}</h1>
+                    <h2 class="text-white" style="margin: 5px;"><b>{{ status }}</b></h2>
+                    <hr class="col-lg-8" style="background-color: white">
+                    <h2 class="text-white" style="margin: 5px;" id="countdown">L - 00 : 00 : 00 : 00</h2>
+                    <h3 class="text-white" style="margin: -5px;" id="date">{{ launch.net}}</h3>
+                    <hr class="col-lg-8" style="background-color: white">
                     <span class="badge badge-pill badge-primary">{{ launch.lsp.name }}</span>
+                    {% if launch.location.pads.all.first %}
+                    <span class="badge badge-pill badge-primary">{{ launch.location.pads.all.first.name }}</span>
+                    {% endif %}
                     {% if launch.location.name %}
                     <span class="badge badge-pill badge-primary">{{ launch.location.name }}</span>
                     {% endif %}
@@ -119,10 +123,12 @@
                 <div class="card-header card-header-danger text-center">
                     {% if launch.mission %}
                     <h1 class="title text-white">{{ launch.mission.name }}</h1>
+                    <h2 class="subheading text-white">{{ launch.rocket.name }}</h2>
                     {% else %}
                     <h1 class="title text-white">{{ launch.name }}</h1>
+                    <h2 class="subheading text-white">{{ launch.rocket.name }}</h2>
                     {% endif %}
-                    <h2 class="subheading text-white">{{ launch.lsp.name }} - {{ launch.rocket.name }}</h2>
+
                 </div>
             </div>
         </div>
@@ -135,6 +141,9 @@
                              alt="Circle Image"
                              class="img-fluid mx-auto"
                              style="max-width: 45%;">
+                        {% else %}
+                        <h1 class="title text-center" style="margin-left: 100px; margin-right:100px;">{{ launch.lsp.name }}</h1>
+                        <h2 class="subheading text-center">({{ launch.lsp.abbrev }})</h2>
                         {% endif %}
                     </div>
                 </div>
@@ -249,15 +258,24 @@
                     <h3 class="mt-4 card-title">Links</h3>
                     <hr>
                     <h4>Videos</h4>
+                    {% if launch.vid_urls.all|length > 0%}
                     {% for url in launch.vid_urls.all %}
                     <a href="{{ url.vid_url }}">{{ url.vid_url }}</a><br>
 
                     {% endfor %}
+                    {% else %}
+                    <p>No videos available for this launch!</p>
+                    {% endif %}
                     <h4>Information</h4>
+                    {% if launch.vid_urls.all|length > 0%}
                     {% for i_url in launch.info_urls.all %}
                     <a href="{{ i_url.info_url }}">{{ i_url.info_url }}</a><br>
                     {% endfor %}
+                    {% else %}
+                    <p>No information links available for this launch!</p>
+                    {% endif %}
                     <hr>
+                <h5>Help <a href="https://launchlibrary.net/about.html">Launch Library</a> keep this launch up to date!</h5>
                     <br>
                 </div>
             </div>
