@@ -17,12 +17,6 @@ class LocationAdmin(admin.ModelAdmin):
     list_select_related = True
 
 
-@admin.register(models.Pad)
-class PadAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'location')
-    list_select_related = True
-
-
 @admin.register(models.Rocket)
 class RocketAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'configuration',)

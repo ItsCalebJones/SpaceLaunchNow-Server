@@ -5,7 +5,7 @@ from drf_queryfields import QueryFieldsMixin
 from api.models import Orbiter, Launcher, Agency, Events
 from rest_framework import serializers
 
-from bot.models import Launch, Pad, Rocket, LSP, Location, Mission
+from bot.models import Launch, Rocket, LSP, Location, Mission
 
 
 class LauncherSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
@@ -80,19 +80,12 @@ class RocketSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'imageURL', 'family_name')
 
 
-class PadSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Pad
-        fields = ('id', 'name', 'info_url', 'wiki_url', 'map_url')
-
-
 class LocationSerializer(serializers.ModelSerializer):
-    pads = PadSerializer(many=True, read_only=True)
 
     class Meta:
+        depth = 2
         model = Location
-        fields = ('id', 'name', 'country_code', 'pads')
+        fields = ('id', 'name', 'country_code', 'pad_name', 'info_url', 'wiki_url', 'map_url')
 
 
 class LSPSerializer(serializers.ModelSerializer):
@@ -116,6 +109,7 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     mission = MissionSerializer(many=False, read_only=True)
 
     class Meta:
+        depth = 3
         model = Launch
         fields = ('id', 'url', 'name', 'img_url', 'status', 'netstamp', 'wsstamp', 'westamp', 'net', 'window_end',
                   'window_start', 'isonet', 'isostart', 'isoend', 'inhold', 'tbdtime', 'tbddate', 'probability',

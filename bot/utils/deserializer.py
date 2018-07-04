@@ -1,6 +1,6 @@
 import datetime
 
-from bot.models import Launch, Notification, VidURLs, Pad, Location, Rocket, Mission, LSP, Agency, InfoURLs
+from bot.models import Launch, Notification, VidURLs, Location, Rocket, Mission, LSP, Agency, InfoURLs
 
 
 def launch_json_to_model(data):
@@ -71,25 +71,20 @@ def check_notification(launch):
 
 def get_location(launch, data):
     if 'location' in data and data['location'] is not None:
-        location, created = Location.objects.get_or_create(id=data['location']['id'])
-        location.name = data['location']['name']
-        location.country_code = data['location']['countryCode']
-
         if data['location']['pads'] is not None and len(data['location']['pads']) > 0:
-                pad, created = Pad.objects.get_or_create(id=data['location']['pads'][0]['id'], location=location)
-                pad.name = data['location']['pads'][0]['name']
-                pad.map_url = data['location']['pads'][0]['mapURL']
-                pad.wiki_url = data['location']['pads'][0]['wikiURL']
-                pad.location = location
-                pad.save()
-                if data['location']['pads'][0]['agencies'] is not None and len(data['location']['pads'][0]['agencies']) > 0:
-                    agency, created = Agency.objects.get_or_create(id=data['location']['pads'][0]['agencies'][0]['id'])
-                    agency.name = data['location']['pads'][0]['agencies'][0]['name']
-                    agency.abbrev = data['location']['pads'][0]['agencies'][0]['abbrev']
-                    agency.country_code = data['location']['pads'][0]['agencies'][0]['countryCode']
-                    agency.pads.add(pad)
-                    agency.save()
-        location.save()
+            location, created = Location.objects.get_or_create(id=data['location']['pads'][0]['id'])
+            location.name = data['location']['name']
+            location.country_code = data['location']['countryCode']
+            location.pad_name = data['location']['pads'][0]['name']
+            location.map_url = data['location']['pads'][0]['mapURL']
+            location.wiki_url = data['location']['pads'][0]['wikiURL']
+            location.info_url = data['location']['pads'][0]['infoURL']
+            location.save()
+        else:
+            location, created = Location.objects.get_or_create(id=data['location']['id'])
+            location.name = data['location']['name']
+            location.country_code = data['location']['countryCode']
+            location.save()
         return location
 
 
