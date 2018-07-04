@@ -68,7 +68,7 @@ class LaunchRepository:
 
     def get_previous_launches(self):
         logger.info("Weekly Digest running...")
-        response = self.launchLibrary.get_next_weeks_launches()
+        response = self.launchLibrary.get_previous_launches()
         if response.status_code is 200:
             response_json = response.json()
             launch_data = response_json['launches']

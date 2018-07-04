@@ -46,6 +46,16 @@ class LaunchLibrarySDK(object):
         url = self.api_url + '/launch/%s/%s?mode=verbose' % (today, next_week)
         return send_request(url, method='GET', headers=headers)
 
+    def get_previous_launches(self):
+        """
+        Sends a request using `requests` module.
+        :return: Returns a HTTP Response object
+        """
+        today = datetime.today().strftime('%Y-%m-%d')
+        previous = "1960-01-01"
+        url = self.api_url + '/launch/%s/%s?mode=verbose' % (previous, today)
+        return send_request(url, method='GET', headers=headers)
+
     def get_location_by_pad(self, location_id):
         url = '%s/pad/%i?fields=name' % (self.api_url, location_id)
         return send_request(url, method='GET', headers=headers)

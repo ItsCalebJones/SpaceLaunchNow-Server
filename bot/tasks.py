@@ -37,11 +37,18 @@ def run_weekly():
     daily_digest.run(weekly=True)
 
 
-@periodic_task(run_every=(crontab(hour='*/1')), options={"expires": 60})
+@periodic_task(run_every=(crontab(hour='*/6')), options={"expires": 60})
 def get_upcoming_launches():
     logger.info('Task - Get Upcoming launches!')
     repository = LaunchRepository()
     repository.get_next_launches(count=100)
+    check_for_orphaned_launches()
+
+
+def check_for_orphaned_launches():
+    logger.info('Task - Get Upcoming launches!')
+    # Query the DB and verify no upcoming launches have failed to update.
+    # Most likely requires a new created on and last updated field.
 
 
 @periodic_task(
