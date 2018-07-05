@@ -4,7 +4,9 @@ from pytz import utc
 
 
 class Location(models.Model):
-    id = models.IntegerField(primary_key=True)
+    pad_id = models.IntegerField(primary_key=True)
+    location_id = models.IntegerField()
+    agency_id = models.IntegerField()
     name = models.CharField(max_length=255, blank=True, default="")
     pad_name = models.CharField(max_length=255, blank=True, default="")
     country_code = models.CharField(max_length=255, blank=True, default="")

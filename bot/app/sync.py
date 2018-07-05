@@ -33,8 +33,8 @@ def json_default(value):
 
 
 def get_message(launch, diff):
-    return '%s launching from %s by %s in %s. \n %s' % (launch.name, launch.location_set.first().name,
-                                                        launch.rocket_set.first().agency_set.first().name,
+    return '%s launching from %s by %s in %s. \n %s' % (launch.name, launch.location.name,
+                                                        launch.lsp.name,
                                                         seconds_to_time(diff),
                                                         'https://spacelaunchnow.me/launch/%s' % launch.id)
 
@@ -54,7 +54,7 @@ class LaunchLibrarySync:
         )
 
     def check_next_launch(self):
-        for launch in self.repository.get_next_launches(count=10):
+        for launch in self.repository.get_next_launches(next_count=10):
             if launch.netstamp > 0:
                 current_time = datetime.utcnow()
                 launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
@@ -121,7 +121,7 @@ class LaunchLibrarySync:
         logger.debug('LAUNCH DATA: %s', serializers.serialize('json', [launch, ]))
         logger.debug('NOTIFICATION DATA: %s', serializers.serialize('json', [notification, ]))
         if notification.last_twitter_post is not None:
-            time_since_twitter = (datetime.now() - notification.last_twitter_post).total_seconds()
+            time_since_twitter = (datetime.now(pytz.utc) - notification.last_twitter_post).total_seconds()
             logger.info('Seconds since last update on Twitter %d for %s' % (time_since_twitter,
                                                                             launch.name))
             if diff <= 86400 and notification.wasNotifiedTwentyFourHourTwitter is False:
@@ -209,9 +209,9 @@ class LaunchLibrarySync:
                 logger.debug('Sending to twitter - message: %s' % message)
                 self.twitter.statuses.update(status=message)
 
-            notification.last_twitter_post = datetime.now()
+            notification.last_twitter_post = datetime.now(pytz.utc)
             notification.last_net_stamp = notification.launch.netstamp
-            notification.last_net_stamp_timestamp = datetime.now()
+            notification.last_net_stamp_timestamp = datetime.now(pytz.utc)
             logger.info('Updating Notification %s to timestamp %s' % (notification.launch.id,
                                                                       notification.last_twitter_post
                                                                       .strftime("%A %d. %B %Y")))
@@ -228,15 +228,15 @@ class LaunchLibrarySync:
             contents = 'UPDATE: New launch attempt scheduled on %s at %s.' % (launch_time.strftime("%A, %B %d"),
                                                                launch_time.strftime("%H:%M UTC"))
         elif notification_type == 'tenMinutes':
-            contents = 'Launch attempt  from %s in ten minutes.' % launch.location_set.first().name
+            contents = 'Launch attempt  from %s in ten minutes.' % launch.location.name
         elif notification_type == 'twentyFourHour':
-            contents = 'Launch attempt from %s in 24 hours.' % launch.location_set.first().name
+            contents = 'Launch attempt from %s in 24 hours.' % launch.location.name
         elif notification_type == 'oneHour':
-            contents = 'Launch attempt from %s in one hour.' % launch.location_set.first().name
+            contents = 'Launch attempt from %s in one hour.' % launch.location.name
 
         else:
             launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
-            contents = 'Launch attempt from %s on %s at %s.' % (launch.location_set.first().name,
+            contents = 'Launch attempt from %s on %s at %s.' % (launch.location.name,
                                                                 launch_time.strftime("%A, %B %d"),
                                                                 launch_time.strftime("%H:%M UTC"))
 
@@ -260,9 +260,9 @@ class LaunchLibrarySync:
                   "background": True,
                   "launch_id": launch.id,
                   "launch_name": launch.name,
-                  "launch_image": launch.rocket_set.first().imageURL,
-                  "launch_net": launch.net,
-                  "launch_location": launch.location_set.first().name,
+                  "launch_image": launch.rocket.imageURL,
+                  "launch_net": launch.netstamp,
+                  "launch_location": launch.location.name,
                   "notification_type": notification_type,
                   "webcast": webcast
                   }
@@ -272,7 +272,7 @@ class LaunchLibrarySync:
         logger.debug('Sending notification - %s' % contents)
         time_since_last_notification = None
         if notification.last_notification_sent is not None:
-            time_since_last_notification = datetime.now() - notification.last_notification_sent
+            time_since_last_notification = datetime.now(pytz.utc) - notification.last_notification_sent
         if time_since_last_notification is not None and time_since_last_notification.total_seconds() < 600 and not self.DEBUG:
             logger.info('Cannot send notification - too soon since last notification!')
         else:
@@ -304,7 +304,7 @@ class LaunchLibrarySync:
                 notification_id = notification_data['id']
                 assert notification_data['id'] and notification_data['recipients']
                 notification.last_notification_recipient_count = notification_data['recipients']
-                notification.last_notification_sent = datetime.now()
+                notification.last_notification_sent = datetime.now(pytz.utc)
                 notification.save()
 
                 # Get the notification

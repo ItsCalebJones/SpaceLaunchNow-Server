@@ -13,7 +13,7 @@ class LaunchAdmin(admin.ModelAdmin):
 
 @admin.register(models.Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'country_code',)
+    list_display = ('pad_id', 'name', 'pad_name', 'country_code',)
     list_select_related = True
 
 

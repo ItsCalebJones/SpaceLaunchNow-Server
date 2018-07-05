@@ -19,41 +19,44 @@ class LaunchLibrarySDK(object):
         self.version = version
         self.api_url = BASE_URL + self.version
 
-    def get_next_launch(self, tbd=False, launch_service_provider=None, count=1):
+    def get_next_launches(self, tbd=False, launch_service_provider=None, next_count=1, offset=0):
         """
         Builds a URL and fetches response from LL
+        :param tbd:
+        :param offset:
+        :param next_count:
         :param agency: Pass the ID of an Agency to get launches for that agency (Rocket, Location, or Mission agency)
         :param launch_service_provider: Pass the ID of a LSP to get launches for that provider
         :param count: The number of launch objects to fetch.
         :return: Returns a HTTP Response object
         """
         if tbd:
-            url = self.api_url + '/launch/next/%d?mode=verbose&tbdtime=0&tbddate=0' % count
+            url = self.api_url + '/launch/next/%d?mode=verbose&tbdtime=0&tbddate=0&offset=%s' % (next_count, offset)
         else:
-            url = self.api_url + '/launch/next/%d?mode=verbose' % count
+            url = self.api_url + '/launch/next/%d?mode=verbose&offset=%s' % (next_count, offset)
 
         if launch_service_provider:
             url = url + "&lsp=" + launch_service_provider
         return send_request(url, method='GET', headers=headers)
 
-    def get_next_weeks_launches(self):
+    def get_next_weeks_launches(self, offset=0):
         """
         Sends a request using `requests` module.
         :return: Returns a HTTP Response object
         """
         today = datetime.today().strftime('%Y-%m-%d')
         next_week = (datetime.now() + timedelta(days=7)).strftime('%Y-%m-%d')
-        url = self.api_url + '/launch/%s/%s?mode=verbose' % (today, next_week)
+        url = self.api_url + '/launch/%s/%s?mode=verbose&offset=%s' % (today, next_week, offset)
         return send_request(url, method='GET', headers=headers)
 
-    def get_previous_launches(self):
+    def get_previous_launches(self, offset=0):
         """
         Sends a request using `requests` module.
         :return: Returns a HTTP Response object
         """
         today = datetime.today().strftime('%Y-%m-%d')
         previous = "1960-01-01"
-        url = self.api_url + '/launch/%s/%s?mode=verbose' % (previous, today)
+        url = self.api_url + '/launch/%s/%s?mode=verbose&offset=%s&limit=100' % (previous, today, offset)
         return send_request(url, method='GET', headers=headers)
 
     def get_location_by_pad(self, location_id):

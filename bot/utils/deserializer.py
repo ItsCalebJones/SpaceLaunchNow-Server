@@ -1,5 +1,7 @@
 import datetime
 
+import pytz
+
 from bot.models import Launch, Notification, VidURLs, Location, Rocket, Mission, LSP, Agency, InfoURLs
 
 
@@ -42,9 +44,9 @@ def launch_json_to_model(data):
     launch.hashtag = hashtag
     launch.tbddate = tbddate
     launch.tbdtime = tbdtime
-    launch.net = datetime.datetime.strptime(net, '%B %d, %Y %H:%M:%S %Z')
-    launch.window_end = datetime.datetime.strptime(window_end, '%B %d, %Y %H:%M:%S %Z')
-    launch.window_start = datetime.datetime.strptime(window_start, '%B %d, %Y %H:%M:%S %Z')
+    launch.net = datetime.datetime.strptime(net, '%B %d, %Y %H:%M:%S %Z').replace(tzinfo=pytz.utc)
+    launch.window_end = datetime.datetime.strptime(window_end, '%B %d, %Y %H:%M:%S %Z').replace(tzinfo=pytz.utc)
+    launch.window_start = datetime.datetime.strptime(window_start, '%B %d, %Y %H:%M:%S %Z').replace(tzinfo=pytz.utc)
 
     launch.vid_urls.all().delete()
     for url in vid_urls:
@@ -72,13 +74,16 @@ def check_notification(launch):
 def get_location(launch, data):
     if 'location' in data and data['location'] is not None:
         if data['location']['pads'] is not None and len(data['location']['pads']) > 0:
-            location, created = Location.objects.get_or_create(id=data['location']['pads'][0]['id'])
+            location, created = Location.objects.get_or_create(pad_id=data['location']['pads'][0]['id'])
+            location.location_id = data['location']['id']
             location.name = data['location']['name']
             location.country_code = data['location']['countryCode']
             location.pad_name = data['location']['pads'][0]['name']
             location.map_url = data['location']['pads'][0]['mapURL']
             location.wiki_url = data['location']['pads'][0]['wikiURL']
             location.info_url = data['location']['pads'][0]['infoURL']
+            if data['location']['pads'][0]['agencies'] is not None and len(data['location']['pads'][0]['agencies']) > 0:
+                location.agency_id = data['location']['pads'][0]['agencies'][0]['id']
             location.save()
         else:
             location, created = Location.objects.get_or_create(id=data['location']['id'])
@@ -102,7 +107,7 @@ def get_rocket(launch, data):
 
         rocket.launch = launch
         rocket.save()
-        if len(data['rocket']['agencies']) > 0:
+        if data['rocket']['agencies'] is not None and len(data['rocket']['agencies']) > 0:
             agency, created = Agency.objects.get_or_create(id=data['rocket']['agencies'][0]['id'])
             agency.name = data['rocket']['agencies'][0]['name']
             agency.abbrev = data['rocket']['agencies'][0]['abbrev']

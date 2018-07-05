@@ -19,7 +19,7 @@ def index(request):
 # Create your views here.
 def next_launch(request):
     launchLibrary = LaunchLibrarySDK()
-    response = launchLibrary.get_next_launch()
+    response = launchLibrary.get_next_launches()
     if response.status_code is 200:
         response_json = response.json()
         launch_data = response_json['launches']
@@ -81,9 +81,9 @@ def launches(request,):
     launchLibrary = LaunchLibrarySDK()
     query = request.GET.get('q')
     if query is not None:
-        response = launchLibrary.get_next_launch(count=5, launch_service_provider=query)
+        response = launchLibrary.get_next_launches(next_count=5, launch_service_provider=query)
     else:
-        response = launchLibrary.get_next_launch(count=5, tbd=True)
+        response = launchLibrary.get_next_launches(next_count=5, tbd=True)
     if response.status_code is 200:
         response_json = response.json()
         launch_data = response_json['launches']
