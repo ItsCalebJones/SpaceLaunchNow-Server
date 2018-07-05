@@ -15,7 +15,7 @@ class LauncherDetailAdmin(admin.ModelAdmin):
 
 @admin.register(models.Agency)
 class AgencyAdmin(admin.ModelAdmin):
-    list_display = ('short_name', 'featured', 'launch_library_id', 'launchers', 'orbiters', 'short_description')
+    list_display = ('short_name', 'featured', 'launchers', 'orbiters', 'short_description')
     list_filter = ('name', 'featured',)
 
 

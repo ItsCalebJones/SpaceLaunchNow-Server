@@ -2,10 +2,8 @@ from rest_framework.relations import HyperlinkedRelatedField
 
 from drf_queryfields import QueryFieldsMixin
 
-from api.models import Orbiter, Launcher, Agency, Events
+from api.models import *
 from rest_framework import serializers
-
-from bot.models import Launch, Rocket, LSP, Location, Mission
 
 
 class LauncherSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
@@ -52,7 +50,7 @@ class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer)
     class Meta:
         model = Agency
         fields = ('id', 'url', 'name', 'featured', 'launchers', 'orbiters', 'description', 'image_url', 'nation_url',
-                  'ceo', 'founding_year', 'logo_url', 'launch_library_url', 'launch_library_id', 'launcher_list',
+                  'ceo', 'founding_year', 'logo_url', 'launch_library_url', 'launcher_list',
                   'orbiter_list',)
 
 
@@ -63,7 +61,7 @@ class AgencyDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSer
     class Meta:
         model = Agency
         fields = ('id', 'url', 'name', 'featured', 'launchers', 'orbiters', 'description', 'image_url', 'nation_url',
-                  'ceo', 'founding_year', 'logo_url', 'launch_library_url', 'launch_library_id', 'launcher_list',
+                  'ceo', 'founding_year', 'logo_url', 'launch_library_url', 'launcher_list',
                   'orbiter_list',)
 
 
@@ -73,19 +71,26 @@ class EventsSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'url', 'name', 'description', 'location', 'feature_image', 'date')
 
 
-class RocketSerializer(serializers.ModelSerializer):
+# class RocketSerializer(serializers.ModelSerializer):
+#
+#     class Meta:
+#         model = Rocket
+#         fields = ('id', 'name', 'imageURL', 'family_name')
+
+
+class PadSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Rocket
-        fields = ('id', 'name', 'imageURL', 'family_name')
+        model = Pad
+        fields = ('id', 'agency_id', 'name', 'info_url', 'wiki_url', 'map_url')
 
 
 class LocationSerializer(serializers.ModelSerializer):
+    pads = PadSerializer(many=True, read_only=True)
 
     class Meta:
-        depth = 2
         model = Location
-        fields = ('id', 'name', 'country_code', 'pad_name', 'info_url', 'wiki_url', 'map_url')
+        fields = ('id', 'name', 'country_code', 'pads')
 
 
 class LSPSerializer(serializers.ModelSerializer):
@@ -103,8 +108,9 @@ class MissionSerializer(serializers.ModelSerializer):
 
 
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):
-    location = LocationSerializer(many=False, read_only=True)
-    rocket = RocketSerializer(many=False, read_only=True)
+    location = LocationSerializer(many=False, read_only=True, source='pad.location')
+    pad = PadSerializer(many=False, read_only=True)
+    launcher = LauncherSerializer(many=False, read_only=True)
     lsp = LSPSerializer(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
 
@@ -113,4 +119,4 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
         model = Launch
         fields = ('id', 'url', 'name', 'img_url', 'status', 'netstamp', 'wsstamp', 'westamp', 'net', 'window_end',
                   'window_start', 'isonet', 'isostart', 'isoend', 'inhold', 'tbdtime', 'tbddate', 'probability',
-                  'holdreason', 'failreason', 'hashtag', 'rocket', 'mission', 'lsp', 'location')
+                  'holdreason', 'failreason', 'hashtag', 'launcher', 'mission', 'lsp', 'location', 'pad')

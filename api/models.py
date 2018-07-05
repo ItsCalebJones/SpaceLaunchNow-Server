@@ -41,8 +41,13 @@ def logo_path(instance, filename):
 
 
 class Agency(models.Model):
-    id = models.AutoField(primary_key=True)
+    id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=200)
+    country_code = models.CharField(max_length=255, blank=True, default="")
+    abbrev = models.CharField(max_length=255, blank=True, default="")
+    type = models.CharField(max_length=255, blank=True, null=True)
+    info_url = models.URLField(blank=True, null=True)
+    wiki_url = models.URLField(blank=True, null=True)
     description = models.CharField(max_length=2048, blank=True, null=True, default=None)
     launchers = models.CharField(max_length=500, default='', blank=True)
     orbiters = models.CharField(max_length=500, default='', blank=True)
@@ -55,7 +60,6 @@ class Agency(models.Model):
     ceo = models.CharField(max_length=200, blank=True, null=True, default=None)
     founding_year = models.CharField(blank=True, null=True, default=None, max_length=20)
     logo_url = models.FileField(default=None, storage=LogoStorage(), upload_to=logo_path, null=True, blank=True)
-    launch_library_id = models.IntegerField(blank=True, null=True, default=None)
     featured = models.BooleanField(default=False)
 
     def __str__(self):
@@ -79,8 +83,8 @@ class Agency(models.Model):
 
     @property
     def launch_library_url(self):
-        if self.launch_library_id:
-            return "https://launchlibrary.net/1.3/agency/%s" % self.launch_library_id
+        if self.id:
+            return "https://launchlibrary.net/1.3/agency/%s" % self.id
         else:
             return None
 
@@ -182,3 +186,114 @@ class Events(models.Model):
         ordering = ['name']
         verbose_name = 'Event'
         verbose_name_plural = 'Events'
+
+
+class Location(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255, blank=True, default="")
+    country_code = models.CharField(max_length=255, blank=True, default="")
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Location'
+        verbose_name_plural = 'Locations'
+
+
+class Pad(models.Model):
+    id = models.IntegerField(primary_key=True)
+    agency_id = models.IntegerField(blank=True, null=True)
+    name = models.CharField(max_length=255, blank=True, default="")
+    info_url = models.URLField(blank=True, null=True)
+    wiki_url = models.URLField(blank=True, null=True)
+    map_url = models.URLField(blank=True, null=True)
+    location = models.ForeignKey(Location, related_name='pad', blank=True, on_delete=models.CASCADE)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Pad'
+        verbose_name_plural = 'Pads'
+
+
+class LSP(Agency):
+    super
+
+    class Meta:
+        verbose_name = 'LSP'
+        verbose_name_plural = 'LSPs'
+
+
+class Mission(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255, blank=True, default="")
+    description = models.CharField(max_length=2048, blank=True, default="")
+    type = models.IntegerField(blank=True, null=True)
+    type_name = models.CharField(max_length=255, blank=True, default="")
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Mission'
+        verbose_name_plural = 'Missions'
+
+
+class Launch(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255, blank=True)
+    img_url = models.CharField(max_length=255, blank=True, null=True)
+    status = models.IntegerField(blank=True, null=True)
+    netstamp = models.IntegerField(blank=True, null=True)
+    wsstamp = models.IntegerField(blank=True, null=True)
+    westamp = models.IntegerField(blank=True, null=True)
+    net = models.DateTimeField(max_length=255, null=True)
+    window_end = models.DateTimeField(max_length=255, null=True)
+    window_start = models.DateTimeField(max_length=255, null=True)
+    isostart = models.CharField(max_length=255, blank=True, null=True)
+    isoend = models.CharField(max_length=255, blank=True, null=True)
+    isonet = models.CharField(max_length=255, blank=True, null=True)
+    inhold = models.NullBooleanField(default=False)
+    tbdtime = models.NullBooleanField(default=False)
+    tbddate = models.NullBooleanField(default=False)
+    probability = models.IntegerField(blank=True, null=True)
+    holdreason = models.CharField(max_length=255, blank=True, null=True)
+    failreason = models.CharField(max_length=255, blank=True, null=True)
+    hashtag = models.CharField(max_length=255, blank=True, null=True)
+    lsp = models.ForeignKey(LSP, related_name='launch', null=True, on_delete=models.CASCADE)
+    launcher = models.ForeignKey(Launcher, related_name='launch', null=True, on_delete=models.CASCADE)
+    pad = models.ForeignKey(Pad, related_name='launch', null=True, on_delete=models.CASCADE)
+    mission = models.ForeignKey(Mission, related_name='launch', null=True, on_delete=models.CASCADE)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Launch'
+        verbose_name_plural = 'Launches'
+
+
+class VidURLs(models.Model):
+    vid_url = models.URLField(max_length=200)
+    launch = models.ForeignKey(Launch, related_name='vid_urls', on_delete=models.CASCADE)
+
+    def __unicode__(self):
+        return '%s' % self.vid_url
+
+    class Meta:
+        verbose_name = 'Video URL'
+        verbose_name_plural = 'Video URLs'
+
+
+class InfoURLs(models.Model):
+    info_url = models.URLField(max_length=200)
+    launch = models.ForeignKey(Launch, related_name='info_urls', on_delete=models.CASCADE)
+
+    def __unicode__(self):
+        return '%s' % self.info_url
+
+    class Meta:
+        verbose_name = 'Info URL'
+        verbose_name_plural = 'Info URLs'

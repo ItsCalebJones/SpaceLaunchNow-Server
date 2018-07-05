@@ -1,8 +1,8 @@
 import datetime
-
 import pytz
 
-from bot.models import Launch, Notification, VidURLs, Location, Rocket, Mission, LSP, Agency, InfoURLs
+from api.models import *
+from bot.models import *
 
 
 def launch_json_to_model(data):
@@ -73,47 +73,35 @@ def check_notification(launch):
 
 def get_location(launch, data):
     if 'location' in data and data['location'] is not None:
+        location, created = Location.objects.get_or_create(id=data['location']['id'])
+        location.name = data['location']['name']
+        location.country_code = data['location']['countryCode']
+        location.save()
         if data['location']['pads'] is not None and len(data['location']['pads']) > 0:
-            location, created = Location.objects.get_or_create(pad_id=data['location']['pads'][0]['id'])
-            location.location_id = data['location']['id']
-            location.name = data['location']['name']
-            location.country_code = data['location']['countryCode']
-            location.pad_name = data['location']['pads'][0]['name']
-            location.map_url = data['location']['pads'][0]['mapURL']
-            location.wiki_url = data['location']['pads'][0]['wikiURL']
-            location.info_url = data['location']['pads'][0]['infoURL']
-            if data['location']['pads'][0]['agencies'] is not None and len(data['location']['pads'][0]['agencies']) > 0:
-                location.agency_id = data['location']['pads'][0]['agencies'][0]['id']
-            location.save()
-        else:
-            location, created = Location.objects.get_or_create(id=data['location']['id'])
-            location.name = data['location']['name']
-            location.country_code = data['location']['countryCode']
-            location.save()
+                pad, created = Pad.objects.get_or_create(id=data['location']['pads'][0]['id'], location=location)
+                pad.name = data['location']['pads'][0]['name']
+                pad.map_url = data['location']['pads'][0]['mapURL']
+                pad.wiki_url = data['location']['pads'][0]['wikiURL']
+                launch.pad = pad
+                pad.save()
         return location
 
 
 def get_rocket(launch, data):
     if 'rocket' in data and data['rocket'] is not None:
-        rocket, created = Rocket.objects.get_or_create(id=data['rocket']['id'])
-        rocket.name = data['rocket']['name']
-        rocket.family_name = data['rocket']['familyname']
-        rocket.configuration = data['rocket']['configuration']
-        if 'placeholder' not in data['rocket']['imageURL']:
-            rocket.imageURL = data['rocket']['imageURL']
-            if rocket.imageURL is not None:
-                launch.img_url = rocket.imageURL
-                launch.save()
+        rocket, created = Launcher.objects.get_or_create(id=data['rocket']['id'])
+        if created:
+            rocket.name = data['rocket']['name']
+            rocket.family_name = data['rocket']['familyname']
+            rocket.configuration = data['rocket']['configuration']
+            if 'placeholder' not in data['rocket']['imageURL']:
+                rocket.imageURL = data['rocket']['imageURL']
+                if rocket.imageURL is not None:
+                    launch.img_url = rocket.imageURL
+                    launch.save()
 
-        rocket.launch = launch
+        rocket.launch.add(launch)
         rocket.save()
-        if data['rocket']['agencies'] is not None and len(data['rocket']['agencies']) > 0:
-            agency, created = Agency.objects.get_or_create(id=data['rocket']['agencies'][0]['id'])
-            agency.name = data['rocket']['agencies'][0]['name']
-            agency.abbrev = data['rocket']['agencies'][0]['abbrev']
-            agency.country_code = data['rocket']['agencies'][0]['countryCode']
-            agency.rockets.add(rocket)
-            agency.save()
     return rocket
 
 
