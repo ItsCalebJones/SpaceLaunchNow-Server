@@ -43,6 +43,7 @@ def logo_path(instance, filename):
 class Agency(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=200)
+    featured = models.BooleanField(default=False)
     country_code = models.CharField(max_length=255, blank=True, default="")
     abbrev = models.CharField(max_length=255, blank=True, default="")
     type = models.CharField(max_length=255, blank=True, null=True)
@@ -51,16 +52,15 @@ class Agency(models.Model):
     description = models.CharField(max_length=2048, blank=True, null=True, default=None)
     launchers = models.CharField(max_length=500, default='', blank=True)
     orbiters = models.CharField(max_length=500, default='', blank=True)
-    legacy_image_url = models.URLField(blank=True, null=True, default=None)
-    image_url = models.FileField(default=None, storage=AgencyImageStorage(), upload_to=image_path, null=True,
-                                 blank=True)
-    legacy_nation_url = models.URLField(blank=True, null=True, default=None)
-    nation_url = models.FileField(default=None, storage=AgencyNationStorage(), upload_to=nation_path, null=True,
-                                  blank=True)
     ceo = models.CharField(max_length=200, blank=True, null=True, default=None)
     founding_year = models.CharField(blank=True, null=True, default=None, max_length=20)
+    legacy_image_url = models.URLField(blank=True, null=True, default=None)
+    legacy_nation_url = models.URLField(blank=True, null=True, default=None)
+    image_url = models.FileField(default=None, storage=AgencyImageStorage(), upload_to=image_path, null=True,
+                                 blank=True)
     logo_url = models.FileField(default=None, storage=LogoStorage(), upload_to=logo_path, null=True, blank=True)
-    featured = models.BooleanField(default=False)
+    nation_url = models.FileField(default=None, storage=AgencyNationStorage(), upload_to=nation_path, null=True,
+                                  blank=True)
 
     def __str__(self):
         return self.name
@@ -98,15 +98,15 @@ class Orbiter(models.Model):
     launch_agency = models.ForeignKey(Agency, related_name='orbiter_list', blank=True, null=True)
     history = models.CharField(max_length=1000, default='')
     details = models.CharField(max_length=1000, default='')
-    legacy_image_url = models.URLField(blank=True)
-    image_url = models.FileField(default=None, storage=OrbiterImageStorage(), upload_to=image_path, null=True,
-                                 blank=True)
-    legacy_nation_url = models.URLField(blank=True)
-    nation_url = models.FileField(default=None, storage=AgencyNationStorage(), upload_to=image_path, null=True,
-                                  blank=True)
     in_use = models.BooleanField(default=True)
     capability = models.CharField(max_length=2048, default='')
     wiki_link = models.URLField(blank=True)
+    legacy_image_url = models.URLField(blank=True)
+    legacy_nation_url = models.URLField(blank=True)
+    image_url = models.FileField(default=None, storage=OrbiterImageStorage(), upload_to=image_path, null=True,
+                                 blank=True)
+    nation_url = models.FileField(default=None, storage=AgencyNationStorage(), upload_to=image_path, null=True,
+                                  blank=True)
 
     def __str__(self):
         return self.name
@@ -129,7 +129,6 @@ class Launcher(models.Model):
     active = models.BooleanField(default=True)
     description = models.CharField(max_length=2048, default='', blank=True)
     family = models.CharField(max_length=200, default='', blank=True)
-    s_family = models.CharField(max_length=200, default='', blank=True)
     agency = models.CharField(max_length=200, default='', blank=True)
     full_name = models.CharField(max_length=200, default='', blank=True)
     launch_agency = models.ForeignKey(Agency, related_name='launcher_list', blank=True, null=True)
@@ -137,22 +136,21 @@ class Launcher(models.Model):
     alias = models.CharField(max_length=200, default='', blank=True)
     min_stage = models.IntegerField(blank=True, null=True)
     max_stage = models.IntegerField(blank=True, null=True)
-    length = models.CharField(max_length=200, default='', blank=True)
-    diameter = models.CharField(max_length=200, default='', blank=True)
-    launch_mass = models.CharField(max_length=200, default='', blank=True)
-    leo_capacity = models.CharField(max_length=200, default='', blank=True)
-    gto_capacity = models.CharField(max_length=200, default='', blank=True)
-    to_thrust = models.CharField(max_length=200, default='', blank=True)
-    vehicle_class = models.CharField(max_length=200, default='', blank=True)
-    apogee = models.CharField(max_length=200, default='', blank=True)
-    vehicle_range = models.CharField(max_length=200, default='', blank=True)
+    length = models.FloatField(blank=True, null=True)
+    diameter = models.FloatField(blank=True, null=True)
+    launch_mass = models.IntegerField(blank=True, null=True)
+    leo_capacity = models.IntegerField(blank=True, null=True)
+    gto_capacity = models.IntegerField(blank=True, null=True)
+    to_thrust = models.IntegerField(blank=True, null=True)
+    apogee = models.IntegerField(blank=True, null=True)
+    vehicle_range = models.IntegerField(blank=True, null=True)
     legacy_image_url = models.CharField(max_length=200, default='', blank=True)
-    image_url = models.FileField(default=None, storage=LauncherImageStorage(), upload_to=image_path, null=True,
-                                 blank=True)
     in_use = models.BooleanField(default=True)
     capability = models.CharField(max_length=2048, default='', blank=True)
     info_url = models.CharField(max_length=200, default='', blank=True)
     wiki_url = models.CharField(max_length=200, default='', blank=True)
+    image_url = models.FileField(default=None, storage=LauncherImageStorage(), upload_to=image_path, null=True,
+                                 blank=True)
 
     def __str__(self):
         return self.name
@@ -218,14 +216,6 @@ class Pad(models.Model):
         verbose_name_plural = 'Pads'
 
 
-class LSP(Agency):
-    super
-
-    class Meta:
-        verbose_name = 'LSP'
-        verbose_name_plural = 'LSPs'
-
-
 class Mission(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255, blank=True, default="")
@@ -246,6 +236,7 @@ class Launch(models.Model):
     name = models.CharField(max_length=255, blank=True)
     img_url = models.CharField(max_length=255, blank=True, null=True)
     status = models.IntegerField(blank=True, null=True)
+    status_name = models.CharField(max_length=255,blank=True, null=True)
     netstamp = models.IntegerField(blank=True, null=True)
     wsstamp = models.IntegerField(blank=True, null=True)
     westamp = models.IntegerField(blank=True, null=True)
@@ -262,7 +253,7 @@ class Launch(models.Model):
     holdreason = models.CharField(max_length=255, blank=True, null=True)
     failreason = models.CharField(max_length=255, blank=True, null=True)
     hashtag = models.CharField(max_length=255, blank=True, null=True)
-    lsp = models.ForeignKey(LSP, related_name='launch', null=True, on_delete=models.CASCADE)
+    lsp = models.ForeignKey(Agency, related_name='launch', null=True, on_delete=models.CASCADE)
     launcher = models.ForeignKey(Launcher, related_name='launch', null=True, on_delete=models.CASCADE)
     pad = models.ForeignKey(Pad, related_name='launch', null=True, on_delete=models.CASCADE)
     mission = models.ForeignKey(Mission, related_name='launch', null=True, on_delete=models.CASCADE)

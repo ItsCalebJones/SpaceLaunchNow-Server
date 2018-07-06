@@ -24,9 +24,9 @@ class LauncherDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Launcher
-        fields = ('id', 'url', 'name', 'description', 'family', 's_family', 'full_name', 'agency',
+        fields = ('id', 'url', 'name', 'description', 'family', 'full_name', 'agency',
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
-                  'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust', 'vehicle_class',
+                  'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust',
                   'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url',)
 
 
@@ -96,7 +96,7 @@ class LocationSerializer(serializers.ModelSerializer):
 class LSPSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = LSP
+        model = Agency
         fields = ('id', 'name', 'country_code', 'abbrev', 'type', 'info_url', 'wiki_url')
 
 

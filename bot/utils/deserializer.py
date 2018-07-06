@@ -2,6 +2,7 @@ import datetime
 import pytz
 
 from api.models import *
+from api.utils.utilities import get_mission_type, get_agency_type, get_launch_status
 from bot.models import *
 
 
@@ -9,6 +10,9 @@ def launch_json_to_model(data):
     id = data['id']
     name = data['name']
     status = data['status']
+    if status < 1 or status > 7:
+        print id
+    status_name = get_launch_status(data['status'])
     netstamp = data['netstamp']
     wsstamp = data['wsstamp']
     westamp = data['westamp']
@@ -31,6 +35,7 @@ def launch_json_to_model(data):
     launch, created = Launch.objects.get_or_create(id=id)
     launch.name = name
     launch.status = status
+    launch.status_name = status_name
     launch.netstamp = netstamp
     launch.wsstamp = wsstamp
     launch.westamp = westamp
@@ -110,7 +115,7 @@ def get_mission(launch, data):
         mission, created = Mission.objects.get_or_create(id=data['missions'][0]['id'])
         mission.name = data['missions'][0]['name']
         mission.type = data['missions'][0]['type']
-        mission.type_name = data['missions'][0]['typeName']
+        mission.type_name = get_mission_type(data['missions'][0]['type'])
         mission.description = data['missions'][0]['description']
         mission.save()
         return mission
@@ -122,7 +127,7 @@ def get_lsp(launch, data):
         lsp.name = data['lsp']['name']
         lsp.country_code = data['lsp']['countryCode']
         lsp.abbrev = data['lsp']['abbrev']
-        lsp.type = data['lsp']['type']
+        lsp.type = get_agency_type(data['lsp']['type'])
         if len(data['lsp']['infoURLs']) > 0:
             lsp.info_url = data['lsp']['infoURLs'][0]
         lsp.wiki_url = data['lsp']['wikiURL']

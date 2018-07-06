@@ -5,7 +5,7 @@
         class="input-field file-field col s12{% if field.required %} required{% endif %}{% if bound_field.errors %} has-error{% endif %}"
    {% endattrs %}>
         <div class="btn">
-            {% part field prefix %}<span>{% trans 'File' %}</span>{% endpart %}
+            {% part field prefix %}<span>{{ bound_field.label }}</span>{% endpart %}
             <input type="file" name="{{ bound_field.html_name }}"/>
         </div>
         {% part field suffix %}{% endpart %}{% part field control %}<div class="file-path-wrapper">
@@ -30,5 +30,10 @@
         {% if bound_field.errors %}
             {% include  'material/field_errors.html' %}
         {% endif %}{% endpart %}{{ hidden_initial }}
+
     </div>
+        <div class="file-field-clear">
+            <input id="{{ bound_field.html_name }}-clear_id" name="{{ bound_field.html_name }}-clear" type="checkbox">
+            <label for="{{ bound_field.html_name }}-clear_id">{{ field.widget.clear_checkbox_label }}</label>
+        </div>
 </div>{% endpart %}
