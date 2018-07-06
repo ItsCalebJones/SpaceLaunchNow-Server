@@ -123,7 +123,7 @@ def get_mission(launch, data):
 
 def get_lsp(launch, data):
     if 'lsp' in data and data['lsp'] is not None:
-        lsp, created = LSP.objects.get_or_create(id=data['lsp']['id'])
+        lsp, created = Agency.objects.get_or_create(id=data['lsp']['id'])
         lsp.name = data['lsp']['name']
         lsp.country_code = data['lsp']['countryCode']
         lsp.abbrev = data['lsp']['abbrev']
