@@ -33,7 +33,7 @@ class AgencyHyperlinkedSerializer(QueryFieldsMixin, serializers.HyperlinkedModel
         model = Agency
         fields = ('id', 'url', 'name', 'featured', 'launchers', 'orbiters', 'launcher_list', 'orbiter_list',
                   'description', 'legacy_image_url', 'image_url', 'legacy_nation_url', 'nation_url', 'ceo',
-                  'founding_year', 'logo_url', 'launch_library_url', 'launch_library_id')
+                  'founding_year', 'logo_url', 'launch_library_url',)
 
 
 # class AgencyModelSerializer(QueryFieldsMixin, serializers.ModelSerializer):
@@ -52,7 +52,7 @@ class LauncherDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSer
         model = Launcher
         fields = ('id', 'url', 'name', 'description', 'family', 'full_name', 'agency',
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
-                  'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust', 'vehicle_class',
+                  'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust',
                   'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url')
 
 
