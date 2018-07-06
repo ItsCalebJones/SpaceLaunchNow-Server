@@ -216,14 +216,6 @@ class Pad(models.Model):
         verbose_name_plural = 'Pads'
 
 
-class LSP(Agency):
-    super
-
-    class Meta:
-        verbose_name = 'LSP'
-        verbose_name_plural = 'LSPs'
-
-
 class Mission(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255, blank=True, default="")
@@ -261,7 +253,7 @@ class Launch(models.Model):
     holdreason = models.CharField(max_length=255, blank=True, null=True)
     failreason = models.CharField(max_length=255, blank=True, null=True)
     hashtag = models.CharField(max_length=255, blank=True, null=True)
-    lsp = models.ForeignKey(LSP, related_name='launch', null=True, on_delete=models.CASCADE)
+    lsp = models.ForeignKey(Agency, related_name='launch', null=True, on_delete=models.CASCADE)
     launcher = models.ForeignKey(Launcher, related_name='launch', null=True, on_delete=models.CASCADE)
     pad = models.ForeignKey(Pad, related_name='launch', null=True, on_delete=models.CASCADE)
     mission = models.ForeignKey(Mission, related_name='launch', null=True, on_delete=models.CASCADE)

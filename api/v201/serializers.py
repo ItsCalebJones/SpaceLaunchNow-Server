@@ -96,7 +96,7 @@ class LocationSerializer(serializers.ModelSerializer):
 class LSPSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = LSP
+        model = Agency
         fields = ('id', 'name', 'country_code', 'abbrev', 'type', 'info_url', 'wiki_url')
 
 
