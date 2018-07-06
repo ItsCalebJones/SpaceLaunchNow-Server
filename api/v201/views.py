@@ -51,6 +51,7 @@ class AgencyViewSet(ModelViewSet):
     search_fields = ('^name',)
     ordering_fields = ('id', 'name', 'featured')
 
+
 class LaunchersViewSet(ModelViewSet):
     """
     API endpoint that allows Launchers to be viewed.
