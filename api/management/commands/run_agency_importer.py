@@ -2,6 +2,8 @@ import requests
 from api.models import *
 from django.core.management import BaseCommand
 
+from api.utils.utilities import get_agency_type
+
 
 def get_agency_data():
     Agency.objects.all().delete()
@@ -12,8 +14,7 @@ def get_agency_data():
         agency.name = data['name']
         agency.country_code = data['countryCode']
         agency.abbrev = data['abbrev']
-        #TODO Write parser
-        agency.type = str(data['type'])
+        agency.type = get_agency_type(data['type'])
         try:
             if data['infoURLs'] is not None and len(data['infoURLs']) > 0:
                 agency.info_url = data['infoURLs'][0]

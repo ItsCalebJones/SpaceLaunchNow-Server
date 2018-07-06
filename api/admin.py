@@ -25,7 +25,13 @@ class OrbiterAdmin(admin.ModelAdmin):
     list_filter = ('agency',)
 
 
+@admin.register(models.Launch)
+class LaunchAdmin(admin.ModelAdmin):
+    list_display = ('name', 'net')
+    list_filter = ('name',)
+
+
 @admin.register(models.Events)
 class EventAdmin(admin.ModelAdmin):
     list_display = ('name',)
-    ist_filter = ('name',)
+    list_filter = ('name',)
