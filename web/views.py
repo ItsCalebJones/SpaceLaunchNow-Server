@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from datetime import datetime
 from django.db.models import Q
 from django.http import Http404, HttpResponseNotFound
 from django.shortcuts import render, redirect
 
 # Create your views here.
-from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
-from bot.models import Launch
-from bot.utils.deserializer import launch_json_to_model
-from api.models import Agency as SLNAgency
+from api.models import Agency, Launch
 
 
 def index(request):
@@ -18,31 +16,25 @@ def index(request):
 
 # Create your views here.
 def next_launch(request):
-    launchLibrary = LaunchLibrarySDK()
-    response = launchLibrary.get_next_launches()
-    if response.status_code is 200:
-        response_json = response.json()
-        launch_data = response_json['launches']
-        launch = launch_json_to_model(launch_data[0])
+    launch = Launch.objects.filter(net__gt=datetime.now()).order_by('net').first()
+    if launch:
         return redirect('launch_by_id', pk=launch.id)
     else:
         return redirect('launches')
 
 
 # Create your views here.
-def launch_by_id(request, pk, launch=None):
+def launch_by_id(request, pk=None, launch=None):
     if launch is not None:
         return create_launch_view(request, launch)
-    else:
-        launchLibrary = LaunchLibrarySDK()
-        response = launchLibrary.get_launch_by_id(pk)
-        if response.status_code is 200:
-            response_json = response.json()
-            launch_data = response_json['launches']
-            launch = launch_json_to_model(launch_data[0])
+    elif pk is not None:
+        launch = Launch.objects.filter(pk=pk).first()
+        if launch:
             return create_launch_view(request, launch)
         else:
             raise Http404
+    else:
+        raise Http404
 
 
 def get_launch_status(launch):
@@ -60,11 +52,8 @@ def get_launch_status(launch):
 def create_launch_view(request, launch):
     youtube_urls = []
     vids = launch.vid_urls.all()
-    status = get_launch_status(launch)
-    try:
-        agency = SLNAgency.objects.get(launch_library_id=launch.lsp.id)
-    except SLNAgency.DoesNotExist:
-        agency = None
+    status = launch.status_name
+    agency = launch.lsp
     launches_good = Launch.objects.filter(lsp=launch.lsp, status=3)
     launches_bad = Launch.objects.filter(lsp=launch.lsp, status=4)
     launches_pending = Launch.objects.filter(Q(lsp=launch.lsp) & Q(Q(status=1) | Q(status=2)))
@@ -78,20 +67,16 @@ def create_launch_view(request, launch):
 
 # Create your views here.
 def launches(request,):
-    launchLibrary = LaunchLibrarySDK()
     query = request.GET.get('q')
+
     if query is not None:
-        response = launchLibrary.get_next_launches(next_count=5, launch_service_provider=query)
+        _launches = Launch.objects.filter(net__gt=datetime.now()).order_by('net')
+        _launches = _launches.filter(lsp__abbrev=query)[:5]
     else:
-        response = launchLibrary.get_next_launches(next_count=5, tbd=True)
-    if response.status_code is 200:
-        response_json = response.json()
-        launch_data = response_json['launches']
-        _launches = []
-        for launch in launch_data:
-            launch = launch_json_to_model(launch)
-            launch.save()
-            _launches.append(launch)
+        _launches = Launch.objects.filter(net__gt=datetime.now()).order_by('net')[:5]
+
+
+    if _launches:
         return render(request, 'web/launches.html', {'launches': _launches, 'query': query})
     else:
         raise Http404
