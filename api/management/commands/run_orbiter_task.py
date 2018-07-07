@@ -20,6 +20,7 @@ class Command(BaseCommand):
                         Orbiter.objects.create(id=orb['id'], name=orb['name'], agency=orb['agency'],
                                                launch_agency=agency, history=orb['history'], details=orb['details'],
                                                image_url=orb['image_url'], legacy_nation_url=orb['legacy_nation_url'],
+                                               legacy_image_url=orb['legacy_image_url'],
                                                nation_url=orb['nation_url'], wiki_link=orb['wiki_link'],
                                                in_use=orb['in_use'], capability=orb['capability'])
                         print "Added " + orb['name']
