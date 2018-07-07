@@ -260,7 +260,7 @@ class LaunchLibrarySync:
                   "background": True,
                   "launch_id": launch.id,
                   "launch_name": launch.name,
-                  "launch_image": launch.rocket.imageURL,
+                  "launch_image": launch.rocket.image_url.url,
                   "launch_net": launch.netstamp,
                   "launch_location": launch.location.name,
                   "notification_type": notification_type,
