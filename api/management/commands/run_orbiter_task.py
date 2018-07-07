@@ -1,9 +1,6 @@
 import json
-
 from django.core.management import BaseCommand
-
 from api.models import Orbiter, Agency
-from bot.tasks import logger
 
 
 class Command(BaseCommand):
@@ -20,10 +17,11 @@ class Command(BaseCommand):
                     if Agency.objects.filter(name=orb['agency']).exists():
                         agency = Agency.objects.get(name=orb['agency'])
 
-                        Orbiter.objects.create(id=orb['id'], name=orb['name'], agency=orb['agency'],launch_agency=agency,
-                                               history=orb['history'], details=orb['details'], image_url=orb['image_url'],
-                                               legacy_nation_url=orb['legacy_nation_url'], nation_url=orb['nation_url'],
-                                               wiki_link=orb['wiki_link'], in_use=orb['in_use'], capability=orb['capability'])
+                        Orbiter.objects.create(id=orb['id'], name=orb['name'], agency=orb['agency'],
+                                               launch_agency=agency, history=orb['history'], details=orb['details'],
+                                               image_url=orb['image_url'], legacy_nation_url=orb['legacy_nation_url'],
+                                               nation_url=orb['nation_url'], wiki_link=orb['wiki_link'],
+                                               in_use=orb['in_use'], capability=orb['capability'])
                         print "Added " + orb['name']
 
                     else:
