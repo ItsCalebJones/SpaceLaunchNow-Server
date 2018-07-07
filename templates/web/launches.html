@@ -114,15 +114,15 @@
                             <div class="media">
                                 <a class="relative" href="/launch/{{ launch.id }}">
                                     <img class="card-img"
-                                         src="https://maps.googleapis.com/maps/api/staticmap?center={{ launch.location.name }}&scale=2&zoom=7&size=720x300&maptype=roadmap&key=AIzaSyBkjvMIaP-KQrHWJ_aFndxsNS7KbDPu9Zw&markers=color:red%|{{ launch.location.name }}"
+                                         src="https://maps.googleapis.com/maps/api/staticmap?center={{ launch.location.name }}&scale=2&zoom=7&size=720x300&maptype=roadmap&key=AIzaSyBkjvMIaP-KQrHWJ_aFndxsNS7KbDPu9Zw&markers=color:red%|{{ launch.pad.location.name }}"
                                          alt="">
 
                                 </a>
                             </div>
                             <div class="card-header card-header-info">
-                                {% if launch.img_url %}
+                                {% if launch.launcher.img_url %}
                                     <img class="img-raised rounded-circle img-fluid text-center"
-                                         src="{{ launch.img_url }}"
+                                         src="{{ launch.launcher.img_url }}"
                                          style="max-width: 35%;overflow: hidden;margin: -100px 0 0 0;width: 125px;height: 125px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                                 {% else %}
                                     <img class="img-raised rounded-circle img-fluid text-center"

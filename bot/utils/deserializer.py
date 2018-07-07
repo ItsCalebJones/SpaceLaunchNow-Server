@@ -60,7 +60,7 @@ def launch_json_to_model(data):
     for url in info_urls:
         InfoURLs.objects.create(info_url=url, launch=launch)
     launch.location = get_location(launch, data)
-    launch.rocket = get_rocket(launch, data)
+    launch.launcher = get_rocket(launch, data)
     launch.mission = get_mission(launch, data)
     launch.lsp = get_lsp(launch, data)
     check_notification(launch)

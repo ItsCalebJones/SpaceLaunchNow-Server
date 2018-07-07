@@ -71,7 +71,7 @@
 {% block content %}
 {% if launch.img_url %}
     <div class="page-header header-filter" data-parallax="true"
-         style="background-image: url({{ launch.img_url }});">
+         style="background-image: url({{ launch.launcher.img_url }});">
 {% else %}
     <div class="page-header header-filter" data-parallax="true"
          style="background-image: url('https://firebasestorage.googleapis.com/v0/b/space-launch-now.appspot.com/o/16072049543_53f7db3aa5_b.jpg?alt=media&token=2b9d5907-7c3a-4af9-9b85-f0a200d9d04b');">
@@ -79,18 +79,24 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-10 ml-auto mr-auto text-center">
-            <h1 class="title text-white">{{ launch.rocket.name }}</h1>
+            <h1 class="title text-white">{{ launch.launcher.name }}</h1>
             <h2 class="text-white" style="margin: 5px;">{{ status }}</h2>
+            {% if launch.failreason %}
+            <span class="badge badge-pill badge-danger">{{ launch.failreason }}</span>
+            {% endif %}
+            {% if launch.holdreason %}
+            <span class="badge badge-pill badge-warning">{{ launch.holdreason }}</span>
+            {% endif %}
             <hr class="col-lg-8" style="background-color: white">
-            <h2 class="title text-white" style="margin: 5px;" id="countdown">L - 00 : 00 : 00 : 00</h2>
+            <h2 class="title text-white" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h2>
             <h3 class="text-white" style="margin: -5px;" id="date">{{ launch.net }}</h3>
             <hr class="col-lg-8" style="background-color: white">
             <span class="badge badge-pill badge-primary">{{ launch.lsp.name }}</span>
-            {% if launch.location.pads.all.first %}
-                <span class="badge badge-pill badge-primary">{{ launch.location.pads.all.first.name }}</span>
+            {% if launch.pad %}
+                <span class="badge badge-pill badge-primary">{{ launch.pad.name }}</span>
             {% endif %}
-            {% if launch.location.name %}
-                <span class="badge badge-pill badge-primary">{{ launch.location.name }}</span>
+            {% if launch.pad.location.name %}
+                <span class="badge badge-pill badge-primary">{{ launch.pad.location.name }}</span>
             {% endif %}
             {% if launch.probability > 0 %}
                 <span class="badge badge-pill badge-primary">Probability: {{ launch.probability }}%</span>
@@ -112,10 +118,10 @@
                     <div class="card-header card-header-danger text-center">
                         {% if launch.mission %}
                             <h1 class="title text-white">{{ launch.mission.name }}</h1>
-                            <h2 class="subheading text-white">{{ launch.rocket.name }}</h2>
+                            <h2 class="subheading text-white">{{ launch.launcher.name }}</h2>
                         {% else %}
                             <h1 class="title text-white">{{ launch.name }}</h1>
-                            <h2 class="subheading text-white">{{ launch.rocket.name }}</h2>
+                            <h2 class="subheading text-white">{{ launch.launcher.name }}</h2>
                         {% endif %}
 
                     </div>
@@ -152,7 +158,9 @@
                     <span class="badge badge-pill badge-default">Pending: {{ launches.pending|length }}</span>
                     <br>
                     <br>
+                    {% if agency.description %}
                     <p>{{ agency.description }}</p>
+                    {% endif %}
                     {% if launch.lsp.info_url %}
                         <a class="btn btn-primary btn-lg" href="{{ launch.lsp.info_url }}">INFO</a>
                     {% endif %}
@@ -168,12 +176,12 @@
                         <!-- Date/Time -->
                         <h3 class="card-title">Launch Vehicle</h3>
                         <hr>
-                        {% with rocket=launch.rocket %}
-                            <h4>{{ rocket.name }}</h4>
+                        {% with launcher=launch.launcher %}
+                            <h4>{{ launcher.name }}</h4>
 
-                            <p>Configuration: {{ rocket.configuration }}</p>
+                            <p>Configuration: {{ launcher.configuration }}</p>
 
-                            <p>Family: {{ rocket.family }}</p>
+                            <p>Family: {{ launcher.family }}</p>
                         {% endwith %}
                     </div>
                 </div>
@@ -227,16 +235,16 @@
             </div>
             <div class="row text-center">
                 <div class="container">
-                    <h3 class="text-center card-title"><b>{{ launch.location.name }}</b></h3>
-                    <h4 class="text-center">{{ launch.location.pads.all.first.name }}</h4>
+                    <h3 class="text-center card-title"><b>{{ launch.pad.location.name }}</b></h3>
+                    <h4 class="text-center">{{ launch.pad.name }}</h4>
                     <hr>
                     <div class="col-lg-12">
                         <iframe
                                 width="100%"
-                                height="500"
+                                height="400"
                                 frameborder="0" style="border:0"
                                 src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBkjvMIaP-KQrHWJ_aFndxsNS7KbDPu9Zw
-    &q={{ launch.location.name }}&zoom=10" allowfullscreen>
+    &q={{ launch.pad.location.name }}&zoom=10" allowfullscreen>
 
                         </iframe>
                     </div>
@@ -289,10 +297,9 @@
     </div>
     <script src="{% static 'material_kit/js/dateFormat.js' %}" type="text/javascript"></script>
     <script>
-        var countDownDate = new Date({{launch.netstamp}} * 1000
-        )
-        ;
-        document.getElementById("date").innerHTML = dateFormat(countDownDate, "mmmm dS, h:MM Z");
+        var countDownDate = new Date("{{launch.net.isoformat}}");
+
+        document.getElementById("date").innerHTML = dateFormat(countDownDate, "mmmm dS, yyyy - h:MM Z");
         // Set the date we're counting down to
 
         var now = new Date().getTime();
@@ -332,9 +339,11 @@
                 // If the count down is finished, write some text
                 if (distance < 0) {
                     clearInterval(x);
-                    document.getElementById("demo").innerHTML = "EXPIRED";
+                    document.getElementById("countdown").innerHTML = "L - 00 : 00 : 00 : 00";
                 }
             }, 1000);
+        } else {
+            document.getElementById("countdown").innerHTML = "L - 00 : 00 : 00 : 00";
         }
 
 

@@ -71,10 +71,9 @@ def launches(request,):
 
     if query is not None:
         _launches = Launch.objects.filter(net__gt=datetime.now()).order_by('net')
-        _launches = _launches.filter(lsp__abbrev=query)[:5]
+        _launches = _launches.filter(lsp__abbrev__contains=query)[:5]
     else:
         _launches = Launch.objects.filter(net__gt=datetime.now()).order_by('net')[:5]
-
 
     if _launches:
         return render(request, 'web/launches.html', {'launches': _launches, 'query': query})
