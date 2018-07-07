@@ -127,6 +127,7 @@ class Orbiter(models.Model):
 class Launcher(models.Model):
     name = models.CharField(max_length=200)
     active = models.BooleanField(default=True)
+    in_use = models.BooleanField(default=True)
     description = models.CharField(max_length=2048, default='', blank=True)
     family = models.CharField(max_length=200, default='', blank=True)
     agency = models.CharField(max_length=200, default='', blank=True)
@@ -144,11 +145,10 @@ class Launcher(models.Model):
     to_thrust = models.IntegerField(blank=True, null=True)
     apogee = models.IntegerField(blank=True, null=True)
     vehicle_range = models.IntegerField(blank=True, null=True)
-    legacy_image_url = models.CharField(max_length=200, default='', blank=True)
-    in_use = models.BooleanField(default=True)
     capability = models.CharField(max_length=2048, default='', blank=True)
-    info_url = models.CharField(max_length=200, default='', blank=True)
-    wiki_url = models.CharField(max_length=200, default='', blank=True)
+    info_url = models.CharField(max_length=200, default='', blank=True, null=True)
+    wiki_url = models.CharField(max_length=200, default='', blank=True, null=True)
+    legacy_image_url = models.CharField(max_length=200, default='', blank=True)
     image_url = models.FileField(default=None, storage=LauncherImageStorage(), upload_to=image_path, null=True,
                                  blank=True)
 
