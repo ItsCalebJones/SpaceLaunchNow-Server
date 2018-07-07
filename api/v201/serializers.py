@@ -110,7 +110,7 @@ class MissionSerializer(serializers.ModelSerializer):
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     pad = PadSerializer(many=False, read_only=True)
-    launcher = LauncherSerializer(many=False, read_only=True)
+    launcher = LauncherDetailSerializer(many=False, read_only=True)
     lsp = LSPSerializer(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
 
