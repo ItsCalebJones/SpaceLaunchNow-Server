@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.template.defaultfilters import slugify
 from datetime import datetime
 from django.db.models import Q
@@ -19,17 +20,24 @@ def index(request):
 def next_launch(request):
     launch = Launch.objects.filter(net__gt=datetime.now()).order_by('net').first()
     if launch:
-        return redirect('launch_by_id', slug=launch.slug)
+        return redirect('launch_by_slug', slug=launch.slug)
     else:
         return redirect('launches')
 
 
 # Create your views here.
-def launch_by_id(request, slug):
-    launch = Launch.objects.get(slug=slug)
-    if launch:
-        return create_launch_view(request, launch)
-    else:
+def launch_by_slug(request, slug):
+    try:
+        return create_launch_view(request, Launch.objects.get(slug=slug))
+    except ObjectDoesNotExist:
+        raise Http404
+
+
+# Create your views here.
+def launch_by_id(request, id):
+    try:
+        return redirect('launch_by_slug', slug=Launch.objects.get(pk=id).slug)
+    except ObjectDoesNotExist:
         raise Http404
 
 

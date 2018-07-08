@@ -36,7 +36,7 @@ def get_message(launch, diff):
     return '%s launching from %s by %s in %s. \n %s' % (launch.name, launch.location.name,
                                                         launch.lsp.name,
                                                         seconds_to_time(diff),
-                                                        'https://spacelaunchnow.me/launch/%s' % launch.id)
+                                                        'https://spacelaunchnow.me/launch/%s' % launch.slug)
 
 
 class LaunchLibrarySync:
