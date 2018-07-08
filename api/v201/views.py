@@ -154,7 +154,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
     Return a list of future Launches
     """
     now = datetime.now()
-    queryset = Launch.objects.filter(net__gte=now).all()
+    queryset = Launch.objects.filter(net__gte=now).order_by('net').all()
     serializer_class = LaunchSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
@@ -178,7 +178,7 @@ class PreviousLaunchViewSet(ModelViewSet):
     Return a list of previous Launches
     """
     now = datetime.now()
-    queryset = Launch.objects.filter(net__lte=now).all()
+    queryset = Launch.objects.filter(net__lte=now).order_by('-net').all()
     serializer_class = LaunchSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {

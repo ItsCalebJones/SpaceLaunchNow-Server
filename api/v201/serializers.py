@@ -50,7 +50,7 @@ class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer)
     class Meta:
         model = Agency
         fields = ('id', 'url', 'name', 'featured', 'launchers', 'orbiters', 'description', 'image_url', 'nation_url',
-                  'ceo', 'founding_year', 'logo_url', 'launch_library_url', 'launcher_list',
+                  'administrator', 'founding_year', 'logo_url', 'launch_library_url', 'launcher_list',
                   'orbiter_list',)
 
 
@@ -61,7 +61,7 @@ class AgencyDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSer
     class Meta:
         model = Agency
         fields = ('id', 'url', 'name', 'featured', 'launchers', 'orbiters', 'description', 'image_url', 'nation_url',
-                  'ceo', 'founding_year', 'logo_url', 'launch_library_url', 'launcher_list',
+                  'administrator', 'founding_year', 'logo_url', 'launch_library_url', 'launcher_list',
                   'orbiter_list',)
 
 
