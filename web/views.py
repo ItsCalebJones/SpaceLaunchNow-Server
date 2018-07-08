@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.template.defaultfilters import slugify
 from datetime import datetime
 from django.db.models import Q
 from django.http import Http404, HttpResponseNotFound
@@ -18,21 +19,16 @@ def index(request):
 def next_launch(request):
     launch = Launch.objects.filter(net__gt=datetime.now()).order_by('net').first()
     if launch:
-        return redirect('launch_by_id', pk=launch.id)
+        return redirect('launch_by_id', slug=launch.slug)
     else:
         return redirect('launches')
 
 
 # Create your views here.
-def launch_by_id(request, pk=None, launch=None):
-    if launch is not None:
+def launch_by_id(request, slug):
+    launch = Launch.objects.get(slug=slug)
+    if launch:
         return create_launch_view(request, launch)
-    elif pk is not None:
-        launch = Launch.objects.filter(pk=pk).first()
-        if launch:
-            return create_launch_view(request, launch)
-        else:
-            raise Http404
     else:
         raise Http404
 

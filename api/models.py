@@ -12,7 +12,7 @@ from custom_storages import LogoStorage, AgencyImageStorage, OrbiterImageStorage
 #
 # Example: SpaceX has Falcon 9 Launchers and Dragon orbiters
 #
-from django.template.defaultfilters import truncatechars
+from django.template.defaultfilters import truncatechars, slugify
 import urllib
 
 
@@ -253,6 +253,7 @@ class Launch(models.Model):
     holdreason = models.CharField(max_length=255, blank=True, null=True)
     failreason = models.CharField(max_length=255, blank=True, null=True)
     hashtag = models.CharField(max_length=255, blank=True, null=True)
+    slug = models.SlugField(unique=True)
     lsp = models.ForeignKey(Agency, related_name='launch', null=True, on_delete=models.CASCADE)
     launcher = models.ForeignKey(Launcher, related_name='launch', null=True, on_delete=models.CASCADE)
     pad = models.ForeignKey(Pad, related_name='launch', null=True, on_delete=models.CASCADE)
@@ -260,6 +261,10 @@ class Launch(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name + "-" + str(self.id))
+        super(Launch, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Launch'
