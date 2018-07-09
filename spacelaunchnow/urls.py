@@ -18,7 +18,7 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.generic import TemplateView
 
-from api.v201.router import api_urlpatterns as api_v201
+from api.v300.router import api_urlpatterns as api_v201
 from api.v200.router import api_urlpatterns as api_v2
 from api.v1.router import api_urlpatterns as api_v1
 from web import views as landing_views
@@ -27,12 +27,13 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^v1/', include(api_v1, namespace='v1')),
     url(r'^2.0.0/', include(api_v2, namespace='v200')),
-    url(r'^2.0.1/', include(api_v201, namespace='v201')),
+    url(r'^3.0.0/', include(api_v201, namespace='v300')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^docs/', include('rest_framework_docs.urls')),
     url(r'^$', landing_views.index, name='index'),
     url(r'^next/', landing_views.next_launch, name='next'),
-    url(r'^launch/(?P<pk>\d+)/$', landing_views.launch_by_id, name='launch_by_id'),
+    url(r'^launch/(?P<id>\d+)/$', landing_views.launch_by_id, name='launch_by_id'),
+    url(r'^launch/(?P<slug>[-\w]+)/$', landing_views.launch_by_slug, name='launch_by_slug'),
     url(r'^launch/$', landing_views.launches, name='launches'),
     url(r'^news/', include('zinnia.urls')),
     url(r'^comments/', include('django_comments.urls')),

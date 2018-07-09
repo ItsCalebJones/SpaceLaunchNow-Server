@@ -1,5 +1,6 @@
 {% load staticfiles %}
 {% load user_agents %}
+{% load tz %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,110 +17,146 @@
 
     <title>Space Launch Now</title>
 
-    <link rel="shortcut icon" href="{%  static 'img/favicon.ico' %}">
-    <!-- Bootstrap core CSS -->
-    <link href="{% static  'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
+    <!--     Fonts and icons     -->
+    <link rel="stylesheet" type="text/css"
+          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css"
+          integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
 
-    <!-- Custom fonts for this template -->
-    <link href="{% static  'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
-          rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic'
-          rel='stylesheet' type='text/css'>
-
-    <!-- Plugin CSS -->
-    <link href="{% static  'vendor/magnific-popup/magnific-popup.css' %}" rel="stylesheet">
-
-    <!-- Custom styles for this template -->
-    <link href="{% static  'css/creative.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="{% static  'css/Footer-with-button-logo.css' %}">
-
-    <link rel="stylesheet" href="{% static  'compiled/flipclock.css' %}">
+    <!-- CSS Files -->
+    <link href="{% static  'material_kit/css/material-kit.css' %}" rel="stylesheet">
+    <link href="{% static  'material_kit/css/spacelaunchnow.css' %}" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
+    <link rel="stylesheet" href="{% static  'compiled/flipclock.css' %}">
     <script src="{% static  'compiled/flipclock.js' %}"></script>
     {% block extrahead %}
     {% endblock %}
 </head>
 
-<body id="page-top">
+<body class="index-page sidebar-collapse" id="page-top">
 
 {% block navigation %}
 {% endblock %}
 
 {% block content %}
 {% endblock %}
-
-
-<footer id="myFooter">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-3">
-
-                <div class="logo">
-                    <img style='width:80%;' alt='Get it on Google Play'
-                         src="{% static  'img/ic_launcher.png' %}"/></a>
-                </div>
-
+<!--  End Modal -->
+<div class="col-lg-12 justify-content-center align-self-center">
+    <div class="row justify-content-center align-items-center align-self-center">
+        <div class="col-lg-5">
+            <div class="card" style="height: 720px;">
+                <a class="twitter-timeline" data-height="720" data-link-color="#981CEB"
+                   href="https://twitter.com/SpaceLaunchNow/lists/space-launch-news?ref_src=twsrc%5Etfw">Space
+                    Launch
+                    News</a>
+                <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
             </div>
-            <div class="col-sm-2">
-                <h5>About Me</h5>
-                <ul>
-                    <li><a href="http://calebjones.me/">Blog</a></li>
-                    <li><a href="https://twitter.com/koun7erfit">Twitter</a></li>
-                    <li><a href="https://go.twitch.tv/koun7erfit">Twitch</a></li>
-                </ul>
-            </div>
-            <div class="col-sm-2">
-                <h5>Other</h5>
-                <ul>
-                    <li><a href="https://play.google.com/store/apps/dev?id=7111684947714289915">Apps</a></li>
-                    <li><a href="https://play.google.com/store/apps/details?id=me.calebjones.pubgtracker">PUBG Stat Tracker</a></li>
-                    <li><a href="https://play.google.com/store/apps/details?id=me.calebjones.blogsite">The Jones Theory</a></li>
-
-                </ul>
-            </div>
-            <div class="col-sm-2">
-                <h5>Support</h5>
-                <ul>
-
-                    <li><a href="https://www.reddit.com/r/spacelaunchnow/">Reddit</a></li>
-                    <li><a href="mailto:support@calebjones.me">Email</a></li>
-                    <li><a href="https://discord.gg/chaQsQW">LL - Discord</a></li>
-                </ul>
-            </div>
-            <div class="col-sm-3">
-                <div class="social-networks">
-                    <a href="https://twitter.com/SpaceLaunchNow" class="twitter"><i class="fa fa-twitter"></i></a>
-                    <a href="https://www.facebook.com/spacelaunchnow/" class="facebook"><i
-                            class="fa fa-facebook"></i></a>
-                    <a href="https://www.reddit.com/r/spacelaunchnow/" class="reddit"><i class="fa fa-reddit"></i></a>
-                    <a href="https://www.reddit.com/r/spacelaunchnow/" class="github"><i class="fa fa-github"></i></a>
-
-                </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="card" style="height: 720px;">
+                <iframe id="widgetbot"
+                        src="https://widgetbot.io/channels/380226438584074242/380226438584074245/"
+                        scrolling="no" frameborder="0" allowtransparency="true"
+                        style="position: static; width: 100%; height: 100%;"></iframe>
             </div>
         </div>
     </div>
-    <div class="footer-copyright">
-        <p>© 2017 Copyright | Powered by <a href="https://launchlibrary.net/docs/1.2.1/api.html">Launch
-            Library</a></p>
+</div>
+<br>
+<div class="call-to-action bg-dark">
+    <div class="container text-center">
+        <div class="row text-center">
+            <div class="col-sm-6 text-center">
+                <a href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+                    <img style="width:100%" alt='Get it on Google Play'
+                         src="{% static 'img/en_get.svg' %}"/></a>
+            </div>
+            <div class="col-sm-6 text-center">
+                <a href='#'>
+                    <img style="margin:5%; width:88%;" alt='Get it on the App Store'
+                         src="{% static 'img/app_store.svg' %}"/></a>
+            </div>
+        </div>
+    </div>
+</div>
+<footer class="footer" data-background-color="black">
+    <div class="container">
+        <nav class="float-left">
+            <ul>
+                <li>
+                    <a href="/site/about">
+                        About Us
+                    </a>
+                </li>
+                <li>
+                    <a href="/site/privacy">
+                        Privacy Policy
+                    </a>
+                </li>
+                <li>
+                    <a href="/site/tos">
+                        Terms of Use
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.facebook.com/spacelaunchnow/" class="facebook"><i
+                            class="fab fa-facebook"></i></a>
+                </li>
+                <li>
+                    <a href="https://www.instagram.com/spacelaunchnow/" class="twitter"><i class="fab fa-instagram"></i></a>
+                </li>
+                <li>
+                    <a href="https://discord.gg/JMaNs5p" class="twitter"><i class="fab fa-discord"></i></a>
+                </li>
+                <li>
+                    <a href="https://twitter.com/SpaceLaunchNow" class="twitter"><i class="fab fa-twitter"></i></a>
+                </li>
+                <li>
+                    <a href="https://github.com/itscalebjones" class="twitter"><i class="fab fa-github"></i></a>
+                </li>
+            </ul>
+        </nav>
+        <div class="copyright float-right">
+            <p>© 2017 Copyright | Powered by <a href="https://launchlibrary.net">Launch
+                Library</a></p>
+        </div>
     </div>
 </footer>
-<!-- Bootstrap core JavaScript -->
-<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
-<script src="{% static  'vendor/popper/popper.min.js' %}"></script>
-<script src="{% static  'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
 
-<!-- Plugin JavaScript -->
-<script src="{% static  'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
-<script src="{% static  'vendor/scrollreveal/scrollreveal.min.js' %}"></script>
-<script src="{% static  'vendor/magnific-popup/jquery.magnific-popup.min.js' %}"></script>
+<!--   Core JS Files   -->
+<script src="{% static 'material_kit/js/core/jquery.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'material_kit/js/core/popper.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'material_kit/js/core/bootstrap-material-design.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'material_kit/js/plugins/moment.min.js' %}"></script>
+<!--	Plugin for the Datepicker, full documentation here: https://github.com/Eonasdan/bootstrap-datetimepicker -->
+<script src="{% static 'material_kit/js/plugins/bootstrap-datetimepicker.js' %}" type="text/javascript"></script>
+<!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
+<script src="{% static 'material_kit/js/plugins/nouislider.min.js' %}" type="text/javascript"></script>
+<!-- Control Center for Now Ui Kit: parallax effects, scripts for the example pages etc -->
+<script src="{% static 'material_kit/js/material-kit.js' %}" type="text/javascript"></script>
+<script>
+    $(document).ready(function () {
+        //init DateTimePickers
+        materialKit.initFormExtendedDatetimepickers();
 
-<!-- Custom scripts for this template -->
-<script src="{% static  'js/creative.js' %}"></script>
+        // Sliders Init
+        materialKit.initSliders();
+    });
 
+
+    function scrollToDownload() {
+        if ($('.section-download').length != 0) {
+            $("html, body").animate({
+                scrollTop: $('.section-download').offset().top
+            }, 1000);
+        }
+    }
+
+
+</script>
 </body>
-
 </html>
 

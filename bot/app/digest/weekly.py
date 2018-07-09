@@ -68,13 +68,13 @@ def build_weekly_message(possible, confirmed, DEBUG=True):
         launch = confirmed[0]
         day = datetime.fromtimestamp(int(launch.netstamp)).replace(tzinfo=pytz.UTC).strftime("%A")
         message = "%s %s launching from %s on %s. (1/%i)" % (
-            compact_header, launch.name, launch.location_set.all()[0].name, day,
+            compact_header, launch.name, launch.location.name, day,
             total)
         response_id = send_twitter_update(message, DEBUG, response_id)
     elif len(confirmed) > 1:
         for index, launch in enumerate(confirmed, start=1):
             message = "%s %s launching from %s on %s. (%i/%i)" % (compact_header, launch.name,
-                                                                  launch.location_set.all()[0].name,
+                                                                  launch.location.name,
                                                                   datetime
                                                                   .fromtimestamp(int(launch.netstamp))
                                                                   .replace(tzinfo=pytz.UTC)
@@ -85,14 +85,14 @@ def build_weekly_message(possible, confirmed, DEBUG=True):
     if len(possible) == 1:
         launch = possible[0]
         message = "%s %s might launch this week from %s. (%i/%i)" % (compact_header, launch.name,
-                                                                     launch.location_set.all()[0].name,
+                                                                     launch.location.name,
                                                                      len(confirmed) + 1, total)
         response_id = send_twitter_update(message, DEBUG, response_id)
     elif len(possible) > 1:
         for index, launch in enumerate(possible, start=1):
             message = "%s %s might be launching from %s. (%i/%i)" % (compact_header,
                                                                      launch.name,
-                                                                     launch.location_set.all()[0].name,
+                                                                     launch.location.name,
                                                                      index + len(confirmed),
                                                                      total)
             response_id = send_twitter_update(message, DEBUG, response_id)

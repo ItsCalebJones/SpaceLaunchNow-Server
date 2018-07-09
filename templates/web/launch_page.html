@@ -1,13 +1,14 @@
 {% extends "web/base.html" %}
-{% load staticfiles%}
+{% load staticfiles %}
 {% load user_agents %}
 {% load embed_video_tags %}
+{% load tz %}
 {% block extrahead %}
 <meta property="fb:app_id" content="746774215504127"/>
-<meta property="og:title" content="{{ launch.name}} - {{launch.mission_set.0.name}}"/>
+<meta property="og:title" content="{{ launch.name }} - {{ launch.mission_set.0.name }}"/>
 <meta property="og:type" content="website"/>
 <meta property="og:description" content="{{ launch.mission_description }}"/>
-<meta property="og:url" content="https://spacelaunchnow.me/launch/{{launch.id}}/"/>
+<meta property="og:url" content="https://spacelaunchnow.me/launch/{{ launch.id }}/"/>
 {% if launch.img_url %}
 <meta property="og:image" content="{{ launch.img_url }}"/>
 {% else %}
@@ -18,43 +19,50 @@
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <script>
-  (adsbygoogle = window.adsbygoogle || []).push({
-    google_ad_client: "ca-pub-9824528399164059",
-    enable_page_level_ads: true
-  });
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-9824528399164059",
+            enable_page_level_ads: true
+        });
+
+
+
 
 </script>
 {% endblock %}
 
 {% block navigation %}
-<nav class="navbar navbar-expand-lg navbar-light fixed-top navbar-shrink-alt" id="indexNav">
+<!-- Navigation -->
+<nav class="navbar navbar-transparent navbar-color-on-scroll bg-primary fixed-top navbar-expand-lg">
     <div class="container">
-        <a class="navbar-brand js-scroll-trigger" href="/">Space Launch Now</a>
-        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
-                data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
-                aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarResponsive">
+        <div class="navbar-translate">
+            <a class="navbar-brand" href="#page-top"><b>Space Launch Now</b></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <div class="collapse navbar-collapse">
 
             <ul class="navbar-nav ml-auto">
 
                 <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="/">Home</a>
+                    <a class="nav-link active" href="/">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active js-scroll-trigger active" href="/next">Next</a>
+                    <a class="nav-link active" href="/next">Next</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="/launch/">Launches</a>
+                    <a class="nav-link" href="/launch">Launches</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link twitter" href="https://twitter.com/SpaceLaunchNow"><i class="fa fa-twitter"></i></a>
+                    <a class="nav-link twitter" href="https://twitter.com/SpaceLaunchNow"><i
+                            class="fab fa-twitter"></i></a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="/v1">API</a>
+                    <a class="nav-link" href="/3.0.0">API</a>
                 </li>
             </ul>
         </div>
@@ -63,170 +71,303 @@
 {% endblock %}
 
 {% block content %}
-<!-- Navigation -->
-
-<div class="container" style="margin-top:64px;margin-bottom: 16px">
-    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <!-- Space Launch Now -->
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-9824528399164059"
-         data-ad-slot="8772606898"
-         data-ad-format="auto"></ins>
-    <script>
-    (adsbygoogle = window.adsbygoogle || []).push({});
-
-    </script>
-</div>
-<div class="container">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/launch/">Launches</a></li>
-        <li class="breadcrumb-item active"><a>{{ launch.mission_set.all.0.name}}</a></li>
-    </ol>
-    <div class="jumbotron jumbotron-billboard">
-        {% if launch.img_url %}
-        <div class="img" style="background: #000 url({{ launch.img_url }}) center center;"></div>
-        {% else %}
-        <div class="img"></div>
+{% if launch.img_url %}
+<div class="page-header header-filter" data-parallax="true"
+     style="background-image: url({{ launch.launcher.img_url }});">
+    {% else %}
+    <div class="page-header header-filter" data-parallax="true"
+         style="background-image: url('https://firebasestorage.googleapis.com/v0/b/space-launch-now.appspot.com/o/16072049543_53f7db3aa5_b.jpg?alt=media&token=2b9d5907-7c3a-4af9-9b85-f0a200d9d04b');">
         {% endif %}
         <div class="container">
-            <h1>{{ launch.mission_set.all.0.name }}</h1>
-            {% if launch.rocket_set.all.0.agency_set.all.0.name  %}
-            <h2 class="subheading">{{ launch.rocket_set.all.0.agency_set.all.0.name }} - {{ launch.rocket_set.all.0.name }}</h2>
-            {% else %}
-            <h2 class="subheading">{{ launch.lsp_set.all.0.name }} - {{ launch.rocket_set.all.0.name }}</h2>
-            {% endif %}
-            <span class="meta">NET: {{ launch.net }}</span>
-            {% if not request|is_mobile %}
-            <div class="countdown" style="margin-top:10em;"></div>
-            {% endif %}
+            <div class="row">
+                <div class="col-lg-10 ml-auto mr-auto text-center">
+                    <h1 class="title text-white">{{ launch.launcher.name }}</h1>
+                    <h2 class="text-white" style="margin: 5px;">{{ status }}</h2>
+                    {% if launch.failreason %}
+                    <span class="badge badge-pill badge-danger">{{ launch.failreason }}</span>
+                    {% endif %}
+                    {% if launch.holdreason %}
+                    <span class="badge badge-pill badge-warning">{{ launch.holdreason }}</span>
+                    {% endif %}
+                    <hr class="col-lg-8" style="background-color: white">
+                    <h2 class="title text-white" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h2>
+                    <h3 class="text-white" style="margin: -5px;" id="date">{{ launch.net }}</h3>
+                    <hr class="col-lg-8" style="background-color: white">
+                    <span class="badge badge-pill badge-primary">{{ launch.lsp.name }}</span>
+                    {% if launch.pad %}
+                    <span class="badge badge-pill badge-primary">{{ launch.pad.name }}</span>
+                    {% endif %}
+                    {% if launch.pad.location.name %}
+                    <span class="badge badge-pill badge-primary">{{ launch.pad.location.name }}</span>
+                    {% endif %}
+                    {% if launch.probability > 0 %}
+                    <span class="badge badge-pill badge-primary">Probability: {{ launch.probability }}%</span>
+                    {% endif %}
+                    {% if launch.hashtag %}
+                    <span class="badge badge-pill badge-primary">{{ launch.hashtag }}</span>
+                    {% endif %}
+                </div>
+            </div>
         </div>
+    </div>
+</div>
+<div class="col-lg-10 ml-auto mr-auto mx-auto text-center">
+    <div class="container">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- Space Launch Now -->
+        <ins class="adsbygoogle"
+             style="display:block; margin-top:50px; margin-bottom:50px;"
+             data-ad-client="ca-pub-9824528399164059"
+             data-ad-slot="8772606898"
+             data-ad-format="auto"></ins>
+        <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+
+
+
+
+        </script>
     </div>
 </div>
 <!-- Page Content -->
-<div class="container">
+<div class="col-lg-10 ml-auto mr-auto mx-auto text-center">
+    <div class="main card text-center">
+        <div class="row ">
+            <!-- Post Content Column -->
+            <div class="col-lg-12 text-center">
+                <div class="card-header card-header-danger text-center">
+                    {% if launch.mission %}
+                    <h1 class="title text-white">{{ launch.mission.name }}</h1>
+                    <h2 class="subheading text-white">{{ launch.launcher.name }}</h2>
+                    {% else %}
+                    <h1 class="title text-white">{{ launch.name }}</h1>
+                    <h2 class="subheading text-white">{{ launch.launcher.name }}</h2>
+                    {% endif %}
 
-    <div class="row">
-
-
-        <!-- Post Content Column -->
-        <div class="col-lg-8">
-            {% with mission=launch.mission_set.all.0%}
-            <h2>Mission
-                <small>{{ mission.name }}</small>
-            </h2>
-            <!-- Post Content -->
-            <p class="lead">Type: {{ mission.type_name }}</p>
-
-            <p>{{ mission.description}}</p>
-            <hr>
-
-            {% endwith %}
-
-            <!-- Date/Time -->
-            <h3>Launch Window</h3>
-
-            <p>Open: {{ launch.window_start}}</p>
-
-            <p>Close: {{ launch.window_end }}</p>
-
-            <hr>
-
-            <h2 class="mt-4">Watch the Launch</h2>
-            <!-- Title -->
-            {% if youtube_urls|length > 0 %}
-            {% for url in youtube_urls %}
-            {% video url as my_video %}
-            {% if request|is_mobile %}
-                {% video my_video '85% x 25%' %}
-            {% else %}
-                {% video my_video 'medium' %}
-            {% endif %}
-
-            {% endvideo %}
-            {% endfor %}
-            {% else %}
-            <p>Check back later for live embedded streams.</p>
-            {% endif %}
-            {% if launch.vid_urls.count > 0 %}
-            <h4>Links</h4>
-            {% for url in launch.vid_urls.all %}
-            <a href="{{url.vid_url}}">{{url.vid_url}}</a><br>
-            {% endfor %}
-            {% endif %}
-
+                </div>
+            </div>
         </div>
+        <div class="row" style="margin:50px;">
+            <div class="col-md-12 ml-auto mx-auto mr-auto text-center">
+                <div class="profile">
+                    <div class="avatar">
+                        {% if agency.logo_url %}
+                        <img src="{{ agency.logo_url.url }}"
+                             alt="Circle Image"
+                             class="img-fluid mx-auto"
+                             style="max-width: 45%;">
+                        {% else %}
+                        <h1 class="title text-center"
+                            style="margin-left: 100px; margin-right:100px;">{{ launch.lsp.name }}</h1>
+                        <h2 class="subheading text-center">({{ launch.lsp.abbrev }})</h2>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <row>
+            <div class="col-md-8 ml-auto mx-auto mr-auto text-center">
+                {% if agency.ceo %}
+                <span class="badge badge-pill badge-primary">CEO: {{ agency.ceo }}</span>
+                {% endif %}
+                {% if agency.founding_year %}
+                <span class="badge badge-pill badge-warning">Founded: {{ agency.founding_year }}</span>
+                {% endif %}
+                <span class="badge badge-pill badge-info">Successes: {{ launches.good|length }}</span>
+                <span class="badge badge-pill badge-danger">Failures: {{ launches.bad|length }}</span>
+                <span class="badge badge-pill badge-default">Pending: {{ launches.pending|length }}</span>
+                <br>
+                <br>
+                {% if agency.description %}
+                <p>{{ agency.description }}</p>
+                {% endif %}
+                {% if launch.lsp.info_url %}
+                <a class="btn btn-primary btn-lg" href="{{ launch.lsp.info_url }}">INFO</a>
+                {% endif %}
+                {% if launch.lsp.wiki_url %}
+                <a class="btn btn-danger btn-lg" href="{{ launch.lsp.wiki_url }}">WIKI</a>
+                {% endif %}
+            </div>
+        </row>
+        <div class="row justify-content-center">
+            <!-- Post Content Column -->
+            <div class="col-md-4">
+                <div class="info">
+                    <!-- Date/Time -->
+                    <h3 class="card-title">Launch Vehicle</h3>
+                    <hr>
+                    {% with launcher=launch.launcher %}
+                    <h4>{{ launcher.name }}</h4>
 
-        <!-- Sidebar Widgets Column -->
-        <div class="col-md-4">
+                    <p>Configuration: {{ launcher.configuration }}</p>
+
+                    <p>Family: {{ launcher.family }}</p>
+                    {% endwith %}
+                </div>
+            </div>
+            {% if launch.mission %}
+            <div class="col-md-4">
+                <div class="info">
+                    <!-- Date/Time -->
+                    <h3 class="card-title">{{ launch.mission.type_name }}</h3>
+                    <hr>
+                    <p>{{ launch.mission.description }}</p>
+                </div>
+            </div>
+            {% endif %}
+            <div class="col-md-4">
+                <div class="info">
+                    <!-- Date/Time -->
+                    <h3 class="card-title">Launch Window</h3>
+                    <hr>
+                    <p>NET: {{ launch.net|date:"F jS Y - H:i T" }}</p>
+
+                    <p>Open: {{ launch.window_start|date:"F jS Y - H:i T" }}</p>
+
+                    <p>Close: {{ launch.window_end|date:"F jS Y - H:i T" }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="row text-center">
             <div class="container">
-                <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                <!-- Space Launch Now -->
-                <ins class="adsbygoogle"
-                     style="display:block"
-                     data-ad-client="ca-pub-9824528399164059"
-                     data-ad-slot="8772606898"
-                     data-ad-format="auto"></ins>
-                <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-
-                </script>
-            </div>
-            <!-- Categories Widget -->
-            <div class="card my-2 desktop-only">
-                <a class="twitter-timeline desktop-only"
-                   href="https://twitter.com/SpaceLaunchNow/lists/space-launch-news"
-                   data-tweet-limit="8"
-                   data-show-replies="true"
-                >Tweets from https://twitter.com/SpaceLaunchNow/lists/space-launch-news</a>
-                <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+                <div class="col-lg-12">
+                    <h3 class="text-center card-title"><b>Watch the Launch</b></h3>
+                    <hr>
+                    <!-- Title -->
+                    {% if youtube_urls|length > 0 %}
+                    {% for url in youtube_urls %}
+                    {% video url as my_video %}
+                    <div class="videoWrapper">
+                        {% if request|is_mobile %}
+                        {% video my_video '85% x 25%' %}
+                        {% else %}
+                        {% video my_video '100% x 100%' %}
+                        {% endif %}
+                    </div>
+                    <br>
+                    {% endvideo %}
+                    {% endfor %}
+                    {% else %}
+                    <p>Check back later for live embedded streams.</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
+        <div class="row text-center">
+            <div class="container">
+                <h3 class="text-center card-title"><b>{{ launch.pad.location.name }}</b></h3>
+                <h4 class="text-center">{{ launch.pad.name }}</h4>
+                <hr>
+                <div class="col-lg-12">
+                    <iframe
+                            width="100%"
+                            height="400"
+                            frameborder="0" style="border:0"
+                            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBkjvMIaP-KQrHWJ_aFndxsNS7KbDPu9Zw
+    &q={{ launch.pad.location.name }}&zoom=10" allowfullscreen>
+
+                    </iframe>
+                </div>
+            </div>
+        </div>
+        <div class="row text-center">
+            <div class="container">
+                <div class="col-lg-12">
+                    <h3 class="mt-4 card-title">Links</h3>
+                    <hr>
+                    <h4>Videos</h4>
+                    {% if launch.vid_urls.all|length > 0 %}
+                    {% for url in launch.vid_urls.all %}
+                    <a href="{{ url.vid_url }}">{{ url.vid_url }}</a><br>
+
+                    {% endfor %}
+                    {% else %}
+                    <p>No videos available for this launch!</p>
+                    {% endif %}
+                    <h4>Information</h4>
+                    {% if launch.vid_urls.all|length > 0 %}
+                    {% for i_url in launch.info_urls.all %}
+                    <a href="{{ i_url.info_url }}">{{ i_url.info_url }}</a><br>
+                    {% endfor %}
+                    {% else %}
+                    <p>No information links available for this launch!</p>
+                    {% endif %}
+                    <hr>
+                    <h5>Help <a href="https://launchlibrary.net/about.html">Launch Library</a> keep this launch up
+                        to date!</h5>
+                    <br>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 <!-- /.row -->
-<div class="container" style="margin-top:16px;margin-bottom: 16px">
+
+<div class="container">
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <!-- Space Launch Now -->
     <ins class="adsbygoogle"
-         style="display:block"
+         style="display:block; margin-top:50px; margin-bottom:50px;"
          data-ad-client="ca-pub-9824528399164059"
          data-ad-slot="8772606898"
          data-ad-format="auto"></ins>
     <script>
-    (adsbygoogle = window.adsbygoogle || []).push({});
-
+                (adsbygoogle = window.adsbygoogle || []).push({});
     </script>
 </div>
-<div class="call-to-action bg-dark">
-    <div class="container text-center">
-        <div class="row">
-            <div class="col-lg-8 mx-auto text-center">
-                <a href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-                    <img style='width:80%;' alt='Get it on Google Play'
-                         src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
-            </div>
-        </div>
-    </div>
-</div>
-<script type="text/javascript">
+<script src="{% static 'material_kit/js/dateFormat.js' %}" type="text/javascript"></script>
+<script>
+        var countDownDate = new Date("{{launch.net.isoformat}}");
 
-    var clock;
+        document.getElementById("date").innerHTML = dateFormat(countDownDate, "mmmm dS, yyyy - h:MM Z");
+        // Set the date we're counting down to
 
-    // Grab the current date
-    var currentDate = new Date();
+        var now = new Date().getTime();
+        var distance = countDownDate.getTime() - now;
+        if (distance > 0) {
+            // Update the count down every 1 second
+            var x = setInterval(function () {
 
-    // Set some date in the past. In this case, it's always been since Jan 1
-    var futureDate = new Date("{{ launch.net }}");
+                // Get todays date and time
+                var now = new Date().getTime();
 
-    // Calculate the difference in seconds between the future and current date
-    var diff = futureDate.getTime() / 1000 - currentDate.getTime() / 1000;
+                // Find the distance between now an the count down date
+                var distance = countDownDate.getTime() - now;
 
-    // Instantiate a coutdown FlipClock
-    clock = $('.countdown').FlipClock(diff, {
-        clockFace: 'DailyCounter',
-        countdown: true
-    });
+                // Time calculations for days, hours, minutes and seconds
+                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                if (days <= 9) {
+                    days = "0" + days
+                }
+                if (hours <= 9) {
+                    hours = "0" + hours
+                }
+                if (minutes <= 9) {
+                    minutes = "0" + minutes
+                }
+                if (seconds <= 9) {
+                    seconds = "0" + seconds
+                }
+                // Display the result in the element with id="demo"
+                document.getElementById("countdown").innerHTML = "L - " + days + " : " + hours + " : "
+                    + minutes + " : " + seconds;
+
+                // If the count down is finished, write some text
+                if (distance < 0) {
+                    clearInterval(x);
+                    document.getElementById("countdown").innerHTML = "L - 00 : 00 : 00 : 00";
+                }
+            }, 1000);
+        } else {
+            document.getElementById("countdown").innerHTML = "L - 00 : 00 : 00 : 00";
+        }
+
+
 
 
 </script>
