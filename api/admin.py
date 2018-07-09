@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 from datetime import datetime
 from django.contrib import admin
 from django.shortcuts import redirect
-from rangefilter.filter import DateTimeRangeFilter, DateRangeFilter
 
 from . import models
 
