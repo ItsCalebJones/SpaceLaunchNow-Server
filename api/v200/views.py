@@ -49,9 +49,9 @@ class AgencyViewSet(ModelViewSet):
         'list': ['_Public']
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('featured', 'launch_library_id')
+    filter_fields = ('featured',)
     search_fields = ('^name',)
-    ordering_fields = ('id', 'name', 'featured', 'launch_library_id',)
+    ordering_fields = ('id', 'name', 'featured',)
 
 
 class LaunchersViewSet(ModelViewSet):
@@ -62,10 +62,7 @@ class LaunchersViewSet(ModelViewSet):
     Return a list of all the existing launchers.
 
     FILTERS:
-    Fields - 'family', 'agency', 'name', 'launch_agency__name', 'full_name', 'launch_agency__launch_library_id'
-
-    Get all Launchers with the Launch Library ID of 44.
-    Example - /2.0.0/launchers/?launch_agency__launch_library_id=44
+    Fields - 'family', 'agency', 'name', 'launch_agency__name', 'full_name',
 
     Get all Launchers with the Agency with name NASA.
     Example - /2.0.0/launchers/?launch_agency__name=NASA
@@ -81,7 +78,7 @@ class LaunchersViewSet(ModelViewSet):
         'list': ['_Public']
     }
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('family', 'agency', 'name', 'launch_agency__name', 'full_name', 'launch_agency__launch_library_id')
+    filter_fields = ('family', 'agency', 'name', 'launch_agency__name', 'full_name',)
 
 
 class OrbiterViewSet(ModelViewSet):

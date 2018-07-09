@@ -30,7 +30,7 @@ DEBUG = config.DEBUG
 ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8', '.spacelaunchnow.me', '127.0.0.1', 'spacelaunchnow.me']
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 1000,
+    'PAGE_SIZE': 10,
     'DEFAULT_MODEL_SERIALIZER_CLASS': 'drf_toolbox.serializers.ModelSerializer',
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
@@ -142,8 +142,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
 ]
+
+GEOIP_DATABASE = 'GeoLiteCity.dat'
+GEOIPV6_DATABASE = 'GeoLiteCityv6.dat'
 
 ROOT_URLCONF = 'spacelaunchnow.urls'
 
@@ -219,12 +221,12 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False
+USE_TZ = True
 
 GA_TRACKING_ID = config.GOOGLE_ANALYTICS_TRACKING_ID
 
 # CELERY STUFF
-BROKER_URL = "amqp://spacelaunchnow:spacelaunchnow@localhost:5672/vhost_spacelaunchnow"
+BROKER_URL = config.BROKER_URL
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
@@ -275,8 +277,9 @@ AWS_S3_OBJECT_PARAMETERS = {
 STATIC_URL_AWS = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
 
 MEDIA_LOCATION = 'media'
-
-STATICFILES_LOCATION = 'static'
+PROJECT_PATH = os.path.abspath(os.path.dirname(__name__))
+STATICFILES_DIRS = [os.path.join(PROJECT_PATH, 'static')]
+STATICFILES_LOCATION = 'static/home'
 STATICFILES_STORAGE = 'custom_storages.StaticStorage'
 
 LOGO_LOCATION = MEDIA_LOCATION + '/logo'  # type: str

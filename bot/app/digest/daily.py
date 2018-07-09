@@ -46,7 +46,7 @@ def build_daily_message(possible, confirmed, DEBUG=True):
         message = "%s %s launching from %s in %s hours. \n %s" % (
             header, launch.name, launch.location_set.all()[0].name,
             '{0:g}'.format(float(round(abs(launch_time - current_time).total_seconds() / 3600.0))),
-            'https://spacelaunchnow.me/launch/%s' % launch.id)
+            'https://spacelaunchnow.me/launch/%s' % launch.slug)
         messages = messages + message + "\n"
         send_twitter_update(message, DEBUG)
 
@@ -79,7 +79,7 @@ def build_daily_message(possible, confirmed, DEBUG=True):
         message = "%s %s launching from %s in %s hours. \n %s" % (
             header, confirmed_launch.name, confirmed_launch.location_set.all()[0].name,
             '{0:g}'.format(float(round(abs(launch_time - current_time).total_seconds() / 3600.0))),
-            'https://spacelaunchnow.me/launch/%s' % launch.id)
+            'https://spacelaunchnow.me/launch/%s' % launch.slug)
         messages = messages + message + "\n"
         send_twitter_update(message, DEBUG, response_id)
 
@@ -100,7 +100,7 @@ def build_daily_message(possible, confirmed, DEBUG=True):
                 launch.location_set.all()[0].name,
                 '{0:g}'.format(float(round(abs(launch_time - current_time).total_seconds() / 3600.0))),
                 index + 1, len(confirmed) + 1,
-                'https://spacelaunchnow.me/launch/%s' % launch.id)
+                'https://spacelaunchnow.me/launch/%s' % launch.slug)
             messages = messages + message + "\n"
             response_id = send_twitter_update(message, DEBUG, response_id)
 
@@ -151,7 +151,7 @@ def build_daily_message(possible, confirmed, DEBUG=True):
                 launch.name,
                 launch.location_set.all()[0].name,
                 '{0:g}'.format(float(round(abs(launch_time - current_time).total_seconds() / 3600.0))),
-                possible + index, len(total), 'https://spacelaunchnow.me/launch/%s' % launch.id)
+                possible + index, len(total), 'https://spacelaunchnow.me/launch/%s' % launch.slug)
             messages = messages + message + "\n"
             send_twitter_update(message, DEBUG, response_id)
 
