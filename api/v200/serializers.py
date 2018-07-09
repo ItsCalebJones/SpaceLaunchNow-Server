@@ -29,11 +29,17 @@ class AgencyHyperlinkedSerializer(QueryFieldsMixin, serializers.HyperlinkedModel
     launcher_list = LauncherModelSerializer(many=True, read_only=True)
     orbiter_list = OrbiterModelSerializer(many=True, read_only=True)
 
+    ceo = serializers.SerializerMethodField('get_administrator')
+
     class Meta:
         model = Agency
         fields = ('id', 'url', 'name', 'featured', 'launchers', 'orbiters', 'launcher_list', 'orbiter_list',
                   'description', 'legacy_image_url', 'image_url', 'legacy_nation_url', 'nation_url', 'ceo',
                   'founding_year', 'logo_url', 'launch_library_url',)
+
+    @staticmethod
+    def get_administrator(obj):
+        return obj.administrator
 
 
 # class AgencyModelSerializer(QueryFieldsMixin, serializers.ModelSerializer):

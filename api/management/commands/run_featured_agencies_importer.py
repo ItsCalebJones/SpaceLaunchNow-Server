@@ -38,7 +38,7 @@ class Command(BaseCommand):
                         agency.description = ag['description']
                         agency.launchers = ag['launchers']
                         agency.orbiters = ag['orbiters']
-                        agency.ceo = ag['ceo']
+                        agency.administrator = ag['ceo']
                         agency.founding_year = ag['founding_year']
                         agency.legacy_image_url = ag['legacy_image_url']
                         agency.legacy_nation_url = ag['legacy_nation_url']

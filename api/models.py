@@ -52,7 +52,7 @@ class Agency(models.Model):
     description = models.CharField(max_length=2048, blank=True, null=True, default=None)
     launchers = models.CharField(max_length=500, default='', blank=True)
     orbiters = models.CharField(max_length=500, default='', blank=True)
-    ceo = models.CharField(max_length=200, blank=True, null=True, default=None)
+    administrator = models.CharField(max_length=200, blank=True, null=True, default=None)
     founding_year = models.CharField(blank=True, null=True, default=None, max_length=20)
     legacy_image_url = models.URLField(blank=True, null=True, default=None)
     legacy_nation_url = models.URLField(blank=True, null=True, default=None)
