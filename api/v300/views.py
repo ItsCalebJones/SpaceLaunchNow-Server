@@ -2,7 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from api.v201.serializers import *
+from api.v300.serializers import *
 from datetime import datetime
 from api.models import Launcher, Orbiter, Agency
 from api.permission import HasGroupPermission
@@ -18,14 +18,14 @@ class AgencyViewSet(ModelViewSet):
 
     FILTERS:
     Parameters - 'featured', 'launch_library_id', 'detailed'
-    Example - /2.0.0/agencies/?featured=true&launch_library_id=44&detailed
+    Example - /3.0.0/agencies/?featured=true&launch_library_id=44&detailed
 
     SEARCH EXAMPLE:
-    /2.0.0/agencies/?search=nasa
+    /3.0.0/agencies/?search=nasa
 
     ORDERING:
     Fields - 'id', 'name', 'featured', 'launch_library_id'
-    Example - /v200/agencies/?ordering=featured
+    Example - /v300/agencies/?ordering=featured
 
     """
     queryset = Agency.objects.all()
@@ -63,10 +63,10 @@ class LaunchersViewSet(ModelViewSet):
     Fields - 'family', 'agency', 'name', 'launch_agency__name', 'full_name', 'launch_agency__launch_library_id'
 
     Get all Launchers with the Launch Library ID of 44.
-    Example - /2.0.0/launchers/?launch_agency__launch_library_id=44
+    Example - /3.0.0/launchers/?launch_agency__launch_library_id=44
 
     Get all Launchers with the Agency with name NASA.
-    Example - /2.0.0/launchers/?launch_agency__name=NASA
+    Example - /3.0.0/launchers/?launch_agency__name=NASA
     """
     queryset = Launcher.objects.all()
     serializer_class = LauncherDetailSerializer
