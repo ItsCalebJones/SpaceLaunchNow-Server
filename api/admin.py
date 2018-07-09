@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from datetime import datetime
 from django.contrib import admin
+from django.shortcuts import redirect
+from rangefilter.filter import DateTimeRangeFilter, DateRangeFilter
 
 from . import models
 
@@ -10,8 +13,9 @@ from . import models
 class LauncherDetailAdmin(admin.ModelAdmin):
     list_display = ('name', 'active',  'variant', 'family', 'full_name', 'launch_agency', 'leo_capacity',
                     'gto_capacity')
-    list_filter = ('family', 'agency',)
+    list_filter = ('family', 'agency', 'image_url')
     ordering = ('name',)
+    search_fields = ('name', 'agency__name',)
 
 
 @admin.register(models.Agency)
@@ -31,8 +35,9 @@ class OrbiterAdmin(admin.ModelAdmin):
 @admin.register(models.Launch)
 class LaunchAdmin(admin.ModelAdmin):
     list_display = ('name', 'net')
-    list_filter = ('name',)
+    list_filter = ('net', 'status_name', 'lsp__name', 'launcher__name')
     ordering = ('net',)
+    search_fields = ('name', 'lsp__name', 'launcher__name', 'mission__description')
 
 
 @admin.register(models.Events)
