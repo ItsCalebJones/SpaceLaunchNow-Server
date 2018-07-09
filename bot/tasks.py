@@ -65,7 +65,7 @@ def get_previous_launches():
 
 
 @periodic_task(run_every=(crontab(minute='*/1')), options={"expires": 60})
-def check_next_launch(debug=True):
+def check_next_launch(debug=False):
     logger.info('Task - Running Notifications...')
     notification = LaunchLibrarySync(debug=debug)
     notification.check_next_launch()
