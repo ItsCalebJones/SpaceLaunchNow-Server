@@ -44,7 +44,7 @@ def build_daily_message(possible, confirmed, DEBUG=True):
         launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
         logger.info("One launch - sending message. ")
         message = "%s %s launching from %s in %s hours. \n %s" % (
-            header, launch.name, launch.location_set.all()[0].name,
+            header, launch.name, launch.pad.location.name,
             '{0:g}'.format(float(round(abs(launch_time - current_time).total_seconds() / 3600.0))),
             'https://spacelaunchnow.me/launch/%s' % launch.slug)
         messages = messages + message + "\n"
@@ -56,7 +56,7 @@ def build_daily_message(possible, confirmed, DEBUG=True):
         logger.info("One launch - sending message. ")
         date = datetime.utcfromtimestamp(launch.netstamp).replace(tzinfo=pytz.UTC)
         message = "%s %s might be launching from %s on %s." % (
-            header, launch.name, launch.location_set.all()[0].name,
+            header, launch.name, launch.pad.location.name,
             date.strftime("%A at %H:%S %Z"))
         messages = messages + message + "\n"
         send_twitter_update(message, DEBUG)
@@ -68,7 +68,7 @@ def build_daily_message(possible, confirmed, DEBUG=True):
         logger.info("One launch possible - sending message. ")
         date = datetime.utcfromtimestamp(possible_launch.netstamp).replace(tzinfo=pytz.UTC)
         message = "%s %s might be launching from %s on %s." % (header, possible_launch.name,
-                                                               possible_launch.location_set.all()[0].name,
+                                                               possible_launch.pad.location.name,
                                                                date.strftime("%A at %H:%S %Z"))
         messages = messages + message + "\n"
         response_id = send_twitter_update(message, DEBUG)
@@ -77,7 +77,7 @@ def build_daily_message(possible, confirmed, DEBUG=True):
         launch_time = datetime.utcfromtimestamp(int(confirmed_launch.netstamp))
         logger.info("One launch confirmed - sending message. ")
         message = "%s %s launching from %s in %s hours. \n %s" % (
-            header, confirmed_launch.name, confirmed_launch.location_set.all()[0].name,
+            header, confirmed_launch.name, confirmed_launch.pad.location.name,
             '{0:g}'.format(float(round(abs(launch_time - current_time).total_seconds() / 3600.0))),
             'https://spacelaunchnow.me/launch/%s' % launch.slug)
         messages = messages + message + "\n"
@@ -97,7 +97,7 @@ def build_daily_message(possible, confirmed, DEBUG=True):
             launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
             message = "%s launching from %s in %s hours. (%i/%i) \n %s" % (
                 launch.name,
-                launch.location_set.all()[0].name,
+                launch.pad.location.name,
                 '{0:g}'.format(float(round(abs(launch_time - current_time).total_seconds() / 3600.0))),
                 index + 1, len(confirmed) + 1,
                 'https://spacelaunchnow.me/launch/%s' % launch.slug)
@@ -114,7 +114,7 @@ def build_daily_message(possible, confirmed, DEBUG=True):
         for index, launch in enumerate(possible, start=1):
             date = datetime.utcfromtimestamp(launch.netstamp).replace(tzinfo=pytz.UTC)
             message = "%s might be launching from %s on %s. (%i/%i)" % (launch.name,
-                                                                        launch.location_set.all()[0].name,
+                                                                        launch.pad.location.name,
                                                                         date.strftime("%A at %H:%S %Z"),
                                                                         index + 1, len(possible) + 1)
             messages = messages + message + "\n"
@@ -134,7 +134,7 @@ def build_daily_message(possible, confirmed, DEBUG=True):
         # Possible launches
         for index, launch in enumerate(possible, start=1):
             message = "%s might be launching from %s on %s. (%i/%i)" % (launch.name,
-                                                                        launch.location_set.all()[0].name,
+                                                                        launch.pad.location.name,
                                                                         datetime.fromtimestamp(launch
                                                                                                .launch.netstamp)
                                                                         .strftime("%A at %H:%S %Z"),
@@ -149,7 +149,7 @@ def build_daily_message(possible, confirmed, DEBUG=True):
             launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
             message = "%s launching from %s in %s hours. (%i/%i) \n %s" % (
                 launch.name,
-                launch.location_set.all()[0].name,
+                launch.pad.location.name,
                 '{0:g}'.format(float(round(abs(launch_time - current_time).total_seconds() / 3600.0))),
                 possible + index, len(total), 'https://spacelaunchnow.me/launch/%s' % launch.slug)
             messages = messages + message + "\n"
