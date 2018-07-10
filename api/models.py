@@ -150,6 +150,8 @@ class Launcher(models.Model):
     legacy_image_url = models.CharField(max_length=200, default='', blank=True)
     image_url = models.FileField(default=None, storage=LauncherImageStorage(), upload_to=image_path, null=True,
                                  blank=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
@@ -257,6 +259,8 @@ class Launch(models.Model):
     launcher = models.ForeignKey(Launcher, related_name='launch', null=True, on_delete=models.CASCADE)
     pad = models.ForeignKey(Pad, related_name='launch', null=True, on_delete=models.CASCADE)
     mission = models.ForeignKey(Mission, related_name='launch', null=True, on_delete=models.CASCADE)
+    created_date = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return self.name

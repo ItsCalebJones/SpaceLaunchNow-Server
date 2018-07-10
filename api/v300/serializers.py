@@ -34,7 +34,7 @@ class OrbiterDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSeri
     class Meta:
         model = Orbiter
         fields = ('id', 'url', 'name', 'agency', 'history', 'details', 'image_url',
-                  'legacy_nation_url', 'nation_url', 'wiki_link', 'in_use', 'capability')
+                  'legacy_nation_url', 'nation_url', 'wiki_link', 'capability')
 
 
 class OrbiterSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):

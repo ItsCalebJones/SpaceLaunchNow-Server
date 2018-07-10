@@ -9,7 +9,7 @@ class LauncherModelSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = Launcher
         fields = ('id', 'url', 'name', 'description', 'agency', 'variant',  'image_url',
-                  'info_url', 'wiki_url', 'in_use', 'capability')
+                  'info_url', 'wiki_url', 'capability')
 
 
 class OrbiterSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
