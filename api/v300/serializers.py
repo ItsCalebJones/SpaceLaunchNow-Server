@@ -6,14 +6,24 @@ from api.models import *
 from rest_framework import serializers
 
 
+class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Agency
+        fields = ('id', 'url', 'name', 'featured', 'launchers', 'orbiters', 'description', 'image_url', 'nation_url',
+                  'administrator', 'founding_year', 'logo_url', 'launch_library_url')
+
+
 class LauncherSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+
     class Meta:
         model = Launcher
-        fields = ('id', 'url', 'name')
+        fields = ('id', 'url', 'name', 'agency')
 
 
 class LauncherDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
-    agency = serializers.CharField(read_only=True, source="launch_agency.name")
+    agency = AgencySerializer(many=False, read_only=True, source='launch_agency')
 
     def get_rep(self, obj):
         rep = obj.rep
@@ -30,6 +40,23 @@ class LauncherDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
                   'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url',)
 
 
+class LauncherDetailSerializerForAgency(QueryFieldsMixin, serializers.ModelSerializer):
+
+    def get_rep(self, obj):
+        rep = obj.rep
+        serializer_context = {'request': self.context.get('request'),
+                              'id': obj.id}
+        serializer = AgencySerializer(rep, context=serializer_context)
+        return serializer.data
+
+    class Meta:
+        model = Launcher
+        fields = ('id', 'url', 'name', 'description', 'family', 'full_name',
+                  'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
+                  'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust',
+                  'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url',)
+
+
 class OrbiterDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Orbiter
@@ -37,25 +64,8 @@ class OrbiterDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSeri
                   'legacy_nation_url', 'nation_url', 'wiki_link', 'capability')
 
 
-class OrbiterSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Orbiter
-        fields = ('id', 'url', 'name')
-
-
-class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    launcher_list = HyperlinkedRelatedField(many=True, read_only=True, view_name='launcher-detail')
-    orbiter_list = HyperlinkedRelatedField(many=True, read_only=True, view_name='orbiter-detail')
-
-    class Meta:
-        model = Agency
-        fields = ('id', 'url', 'name', 'featured', 'launchers', 'orbiters', 'description', 'image_url', 'nation_url',
-                  'administrator', 'founding_year', 'logo_url', 'launch_library_url', 'launcher_list',
-                  'orbiter_list',)
-
-
 class AgencyDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    launcher_list = LauncherDetailSerializer(many=True, read_only=True)
+    launcher_list = LauncherDetailSerializerForAgency(many=True, read_only=True)
     orbiter_list = OrbiterDetailSerializer(many=True, read_only=True)
 
     class Meta:
@@ -63,6 +73,12 @@ class AgencyDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSer
         fields = ('id', 'url', 'name', 'featured', 'launchers', 'orbiters', 'description', 'image_url', 'nation_url',
                   'administrator', 'founding_year', 'logo_url', 'launch_library_url', 'launcher_list',
                   'orbiter_list',)
+
+
+class OrbiterSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Orbiter
+        fields = ('id', 'url', 'name')
 
 
 class EventsSerializer(serializers.HyperlinkedModelSerializer):

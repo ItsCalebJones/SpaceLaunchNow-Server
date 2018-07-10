@@ -132,7 +132,6 @@ class Launcher(models.Model):
     reusable = models.BooleanField(default=False)
     description = models.CharField(max_length=2048, default='', blank=True)
     family = models.CharField(max_length=200, default='', blank=True)
-    agency = models.CharField(max_length=200, default='', blank=True)
     full_name = models.CharField(max_length=200, default='', blank=True)
     launch_agency = models.ForeignKey(Agency, related_name='launcher_list', blank=True, null=True)
     variant = models.CharField(max_length=200, default='', blank=True)
