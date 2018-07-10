@@ -10,9 +10,8 @@ from . import models
 
 @admin.register(models.Launcher)
 class LauncherDetailAdmin(admin.ModelAdmin):
-    list_display = ('name', 'active',  'variant', 'family', 'full_name', 'launch_agency', 'leo_capacity',
-                    'gto_capacity')
-    list_filter = ('family', 'agency', 'image_url', 'launch_agency__name')
+    list_display = ('name', 'variant', 'full_name', 'family', 'active', 'agency', 'launch_agency', )
+    list_filter = ('name', 'family', 'agency', 'image_url', 'launch_agency__name', 'agency')
     ordering = ('name',)
     search_fields = ('name', 'agency__name',)
 
