@@ -251,6 +251,11 @@ class LaunchLibrarySync:
             webcast = True
         else:
             webcast = False
+        image = ''
+        if launch.launcher.image_url:
+            image = launch.launcher.image_url.url
+        elif launch.launcher.legacy_image_url:
+            image = launch.launcher.legacy_image_url
         kwargs = dict(
             content_available=True,
             excluded_segments=exclude_segments,
@@ -260,8 +265,8 @@ class LaunchLibrarySync:
                   "background": True,
                   "launch_id": launch.id,
                   "launch_name": launch.name,
-                  "launch_image": launch.rocket.image_url.url,
-                  "launch_net": launch.netstamp,
+                  "launch_image": image,
+                  "launch_net": launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
                   "launch_location": launch.location.name,
                   "notification_type": notification_type,
                   "webcast": webcast
