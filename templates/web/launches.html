@@ -126,14 +126,14 @@
                     </a>
                 </div>
                 <div class="card-header card-header-info">
-                    {% if launch.launcher.img_url %}
+                    {% if launch.launcher.image_url %}
                     <img class="img-raised rounded-circle img-fluid text-center"
-                         src="{{ launch.launcher.img_url }}"
-                         style="max-width: 35%;overflow: hidden;margin: -100px 0 0 0;width: 125px;height: 125px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                         src="{{ launch.launcher.image_url.url }}"
+                         style="max-width: 35%;overflow: hidden;margin: -100px 0 0 0;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                     {% else %}
                     <img class="img-raised rounded-circle img-fluid text-center"
                          src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png"
-                         style="max-width: 35%;overflow: hidden;margin: -100px 0 0 0;width: 125px;height: 125px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                         style="max-width: 35%;overflow: hidden;margin: -100px 0 0 0;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                     {% endif %}
                     <h4 class="card-title">{{ launch.name }}</h4>
                     {{ launch.lsp.name }} | {{ launch.lsp.country_code }}<br>
