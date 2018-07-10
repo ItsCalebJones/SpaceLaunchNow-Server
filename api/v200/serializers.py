@@ -6,6 +6,8 @@ from rest_framework import serializers
 
 
 class LauncherModelSerializer(QueryFieldsMixin, serializers.ModelSerializer):
+    agency = serializers.ReadOnlyField(allow_null=True, read_only=True, source="launch_agency.name")
+
     class Meta:
         model = Launcher
         fields = ('id', 'url', 'name', 'description', 'agency', 'variant',  'image_url',
