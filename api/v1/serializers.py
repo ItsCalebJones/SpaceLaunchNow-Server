@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 class LauncherModelSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField('get_legacy_name')
+    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
         model = Launcher
@@ -72,6 +73,7 @@ class AgencySerializer(serializers.HyperlinkedModelSerializer):
 
 class LauncherDetailSerializer(serializers.HyperlinkedModelSerializer):
     image_url = serializers.SerializerMethodField('get_legacy_name')
+    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
         model = Launcher
