@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from bot.app.digest.digest import DigestServer
 from celery.schedules import crontab
 from celery.task import periodic_task
@@ -5,6 +7,7 @@ from celery.utils.log import get_task_logger
 
 from bot.app.repository.launches_repository import LaunchRepository
 from bot.app.sync import LaunchLibrarySync
+from bot.models import Notification
 
 logger = get_task_logger('bot')
 
@@ -49,6 +52,9 @@ def check_for_orphaned_launches():
     logger.info('Task - Get Upcoming launches!')
     # Query the DB and verify no upcoming launches have failed to update.
     # Most likely requires a new created on and last updated field.
+    date = datetime.today() - timedelta(days=7)
+    notifications = Notification.objects.filter(launch__net__lte=date)
+    notifications.delete()
 
 
 @periodic_task(
