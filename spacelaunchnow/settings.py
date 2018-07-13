@@ -306,3 +306,5 @@ EVENT_IMAGE_LOCATION = MEDIA_LOCATION + '/event_images' #type: str
 EVENT_IMAGE_STORAGE = 'custom_storages.EventImageStorage'
 
 DEFAULT_FILE_STORAGE = DEFAULT_STORAGE
+
+AWS_IS_GZIPPED = True
