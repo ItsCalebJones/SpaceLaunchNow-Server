@@ -60,7 +60,7 @@
 {% block content %}
 <div class="profile-page">
     <div class="page-header header-filter" data-parallax="true"
-         style="background-image: url('https://firebasestorage.googleapis.com/v0/b/space-launch-now.appspot.com/o/16072049543_53f7db3aa5_b.jpg?alt=media&token=2b9d5907-7c3a-4af9-9b85-f0a200d9d04b');">
+         style="background-image: url('{% static 'img/header.jpg'%}');">
     </div>
     <div class="main main-raised">
         <div class="profile-content">
@@ -69,7 +69,7 @@
                     <div class="col-lg-12 ml-auto mr-auto">
                         <div class="profile">
                             <div class="avatar" style="max-height: 280px;">
-                                <img src="https://firebasestorage.googleapis.com/v0/b/space-launch-now.appspot.com/o/fb_profile.png?alt=media&token=be63157e-4948-4f56-b8a1-ac42832382b5"
+                                <img src="{% static 'img/launcher.png'%}"
                                      alt="Circle Image"
                                      class="img-raised rounded-circle img-fluid "
                                      style="max-width: 25%">
