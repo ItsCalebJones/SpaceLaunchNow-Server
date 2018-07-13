@@ -130,6 +130,7 @@ INSTALLED_APPS = [
     'mptt',
     'tagging',
     'zinnia',
+    'collectfast',
 ]
 
 SITE_ID = 1
@@ -281,6 +282,7 @@ PROJECT_PATH = os.path.abspath(os.path.dirname(__name__))
 STATICFILES_DIRS = [os.path.join(PROJECT_PATH, 'static')]
 STATICFILES_LOCATION = 'static/home'
 STATICFILES_STORAGE = 'custom_storages.StaticStorage'
+AWS_PRELOAD_METADATA = True
 
 LOGO_LOCATION = MEDIA_LOCATION + '/logo'  # type: str
 LOGO_STORAGE = 'custom_storages.LogoStorage'
@@ -304,3 +306,5 @@ EVENT_IMAGE_LOCATION = MEDIA_LOCATION + '/event_images' #type: str
 EVENT_IMAGE_STORAGE = 'custom_storages.EventImageStorage'
 
 DEFAULT_FILE_STORAGE = DEFAULT_STORAGE
+
+AWS_IS_GZIPPED = True
