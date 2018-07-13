@@ -130,8 +130,16 @@ INSTALLED_APPS = [
     'mptt',
     'tagging',
     'zinnia',
+    "compressor",
     'collectfast',
 ]
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # other finders..
+    'compressor.finders.CompressorFinder',
+)
 
 SITE_ID = 1
 
@@ -257,7 +265,8 @@ AWS_STORAGE_BUCKET_NAME = config.STORAGE_BUCKET_NAME
 # Using CloudFront?
 # S3_CUSTOM_DOMAIN = CLOUDFRONT_DOMAIN
 AWS_S3_CUSTOM_DOMAIN = config.S3_CUSTOM_DOMAIN
-
+STATIC_ROOT = os.path.join(BASE_DIR,'static_files/')
+COMPRESS_ROOT = STATIC_ROOT
 # Static URL always ends in /
 STATIC_URL = config.S3_CUSTOM_DOMAIN + "/"
 
@@ -283,6 +292,9 @@ STATICFILES_DIRS = [os.path.join(PROJECT_PATH, 'static')]
 STATICFILES_LOCATION = 'static/home'
 STATICFILES_STORAGE = 'custom_storages.StaticStorage'
 AWS_PRELOAD_METADATA = True
+COMPRESS_STORAGE = STATICFILES_STORAGE
+COMPRESS_URL = STATIC_URL
+
 
 LOGO_LOCATION = MEDIA_LOCATION + '/logo'  # type: str
 LOGO_STORAGE = 'custom_storages.LogoStorage'

@@ -1,6 +1,7 @@
 {% load staticfiles %}
 {% load user_agents %}
 {% load tz %}
+{% load compress %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,11 +24,13 @@
           href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons"/>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css"
           integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+    {% compress css %}
 
     <!-- CSS Files -->
     <link href="{% static  'material_kit/css/material-kit.css' %}" rel="stylesheet">
     <link href="{% static  'material_kit/css/spacelaunchnow.css' %}" rel="stylesheet">
-
+    {% endcompress %}
+    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     {% block extrahead %}
     {% endblock %}
