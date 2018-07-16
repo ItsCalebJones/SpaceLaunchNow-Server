@@ -131,6 +131,7 @@ INSTALLED_APPS = [
     'tagging',
     'zinnia',
     'collectfast',
+    'cachalot',
 ]
 
 SITE_ID = 1
@@ -170,7 +171,7 @@ TEMPLATES = [
 ]
 
 ZINNIA_ENTRY_CONTENT_TEMPLATES = [
-  ('zinnia/_short_entry_detail.html', 'Short entry template'),
+    ('zinnia/_short_entry_detail.html', 'Short entry template'),
 ]
 
 ZINNIA_ENTRY_DETAIL_TEMPLATES = [
@@ -247,7 +248,6 @@ EMAIL_HOST_PASSWORD = config.EMAIL_HOST_PASSWORD
 EMAIL_USE_TLS = config.EMAIL_HOST_TLS
 DEFAULT_FROM_EMAIL = config.EMAIL_FROM_EMAIL
 
-
 # AWS Storage Information
 
 AWS_STORAGE_BUCKET_NAME = config.STORAGE_BUCKET_NAME
@@ -268,10 +268,9 @@ CLOUDFRONT_ID = config.CLOUDFRONT_ID
 AWS_ACCESS_KEY_ID = config.AWS_ACCESS_KEY_ID
 AWS_SECRET_ACCESS_KEY = config.AWS_SECRET_ACCESS_KEY
 
-
 AWS_LOCATION = 'static'
 AWS_S3_OBJECT_PARAMETERS = {
-   'CacheControl': 'max-age=86400',
+    'CacheControl': 'max-age=86400',
 
 }
 
@@ -290,19 +289,19 @@ LOGO_STORAGE = 'custom_storages.LogoStorage'
 DEFAULT_LOCATION = MEDIA_LOCATION + '/default'  # type: str
 DEFAULT_STORAGE = 'custom_storages.DefaultStorage'
 
-AGENCY_IMAGE_LOCATION = MEDIA_LOCATION + '/agency_images' #type: str
+AGENCY_IMAGE_LOCATION = MEDIA_LOCATION + '/agency_images'  # type: str
 AGENCY_IMAGE_STORAGE = 'custom_storages.AgencyImageStorage'
 
-AGENCY_NATION_LOCATION = MEDIA_LOCATION + '/agency_nation' #type: str
+AGENCY_NATION_LOCATION = MEDIA_LOCATION + '/agency_nation'  # type: str
 AGENCY_NATION_STORAGE = 'custom_storages.AgencyNationStorage'
 
-ORBITER_IMAGE_LOCATION = MEDIA_LOCATION + '/orbiter_images' #type: str
+ORBITER_IMAGE_LOCATION = MEDIA_LOCATION + '/orbiter_images'  # type: str
 ORBITER_IMAGE_STORAGE = 'custom_storages.OrbiterImageStorage'
 
-LAUNCHER_IMAGE_LOCATION = MEDIA_LOCATION + '/launcher_images' #type: str
+LAUNCHER_IMAGE_LOCATION = MEDIA_LOCATION + '/launcher_images'  # type: str
 LAUNCHER_IMAGE_STORAGE = 'custom_storages.LauncherImageStorage'
 
-EVENT_IMAGE_LOCATION = MEDIA_LOCATION + '/event_images' #type: str
+EVENT_IMAGE_LOCATION = MEDIA_LOCATION + '/event_images'  # type: str
 EVENT_IMAGE_STORAGE = 'custom_storages.EventImageStorage'
 
 DEFAULT_FILE_STORAGE = DEFAULT_STORAGE
