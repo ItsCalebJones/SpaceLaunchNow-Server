@@ -72,8 +72,8 @@ class AgencyDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSer
     class Meta:
         model = Agency
         fields = ('id', 'url', 'name', 'featured', 'launchers', 'orbiters', 'description', 'image_url', 'nation_url',
-                  'administrator', 'founding_year', 'logo_url', 'launch_library_url', 'launcher_list',
-                  'orbiter_list',)
+                  'administrator', 'founding_year', 'logo_url', 'launch_library_url', 'country_code', 'abbrev',
+                  'launcher_list', 'orbiter_list',)
 
 
 class OrbiterSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
