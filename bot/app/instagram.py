@@ -76,10 +76,10 @@ class InstagramBot:
             except ClientCookieExpiredError:
                 print('Cookie Expired. Please discard cached auth and login again.')
 
-    def update_profile(self, message):
-        self.instagram.edit_profile(external_url='https://spacelaunchnow.me/',
+    def update_profile(self, message, url='https://spacelaunchnow.me'):
+        self.instagram.edit_profile(external_url=url,
                                     first_name='Space Launch Now',
                                     biography=message,
                                     gender='3',
                                     email='ca.jones9119+spacelaunchnow@gmail.com',
-                                    phone_number=None)
+                                    phone_number='')
