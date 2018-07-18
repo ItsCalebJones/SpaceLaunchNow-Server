@@ -3,7 +3,7 @@ import codecs
 import json
 
 from instagram_private_api import Client, ClientCompatPatch, ClientLoginError, ClientCookieExpiredError
-
+from urllib2 import urlopen
 from spacelaunchnow import config
 
 settings_file = 'instagram.cache'
@@ -83,3 +83,10 @@ class InstagramBot:
                                     gender='3',
                                     email='ca.jones9119+spacelaunchnow@gmail.com',
                                     phone_number='')
+
+    def create_post(self, launch, mode='twentyFourHour'):
+        sample_url = 'https://c1.staticflickr.com/5/4103/5059663679_85a7ec3f63_b.jpg'
+        res = urlopen(sample_url)
+        photo_data = res.read()
+        results = self.instagram.post_photo(photo_data, caption='Feathers #feathers')
+        assert results.get('status') is 'ok'

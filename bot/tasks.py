@@ -1,3 +1,4 @@
+# coding=utf-8
 from api.models import Launch
 from datetime import datetime, timedelta
 
@@ -93,6 +94,7 @@ def set_instagram():
            custom_strftime("%B {S} at %I:%M %p %Z", launch.net))
     message = (message[:150]) if len(message) > 150 else message
     instagram.update_profile(message, launch.get_full_absolute_url())
+    instagram.create_post(launch)
 
 
 def suffix(d):
