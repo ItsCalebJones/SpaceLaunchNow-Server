@@ -52,6 +52,7 @@ html5lib==0.999999999
 httplib2==0.11.3
 idna==2.6
 importlib==1.0.4
+instagram-private-api==1.5.7
 itypes==1.1.0
 Jinja2==2.9.6
 jmespath==0.9.3
