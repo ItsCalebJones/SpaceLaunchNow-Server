@@ -6,10 +6,12 @@ from rest_framework import serializers
 
 
 class LauncherModelSerializer(QueryFieldsMixin, serializers.ModelSerializer):
+    agency = serializers.ReadOnlyField(allow_null=True, read_only=True, source="launch_agency.name")
+
     class Meta:
         model = Launcher
         fields = ('id', 'url', 'name', 'description', 'agency', 'variant',  'image_url',
-                  'info_url', 'wiki_url', 'in_use', 'capability')
+                  'info_url', 'wiki_url')
 
 
 class OrbiterSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
@@ -28,7 +30,6 @@ class OrbiterModelSerializer(QueryFieldsMixin, serializers.ModelSerializer):
 class AgencyHyperlinkedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     launcher_list = LauncherModelSerializer(many=True, read_only=True)
     orbiter_list = OrbiterModelSerializer(many=True, read_only=True)
-
     ceo = serializers.SerializerMethodField('get_administrator')
 
     class Meta:
@@ -54,6 +55,8 @@ class AgencyHyperlinkedSerializer(QueryFieldsMixin, serializers.HyperlinkedModel
 
 
 class LauncherDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+    agency = serializers.ReadOnlyField(allow_null=True, read_only=True, source="launch_agency.name")
+
     class Meta:
         model = Launcher
         fields = ('id', 'url', 'name', 'description', 'family', 'full_name', 'agency',

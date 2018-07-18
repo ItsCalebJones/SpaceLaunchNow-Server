@@ -62,7 +62,7 @@ class LaunchersViewSet(ModelViewSet):
     Return a list of all the existing launchers.
 
     FILTERS:
-    Fields - 'family', 'agency', 'name', 'launch_agency__name', 'full_name',
+    Fields - 'family', 'name', 'launch_agency__name', 'full_name',
 
     Get all Launchers with the Agency with name NASA.
     Example - /2.0.0/launchers/?launch_agency__name=NASA
@@ -78,7 +78,7 @@ class LaunchersViewSet(ModelViewSet):
         'list': ['_Public']
     }
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('family', 'agency', 'name', 'launch_agency__name', 'full_name',)
+    filter_fields = ('family', 'name', 'launch_agency__name', 'full_name',)
 
 
 class OrbiterViewSet(ModelViewSet):

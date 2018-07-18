@@ -13,11 +13,13 @@ certifi==2018.4.16
 chardet==3.0.4
 coreapi==2.3.0
 coreschema==0.0.4
+Collectfast==0.6.2
 creole==1.2
 dict.sorted==1.0.0
 distlib==0.2.7
 Django==1.11.4
 django-appconf==1.0.2
+django-cachalot==2.0.1
 django-blog-zinnia==0.19
 django-bootstrap-form==3.4
 django-celery==3.2.1

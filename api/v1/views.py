@@ -34,7 +34,7 @@ class LauncherDetailViewSet(viewsets.ModelViewSet):
     Return a list of all the existing launchers.
 
     FILTERS:
-    'family', 'agency', 'name', 'launch_agency__agency', 'full_name'
+    'family', 'name', 'launch_agency__agency', 'full_name'
     """
     queryset = Launcher.objects.all()
     serializer_class = LauncherDetailSerializer
@@ -47,7 +47,7 @@ class LauncherDetailViewSet(viewsets.ModelViewSet):
         'list': ['_Public']
     }
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
-    filter_fields = ('family', 'agency', 'name', 'launch_agency__name', 'full_name',)
+    filter_fields = ('family', 'name', 'launch_agency__name', 'full_name',)
 
 
 class OrbiterViewSet(viewsets.ModelViewSet):

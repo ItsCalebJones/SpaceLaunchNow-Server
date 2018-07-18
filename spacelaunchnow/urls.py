@@ -18,6 +18,7 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.generic import TemplateView
 
+import web
 from api.v300.router import api_urlpatterns as api_v201
 from api.v200.router import api_urlpatterns as api_v2
 from api.v1.router import api_urlpatterns as api_v1
@@ -45,5 +46,7 @@ urlpatterns = [
     url('^', include('django.contrib.auth.urls')),
 ]
 
+handler404 = web.views.handler404
+handler500 = web.views.handler500
 admin.site.site_header = "Space Launch Now"
 admin.site.site_title = "Administration"

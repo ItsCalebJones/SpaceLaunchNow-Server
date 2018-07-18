@@ -42,7 +42,7 @@ def logo_path(instance, filename):
 
 
 class Agency(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=200)
     featured = models.BooleanField(default=False)
     country_code = models.CharField(max_length=255, blank=True, default="")
@@ -94,6 +94,7 @@ class Agency(models.Model):
 #
 # Example: Dragon, Orion, etc.
 class Orbiter(models.Model):
+    id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=200)
     agency = models.CharField(max_length=200, default='Unknown')
     launch_agency = models.ForeignKey(Agency, related_name='orbiter_list', blank=True, null=True)
@@ -126,12 +127,12 @@ class Orbiter(models.Model):
 # Example: Falcon 9, Saturn V, etc.
 # TODO Deprecate the 'agency' string field now that its linked to launch_agency.
 class Launcher(models.Model):
+    id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=200)
     active = models.BooleanField(default=True)
-    in_use = models.BooleanField(default=True)
+    reusable = models.BooleanField(default=False)
     description = models.CharField(max_length=2048, default='', blank=True)
     family = models.CharField(max_length=200, default='', blank=True)
-    agency = models.CharField(max_length=200, default='', blank=True)
     full_name = models.CharField(max_length=200, default='', blank=True)
     launch_agency = models.ForeignKey(Agency, related_name='launcher_list', blank=True, null=True)
     variant = models.CharField(max_length=200, default='', blank=True)
@@ -146,12 +147,12 @@ class Launcher(models.Model):
     to_thrust = models.IntegerField(blank=True, null=True)
     apogee = models.IntegerField(blank=True, null=True)
     vehicle_range = models.IntegerField(blank=True, null=True)
-    capability = models.CharField(max_length=2048, default='', blank=True)
     info_url = models.CharField(max_length=200, default='', blank=True, null=True)
     wiki_url = models.CharField(max_length=200, default='', blank=True, null=True)
     legacy_image_url = models.CharField(max_length=200, default='', blank=True)
-    image_url = models.FileField(default=None, storage=LauncherImageStorage(), upload_to=image_path, null=True,
-                                 blank=True)
+    image_url = models.FileField(default=None, storage=LauncherImageStorage(), upload_to=image_path, null=True, blank=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
@@ -188,7 +189,7 @@ class Events(models.Model):
 
 
 class Location(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=255, blank=True, default="")
     country_code = models.CharField(max_length=255, blank=True, default="")
 
@@ -201,7 +202,7 @@ class Location(models.Model):
 
 
 class Pad(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.IntegerField(primary_key=True, editable=True)
     agency_id = models.IntegerField(blank=True, null=True)
     name = models.CharField(max_length=255, blank=True, default="")
     info_url = models.URLField(blank=True, null=True)
@@ -218,7 +219,7 @@ class Pad(models.Model):
 
 
 class Mission(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=255, blank=True, default="")
     description = models.CharField(max_length=2048, blank=True, default="")
     type = models.IntegerField(blank=True, null=True)
@@ -233,7 +234,7 @@ class Mission(models.Model):
 
 
 class Launch(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=255, blank=True)
     img_url = models.CharField(max_length=255, blank=True, null=True)
     status = models.IntegerField(blank=True, null=True)
@@ -259,6 +260,8 @@ class Launch(models.Model):
     launcher = models.ForeignKey(Launcher, related_name='launch', null=True, on_delete=models.CASCADE)
     pad = models.ForeignKey(Pad, related_name='launch', null=True, on_delete=models.CASCADE)
     mission = models.ForeignKey(Mission, related_name='launch', null=True, on_delete=models.CASCADE)
+    created_date = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return self.name

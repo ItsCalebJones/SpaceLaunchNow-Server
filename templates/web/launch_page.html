@@ -48,7 +48,7 @@
             <ul class="navbar-nav ml-auto">
 
                 <li class="nav-item">
-                    <a class="nav-link active" href="/">Home</a>
+                    <a class="nav-link" href="/">Home</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="/next">Next</a>
@@ -71,12 +71,12 @@
 {% endblock %}
 
 {% block content %}
-{% if launch.img_url %}
+{% if launch.launcher.image_url %}
 <div class="page-header header-filter" data-parallax="true"
-     style="background-image: url({{ launch.launcher.img_url }});">
+     style="background-image: url({{ launch.launcher.image_url.url }});">
     {% else %}
     <div class="page-header header-filter" data-parallax="true"
-         style="background-image: url('https://firebasestorage.googleapis.com/v0/b/space-launch-now.appspot.com/o/16072049543_53f7db3aa5_b.jpg?alt=media&token=2b9d5907-7c3a-4af9-9b85-f0a200d9d04b');">
+         style="background-image: url('{% static 'img/header.jpg'%}');">
         {% endif %}
         <div class="container">
             <div class="row">
@@ -371,5 +371,7 @@
 
 
 </script>
+{% include "web/news_and_discord.html" %}
+{% include "web/install_buttons.html" %}
 {% endblock %}
 

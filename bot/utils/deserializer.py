@@ -69,11 +69,13 @@ def launch_json_to_model(data):
 
 
 def check_notification(launch):
-    try:
-        if Notification.objects.get(launch=launch) is None:
+    current = datetime.datetime.now(tz=utc)
+    if launch.net >= current:
+        try:
+            if Notification.objects.get(launch=launch) is None:
+                Notification.objects.get_or_create(launch=launch)
+        except Notification.DoesNotExist:
             Notification.objects.get_or_create(launch=launch)
-    except Notification.DoesNotExist:
-        Notification.objects.get_or_create(launch=launch)
 
 
 def get_location(launch, data):

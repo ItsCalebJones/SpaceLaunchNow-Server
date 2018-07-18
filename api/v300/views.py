@@ -79,7 +79,7 @@ class LaunchersViewSet(ModelViewSet):
         'list': ['_Public']
     }
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('family', 'agency', 'name', 'launch_agency__name', 'full_name')
+    filter_fields = ('family', 'name', 'launch_agency__name', 'full_name', 'id')
 
 
 class OrbiterViewSet(ModelViewSet):
