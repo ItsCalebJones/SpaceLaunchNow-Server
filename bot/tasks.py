@@ -1,3 +1,4 @@
+# coding=utf-8
 from api.models import Launch
 from datetime import datetime, timedelta
 
