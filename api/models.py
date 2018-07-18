@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import os
 
+from django.contrib.sites.models import Site
 from django.db.models.functions import datetime
 from django.db import models
 from custom_storages import LogoStorage, AgencyImageStorage, OrbiterImageStorage, LauncherImageStorage, \
@@ -268,6 +269,12 @@ class Launch(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name + "-" + str(self.id))
         super(Launch, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return self.slug
+
+    def get_full_absolute_url(self):
+        return 'https://spacelaunchnow.me/%s' % (self.get_absolute_url())
 
     class Meta:
         verbose_name = 'Launch'
