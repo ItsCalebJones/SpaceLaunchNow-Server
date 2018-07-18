@@ -1,3 +1,4 @@
+from api.models import Launch
 from datetime import datetime, timedelta
 
 from bot.app.digest.digest import DigestServer
@@ -5,6 +6,7 @@ from celery.schedules import crontab
 from celery.task import periodic_task
 from celery.utils.log import get_task_logger
 
+from bot.app.instagram import InstagramBot
 from bot.app.repository.launches_repository import LaunchRepository
 from bot.app.sync import LaunchLibrarySync
 from bot.models import Notification
@@ -77,3 +79,25 @@ def check_next_launch(debug=False):
     notification.check_next_launch()
 
 
+@periodic_task(run_every=(crontab(hour='*/1')), options={"expires": 600})
+def set_instagram():
+    logger.info('Task - setting Instagram')
+    instagram = InstagramBot()
+    launch = Launch.objects.filter(net__gte=datetime.now()).order_by('net').first()
+    message = u"""
+    🚀: %s
+    📋: %s
+    📍: %s
+    📅: %s
+    """ % (launch.name, launch.mission.type_name, launch.pad.location.name,
+           custom_strftime("%B {S} at %I:%M %p %Z", launch.net))
+    message = (message[:150]) if len(message) > 150 else message
+    instagram.update_profile(message, launch.get_full_absolute_url())
+
+
+def suffix(d):
+    return 'th' if 11 <= d <= 13 else {1: 'st', 2: 'nd', 3: 'rd'}.get(d % 10, 'th')
+
+
+def custom_strftime(format, t):
+    return t.strftime(format).replace('{S}', str(t.day) + suffix(t.day))

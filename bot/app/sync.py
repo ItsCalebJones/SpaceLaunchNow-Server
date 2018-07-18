@@ -6,6 +6,8 @@ import datetime as dtime
 import pytz
 from twitter import Twitter, OAuth, TwitterHTTPError
 
+from api.models import Launch
+from bot.app.instagram import InstagramBot
 from bot.app.repository.launches_repository import LaunchRepository
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.libraries.onesignalsdk import OneSignalSdk
@@ -52,6 +54,7 @@ class LaunchLibrarySync:
         self.twitter = Twitter(
             auth=OAuth(keys['TOKEN_KEY'], keys['TOKEN_SECRET'], keys['CONSUMER_KEY'], keys['CONSUMER_SECRET'])
         )
+        self.instagram = InstagramBot()
 
     def check_next_launch(self):
         for launch in self.repository.get_next_launches(next_count=10):
@@ -62,6 +65,11 @@ class LaunchLibrarySync:
                     diff = int((launch_time - current_time).total_seconds())
                     logger.info('%s in %s hours' % (launch.name, (diff / 60) / 60))
                     self.check_next_stamp_changed(diff, launch)
+        self.check_instagram_profile()
+
+    def check_instagram_profile(self):
+        launch = Launch.objects.filter(net__gte=datetime.now()).order_by('net').first()
+        self.instagram.update_profile(launch.name)
 
     def netstamp_changed(self, launch, notification, diff):
         logger.info('Netstamp change detected for %s - now launching in %d seconds.' % (launch.name, diff))
