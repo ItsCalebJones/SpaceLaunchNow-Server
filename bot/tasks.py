@@ -11,6 +11,7 @@ from bot.app.instagram import InstagramBot
 from bot.app.repository.launches_repository import LaunchRepository
 from bot.app.sync import LaunchLibrarySync
 from bot.models import Notification
+from bot.utils.util import custom_strftime
 
 logger = get_task_logger('bot')
 
@@ -95,10 +96,3 @@ def set_instagram():
     message = (message[:150]) if len(message) > 150 else message
     instagram.update_profile(message, launch.get_full_absolute_url())
 
-
-def suffix(d):
-    return 'th' if 11 <= d <= 13 else {1: 'st', 2: 'nd', 3: 'rd'}.get(d % 10, 'th')
-
-
-def custom_strftime(format, t):
-    return t.strftime(format).replace('{S}', str(t.day) + suffix(t.day))

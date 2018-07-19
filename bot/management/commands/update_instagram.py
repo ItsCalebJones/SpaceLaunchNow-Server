@@ -14,3 +14,4 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         logger.info('Running Instagram update...')
         set_instagram()
+
