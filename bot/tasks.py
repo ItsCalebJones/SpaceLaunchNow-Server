@@ -86,10 +86,10 @@ def set_instagram():
     instagram = InstagramBot()
     launch = Launch.objects.filter(net__gte=datetime.now()).order_by('net').first()
     message = u"""
-    🚀: %s
-    📋: %s
-    📍: %s
-    📅: %s
+🚀: %s
+📋: %s
+📍: %s
+📅: %s
     """ % (launch.name, launch.mission.type_name, launch.pad.location.name,
            custom_strftime("%B {S} at %I:%M %p %Z", launch.net))
     message = (message[:150]) if len(message) > 150 else message

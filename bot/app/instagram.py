@@ -81,5 +81,5 @@ class InstagramBot:
                                     first_name='Space Launch Now',
                                     biography=message,
                                     gender='3',
-                                    email='ca.jones9119+spacelaunchnow@gmail.com',
+                                    email=config.INSTAGRAM_EMAIL,
                                     phone_number='')
