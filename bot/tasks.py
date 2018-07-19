@@ -80,19 +80,3 @@ def check_next_launch(debug=False):
     notification = LaunchLibrarySync(debug=debug)
     notification.check_next_launch()
 
-
-@periodic_task(run_every=(crontab(hour='*/1')), options={"expires": 600})
-def set_instagram():
-    logger.info('Task - setting Instagram')
-    instagram = InstagramBot()
-    launch = Launch.objects.filter(net__gte=datetime.now()).order_by('net').first()
-    message = u"""
-🚀: %s
-📋: %s
-📍: %s
-📅: %s
-    """ % (launch.name, launch.mission.type_name, launch.pad.location.name,
-           custom_strftime("%B {S} at %I:%M %p %Z", launch.net))
-    message = (message[:150]) if len(message) > 150 else message
-    instagram.update_profile(message, launch.get_full_absolute_url())
-
