@@ -274,7 +274,7 @@ class Launch(models.Model):
         return self.slug
 
     def get_full_absolute_url(self):
-        return 'https://spacelaunchnow.me/%s' % (self.get_absolute_url())
+        return 'https://spacelaunchnow.me/launch/%s' % (self.get_absolute_url())
 
     class Meta:
         verbose_name = 'Launch'
