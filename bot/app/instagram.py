@@ -1,9 +1,15 @@
+# coding=utf-8
 import os
 import codecs
 import json
+import urllib
+import io
+import textwrap
 
+from PIL import Image, ImageTk, ImageDraw, ImageFont, ImageFilter
 from instagram_private_api import Client, ClientCompatPatch, ClientLoginError, ClientCookieExpiredError
-from urllib2 import urlopen
+
+from bot.utils.util import custom_strftime, drop_shadow
 from spacelaunchnow import config
 
 settings_file = 'instagram.cache'
@@ -81,12 +87,99 @@ class InstagramBot:
                                     first_name='Space Launch Now',
                                     biography=message,
                                     gender='3',
-                                    email='ca.jones9119+spacelaunchnow@gmail.com',
+                                    email=config.INSTAGRAM_EMAIL,
                                     phone_number='')
 
-    def create_post(self, launch, mode='twentyFourHour'):
-        sample_url = 'https://c1.staticflickr.com/5/4103/5059663679_85a7ec3f63_b.jpg'
-        res = urlopen(sample_url)
-        photo_data = res.read()
-        results = self.instagram.post_photo(photo_data, caption='Feathers #feathers')
-        assert results.get('status') is 'ok'
+    def create_post(self, launch, time_remaining='one hour'):
+        MAX_W = 1080
+        MAX_H = 1080
+        size = (MAX_W, MAX_H)
+
+        if launch.img_url:
+            # Download the Image
+            fd = urllib.urlopen(launch.img_url)
+            image_file = io.BytesIO(fd.read())
+            im = Image.open(image_file)
+        else:
+            im = Image.open("static/img/header.jpg")
+
+        width, height = im.size
+
+        # Crop the Image
+        left = (width - MAX_W) / 2
+        top = (height - MAX_H) / 2
+        right = (width + MAX_W) / 2
+        bottom = (height + MAX_H) / 2
+        im = im.crop((left, top, right, bottom))
+
+        # Create Text
+        text = Image.new('RGBA', size)
+        text_shadow = Image.new('RGBA', size)
+        shadowcolor = (0, 0, 0, 128)
+
+
+        # Create Header Text
+        header = launch.name
+        font = ImageFont.truetype(
+            'static/font/RobotoCondensed-Bold.ttf', 120)
+        para = textwrap.wrap(header, width=20)
+        draw = ImageDraw.Draw(text)
+        draw_shadow = ImageDraw.Draw(text_shadow)
+        current_h, pad = 50, 10
+
+        for line in para:
+            w, h = draw.textsize(line, font=font)
+            x = (MAX_W - w) / 2
+            y = current_h
+            draw_shadow.text((x + 5, y), line, font=font, fill=shadowcolor)
+            draw_shadow.text((x, y + 5), line, font=font, fill=shadowcolor)
+
+            draw.text((x, y), line, font=font)
+            current_h += h + pad
+
+        # Create Body Text
+        message = u"""
+        Mission: %s
+        Location: %s
+        Date: %s
+        """ % (launch.mission.type_name, launch.pad.location.name,
+               custom_strftime("%B {S} at %I:%M %p %Z", launch.net))
+        font = ImageFont.truetype(
+            'static/font/RobotoCondensed-Bold.ttf', 60)
+        w, h = draw.textsize(message, font=font)
+        x = (MAX_W - w) / 2
+        y = (MAX_H - h) / 2
+        draw_shadow.text((x + 5, y), message, font=font, fill=shadowcolor)
+        draw_shadow.text((x, y + 5), message, font=font, fill=shadowcolor)
+
+        draw.text((x, y), message, font=font)
+
+        # Create Footer
+        font = ImageFont.truetype(
+            'static/font/RobotoCondensed-Bold.ttf', 100)
+        footer = "Launching in %s!" % time_remaining
+        para = textwrap.wrap(footer, width=100)
+        draw = ImageDraw.Draw(text)
+        current_h, pad = 50, 10
+
+        for line in para:
+            w, h = draw.textsize(line, font=font)
+            x = (MAX_W - w) / 2
+            y = (MAX_H - 200)
+            draw_shadow.text((x + 5, y), line, font=font, fill=shadowcolor)
+            draw_shadow.text((x, y + 5), line, font=font, fill=shadowcolor)
+
+            draw.text((x, y), line, font=font)
+            current_h += h + pad
+        text_shadow = text_shadow.filter(ImageFilter.GaussianBlur(radius=5))
+        text_shadow.paste(text, (0, 0), text)
+        im = im.filter(ImageFilter.GaussianBlur(radius=5))
+        im.paste(text_shadow, (0, 0), text_shadow)
+        im = im.convert('RGB')
+        im.save("temp.jpg", 'JPEG')
+        in_file = open("temp.jpg", "rb")
+        results = self.instagram.post_photo(in_file.read(), size=size, caption=launch.name)
+        in_file.close()
+        os.remove("temp.jpg")
+        assert 'ok' in results.get('status')
+
