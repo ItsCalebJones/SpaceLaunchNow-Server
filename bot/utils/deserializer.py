@@ -89,6 +89,8 @@ def get_location(launch, data):
                 pad.name = data['location']['pads'][0]['name']
                 pad.map_url = data['location']['pads'][0]['mapURL']
                 pad.wiki_url = data['location']['pads'][0]['wikiURL']
+                pad.latitude = data['location']['pads'][0]['latitude']
+                pad.longitude = data['location']['pads'][0]['longitude']
                 launch.pad = pad
                 pad.save()
         return location

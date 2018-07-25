@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import json
 import os
 
 from django.contrib.sites.models import Site
@@ -15,6 +16,7 @@ from custom_storages import LogoStorage, AgencyImageStorage, OrbiterImageStorage
 #
 from django.template.defaultfilters import truncatechars, slugify
 import urllib
+from django.core import serializers
 
 
 def image_path(instance, filename):
@@ -208,6 +210,8 @@ class Pad(models.Model):
     info_url = models.URLField(blank=True, null=True)
     wiki_url = models.URLField(blank=True, null=True)
     map_url = models.URLField(blank=True, null=True)
+    latitude = models.CharField(blank=True, null=True, max_length=30)
+    longitude = models.CharField(blank=True, null=True, max_length=30)
     location = models.ForeignKey(Location, related_name='pad', blank=True, on_delete=models.CASCADE)
 
     def __unicode__(self):
@@ -262,6 +266,16 @@ class Launch(models.Model):
     mission = models.ForeignKey(Mission, related_name='launch', null=True, on_delete=models.CASCADE)
     created_date = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    @property
+    def vidURLs(self):
+        id = VidURLs.objects.filter(launch_id=self.id).values_list('vid_url', flat=True)
+        return id
+
+    @property
+    def infoURLs(self):
+        id = InfoURLs.objects.filter(launch_id=self.id).values_list('info_url', flat=True)
+        return id
 
     def __unicode__(self):
         return self.name
