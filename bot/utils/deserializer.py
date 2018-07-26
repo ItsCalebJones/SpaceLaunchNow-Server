@@ -143,7 +143,12 @@ def download_launcher_image(launcher):
     webrocket = result.json()['rockets'][0]
 
     request = requests.get(webrocket['imageURL'], stream=True)
-    file_name = webrocket['imageURL'].split('/')[-1]
+    filename = webrocket['imageURL'].split('/')[-1]
+    filename, file_extension = os.path.splitext(filename)
+    clean_name = urllib.quote(urllib.quote(launcher.name.encode('utf8')), '')
+    clean_name = "%s_nation_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
+    name = "%s%s" % (str(clean_name), file_extension)
+
     lf = tempfile.NamedTemporaryFile()
 
     for block in request.iter_content(1024 * 8):
@@ -152,4 +157,4 @@ def download_launcher_image(launcher):
         lf.write(block)
 
     image_file = Launcher.objects.get(id=launcher.id).image_url
-    image_file.save(file_name, files.File(lf))
+    image_file.save(name, files.File(lf))
