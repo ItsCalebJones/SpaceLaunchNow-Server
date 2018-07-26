@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import json
 import os
 
 from django.contrib.sites.models import Site
@@ -16,7 +15,6 @@ from custom_storages import LogoStorage, AgencyImageStorage, OrbiterImageStorage
 #
 from django.template.defaultfilters import truncatechars, slugify
 import urllib
-from django.core import serializers
 
 
 def image_path(instance, filename):
