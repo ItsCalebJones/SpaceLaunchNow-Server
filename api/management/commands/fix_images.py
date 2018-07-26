@@ -14,6 +14,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for each in Launcher.objects.all():
+            if 'cloudinary' in each.image_url or 'imgur' in each.image_url:
+                each.image_url = ''
             if each.image_url == '':
                 result = requests.get("http://launchlibrary.net/1.3/rocket/" + str(each.id))
                 webrocket = result.json()['rockets'][0]

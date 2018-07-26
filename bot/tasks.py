@@ -49,6 +49,7 @@ def get_upcoming_launches():
     logger.info('Task - Get Upcoming launches!')
     repository = LaunchRepository()
     repository.get_next_launches(next_count=100, all=True)
+
     check_for_orphaned_launches()
 
 
@@ -80,3 +81,11 @@ def check_next_launch(debug=False):
     notification = LaunchLibrarySync(debug=debug)
     notification.check_next_launch()
 
+
+@periodic_task(run_every=(crontab(minute='*/1')), options={"expires": 60})
+def get_recent_previous_launches():
+    logger.info('Task - Get Recent Previous launches!')
+    repository = LaunchRepository()
+    repository.get_recent_previous_launches()
+
+    check_for_orphaned_launches()

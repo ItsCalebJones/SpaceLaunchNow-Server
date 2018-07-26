@@ -86,12 +86,37 @@ class LaunchRepository:
         return launches
 
     def get_previous_launches(self):
-        logger.info("Getting preivous launches")
+        logger.info("Getting previous launches")
         launches = []
         count = 0
         total = None
         while total is None or count < total:
             response = self.launchLibrary.get_previous_launches(offset=count)
+            if response.status_code is 200:
+                response_json = response.json()
+                count = response_json['count'] + response_json['offset']
+                total = response_json['total']
+                launch_data = response_json['launches']
+                logger.info("Saving next %i launches - %s out of %s" % (len(launch_data), count, total))
+
+                for launch in launch_data:
+                    launch = launch_json_to_model(launch)
+                    launch.save()
+                    launches.append(launch)
+            else:
+                logger.error('ERROR ' + str(response.status_code))
+                logger.error('RESPONSE: ' + response.text)
+                logger.error('URL: ' + response.url)
+                break
+        return launches
+
+    def get_recent_previous_launches(self):
+        logger.info("Getting recent previous launches")
+        launches = []
+        count = 0
+        total = None
+        while total is None or count < total:
+            response = self.launchLibrary.get_recent_previous_launches(offset=count)
             if response.status_code is 200:
                 response_json = response.json()
                 count = response_json['count'] + response_json['offset']
