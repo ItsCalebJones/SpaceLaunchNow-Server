@@ -135,12 +135,8 @@ class LaunchViewSet(ModelViewSet):
             ids = ids.split(',')
             return Launch.objects.filter(id__in=ids)
         else:
-            return Launch.objects.all()
+            return Launch.objects.order_by('net').all()
 
-
-    now = datetime.now()
-    queryset = Launch.objects.all()
-    queryset.order_by('net')
     serializer_class = LaunchSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
@@ -166,14 +162,14 @@ class UpcomingLaunchViewSet(ModelViewSet):
 
     def get_queryset(self):
         ids = self.request.query_params.get('id', None)
+        now = datetime.now()
         if ids:
             ids = ids.split(',')
             return Launch.objects.filter(id__in=ids)
         else:
-            return Launch.objects.all()
+            return Launch.objects.filter(net__gte=now).order_by('net').all()
 
     now = datetime.now()
-    queryset = Launch.objects.filter(net__gte=now).order_by('net').all()
     serializer_class = LaunchSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
@@ -199,14 +195,13 @@ class PreviousLaunchViewSet(ModelViewSet):
 
     def get_queryset(self):
         ids = self.request.query_params.get('id', None)
+        now = datetime.now()
         if ids:
             ids = ids.split(',')
             return Launch.objects.filter(id__in=ids)
         else:
-            return Launch.objects.all()
+            return Launch.objects.filter(net__lte=now).order_by('-net').all()
 
-    now = datetime.now()
-    queryset = Launch.objects.filter(net__lte=now).order_by('-net').all()
     serializer_class = LaunchSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
