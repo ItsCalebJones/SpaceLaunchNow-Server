@@ -99,7 +99,7 @@ class PadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Pad
-        fields = ('id', 'agency_id', 'name', 'info_url', 'wiki_url', 'map_url')
+        fields = ('id', 'agency_id', 'name', 'info_url', 'wiki_url', 'map_url', 'latitude', 'longitude')
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -131,9 +131,16 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     lsp = LSPSerializer(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
 
+    infoURLs = serializers.ReadOnlyField()
+    vidURLs = serializers.ReadOnlyField()
+
     class Meta:
         depth = 3
         model = Launch
         fields = ('id', 'url', 'name', 'img_url', 'status', 'netstamp', 'wsstamp', 'westamp', 'net', 'window_end',
                   'window_start', 'isonet', 'isostart', 'isoend', 'inhold', 'tbdtime', 'tbddate', 'probability',
-                  'holdreason', 'failreason', 'hashtag', 'launcher', 'mission', 'lsp', 'location', 'pad')
+                  'holdreason', 'failreason', 'hashtag', 'launcher', 'mission', 'lsp', 'location', 'pad', 'infoURLs',
+                  'vidURLs')
+
+
+

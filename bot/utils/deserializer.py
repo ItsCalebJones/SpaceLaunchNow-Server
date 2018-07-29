@@ -1,9 +1,12 @@
 import datetime
 import pytz
+import requests
+import tempfile
 
 from api.models import *
 from api.utils.utilities import get_mission_type, get_agency_type, get_launch_status
 from bot.models import *
+from django.core import files
 
 
 def launch_json_to_model(data):
@@ -89,6 +92,8 @@ def get_location(launch, data):
                 pad.name = data['location']['pads'][0]['name']
                 pad.map_url = data['location']['pads'][0]['mapURL']
                 pad.wiki_url = data['location']['pads'][0]['wikiURL']
+                pad.latitude = data['location']['pads'][0]['latitude']
+                pad.longitude = data['location']['pads'][0]['longitude']
                 launch.pad = pad
                 pad.save()
         return location
@@ -101,14 +106,10 @@ def get_rocket(launch, data):
             rocket.name = data['rocket']['name']
             rocket.family_name = data['rocket']['familyname']
             rocket.configuration = data['rocket']['configuration']
-            if 'placeholder' not in data['rocket']['imageURL']:
-                rocket.imageURL = data['rocket']['imageURL']
-                if rocket.imageURL is not None:
-                    launch.img_url = rocket.imageURL
-                    launch.save()
-
         rocket.launch.add(launch)
         rocket.save()
+        if 'placeholder' not in data['rocket']['imageURL'] and created:
+            download_launcher_image(rocket)
     return rocket
 
 
@@ -135,3 +136,25 @@ def get_lsp(launch, data):
         lsp.wiki_url = data['lsp']['wikiURL']
         lsp.save()
         return lsp
+
+
+def download_launcher_image(launcher):
+    result = requests.get("http://launchlibrary.net/1.3/rocket/" + str(launcher.id))
+    webrocket = result.json()['rockets'][0]
+
+    request = requests.get(webrocket['imageURL'], stream=True)
+    filename = webrocket['imageURL'].split('/')[-1]
+    filename, file_extension = os.path.splitext(filename)
+    clean_name = urllib.quote(urllib.quote(launcher.name.encode('utf8')), '')
+    clean_name = "%s_nation_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
+    name = "%s%s" % (str(clean_name), file_extension)
+
+    lf = tempfile.NamedTemporaryFile()
+
+    for block in request.iter_content(1024 * 8):
+        if not block:
+            break
+        lf.write(block)
+
+    image_file = Launcher.objects.get(id=launcher.id).image_url
+    image_file.save(name, files.File(lf))

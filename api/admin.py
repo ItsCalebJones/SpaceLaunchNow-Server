@@ -57,3 +57,13 @@ class PadAdmin(admin.ModelAdmin):
     list_display = ('name', 'location')
     list_filter = ('name', 'agency_id')
     ordering = ('name',)
+
+
+@admin.register(models.VidURLs)
+class VidAdmin(admin.ModelAdmin):
+    list_display = ('vid_url', 'launch')
+
+
+@admin.register(models.InfoURLs)
+class InfoAdmin(admin.ModelAdmin):
+    list_display = ('info_url', 'launch')
