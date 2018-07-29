@@ -128,6 +128,16 @@ class LaunchViewSet(ModelViewSet):
     GET:
     Return a list of all Launch objects.
     """
+
+    def get_queryset(self):
+        ids = self.request.query_params.get('id', None)
+        if ids:
+            ids = ids.split(',')
+            return Launch.objects.filter(id__in=ids)
+        else:
+            return Launch.objects.all()
+
+
     now = datetime.now()
     queryset = Launch.objects.all()
     queryset.order_by('net')
@@ -153,6 +163,15 @@ class UpcomingLaunchViewSet(ModelViewSet):
     GET:
     Return a list of future Launches
     """
+
+    def get_queryset(self):
+        ids = self.request.query_params.get('id', None)
+        if ids:
+            ids = ids.split(',')
+            return Launch.objects.filter(id__in=ids)
+        else:
+            return Launch.objects.all()
+
     now = datetime.now()
     queryset = Launch.objects.filter(net__gte=now).order_by('net').all()
     serializer_class = LaunchSerializer
@@ -177,6 +196,15 @@ class PreviousLaunchViewSet(ModelViewSet):
     GET:
     Return a list of previous Launches
     """
+
+    def get_queryset(self):
+        ids = self.request.query_params.get('id', None)
+        if ids:
+            ids = ids.split(',')
+            return Launch.objects.filter(id__in=ids)
+        else:
+            return Launch.objects.all()
+
     now = datetime.now()
     queryset = Launch.objects.filter(net__lte=now).order_by('-net').all()
     serializer_class = LaunchSerializer
