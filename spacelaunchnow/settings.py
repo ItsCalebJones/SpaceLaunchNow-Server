@@ -74,14 +74,14 @@ LOGGING = {
         },
         'digest': {
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'log/bot/daily_digest.log',
+            'filename': 'log/daily_digest.log',
             'formatter': 'standard',
             'maxBytes': 1024 * 1024 * 5,
             'backupCount': 5
         },
         'notifications': {
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'log/bot/notification.log',
+            'filename': 'log/notification.log',
             'formatter': 'standard',
             'maxBytes': 1024 * 1024 * 5,
             'backupCount': 5
@@ -307,3 +307,5 @@ EVENT_IMAGE_STORAGE = 'custom_storages.EventImageStorage'
 DEFAULT_FILE_STORAGE = DEFAULT_STORAGE
 
 AWS_IS_GZIPPED = True
+
+CACHALOT_TIMEOUT = 120

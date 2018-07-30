@@ -102,8 +102,8 @@ class OneSignalSdk(object):
 
         api_url = self.api_url + "/notifications"
         data = json.dumps(data)
-        logger.info('URL: %s' % api_url)
-        logger.info('DATA: %s' % data)
+        logger.debug('URL: %s' % api_url)
+        logger.debug('DATA: %s' % data)
         return send_request(api_url, method='POST', headers=self.get_headers(), data=data)
 
     def get_notification(self, notification_id):

@@ -7,6 +7,8 @@ from bot.utils.config import keys
 # import the logging library
 
 # Get an instance of a logger
+from spacelaunchnow import config
+
 logger = logging.getLogger('bot.digest')
 
 AUTH_TOKEN_HERE = keys['AUTH_TOKEN_HERE']
@@ -18,7 +20,7 @@ class DigestServer:
     def __init__(self, debug=None, version=None):
 
         if debug is None:
-            self.DEBUG = False
+            self.DEBUG = config.DEBUG
         else:
             self.DEBUG = debug
 

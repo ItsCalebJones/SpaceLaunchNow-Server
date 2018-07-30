@@ -37,6 +37,7 @@ class LaunchRepository:
 
                 for launch in launch_data:
                     launch = launch_json_to_model(launch)
+                    logger.debug("Saving Launch: %s" % launch.name)
                     launch.save()
                     launches.append(launch)
                 if not all:
@@ -53,7 +54,7 @@ class LaunchRepository:
         if response.status_code is 200:
             response_json = response.json()
             launch_data = response_json['launches']
-            logger.info("Found %i launches" % len(launch_data))
+            logger.debug("Found %i launches" % len(launch_data))
             logger.debug("DATA: %s" % launch_data)
             for launch in launch_data:
                 return launch_json_to_model(launch)
