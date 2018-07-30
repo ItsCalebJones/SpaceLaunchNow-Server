@@ -131,7 +131,6 @@ INSTALLED_APPS = [
     'tagging',
     'zinnia',
     'collectfast',
-    'cachalot',
 ]
 
 SITE_ID = 1
