@@ -74,14 +74,14 @@ LOGGING = {
         },
         'digest': {
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'log/bot/daily_digest.log',
+            'filename': 'log/daily_digest.log',
             'formatter': 'standard',
             'maxBytes': 1024 * 1024 * 5,
             'backupCount': 5
         },
         'notifications': {
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'log/bot/notification.log',
+            'filename': 'log/notification.log',
             'formatter': 'standard',
             'maxBytes': 1024 * 1024 * 5,
             'backupCount': 5

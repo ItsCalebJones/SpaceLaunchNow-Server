@@ -63,7 +63,7 @@ class LaunchLibrarySync:
                 launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
                 if current_time <= launch_time:
                     diff = int((launch_time - current_time).total_seconds())
-                    logger.info('%s in %s hours' % (launch.name, (diff / 60) / 60))
+                    logger.debug('%s in %s hours' % (launch.name, (diff / 60) / 60))
                     self.check_next_stamp_changed(diff, launch)
 
     def netstamp_changed(self, launch, notification, diff):
@@ -120,12 +120,12 @@ class LaunchLibrarySync:
         notification.save()
 
     def check_twitter(self, diff, launch, notification):
-        logger.info('Diff - %d for %s' % (diff, launch.name,))
+        logger.debug('Diff - %d for %s' % (diff, launch.name,))
         logger.debug('LAUNCH DATA: %s', serializers.serialize('json', [launch, ]))
         logger.debug('NOTIFICATION DATA: %s', serializers.serialize('json', [notification, ]))
         if notification.last_twitter_post is not None:
             time_since_twitter = (datetime.now(pytz.utc) - notification.last_twitter_post).total_seconds()
-            logger.info('Seconds since last update on Twitter %d for %s' % (time_since_twitter,
+            logger.debug('Seconds since last update on Twitter %d for %s' % (time_since_twitter,
                                                                             launch.name))
             if diff <= 86400 and notification.wasNotifiedTwentyFourHourTwitter is False:
                 message = get_message(launch, diff)
@@ -177,19 +177,19 @@ class LaunchLibrarySync:
 
     def check_launch_window(self, diff, launch, notification):
         self.check_twitter(diff, launch, notification)
-        logger.info('Checking launch window for %s' % notification.launch.name)
+        logger.debug('Checking launch window for %s' % notification.launch.name)
 
         # If launch is within 24 hours...
         if 86400 >= diff > 3600 and not notification.wasNotifiedTwentyFourHour:
-            logger.info('Launch is within 24 hours, sending notifications.')
+            logger.info('%s is within 24 hours, sending notifications.' % launch.name)
             self.send_notification(launch, 'twentyFourHour', notification)
             notification.wasNotifiedTwentyFourHour = True
         elif 3600 >= diff > 600 and not notification.wasNotifiedOneHour:
-            logger.info('Launch is within one hour, sending notifications.')
+            logger.info('%s is within one hour, sending notifications.' % launch.name)
             self.send_notification(launch, 'oneHour', notification)
             notification.wasNotifiedOneHour = True
         elif diff <= 600 and not notification.wasNotifiedTenMinutes:
-            logger.info('Launch is within ten minutes, sending notifications.')
+            logger.info('%s is within ten minutes, sending notifications.' % launch.name)
             self.send_notification(launch, 'tenMinutes', notification)
             notification.wasNotifiedTenMinutes = True
         else:
@@ -277,13 +277,14 @@ class LaunchLibrarySync:
         )
         # url = 'https://spacelaunchnow.me/launch/%d/' % launch.id
         heading = 'Space Launch Now'
-        logger.debug('Sending notification - %s' % contents)
         time_since_last_notification = None
         if notification.last_notification_sent is not None:
             time_since_last_notification = datetime.now(pytz.utc) - notification.last_notification_sent
         if time_since_last_notification is not None and time_since_last_notification.total_seconds() < 600 and not self.DEBUG:
             logger.info('Cannot send notification - too soon since last notification!')
         else:
+            logger.info('----------------------------------------------------------')
+            logger.info('Sending notification - %s' % contents)
             logger.info('Notification Data - %s' % kwargs)
             push_service = FCMNotification(api_key=keys['FCM_KEY'])
             android_topics = topics_and_segments['topics']
@@ -302,8 +303,8 @@ class LaunchLibrarySync:
                                                                    time_to_live=86400,
                                                                    message_title=launch.name,
                                                                    message_body=contents)
-            logger.info(android_result)
-            logger.info(flutter_result)
+            logger.debug(android_result)
+            logger.debug(flutter_result)
             response = self.one_signal.create_notification(contents, heading, **kwargs)
             if response.status_code == 200:
                 logger.info('Notification Sent -  Status: %s Response: %s' % (response.status_code, response.json()))
@@ -328,3 +329,4 @@ class LaunchLibrarySync:
                 assert notification_data['contents']['en'] == contents
             else:
                 logger.error(response.text)
+            logger.info('----------------------------------------------------------')
