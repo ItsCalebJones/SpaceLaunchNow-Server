@@ -18,6 +18,8 @@ from bot.utils.util import seconds_to_time, get_fcm_topics_and_onesignal_segment
 from pyfcm import FCMNotification
 import logging
 
+from spacelaunchnow import config
+
 AUTH_TOKEN_HERE = keys['AUTH_TOKEN_HERE']
 APP_ID = keys['APP_ID']
 DAEMON_SLEEP = 600
@@ -48,7 +50,7 @@ class LaunchLibrarySync:
             version = '1.3'
         self.repository = LaunchRepository(version=version)
         if debug is None:
-            self.DEBUG = False
+            self.DEBUG = config.DEBUG
         else:
             self.DEBUG = debug
         self.twitter = Twitter(
