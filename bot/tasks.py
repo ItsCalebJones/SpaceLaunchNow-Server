@@ -12,6 +12,7 @@ from bot.app.repository.launches_repository import LaunchRepository
 from bot.app.sync import LaunchLibrarySync
 from bot.models import Notification
 from bot.utils.util import custom_strftime
+from spacelaunchnow import config
 
 logger = get_task_logger('bot')
 
@@ -76,7 +77,7 @@ def get_previous_launches():
 
 
 @periodic_task(run_every=(crontab(minute='*/1')), options={"expires": 60})
-def check_next_launch(debug=False):
+def check_next_launch(debug=config.DEBUG):
     logger.info('Task - Running Notifications...')
     notification = LaunchLibrarySync(debug=debug)
     notification.check_next_launch()
