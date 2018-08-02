@@ -124,11 +124,43 @@ class MissionSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'description', 'type', 'type_name')
 
 
+class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
+    location = LocationSerializer(many=False, read_only=True, source='pad.location')
+    launcher = LauncherSerializer(many=False, read_only=True)
+    lsp = LSPSerializer(many=False, read_only=True)
+    mission = MissionSerializer(many=False, read_only=True)
+
+    class Meta:
+        depth = 3
+        model = Launch
+        fields = ('id', 'url', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold', 'tbdtime', 'tbddate',
+                  'launcher', 'mission', 'lsp', 'location')
+
+
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     pad = PadSerializer(many=False, read_only=True)
-    launcher = LauncherDetailSerializer(many=False, read_only=True)
+    launcher = LauncherSerializer(many=False, read_only=True)
     lsp = LSPSerializer(many=False, read_only=True)
+    mission = MissionSerializer(many=False, read_only=True)
+
+    infoURLs = serializers.ReadOnlyField()
+    vidURLs = serializers.ReadOnlyField()
+
+    class Meta:
+        depth = 3
+        model = Launch
+        fields = ('id', 'url', 'name', 'img_url', 'status', 'netstamp', 'wsstamp', 'westamp', 'net', 'window_end',
+                  'window_start', 'isonet', 'isostart', 'isoend', 'inhold', 'tbdtime', 'tbddate', 'probability',
+                  'holdreason', 'failreason', 'hashtag', 'launcher', 'mission', 'lsp', 'location', 'pad', 'infoURLs',
+                  'vidURLs')
+
+
+class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
+    location = LocationSerializer(many=False, read_only=True, source='pad.location')
+    pad = PadSerializer(many=False, read_only=True)
+    launcher = LauncherDetailSerializerForAgency(many=False, read_only=True)
+    lsp = AgencySerializer(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
 
     infoURLs = serializers.ReadOnlyField()

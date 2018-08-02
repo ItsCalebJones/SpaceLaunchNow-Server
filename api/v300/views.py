@@ -137,7 +137,14 @@ class LaunchViewSet(ModelViewSet):
         else:
             return Launch.objects.order_by('net').all()
 
-    serializer_class = LaunchSerializer
+    def get_serializer_class(self):
+        print(self.request.query_params.keys())
+        if self.request.query_params.has_key("detailed"):
+            return LaunchDetailedSerializer
+        if self.request.query_params.has_key("list"):
+            return LaunchListSerializer
+        return LaunchSerializer
+
     permission_classes = [HasGroupPermission]
     permission_groups = {
         'create': ['Developers'],  # Developers can POST
@@ -169,8 +176,15 @@ class UpcomingLaunchViewSet(ModelViewSet):
         else:
             return Launch.objects.filter(net__gte=now).order_by('net').all()
 
+    def get_serializer_class(self):
+        print(self.request.query_params.keys())
+        if self.request.query_params.has_key("detailed"):
+            return LaunchDetailedSerializer
+        if self.request.query_params.has_key("list"):
+            return LaunchListSerializer
+        return LaunchSerializer
+
     now = datetime.now()
-    serializer_class = LaunchSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
         'create': ['Developers'],  # Developers can POST
@@ -202,7 +216,14 @@ class PreviousLaunchViewSet(ModelViewSet):
         else:
             return Launch.objects.filter(net__lte=now).order_by('-net').all()
 
-    serializer_class = LaunchSerializer
+    def get_serializer_class(self):
+        print(self.request.query_params.keys())
+        if self.request.query_params.has_key("detailed"):
+            return LaunchDetailedSerializer
+        if self.request.query_params.has_key("list"):
+            return LaunchListSerializer
+        return LaunchSerializer
+
     permission_classes = [HasGroupPermission]
     permission_groups = {
         'create': ['Developers'],  # Developers can POST
