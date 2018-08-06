@@ -56,11 +56,22 @@ def get_upcoming_launches():
 
 def check_for_orphaned_launches():
     logger.info('Task - Get Upcoming launches!')
-    # Query the DB and verify no upcoming launches have failed to update.
-    # Most likely requires a new created on and last updated field.
-    date = datetime.today() - timedelta(days=7)
-    notifications = Notification.objects.filter(launch__net__lte=date)
+
+    # Delete notification records from old launches.
+    seven_days_past = datetime.today() - timedelta(days=7)
+    notifications = Notification.objects.filter(launch__net__lte=seven_days_past)
     notifications.delete()
+
+    # Check for stale launches.
+    three_days_past = datetime.today() - timedelta(days=3)
+    launches = Launch.objects.filter(last_updated__lte=three_days_past, launch_library=True)
+    if len(launches) > 0:
+        logger.info("Found stale launches - checking to see if they are deleted from Launch Library")
+        repository = LaunchRepository()
+        for launch in launches:
+            logger.debug("Stale - %s" % launch.name)
+            if repository.is_launch_deleted(launch.id):
+                launch.delete()
 
 
 @periodic_task(

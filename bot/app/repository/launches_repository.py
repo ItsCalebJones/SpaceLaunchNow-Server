@@ -136,6 +136,21 @@ class LaunchRepository:
                 break
         return launches
 
+    def is_launch_deleted(self, id):
+        response = self.launchLibrary.get_launch_by_id(id)
+        if response.status_code == 200:
+            logger.debug("Launch is NOT Stale - %s" % id)
+            response_json = response.json()
+            launch_data = response_json['launches']
+            logger.debug("Found %i launches" % len(launch_data))
+            logger.debug("DATA: %s" % launch_data)
+            for launch in launch_data:
+                return launch_json_to_model(launch)
+            return False
+        elif response.status_code == 404:
+            logger.debug("Launch is Stale - %s" % id)
+            return True
+
 
 def update_notification_record(launch):
     notification = Notification.objects.get(launch=launch)
