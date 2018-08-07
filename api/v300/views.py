@@ -31,12 +31,13 @@ class AgencyViewSet(ModelViewSet):
     queryset = Agency.objects.all()
     # serializer_class = AgencySerializer
 
-    # taken directly from the docs for generic APIViews
     def get_serializer_class(self):
         print(self.request.query_params.keys())
-        if self.request.query_params.has_key("detailed"):
+        mode = self.request.query_params.get("mode", "normal")
+        if mode == "detailed":
             return AgencyDetailedSerializer
-        return AgencySerializer
+        else:
+            return AgencySerializer
 
     permission_classes = [HasGroupPermission]
     permission_groups = {
@@ -139,11 +140,13 @@ class LaunchViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         print(self.request.query_params.keys())
-        if self.request.query_params.has_key("detailed"):
+        mode = self.request.query_params.get("mode", "normal")
+        if mode == "detailed":
             return LaunchDetailedSerializer
-        if self.request.query_params.has_key("list"):
+        elif mode == "list":
             return LaunchListSerializer
-        return LaunchSerializer
+        else:
+            return LaunchSerializer
 
     permission_classes = [HasGroupPermission]
     permission_groups = {
@@ -178,11 +181,13 @@ class UpcomingLaunchViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         print(self.request.query_params.keys())
-        if self.request.query_params.has_key("detailed"):
+        mode = self.request.query_params.get("mode", "normal")
+        if mode == "detailed":
             return LaunchDetailedSerializer
-        if self.request.query_params.has_key("list"):
+        elif mode == "list":
             return LaunchListSerializer
-        return LaunchSerializer
+        else:
+            return LaunchSerializer
 
     now = datetime.now()
     permission_classes = [HasGroupPermission]
@@ -218,11 +223,13 @@ class PreviousLaunchViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         print(self.request.query_params.keys())
-        if self.request.query_params.has_key("detailed"):
+        mode = self.request.query_params.get("mode", "normal")
+        if mode == "detailed":
             return LaunchDetailedSerializer
-        if self.request.query_params.has_key("list"):
+        elif mode == "list":
             return LaunchListSerializer
-        return LaunchSerializer
+        else:
+            return LaunchSerializer
 
     permission_classes = [HasGroupPermission]
     permission_groups = {
