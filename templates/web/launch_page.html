@@ -9,8 +9,8 @@
 <meta property="og:type" content="website"/>
 <meta property="og:description" content="{{ launch.mission_description }}"/>
 <meta property="og:url" content="https://spacelaunchnow.me/launch/{{ launch.id }}/"/>
-{% if launch.img_url %}
-<meta property="og:image" content="{{ launch.img_url }}"/>
+{% if launch.launcher.image_url %}
+<meta property="og:image" content="{{ launch.launcher.image_url.url }}"/>
 {% else %}
 <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
 <meta property="og:image:width" content="3000"/>
@@ -122,10 +122,6 @@
              data-ad-format="auto"></ins>
         <script>
                 (adsbygoogle = window.adsbygoogle || []).push({});
-
-
-
-
         </script>
     </div>
 </div>

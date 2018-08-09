@@ -20,6 +20,13 @@
 
 
 
+
+
+
+
+
+
+
 </script>
 {% endblock %}
 
@@ -108,6 +115,13 @@
 
 
 
+
+
+
+
+
+
+
         </script>
     </div>
 
@@ -116,7 +130,7 @@
         <div class="col-lg-8 col-md-12 col-xl-8">
             {% if launches|length > 0 %}
             {% for launch in launches %}
-            <div class="card text-left" style="margin-top: 12px">
+            <div class="card text-left">
                 <div class="media">
                     <a class="relative" href="/launch/{{ launch.id }}">
                         <img class="card-img"
@@ -165,6 +179,24 @@
         <!-- Sidebar Widgets Column -->
         <div class="col-lg-4 col-md-12 col-xl-4">
             <!-- Categories Widget -->
+            <div class="card">
+                <div class="card-header card-header-danger">Recent Launches
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for launch in previous_launches %}
+                    <a href="{{ launch.slug }}" class="list-group-item list-group-item-action flex-column align-items-start">
+                        <div class="d-flex w-100 justify-content-between">
+                            <div>
+                                <h5 class="mb-1">{{ launch.launcher.name }}</h5>
+                                <h6 class="mb-1">{{ launch.mission.name }} - {{ launch.status_name }}</h6>
+                            </div>
+                            <small class="text-muted">{{ launch.net|timesince }}</small>
+                        </div>
+                        <p class="mb-1">{{ launch.mission.description }}</p>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
             <div class="card" style="height: 1500px;">
                 <a class="twitter-timeline" data-height="1500" data-link-color="#981CEB"
                    href="https://twitter.com/SpaceLaunchNow/lists/space-launch-news?ref_src=twsrc%5Etfw">Space
@@ -182,7 +214,15 @@
             <script>
                     (adsbygoogle = window.adsbygoogle || []).push({});
 
+
+
+
+
+
+
+
             </script>
+            <br>
             <iframe src="https://discordapp.com/widget?id=380226438584074242&theme=dark"
                     width="100%" height="500"
                     allowtransparency="true"
@@ -191,16 +231,23 @@
     </div>
 </div>
 <div class="container">
-        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-        <!-- Space Launch Now -->
-        <ins class="adsbygoogle"
-             style="display:block; margin-top:16px; margin-bottom:16px;"
-             data-ad-client="ca-pub-9824528399164059"
-             data-ad-slot="8772606898"
-             data-ad-format="auto"></ins>
-        <script>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- Space Launch Now -->
+    <ins class="adsbygoogle"
+         style="display:block; margin-top:16px; margin-bottom:16px;"
+         data-ad-client="ca-pub-9824528399164059"
+         data-ad-slot="8772606898"
+         data-ad-format="auto"></ins>
+    <script>
             (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
+
+
+
+
+
+
+
+    </script>
 </div>
 {% include "web/install_buttons.html" %}
 {% endblock %}
