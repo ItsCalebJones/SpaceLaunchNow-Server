@@ -13,7 +13,7 @@ class LauncherAdmin(admin.ModelAdmin):
     list_display = ('name', 'variant', 'full_name', 'family', 'active', 'launch_agency', )
     list_filter = ('name', 'family', 'image_url', 'launch_agency__name',)
     ordering = ('name',)
-    search_fields = ('name', 'agency__name',)
+    search_fields = ('name', 'launch_agency__name',)
 
 
 @admin.register(models.Agency)

@@ -27,6 +27,14 @@
 
 
 
+
+
+
+
+
+
+
+
 </script>
 {% endblock %}
 
@@ -122,6 +130,14 @@
              data-ad-format="auto"></ins>
         <script>
                 (adsbygoogle = window.adsbygoogle || []).push({});
+
+
+
+
+
+
+
+
         </script>
     </div>
 </div>
@@ -185,7 +201,7 @@
                 {% endif %}
             </div>
         </row>
-        <div class="row justify-content-center">
+        <div class="row">
             <!-- Post Content Column -->
             <div class="col-md-4">
                 <div class="info">
@@ -193,11 +209,36 @@
                     <h3 class="card-title">Launch Vehicle</h3>
                     <hr>
                     {% with launcher=launch.launcher %}
-                    <h4>{{ launcher.name }}</h4>
+                    <h4 class="mbt-2">{{ launcher.name }}</h4>
+                    <h6 class="mbt-2">
+                        Configuration: {{ launcher.variant }}<br>
+                        Family: {{ launcher.family }}</h6>
+                    <p> {{ launcher.description}}</p>
 
-                    <p>Configuration: {{ launcher.configuration }}</p>
-
-                    <p>Family: {{ launcher.family }}</p>
+                    <p>
+                        <button class="btn btn-primary btn-link" type="button" data-toggle="collapse"
+                                data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                            Specifications
+                        </button>
+                    </p>
+                    <div class="collapse" id="collapseExample">
+                        <div class="card">
+                            <div class="card-header card-header-danger"> {{ launcher.full_name }}
+                            </div>
+                            GTO: {{ launcher.gto_capacity }}<br>
+                            LEO: {{ launcher.leo_capacity }}<br>
+                            Length: {{ launcher.length }} m<br>
+                            Diameter: {{ launcher.diameter }} m<br>
+                            Launch Mass: {{ launcher.launch_mass }}k kg<br>
+                            Thurst: {{ launcher.to_thrust }} kN<br>
+                        </div>
+                    </div>
+                    {% if launcher.info_url %}
+                    <a class="btn btn-primary btn-lg" href="{{ launcher.info_url }}">INFO</a>
+                    {% endif %}
+                    {% if launcher.wiki_url %}
+                    <a class="btn btn-danger btn-lg" href="{{ launcher.wiki_url }}">WIKI</a>
+                    {% endif %}
                     {% endwith %}
                 </div>
             </div>
@@ -310,6 +351,14 @@
          data-ad-format="auto"></ins>
     <script>
                 (adsbygoogle = window.adsbygoogle || []).push({});
+
+
+
+
+
+
+
+
     </script>
 </div>
 <script src="{% static 'material_kit/js/dateFormat.js' %}" type="text/javascript"></script>
@@ -362,6 +411,14 @@
         } else {
             document.getElementById("countdown").innerHTML = "L - 00 : 00 : 00 : 00";
         }
+
+
+
+
+
+
+
+
 
 
 
