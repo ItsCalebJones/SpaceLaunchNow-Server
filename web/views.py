@@ -74,13 +74,17 @@ def launches(request,):
     query = request.GET.get('q')
 
     if query is not None:
-        _launches = Launch.objects.filter(net__gt=datetime.now()).order_by('net')
+        _launches = Launch.objects.filter(net__gte=datetime.now()).order_by('net')
         _launches = _launches.filter(lsp__abbrev__contains=query)[:5]
     else:
-        _launches = Launch.objects.filter(net__gt=datetime.now()).order_by('net')[:5]
+        _launches = Launch.objects.filter(net__gte=datetime.now()).order_by('net')[:5]
+
+    previous_launches = Launch.objects.filter(net__lte=datetime.now()).order_by('-net')[:5]
 
     if _launches:
-        return render(request, 'web/launches.html', {'launches': _launches, 'query': query})
+        return render(request, 'web/launches.html', {'launches': _launches,
+                                                     'query': query,
+                                                     'previous_launches': previous_launches})
     else:
         raise Http404
 
