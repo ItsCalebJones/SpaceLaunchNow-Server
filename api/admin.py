@@ -5,12 +5,13 @@ from datetime import datetime
 from django.contrib import admin
 from django.shortcuts import redirect
 
+from api.filters.UpcomingFilter import DateListFilter
 from . import models
 
 
 @admin.register(models.Launcher)
 class LauncherAdmin(admin.ModelAdmin):
-    list_display = ('name', 'variant', 'full_name', 'family', 'active', 'launch_agency', )
+    list_display = ('name', 'variant', 'full_name', 'family', 'active', 'launch_agency',)
     list_filter = ('name', 'family', 'image_url', 'launch_agency__name',)
     ordering = ('name',)
     search_fields = ('name', 'launch_agency__name',)
@@ -19,9 +20,9 @@ class LauncherAdmin(admin.ModelAdmin):
 @admin.register(models.Agency)
 class AgencyAdmin(admin.ModelAdmin):
     list_display = ('short_name', 'featured', 'launchers', 'orbiters', 'short_description')
-    list_filter = ('name', 'featured', 'legacy_image_url', )
+    list_filter = ('name', 'featured',)
     ordering = ('name',)
-    search_fields = ('name', )
+    search_fields = ('name',)
 
 
 @admin.register(models.Orbiter)
@@ -34,7 +35,7 @@ class OrbiterAdmin(admin.ModelAdmin):
 @admin.register(models.Launch)
 class LaunchAdmin(admin.ModelAdmin):
     list_display = ('name', 'net')
-    list_filter = ('net', 'status_name', 'lsp__name', 'launcher__name')
+    list_filter = (DateListFilter, 'status_name', 'lsp__name', 'launcher__name')
     ordering = ('net',)
     search_fields = ('name', 'lsp__name', 'launcher__name', 'mission__description')
 
