@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from datetime import datetime
 from django.contrib import admin
-from django.shortcuts import redirect
 
 from api.filters.UpcomingFilter import DateListFilter
 from . import models

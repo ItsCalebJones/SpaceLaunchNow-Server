@@ -157,7 +157,7 @@ class LaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'launcher__name', 'lsp__name', 'status', 'tbddate', 'tbdtime')
+    filter_fields = ('name', 'launcher__name', 'lsp__name', 'status', 'tbddate', 'tbdtime', 'launcher__id')
     search_fields = ('$name', '$launcher__name', '$lsp__name')
     ordering_fields = ('id', 'name', 'net',)
 
@@ -199,7 +199,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'launcher__name', 'lsp__name', 'status', 'tbddate', 'tbdtime')
+    filter_fields = ('name', 'launcher__name', 'lsp__name', 'status', 'tbddate', 'tbdtime', 'launcher__id')
     search_fields = ('$name', '$launcher__name', '$lsp__name')
     ordering_fields = ('id', 'name', 'net',)
 
@@ -240,7 +240,7 @@ class PreviousLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'launcher__name', 'lsp__name', 'status', 'tbddate', 'tbdtime')
+    filter_fields = ('name', 'launcher__name', 'lsp__name', 'status', 'tbddate', 'tbdtime', 'launcher__id')
     search_fields = ('$name', '$launcher__name', '$lsp__name')
     ordering_fields = ('id', 'name', 'net',)
 
