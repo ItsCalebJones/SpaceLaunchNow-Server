@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import os
 
 from django.contrib.sites.models import Site
+from django.db.models import Q
 from django.db.models.functions import datetime
 from django.db import models
 from custom_storages import LogoStorage, AgencyImageStorage, OrbiterImageStorage, LauncherImageStorage, \
@@ -44,6 +45,7 @@ def logo_path(instance, filename):
 class Agency(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=200)
+    parent = models.ForeignKey('self', related_name='related_agencies', null=True, blank=True)
     featured = models.BooleanField(default=False)
     country_code = models.CharField(max_length=255, blank=True, default="")
     abbrev = models.CharField(max_length=255, blank=True, default="")
@@ -62,6 +64,30 @@ class Agency(models.Model):
     logo_url = models.FileField(default=None, storage=LogoStorage(), upload_to=logo_path, null=True, blank=True)
     nation_url = models.FileField(default=None, storage=AgencyNationStorage(), upload_to=nation_path, null=True,
                                   blank=True)
+
+    @property
+    def successful_launches(self):
+        count = Launch.objects.filter(lsp__id=self.id).filter(status=3).count()
+        related_agency = self.related_agencies.all()
+        for related in related_agency:
+            count += Launch.objects.filter(lsp__id=related.id).count()
+        return count
+
+    @property
+    def failed_launches(self):
+        count = Launch.objects.filter(lsp__id=self.id).filter(Q(status=4) | Q(status=7)).count()
+        related_agency = self.related_agencies.all()
+        for related in related_agency:
+            count += Launch.objects.filter(lsp__id=related.id).filter(Q(status=4) | Q(status=7)).count()
+        return count
+
+    @property
+    def pending_launches(self):
+        count = Launch.objects.filter(lsp__id=self.id).filter(Q(status=1) | Q(status=2) | Q(status=5)).count()
+        related_agency = self.related_agencies.all()
+        for related in related_agency:
+            count += Launch.objects.filter(lsp__id=related.id).filter(Q(status=1) | Q(status=2) | Q(status=5)).count()
+        return count
 
     def __str__(self):
         return self.name
