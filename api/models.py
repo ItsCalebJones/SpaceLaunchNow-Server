@@ -111,7 +111,7 @@ class Agency(models.Model):
     @property
     def launch_library_url(self):
         if self.id:
-            return "https://launchlibrary.net/1.3/agency/%s" % self.id
+            return "https://launchlibrary.net/1.4/agency/%s" % self.id
         else:
             return None
 
@@ -259,6 +259,18 @@ class Mission(models.Model):
     class Meta:
         verbose_name = 'Mission'
         verbose_name_plural = 'Missions'
+
+
+class Payload(models.Model):
+    id = models.IntegerField(primary_key=True, editable=True)
+    name = models.CharField(max_length=255, blank=True, default="")
+    description = models.CharField(max_length=2048, blank=True, default="")
+    weight = models.CharField(max_length=255, blank=True, null=True)
+    dimensions = models.CharField(max_length=255, blank=True, null=True)
+    type = models.IntegerField(blank=True, null=True)
+    total = models.IntegerField(blank=True, null=True)
+    type_name = models.CharField(max_length=255, blank=True, default="")
+    mission = models.ForeignKey(Mission, related_name='payloads', blank=True, null=True, on_delete=models.CASCADE)
 
 
 class Launch(models.Model):

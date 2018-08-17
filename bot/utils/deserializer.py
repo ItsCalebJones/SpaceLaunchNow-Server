@@ -121,6 +121,14 @@ def get_mission(launch, data):
         mission.type_name = get_mission_type(data['missions'][0]['type'])
         mission.description = data['missions'][0]['description']
         mission.save()
+        if data['missions'][0]['payloads'] is not None and len(data['missions'][0]['payloads']) > 0:
+            for payload_data in data['missions'][0]['payloads']:
+                payload, created = Payload.objects.get_or_create(id=payload_data['id'])
+                payload.name = payload_data['name']
+                # payload.type = payload_data['type']
+                # payload.type_name = get_mission_type(payload_data['type'])
+                # payload.description = payload_data['description']
+                payload.mission.add(mission)
         return mission
 
 
