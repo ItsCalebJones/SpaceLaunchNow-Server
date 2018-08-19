@@ -46,6 +46,7 @@ urlpatterns = [
     url(r'^site/tos', TemplateView.as_view(template_name='web/site/tos.html'), name='tos'),
     # Changing Password
     url('^', include('django.contrib.auth.urls')),
+    url(r'^signup/$', landing_views.signup, name='signup'),
 ]
 
 handler404 = web.views.handler404

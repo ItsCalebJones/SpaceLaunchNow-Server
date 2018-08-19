@@ -144,8 +144,8 @@ class Orbiter(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = 'Orbiter'
-        verbose_name_plural = 'Orbiters'
+        verbose_name = 'Spacecraft'
+        verbose_name_plural = 'Spacecrafts'
 
 
 # The LauncherDetail object is meant to define orbital class launch vehicles (past and present).
@@ -157,6 +157,8 @@ class Launcher(models.Model):
     name = models.CharField(max_length=200)
     active = models.BooleanField(default=True)
     reusable = models.BooleanField(default=False)
+    audited = models.BooleanField(default=False)
+    librarian_notes= models.CharField(max_length=2048, default='', blank=True)
     description = models.CharField(max_length=2048, default='', blank=True)
     family = models.CharField(max_length=200, default='', blank=True)
     full_name = models.CharField(max_length=200, default='', blank=True)
@@ -188,8 +190,8 @@ class Launcher(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = 'Launcher Detail'
-        verbose_name_plural = 'Launcher Details'
+        verbose_name = 'Launcher Configurations'
+        verbose_name_plural = 'Launcher Configurations'
 
 
 # The Events object is meant to define events (past and present).
