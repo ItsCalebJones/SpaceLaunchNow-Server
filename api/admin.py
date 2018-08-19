@@ -7,7 +7,7 @@ from api.filters.UpcomingFilter import DateListFilter
 from . import models
 
 
-@admin.register(models.Launcher)
+@admin.register(models.LauncherConfig)
 class LauncherAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">extension</i>'
     list_display = ('name', 'variant', 'full_name', 'family', 'active', 'launch_agency',)
@@ -37,9 +37,9 @@ class OrbiterAdmin(admin.ModelAdmin):
 class LaunchAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">launch</i>'
     list_display = ('name', 'net')
-    list_filter = (DateListFilter, 'status_name', 'lsp__name', 'launcher__name')
+    list_filter = (DateListFilter, 'status_name', 'lsp__name', 'launcher_config__name')
     ordering = ('net',)
-    search_fields = ('name', 'lsp__name', 'launcher__name', 'mission__description')
+    search_fields = ('name', 'lsp__name', 'launcher_config__name', 'mission__description')
 
 
 @admin.register(models.Events)

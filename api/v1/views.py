@@ -2,7 +2,7 @@ import django_filters
 from rest_framework import permissions
 from rest_framework import viewsets
 
-from api.models import Launcher, Orbiter, Agency
+from api.models import LauncherConfig, Orbiter, Agency
 from api.permission import HasGroupPermission
 from api.v1.serializers import OrbiterSerializer, LauncherDetailSerializer, AgencySerializer
 
@@ -36,7 +36,7 @@ class LauncherDetailViewSet(viewsets.ModelViewSet):
     FILTERS:
     'family', 'name', 'launch_agency__agency', 'full_name'
     """
-    queryset = Launcher.objects.all()
+    queryset = LauncherConfig.objects.all()
     serializer_class = LauncherDetailSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
