@@ -150,6 +150,10 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         depth = 3
         model = Launch
+        # fields = ('id', 'url', 'name', 'img_url', 'status', 'net', 'window_end',
+        #           'window_start', 'inhold', 'tbdtime', 'tbddate', 'probability',
+        #           'holdreason', 'failreason', 'hashtag', 'launcher', 'mission', 'lsp', 'location', 'pad', 'infoURLs',
+        #           'vidURLs')
         fields = ('id', 'url', 'name', 'img_url', 'status', 'netstamp', 'wsstamp', 'westamp', 'net', 'window_end',
                   'window_start', 'isonet', 'isostart', 'isoend', 'inhold', 'tbdtime', 'tbddate', 'probability',
                   'holdreason', 'failreason', 'hashtag', 'launcher', 'mission', 'lsp', 'location', 'pad', 'infoURLs',
@@ -175,9 +179,9 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         depth = 3
         model = Launch
-        fields = ('id', 'url', 'name', 'img_url', 'status', 'netstamp', 'wsstamp', 'westamp', 'net', 'window_end',
-                  'window_start', 'isonet', 'isostart', 'isoend', 'inhold', 'tbdtime', 'tbddate', 'probability',
-                  'holdreason', 'failreason', 'hashtag', 'launcher', 'mission', 'lsp', 'location', 'pad', 'infoURLs', 'vidURLs')
+        fields = ('id', 'url', 'name', 'img_url', 'status','net', 'window_end', 'window_start', 'inhold', 'tbdtime',
+                  'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'launcher', 'mission', 'lsp',
+                  'location', 'pad', 'infoURLs', 'vidURLs')
 
 
 
