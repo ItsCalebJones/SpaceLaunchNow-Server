@@ -49,7 +49,7 @@ class LauncherSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerialize
     agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
-        model = Launcher
+        model = LauncherConfig
         fields = ('id', 'url', 'name', 'agency')
 
 
@@ -64,7 +64,7 @@ class LauncherDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         return serializer.data
 
     class Meta:
-        model = Launcher
+        model = LauncherConfig
         fields = ('id', 'url', 'name', 'description', 'family', 'full_name', 'agency',
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust',
@@ -81,7 +81,7 @@ class LauncherDetailSerializerForAgency(QueryFieldsMixin, serializers.ModelSeria
         return serializer.data
 
     class Meta:
-        model = Launcher
+        model = LauncherConfig
         fields = ('id', 'url', 'name', 'description', 'family', 'full_name',
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust',
@@ -162,7 +162,7 @@ class MissionSerializer(serializers.ModelSerializer):
 
 class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
-    launcher = LauncherSerializer(many=False, read_only=True)
+    launcher_config = LauncherSerializer(many=False, read_only=True)
     lsp = LSPSerializer(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
 
@@ -170,13 +170,13 @@ class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
         depth = 3
         model = Launch
         fields = ('id', 'url', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold', 'tbdtime', 'tbddate',
-                  'launcher', 'mission', 'lsp', 'location')
+                  'launcher_config', 'mission', 'lsp', 'location')
 
 
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     pad = PadSerializer(many=False, read_only=True)
-    launcher = LauncherSerializer(many=False, read_only=True)
+    launcher_config = LauncherSerializer(many=False, read_only=True)
     lsp = LSPSerializer(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
 
@@ -188,14 +188,14 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
         model = Launch
         fields = ('id', 'url', 'name', 'img_url', 'status', 'netstamp', 'wsstamp', 'westamp', 'net', 'window_end',
                   'window_start', 'isonet', 'isostart', 'isoend', 'inhold', 'tbdtime', 'tbddate', 'probability',
-                  'holdreason', 'failreason', 'hashtag', 'launcher', 'mission', 'lsp', 'location', 'pad', 'infoURLs',
+                  'holdreason', 'failreason', 'hashtag', 'launcher_config', 'mission', 'lsp', 'location', 'pad', 'infoURLs',
                   'vidURLs')
 
 
 class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     pad = PadSerializer(many=False, read_only=True)
-    launcher = LauncherDetailSerializerForAgency(many=False, read_only=True)
+    launcher_config = LauncherDetailSerializerForAgency(many=False, read_only=True)
     lsp = AgencySerializerDetailed(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
 
@@ -207,5 +207,5 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
         model = Launch
         fields = ('id', 'url', 'name', 'img_url', 'status', 'netstamp', 'wsstamp', 'westamp', 'net', 'window_end',
                   'window_start', 'isonet', 'isostart', 'isoend', 'inhold', 'tbdtime', 'tbddate', 'probability',
-                  'holdreason', 'failreason', 'hashtag', 'launcher', 'mission', 'lsp', 'location', 'pad', 'infoURLs',
+                  'holdreason', 'failreason', 'hashtag', 'launcher_config', 'mission', 'lsp', 'location', 'pad', 'infoURLs',
                   'vidURLs')

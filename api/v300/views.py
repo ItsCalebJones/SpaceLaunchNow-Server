@@ -5,7 +5,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 
 from api.v300.serializers import *
 from datetime import datetime
-from api.models import Launcher, Orbiter, Agency
+from api.models import LauncherConfig, Orbiter, Agency
 from api.permission import HasGroupPermission
 from bot.models import Launch
 
@@ -71,7 +71,7 @@ class LaunchersViewSet(ModelViewSet):
     Get all Launchers with the Agency with name NASA.
     Example - /3.0.0/launchers/?launch_agency__name=NASA
     """
-    queryset = Launcher.objects.all()
+    queryset = LauncherConfig.objects.all()
     serializer_class = LauncherDetailSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
@@ -162,8 +162,8 @@ class LaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'launcher__name', 'lsp__name', 'status', 'tbddate', 'tbdtime', 'launcher__id')
-    search_fields = ('$name', '$launcher__name', '$lsp__name')
+    filter_fields = ('name', 'launcher_config__name', 'lsp__name', 'status', 'tbddate', 'tbdtime', 'launcher_config__id')
+    search_fields = ('$name', '$launcher_config__name', '$lsp__name')
     ordering_fields = ('id', 'name', 'net',)
 
 
@@ -207,8 +207,8 @@ class UpcomingLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'launcher__name', 'lsp__name', 'status', 'tbddate', 'tbdtime', 'launcher__id')
-    search_fields = ('$name', '$launcher__name', '$lsp__name')
+    filter_fields = ('name', 'launcher_config__name', 'lsp__name', 'status', 'tbddate', 'tbdtime', 'launcher_config__id')
+    search_fields = ('$name', '$launcher_config__name', '$lsp__name')
     ordering_fields = ('id', 'name', 'net',)
 
 
@@ -251,6 +251,6 @@ class PreviousLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'launcher__name', 'lsp__name', 'status', 'tbddate', 'tbdtime', 'launcher__id')
-    search_fields = ('$name', '$launcher__name', '$lsp__name')
+    filter_fields = ('name', 'launcher_config__name', 'lsp__name', 'status', 'tbddate', 'tbdtime', 'launcher_config__id')
+    search_fields = ('$name', '$launcher_config__name', '$lsp__name')
     ordering_fields = ('id', 'name', 'net',)

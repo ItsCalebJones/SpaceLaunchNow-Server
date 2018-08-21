@@ -152,7 +152,7 @@ class Orbiter(models.Model):
 #
 # Example: Falcon 9, Saturn V, etc.
 # TODO Deprecate the 'agency' string field now that its linked to launch_agency.
-class Launcher(models.Model):
+class LauncherConfig(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=200)
     active = models.BooleanField(default=True)
@@ -275,6 +275,32 @@ class Payload(models.Model):
     mission = models.ForeignKey(Mission, related_name='payloads', blank=True, null=True, on_delete=models.CASCADE)
 
 
+class Orbit(models.Model):
+    name = models.CharField(primary_key=True, editable=True, max_length=30)
+    abbrev = models.CharField(max_length=30)
+
+    class Meta:
+        ordering = ['name', ]
+        verbose_name = 'Orbit'
+        verbose_name_plural = 'Orbits'
+
+
+class Launcher(models.Model):
+    id = models.IntegerField(primary_key=True)
+    serial_number = models.CharField(max_length=10, blank=True, null=True)
+    flight_number = models.IntegerField(blank=True, null=True)
+    reused = models.BooleanField(default=False)
+    land_success = models.NullBooleanField(blank=True, null=True)
+    landing_type = models.CharField(max_length=10, blank=True, null=True)
+    landing_vehicle = models.CharField(max_length=10, blank=True, null=True)
+    launcher = models.ForeignKey(LauncherConfig, related_name='launcher', null=True, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['serial_number', ]
+        verbose_name = 'Launcher'
+        verbose_name_plural = 'Launchers'
+
+
 class Launch(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     launch_library = models.NullBooleanField(default=True)
@@ -300,9 +326,10 @@ class Launch(models.Model):
     hashtag = models.CharField(max_length=255, blank=True, null=True)
     slug = models.SlugField(unique=True)
     lsp = models.ForeignKey(Agency, related_name='launch', null=True, on_delete=models.CASCADE)
-    launcher = models.ForeignKey(Launcher, related_name='launch', null=True, on_delete=models.CASCADE)
+    launcher_config = models.ForeignKey(LauncherConfig, related_name='launch', null=True, on_delete=models.CASCADE)
     pad = models.ForeignKey(Pad, related_name='launch', null=True, on_delete=models.CASCADE)
     mission = models.ForeignKey(Mission, related_name='launch', null=True, on_delete=models.CASCADE)
+    orbit = models.ForeignKey(Orbit, related_name='launch', null=True, on_delete=models.CASCADE)
     created_date = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 

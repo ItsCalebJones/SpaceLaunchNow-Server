@@ -1,4 +1,4 @@
-from api.models import Orbiter, Launcher, Agency
+from api.models import Orbiter, LauncherConfig, Agency
 from rest_framework import serializers
 
 
@@ -7,7 +7,7 @@ class LauncherModelSerializer(serializers.ModelSerializer):
     agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
-        model = Launcher
+        model = LauncherConfig
         fields = ('id', 'url', 'name', 'description', 'agency', 'variant', 'image_url', 'info_url', 'wiki_url')
 
     def get_legacy_name(self, obj):
@@ -76,7 +76,7 @@ class LauncherDetailSerializer(serializers.HyperlinkedModelSerializer):
     agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
-        model = Launcher
+        model = LauncherConfig
         fields = ('id', 'url', 'name', 'description', 'family', 'full_name', 'agency',
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust',
