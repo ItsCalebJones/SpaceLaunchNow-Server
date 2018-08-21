@@ -306,16 +306,6 @@ class Launch(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    @property
-    def vidURLs(self):
-        id = VidURLs.objects.filter(launch_id=self.id).values_list('vid_url', flat=True)
-        return id
-
-    @property
-    def infoURLs(self):
-        id = InfoURLs.objects.filter(launch_id=self.id).values_list('info_url', flat=True)
-        return id
-
     def __unicode__(self):
         return self.name
 

@@ -10,10 +10,10 @@ from . import models
 @admin.register(models.Launcher)
 class LauncherAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">extension</i>'
-    list_display = ('name', 'variant', 'full_name', 'family', 'active', 'launch_agency',)
-    list_filter = ('name', 'family', 'image_url', 'launch_agency__name',)
-    ordering = ('name',)
-    search_fields = ('name', 'launch_agency__name',)
+    list_display = ('name', 'audited', 'variant', 'full_name', 'family', 'active', 'launch_agency',)
+    list_filter = ('name', 'family', 'image_url', 'launch_agency__name', 'audited',)
+    ordering = ('name','id')
+    search_fields = ('name', 'launch_agency__name')
 
 
 @admin.register(models.Agency)

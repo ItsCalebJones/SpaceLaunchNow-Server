@@ -1,3 +1,4 @@
+from django.db.models import Prefetch
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -29,6 +30,7 @@ class AgencyViewSet(ModelViewSet):
 
     """
     queryset = Agency.objects.all()
+
     # serializer_class = AgencySerializer
 
     def get_serializer_class(self):
@@ -136,7 +138,10 @@ class LaunchViewSet(ModelViewSet):
             ids = ids.split(',')
             return Launch.objects.filter(id__in=ids)
         else:
-            return Launch.objects.order_by('net').all()
+            return Launch.objects.order_by('net').prefetch_related('info_urls').prefetch_related(
+                'vid_urls').prefetch_related('launcher__launch_agency').prefetch_related(
+                'pad__location').select_related('mission').select_related('lsp').select_related(
+                'launcher').select_related('pad').all()
 
     def get_serializer_class(self):
         print(self.request.query_params.keys())
@@ -175,9 +180,12 @@ class UpcomingLaunchViewSet(ModelViewSet):
         now = datetime.now()
         if ids:
             ids = ids.split(',')
-            return Launch.objects.filter(id__in=ids)
+            return Launch.objects.filter(id__in=ids).filter(net__gte=now)
         else:
-            return Launch.objects.filter(net__gte=now).order_by('net').all()
+            return Launch.objects.filter(net__gte=now).prefetch_related('info_urls').prefetch_related(
+                'vid_urls').prefetch_related('launcher__launch_agency').prefetch_related(
+                'pad__location').select_related('mission').select_related('lsp').select_related(
+                'launcher').select_related('pad').order_by('net').all()
 
     def get_serializer_class(self):
         print(self.request.query_params.keys())
@@ -217,9 +225,12 @@ class PreviousLaunchViewSet(ModelViewSet):
         now = datetime.now()
         if ids:
             ids = ids.split(',')
-            return Launch.objects.filter(id__in=ids)
+            return Launch.objects.filter(id__in=ids).filter(net__lte=now)
         else:
-            return Launch.objects.filter(net__lte=now).order_by('-net').all()
+            return Launch.objects.filter(net__lte=now).prefetch_related('info_urls').prefetch_related(
+                'vid_urls').prefetch_related('launcher__launch_agency').prefetch_related(
+                'pad__location').select_related('mission').select_related('lsp').select_related(
+                'launcher').select_related('pad').order_by('-net').all()
 
     def get_serializer_class(self):
         print(self.request.query_params.keys())
@@ -243,4 +254,3 @@ class PreviousLaunchViewSet(ModelViewSet):
     filter_fields = ('name', 'launcher__name', 'lsp__name', 'status', 'tbddate', 'tbdtime', 'launcher__id')
     search_fields = ('$name', '$launcher__name', '$lsp__name')
     ordering_fields = ('id', 'name', 'net',)
-

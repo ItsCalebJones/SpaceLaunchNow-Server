@@ -156,23 +156,28 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
                   'vidURLs')
 
 
+class InfoURLSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = InfoURLs
+        fields = ('info_url',)
+
+
 class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     pad = PadSerializer(many=False, read_only=True)
     launcher = LauncherDetailSerializerForAgency(many=False, read_only=True)
     lsp = AgencySerializer(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
-
-    infoURLs = serializers.ReadOnlyField()
-    vidURLs = serializers.ReadOnlyField()
+    infoURLs = serializers.StringRelatedField(read_only=True, many=True, source='info_urls')
+    vidURLs = serializers.StringRelatedField(read_only=True, many=True, source='vid_urls')
 
     class Meta:
         depth = 3
         model = Launch
         fields = ('id', 'url', 'name', 'img_url', 'status', 'netstamp', 'wsstamp', 'westamp', 'net', 'window_end',
                   'window_start', 'isonet', 'isostart', 'isoend', 'inhold', 'tbdtime', 'tbddate', 'probability',
-                  'holdreason', 'failreason', 'hashtag', 'launcher', 'mission', 'lsp', 'location', 'pad', 'infoURLs',
-                  'vidURLs')
+                  'holdreason', 'failreason', 'hashtag', 'launcher', 'mission', 'lsp', 'location', 'pad', 'infoURLs', 'vidURLs')
 
 
 
