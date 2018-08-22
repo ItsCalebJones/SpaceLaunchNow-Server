@@ -139,9 +139,9 @@ class LaunchViewSet(ModelViewSet):
             return Launch.objects.filter(id__in=ids)
         else:
             return Launch.objects.order_by('net').prefetch_related('info_urls').prefetch_related(
-                'vid_urls').prefetch_related('launcher__launch_agency').prefetch_related(
+                'vid_urls').prefetch_related('launcher_config__launch_agency').prefetch_related(
                 'pad__location').select_related('mission').select_related('lsp').select_related(
-                'launcher').select_related('pad').all()
+                'launcher_config').select_related('pad').all()
 
     def get_serializer_class(self):
         print(self.request.query_params.keys())
@@ -183,9 +183,9 @@ class UpcomingLaunchViewSet(ModelViewSet):
             return Launch.objects.filter(id__in=ids).filter(net__gte=now)
         else:
             return Launch.objects.filter(net__gte=now).prefetch_related('info_urls').prefetch_related(
-                'vid_urls').prefetch_related('launcher__launch_agency').prefetch_related(
+                'vid_urls').prefetch_related('launcher_config__launch_agency').prefetch_related(
                 'pad__location').select_related('mission').select_related('lsp').select_related(
-                'launcher').select_related('pad').order_by('net').all()
+                'launcher_config').select_related('pad').order_by('net').all()
 
     def get_serializer_class(self):
         print(self.request.query_params.keys())
@@ -228,9 +228,9 @@ class PreviousLaunchViewSet(ModelViewSet):
             return Launch.objects.filter(id__in=ids).filter(net__lte=now)
         else:
             return Launch.objects.filter(net__lte=now).prefetch_related('info_urls').prefetch_related(
-                'vid_urls').prefetch_related('launcher__launch_agency').prefetch_related(
+                'vid_urls').prefetch_related('launcher_config__launch_agency').prefetch_related(
                 'pad__location').select_related('mission').select_related('lsp').select_related(
-                'launcher').select_related('pad').order_by('-net').all()
+                'launcher_config').select_related('pad').order_by('-net').all()
 
     def get_serializer_class(self):
         print(self.request.query_params.keys())

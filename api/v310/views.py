@@ -11,6 +11,30 @@ from api.models import LauncherConfig, Orbiter, Agency
 from api.permission import HasGroupPermission
 from bot.models import Launch
 
+class EntryViewSet(ModelViewSet):
+    """
+    API endpoint that allows News posts to be viewed.
+
+    """
+    queryset = Entry.objects.order_by('-publication_date').filter(status=2).all()
+
+    # serializer_class = AgencySerializer
+
+    def get_serializer_class(self):
+            return EntrySerializer
+
+    permission_classes = [HasGroupPermission]
+    permission_groups = {
+        'create': ['Developers'],  # Developers can POST
+        'destroy': ['Developers'],  # Developers can DELETE
+        'partial_update': ['Contributors', 'Developers'],  # Designers and Developers can PATCH
+        'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
+        'list': ['_Public']
+    }
+    # filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    # filter_fields = ('featured',)
+    # search_fields = ('^name',)
+    # ordering_fields = ('id', 'name', 'featured')
 
 class AgencyViewSet(ModelViewSet):
     """
@@ -57,24 +81,24 @@ class AgencyViewSet(ModelViewSet):
     ordering_fields = ('id', 'name', 'featured')
 
 
-class LaunchersViewSet(ModelViewSet):
+class LauncherConfigViewSet(ModelViewSet):
     """
-    API endpoint that allows Launchers to be viewed.
+    API endpoint that allows Launcher Configurations to be viewed.
 
     GET:
-    Return a list of all the existing launchers.
+    Return a list of all the existing launcher configurations.
 
     FILTERS:
     Fields - 'family', 'agency', 'name', 'launch_agency__name', 'full_name', 'launch_agency__launch_library_id'
 
     Get all Launchers with the Launch Library ID of 44.
-    Example - /3.1.0/launchers/?launch_agency__launch_library_id=44
+    Example - /3.1.0/launcher_config/?launch_agency__launch_library_id=44
 
     Get all Launchers with the Agency with name NASA.
-    Example - /3.1.0/launchers/?launch_agency__name=NASA
+    Example - /3.1.0/launcher_config/?launch_agency__name=NASA
     """
     queryset = LauncherConfig.objects.all()
-    serializer_class = LauncherDetailSerializer
+    serializer_class = LauncherConfigDetailSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
         'create': ['Developers'],  # Developers can POST
@@ -85,6 +109,35 @@ class LaunchersViewSet(ModelViewSet):
     }
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('family', 'name', 'launch_agency__name', 'full_name', 'id')
+
+
+class LauncherViewSet(ModelViewSet):
+    """
+    API endpoint that allows Launcher instances to be viewed.
+
+    GET:
+    Return a list of all the existing launcher instances.
+
+    FILTERS:
+
+    Get all Launchers with the Launch Library ID of 44.
+    Example - /3.1.0/launcher
+
+    Get all Launchers with the Agency with name NASA.
+    Example - /3.1.0/launcher/?launch_agency__name=NASA
+    """
+    queryset = Launcher.objects.all()
+    serializer_class = LauncherDetailedSerializer
+    permission_classes = [HasGroupPermission]
+    permission_groups = {
+        'create': ['Developers'],  # Developers can POST
+        'destroy': ['Developers'],  # Developers can POST
+        'partial_update': ['Contributors', 'Developers'],  # Designers and Developers can PATCH
+        'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
+        'list': ['_Public']
+    }
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('id', 'serial_number',)
 
 
 class OrbiterViewSet(ModelViewSet):
@@ -166,7 +219,10 @@ class LaunchViewSet(ModelViewSet):
                 print ("Cant find agency.")
             return total_launches.order_by('net')
         else:
-            return Launch.objects.order_by('net').all()
+            return Launch.objects.order_by('net').prefetch_related('info_urls').prefetch_related(
+                'vid_urls').prefetch_related('launcher_config__launch_agency').prefetch_related(
+                'pad__location').select_related('mission').select_related('lsp').select_related(
+                'launcher_config').select_related('pad').all()
 
     def get_serializer_class(self):
         print(self.request.query_params.keys())
@@ -187,7 +243,7 @@ class LaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'launcher_config__name', 'lsp__name', 'lsp__id', 'status', 'tbddate', 'tbdtime', 'launcher_config__id')
+    filter_fields = ('name', 'launcher_config__name', 'lsp__name', 'lsp__id', 'status', 'tbddate', 'tbdtime', 'launcher_config__id', 'launcher__id')
     search_fields = ('$name', '$launcher_config__name', '$lsp__name')
     ordering_fields = ('id', 'name', 'net',)
 
@@ -233,7 +289,10 @@ class UpcomingLaunchViewSet(ModelViewSet):
                 print ("Cant find agency.")
             return total_launches.order_by('net')
         else:
-            return Launch.objects.filter(net__gte=now).order_by('net').all()
+            return Launch.objects.filter(net__gte=now).prefetch_related('info_urls').prefetch_related(
+                'vid_urls').prefetch_related('launcher_config__launch_agency').prefetch_related(
+                'pad__location').select_related('mission').select_related('lsp').select_related(
+                'launcher_config').select_related('pad').order_by('net').all()
 
     def get_serializer_class(self):
         print(self.request.query_params.keys())
@@ -255,7 +314,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'launcher_config__name', 'status', 'tbddate', 'tbdtime', 'launcher_config__id')
+    filter_fields = ('name', 'launcher_config__name', 'status', 'tbddate', 'tbdtime', 'launcher_config__id', 'launcher__id')
     search_fields = ('$name', '$launcher_config__name', '$lsp__name')
     ordering_fields = ('id', 'name', 'net',)
 
@@ -301,7 +360,10 @@ class PreviousLaunchViewSet(ModelViewSet):
                 print ("Cant find agency.")
             return total_launches.order_by('-net')
         else:
-            return Launch.objects.filter(net__lte=now).order_by('-net').all()
+            return Launch.objects.filter(net__lte=now).prefetch_related('info_urls').prefetch_related(
+                'vid_urls').prefetch_related('launcher_config__launch_agency').prefetch_related(
+                'pad__location').select_related('mission').select_related('lsp').select_related(
+                'launcher_config').select_related('pad').order_by('-net').all()
 
     def get_serializer_class(self):
         print(self.request.query_params.keys())
@@ -322,6 +384,6 @@ class PreviousLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'launcher_config__name', 'status', 'tbddate', 'tbdtime', 'launcher_config__id')
+    filter_fields = ('name', 'launcher_config__name', 'status', 'tbddate', 'tbdtime', 'launcher_config__id', 'launcher__id')
     search_fields = ('$name', '$launcher_config__name', '$lsp__name')
     ordering_fields = ('id', 'name', 'net',)

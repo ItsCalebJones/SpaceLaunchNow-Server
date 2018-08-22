@@ -8,12 +8,66 @@ from . import models
 
 
 @admin.register(models.LauncherConfig)
-class LauncherAdmin(admin.ModelAdmin):
+class LauncherConfigAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">extension</i>'
     list_display = ('name', 'audited', 'variant', 'full_name', 'family', 'active', 'launch_agency',)
     list_filter = ('name', 'family', 'image_url', 'launch_agency__name', 'audited',)
-    ordering = ('name','id')
+    ordering = ('name', 'id')
     search_fields = ('name', 'launch_agency__name')
+
+
+@admin.register(models.Launcher)
+class LauncherAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">extension</i>'
+    list_display = ('id', 'serial_number',)
+    list_filter = ('id', 'serial_number',)
+    ordering = ('id', 'serial_number',)
+    search_fields = ('serial_number',)
+
+
+@admin.register(models.Mission)
+class MissionAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">assignment</i>'
+    list_display = ('id', 'name', 'type_name', 'orbit')
+    list_filter = ('id', 'name', 'type_name', 'orbit')
+    ordering = ('id', )
+    search_fields = ('name', 'description')
+
+
+@admin.register(models.MissionType)
+class MissionTypeAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">assessment</i>'
+    list_display = ('id', 'name',)
+    list_filter = ('id', 'name',)
+    ordering = ('id', )
+    search_fields = ('name',)
+
+
+@admin.register(models.AgencyType)
+class AgencyTypeAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">group</i>'
+    list_display = ('id', 'name',)
+    list_filter = ('id', 'name',)
+    ordering = ('id', )
+    search_fields = ('name',)
+
+
+@admin.register(models.LaunchStatus)
+class LaunchStatusAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">launch</i>'
+    list_display = ('id', 'name',)
+    list_filter = ('id', 'name',)
+    ordering = ('id', )
+    search_fields = ('name',)
+
+
+@admin.register(models.Orbit)
+class OrbitAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">extension</i>'
+    list_display = ('name', 'abbrev',)
+    list_filter = ('name', 'abbrev',)
+    ordering = ('name', 'abbrev',)
+    search_fields = ('name',)
 
 
 @admin.register(models.Agency)

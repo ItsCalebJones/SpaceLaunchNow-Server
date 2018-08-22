@@ -140,9 +140,9 @@
                     </a>
                 </div>
                 <div class="card-header card-header-info">
-                    {% if launch.launcher.image_url %}
+                    {% if launch.launcher_config.image_url %}
                     <img class="img-raised rounded-circle img-fluid text-center"
-                         src="{{ launch.launcher.image_url.url }}"
+                         src="{{ launch.launcher_config.image_url.url }}"
                          style="max-width: 35%;overflow: hidden;margin: -100px 0 0 0;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                     {% else %}
                     <img class="img-raised rounded-circle img-fluid text-center"
@@ -187,7 +187,7 @@
                     <a href="{{ launch.slug }}" class="list-group-item list-group-item-action flex-column align-items-start">
                         <div class="d-flex w-100 justify-content-between">
                             <div>
-                                <h5 class="mb-1">{{ launch.launcher.name }}</h5>
+                                <h5 class="mb-1">{{ launch.launcher_config.name }}</h5>
                                 <h6 class="mb-1">{{ launch.mission.name }} - {{ launch.status_name }}</h6>
                             </div>
                             <small class="text-muted">{{ launch.net|timesince }}</small>
