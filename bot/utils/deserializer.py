@@ -101,7 +101,7 @@ def get_location(launch, data):
 
 def get_rocket(launch, data):
     if 'rocket' in data and data['rocket'] is not None:
-        rocket, created = Launcher.objects.get_or_create(id=data['rocket']['id'])
+        rocket, created = LauncherConfig.objects.get_or_create(id=data['rocket']['id'])
         if created:
             rocket.name = data['rocket']['name']
             rocket.family_name = data['rocket']['familyname']
@@ -121,6 +121,14 @@ def get_mission(launch, data):
         mission.type_name = get_mission_type(data['missions'][0]['type'])
         mission.description = data['missions'][0]['description']
         mission.save()
+        # if data['missions'][0]['payloads'] is not None and len(data['missions'][0]['payloads']) > 0:
+        #     for payload_data in data['missions'][0]['payloads']:
+        #         payload, created = Payload.objects.get_or_create(id=payload_data['id'])
+        #         payload.name = payload_data['name']
+        #         # payload.type = payload_data['type']
+        #         # payload.type_name = get_mission_type(payload_data['type'])
+        #         # payload.description = payload_data['description']
+        #         payload.mission.add(mission)
         return mission
 
 
@@ -156,5 +164,5 @@ def download_launcher_image(launcher):
             break
         lf.write(block)
 
-    image_file = Launcher.objects.get(id=launcher.id).image_url
+    image_file = LauncherConfig.objects.get(id=launcher.id).image_url
     image_file.save(name, files.File(lf))

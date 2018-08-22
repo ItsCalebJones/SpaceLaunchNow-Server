@@ -42,6 +42,14 @@ def logo_path(instance, filename):
     return name
 
 
+class AgencyType(models.Model):
+    id = models.IntegerField(primary_key=True, editable=True)
+    name = models.CharField(max_length=255, blank=True, default="")
+
+    def __unicode__(self):
+        return self.name
+
+
 class Agency(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=200)
@@ -50,6 +58,7 @@ class Agency(models.Model):
     country_code = models.CharField(max_length=255, blank=True, default="")
     abbrev = models.CharField(max_length=255, blank=True, default="")
     type = models.CharField(max_length=255, blank=True, null=True)
+    agency_type = models.ForeignKey(AgencyType, related_name='agency', blank=True, null=True, on_delete=models.CASCADE)
     info_url = models.URLField(blank=True, null=True)
     wiki_url = models.URLField(blank=True, null=True)
     description = models.CharField(max_length=2048, blank=True, null=True, default=None)
@@ -111,7 +120,7 @@ class Agency(models.Model):
     @property
     def launch_library_url(self):
         if self.id:
-            return "https://launchlibrary.net/1.3/agency/%s" % self.id
+            return "https://launchlibrary.net/1.4/agency/%s" % self.id
         else:
             return None
 
@@ -144,19 +153,21 @@ class Orbiter(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = 'Orbiter'
-        verbose_name_plural = 'Orbiters'
+        verbose_name = 'Spacecraft'
+        verbose_name_plural = 'Spacecrafts'
 
 
 # The LauncherDetail object is meant to define orbital class launch vehicles (past and present).
 #
 # Example: Falcon 9, Saturn V, etc.
 # TODO Deprecate the 'agency' string field now that its linked to launch_agency.
-class Launcher(models.Model):
+class LauncherConfig(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=200)
     active = models.BooleanField(default=True)
     reusable = models.BooleanField(default=False)
+    audited = models.BooleanField(default=False)
+    librarian_notes = models.CharField(max_length=2048, default='', blank=True)
     description = models.CharField(max_length=2048, default='', blank=True)
     family = models.CharField(max_length=200, default='', blank=True)
     full_name = models.CharField(max_length=200, default='', blank=True)
@@ -181,15 +192,15 @@ class Launcher(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return self.full_name
 
     def __unicode__(self):
-        return u'%s' % self.name
+        return u'%s' % self.full_name
 
     class Meta:
         ordering = ['name']
-        verbose_name = 'Launcher Detail'
-        verbose_name_plural = 'Launcher Details'
+        verbose_name = 'Launcher Configurations'
+        verbose_name_plural = 'Launcher Configurations'
 
 
 # The Events object is meant to define events (past and present).
@@ -246,12 +257,35 @@ class Pad(models.Model):
         verbose_name_plural = 'Pads'
 
 
+class Orbit(models.Model):
+    name = models.CharField(primary_key=True, editable=True, max_length=30)
+    abbrev = models.CharField(max_length=30)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name', ]
+        verbose_name = 'Orbit'
+        verbose_name_plural = 'Orbits'
+
+
+class MissionType(models.Model):
+    id = models.IntegerField(primary_key=True, editable=True)
+    name = models.CharField(max_length=255, blank=True, default="")
+
+    def __unicode__(self):
+        return self.name
+
+
 class Mission(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=255, blank=True, default="")
     description = models.CharField(max_length=2048, blank=True, default="")
     type = models.IntegerField(blank=True, null=True)
     type_name = models.CharField(max_length=255, blank=True, default="")
+    mission_type = models.ForeignKey(MissionType, related_name='mission', blank=True, null=True, on_delete=models.CASCADE)
+    orbit = models.ForeignKey(Orbit, related_name='mission', null=True, blank=True, on_delete=models.CASCADE)
 
     def __unicode__(self):
         return self.name
@@ -261,13 +295,60 @@ class Mission(models.Model):
         verbose_name_plural = 'Missions'
 
 
+class Payload(models.Model):
+    id = models.IntegerField(primary_key=True, editable=True)
+    name = models.CharField(max_length=255, blank=True, default="")
+    description = models.CharField(max_length=2048, blank=True, default="")
+    weight = models.CharField(max_length=255, blank=True, null=True)
+    dimensions = models.CharField(max_length=255, blank=True, null=True)
+    type = models.IntegerField(blank=True, null=True)
+    total = models.IntegerField(blank=True, null=True)
+    type_name = models.CharField(max_length=255, blank=True, default="")
+    mission = models.ForeignKey(Mission, related_name='payloads', blank=True, null=True, on_delete=models.CASCADE)
+
+
+class Launcher(models.Model):
+    id = models.AutoField(primary_key=True)
+    serial_number = models.CharField(max_length=10, blank=True, null=True)
+    launcher_config = models.ForeignKey(LauncherConfig, related_name='launcher', null=True, on_delete=models.CASCADE)
+
+    @property
+    def previous_flights(self):
+        count = Launch.objects.filter(launcher_id=self.id).filter(land_success=True).count()
+        return count
+
+    def __str__(self):
+        return '%s (%s)' % (self.serial_number, self.launcher_config.full_name)
+
+    def __unicode__(self):
+        return u'%s (%s)' % (self.serial_number, self.launcher_config.full_name)
+
+    class Meta:
+        ordering = ['serial_number', ]
+        verbose_name = 'Launcher'
+        verbose_name_plural = 'Launchers'
+
+
+class LaunchStatus(models.Model):
+    id = models.IntegerField(primary_key=True, editable=True)
+    name = models.CharField(max_length=255, blank=True, default="")
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Launch Status'
+        verbose_name_plural = 'Launch Statuses'
+
+
 class Launch(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     launch_library = models.NullBooleanField(default=True)
     name = models.CharField(max_length=255, blank=True)
     img_url = models.CharField(max_length=255, blank=True, null=True)
     status = models.IntegerField(blank=True, null=True)
-    status_name = models.CharField(max_length=255,blank=True, null=True)
+    status_name = models.CharField(max_length=255, blank=True, null=True)
+    launch_status = models.ForeignKey(LaunchStatus, related_name='launch', blank=True, null=True, on_delete=models.CASCADE)
     netstamp = models.IntegerField(blank=True, null=True)
     wsstamp = models.IntegerField(blank=True, null=True)
     westamp = models.IntegerField(blank=True, null=True)
@@ -284,23 +365,18 @@ class Launch(models.Model):
     holdreason = models.CharField(max_length=255, blank=True, null=True)
     failreason = models.CharField(max_length=255, blank=True, null=True)
     hashtag = models.CharField(max_length=255, blank=True, null=True)
+    reused = models.BooleanField(default=False)
+    land_success = models.NullBooleanField(blank=True, null=True)
+    landing_type = models.CharField(max_length=10, blank=True, null=True)
+    landing_location = models.CharField(max_length=10, blank=True, null=True)
     slug = models.SlugField(unique=True)
     lsp = models.ForeignKey(Agency, related_name='launch', null=True, on_delete=models.CASCADE)
     launcher = models.ForeignKey(Launcher, related_name='launch', null=True, on_delete=models.CASCADE)
+    launcher_config = models.ForeignKey(LauncherConfig, related_name='launch', null=True, on_delete=models.CASCADE)
     pad = models.ForeignKey(Pad, related_name='launch', null=True, on_delete=models.CASCADE)
     mission = models.ForeignKey(Mission, related_name='launch', null=True, on_delete=models.CASCADE)
     created_date = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-
-    @property
-    def vidURLs(self):
-        id = VidURLs.objects.filter(launch_id=self.id).values_list('vid_url', flat=True)
-        return id
-
-    @property
-    def infoURLs(self):
-        id = InfoURLs.objects.filter(launch_id=self.id).values_list('info_url', flat=True)
-        return id
 
     def __unicode__(self):
         return self.name

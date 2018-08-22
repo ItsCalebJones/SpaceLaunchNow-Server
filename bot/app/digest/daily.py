@@ -1,11 +1,14 @@
 import pytz
 from num2words import num2words
 
+from api.models import Launch
 from bot.app.digest.sender import send_twitter_update
 from bot.app.repository.launches_repository import *
 
 
 # Get an instance of a logger
+from bot.utils.util import custom_strftime
+
 logger = logging.getLogger('bot.digest')
 
 
@@ -31,8 +34,9 @@ def build_daily_message(possible, confirmed, DEBUG=True):
     messages = "MESSAGES SENT TO TWITTER: \n"
     if len(confirmed) == 0 and len(possible) == 0:
         logger.info("No launches - sending message. ")
+        launch = Launch.objects.filter(net__gte=datetime.now()).order_by('net').first()
 
-        message = "%s There are currently no launches scheduled within the next 48 hours." % header
+        message = "%s There are currently no launches scheduled within the next 48 hours. Next up is %s on %s" % (header, launch.name, custom_strftime("%B {S} at %I:%M %p %Z", launch.net))
 
         messages = messages + message + "\n"
         send_twitter_update(message, DEBUG)

@@ -1,10 +1,11 @@
+from django.db.models import Prefetch
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from api.v300.serializers import *
 from datetime import datetime
-from api.models import Launcher, Orbiter, Agency
+from api.models import LauncherConfig, Orbiter, Agency
 from api.permission import HasGroupPermission
 from bot.models import Launch
 
@@ -29,6 +30,7 @@ class AgencyViewSet(ModelViewSet):
 
     """
     queryset = Agency.objects.all()
+
     # serializer_class = AgencySerializer
 
     def get_serializer_class(self):
@@ -69,7 +71,7 @@ class LaunchersViewSet(ModelViewSet):
     Get all Launchers with the Agency with name NASA.
     Example - /3.0.0/launchers/?launch_agency__name=NASA
     """
-    queryset = Launcher.objects.all()
+    queryset = LauncherConfig.objects.all()
     serializer_class = LauncherDetailSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
@@ -136,7 +138,10 @@ class LaunchViewSet(ModelViewSet):
             ids = ids.split(',')
             return Launch.objects.filter(id__in=ids)
         else:
-            return Launch.objects.order_by('net').all()
+            return Launch.objects.order_by('net').prefetch_related('info_urls').prefetch_related(
+                'vid_urls').prefetch_related('launcher_config__launch_agency').prefetch_related(
+                'pad__location').select_related('mission').select_related('lsp').select_related(
+                'launcher_config').select_related('pad').all()
 
     def get_serializer_class(self):
         print(self.request.query_params.keys())
@@ -157,8 +162,8 @@ class LaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'launcher__name', 'lsp__name', 'status', 'tbddate', 'tbdtime', 'launcher__id')
-    search_fields = ('$name', '$launcher__name', '$lsp__name')
+    filter_fields = ('name', 'launcher_config__name', 'lsp__name', 'status', 'tbddate', 'tbdtime', 'launcher_config__id')
+    search_fields = ('$name', '$launcher_config__name', '$lsp__name')
     ordering_fields = ('id', 'name', 'net',)
 
 
@@ -175,9 +180,12 @@ class UpcomingLaunchViewSet(ModelViewSet):
         now = datetime.now()
         if ids:
             ids = ids.split(',')
-            return Launch.objects.filter(id__in=ids)
+            return Launch.objects.filter(id__in=ids).filter(net__gte=now)
         else:
-            return Launch.objects.filter(net__gte=now).order_by('net').all()
+            return Launch.objects.filter(net__gte=now).prefetch_related('info_urls').prefetch_related(
+                'vid_urls').prefetch_related('launcher_config__launch_agency').prefetch_related(
+                'pad__location').select_related('mission').select_related('lsp').select_related(
+                'launcher_config').select_related('pad').order_by('net').all()
 
     def get_serializer_class(self):
         print(self.request.query_params.keys())
@@ -199,8 +207,8 @@ class UpcomingLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'launcher__name', 'lsp__name', 'status', 'tbddate', 'tbdtime', 'launcher__id')
-    search_fields = ('$name', '$launcher__name', '$lsp__name')
+    filter_fields = ('name', 'launcher_config__name', 'lsp__name', 'status', 'tbddate', 'tbdtime', 'launcher_config__id')
+    search_fields = ('$name', '$launcher_config__name', '$lsp__name')
     ordering_fields = ('id', 'name', 'net',)
 
 
@@ -217,9 +225,12 @@ class PreviousLaunchViewSet(ModelViewSet):
         now = datetime.now()
         if ids:
             ids = ids.split(',')
-            return Launch.objects.filter(id__in=ids)
+            return Launch.objects.filter(id__in=ids).filter(net__lte=now)
         else:
-            return Launch.objects.filter(net__lte=now).order_by('-net').all()
+            return Launch.objects.filter(net__lte=now).prefetch_related('info_urls').prefetch_related(
+                'vid_urls').prefetch_related('launcher_config__launch_agency').prefetch_related(
+                'pad__location').select_related('mission').select_related('lsp').select_related(
+                'launcher_config').select_related('pad').order_by('-net').all()
 
     def get_serializer_class(self):
         print(self.request.query_params.keys())
@@ -240,7 +251,6 @@ class PreviousLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'launcher__name', 'lsp__name', 'status', 'tbddate', 'tbdtime', 'launcher__id')
-    search_fields = ('$name', '$launcher__name', '$lsp__name')
+    filter_fields = ('name', 'launcher_config__name', 'lsp__name', 'status', 'tbddate', 'tbdtime', 'launcher_config__id')
+    search_fields = ('$name', '$launcher_config__name', '$lsp__name')
     ordering_fields = ('id', 'name', 'net',)
-

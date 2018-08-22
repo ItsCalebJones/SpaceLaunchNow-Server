@@ -47,7 +47,7 @@ class LaunchLibrarySync:
     def __init__(self, debug=None, version=None):
         self.one_signal = OneSignalSdk(AUTH_TOKEN_HERE, APP_ID)
         if version is None:
-            version = '1.3'
+            version = '1.4.1'
         self.repository = LaunchRepository(version=version)
         if debug is None:
             self.DEBUG = config.DEBUG
