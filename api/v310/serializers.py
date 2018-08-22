@@ -222,11 +222,10 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         depth = 3
         model = Launch
-        fields = '__all__'
-        # fields = ('id', 'url', 'name', 'img_url', 'status', 'net', 'window_end', 'window_start', 'inhold', 'tbdtime',
-        #           'tbddate', 'probability', 'holdreason', 'failreason', 'reused', 'land_success', 'landing_type',
-        #           'landing_location', 'hashtag', 'launcher', 'launcher_config', 'mission', 'lsp', 'location', 'pad',
-        #           'infoURLs', 'vidURLs')
+        fields = ('id', 'url', 'name', 'img_url', 'status', 'net', 'window_end', 'window_start', 'inhold', 'tbdtime',
+                  'tbddate', 'probability', 'holdreason', 'failreason', 'reused', 'land_success', 'landing_type',
+                  'landing_location', 'hashtag', 'launcher', 'launcher_config', 'mission', 'lsp', 'location', 'pad',
+                  'infoURLs', 'vidURLs')
 
 
 class EntrySerializer(serializers.ModelSerializer):
@@ -234,5 +233,4 @@ class EntrySerializer(serializers.ModelSerializer):
     class Meta:
         depth = 3
         model = Entry
-        fields = '__all__'
-        # fields = ('id', 'title', 'slug', 'publication_date', 'content', 'lead', 'excerpt', 'image', 'featured',)
+        fields = ('id', 'title', 'slug', 'publication_date', 'content', 'lead', 'excerpt', 'image', 'featured',)
