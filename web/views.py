@@ -17,7 +17,8 @@ from api.models import Agency, Launch
 
 
 def index(request):
-    return render(request, 'web/index.html',)
+    launch = Launch.objects.filter(net__gt=datetime.now()).order_by('net').first()
+    return render(request, 'web/index.html', {'launch': launch})
 
 
 # Create your views here.

@@ -130,14 +130,6 @@
              data-ad-format="auto"></ins>
         <script>
                 (adsbygoogle = window.adsbygoogle || []).push({});
-
-
-
-
-
-
-
-
         </script>
     </div>
 </div>
@@ -159,7 +151,7 @@
                 </div>
             </div>
         </div>
-        <div class="row" style="margin:50px;">
+        <div class="row" style="margin: 50px;">
             <div class="col-md-12 ml-auto mx-auto mr-auto text-center">
                 <div class="profile">
                     <div class="avatar">
@@ -365,7 +357,7 @@
 <script>
         var countDownDate = new Date("{{launch.net.isoformat}}");
 
-        document.getElementById("date").innerHTML = dateFormat(countDownDate, "mmmm dS, yyyy - h:MM Z");
+        document.getElementById("date").innerHTML = dateFormat(countDownDate, "mmmm dS, yyyy - h:MM TT Z");
         // Set the date we're counting down to
 
         var now = new Date().getTime();
@@ -411,20 +403,7 @@
         } else {
             document.getElementById("countdown").innerHTML = "L - 00 : 00 : 00 : 00";
         }
-
-
-
-
-
-
-
-
-
-
-
-
 </script>
-{% include "web/news_and_discord.html" %}
 {% include "web/install_buttons.html" %}
 {% endblock %}
 
