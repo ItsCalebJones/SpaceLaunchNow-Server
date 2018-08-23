@@ -63,7 +63,7 @@ def launch_json_to_model(data):
     for url in info_urls:
         InfoURLs.objects.create(info_url=url, launch=launch)
     launch.location = get_location(launch, data)
-    launch.launcher = get_rocket(launch, data)
+    launch.launcher_config = get_rocket(launch, data)
     launch.mission = get_mission(launch, data)
     launch.lsp = get_lsp(launch, data)
     check_notification(launch)
@@ -119,6 +119,9 @@ def get_mission(launch, data):
         mission.name = data['missions'][0]['name']
         mission.type = data['missions'][0]['type']
         mission.type_name = get_mission_type(data['missions'][0]['type'])
+        if data['missions'][0]['type'] != 0:
+            mission_type = MissionType.objects.get(id=data['missions'][0]['type'])
+            mission.mission_type = mission_type
         mission.description = data['missions'][0]['description']
         mission.save()
         # if data['missions'][0]['payloads'] is not None and len(data['missions'][0]['payloads']) > 0:
@@ -138,7 +141,9 @@ def get_lsp(launch, data):
         lsp.name = data['lsp']['name']
         lsp.country_code = data['lsp']['countryCode']
         lsp.abbrev = data['lsp']['abbrev']
-        lsp.type = get_agency_type(data['lsp']['type'])
+        if data['lsp']['type'] != 0:
+            agency_type = AgencyType.objects.get(id=data['lsp']['type'])
+            lsp.agency_type = agency_type
         if len(data['lsp']['infoURLs']) > 0:
             lsp.info_url = data['lsp']['infoURLs'][0]
         lsp.wiki_url = data['lsp']['wikiURL']

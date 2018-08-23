@@ -111,6 +111,7 @@ class LocationSerializer(serializers.ModelSerializer):
 
 
 class LSPSerializer(serializers.ModelSerializer):
+    type = serializers.StringRelatedField(many=False, source='mission_type')
 
     class Meta:
         model = Agency
@@ -118,6 +119,8 @@ class LSPSerializer(serializers.ModelSerializer):
 
 
 class MissionSerializer(serializers.ModelSerializer):
+    type = serializers.PrimaryKeyRelatedField(read_only=True, many=False, source='mission_type')
+    type_name = serializers.StringRelatedField(many=False, source='mission_type')
 
     class Meta:
         model = Mission

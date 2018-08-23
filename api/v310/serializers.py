@@ -163,6 +163,7 @@ class LocationSerializer(serializers.ModelSerializer):
 
 class LSPSerializer(serializers.ModelSerializer):
     parent = serializers.StringRelatedField(read_only=True)
+    type = serializers.StringRelatedField(many=False, source='agency_type')
 
     class Meta:
         model = Agency
@@ -170,11 +171,13 @@ class LSPSerializer(serializers.ModelSerializer):
 
 
 class MissionSerializer(serializers.ModelSerializer):
-    mission_type = serializers.StringRelatedField(many=False)
+    type = serializers.StringRelatedField(many=False, source='mission_type')
+    orbit = serializers.StringRelatedField(many=False)
+    orbit_abbrev = serializers.StringRelatedField(many=False, source='orbit.abbrev')
 
     class Meta:
         model = Mission
-        fields = ('id', 'name', 'description', 'mission_type')
+        fields = ('id', 'name', 'description', 'type', 'orbit', 'orbit_abbrev')
 
 
 class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
