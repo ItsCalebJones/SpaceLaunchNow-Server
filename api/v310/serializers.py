@@ -46,7 +46,7 @@ class AgencySerializerDetailed(QueryFieldsMixin, serializers.HyperlinkedModelSer
         return fields
 
 
-class LauncherSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+class LauncherSerializer(QueryFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Launcher
@@ -98,8 +98,8 @@ class LauncherConfigDetailSerializerForAgency(QueryFieldsMixin, serializers.Mode
     class Meta:
         model = LauncherConfig
         fields = ('id', 'url', 'name', 'description', 'family', 'full_name',
-                  'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
-                  'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust',
+                  'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter', 'launch_cost',
+                  'launch_mass', 'leo_capacity', 'gto_capacity', 'geo_capacity', 'sso_capacity', 'to_thrust',
                   'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url',)
 
 
@@ -153,6 +153,13 @@ class PadSerializer(serializers.ModelSerializer):
         fields = ('id', 'agency_id', 'name', 'info_url', 'wiki_url', 'map_url', 'latitude', 'longitude')
 
 
+class LaunchStatusSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = LaunchStatus
+        fields = ('id', 'name',)
+
+
 class LocationSerializer(serializers.ModelSerializer):
     pads = PadSerializer(many=True, read_only=True)
 
@@ -182,15 +189,14 @@ class MissionSerializer(serializers.ModelSerializer):
 
 class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
-    launcher_config = LauncherConfigSerializer(many=False, read_only=True)
     lsp = LSPSerializer(many=False, read_only=True)
-    mission = MissionSerializer(many=False, read_only=True)
+    status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
 
     class Meta:
         depth = 3
         model = Launch
         fields = ('id', 'url', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold', 'tbdtime', 'tbddate',
-                  'launcher_config', 'mission', 'lsp', 'location')
+                  'lsp', 'location')
 
 
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):
@@ -199,6 +205,8 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     launcher_config = LauncherConfigSerializer(many=False, read_only=True)
     lsp = LSPSerializer(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
+    launcher = LauncherSerializer(read_only=True, many=True)
+    status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
 
     infoURLs = serializers.ReadOnlyField()
     vidURLs = serializers.ReadOnlyField()
@@ -207,17 +215,18 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
         depth = 3
         model = Launch
         fields = ('id', 'url', 'name', 'img_url', 'status', 'net', 'window_end', 'window_start', 'inhold', 'tbdtime',
-                  'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'launcher_config', 'mission',
-                  'lsp', 'location', 'pad', 'infoURLs', 'vidURLs')
+                  'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'launcher',  'launcher_config',
+                  'mission', 'lsp', 'location', 'pad', 'infoURLs', 'vidURLs')
 
 
 class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     pad = PadSerializer(many=False, read_only=True)
     launcher_config = LauncherConfigDetailSerializerForAgency(many=False, read_only=True)
-    launcher = LauncherSerializer(many=False, read_only=True)
+    launcher = LauncherSerializer(read_only=True, many=True)
     lsp = AgencySerializerDetailed(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
+    status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
 
     infoURLs = serializers.ReadOnlyField()
     vidURLs = serializers.ReadOnlyField()

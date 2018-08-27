@@ -177,6 +177,7 @@ class LauncherConfig(models.Model):
     launch_agency = models.ForeignKey(Agency, related_name='launcher_list', blank=True, null=True)
     variant = models.CharField(max_length=200, default='', blank=True)
     alias = models.CharField(max_length=200, default='', blank=True)
+    launch_cost = models.CharField(max_length=200, null=True, blank=True)
     min_stage = models.IntegerField(blank=True, null=True)
     max_stage = models.IntegerField(blank=True, null=True)
     length = models.FloatField(blank=True, null=True)
@@ -184,6 +185,8 @@ class LauncherConfig(models.Model):
     launch_mass = models.IntegerField(blank=True, null=True)
     leo_capacity = models.IntegerField(blank=True, null=True)
     gto_capacity = models.IntegerField(blank=True, null=True)
+    geo_capacity = models.IntegerField(blank=True, null=True)
+    sso_capacity = models.IntegerField(blank=True, null=True)
     to_thrust = models.IntegerField(blank=True, null=True)
     apogee = models.IntegerField(blank=True, null=True)
     vehicle_range = models.IntegerField(blank=True, null=True)
@@ -317,7 +320,7 @@ class Launcher(models.Model):
 
     @property
     def previous_flights(self):
-        count = Launch.objects.filter(launcher_id=self.id).filter(land_success=True).count()
+        count = Launch.objects.filter(launcher__id=self.id).filter(land_success=True).count()
         return count
 
     def __str__(self):
@@ -374,7 +377,7 @@ class Launch(models.Model):
     landing_location = models.CharField(max_length=10, blank=True, null=True)
     slug = models.SlugField(unique=True)
     lsp = models.ForeignKey(Agency, related_name='launch', null=True, on_delete=models.CASCADE)
-    launcher = models.ForeignKey(Launcher, related_name='launch', null=True, on_delete=models.CASCADE)
+    launcher = models.ManyToManyField(Launcher, related_name='launch')
     launcher_config = models.ForeignKey(LauncherConfig, related_name='launch', null=True, on_delete=models.CASCADE)
     pad = models.ForeignKey(Pad, related_name='launch', null=True, on_delete=models.CASCADE)
     mission = models.ForeignKey(Mission, related_name='launch', null=True, on_delete=models.CASCADE)
