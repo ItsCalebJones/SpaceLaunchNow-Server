@@ -191,11 +191,12 @@ class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     lsp = LSPSerializer(many=False, read_only=True)
     status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
-
+    slug = serializers.SlugField(source='get_full_absolute_url')
+    
     class Meta:
         depth = 3
         model = Launch
-        fields = ('id', 'url', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold', 'tbdtime', 'tbddate',
+        fields = ('id', 'url', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold', 'tbdtime', 'tbddate',
                   'lsp', 'location')
 
 
@@ -207,6 +208,7 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     mission = MissionSerializer(many=False, read_only=True)
     launcher = LauncherSerializer(read_only=True, many=True)
     status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
+    slug = serializers.SlugField(source='get_full_absolute_url')
 
     infoURLs = serializers.ReadOnlyField()
     vidURLs = serializers.ReadOnlyField()
@@ -214,7 +216,7 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         depth = 3
         model = Launch
-        fields = ('id', 'url', 'name', 'img_url', 'status', 'net', 'window_end', 'window_start', 'inhold', 'tbdtime',
+        fields = ('id', 'url', 'slug', 'name', 'img_url', 'status', 'net', 'window_end', 'window_start', 'inhold', 'tbdtime',
                   'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'launcher',  'launcher_config',
                   'mission', 'lsp', 'location', 'pad', 'infoURLs', 'vidURLs')
 
@@ -227,6 +229,7 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     lsp = AgencySerializerDetailed(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
     status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
+    slug = serializers.SlugField(source='get_full_absolute_url')
 
     infoURLs = serializers.ReadOnlyField()
     vidURLs = serializers.ReadOnlyField()
@@ -234,7 +237,7 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         depth = 3
         model = Launch
-        fields = ('id', 'url', 'name', 'img_url', 'status', 'net', 'window_end', 'window_start', 'inhold', 'tbdtime',
+        fields = ('id', 'url', 'slug', 'name', 'img_url', 'status', 'net', 'window_end', 'window_start', 'inhold', 'tbdtime',
                   'tbddate', 'probability', 'holdreason', 'failreason', 'reused', 'land_success', 'landing_type',
                   'landing_location', 'hashtag', 'launcher', 'launcher_config', 'mission', 'lsp', 'location', 'pad',
                   'infoURLs', 'vidURLs')
