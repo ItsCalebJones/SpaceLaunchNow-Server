@@ -28,8 +28,8 @@ class LauncherAdmin(admin.ModelAdmin):
 @admin.register(models.Mission)
 class MissionAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">assignment</i>'
-    list_display = ('id', 'name', 'type_name', 'orbit')
-    list_filter = ('id', 'name', 'type_name', 'orbit')
+    list_display = ('id', 'name', 'mission_type', 'orbit')
+    list_filter = ('id', 'name', 'mission_type', 'orbit')
     ordering = ('id', )
     search_fields = ('name', 'description')
 
@@ -91,7 +91,7 @@ class OrbiterAdmin(admin.ModelAdmin):
 class LaunchAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">launch</i>'
     list_display = ('name', 'net')
-    list_filter = (DateListFilter, 'status_name', 'lsp__name', 'launcher_config__name')
+    list_filter = (DateListFilter, 'status', 'lsp__name', 'launcher_config__name')
     ordering = ('net',)
     search_fields = ('name', 'lsp__name', 'launcher_config__name', 'mission__description')
 
