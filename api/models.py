@@ -140,6 +140,7 @@ class Orbiter(models.Model):
     details = models.CharField(max_length=1000, default='')
     in_use = models.BooleanField(default=True)
     capability = models.CharField(max_length=2048, default='')
+    human_rated = models.BooleanField(default=False)
     wiki_link = models.URLField(blank=True)
     legacy_image_url = models.URLField(blank=True)
     legacy_nation_url = models.URLField(blank=True)
@@ -157,7 +158,7 @@ class Orbiter(models.Model):
     class Meta:
         ordering = ['name']
         verbose_name = 'Spacecraft'
-        verbose_name_plural = 'Spacecrafts'
+        verbose_name_plural = 'Spacecraft'
 
 
 # The LauncherDetail object is meant to define orbital class launch vehicles (past and present).
@@ -284,6 +285,23 @@ class MissionType(models.Model):
         return self.name
 
 
+class LandingType(models.Model):
+    id = models.IntegerField(primary_key=True, editable=True)
+    name = models.CharField(max_length=255, blank=True, default="")
+    description = models.CharField(max_length=2048, null=True, blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class LandingLocation(models.Model):
+    id = models.IntegerField(primary_key=True, editable=True)
+    name = models.CharField(max_length=255, blank=True, default="")
+
+    def __unicode__(self):
+        return self.name
+
+
 class Mission(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=255, blank=True, default="")
@@ -373,8 +391,8 @@ class Launch(models.Model):
     hashtag = models.CharField(max_length=255, blank=True, null=True)
     reused = models.BooleanField(default=False)
     land_success = models.NullBooleanField(blank=True, null=True)
-    landing_type = models.CharField(max_length=10, blank=True, null=True)
-    landing_location = models.CharField(max_length=10, blank=True, null=True)
+    landing_type = models.ForeignKey(LandingType, related_name='launch', null=True, on_delete=models.CASCADE)
+    landing_location = models.ForeignKey(LandingLocation, related_name='launch', null=True, on_delete=models.CASCADE)
     slug = models.SlugField(unique=True)
     lsp = models.ForeignKey(Agency, related_name='launch', null=True, on_delete=models.CASCADE)
     launcher = models.ManyToManyField(Launcher, related_name='launch')

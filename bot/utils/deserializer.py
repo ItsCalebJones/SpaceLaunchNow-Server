@@ -3,6 +3,8 @@ import pytz
 import requests
 import tempfile
 
+from django.core.exceptions import ObjectDoesNotExist
+
 from api.models import *
 from api.utils.utilities import get_mission_type, get_agency_type, get_launch_status
 from bot.models import *
@@ -36,9 +38,15 @@ def launch_json_to_model(data):
     tbddate = data['tbddate']
 
     launch, created = Launch.objects.get_or_create(id=id)
+
     launch.name = name
     launch.status = status
     launch.status_name = status_name
+    try:
+        status = LaunchStatus.objects.get(name=launch.status)
+        launch.launch_status = status
+    except ObjectDoesNotExist:
+        print "LaunchStatus %s" % launch.status
     launch.netstamp = netstamp
     launch.wsstamp = wsstamp
     launch.westamp = westamp

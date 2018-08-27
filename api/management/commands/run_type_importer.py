@@ -16,6 +16,15 @@ def get_agency_type():
         agency_types.save()
 
 
+def get_launch_status():
+    results = requests.get("https://launchlibrary.net/1.4/launchstatus")
+    types = results.json()['types']
+    for data in types:
+        status, created = LaunchStatus.objects.get_or_create(id=data['id'])
+        status.name = data['name']
+        status.save()
+
+
 def get_mission_type():
     results = requests.get("https://launchlibrary.net/1.4/missiontype")
     types = results.json()['types']
@@ -49,6 +58,18 @@ def update_agencies():
             print agency.type
 
 
+def update_launches():
+    launches = Launch.objects.all()
+    for launch in launches:
+        try:
+            status = LaunchStatus.objects.get(name=launch.status)
+            launch.launch_status = status
+            launch.save()
+        except ObjectDoesNotExist:
+            print "LaunchStatus %s" % launch.status
+            print launch
+
+
 class Command(BaseCommand):
     help = 'Run import manually.'
 
@@ -57,5 +78,6 @@ class Command(BaseCommand):
         if response == "Y":
             get_agency_type()
             get_mission_type()
+            get_launch_status()
             update_missions()
             update_agencies()
