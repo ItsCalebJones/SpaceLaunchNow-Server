@@ -8,6 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from api.models import *
 from api.utils.utilities import get_mission_type, get_agency_type, get_launch_status
 from bot.models import *
+from configurations.models import *
 from django.core import files
 
 

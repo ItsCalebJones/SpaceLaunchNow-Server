@@ -7,6 +7,8 @@ from django.contrib.sites.models import Site
 from django.db.models import Q
 from django.db.models.functions import datetime
 from django.db import models
+
+from configurations.models import *
 from custom_storages import LogoStorage, AgencyImageStorage, OrbiterImageStorage, LauncherImageStorage, \
     AgencyNationStorage, EventImageStorage
 
@@ -40,17 +42,6 @@ def logo_path(instance, filename):
     clean_name = "%s_logo_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
     name = "%s%s" % (str(clean_name), file_extension)
     return name
-
-
-class AgencyType(models.Model):
-    id = models.IntegerField(primary_key=True, editable=True)
-    name = models.CharField(max_length=255, blank=True, default="")
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.name
 
 
 class Agency(models.Model):
@@ -264,44 +255,6 @@ class Pad(models.Model):
         verbose_name_plural = 'Pads'
 
 
-class Orbit(models.Model):
-    name = models.CharField(primary_key=True, editable=True, max_length=30)
-    abbrev = models.CharField(max_length=30)
-
-    def __unicode__(self):
-        return self.name
-
-    class Meta:
-        ordering = ['name', ]
-        verbose_name = 'Orbit'
-        verbose_name_plural = 'Orbits'
-
-
-class MissionType(models.Model):
-    id = models.IntegerField(primary_key=True, editable=True)
-    name = models.CharField(max_length=255, blank=True, default="")
-
-    def __unicode__(self):
-        return self.name
-
-
-class LandingType(models.Model):
-    id = models.IntegerField(primary_key=True, editable=True)
-    name = models.CharField(max_length=255, blank=True, default="")
-    description = models.CharField(max_length=2048, null=True, blank=True)
-
-    def __unicode__(self):
-        return self.name
-
-
-class LandingLocation(models.Model):
-    id = models.IntegerField(primary_key=True, editable=True)
-    name = models.CharField(max_length=255, blank=True, default="")
-
-    def __unicode__(self):
-        return self.name
-
-
 class Mission(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=255, blank=True, default="")
@@ -351,18 +304,6 @@ class Launcher(models.Model):
         ordering = ['serial_number', ]
         verbose_name = 'Launcher'
         verbose_name_plural = 'Launchers'
-
-
-class LaunchStatus(models.Model):
-    id = models.IntegerField(primary_key=True, editable=True)
-    name = models.CharField(max_length=255, blank=True, default="")
-
-    def __unicode__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = 'Launch Status'
-        verbose_name_plural = 'Launch Statuses'
 
 
 class Launch(models.Model):

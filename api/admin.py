@@ -34,42 +34,6 @@ class MissionAdmin(admin.ModelAdmin):
     search_fields = ('name', 'description')
 
 
-@admin.register(models.MissionType)
-class MissionTypeAdmin(admin.ModelAdmin):
-    icon = '<i class="material-icons">assessment</i>'
-    list_display = ('id', 'name',)
-    list_filter = ('id', 'name',)
-    ordering = ('id', )
-    search_fields = ('name',)
-
-
-@admin.register(models.AgencyType)
-class AgencyTypeAdmin(admin.ModelAdmin):
-    icon = '<i class="material-icons">group</i>'
-    list_display = ('id', 'name',)
-    list_filter = ('id', 'name',)
-    ordering = ('id', )
-    search_fields = ('name',)
-
-
-@admin.register(models.LaunchStatus)
-class LaunchStatusAdmin(admin.ModelAdmin):
-    icon = '<i class="material-icons">launch</i>'
-    list_display = ('id', 'name',)
-    list_filter = ('id', 'name',)
-    ordering = ('id', )
-    search_fields = ('name',)
-
-
-@admin.register(models.Orbit)
-class OrbitAdmin(admin.ModelAdmin):
-    icon = '<i class="material-icons">extension</i>'
-    list_display = ('name', 'abbrev',)
-    list_filter = ('name', 'abbrev',)
-    ordering = ('name', 'abbrev',)
-    search_fields = ('name',)
-
-
 @admin.register(models.Agency)
 class AgencyAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">group</i>'
