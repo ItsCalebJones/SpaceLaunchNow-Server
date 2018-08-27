@@ -44,8 +44,8 @@ def launch_json_to_model(data):
     launch.status = status
     launch.status_name = status_name
     try:
-        status = LaunchStatus.objects.get(name=launch.status)
-        launch.launch_status = status
+        launch_status = LaunchStatus.objects.get(id=launch.status)
+        launch.launch_status = launch_status
     except ObjectDoesNotExist:
         print "LaunchStatus %s" % launch.status
     launch.netstamp = netstamp

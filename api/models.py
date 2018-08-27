@@ -287,6 +287,9 @@ class Payload(models.Model):
 class Launcher(models.Model):
     id = models.AutoField(primary_key=True)
     serial_number = models.CharField(max_length=10, blank=True, null=True)
+    flight_proven = models.BooleanField(default=False)
+    status = models.CharField(max_length=255, blank=True, default="")
+    details = models.CharField(max_length=2048, blank=True, default="")
     launcher_config = models.ForeignKey(LauncherConfig, related_name='launcher', null=True, on_delete=models.CASCADE)
 
     @property
@@ -295,15 +298,21 @@ class Launcher(models.Model):
         return count
 
     def __str__(self):
-        return '%s (%s)' % (self.serial_number, self.launcher_config.full_name)
+        if self.launcher_config is not None:
+            return '%s (%s)' % (self.serial_number, self.launcher_config.full_name)
+        else:
+            return self.serial_number
 
     def __unicode__(self):
-        return u'%s (%s)' % (self.serial_number, self.launcher_config.full_name)
+        if self.launcher_config is not None:
+            return u'%s (%s)' % (self.serial_number, self.launcher_config.full_name)
+        else:
+            return u'%s' % self.serial_number
 
     class Meta:
         ordering = ['serial_number', ]
-        verbose_name = 'Launcher'
-        verbose_name_plural = 'Launchers'
+        verbose_name = 'Launch Vehicle'
+        verbose_name_plural = 'Launch Vehicles'
 
 
 class Launch(models.Model):
@@ -330,7 +339,6 @@ class Launch(models.Model):
     holdreason = models.CharField(max_length=255, blank=True, null=True)
     failreason = models.CharField(max_length=255, blank=True, null=True)
     hashtag = models.CharField(max_length=255, blank=True, null=True)
-    reused = models.BooleanField(default=False)
     land_success = models.NullBooleanField(blank=True, null=True)
     landing_type = models.ForeignKey(LandingType, related_name='launch', null=True, on_delete=models.CASCADE)
     landing_location = models.ForeignKey(LandingLocation, related_name='launch', null=True, on_delete=models.CASCADE)

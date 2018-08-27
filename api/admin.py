@@ -19,10 +19,10 @@ class LauncherConfigAdmin(admin.ModelAdmin):
 @admin.register(models.Launcher)
 class LauncherAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">extension</i>'
-    list_display = ('id', 'serial_number',)
-    list_filter = ('id', 'serial_number',)
-    ordering = ('id', 'serial_number',)
-    search_fields = ('serial_number',)
+    list_display = ('id', 'serial_number', 'flight_proven', 'status', 'launcher_config')
+    list_filter = ('id', 'serial_number', 'flight_proven', 'status', 'launcher_config')
+    ordering = ('id', 'serial_number', 'flight_proven', 'status')
+    search_fields = ('serial_number', 'launcher_config', 'status', 'details')
 
 
 @admin.register(models.Mission)

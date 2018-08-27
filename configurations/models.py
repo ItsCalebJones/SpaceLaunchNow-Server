@@ -49,8 +49,9 @@ class MissionType(models.Model):
 
 
 class LandingType(models.Model):
-    id = models.IntegerField(primary_key=True, editable=True)
+    id = models.AutoField(primary_key=True, editable=True)
     name = models.CharField(max_length=255, blank=True, default="")
+    abbrev = models.CharField(max_length=255, blank=True, default="")
     description = models.CharField(max_length=2048, null=True, blank=True)
 
     def __unicode__(self):
@@ -58,8 +59,10 @@ class LandingType(models.Model):
 
 
 class LandingLocation(models.Model):
-    id = models.IntegerField(primary_key=True, editable=True)
+    id = models.AutoField(primary_key=True, editable=True)
     name = models.CharField(max_length=255, blank=True, default="")
+    abbrev = models.CharField(max_length=255, blank=True, default="")
+    description = models.CharField(max_length=2048, null=True, blank=True)
 
     def __unicode__(self):
         return self.name
