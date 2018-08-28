@@ -26,6 +26,8 @@ from api.v1.router import api_urlpatterns as api_v1
 from web import views as landing_views
 
 urlpatterns = [
+    url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
+    url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
     url(r'^admin/', include(admin.site.urls)),
     url(r'^v1/', include(api_v1, namespace='v1')),
     url(r'^2.0.0/', include(api_v2, namespace='v200')),

@@ -119,8 +119,8 @@ INSTALLED_APPS = [
     'configurations',
     'djcelery',
     'embed_video',
-    'material',
-    'material.admin',
+    'jet.dashboard',
+    'jet',
     'django.contrib.admin',
     'django_user_agents',
     'django_filters',
@@ -133,6 +133,40 @@ INSTALLED_APPS = [
     'collectfast',
 # 'silk'
 ]
+
+JET_THEMES = [
+    {
+        'theme': 'default', # theme folder name
+        'color': '#47bac1', # color of the theme's button in user menu
+        'title': 'Default' # theme title
+    },
+    {
+        'theme': 'green',
+        'color': '#44b78b',
+        'title': 'Green'
+    },
+    {
+        'theme': 'light-green',
+        'color': '#2faa60',
+        'title': 'Light Green'
+    },
+    {
+        'theme': 'light-violet',
+        'color': '#a464c4',
+        'title': 'Light Violet'
+    },
+    {
+        'theme': 'light-blue',
+        'color': '#5EADDE',
+        'title': 'Light Blue'
+    },
+    {
+        'theme': 'light-gray',
+        'color': '#222',
+        'title': 'Light Gray'
+    }
+]
+
 
 SITE_ID = 1
 
@@ -151,6 +185,8 @@ GEOIP_DATABASE = 'GeoLiteCity.dat'
 GEOIPV6_DATABASE = 'GeoLiteCityv6.dat'
 
 ROOT_URLCONF = 'spacelaunchnow.urls'
+
+JET_MODULE_GOOGLE_ANALYTICS_CLIENT_SECRETS_FILE = os.path.join(BASE_DIR, 'client_secrets.json')
 
 TEMPLATES = [
     {
