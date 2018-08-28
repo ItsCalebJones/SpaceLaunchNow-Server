@@ -116,6 +116,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'rest_framework_docs',
     'bot',
+    'configurations',
     'djcelery',
     'embed_video',
     'material',

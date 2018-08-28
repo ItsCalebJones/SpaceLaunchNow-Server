@@ -50,14 +50,14 @@ class LauncherSerializer(QueryFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Launcher
-        fields = ('id', 'url', 'serial_number', 'previous_flights')
+        fields = ('id', 'url', 'flight_proven', 'serial_number')
 
 
 class LauncherDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Launcher
-        fields = ('id', 'url', 'serial_number', 'previous_flights')
+        fields = ('id', 'url', 'flight_proven', 'serial_number', 'previous_flights')
 
 
 class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
@@ -238,7 +238,7 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
         depth = 3
         model = Launch
         fields = ('id', 'url', 'slug', 'name', 'img_url', 'status', 'net', 'window_end', 'window_start', 'inhold', 'tbdtime',
-                  'tbddate', 'probability', 'holdreason', 'failreason', 'reused', 'land_success', 'landing_type',
+                  'tbddate', 'probability', 'holdreason', 'failreason', 'land_success', 'landing_type',
                   'landing_location', 'hashtag', 'launcher', 'launcher_config', 'mission', 'lsp', 'location', 'pad',
                   'infoURLs', 'vidURLs')
 

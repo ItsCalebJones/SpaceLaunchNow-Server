@@ -19,10 +19,10 @@ class LauncherConfigAdmin(admin.ModelAdmin):
 @admin.register(models.Launcher)
 class LauncherAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">extension</i>'
-    list_display = ('id', 'serial_number',)
-    list_filter = ('id', 'serial_number',)
-    ordering = ('id', 'serial_number',)
-    search_fields = ('serial_number',)
+    list_display = ('id', 'serial_number', 'flight_proven', 'status', 'launcher_config')
+    list_filter = ('id', 'serial_number', 'flight_proven', 'status', 'launcher_config')
+    ordering = ('id', 'serial_number', 'flight_proven', 'status')
+    search_fields = ('serial_number', 'launcher_config', 'status', 'details')
 
 
 @admin.register(models.Mission)
@@ -32,42 +32,6 @@ class MissionAdmin(admin.ModelAdmin):
     list_filter = ('id', 'name', 'mission_type', 'orbit')
     ordering = ('id', )
     search_fields = ('name', 'description')
-
-
-@admin.register(models.MissionType)
-class MissionTypeAdmin(admin.ModelAdmin):
-    icon = '<i class="material-icons">assessment</i>'
-    list_display = ('id', 'name',)
-    list_filter = ('id', 'name',)
-    ordering = ('id', )
-    search_fields = ('name',)
-
-
-@admin.register(models.AgencyType)
-class AgencyTypeAdmin(admin.ModelAdmin):
-    icon = '<i class="material-icons">group</i>'
-    list_display = ('id', 'name',)
-    list_filter = ('id', 'name',)
-    ordering = ('id', )
-    search_fields = ('name',)
-
-
-@admin.register(models.LaunchStatus)
-class LaunchStatusAdmin(admin.ModelAdmin):
-    icon = '<i class="material-icons">launch</i>'
-    list_display = ('id', 'name',)
-    list_filter = ('id', 'name',)
-    ordering = ('id', )
-    search_fields = ('name',)
-
-
-@admin.register(models.Orbit)
-class OrbitAdmin(admin.ModelAdmin):
-    icon = '<i class="material-icons">extension</i>'
-    list_display = ('name', 'abbrev',)
-    list_filter = ('name', 'abbrev',)
-    ordering = ('name', 'abbrev',)
-    search_fields = ('name',)
 
 
 @admin.register(models.Agency)

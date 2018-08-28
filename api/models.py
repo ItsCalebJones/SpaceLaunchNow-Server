@@ -7,6 +7,8 @@ from django.contrib.sites.models import Site
 from django.db.models import Q
 from django.db.models.functions import datetime
 from django.db import models
+
+from configurations.models import *
 from custom_storages import LogoStorage, AgencyImageStorage, OrbiterImageStorage, LauncherImageStorage, \
     AgencyNationStorage, EventImageStorage
 
@@ -40,17 +42,6 @@ def logo_path(instance, filename):
     clean_name = "%s_logo_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
     name = "%s%s" % (str(clean_name), file_extension)
     return name
-
-
-class AgencyType(models.Model):
-    id = models.IntegerField(primary_key=True, editable=True)
-    name = models.CharField(max_length=255, blank=True, default="")
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.name
 
 
 class Agency(models.Model):
@@ -140,6 +131,7 @@ class Orbiter(models.Model):
     details = models.CharField(max_length=1000, default='')
     in_use = models.BooleanField(default=True)
     capability = models.CharField(max_length=2048, default='')
+    human_rated = models.BooleanField(default=False)
     wiki_link = models.URLField(blank=True)
     legacy_image_url = models.URLField(blank=True)
     legacy_nation_url = models.URLField(blank=True)
@@ -157,7 +149,7 @@ class Orbiter(models.Model):
     class Meta:
         ordering = ['name']
         verbose_name = 'Spacecraft'
-        verbose_name_plural = 'Spacecrafts'
+        verbose_name_plural = 'Spacecraft'
 
 
 # The LauncherDetail object is meant to define orbital class launch vehicles (past and present).
@@ -263,27 +255,6 @@ class Pad(models.Model):
         verbose_name_plural = 'Pads'
 
 
-class Orbit(models.Model):
-    name = models.CharField(primary_key=True, editable=True, max_length=30)
-    abbrev = models.CharField(max_length=30)
-
-    def __unicode__(self):
-        return self.name
-
-    class Meta:
-        ordering = ['name', ]
-        verbose_name = 'Orbit'
-        verbose_name_plural = 'Orbits'
-
-
-class MissionType(models.Model):
-    id = models.IntegerField(primary_key=True, editable=True)
-    name = models.CharField(max_length=255, blank=True, default="")
-
-    def __unicode__(self):
-        return self.name
-
-
 class Mission(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=255, blank=True, default="")
@@ -316,6 +287,9 @@ class Payload(models.Model):
 class Launcher(models.Model):
     id = models.AutoField(primary_key=True)
     serial_number = models.CharField(max_length=10, blank=True, null=True)
+    flight_proven = models.BooleanField(default=False)
+    status = models.CharField(max_length=255, blank=True, default="")
+    details = models.CharField(max_length=2048, blank=True, default="")
     launcher_config = models.ForeignKey(LauncherConfig, related_name='launcher', null=True, on_delete=models.CASCADE)
 
     @property
@@ -324,27 +298,21 @@ class Launcher(models.Model):
         return count
 
     def __str__(self):
-        return '%s (%s)' % (self.serial_number, self.launcher_config.full_name)
+        if self.launcher_config is not None:
+            return '%s (%s)' % (self.serial_number, self.launcher_config.full_name)
+        else:
+            return self.serial_number
 
     def __unicode__(self):
-        return u'%s (%s)' % (self.serial_number, self.launcher_config.full_name)
+        if self.launcher_config is not None:
+            return u'%s (%s)' % (self.serial_number, self.launcher_config.full_name)
+        else:
+            return u'%s' % self.serial_number
 
     class Meta:
         ordering = ['serial_number', ]
-        verbose_name = 'Launcher'
-        verbose_name_plural = 'Launchers'
-
-
-class LaunchStatus(models.Model):
-    id = models.IntegerField(primary_key=True, editable=True)
-    name = models.CharField(max_length=255, blank=True, default="")
-
-    def __unicode__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = 'Launch Status'
-        verbose_name_plural = 'Launch Statuses'
+        verbose_name = 'Launch Vehicle'
+        verbose_name_plural = 'Launch Vehicles'
 
 
 class Launch(models.Model):
@@ -371,10 +339,9 @@ class Launch(models.Model):
     holdreason = models.CharField(max_length=255, blank=True, null=True)
     failreason = models.CharField(max_length=255, blank=True, null=True)
     hashtag = models.CharField(max_length=255, blank=True, null=True)
-    reused = models.BooleanField(default=False)
     land_success = models.NullBooleanField(blank=True, null=True)
-    landing_type = models.CharField(max_length=10, blank=True, null=True)
-    landing_location = models.CharField(max_length=10, blank=True, null=True)
+    landing_type = models.ForeignKey(LandingType, related_name='launch', null=True, on_delete=models.CASCADE)
+    landing_location = models.ForeignKey(LandingLocation, related_name='launch', null=True, on_delete=models.CASCADE)
     slug = models.SlugField(unique=True)
     lsp = models.ForeignKey(Agency, related_name='launch', null=True, on_delete=models.CASCADE)
     launcher = models.ManyToManyField(Launcher, related_name='launch')
