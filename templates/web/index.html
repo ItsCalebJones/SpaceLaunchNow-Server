@@ -69,6 +69,12 @@
             <hr class="col-lg-8" style="background-color: white">
             <h1 class="title">Space Launch Now</h1>
             <h2>A Spaceflight Tracker</h2>
+            <a href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+                <img alt='Get it on Google Play' src="{% static 'img/button/google-play-badge.png'%}" width="135" height="40" alt="">
+            </a>
+            <a href='https://itunes.apple.com/us/app/space-launch-now/id1399715731'>
+                <img alt='Get it on App Store' src="{% static 'img/button/ios-badge.svg'%}" width="135" height="40" alt="">
+            </a>
             <hr class="col-lg-8" style="background-color: white">
         </div>
     </div>
@@ -80,13 +86,30 @@
             <h2 class="title">{{ launch.pad.location.name }}</h2>
         </div>
         <br>
+        <div class="row">
+            <div class="col-md-12 ml-auto mx-auto mr-auto text-center">
+                <div class="profile">
+                    <div class="avatar">
+                        {% if agency.logo_url %}
+                        <img src="{{ agency.logo_url.url }}"
+                             alt="Circle Image"
+                             class="img-fluid mx-auto"
+                             style="max-width: 45%;">
+                        {% else %}
+                        <h1 class="title text-center"
+                            style="margin-left: 100px; margin-right:100px;">{{ launch.lsp.name }}</h1>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="container">
             <div class="row text-center">
                 <div class="col-md-12 ml-auto mr-auto text-center">
                     <!--<h1 class="title" class="text-center"-->
-                        <!--style="margin-left: 100px; margin-right:100px;">{{ launch.lsp.name }}</h1>-->
+                    <!--style="margin-left: 100px; margin-right:100px;">{{ launch.lsp.name }}</h1>-->
                     <!--<div class="col-md-8 ml-auto mr-auto text-center">-->
-                        <!--<p>{{ launch.mission.description }}</p>-->
+                    <!--<p>{{ launch.mission.description }}</p>-->
                     <!--</div>-->
                     <h2 style="margin: 5px;">{{ status }}</h2>
                     {% if launch.failreason %}
@@ -131,18 +154,6 @@
                             of the solar system. We track every orbital launch and even the occasional
                             experimental test flight.</h3>
 
-                    </div>
-                    <div class="row justify-content-center">
-                        <div class="col-sm-6 text-center">
-                            <a href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-                                <img style="width:100%" alt='Get it on Google Play'
-                                     src="{% static 'img/en_get.svg' %}"/></a>
-                        </div>
-                        <div class="col-sm-6 text-center">
-                            <a href='https://itunes.apple.com/us/app/space-launch-now/id1399715731'>
-                                <img style="margin:5%; width:88%;" alt='Get it on the App Store'
-                                     src="{% static 'img/app_store.svg' %}"/></a>
-                        </div>
                     </div>
 
                     <hr>
@@ -265,7 +276,6 @@
                         </p>
                     </div>
                 </div>
-                <hr>
                 <br>
             </div>
         </div>
@@ -321,6 +331,14 @@
         } else {
             document.getElementById("countdown").innerHTML = "L - 00 : 00 : 00 : 00";
         }
+
+
+
+
+
+
+
+
 
 
 
