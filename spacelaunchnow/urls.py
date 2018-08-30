@@ -19,16 +19,20 @@ from django.contrib import admin
 from django.views.generic import TemplateView
 
 import web
-from api.v300.router import api_urlpatterns as api_v201
+from api.v310.router import api_urlpatterns as api_v310
+from api.v300.router import api_urlpatterns as api_v300
 from api.v200.router import api_urlpatterns as api_v2
 from api.v1.router import api_urlpatterns as api_v1
 from web import views as landing_views
 
 urlpatterns = [
+    url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
+    url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
     url(r'^admin/', include(admin.site.urls)),
     url(r'^v1/', include(api_v1, namespace='v1')),
     url(r'^2.0.0/', include(api_v2, namespace='v200')),
-    url(r'^3.0.0/', include(api_v201, namespace='v300')),
+    url(r'^3.0.0/', include(api_v300, namespace='v300')),
+    url(r'^3.1.0/', include(api_v310, namespace='v310')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^docs/', include('rest_framework_docs.urls')),
     url(r'^$', landing_views.index, name='index'),

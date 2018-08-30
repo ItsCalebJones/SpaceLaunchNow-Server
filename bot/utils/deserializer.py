@@ -3,9 +3,12 @@ import pytz
 import requests
 import tempfile
 
+from django.core.exceptions import ObjectDoesNotExist
+
 from api.models import *
 from api.utils.utilities import get_mission_type, get_agency_type, get_launch_status
 from bot.models import *
+from configurations.models import *
 from django.core import files
 
 
@@ -36,9 +39,15 @@ def launch_json_to_model(data):
     tbddate = data['tbddate']
 
     launch, created = Launch.objects.get_or_create(id=id)
+
     launch.name = name
     launch.status = status
     launch.status_name = status_name
+    try:
+        launch_status = LaunchStatus.objects.get(id=launch.status)
+        launch.launch_status = launch_status
+    except ObjectDoesNotExist:
+        print "LaunchStatus %s" % launch.status
     launch.netstamp = netstamp
     launch.wsstamp = wsstamp
     launch.westamp = westamp
@@ -63,7 +72,7 @@ def launch_json_to_model(data):
     for url in info_urls:
         InfoURLs.objects.create(info_url=url, launch=launch)
     launch.location = get_location(launch, data)
-    launch.launcher = get_rocket(launch, data)
+    launch.launcher_config = get_rocket(launch, data)
     launch.mission = get_mission(launch, data)
     launch.lsp = get_lsp(launch, data)
     check_notification(launch)
@@ -101,7 +110,7 @@ def get_location(launch, data):
 
 def get_rocket(launch, data):
     if 'rocket' in data and data['rocket'] is not None:
-        rocket, created = Launcher.objects.get_or_create(id=data['rocket']['id'])
+        rocket, created = LauncherConfig.objects.get_or_create(id=data['rocket']['id'])
         if created:
             rocket.name = data['rocket']['name']
             rocket.family_name = data['rocket']['familyname']
@@ -119,8 +128,19 @@ def get_mission(launch, data):
         mission.name = data['missions'][0]['name']
         mission.type = data['missions'][0]['type']
         mission.type_name = get_mission_type(data['missions'][0]['type'])
+        if data['missions'][0]['type'] != 0:
+            mission_type = MissionType.objects.get(id=data['missions'][0]['type'])
+            mission.mission_type = mission_type
         mission.description = data['missions'][0]['description']
         mission.save()
+        # if data['missions'][0]['payloads'] is not None and len(data['missions'][0]['payloads']) > 0:
+        #     for payload_data in data['missions'][0]['payloads']:
+        #         payload, created = Payload.objects.get_or_create(id=payload_data['id'])
+        #         payload.name = payload_data['name']
+        #         # payload.type = payload_data['type']
+        #         # payload.type_name = get_mission_type(payload_data['type'])
+        #         # payload.description = payload_data['description']
+        #         payload.mission.add(mission)
         return mission
 
 
@@ -130,7 +150,9 @@ def get_lsp(launch, data):
         lsp.name = data['lsp']['name']
         lsp.country_code = data['lsp']['countryCode']
         lsp.abbrev = data['lsp']['abbrev']
-        lsp.type = get_agency_type(data['lsp']['type'])
+        if data['lsp']['type'] != 0:
+            agency_type = AgencyType.objects.get(id=data['lsp']['type'])
+            lsp.agency_type = agency_type
         if len(data['lsp']['infoURLs']) > 0:
             lsp.info_url = data['lsp']['infoURLs'][0]
         lsp.wiki_url = data['lsp']['wikiURL']
@@ -156,5 +178,5 @@ def download_launcher_image(launcher):
             break
         lf.write(block)
 
-    image_file = Launcher.objects.get(id=launcher.id).image_url
+    image_file = LauncherConfig.objects.get(id=launcher.id).image_url
     image_file.save(name, files.File(lf))

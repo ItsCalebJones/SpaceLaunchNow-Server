@@ -18,7 +18,7 @@ class LaunchRepository:
     def __init__(self, version=None):
 
         if version is None:
-            version = '1.3'
+            version = '1.4.1'
         self.launchLibrary = LaunchLibrarySDK(version=version)
 
     def get_next_launches(self, next_count=5, all=False):

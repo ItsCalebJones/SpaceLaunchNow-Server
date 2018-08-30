@@ -19,7 +19,7 @@ class LauncherSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerialize
     agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
-        model = Launcher
+        model = LauncherConfig
         fields = ('id', 'url', 'name', 'agency')
 
 
@@ -34,7 +34,7 @@ class LauncherDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         return serializer.data
 
     class Meta:
-        model = Launcher
+        model = LauncherConfig
         fields = ('id', 'url', 'name', 'description', 'family', 'full_name', 'agency',
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust',
@@ -51,7 +51,7 @@ class LauncherDetailSerializerForAgency(QueryFieldsMixin, serializers.ModelSeria
         return serializer.data
 
     class Meta:
-        model = Launcher
+        model = LauncherConfig
         fields = ('id', 'url', 'name', 'description', 'family', 'full_name',
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust',
@@ -111,6 +111,7 @@ class LocationSerializer(serializers.ModelSerializer):
 
 
 class LSPSerializer(serializers.ModelSerializer):
+    type = serializers.StringRelatedField(many=False, source='mission_type')
 
     class Meta:
         model = Agency
@@ -118,6 +119,8 @@ class LSPSerializer(serializers.ModelSerializer):
 
 
 class MissionSerializer(serializers.ModelSerializer):
+    type = serializers.PrimaryKeyRelatedField(read_only=True, many=False, source='mission_type')
+    type_name = serializers.StringRelatedField(many=False, source='mission_type')
 
     class Meta:
         model = Mission
@@ -126,9 +129,10 @@ class MissionSerializer(serializers.ModelSerializer):
 
 class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
-    launcher = LauncherSerializer(many=False, read_only=True)
+    launcher = LauncherSerializer(many=False, read_only=True, source='launcher_config')
     lsp = LSPSerializer(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
+    status = serializers.PrimaryKeyRelatedField(many=False, read_only=True, source='launch_status')
 
     class Meta:
         depth = 3
@@ -140,10 +144,9 @@ class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     pad = PadSerializer(many=False, read_only=True)
-    launcher = LauncherSerializer(many=False, read_only=True)
+    launcher = LauncherSerializer(many=False, read_only=True, source='launcher_config')
     lsp = LSPSerializer(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
-
     infoURLs = serializers.ReadOnlyField()
     vidURLs = serializers.ReadOnlyField()
 
@@ -166,11 +169,12 @@ class InfoURLSerializer(serializers.ModelSerializer):
 class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     pad = PadSerializer(many=False, read_only=True)
-    launcher = LauncherDetailSerializerForAgency(many=False, read_only=True)
+    launcher = LauncherDetailSerializerForAgency(many=False, read_only=True, source='launcher_config')
     lsp = AgencySerializer(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
     infoURLs = serializers.StringRelatedField(read_only=True, many=True, source='info_urls')
     vidURLs = serializers.StringRelatedField(read_only=True, many=True, source='vid_urls')
+    status = serializers.PrimaryKeyRelatedField(many=False, read_only=True, source='launch_status')
 
     class Meta:
         depth = 3

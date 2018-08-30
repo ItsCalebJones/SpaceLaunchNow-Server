@@ -13,9 +13,9 @@ headers = {
 
 class LaunchLibrarySDK(object):
     # Latest stable Version stored.
-    def __init__(self, version='1.4'):
+    def __init__(self, version='1.4.1'):
         if version is None:
-            version = '1.4'
+            version = '1.4.1'
         self.version = version
         self.api_url = BASE_URL + self.version
 

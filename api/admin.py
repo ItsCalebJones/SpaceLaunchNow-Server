@@ -7,13 +7,31 @@ from api.filters.UpcomingFilter import DateListFilter
 from . import models
 
 
-@admin.register(models.Launcher)
-class LauncherAdmin(admin.ModelAdmin):
+@admin.register(models.LauncherConfig)
+class LauncherConfigAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">extension</i>'
     list_display = ('name', 'audited', 'variant', 'full_name', 'family', 'active', 'launch_agency',)
     list_filter = ('name', 'family', 'image_url', 'launch_agency__name', 'audited',)
-    ordering = ('name','id')
+    ordering = ('name', 'id')
     search_fields = ('name', 'launch_agency__name')
+
+
+@admin.register(models.Launcher)
+class LauncherAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">extension</i>'
+    list_display = ('id', 'serial_number', 'flight_proven', 'status', 'launcher_config')
+    list_filter = ('id', 'serial_number', 'flight_proven', 'status', 'launcher_config')
+    ordering = ('id', 'serial_number', 'flight_proven', 'status')
+    search_fields = ('serial_number', 'launcher_config', 'status', 'details')
+
+
+@admin.register(models.Mission)
+class MissionAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">assignment</i>'
+    list_display = ('id', 'name', 'mission_type', 'orbit')
+    list_filter = ('id', 'name', 'mission_type', 'orbit')
+    ordering = ('id', )
+    search_fields = ('name', 'description')
 
 
 @admin.register(models.Agency)
@@ -37,9 +55,9 @@ class OrbiterAdmin(admin.ModelAdmin):
 class LaunchAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">launch</i>'
     list_display = ('name', 'net')
-    list_filter = (DateListFilter, 'status_name', 'lsp__name', 'launcher__name')
+    list_filter = (DateListFilter, 'status', 'lsp__name', 'launcher_config__name')
     ordering = ('net',)
-    search_fields = ('name', 'lsp__name', 'launcher__name', 'mission__description')
+    search_fields = ('name', 'lsp__name', 'launcher_config__name', 'mission__description')
 
 
 @admin.register(models.Events)
