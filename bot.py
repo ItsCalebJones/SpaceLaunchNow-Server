@@ -39,7 +39,7 @@ log = logging.getLogger()
 log.setLevel(logging.INFO)
 bot_start_time = datetime.datetime.utcnow()
 
-logs_dir = '/webapps/squidbot/logs/{0}/{1}'.format(bot_start_time.strftime('%Y'), bot_start_time.strftime('%m'))
+logs_dir = 'log/{0}/{1}'.format(bot_start_time.strftime('%Y'), bot_start_time.strftime('%m'))
 os.makedirs(logs_dir, exist_ok=True)
 log_filename = '{0}/squid_bot.{1}.log'.format(logs_dir, bot_start_time.strftime('%Y-%m-%d.%H-%M-%S'))
 
