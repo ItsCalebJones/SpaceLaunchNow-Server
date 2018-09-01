@@ -15,7 +15,7 @@ from django.db.models import Q
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "spacelaunchnow.settings")
 django.setup()
-from bot.models import Notification
+from bot.models import Notification, DiscordChannel
 from api.models import Launch
 from spacelaunchnow import config
 
@@ -72,7 +72,7 @@ async def on_ready():
     log.info('Logged in as:\nUsername: {0.user.name}\nID: {0.user.id}\nDebug: {1}\n------'.format(bot, str(debug_mode)))
     if not hasattr(bot, 'uptime'):
         bot.uptime = bot_start_time
-    squid_bot_game = discord.Game(name='?help', url=github_url, type=0)
+    squid_bot_game = discord.Game(name='Watching for launches * spacelaunchnow.me', url=github_url, type=0)
     await bot.change_presence(game=squid_bot_game, status=discord.Status.online, afk=False)
 
 
@@ -160,7 +160,7 @@ def launch_to_large_embed(launch):
     return embed
 
 
-def launch_to_small_embed(launch):
+def launch_to_small_embed(launch, notification=None):
     title = "%s" % launch.name
     color = get_color(launch.launch_status.id)
     status = "**Status:** %s\n\n" % launch.launch_status.name
@@ -168,7 +168,7 @@ def launch_to_small_embed(launch):
                    "spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)," \
                    " [iOS](https://itunes.apple.com/us/app/space-launch-now/id1399715731)" \
                    " or [on the web](https://spacelaunchnow.me/next)"
-    description_text = status + launch.mission.description + follow_along
+    description_text = notification + status + launch.mission.description + follow_along
     embed = discord.Embed(type="rich", title=title,
                           description=description_text,
                           color=color,
@@ -215,58 +215,153 @@ async def next(context, detailed: str = None):
     await bot.send_message(context.message.channel, embed=embed)
 
 
+@bot.command(pass_context=True)
+async def addNotificationChannel(context):
+    ownerid = context.message.server.owner_id
+    authorid = context.message.author.id
+    if ownerid == authorid:
+        channel = DiscordChannel(name=context.message.channel.name,
+                                 channel_id=context.message.channel.id,
+                                 server_id=context.message.server.id)
+        channel.save()
+        await bot.send_message(context.message.channel, "Added this channel to notification list.")
+    else:
+        await bot.send_message(context.message.channel, "Only server owners can add notification channels.")
+
+
+@bot.command(pass_context=True)
+async def removeNotificationChannel(context):
+    ownerid = context.message.server.owner_id
+    authorid = context.message.author.id
+    if ownerid == authorid:
+        channel = DiscordChannel.objects.filter(server_id=context.message.server.id, channel_id=context.message.channel.id).first()
+        channel.delete()
+        await bot.send_message(context.message.channel, "Removed this channel from the notification list.")
+    else:
+        await bot.send_message(context.message.channel, "Only server owners can remove notification channels.")
+
+
+@bot.command(pass_context=True)
+async def listNotificationChannels(context):
+    ownerid = context.message.server.owner_id
+    authorid = context.message.author.id
+    if ownerid == authorid:
+        channels = DiscordChannel.objects.filter(server_id=context.message.server.id)
+        channel_text = "**Here ya go %s!**" % context.message.author.name
+        for channel in channels:
+            channel_text = channel_text + "\n* %s" % channel.name
+        channel_text = channel_text + "\n\nUse ?notificationHelp for help managing notifications."
+        await bot.send_message(context.message.channel, channel_text)
+    else:
+        await bot.send_message(context.message.channel, "Only server owners list notification channels.")
+
+
 @bot.command(name='git')
 async def give_github_url():
     """Gives the URL of the Github repo"""
     await bot.say('You can find out more about me here: {}'.format(github_url))
 
 
-async def my_background_task():
+async def discord_launch_events():
     await bot.wait_until_ready()
-    counter = 0
-    channel = bot.get_channel(id='485136481048854528')
+    channels = DiscordChannel.objects.all()
+    bot_channels = []
+    for channel in channels:
+        bot_channels.append(bot.get_channel(id=channel.channel_id))
     while not bot.is_closed:
         time_threshold_24_hour = datetime.datetime.now() + datetime.timedelta(hours=24)
         time_threshold_1_hour = datetime.datetime.now() + datetime.timedelta(hours=1)
         time_threshold_10_minute = datetime.datetime.now() + datetime.timedelta(minutes=10)
         time_threshold_1_minute = datetime.datetime.now() + datetime.timedelta(minutes=1)
+        time_threshold_past_two_days = datetime.datetime.now() - datetime.timedelta(days=2)
 
-        twenty_four_hour_launches = Launch.objects.filter(net__lte=time_threshold_24_hour,
-                                                          net__gte=time_threshold_1_hour)
-        for launch in twenty_four_hour_launches:
-            notification = Notification.objects.get_or_create(launch=launch)
-            if not notification.wasNotifiedTwentyFourHourDiscord:
-                print("uh oh")
+        await check_twenty_four_hour(bot_channels, time_threshold_1_hour, time_threshold_24_hour)
 
-        one_hour_launches = Launch.objects.filter(net__lte=time_threshold_1_hour,
-                                                  net__gte=time_threshold_10_minute)
-        for launch in one_hour_launches:
-            notification = Notification.objects.get_or_create(launch=launch)
-            if not notification.wasNotifiedOneHourDiscord:
-                print("uh oh")
+        await check_one_hour(bot_channels, time_threshold_10_minute, time_threshold_1_hour)
 
-        ten_minute_launches = Launch.objects.filter(net__lte=time_threshold_10_minute,
-                                                    net__gte=time_threshold_1_minute)
-        for launch in ten_minute_launches:
-            notification = Notification.objects.get_or_create(launch=launch)
-            if not notification.wasNotifiedTenMinutesDiscord:
-                print("uh oh")
+        await check_ten_minute(bot_channels, time_threshold_10_minute, time_threshold_1_minute)
 
-        one_minute_launches = Launch.objects.filter(net__lte=time_threshold_1_minute,
-                                                    net__gte=datetime.datetime.now())
-        for launch in one_minute_launches:
-            notification = Notification.objects.get_or_create(launch=launch)
-            if not notification.wasNotifiedOneMinutesDiscord:
-                print("uh oh")
+        await check_one_minute(bot_channels, time_threshold_1_minute)
 
-        in_flight_launches = Launch.objects.filter(launch_status__id=6)
-        for launch in in_flight_launches:
-            notification = Notification.objects.get_or_create(launch=launch)
-            if not notification.wasNotifiedInFlightDiscord:
-                print("uh oh")
+        await check_in_flight(bot_channels)
 
-        # await bot.send_message(channel, counter)
+        await check_success(bot_channels, time_threshold_past_two_days, time_threshold_24_hour)
+
         await asyncio.sleep(5)
+
+
+async def check_success(bot_channels, time_threshold_past_two_days, time_threshold_24_hour):
+    recent_success_launches = Launch.objects.filter(launch_status__id=3,
+                                                    net__lte=time_threshold_24_hour,
+                                                    net__gte=time_threshold_past_two_days)
+    for launch in recent_success_launches:
+        notification, created = Notification.objects.get_or_create(launch=launch)
+        if not notification.wasNotifiedSuccessDiscord:
+            for channel in bot_channels:
+                await bot.send_message(channel, embed=launch_to_small_embed(launch, "**Launch was a Success!**\n\n"))
+            notification.wasNotifiedSuccessDiscord = True
+            notification.save()
+
+
+async def check_in_flight(bot_channels):
+    in_flight_launches = Launch.objects.filter(launch_status__id=6)
+    for launch in in_flight_launches:
+        notification, created = Notification.objects.get_or_create(launch=launch)
+        if not notification.wasNotifiedInFlightDiscord:
+            for channel in bot_channels:
+                await bot.send_message(channel, embed=launch_to_small_embed(launch, "**Launch is in flight!**\n\n"))
+            notification.wasNotifiedInFlightDiscord = True
+            notification.save()
+
+
+async def check_one_minute(bot_channels, time_threshold_1_minute):
+    one_minute_launches = Launch.objects.filter(net__lte=time_threshold_1_minute,
+                                                net__gte=datetime.datetime.now())
+    for launch in one_minute_launches:
+        notification, created = Notification.objects.get_or_create(launch=launch)
+        if not notification.wasNotifiedOneMinutesDiscord:
+            for channel in bot_channels:
+                await bot.send_message(channel, embed=launch_to_small_embed(launch, "**Launching in one minute!**\n\n"))
+            notification.wasNotifiedOneMinutesDiscord = True
+            notification.save()
+
+
+async def check_ten_minute(bot_channels, time_threshold_10_minute, time_threshold_1_minute):
+    ten_minute_launches = Launch.objects.filter(net__lte=time_threshold_10_minute,
+                                                net__gte=time_threshold_1_minute)
+    for launch in ten_minute_launches:
+        notification, created = Notification.objects.get_or_create(launch=launch)
+        if not notification.wasNotifiedTenMinutesDiscord:
+            for channel in bot_channels:
+                await bot.send_message(channel,
+                                       embed=launch_to_small_embed(launch, "**Launching in ten minutes!**\n\n"))
+            notification.wasNotifiedTenMinutesDiscord = True
+            notification.save()
+
+
+async def check_twenty_four_hour(bot_channels, time_threshold_1_hour, time_threshold_24_hour):
+    twenty_four_hour_launches = Launch.objects.filter(net__lte=time_threshold_24_hour,
+                                                      net__gte=time_threshold_1_hour)
+    for launch in twenty_four_hour_launches:
+        notification, created = Notification.objects.get_or_create(launch=launch)
+        if not notification.wasNotifiedTwentyFourHourDiscord:
+            for channel in bot_channels:
+                await bot.send_message(channel,
+                                       embed=launch_to_small_embed(launch, "**Launching in twenty four hours!**\n\n"))
+            notification.wasNotifiedTwentyFourHourDiscord = True
+            notification.save()
+
+
+async def check_one_hour(bot_channels, time_threshold_10_minute, time_threshold_1_hour):
+    one_hour_launches = Launch.objects.filter(net__lte=time_threshold_1_hour,
+                                              net__gte=time_threshold_10_minute)
+    for launch in one_hour_launches:
+        notification, created = Notification.objects.get_or_create(launch=launch)
+        if not notification.wasNotifiedOneHourDiscord:
+            for channel in bot_channels:
+                await bot.send_message(channel, embed=launch_to_small_embed(launch, "**Launching in one hour!**\n\n"))
+            notification.wasNotifiedOneHourDiscord = True
+            notification.save()
 
 
 if __name__ == '__main__':
@@ -275,7 +370,7 @@ if __name__ == '__main__':
 
     bot.client_id = config.SQUID_BOT_CLIENT_ID
     bot.commands_used = Counter()
-    bot.loop.create_task(my_background_task())
+    bot.loop.create_task(discord_launch_events())
     for extension in initial_extensions:
         try:
             bot.load_extension(extension)

@@ -25,6 +25,7 @@ class Notification(models.Model):
     wasNotifiedTenMinutesDiscord = models.BooleanField(blank=True, default=False)
     wasNotifiedOneMinutesDiscord = models.BooleanField(blank=True, default=False)
     wasNotifiedInFlightDiscord = models.BooleanField(blank=True, default=False)
+    wasNotifiedSuccessDiscord = models.BooleanField(blank=True, default=False)
 
     def __unicode__(self):
         return self.launch.name
@@ -62,3 +63,16 @@ class DailyDigestRecord(models.Model):
     class Meta:
         verbose_name = 'Daily Digest - Record'
         verbose_name_plural = 'Daily Digest - Records'
+
+
+class DiscordChannel(models.Model):
+    channel_id = models.CharField(max_length=4000, unique=True)
+    server_id = models.CharField(max_length=4000, unique=False)
+    name = models.CharField(max_length=4000)
+
+    def __str__(self):
+        return '{} ({})'.format(self.name, self.channel_id)
+
+    class Meta:
+        verbose_name = "Channel"
+        verbose_name_plural = "Channels"

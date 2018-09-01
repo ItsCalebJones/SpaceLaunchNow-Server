@@ -95,6 +95,10 @@ class LaunchLibrarySync:
             notification.wasNotifiedTwentyFourHourTwitter = True
             notification.wasNotifiedOneHourTwitter = False
             notification.wasNotifiedTenMinutesTwitter = False
+
+            notification.wasNotifiedTwentyFourHourDiscord = True
+            notification.wasNotifiedOneHourDiscord = False
+            notification.wasNotifiedTenMinutesDiscord = False
         elif 3600 >= diff > 600:
             logger.info('Launch is within one hour, resetting Ten minute notifications.')
             notification.wasNotifiedOneHour = True
@@ -102,6 +106,9 @@ class LaunchLibrarySync:
 
             notification.wasNotifiedOneHourTwitter = True
             notification.wasNotifiedTwentyFourHourTwitter = True
+
+            notification.wasNotifiedOneHourDiscord = True
+            notification.wasNotifiedTwentyFourHourDiscord = True
         elif diff <= 600:
             logger.info('Launch is within ten minutes.')
             notification.wasNotifiedOneHour = True
@@ -111,6 +118,10 @@ class LaunchLibrarySync:
             notification.wasNotifiedOneHourTwitter = True
             notification.wasNotifiedTwentyFourHourTwitter = True
             notification.wasNotifiedTenMinutesTwitter = True
+
+            notification.wasNotifiedOneHourDiscord = True
+            notification.wasNotifiedTwentyFourHourDiscord = True
+            notification.wasNotifiedTenMinutesDiscord = True
         elif diff >= 86400:
             notification.wasNotifiedTwentyFourHour = False
             notification.wasNotifiedOneHour = False
@@ -119,6 +130,10 @@ class LaunchLibrarySync:
             notification.wasNotifiedTwentyFourHourTwitter = False
             notification.wasNotifiedOneHourTwitter = False
             notification.wasNotifiedTenMinutesTwitter = False
+
+            notification.wasNotifiedTwentyFourHourDiscord = False
+            notification.wasNotifiedOneHourDiscord = False
+            notification.wasNotifiedTenMinutesDiscord = False
         notification.save()
 
     def check_twitter(self, diff, launch, notification):

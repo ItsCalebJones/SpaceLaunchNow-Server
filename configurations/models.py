@@ -19,6 +19,9 @@ class LaunchStatus(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=255, blank=True, default="")
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -30,6 +33,9 @@ class LaunchStatus(models.Model):
 class Orbit(models.Model):
     name = models.CharField(primary_key=True, editable=True, max_length=30)
     abbrev = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
@@ -44,6 +50,9 @@ class MissionType(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=255, blank=True, default="")
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -54,6 +63,9 @@ class LandingType(models.Model):
     abbrev = models.CharField(max_length=255, blank=True, default="")
     description = models.CharField(max_length=2048, null=True, blank=True)
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -63,6 +75,9 @@ class LandingLocation(models.Model):
     name = models.CharField(max_length=255, blank=True, default="")
     abbrev = models.CharField(max_length=255, blank=True, default="")
     description = models.CharField(max_length=2048, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
