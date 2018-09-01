@@ -17,7 +17,7 @@ def launch_json_to_model(data):
     name = data['name']
     status = data['status']
     if status < 1 or status > 7:
-        print id
+        print(id)
     status_name = get_launch_status(data['status'])
     netstamp = data['netstamp']
     wsstamp = data['wsstamp']
@@ -47,7 +47,7 @@ def launch_json_to_model(data):
         launch_status = LaunchStatus.objects.get(id=launch.status)
         launch.launch_status = launch_status
     except ObjectDoesNotExist:
-        print "LaunchStatus %s" % launch.status
+        print("LaunchStatus %s" % launch.status)
     launch.netstamp = netstamp
     launch.wsstamp = wsstamp
     launch.westamp = westamp

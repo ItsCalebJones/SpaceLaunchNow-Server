@@ -20,6 +20,12 @@ class Notification(models.Model):
     last_net_stamp = models.IntegerField(blank=True, null=True)
     last_net_stamp_timestamp = models.DateTimeField(blank=True, null=True)
 
+    wasNotifiedTwentyFourHourDiscord = models.BooleanField(blank=True, default=False)
+    wasNotifiedOneHourDiscord = models.BooleanField(blank=True, default=False)
+    wasNotifiedTenMinutesDiscord = models.BooleanField(blank=True, default=False)
+    wasNotifiedOneMinutesDiscord = models.BooleanField(blank=True, default=False)
+    wasNotifiedInFlightDiscord = models.BooleanField(blank=True, default=False)
+
     def __unicode__(self):
         return self.launch.name
 

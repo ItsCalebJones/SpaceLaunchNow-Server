@@ -8,7 +8,6 @@ from django.db import migrations, models
 def fill_fake_keys(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     Agency = apps.get_model('api', 'agency')
-    print "Filling fake fks and pks"
     for n, obj in enumerate(Agency.objects.using(db_alias).all()):
         # Dont try to use 0 - things break
         n = n + 1
@@ -16,18 +15,15 @@ def fill_fake_keys(apps, schema_editor):
         obj.orbiter_list.all().update(fake_fk=n)
         obj.launcher_list.all().update(fake_fk=n)
         obj.save()
-    print "Completed - fake fks"
 
 
 # Migrate temp ID's to override PK
 def fill_agency_id(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     Agency = apps.get_model('api', 'agency')
-    print "Filling new Agency ID"
     for obj in Agency.objects.using(db_alias).all():
         obj.id = obj.fake_id
         obj.save()
-    print "Completed - IDs"
 
 
 # Iterate through launchers and orbiters - look for those that have temp ids and assign fk's back.
@@ -46,7 +42,6 @@ def fix_relations(apps, schema_editor):
             agency = Agency.objects.using(db_alias).get(fake_id=obj.fake_fk)
             obj.launch_agency = agency
             obj.save()
-    print "Completed - relations"
 
 
 class Migration(migrations.Migration):

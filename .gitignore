@@ -11,8 +11,9 @@ celerybeat-schedule
 bot/utils/config.py
 celerybeat.pid
 *.log
-venv/**
+venv3/**
 spacelaunchnow/config.py
 bot/utils/config.py
 assets/**
 instagram.cache
+venv3/get-pip.py

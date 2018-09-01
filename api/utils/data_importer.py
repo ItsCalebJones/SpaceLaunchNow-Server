@@ -22,7 +22,7 @@ class importer:
         try:
             return json.loads(text)
         except json.JSONDecodeError as e:
-            print e.message
+            print(e.message)
 
     def get_orbiter(self):
         url = "http://calebjones.me/app/orbiter"
