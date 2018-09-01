@@ -2,7 +2,7 @@
 *.iml
 django_logs/**
 env/**
-venv/**
+venv3/**
 db.sqlite3
 .idea/**
 django.log
