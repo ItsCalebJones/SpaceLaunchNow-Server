@@ -160,7 +160,7 @@ def launch_to_large_embed(launch):
     return embed
 
 
-def launch_to_small_embed(launch, notification=None):
+def launch_to_small_embed(launch, notification=""):
     title = "%s" % launch.name
     color = get_color(launch.launch_status.id)
     status = "**Status:** %s\n\n" % launch.launch_status.name
