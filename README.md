@@ -1,6 +1,8 @@
 # SpaceLaunchNow Server
 A Django-based Twitter bot, REST API endpoint, and website for [Space Launch Now]().
 
+[![discord](https://discordapp.com/api/guilds/380226438584074242/embed.png?style=shield)](https://discord.gg/WVfzEDW)
+
 ## Installation
 
 ### Get Django and the Frontend Running
