@@ -3,6 +3,8 @@
 django_logs/**
 env/**
 venv3/**
+env3/**
+data/reddit/settings.json
 db.sqlite3
 .idea/**
 django.log
