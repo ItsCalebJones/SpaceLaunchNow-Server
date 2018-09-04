@@ -16,3 +16,4 @@ spacelaunchnow/config.py
 bot/utils/config.py
 assets/**
 instagram.cache
+venv3/get-pip.py

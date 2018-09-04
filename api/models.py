@@ -229,6 +229,9 @@ class Location(models.Model):
     name = models.CharField(max_length=255, blank=True, default="")
     country_code = models.CharField(max_length=255, blank=True, default="")
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -248,6 +251,9 @@ class Pad(models.Model):
     longitude = models.CharField(blank=True, null=True, max_length=30)
     location = models.ForeignKey(Location, related_name='pad', blank=True, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -264,6 +270,9 @@ class Mission(models.Model):
     type_name = models.CharField(max_length=255, blank=True, default="")
     mission_type = models.ForeignKey(MissionType, related_name='mission', blank=True, null=True, on_delete=models.CASCADE)
     orbit = models.ForeignKey(Orbit, related_name='mission', null=True, blank=True, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
@@ -283,6 +292,12 @@ class Payload(models.Model):
     total = models.IntegerField(blank=True, null=True)
     type_name = models.CharField(max_length=255, blank=True, default="")
     mission = models.ForeignKey(Mission, related_name='payloads', blank=True, null=True, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
 
 
 class Launcher(models.Model):
@@ -352,6 +367,9 @@ class Launch(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
         return self.name
 
@@ -374,6 +392,9 @@ class VidURLs(models.Model):
     vid_url = models.URLField(max_length=200)
     launch = models.ForeignKey(Launch, related_name='vid_urls', on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.vid_url
+
     def __unicode__(self):
         return '%s' % self.vid_url
 
@@ -385,6 +406,9 @@ class VidURLs(models.Model):
 class InfoURLs(models.Model):
     info_url = models.URLField(max_length=200)
     launch = models.ForeignKey(Launch, related_name='info_urls', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.info_url
 
     def __unicode__(self):
         return '%s' % self.info_url

@@ -11,13 +11,13 @@ logger = logging.getLogger('bot.utils.util')
 def log(tag, message):
     logger.debug(message)
     log_message = ('%s - %s: %s' % ('{:%H:%M:%S %m-%d-%Y}'.format(datetime.datetime.now()), tag, message))
-    print log_message
+    print(log_message)
 
 
 def log_error(tag, message):
     logger.error(message)
     log_message = ('ERROR: %s - %s: %s' % ('{:%H:%M:%S %m-%d-%Y}'.format(datetime.datetime.now()), tag, message))
-    print log_message
+    print(log_message)
 
 
 def seconds_to_time(seconds):
