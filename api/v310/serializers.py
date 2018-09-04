@@ -6,14 +6,11 @@ from rest_framework import serializers
 
 
 class AgencySerializerMini(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+    parent = serializers.StringRelatedField(read_only=True)
+
     class Meta:
         model = Agency
-        fields = ('id', 'url', 'name', 'description', 'related_agencies', 'administrator', 'founding_year', 'type')
-
-    def get_fields(self):
-        fields = super(AgencySerializerMini, self).get_fields()
-        fields['related_agencies'] = AgencySerializerMini(many=True)
-        return fields
+        fields = ('id', 'url', 'name', 'description', 'parent', 'related_agencies', 'administrator', 'founding_year', 'type')
 
 
 class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
@@ -23,11 +20,6 @@ class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer)
         model = Agency
         fields = ('id', 'url', 'name', 'featured', 'type', 'country_code', 'abbrev', 'description', 'administrator',
                   'founding_year', 'launchers', 'orbiters', 'parent', 'related_agencies',)
-
-    def get_fields(self):
-        fields = super(AgencySerializer, self).get_fields()
-        fields['related_agencies'] = AgencySerializerMini(many=True)
-        return fields
 
 
 class AgencySerializerDetailed(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
