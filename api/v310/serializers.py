@@ -192,12 +192,12 @@ class LandingLocationSerializer(serializers.ModelSerializer):
 
 
 class LandingSerializer(serializers.ModelSerializer):
-    landing_type = LandingTypeSerializer(many=False, read_only=True)
-    landing_location = LandingLocationSerializer(many=False, read_only=True)
+    type = LandingTypeSerializer(many=False, read_only=True, source='landing_type')
+    location = LandingLocationSerializer(many=False, read_only=True, source='landing_location')
 
     class Meta:
         model = Landing
-        fields = ('attempt', 'success', 'description', 'landing_type', 'landing_location',)
+        fields = ('attempt', 'success', 'description', 'location', 'type')
 
 
 class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
