@@ -223,7 +223,9 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
     slug = serializers.SlugField(source='get_full_absolute_url')
     landing_type = serializers.StringRelatedField()
+    landing_type_abbrev = serializers.StringRelatedField(source="landing_type.abbrev")
     landing_location = serializers.StringRelatedField()
+    landing_location_abbrev = serializers.StringRelatedField(source="landing_location.abbrev")
 
     infoURLs = serializers.ReadOnlyField()
     vidURLs = serializers.ReadOnlyField()
@@ -232,8 +234,8 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
         depth = 3
         model = Launch
         fields = ('id', 'url', 'slug', 'name', 'img_url', 'status', 'net', 'window_end', 'window_start', 'inhold', 'tbdtime',
-                  'tbddate', 'probability', 'holdreason', 'failreason', 'land_success', 'landing_type',
-                  'landing_location', 'hashtag', 'launcher', 'launcher_config', 'mission', 'lsp', 'location', 'pad',
+                  'tbddate', 'probability', 'holdreason', 'failreason', 'land_success', 'landing_type', 'landing_type_abbrev',
+                  'landing_location', 'landing_location_abbrev', 'hashtag', 'launcher', 'launcher_config', 'mission', 'lsp', 'location', 'pad',
                   'infoURLs', 'vidURLs')
 
 
