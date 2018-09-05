@@ -43,6 +43,15 @@ class AgencyAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+@admin.register(models.Landing)
+class LandingAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">group</i>'
+    list_display = ('name', 'attempt', 'success', 'landing_location', 'landing_type')
+
+    def name(self, x):
+        return x.launch.name
+
+
 @admin.register(models.Orbiter)
 class OrbiterAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">public</i>'

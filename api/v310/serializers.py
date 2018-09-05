@@ -179,6 +179,27 @@ class MissionSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'description', 'type', 'orbit', 'orbit_abbrev')
 
 
+class LandingTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LandingType
+        fields = ('name', 'abbrev', 'description',)
+
+
+class LandingLocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LandingLocation
+        fields = ('name', 'abbrev', 'description',)
+
+
+class LandingSerializer(serializers.ModelSerializer):
+    landing_type = LandingTypeSerializer(many=False, read_only=True)
+    landing_location = LandingLocationSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = Landing
+        fields = ('attempt', 'success', 'description', 'landing_type', 'landing_location',)
+
+
 class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     lsp = LSPSerializer(many=False, read_only=True)
@@ -217,15 +238,12 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     pad = PadSerializer(many=False, read_only=True)
     launcher_config = LauncherConfigDetailSerializerForAgency(many=False, read_only=True)
+    landing = LandingSerializer(read_only=True, many=False)
     launcher = LauncherSerializer(read_only=True, many=True)
     lsp = AgencySerializerDetailed(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
     status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
     slug = serializers.SlugField(source='get_full_absolute_url')
-    landing_type = serializers.StringRelatedField()
-    landing_type_abbrev = serializers.StringRelatedField(source="landing_type.abbrev")
-    landing_location = serializers.StringRelatedField()
-    landing_location_abbrev = serializers.StringRelatedField(source="landing_location.abbrev")
 
     infoURLs = serializers.ReadOnlyField()
     vidURLs = serializers.ReadOnlyField()
@@ -233,10 +251,9 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         depth = 3
         model = Launch
-        fields = ('id', 'url', 'slug', 'name', 'img_url', 'status', 'net', 'window_end', 'window_start', 'inhold', 'tbdtime',
-                  'tbddate', 'probability', 'holdreason', 'failreason', 'land_success', 'landing_type', 'landing_type_abbrev',
-                  'landing_location', 'landing_location_abbrev', 'hashtag', 'launcher', 'launcher_config', 'mission', 'lsp', 'location', 'pad',
-                  'infoURLs', 'vidURLs')
+        fields = ('id', 'url', 'slug', 'name', 'img_url', 'status', 'net', 'window_end', 'window_start', 'inhold',
+                  'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'launcher', 'landing',
+                  'launcher_config', 'mission', 'lsp', 'location', 'pad', 'infoURLs', 'vidURLs')
 
 
 class EntrySerializer(serializers.ModelSerializer):

@@ -331,6 +331,20 @@ class Launcher(models.Model):
         verbose_name_plural = 'Launch Vehicles'
 
 
+class Landing(models.Model):
+    attempt = models.NullBooleanField(blank=False, null=False, default=False)
+    success = models.NullBooleanField(blank=True, null=True)
+    description = models.CharField(max_length=2048, blank=True, default="")
+    landing_type = models.ForeignKey(LandingType, related_name='landing', null=True, blank=True, on_delete=models.CASCADE)
+    landing_location = models.ForeignKey(LandingLocation, related_name='landing', null=True, blank=True, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "%s - %s" % (self.launch.name, self.attempt)
+
+    def __unicode__(self):
+        return u"%s - %s" % (self.launch.name, self.attempt)
+
+
 class Launch(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     launch_library = models.NullBooleanField(default=True)
@@ -355,10 +369,8 @@ class Launch(models.Model):
     holdreason = models.CharField(max_length=255, blank=True, null=True)
     failreason = models.CharField(max_length=255, blank=True, null=True)
     hashtag = models.CharField(max_length=255, blank=True, null=True)
-    land_success = models.NullBooleanField(blank=True, null=True)
-    landing_type = models.ForeignKey(LandingType, related_name='launch', null=True, blank=True, on_delete=models.CASCADE)
-    landing_location = models.ForeignKey(LandingLocation, related_name='launch', null=True, blank=True, on_delete=models.CASCADE)
     slug = models.SlugField(unique=True)
+    landing = models.OneToOneField(Landing, related_name='launch', null=True, blank=True, on_delete=models.CASCADE)
     lsp = models.ForeignKey(Agency, related_name='launch', null=True, blank=True, on_delete=models.CASCADE)
     launcher = models.ManyToManyField(Launcher, null=True, blank=True, related_name='launch')
     launcher_config = models.ForeignKey(LauncherConfig, related_name='launch', null=True, blank=True, on_delete=models.CASCADE)
