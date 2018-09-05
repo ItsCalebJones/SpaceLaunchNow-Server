@@ -335,14 +335,26 @@ class Landing(models.Model):
     attempt = models.NullBooleanField(blank=False, null=False, default=False)
     success = models.NullBooleanField(blank=True, null=True)
     description = models.CharField(max_length=2048, blank=True, default="")
-    landing_type = models.ForeignKey(LandingType, related_name='landing', null=True, blank=True, on_delete=models.CASCADE)
-    landing_location = models.ForeignKey(LandingLocation, related_name='landing', null=True, blank=True, on_delete=models.CASCADE)
+    landing_type = models.ForeignKey(LandingType, related_name='landing', null=True, blank=True, on_delete=models.SET_NULL)
+    landing_location = models.ForeignKey(LandingLocation, related_name='landing', null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
-        return "%s - %s" % (self.launch.name, self.attempt)
+        try:
+            if self.launch is not None:
+                return "%s - %s" % (self.launch.name, self.attempt)
+            else:
+                return "Attempt: %s" % self.attempt
+        except Launch.DoesNotExist:
+            return "Attempt: %s" % self.attempt
 
     def __unicode__(self):
-        return u"%s - %s" % (self.launch.name, self.attempt)
+        try:
+            if self.launch is not None:
+                return u"%s - %s" % (self.launch.name, self.attempt)
+            else:
+                return u"Attempt: %s" % self.attempt
+        except Launch.DoesNotExist:
+            return u"Attempt: %s" % self.attempt
 
 
 class Launch(models.Model):
@@ -370,12 +382,12 @@ class Launch(models.Model):
     failreason = models.CharField(max_length=255, blank=True, null=True)
     hashtag = models.CharField(max_length=255, blank=True, null=True)
     slug = models.SlugField(unique=True)
-    landing = models.OneToOneField(Landing, related_name='launch', null=True, blank=True, on_delete=models.CASCADE)
-    lsp = models.ForeignKey(Agency, related_name='launch', null=True, blank=True, on_delete=models.CASCADE)
+    landing = models.OneToOneField(Landing, related_name='launch', null=True, blank=True, on_delete=models.SET_NULL)
+    lsp = models.ForeignKey(Agency, related_name='launch', null=True, blank=True, on_delete=models.SET_NULL)
     launcher = models.ManyToManyField(Launcher, null=True, blank=True, related_name='launch')
-    launcher_config = models.ForeignKey(LauncherConfig, related_name='launch', null=True, blank=True, on_delete=models.CASCADE)
-    pad = models.ForeignKey(Pad, related_name='launch', null=True, on_delete=models.CASCADE)
-    mission = models.ForeignKey(Mission, related_name='launch', null=True, on_delete=models.CASCADE)
+    launcher_config = models.ForeignKey(LauncherConfig, related_name='launch', null=True, blank=True, on_delete=models.SET_NULL)
+    pad = models.ForeignKey(Pad, related_name='launch', null=True, on_delete=models.SET_NULL)
+    mission = models.ForeignKey(Mission, related_name='launch', null=True, on_delete=models.SET_NULL)
     created_date = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
