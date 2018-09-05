@@ -222,6 +222,8 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     mission = MissionSerializer(many=False, read_only=True)
     status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
     slug = serializers.SlugField(source='get_full_absolute_url')
+    landing_type = serializers.StringRelatedField()
+    landing_location = serializers.StringRelatedField()
 
     infoURLs = serializers.ReadOnlyField()
     vidURLs = serializers.ReadOnlyField()

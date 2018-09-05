@@ -64,10 +64,10 @@ class LandingType(models.Model):
     description = models.CharField(max_length=2048, null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return "%s (%s)" % (self.name, self.abbrev)
 
     def __unicode__(self):
-        return self.name
+        return u"%s (%s)" % (self.name, self.abbrev)
 
 
 class LandingLocation(models.Model):
@@ -77,7 +77,7 @@ class LandingLocation(models.Model):
     description = models.CharField(max_length=2048, null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return "%s (%s)" % (self.name, self.abbrev)
 
     def __unicode__(self):
-        return self.name
+        return u"%s (%s)" % (self.name, self.abbrev)
