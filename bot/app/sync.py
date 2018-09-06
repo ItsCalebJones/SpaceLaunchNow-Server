@@ -199,15 +199,15 @@ class LaunchLibrarySync:
         # If launch is within 24 hours...
         if 86400 >= diff > 3600 and not notification.wasNotifiedTwentyFourHour:
             logger.info('%s is within 24 hours, sending notifications.' % launch.name)
-            self.send_notification(launch, 'twentyFourHour', notification)
+            self.send_notification(launch, 'twentyFourHour', notification, diff)
             notification.wasNotifiedTwentyFourHour = True
         elif 3600 >= diff > 600 and not notification.wasNotifiedOneHour:
             logger.info('%s is within one hour, sending notifications.' % launch.name)
-            self.send_notification(launch, 'oneHour', notification)
+            self.send_notification(launch, 'oneHour', notification, diff)
             notification.wasNotifiedOneHour = True
         elif diff <= 600 and not notification.wasNotifiedTenMinutes:
             logger.info('%s is within ten minutes, sending notifications.' % launch.name)
-            self.send_notification(launch, 'tenMinutes', notification)
+            self.send_notification(launch, 'tenMinutes', notification, diff)
             notification.wasNotifiedTenMinutes = True
         else:
             logger.info('%s does not meet notification criteria.' % notification.launch.name)
@@ -240,7 +240,7 @@ class LaunchLibrarySync:
         except TwitterHTTPError as e:
             logger.error("%s %s" % (str(e), message))
 
-    def send_notification(self, launch, notification_type, notification):
+    def send_notification(self, launch, notification_type, notification, diff=None):
         logger.info('Creating notification for %s' % launch.name)
 
         if notification_type == 'netstampChanged':
@@ -248,9 +248,15 @@ class LaunchLibrarySync:
             contents = 'UPDATE: New launch attempt scheduled on %s at %s.' % (launch_time.strftime("%A, %B %d"),
                                                                launch_time.strftime("%H:%M UTC"))
         elif notification_type == 'tenMinutes':
-            contents = 'Launch attempt  from %s in ten minutes.' % launch.location.name
+            minutes = diff / 60
+            if minutes is 0:
+                minutes = "less then one"
+            contents = 'Launch attempt from %s in %s minute(s).' % (launch.location.name, minutes)
         elif notification_type == 'twentyFourHour':
-            contents = 'Launch attempt from %s in 24 hours.' % launch.location.name
+            hours = diff / 60 / 60
+            if hours is 23:
+                hours = 24
+            contents = 'Launch attempt from %s in %s hours.' % (launch.location.name, hours)
         elif notification_type == 'oneHour':
             contents = 'Launch attempt from %s in one hour.' % launch.location.name
 
