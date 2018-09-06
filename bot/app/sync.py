@@ -272,10 +272,10 @@ class LaunchLibrarySync:
         else:
             webcast = False
         image = ''
-        if launch.launcher.image_url:
-            image = launch.launcher.image_url.url
-        elif launch.launcher.legacy_image_url:
-            image = launch.launcher.legacy_image_url
+        if launch.launcher_config.image_url:
+            image = launch.launcher_config.image_url.url
+        elif launch.launcher_config.legacy_image_url:
+            image = launch.launcher_config.legacy_image_url
         kwargs = dict(
             content_available=True,
             excluded_segments=exclude_segments,
