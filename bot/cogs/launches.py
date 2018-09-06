@@ -130,8 +130,12 @@ def launch_to_small_embed(launch, notification=""):
                           description=description_text,
                           color=color,
                           url=launch.get_full_absolute_url())
-    if launch.launcher_config.image_url is not None:
-        embed.set_thumbnail(url=launch.launcher_config.image_url.url)
+
+    if launch.launcher_config.image_url.name is not '':
+        try:
+            embed.set_thumbnail(url=launch.launcher_config.image_url.url)
+        except ValueError:
+            embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
     else:
         embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
     embed.set_footer(text=launch.net.strftime("NET: %A %B %e, %Y %m %M %Z "))
