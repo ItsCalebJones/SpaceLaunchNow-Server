@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from django.contrib import admin
 
 
@@ -30,11 +30,13 @@ class DateListFilter(admin.SimpleListFilter):
         provided in the query string and retrievable via
         `self.value()`.
         """
+        today = datetime.today()
+
         # Compare the requested value (either '80s' or '90s')
         # to decide how to filter the queryset.
         if self.value() == 'upcoming' or self.value() is None:
-            return queryset.filter(net__gte=date(2018, 8, 12)).order_by('net')
+            return queryset.filter(net__gte=date(today.year, today.month, today.day)).order_by('net')
         if self.value() == 'previous':
-            return queryset.filter(net__lte=date(2018, 8, 12)).order_by('-net')
+            return queryset.filter(net__lte=date(today.year, today.month, today.day)).order_by('-net')
         if self.value() == 'all':
             return queryset.order_by('net')

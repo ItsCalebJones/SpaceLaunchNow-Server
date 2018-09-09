@@ -4,7 +4,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from api.v300.serializers import *
-from datetime import datetime
+from datetime import datetime, timedelta
 from api.models import LauncherConfig, Orbiter, Agency
 from api.permission import HasGroupPermission
 from bot.models import Launch
@@ -178,9 +178,10 @@ class UpcomingLaunchViewSet(ModelViewSet):
     def get_queryset(self):
         ids = self.request.query_params.get('id', None)
         now = datetime.now()
+        now = now - timedelta(days=1)
         if ids:
             ids = ids.split(',')
-            return Launch.objects.filter(id__in=ids).filter(net__gte=now)
+            return Launch.objects.filter(id__in=ids).filter(net__gte=now).order_by('net')
         else:
             return Launch.objects.filter(net__gte=now).prefetch_related('info_urls').prefetch_related(
                 'vid_urls').prefetch_related('launcher_config__launch_agency').prefetch_related(
