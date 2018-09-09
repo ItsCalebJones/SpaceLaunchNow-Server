@@ -245,8 +245,8 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
     slug = serializers.SlugField(source='get_full_absolute_url')
 
-    infoURLs = serializers.ReadOnlyField()
-    vidURLs = serializers.ReadOnlyField()
+    infoURLs = serializers.StringRelatedField(read_only=True, many=True, source='info_urls')
+    vidURLs = serializers.StringRelatedField(read_only=True, many=True, source='vid_urls')
 
     class Meta:
         depth = 3
