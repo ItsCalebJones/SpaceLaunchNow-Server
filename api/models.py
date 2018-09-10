@@ -131,10 +131,15 @@ class Orbiter(models.Model):
     details = models.CharField(max_length=1000, default='')
     in_use = models.BooleanField(default=True)
     capability = models.CharField(max_length=2048, default='')
+    maiden_flight = models.CharField(max_length=50, blank=True, null=True)
+    height = models.FloatField(verbose_name="Length (m)", blank=True, null=True)
+    diameter = models.FloatField(verbose_name="Diameter (m)", blank=True, null=True)
     human_rated = models.BooleanField(default=False)
+    crew_capacity = models.IntegerField(verbose_name="Crew Capacity", blank=True, null=True)
+    payload_capacity = models.CharField(max_length=2048, blank=True, null=True)
+    flight_life = models.CharField(max_length=2048, blank=True, null=True)
     wiki_link = models.URLField(blank=True)
-    legacy_image_url = models.URLField(blank=True)
-    legacy_nation_url = models.URLField(blank=True)
+    info_link = models.URLField(blank=True)
     image_url = models.FileField(default=None, storage=OrbiterImageStorage(), upload_to=image_path, null=True,
                                  blank=True)
     nation_url = models.FileField(default=None, storage=AgencyNationStorage(), upload_to=image_path, null=True,
