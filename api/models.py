@@ -131,7 +131,7 @@ class Orbiter(models.Model):
     details = models.CharField(max_length=1000, default='')
     in_use = models.BooleanField(default=True)
     capability = models.CharField(max_length=2048, default='')
-    maiden_flight = models.CharField(max_length=50, default='')
+    maiden_flight = models.DateField(max_length=255, null=True)
     height = models.FloatField(verbose_name="Length (m)", blank=True, null=True)
     diameter = models.FloatField(verbose_name="Diameter (m)", blank=True, null=True)
     human_rated = models.BooleanField(default=False)
