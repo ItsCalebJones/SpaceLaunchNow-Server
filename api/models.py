@@ -136,7 +136,7 @@ class Orbiter(models.Model):
     diameter = models.FloatField(verbose_name="Diameter (m)", blank=True, null=True)
     human_rated = models.BooleanField(default=False)
     crew_capacity = models.IntegerField(verbose_name="Crew Capacity", blank=True, null=True)
-    payload_capacity = models.CharField(max_length=2048, blank=True, null=True)
+    payload_capacity = models.IntegerField(verbose_name="Payload Capacity (kg)", blank=True, null=True)
     flight_life = models.CharField(max_length=2048, blank=True, null=True)
     wiki_link = models.URLField(blank=True)
     info_link = models.URLField(blank=True)
