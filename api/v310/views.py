@@ -1,6 +1,6 @@
 from itertools import chain
 
-from django.db.models import Q
+from django.db.models import Q, Count
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -36,6 +36,7 @@ class EntryViewSet(ModelViewSet):
     # search_fields = ('^name',)
     # ordering_fields = ('id', 'name', 'featured')
 
+
 class AgencyViewSet(ModelViewSet):
     """
     API endpoint that allows Agencies to be viewed.
@@ -44,7 +45,7 @@ class AgencyViewSet(ModelViewSet):
     Return a list of all the existing users.
 
     FILTERS:
-    Parameters - 'featured', 'launch_library_id', 'detailed'
+    Parameters - 'featured', 'launch_library_id', 'detailed', 'orbiters'
     Example - /3.1.0/agencies/?featured=true&launch_library_id=44&detailed
 
     SEARCH EXAMPLE:
@@ -55,14 +56,20 @@ class AgencyViewSet(ModelViewSet):
     Example - /3.1.0/agencies/?ordering=featured
 
     """
-    queryset = Agency.objects.all()
 
-    # serializer_class = AgencySerializer
+    def get_queryset(self):
+        orbiters = self.request.query_params.get("orbiters", True)
+        if orbiters:
+            return Agency.objects.annotate(orbiter_count=Count('orbiter_list')).filter(orbiter_count__gt=0)
+        else:
+            return Agency.objects.all()
 
     def get_serializer_class(self):
-        print(self.request.query_params.keys())
         mode = self.request.query_params.get("mode", "normal")
+        orbiters = self.request.query_params.get("orbiters", True)
         if mode == "detailed":
+            return AgencyDetailedSerializer
+        if orbiters:
             return AgencyDetailedSerializer
         else:
             return AgencySerializer
