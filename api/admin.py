@@ -63,10 +63,26 @@ class OrbiterAdmin(admin.ModelAdmin):
 @admin.register(models.Launch)
 class LaunchAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">launch</i>'
-    list_display = ('name', 'net')
+    list_display = ('name', 'net', 'landing', '_launcher', 'orbit')
     list_filter = (DateListFilter, 'status', 'lsp__name', 'launcher_config__name')
     ordering = ('net',)
     search_fields = ('name', 'lsp__name', 'launcher_config__name', 'mission__description')
+
+    def _launcher(self, obj):
+        if obj.launcher.count() > 0:
+            return obj.launcher.first().serial_number
+        else:
+            return None
+
+    _launcher.short_description = 'Launcher'
+
+    def orbit(self, obj):
+        if obj.mission is not None and obj.mission.orbit is not None and obj.mission.orbit.name:
+            return obj.mission.orbit.name
+        else:
+            return None
+
+    orbit.short_description = 'Orbit'
 
 
 @admin.register(models.Events)

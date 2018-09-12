@@ -346,20 +346,20 @@ class Landing(models.Model):
     def __str__(self):
         try:
             if self.launch is not None:
-                return "%s - %s" % (self.launch.name, self.attempt)
+                return "Attempt: %s Success: %s" % (self.attempt, self.success)
             else:
-                return "Attempt: %s" % self.attempt
+                return "Attempt: %s Success: %s" % (self.attempt, self.success)
         except Launch.DoesNotExist:
-            return "Attempt: %s" % self.attempt
+            return "Attempt: %s Success: %s" % (self.attempt, self.success)
 
     def __unicode__(self):
         try:
             if self.launch is not None:
-                return u"%s - %s" % (self.launch.name, self.attempt)
+                return u"Attempt: %s Success: %s" % (self.attempt, self.success)
             else:
-                return u"Attempt: %s" % self.attempt
+                return u"Attempt: %s Success: %s" % (self.attempt, self.success)
         except Launch.DoesNotExist:
-            return u"Attempt: %s" % self.attempt
+            return u"Attempt: %s Success: %s" % (self.attempt, self.success)
 
 
 class Launch(models.Model):
