@@ -67,6 +67,13 @@ LOGGING = {
             'maxBytes': 1024 * 1024 * 5,
             'backupCount': 5
         },
+        'django_error': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'log/error.log',
+            'formatter': 'standard',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5
+        },
         'console': {
             'class': 'logging.StreamHandler',
             'formatter': 'standard'
@@ -87,8 +94,15 @@ LOGGING = {
         }
     },
     'loggers': {
+        # Again, default Django configuration to email unhandled exceptions
+        'django.request': {
+            'handlers': ['django_default'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
         'django': {
             'handlers': ['django_default', 'console'],
+            'level': 'DEBUG',
             'propagate': True,
         },
         'bot.digest': {
