@@ -241,7 +241,7 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     pad = PadSerializer(many=False, read_only=True)
     launcher_config = LauncherConfigDetailSerializerForAgency(many=False, read_only=True)
     landing = LandingSerializer(read_only=True, many=False)
-    launcher = LauncherSerializer(read_only=True, many=True)
+    launcher = LauncherDetailedSerializer(read_only=True, many=True)
     lsp = AgencySerializerDetailed(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
     status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
