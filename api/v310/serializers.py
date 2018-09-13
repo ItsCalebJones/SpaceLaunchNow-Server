@@ -42,14 +42,14 @@ class LauncherSerializer(QueryFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Launcher
-        fields = ('id', 'url', 'flight_proven', 'serial_number')
+        fields = ('id', 'url', 'flight_proven', 'serial_number', 'status')
 
 
 class LauncherDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Launcher
-        fields = ('id', 'url', 'flight_proven', 'serial_number', 'previous_flights', 'status')
+        fields = ('id', 'url', 'flight_proven', 'serial_number', 'previous_flights')
 
 
 class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
@@ -241,7 +241,7 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     pad = PadSerializer(many=False, read_only=True)
     launcher_config = LauncherConfigDetailSerializerForAgency(many=False, read_only=True)
     landing = LandingSerializer(read_only=True, many=False)
-    launcher = LauncherDetailedSerializer(read_only=True, many=True)
+    launcher = LauncherSerializer(read_only=True, many=True)
     lsp = AgencySerializerDetailed(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
     status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
