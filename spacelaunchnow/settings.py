@@ -96,7 +96,7 @@ LOGGING = {
     'loggers': {
         # Again, default Django configuration to email unhandled exceptions
         'django.request': {
-            'handlers': ['django_default'],
+            'handlers': ['django_default', 'django_error'],
             'level': 'ERROR',
             'propagate': True,
         },
