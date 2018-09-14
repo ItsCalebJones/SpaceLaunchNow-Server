@@ -11,7 +11,10 @@ class LauncherModelSerializer(serializers.ModelSerializer):
         fields = ('id', 'url', 'name', 'description', 'agency', 'variant', 'image_url', 'info_url', 'wiki_url')
 
     def get_legacy_name(self, obj):
-        return obj.legacy_image_url
+        if obj.image_url:
+            return obj.image_url.url
+        else:
+            return None
 
 
 class OrbiterSerializer(serializers.HyperlinkedModelSerializer):
@@ -28,10 +31,16 @@ class OrbiterSerializer(serializers.HyperlinkedModelSerializer):
                   'wiki_link')
 
     def get_legacy_name(self, obj):
-        return obj.legacy_image_url
+        if obj.image_url:
+            return obj.image_url.url
+        else:
+            return None
 
     def get_nation_name(self, obj):
-        return obj.legacy_nation_url
+        if obj.nation_url:
+            return obj.nation_url.url
+        else:
+            return None
 
 
 class OrbiterModelSerializer(serializers.ModelSerializer):
@@ -43,10 +52,16 @@ class OrbiterModelSerializer(serializers.ModelSerializer):
         fields = ('id', 'url', 'name', 'agency', 'image_url', 'nation_url')
 
     def get_legacy_name(self, obj):
-        return obj.legacy_image_url
+        if obj.image_url:
+            return obj.image_url.url
+        else:
+            return None
 
     def get_nation_name(self, obj):
-        return obj.legacy_nation_url
+        if obj.nation_url:
+            return obj.nation_url.url
+        else:
+            return None
 
 
 class AgencySerializer(serializers.HyperlinkedModelSerializer):
@@ -65,10 +80,16 @@ class AgencySerializer(serializers.HyperlinkedModelSerializer):
         return obj.name
 
     def get_legacy_name(self, obj):
-        return obj.legacy_image_url
+        if obj.image_url:
+            return obj.image_url.url
+        else:
+            return None
 
     def get_nation_name(self, obj):
-        return obj.legacy_nation_url
+        if obj.nation_url:
+            return obj.nation_url.url
+        else:
+            return None
 
 
 class LauncherDetailSerializer(serializers.HyperlinkedModelSerializer):
@@ -83,4 +104,7 @@ class LauncherDetailSerializer(serializers.HyperlinkedModelSerializer):
                   'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url')
 
     def get_legacy_name(self, obj):
-        return obj.legacy_image_url
+        if obj.image_url:
+            return obj.image_url.url
+        else:
+            return None

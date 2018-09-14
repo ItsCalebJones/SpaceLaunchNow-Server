@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import os
 
 from django.contrib.sites.models import Site
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.db.models.functions import datetime
 from django.db import models
@@ -70,26 +71,26 @@ class Agency(models.Model):
 
     @property
     def successful_launches(self):
-        count = Launch.objects.filter(lsp__id=self.id).filter(status=3).count()
+        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(status=3).count()
         related_agency = self.related_agencies.all()
         for related in related_agency:
-            count += Launch.objects.filter(lsp__id=related.id).count()
+            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).count()
         return count
 
     @property
     def failed_launches(self):
-        count = Launch.objects.filter(lsp__id=self.id).filter(Q(status=4) | Q(status=7)).count()
+        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(Q(status=4) | Q(status=7)).count()
         related_agency = self.related_agencies.all()
         for related in related_agency:
-            count += Launch.objects.filter(lsp__id=related.id).filter(Q(status=4) | Q(status=7)).count()
+            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(Q(status=4) | Q(status=7)).count()
         return count
 
     @property
     def pending_launches(self):
-        count = Launch.objects.filter(lsp__id=self.id).filter(Q(status=1) | Q(status=2) | Q(status=5)).count()
+        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(Q(status=1) | Q(status=2) | Q(status=5)).count()
         related_agency = self.related_agencies.all()
         for related in related_agency:
-            count += Launch.objects.filter(lsp__id=related.id).filter(Q(status=1) | Q(status=2) | Q(status=5)).count()
+            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(Q(status=1) | Q(status=2) | Q(status=5)).count()
         return count
 
     def __str__(self):
@@ -171,7 +172,7 @@ class LauncherConfig(models.Model):
     description = models.CharField(max_length=2048, default='', blank=True)
     family = models.CharField(max_length=200, default='', blank=True)
     full_name = models.CharField(max_length=200, default='', blank=True)
-    launch_agency = models.ForeignKey(Agency, related_name='launcher_list', blank=True, null=True)
+    launch_agency = models.ForeignKey(Agency, related_name='launcher_config', blank=True, null=True)
     variant = models.CharField(max_length=200, default='', blank=True)
     alias = models.CharField(max_length=200, default='', blank=True)
     launch_cost = models.CharField(verbose_name="Launch Cost ($)", max_length=200, null=True, blank=True)
@@ -280,7 +281,7 @@ class Mission(models.Model):
         return self.name
 
     def __unicode__(self):
-        return self.name
+        return u'%s' % self.name
 
     class Meta:
         verbose_name = 'Mission'
@@ -302,7 +303,7 @@ class Payload(models.Model):
         return self.name
 
     def __unicode__(self):
-        return self.name
+        return u"%s" % self.name
 
 
 class Launcher(models.Model):
@@ -343,23 +344,72 @@ class Landing(models.Model):
     landing_type = models.ForeignKey(LandingType, related_name='landing', null=True, blank=True, on_delete=models.SET_NULL)
     landing_location = models.ForeignKey(LandingLocation, related_name='landing', null=True, blank=True, on_delete=models.SET_NULL)
 
+    def __unicode__(self):
+        try:
+            if self.firststage is not None:
+                return u"Landing: %s" % self.firststage
+            elif self.secondstage is not None:
+                return u"Landing: %s" % self.secondstage
+            else:
+                return u"(%d) Unassigned Landing" % self.id
+        except (Launch.DoesNotExist, FirstStage.DoesNotExist) as e:
+            return u"(%d) Unassigned Landing" % self.id
+
+
+class Rocket(models.Model):
+    configuration = models.ForeignKey(LauncherConfig, related_name='rocket')
+
     def __str__(self):
         try:
-            if self.launch is not None:
-                return "Attempt: %s Success: %s" % (self.attempt, self.success)
+            if self.launch is not None and self.launch.mission is not None:
+                return u"%s (Rocket)" % self.launch.mission.name
+            elif self.launch is not None:
+                return u"%s (Rocket)" % self.launch.name
             else:
-                return "Attempt: %s Success: %s" % (self.attempt, self.success)
-        except Launch.DoesNotExist:
-            return "Attempt: %s Success: %s" % (self.attempt, self.success)
+                return u"Unsaved %s" % self.configuration.name
+        except ObjectDoesNotExist:
+            return u"Unsaved %s" % self.configuration.name
 
     def __unicode__(self):
         try:
-            if self.launch is not None:
-                return u"Attempt: %s Success: %s" % (self.attempt, self.success)
+            if self.launch is not None and self.launch.mission is not None:
+                return u"%s (Rocket)" % self.launch.mission.name
+            elif self.launch is not None:
+                return u"%s (Rocket)" % self.launch.name
             else:
-                return u"Attempt: %s Success: %s" % (self.attempt, self.success)
-        except Launch.DoesNotExist:
-            return u"Attempt: %s Success: %s" % (self.attempt, self.success)
+                return u"Unsaved %s" % self.configuration.name
+        except ObjectDoesNotExist:
+            return u"Unsaved %s" % self.configuration.name
+
+
+class SecondStage(models.Model):
+    landing = models.OneToOneField(Landing, related_name='secondstage', null=True, blank=True, on_delete=models.SET_NULL)
+    launcher = models.ForeignKey(Launcher, related_name='secondstage', on_delete=models.CASCADE)
+    rocket = models.ForeignKey(Rocket, related_name='secondstage', on_delete=models.CASCADE)
+
+    def __str__(self):
+        try:
+            if self.rocket is not None and self.rocket.launch is not None:
+                return u"%s (%s)" % (self.rocket.launch.name, self.launcher.serial_number)
+            else:
+                return u"Unsaved %s" % self.launcher.serial_number
+        except ObjectDoesNotExist:
+            return u"Unsaved %s" % self.launcher.serial_number
+
+
+class FirstStage(models.Model):
+    landing = models.OneToOneField(Landing, related_name='firststage', null=True, blank=True, on_delete=models.SET_NULL)
+    launcher = models.ForeignKey(Launcher, related_name='firststage', on_delete=models.CASCADE)
+    rocket = models.ForeignKey(Rocket, related_name='firststage', on_delete=models.CASCADE)
+
+    def __str__(self):
+        try:
+            if self.rocket is not None and self.rocket.launch is not None:
+                return u"%s (%s)" % (self.rocket.launch.name, self.launcher.serial_number)
+            else:
+                return u"Unsaved %s" % self.launcher.serial_number
+        except ObjectDoesNotExist:
+            return u"Unsaved %s" % self.launcher.serial_number
 
 
 class Launch(models.Model):
@@ -387,10 +437,7 @@ class Launch(models.Model):
     failreason = models.CharField(max_length=255, blank=True, null=True)
     hashtag = models.CharField(max_length=255, blank=True, null=True)
     slug = models.SlugField(unique=True)
-    landing = models.OneToOneField(Landing, related_name='launch', null=True, blank=True, on_delete=models.SET_NULL)
-    lsp = models.ForeignKey(Agency, related_name='launch', null=True, blank=True, on_delete=models.SET_NULL)
-    launcher = models.ManyToManyField(Launcher, null=True, blank=True, related_name='launch')
-    launcher_config = models.ForeignKey(LauncherConfig, related_name='launch', null=True, blank=True, on_delete=models.SET_NULL)
+    rocket = models.OneToOneField(Rocket, blank=True, null=True, related_name='launch', unique=True)
     pad = models.ForeignKey(Pad, related_name='launch', null=True, on_delete=models.SET_NULL)
     mission = models.ForeignKey(Mission, related_name='launch', null=True, on_delete=models.SET_NULL)
     created_date = models.DateTimeField(auto_now_add=True)
@@ -400,7 +447,7 @@ class Launch(models.Model):
         return self.name
 
     def __unicode__(self):
-        return self.name
+        return u'%s' % self.name
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name + "-" + str(self.id))
@@ -425,7 +472,7 @@ class VidURLs(models.Model):
         return self.vid_url
 
     def __unicode__(self):
-        return '%s' % self.vid_url
+        return u'%s' % self.vid_url
 
     class Meta:
         verbose_name = 'Video URL'
@@ -440,7 +487,7 @@ class InfoURLs(models.Model):
         return self.info_url
 
     def __unicode__(self):
-        return '%s' % self.info_url
+        return u'%s' % self.info_url
 
     class Meta:
         verbose_name = 'Info URL'

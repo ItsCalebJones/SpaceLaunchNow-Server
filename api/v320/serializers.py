@@ -38,30 +38,16 @@ class AgencySerializerDetailed(QueryFieldsMixin, serializers.HyperlinkedModelSer
         return fields
 
 
-class LauncherSerializer(QueryFieldsMixin, serializers.ModelSerializer):
-
-    class Meta:
-        model = Launcher
-        fields = ('id', 'url', 'flight_proven', 'serial_number')
-
-
-class LauncherDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = Launcher
-        fields = ('id', 'url', 'flight_proven', 'serial_number', 'status', 'previous_flights')
-
-
 class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    launch_service_provider = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
         model = LauncherConfig
-        fields = ('id', 'url', 'name', 'agency')
+        fields = ('id', 'url', 'name', 'launch_service_provider',)
 
 
 class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
-    agency = AgencySerializer(many=False, read_only=True, source='launch_agency')
+    launch_service_provider = AgencySerializer(many=False, read_only=True, source='launch_agency')
 
     def get_rep(self, obj):
         rep = obj.rep
@@ -72,7 +58,7 @@ class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializ
 
     class Meta:
         model = LauncherConfig
-        fields = ('id', 'url', 'name', 'description', 'family', 'full_name', 'agency',
+        fields = ('id', 'url', 'name', 'description', 'family', 'full_name', 'launch_service_provider',
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust',
                   'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url',)
@@ -93,6 +79,20 @@ class LauncherConfigDetailSerializerForAgency(QueryFieldsMixin, serializers.Mode
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter', 'launch_cost',
                   'launch_mass', 'leo_capacity', 'gto_capacity', 'geo_capacity', 'sso_capacity', 'to_thrust',
                   'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url',)
+
+
+class LauncherSerializer(QueryFieldsMixin, serializers.ModelSerializer):
+
+    class Meta:
+        model = Launcher
+        fields = ('id', 'url', 'flight_proven', 'serial_number',)
+
+
+class LauncherDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Launcher
+        fields = ('id', 'url', 'flight_proven', 'serial_number', 'status', 'previous_flights',)
 
 
 class OrbiterDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
@@ -140,11 +140,27 @@ class EventsSerializer(serializers.HyperlinkedModelSerializer):
 #         model = Rocket
 #         fields = ('id', 'name', 'imageURL', 'family_name')
 
+class LocationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Location
+        fields = ('id', 'name', 'country_code',)
+
 
 class PadSerializer(serializers.ModelSerializer):
+    location = LocationSerializer(many=False)
+
     class Meta:
         model = Pad
-        fields = ('id', 'agency_id', 'name', 'info_url', 'wiki_url', 'map_url', 'latitude', 'longitude')
+        fields = ('id', 'agency_id', 'name', 'info_url', 'wiki_url', 'map_url', 'latitude', 'longitude', 'location')
+
+
+class LocationListSerializer(serializers.ModelSerializer):
+    pads = PadSerializer()
+
+    class Meta:
+        model = Location
+        fields = ('id', 'name', 'country_code', 'pads')
 
 
 class LaunchStatusSerializer(serializers.ModelSerializer):
@@ -152,14 +168,6 @@ class LaunchStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = LaunchStatus
         fields = ('id', 'name',)
-
-
-class LocationSerializer(serializers.ModelSerializer):
-    pads = PadSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Location
-        fields = ('id', 'name', 'country_code', 'pads')
 
 
 class LSPSerializer(serializers.ModelSerializer):
@@ -202,24 +210,58 @@ class LandingSerializer(serializers.ModelSerializer):
         fields = ('attempt', 'success', 'description', 'location', 'type')
 
 
+class FirstStageSerializer(serializers.ModelSerializer):
+    launcher = LauncherSerializer(read_only=True, many=False)
+    landing = LandingSerializer(read_only=True, many=False)
+
+    class Meta:
+        model = FirstStage
+        fields = ('launcher', 'landing',)
+
+
+class SecondStageSerializer(serializers.ModelSerializer):
+    launcher = LauncherSerializer(read_only=True, many=False)
+    landing = LandingSerializer(read_only=True, many=False)
+
+    class Meta:
+        model = SecondStage
+        fields = ('launcher', 'landing',)
+
+
+class RocketSerializer(serializers.ModelSerializer):
+    configuration = LauncherConfigSerializer(read_only=True, many=False)
+    first_stage = FirstStageSerializer(read_only=True, many=True, source='firststage')
+    second_stage = SecondStageSerializer(read_only=True, many=False, source='secondstage')
+
+    class Meta:
+        model = SecondStage
+        fields = ('configuration', 'first_stage', 'second_stage',)
+
+
+class RocketDetailedSerializer(serializers.ModelSerializer):
+    configuration = LauncherConfigDetailSerializer(read_only=True, many=False)
+    first_stage = FirstStageSerializer(read_only=True, many=True, source='firststage')
+    second_stage = SecondStageSerializer(read_only=True, many=False, source='secondstage')
+
+    class Meta:
+        model = SecondStage
+        fields = ('configuration', 'first_stage', 'second_stage',)
+
+
 class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
-    location = LocationSerializer(many=False, read_only=True, source='pad.location')
-    lsp = LSPSerializer(many=False, read_only=True, source='rocket.configuration.launch_agency')
+    pad = PadSerializer(many=False, read_only=True)
     status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
     slug = serializers.SlugField(source='get_full_absolute_url')
     
     class Meta:
         depth = 3
         model = Launch
-        fields = ('id', 'url', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold', 'tbdtime', 'tbddate',
-                  'lsp', 'location')
+        fields = ('id', 'url', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'pad')
 
 
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):
-    location = LocationSerializer(many=False, read_only=True, source='pad.location')
     pad = PadSerializer(many=False, read_only=True)
-    launcher_config = LauncherConfigSerializer(many=False, read_only=True, source='rocket.configuration')
-    lsp = LSPSerializer(many=False, read_only=True, source='rocket.configuration.launch_agency')
+    rocket = RocketSerializer(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
     status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
     slug = serializers.SlugField(source='get_full_absolute_url')
@@ -230,16 +272,14 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         depth = 3
         model = Launch
-        fields = ('id', 'url', 'slug', 'name', 'img_url', 'status', 'net', 'window_end', 'window_start', 'inhold', 'tbdtime',
-                  'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'launcher_config',
-                  'mission', 'lsp', 'location', 'pad', 'infoURLs', 'vidURLs')
+        fields = ('id', 'url', 'slug', 'name', 'img_url', 'status', 'net', 'window_end', 'window_start', 'inhold',
+                  'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'rocket',
+                  'mission', 'pad', 'infoURLs', 'vidURLs')
 
 
 class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
-    location = LocationSerializer(many=False, read_only=True, source='pad.location')
     pad = PadSerializer(many=False, read_only=True)
-    launcher_config = LauncherConfigDetailSerializerForAgency(many=False, read_only=True, source='rocket.configuration')
-    lsp = AgencySerializerDetailed(many=False, read_only=True, source='rocket.configuration.launch_agency')
+    rocket = RocketDetailedSerializer(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
     status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
     slug = serializers.SlugField(source='get_full_absolute_url')
@@ -251,8 +291,8 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
         depth = 3
         model = Launch
         fields = ('id', 'url', 'slug', 'name', 'img_url', 'status', 'net', 'window_end', 'window_start', 'inhold',
-                  'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag',
-                  'launcher_config', 'mission', 'lsp', 'location', 'pad', 'infoURLs', 'vidURLs')
+                  'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'rocket',
+                  'mission', 'pad', 'infoURLs', 'vidURLs')
 
 
 class EntrySerializer(serializers.ModelSerializer):

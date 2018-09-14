@@ -129,8 +129,8 @@ class MissionSerializer(serializers.ModelSerializer):
 
 class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
-    launcher = LauncherSerializer(many=False, read_only=True, source='launcher_config')
-    lsp = LSPSerializer(many=False, read_only=True)
+    launcher = LauncherSerializer(many=False, read_only=True, source='rocket.configuration')
+    lsp = LSPSerializer(many=False, read_only=True, source='rocket.configuration.launch_agency')
     mission = MissionSerializer(many=False, read_only=True)
     status = serializers.PrimaryKeyRelatedField(many=False, read_only=True, source='launch_status')
 
@@ -144,8 +144,8 @@ class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     pad = PadSerializer(many=False, read_only=True)
-    launcher = LauncherSerializer(many=False, read_only=True, source='launcher_config')
-    lsp = LSPSerializer(many=False, read_only=True)
+    launcher = LauncherSerializer(many=False, read_only=True, source='rocket.configuration')
+    lsp = LSPSerializer(many=False, read_only=True, source='rocket.configuration.launch_agency')
     mission = MissionSerializer(many=False, read_only=True)
     infoURLs = serializers.ReadOnlyField()
     vidURLs = serializers.ReadOnlyField()
@@ -169,8 +169,8 @@ class InfoURLSerializer(serializers.ModelSerializer):
 class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     pad = PadSerializer(many=False, read_only=True)
-    launcher = LauncherDetailSerializerForAgency(many=False, read_only=True, source='launcher_config')
-    lsp = AgencySerializer(many=False, read_only=True)
+    launcher = LauncherDetailSerializerForAgency(many=False, read_only=True, source='rocket.configuration')
+    lsp = AgencySerializer(many=False, read_only=True, source='rocket.configuration.launch_agency')
     mission = MissionSerializer(many=False, read_only=True)
     infoURLs = serializers.StringRelatedField(read_only=True, many=True, source='info_urls')
     vidURLs = serializers.StringRelatedField(read_only=True, many=True, source='vid_urls')

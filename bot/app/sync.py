@@ -5,15 +5,10 @@ from django.utils.datetime_safe import datetime
 import datetime as dtime
 import pytz
 from twitter import Twitter, OAuth, TwitterHTTPError
-
-from api.models import Launch
 from bot.app.instagram import InstagramBot
 from bot.app.repository.launches_repository import LaunchRepository
-from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
-from bot.libraries.onesignalsdk import OneSignalSdk
 from bot.utils.config import keys
 from bot.models import Notification
-from bot.utils.deserializer import launch_json_to_model
 from bot.utils.util import seconds_to_time, get_fcm_topics_and_onesignal_segments
 from pyfcm import FCMNotification
 import logging
@@ -45,7 +40,6 @@ def get_message(launch, diff):
 
 class LaunchLibrarySync:
     def __init__(self, debug=None, version=None):
-        self.one_signal = OneSignalSdk(AUTH_TOKEN_HERE, APP_ID)
         if version is None:
             version = '1.4.1'
         self.repository = LaunchRepository(version=version)
@@ -328,28 +322,6 @@ class LaunchLibrarySync:
                                                                    message_body=contents)
             logger.debug(android_result)
             logger.debug(flutter_result)
-            response = self.one_signal.create_notification(contents, heading, **kwargs)
-            if response.status_code == 200:
-                logger.info('Notification Sent -  Status: %s Response: %s' % (response.status_code, response.json()))
-
-                notification_data = response.json()
-                notification_id = notification_data['id']
-                assert notification_data['id'] and notification_data['recipients']
-                notification.last_notification_recipient_count = notification_data['recipients']
-                notification.last_notification_sent = datetime.now(pytz.utc)
-                notification.save()
-
-                # Get the notification
-                response = self.one_signal.get_notification(notification_id)
-
-                if response.status_code == 200:
-                    logger.info('Notification Status: %s Content: %s' % (response.status_code, response.json()))
-                else:
-                    logger.error(response.text)
-
-                notification_data = response.json()
-                assert notification_data['id'] == notification_id
-                assert notification_data['contents']['en'] == contents
-            else:
-                logger.error(response.text)
+            notification.last_notification_sent = datetime.now(pytz.utc)
+            notification.save()
             logger.info('----------------------------------------------------------')

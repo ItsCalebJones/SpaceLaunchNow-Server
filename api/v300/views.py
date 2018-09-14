@@ -65,9 +65,6 @@ class LaunchersViewSet(ModelViewSet):
     FILTERS:
     Fields - 'family', 'agency', 'name', 'launch_agency__name', 'full_name', 'launch_agency__launch_library_id'
 
-    Get all Launchers with the Launch Library ID of 44.
-    Example - /3.0.0/launchers/?launch_agency__launch_library_id=44
-
     Get all Launchers with the Agency with name NASA.
     Example - /3.0.0/launchers/?launch_agency__name=NASA
     """
@@ -134,14 +131,23 @@ class LaunchViewSet(ModelViewSet):
 
     def get_queryset(self):
         ids = self.request.query_params.get('id', None)
+        lsp_id = self.request.query_params.get('lsp_id', None)
+        lsp_name = self.request.query_params.get('lsp_name', None)
+        launcher_config__id = self.request.query_params.get('launcher_config__id', None)
         if ids:
             ids = ids.split(',')
             return Launch.objects.filter(id__in=ids)
+        elif lsp_id:
+            return Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id)
+        elif lsp_name:
+            return Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
+                                         | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name))
+        elif launcher_config__id:
+            return Launch.objects.filter(rocket__configuration__id=launcher_config__id)
         else:
             return Launch.objects.order_by('net').prefetch_related('info_urls').prefetch_related(
-                'vid_urls').prefetch_related('launcher_config__launch_agency').prefetch_related(
-                'pad__location').select_related('mission').select_related('lsp').select_related(
-                'launcher_config').select_related('pad').all()
+                'vid_urls').prefetch_related('rocket').prefetch_related('pad__location').select_related(
+                'mission').select_related('pad').all()
 
     def get_serializer_class(self):
         print(self.request.query_params.keys())
@@ -162,8 +168,9 @@ class LaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'launcher_config__name', 'lsp__name', 'status', 'tbddate', 'tbdtime', 'launcher_config__id')
-    search_fields = ('$name', '$launcher_config__name', '$lsp__name')
+    filter_fields = ('name',)
+    search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
+                     '$mission__name')
     ordering_fields = ('id', 'name', 'net',)
 
 
@@ -176,17 +183,27 @@ class UpcomingLaunchViewSet(ModelViewSet):
     """
 
     def get_queryset(self):
-        ids = self.request.query_params.get('id', None)
         now = datetime.now()
         now = now - timedelta(days=1)
+        ids = self.request.query_params.get('id', None)
+        lsp_id = self.request.query_params.get('lsp_id', None)
+        lsp_name = self.request.query_params.get('lsp_name', None)
+        launcher_config__id = self.request.query_params.get('launcher_config__id', None)
         if ids:
             ids = ids.split(',')
             return Launch.objects.filter(id__in=ids).filter(net__gte=now).order_by('net')
+        elif lsp_id:
+            return Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id).filter(net__gte=now)
+        elif lsp_name:
+            return Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
+                                         | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)).filter(
+                net__gte=now)
+        elif launcher_config__id:
+            return Launch.objects.filter(rocket__configuration__id=launcher_config__id).filter(net__gte=now)
         else:
             return Launch.objects.filter(net__gte=now).prefetch_related('info_urls').prefetch_related(
-                'vid_urls').prefetch_related('launcher_config__launch_agency').prefetch_related(
-                'pad__location').select_related('mission').select_related('lsp').select_related(
-                'launcher_config').select_related('pad').order_by('net').all()
+                'vid_urls').prefetch_related('rocket').prefetch_related(
+                'pad__location').select_related('mission').select_related('pad').order_by('net').all()
 
     def get_serializer_class(self):
         print(self.request.query_params.keys())
@@ -208,8 +225,9 @@ class UpcomingLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'launcher_config__name', 'lsp__name', 'status', 'tbddate', 'tbdtime', 'launcher_config__id')
-    search_fields = ('$name', '$launcher_config__name', '$lsp__name')
+    filter_fields = ('name',)
+    search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
+                     '$mission__name')
     ordering_fields = ('id', 'name', 'net',)
 
 
@@ -222,16 +240,27 @@ class PreviousLaunchViewSet(ModelViewSet):
     """
 
     def get_queryset(self):
-        ids = self.request.query_params.get('id', None)
         now = datetime.now()
+
+        ids = self.request.query_params.get('id', None)
+        lsp_id = self.request.query_params.get('lsp_id', None)
+        lsp_name = self.request.query_params.get('lsp_name', None)
+        launcher_config__id = self.request.query_params.get('launcher_config__id', None)
         if ids:
             ids = ids.split(',')
             return Launch.objects.filter(id__in=ids).filter(net__lte=now)
+        elif lsp_id:
+            return Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id).filter(net__lte=now)
+        elif lsp_name:
+            return Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
+                                         | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)).filter(
+                net__lte=now)
+        elif launcher_config__id:
+            return Launch.objects.filter(rocket__configuration__id=launcher_config__id).filter(net__lte=now)
         else:
             return Launch.objects.filter(net__lte=now).prefetch_related('info_urls').prefetch_related(
-                'vid_urls').prefetch_related('launcher_config__launch_agency').prefetch_related(
-                'pad__location').select_related('mission').select_related('lsp').select_related(
-                'launcher_config').select_related('pad').order_by('-net').all()
+                'vid_urls').prefetch_related('rocket').prefetch_related(
+                'pad__location').select_related('mission').select_related('pad').order_by('-net').all()
 
     def get_serializer_class(self):
         print(self.request.query_params.keys())
@@ -252,6 +281,7 @@ class PreviousLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'launcher_config__name', 'lsp__name', 'status', 'tbddate', 'tbdtime', 'launcher_config__id')
-    search_fields = ('$name', '$launcher_config__name', '$lsp__name')
+    filter_fields = ('name',)
+    search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
+                     '$mission__name')
     ordering_fields = ('id', 'name', 'net',)

@@ -72,9 +72,8 @@ def launch_json_to_model(data):
     for url in info_urls:
         InfoURLs.objects.create(info_url=url, launch=launch)
     launch.location = get_location(launch, data)
-    launch.launcher_config = get_rocket(launch, data)
     launch.mission = get_mission(launch, data)
-    launch.lsp = get_lsp(launch, data)
+    launch.rocket = get_rocket(launch, data)
     check_notification(launch)
     launch.save()
     return launch
@@ -93,12 +92,14 @@ def check_notification(launch):
 def get_location(launch, data):
     if 'location' in data and data['location'] is not None:
         location, created = Location.objects.get_or_create(id=data['location']['id'])
-        location.name = data['location']['name']
-        location.country_code = data['location']['countryCode']
+        if created:
+            location.name = data['location']['name']
+            location.country_code = data['location']['countryCode']
         location.save()
         if data['location']['pads'] is not None and len(data['location']['pads']) > 0:
                 pad, created = Pad.objects.get_or_create(id=data['location']['pads'][0]['id'], location=location)
-                pad.name = data['location']['pads'][0]['name']
+                if created:
+                    pad.name = data['location']['pads'][0]['name'].split(',', 1)[0]
                 pad.map_url = data['location']['pads'][0]['mapURL']
                 pad.wiki_url = data['location']['pads'][0]['wikiURL']
                 pad.latitude = data['location']['pads'][0]['latitude']
@@ -110,15 +111,16 @@ def get_location(launch, data):
 
 def get_rocket(launch, data):
     if 'rocket' in data and data['rocket'] is not None:
-        rocket, created = LauncherConfig.objects.get_or_create(id=data['rocket']['id'])
+        launcher_config, created = LauncherConfig.objects.get_or_create(id=data['rocket']['id'])
         if created:
-            rocket.name = data['rocket']['name']
-            rocket.family_name = data['rocket']['familyname']
-            rocket.configuration = data['rocket']['configuration']
-        rocket.launch.add(launch)
-        rocket.save()
+            launcher_config.name = data['rocket']['name']
+            launcher_config.family_name = data['rocket']['familyname']
+            launcher_config.configuration = data['rocket']['configuration']
+            launcher_config.launch_agency = get_lsp(launch, data)
+        launcher_config.save()
         if 'placeholder' not in data['rocket']['imageURL'] and created:
-            download_launcher_image(rocket)
+            download_launcher_image(launcher_config)
+        rocket, created = Rocket.objects.get_or_create(launch__id=launch.id, configuration=launcher_config)
     return rocket
 
 
