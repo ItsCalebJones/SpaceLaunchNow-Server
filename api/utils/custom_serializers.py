@@ -7,4 +7,7 @@ class TimeStampField(serializers.Field):
         pass
 
     def to_representation(self, value):
-        return int(time.mktime(value.timetuple()))
+        try:
+            return int(time.mktime(value.timetuple()))
+        except OverflowError:
+            return 0
