@@ -19,18 +19,12 @@ def launch_json_to_model(data):
     if status < 1 or status > 7:
         print(id)
     status_name = get_launch_status(data['status'])
-    netstamp = data['netstamp']
-    wsstamp = data['wsstamp']
-    westamp = data['westamp']
     inhold = data['inhold']
     net = data['net']
     window_end = data['windowend']
     window_start = data['windowstart']
     vid_urls = data['vidURLs']
     info_urls = data['infoURLs']
-    isonet = data['isonet']
-    isostart = data['isostart']
-    isoend = data['isoend']
     probability = data['probability']
     holdreason = data['holdreason']
     failreason = data['failreason']
@@ -48,13 +42,7 @@ def launch_json_to_model(data):
         launch.launch_status = launch_status
     except ObjectDoesNotExist:
         print("LaunchStatus %s" % launch.status)
-    launch.netstamp = netstamp
-    launch.wsstamp = wsstamp
-    launch.westamp = westamp
     launch.inhold = inhold
-    launch.isonet = isonet
-    launch.isostart = isostart
-    launch.isoend = isoend
     launch.probability = probability
     launch.holdreason = holdreason
     launch.failreason = failreason
