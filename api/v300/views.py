@@ -123,10 +123,23 @@ class EventViewSet(ModelViewSet):
 
 class LaunchViewSet(ModelViewSet):
     """
-    API endpoint that returns all Launch objects.
+    API endpoint that returns all Launch objects or a single launch.
+
+    EXAMPLE - /launch/<id>/ or /launch/?mode=list&search=SpaceX
 
     GET:
     Return a list of all Launch objects.
+
+    FILTERS:
+    Fields - 'name', 'id(s)', 'lsp_id', 'lsp_name', 'launcher_config__id',
+
+    MODE:
+    'normal', 'list', 'detailed'
+    EXAMPLE: ?mode=list
+
+    SEARCH:
+    Searches through the launch name, rocket name, launch agency and mission name.
+    EXAMPLE - ?search=SpaceX
     """
 
     def get_queryset(self):
@@ -180,6 +193,17 @@ class UpcomingLaunchViewSet(ModelViewSet):
 
     GET:
     Return a list of future Launches
+
+    FILTERS:
+    Fields - 'name', 'id(s)', 'lsp_id', 'lsp_name', 'launcher_config__id',
+
+    MODE:
+    'normal', 'list', 'detailed'
+    EXAMPLE: ?mode=list
+
+    SEARCH:
+    Searches through the launch name, rocket name, launch agency and mission name.
+    EXAMPLE - ?search=SpaceX
     """
 
     def get_queryset(self):
@@ -237,6 +261,17 @@ class PreviousLaunchViewSet(ModelViewSet):
 
     GET:
     Return a list of previous Launches
+
+    FILTERS:
+    Fields - 'name', 'id(s)', 'lsp_id', 'lsp_name', 'launcher_config__id',
+
+    MODE:
+    'normal', 'list', 'detailed'
+    EXAMPLE: ?mode=list
+
+    SEARCH:
+    Searches through the launch name, rocket name, launch agency and mission name.
+    EXAMPLE - ?search=SpaceX
     """
 
     def get_queryset(self):
