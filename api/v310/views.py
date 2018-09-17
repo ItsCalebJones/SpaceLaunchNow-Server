@@ -198,33 +198,34 @@ class LaunchViewSet(ModelViewSet):
     def get_queryset(self):
         ids = self.request.query_params.get('id', None)
         lsp_name = self.request.query_params.get('lsp__name', None)
-        lsp_id = self.request.query_params.get('lsp__id', None)
+        lsp_id = self.request.query_params.get('rocket__configuration__launch_agency__id', None)
         if ids:
             ids = ids.split(',')
             return Launch.objects.filter(id__in=ids).order_by('net')
         if lsp_name:
-            launches = Launch.objects.filter(lsp__name=lsp_name)
+            launches = Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
+                                             | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name))
             total_launches = launches
             try:
                 agency = Agency.objects.get(name=lsp_name)
                 related_agency = agency.related_agencies.all()
                 for related in related_agency:
-                    related_launches = Launch.objects.filter(lsp__id=related.id)
+                    related_launches = Launch.objects.filter(rocket__configuration__launch_agency__id=related.id)
                     total_launches = launches | related_launches
             except Agency.DoesNotExist:
-                print ("Cant find agency.")
+                print("Cant find agency.")
             return total_launches.order_by('net')
         if lsp_id:
-            launches = Launch.objects.filter(lsp__id=lsp_id)
+            launches = Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id)
             total_launches = launches
             try:
                 agency = Agency.objects.get(name=lsp_id)
                 related_agency = agency.related_agencies.all()
                 for related in related_agency:
-                    related_launches = Launch.objects.filter(lsp__id=related.id)
+                    related_launches = Launch.objects.filter(rocket__configuration__launch_agency__id=related.id)
                     total_launches = launches | related_launches
             except Agency.DoesNotExist:
-                print ("Cant find agency.")
+                print("Cant find agency.")
             return total_launches.order_by('net')
         else:
             return Launch.objects.order_by('net').prefetch_related('info_urls').prefetch_related(
@@ -267,32 +268,33 @@ class UpcomingLaunchViewSet(ModelViewSet):
     def get_queryset(self):
         ids = self.request.query_params.get('id', None)
         lsp_name = self.request.query_params.get('lsp__name', None)
-        lsp_id = self.request.query_params.get('lsp__id', None)
+        lsp_id = self.request.query_params.get('rocket__configuration__launch_agency__id', None)
         now = datetime.now()
         now = now - timedelta(days=1)
         if ids:
             ids = ids.split(',')
             return Launch.objects.filter(id__in=ids).filter(net__gte=now).order_by('net')
         if lsp_name:
-            launches = Launch.objects.filter(lsp__name=lsp_name).filter(net__gte=now)
+            launches = Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
+                                             | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)).filter(net__gte=now)
             total_launches = launches
             try:
                 agency = Agency.objects.get(name=lsp_name)
                 related_agency = agency.related_agencies.all()
                 for related in related_agency:
-                    related_launches = Launch.objects.filter(lsp__id=related.id).filter(net__gte=now)
+                    related_launches = Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(net__gte=now)
                     total_launches = launches | related_launches
             except Agency.DoesNotExist:
                 print ("Cant find agency.")
             return total_launches.order_by('net')
         if lsp_id:
-            launches = Launch.objects.filter(lsp__id=lsp_id).filter(net__gte=now)
+            launches = Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id).filter(net__gte=now)
             total_launches = launches
             try:
                 agency = Agency.objects.get(name=lsp_id)
                 related_agency = agency.related_agencies.all()
                 for related in related_agency:
-                    related_launches = Launch.objects.filter(lsp__id=related.id).filter(net__gte=now)
+                    related_launches = Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(net__gte=now)
                     total_launches = launches | related_launches
             except Agency.DoesNotExist:
                 print("Cant find agency.")
@@ -339,31 +341,32 @@ class PreviousLaunchViewSet(ModelViewSet):
     def get_queryset(self):
         ids = self.request.query_params.get('id', None)
         lsp_name = self.request.query_params.get('lsp__name', None)
-        lsp_id = self.request.query_params.get('lsp__id', None)
+        lsp_id = self.request.query_params.get('rocket__configuration__launch_agency__id', None)
         now = datetime.now()
         if ids:
             ids = ids.split(',')
             return Launch.objects.filter(id__in=ids).filter(net__lte=now).order_by('-net')
         if lsp_name:
-            launches = Launch.objects.filter(lsp__name=lsp_name).filter(net__lte=now)
+            launches = Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
+                                             | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)).filter(net__lte=now)
             total_launches = launches
             try:
                 agency = Agency.objects.get(name=lsp_name)
                 related_agency = agency.related_agencies.all()
                 for related in related_agency:
-                    related_launches = Launch.objects.filter(lsp__id=related.id).filter(net__lte=now)
+                    related_launches = Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(net__lte=now)
                     total_launches = launches | related_launches
             except Agency.DoesNotExist:
                 print ("Cant find agency.")
             return total_launches.order_by('-net')
         if lsp_id:
-            launches = Launch.objects.filter(lsp__id=lsp_id).filter(net__lte=now)
+            launches = Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id).filter(net__lte=now)
             total_launches = launches
             try:
                 agency = Agency.objects.get(id=lsp_id)
                 related_agency = agency.related_agencies.all()
                 for related in related_agency:
-                    related_launches = Launch.objects.filter(lsp__id=related.id).filter(net__lte=now)
+                    related_launches = Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(net__lte=now)
                     total_launches = launches | related_launches
             except Agency.DoesNotExist:
                 print ("Cant find agency.")
