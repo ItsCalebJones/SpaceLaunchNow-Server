@@ -18,7 +18,6 @@ def launch_json_to_model(data):
     status = data['status']
     if status < 1 or status > 7:
         print(id)
-    status_name = get_launch_status(data['status'])
     inhold = data['inhold']
     net = data['net']
     window_end = data['windowend']
@@ -35,11 +34,8 @@ def launch_json_to_model(data):
     launch, created = Launch.objects.get_or_create(id=id)
 
     launch.name = name
-    launch.status = status
-    launch.status_name = status_name
     try:
-        launch_status = LaunchStatus.objects.get(id=launch.status)
-        launch.launch_status = launch_status
+        launch.status = LaunchStatus.objects.get(id=status)
     except ObjectDoesNotExist:
         print("LaunchStatus %s" % launch.status)
     launch.inhold = inhold

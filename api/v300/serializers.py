@@ -134,7 +134,7 @@ class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
     launcher = LauncherSerializer(many=False, read_only=True, source='rocket.configuration')
     lsp = LSPSerializer(many=False, read_only=True, source='rocket.configuration.launch_agency')
     mission = MissionSerializer(many=False, read_only=True)
-    status = serializers.PrimaryKeyRelatedField(many=False, read_only=True, source='launch_status')
+    status = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
 
     class Meta:
         depth = 3
@@ -182,7 +182,7 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     mission = MissionSerializer(many=False, read_only=True)
     infoURLs = serializers.StringRelatedField(read_only=True, many=True, source='info_urls')
     vidURLs = serializers.StringRelatedField(read_only=True, many=True, source='vid_urls')
-    status = serializers.PrimaryKeyRelatedField(many=False, read_only=True, source='launch_status')
+    status = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     netstamp = TimeStampField(source='net')
     wsstamp = TimeStampField(source='window_start')
     westamp = TimeStampField(source='window_end')

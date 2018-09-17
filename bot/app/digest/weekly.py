@@ -16,9 +16,9 @@ def check_launch_weekly(DEBUG=True):
     try:
         for launch in repository.get_next_weeks_launches():
             update_notification_record(launch)
-            if launch.status == 1 and launch.netstamp > 0:
+            if launch.status.id == 1 and launch.net:
                 this_weeks_confirmed_launches.append(launch)
-            elif launch.status == 0 or launch.netstamp == 0:
+            elif launch.status.id == 0 or launch.net:
                 this_weeks_possible_launches.append(launch)
         build_weekly_message(this_weeks_possible_launches, this_weeks_confirmed_launches, DEBUG)
     except TypeError as e:

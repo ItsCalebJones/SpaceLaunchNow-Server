@@ -234,7 +234,7 @@ class RocketDetailedSerializer(serializers.ModelSerializer):
 
 class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
     pad = PadSerializer(many=False, read_only=True)
-    status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
+    status = LaunchStatusSerializer(many=False, read_only=True)
     slug = serializers.SlugField(source='get_full_absolute_url')
     
     class Meta:
@@ -247,7 +247,7 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     pad = PadSerializer(many=False, read_only=True)
     rocket = RocketSerializer(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
-    status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
+    status = LaunchStatusSerializer(many=False, read_only=True)
     slug = serializers.SlugField(source='get_full_absolute_url')
 
     infoURLs = serializers.ReadOnlyField()
@@ -265,7 +265,7 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     pad = PadSerializer(many=False, read_only=True)
     rocket = RocketDetailedSerializer(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
-    status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
+    status = LaunchStatusSerializer(many=False, read_only=True)
     slug = serializers.SlugField(source='get_full_absolute_url')
 
     infoURLs = serializers.StringRelatedField(read_only=True, many=True, source='info_urls')

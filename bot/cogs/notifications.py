@@ -83,7 +83,7 @@ class Notifications:
             await self.bot.send_message(context.message.channel, "Only server owners list notification channels.")
 
     async def check_success(self, bot_channels, time_threshold_past_two_days, time_threshold_24_hour):
-        recent_success_launches = Launch.objects.filter(launch_status__id=3,
+        recent_success_launches = Launch.objects.filter(status__id=3,
                                                         net__lte=time_threshold_24_hour,
                                                         net__gte=time_threshold_past_two_days)
         for launch in recent_success_launches:
@@ -96,7 +96,7 @@ class Notifications:
 
 
     async def check_in_flight(self, bot_channels):
-        in_flight_launches = Launch.objects.filter(launch_status__id=6)
+        in_flight_launches = Launch.objects.filter(status__id=6)
         for launch in in_flight_launches:
             notification, created = Notification.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedInFlightDiscord:

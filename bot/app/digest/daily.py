@@ -16,25 +16,25 @@ def check_launch_daily(DEBUG=True):
     confirmed_launches = []
     possible_launches = []
     repository = LaunchRepository()
-    current_time = datetime.utcnow()
+    current_time = datetime.now(tz=pytz.utc)
     for launch in repository.get_next_launches():
         update_notification_record(launch)
-        if launch.netstamp > 0 and (datetime.utcfromtimestamp(int(launch.netstamp)) - current_time) \
-                .total_seconds() < 172800:
-            if launch.status == 1:
+        if launch.net and (launch.net - current_time).total_seconds() < 172800:
+            if launch.status.id == 1:
                 confirmed_launches.append(launch)
-            elif launch.status == 2:
+            elif launch.status.id == 2:
                 possible_launches.append(launch)
     build_daily_message(possible=possible_launches, confirmed=confirmed_launches, DEBUG=DEBUG)
 
 
 def build_daily_message(possible, confirmed, DEBUG=True):
     logger.debug("Confirmed count - %s | Possible Count - %s" % (len(confirmed), len(possible)))
-    header = "Daily Digest %s:" % datetime.strftime(datetime.now(), "%m/%d")
+    current_time = datetime.now(tz=pytz.utc)
+    header = "Daily Digest %s:" % current_time.strftime("%m/%d")
     messages = "MESSAGES SENT TO TWITTER: \n"
     if len(confirmed) == 0 and len(possible) == 0:
         logger.info("No launches - sending message. ")
-        launch = Launch.objects.filter(net__gte=datetime.now()).order_by('net').first()
+        launch = Launch.objects.filter(net__gte=current_time).order_by('net').first()
 
         message = "%s There are currently no launches scheduled within the next 48 hours. Next up is %s on %s" % (header, launch.name, custom_strftime("%B {S} at %I:%M %p %Z", launch.net))
 
@@ -43,9 +43,7 @@ def build_daily_message(possible, confirmed, DEBUG=True):
 
     if len(confirmed) == 1 and len(possible) == 0:
         launch = confirmed[0]
-
-        current_time = datetime.utcnow()
-        launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
+        launch_time = launch.net
         logger.info("One launch - sending message. ")
         message = "%s %s launching from %s in %s hours. \n %s" % (
             header, launch.name, launch.pad.location.name,
@@ -58,7 +56,7 @@ def build_daily_message(possible, confirmed, DEBUG=True):
         launch = possible[0]
 
         logger.info("One launch - sending message. ")
-        date = datetime.utcfromtimestamp(launch.netstamp).replace(tzinfo=pytz.UTC)
+        date = launch.net
         message = "%s %s might be launching from %s on %s." % (
             header, launch.name, launch.pad.location.name,
             date.strftime("%A at %H:%S %Z"))
@@ -70,15 +68,14 @@ def build_daily_message(possible, confirmed, DEBUG=True):
         confirmed_launch = confirmed[0]
 
         logger.info("One launch possible - sending message. ")
-        date = datetime.utcfromtimestamp(possible_launch.netstamp).replace(tzinfo=pytz.UTC)
+        date = possible_launch.net
         message = "%s %s might be launching from %s on %s." % (header, possible_launch.name,
                                                                possible_launch.pad.location.name,
                                                                date.strftime("%A at %H:%S %Z"))
         messages = messages + message + "\n"
         response_id = send_twitter_update(message, DEBUG)
 
-        current_time = datetime.utcnow()
-        launch_time = datetime.utcfromtimestamp(int(confirmed_launch.netstamp))
+        launch_time = confirmed_launch.net
         logger.info("One launch confirmed - sending message. ")
         message = "%s %s launching from %s in %s hours. \n %s" % (
             header, confirmed_launch.name, confirmed_launch.pad.location.name,
@@ -96,9 +93,8 @@ def build_daily_message(possible, confirmed, DEBUG=True):
         messages = messages + message + "\n"
         response_id = send_twitter_update(message, DEBUG)
         for index, launch in enumerate(confirmed, start=1):
-            current_time = datetime.utcnow()
 
-            launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
+            launch_time = launch.net
             message = "%s launching from %s in %s hours. (%i/%i) \n %s" % (
                 launch.name,
                 launch.pad.location.name,
@@ -116,7 +112,7 @@ def build_daily_message(possible, confirmed, DEBUG=True):
         messages = messages + message + "\n"
         response_id = send_twitter_update(message, DEBUG)
         for index, launch in enumerate(possible, start=1):
-            date = datetime.utcfromtimestamp(launch.netstamp).replace(tzinfo=pytz.UTC)
+            date = launch.net
             message = "%s might be launching from %s on %s. (%i/%i)" % (launch.name,
                                                                         launch.pad.location.name,
                                                                         date.strftime("%A at %H:%S %Z"),
@@ -139,18 +135,15 @@ def build_daily_message(possible, confirmed, DEBUG=True):
         for index, launch in enumerate(possible, start=1):
             message = "%s might be launching from %s on %s. (%i/%i)" % (launch.name,
                                                                         launch.pad.location.name,
-                                                                        datetime.fromtimestamp(launch
-                                                                                               .launch.netstamp)
-                                                                        .strftime("%A at %H:%S %Z"),
+                                                                        launch.net.strftime("%A at %H:%S %Z"),
                                                                         index, len(total))
             messages = messages + message + "\n"
             response_id = send_twitter_update(message, DEBUG, response_id)
 
         # Confirmed launches
         for index, launch in enumerate(confirmed, start=1):
-            current_time = datetime.utcnow()
 
-            launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
+            launch_time = launch.net
             message = "%s launching from %s in %s hours. (%i/%i) \n %s" % (
                 launch.name,
                 launch.pad.location.name,

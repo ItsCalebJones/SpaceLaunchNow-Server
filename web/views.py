@@ -55,13 +55,13 @@ def get_launch_status(launch):
         5: 'Unplanned Hold',
         6: 'In Flight',
         7: 'Partial Failure',
-    }[launch.status]
+    }[launch.status.id]
 
 
 def create_launch_view(request, launch):
     youtube_urls = []
     vids = launch.vid_urls.all()
-    status = launch.status_name
+    status = get_launch_status(launch)
     agency = launch.rocket.configuration.launch_agency
     launches_good = Launch.objects.filter(rocket__configuration__launch_agency=agency, status=3)
     launches_bad = Launch.objects.filter(Q(rocket__configuration__launch_agency=agency) & Q(Q(status=4) | Q(status=7)))

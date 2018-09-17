@@ -2,6 +2,7 @@ import logging
 
 from django.core import serializers
 from django.utils.datetime_safe import datetime
+from pytz import utc
 
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.models import Notification, DailyDigestRecord
@@ -154,11 +155,10 @@ class LaunchRepository:
 
 def update_notification_record(launch):
     notification = Notification.objects.get(launch=launch)
-    notification.last_net_stamp = launch.netstamp
-    notification.last_net_stamp_timestamp = datetime.now()
+    notification.last_net_stamp = launch.net
+    notification.last_net_stamp_timestamp = datetime.now(tz=utc)
     logger.info('Updating Notification %s to timestamp %s' % (notification.launch.name,
-                                                              datetime.fromtimestamp(notification.launch.netstamp)
-                                                              .strftime("%A %d %B %Y")))
+                                                              notification.launch.net.strftime("%A %d %B %Y")))
     notification.save()
 
 
@@ -168,7 +168,7 @@ def create_daily_digest_record(total, messages, launches):
     for launch in launches:
         launch_json = serializers.serialize('json', [launch, ])
         data.append(launch_json)
-    DailyDigestRecord.objects.create(timestamp=datetime.now(),
+    DailyDigestRecord.objects.create(timestamp=datetime.now(tz=utc),
                                      messages=messages,
                                      count=total,
                                      data=data)

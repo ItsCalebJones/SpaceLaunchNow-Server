@@ -42,8 +42,8 @@ def update_missions():
             mission.mission_type = mission_type
             mission.save()
         except ObjectDoesNotExist:
-            print "Mission %s" % mission.id
-            print mission.type
+            print("Mission %s" % mission.id)
+            print(mission.type)
 
 
 def update_agencies():
@@ -54,8 +54,8 @@ def update_agencies():
             agency.agency_type = agency_type
             agency.save()
         except ObjectDoesNotExist:
-            print "Agency %s" % agency.id
-            print agency.type
+            print("Agency %s" % agency.id)
+            print(agency.type)
 
 
 def update_launches():
@@ -63,11 +63,11 @@ def update_launches():
     for launch in launches:
         try:
             status = LaunchStatus.objects.get(name=launch.status)
-            launch.launch_status = status
+            launch.status = status
             launch.save()
         except ObjectDoesNotExist:
-            print "LaunchStatus %s" % launch.status
-            print launch
+            print("LaunchStatus %s" % launch.status)
+            print(launch)
 
 
 def import_core():
@@ -106,7 +106,7 @@ class Command(BaseCommand):
     help = 'Run import manually.'
 
     def handle(self, *args, **options):
-        response = raw_input('Continue with importing Types from LL ? (Y/N) ')
+        response = input('Continue with importing Types from LL ? (Y/N) ')
         if response == "Y":
             get_agency_type()
             get_mission_type()

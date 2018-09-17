@@ -101,7 +101,7 @@ class OrbiterAdmin(admin.ModelAdmin):
 class LaunchAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">launch</i>'
     list_display = ('name', 'net', 'rocket', 'mission', 'orbit')
-    list_filter = (DateListFilter,  ('launch_status__name', custom_titled_filter('Launch Status')),
+    list_filter = (DateListFilter,  ('status__name', custom_titled_filter('Launch Status')),
                    ('rocket__configuration__launch_agency__name', custom_titled_filter('LSP Name')),
                    ('rocket__configuration__name', custom_titled_filter('Launch Configuration Name')))
     ordering = ('net',)
