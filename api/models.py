@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import os
 
+from django.core.cache import cache
 from django.contrib.sites.models import Site
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
@@ -19,6 +20,8 @@ from custom_storages import LogoStorage, AgencyImageStorage, OrbiterImageStorage
 #
 from django.template.defaultfilters import truncatechars, slugify
 import urllib
+
+CACHE_TIMEOUT_ONE_DAY = 24 * 60 * 60
 
 
 def image_path(instance, filename):
@@ -71,26 +74,54 @@ class Agency(models.Model):
 
     @property
     def successful_launches(self):
+
+        cache_key = "%s-%s" % (self.id, "agency-success")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
         count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(status=3).count()
         related_agency = self.related_agencies.all()
         for related in related_agency:
             count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).count()
+
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+
         return count
 
     @property
     def failed_launches(self):
+        cache_key = "%s-%s" % (self.id, "agency-failed")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
         count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(Q(status=4) | Q(status=7)).count()
         related_agency = self.related_agencies.all()
         for related in related_agency:
             count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(Q(status=4) | Q(status=7)).count()
+        # set cal_date in cache for later use
+
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+
         return count
 
     @property
     def pending_launches(self):
+
+        cache_key = "%s-%s" % (self.id, "agency-pending")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
         count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(Q(status=1) | Q(status=2) | Q(status=5)).count()
         related_agency = self.related_agencies.all()
         for related in related_agency:
             count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(Q(status=1) | Q(status=2) | Q(status=5)).count()
+
+        # set in cache for later use
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+
         return count
 
     def __str__(self):
@@ -316,7 +347,18 @@ class Launcher(models.Model):
 
     @property
     def previous_flights(self):
-        count = Launch.objects.filter(rocket__firststage__launcher__id=self.id).filter(~Q(status__id=2) | ~Q(status__id=5)).count()
+
+        cache_key = "%s-%s" % (self.id, "launcher")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        print("not in cache get from database")
+        count = Launch.objects.values('id').filter(rocket__firststage__launcher__id=self.id).filter(~Q(status__id=2) | ~Q(status__id=5)).count()
+
+        # set cal_date in cache for later use
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+
         return count
 
     def __str__(self):

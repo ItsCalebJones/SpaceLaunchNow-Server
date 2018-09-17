@@ -144,7 +144,7 @@ INSTALLED_APPS = [
     'tagging',
     'zinnia',
     'collectfast',
-# 'silk'
+    # 'silk',
 ]
 
 JET_THEMES = [
@@ -193,6 +193,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # 'silk.middleware.SilkyMiddleware',
 ]
+SILKY_PYTHON_PROFILER = True
 
 GEOIP_DATABASE = 'GeoLiteCity.dat'
 GEOIPV6_DATABASE = 'GeoLiteCityv6.dat'
@@ -353,4 +354,4 @@ DEFAULT_FILE_STORAGE = DEFAULT_STORAGE
 
 AWS_IS_GZIPPED = True
 
-CACHALOT_TIMEOUT = 120
+CACHES = config.CACHE
