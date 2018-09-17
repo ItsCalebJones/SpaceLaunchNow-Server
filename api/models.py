@@ -316,7 +316,7 @@ class Launcher(models.Model):
 
     @property
     def previous_flights(self):
-        count = Launch.objects.filter(launcher__id=self.id).filter(~Q(launch_status__id=2) | ~Q(launch_status__id=5)).count()
+        count = Launch.objects.filter(rocket__firststage__launcher__id=self.id).filter(~Q(launch_status__id=2) | ~Q(launch_status__id=5)).count()
         return count
 
     def __str__(self):

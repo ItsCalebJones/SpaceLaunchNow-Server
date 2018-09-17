@@ -68,11 +68,11 @@ class AgencyViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         mode = self.request.query_params.get("mode", "normal")
-        orbiters = self.request.query_params.get("orbiters", True)
+        orbiters = self.request.query_params.get("orbiters", False)
         if mode == "detailed":
-            return AgencyDetailedSerializer
+            return AgencySerializerDetailed
         if orbiters:
-            return AgencyDetailedSerializer
+            return AgencySerializerDetailed
         else:
             return AgencySerializer
 
