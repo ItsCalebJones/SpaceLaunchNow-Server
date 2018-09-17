@@ -1,3 +1,4 @@
+import pytz
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -107,7 +108,7 @@ class EventViewSet(viewsets.ModelViewSet):
     GET:
     Return a list of future Events
     """
-    now = datetime.now()
+    now = datetime.now(tz=pytz.utc)
     queryset = Events.objects.filter(date__gte=now)
     serializer_class = EventsSerializer
     permission_classes = [HasGroupPermission]

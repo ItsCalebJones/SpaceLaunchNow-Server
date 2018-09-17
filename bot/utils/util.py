@@ -77,7 +77,7 @@ def get_fcm_topics_and_onesignal_segments(launch, debug=False, flutter=False, no
 
     if launch.location is not None:
         location_id = launch.location.id
-    lsp_id = launch.lsp.id
+    lsp_id = launch.rocket.configuration.launch_agency.id
 
     if lsp_id == 44:
         topics_set.append('nasa')

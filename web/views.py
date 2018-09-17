@@ -80,7 +80,7 @@ def launches(request,):
 
     if query is not None:
         _launches = Launch.objects.filter(net__gte=datetime.now()).order_by('net')
-        _launches = _launches.filter(lsp__abbrev__contains=query)[:5]
+        _launches = _launches.filter(rocket__configuration__launch_agency__abbrev__contains=query)[:5]
     else:
         _launches = Launch.objects.filter(net__gte=datetime.now()).order_by('net')[:5]
 

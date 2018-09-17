@@ -144,6 +144,10 @@
                     <img class="img-raised rounded-circle img-fluid text-center"
                          src="{{ launch.rocket.configuration.image_url.url }}"
                          style="max-width: 35%;overflow: hidden;margin: -100px 0 0 0;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                    {% elif launch.rocket.configuration.launch_agency.image_url %}
+                    <img class="img-raised rounded-circle img-fluid text-center"
+                         src="{{ launch.rocket.configuration.launch_agency.image_url.url }}"
+                         style="max-width: 35%;overflow: hidden;margin: -100px 0 0 0;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                     {% else %}
                     <img class="img-raised rounded-circle img-fluid text-center"
                          src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png"

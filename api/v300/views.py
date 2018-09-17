@@ -1,3 +1,4 @@
+import pytz
 from django.db.models import Prefetch
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
@@ -108,7 +109,7 @@ class EventViewSet(ModelViewSet):
     GET:
     Return a list of future Events
     """
-    now = datetime.now()
+    now = datetime.now(tz=pytz.utc)
     queryset = Events.objects.filter(date__gte=now)
     serializer_class = EventsSerializer
     permission_classes = [HasGroupPermission]
