@@ -51,7 +51,7 @@ urlpatterns = [
     # Changing Password
     url('^', include('django.contrib.auth.urls')),
     url(r'^signup/$', landing_views.signup, name='signup'),
-    url(r'^silk/', include('silk.urls', namespace='silk'))
+    # url(r'^silk/', include('silk.urls', namespace='silk'))
 ]
 
 handler404 = web.views.handler404
