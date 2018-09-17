@@ -3,7 +3,7 @@
 
 {% block extrahead %}
 <meta property="fb:app_id" content="746774215504127"/>
-<meta property="og:title" content="Space Launch Now - Next Launches"/>
+<meta property="og:title" content="Space Launch Now - Upcoming Launches"/>
 <meta property="og:type" content="website"/>
 <meta property="og:description"
       content="Meet Space Launch Now the best resource for keeping up to date on all of your favorite spaceflight missions from around the world."/>
@@ -63,7 +63,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="/3.0.0">API</a>
+                    <a class="nav-link" href="/3.2.0">API</a>
                 </li>
             </ul>
         </div>
@@ -132,7 +132,7 @@
             {% for launch in launches %}
             <div class="card text-left">
                 <div class="media">
-                    <a class="relative" href="/launch/{{ launch.id }}">
+                    <a class="relative" href="/launch/{{ launch.slug }}">
                         <img class="card-img"
                              src="https://maps.googleapis.com/maps/api/staticmap?center={{ launch.location.name }}&scale=2&zoom=7&size=720x300&maptype=roadmap&key=AIzaSyBkjvMIaP-KQrHWJ_aFndxsNS7KbDPu9Zw&markers=color:red%|{{ launch.pad.location.name }}"
                              alt="">
@@ -140,9 +140,13 @@
                     </a>
                 </div>
                 <div class="card-header card-header-info">
-                    {% if launch.launcher_config.image_url %}
+                    {% if launch.rocket.configuration.image_url %}
                     <img class="img-raised rounded-circle img-fluid text-center"
-                         src="{{ launch.launcher_config.image_url.url }}"
+                         src="{{ launch.rocket.configuration.image_url.url }}"
+                         style="max-width: 35%;overflow: hidden;margin: -100px 0 0 0;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                    {% elif launch.rocket.configuration.launch_agency.image_url %}
+                    <img class="img-raised rounded-circle img-fluid text-center"
+                         src="{{ launch.rocket.configuration.launch_agency.image_url.url }}"
                          style="max-width: 35%;overflow: hidden;margin: -100px 0 0 0;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                     {% else %}
                     <img class="img-raised rounded-circle img-fluid text-center"
@@ -150,7 +154,7 @@
                          style="max-width: 35%;overflow: hidden;margin: -100px 0 0 0;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                     {% endif %}
                     <h4 class="card-title">{{ launch.name }}</h4>
-                    {{ launch.lsp.name }} | {{ launch.lsp.country_code }}<br>
+                    {{ launch.rocket.configuration.launch_agency.name }} | {{ launch.rocket.configuration.launch_agency.country_code }}<br>
                     {% if launch.hashtag %}
                     {{ launch.hashtag }}<br>
                     {% endif %}
@@ -187,7 +191,7 @@
                     <a href="{{ launch.slug }}" class="list-group-item list-group-item-action flex-column align-items-start">
                         <div class="d-flex w-100 justify-content-between">
                             <div>
-                                <h5 class="mb-1">{{ launch.launcher_config.name }}</h5>
+                                <h5 class="mb-1">{{ launch.rocket.configuration.name }}</h5>
                                 <h6 class="mb-1">{{ launch.mission.name }} - {{ launch.status_name }}</h6>
                             </div>
                             <small class="text-muted">{{ launch.net|timesince }}</small>

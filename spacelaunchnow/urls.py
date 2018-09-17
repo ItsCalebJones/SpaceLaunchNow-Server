@@ -19,6 +19,7 @@ from django.contrib import admin
 from django.views.generic import TemplateView
 
 import web
+from api.v320.router import api_urlpatterns as api_v320
 from api.v310.router import api_urlpatterns as api_v310
 from api.v300.router import api_urlpatterns as api_v300
 from api.v200.router import api_urlpatterns as api_v2
@@ -33,6 +34,7 @@ urlpatterns = [
     url(r'^2.0.0/', include(api_v2, namespace='v200')),
     url(r'^3.0.0/', include(api_v300, namespace='v300')),
     url(r'^3.1.0/', include(api_v310, namespace='v310')),
+    url(r'^3.2.0/', include(api_v320, namespace='v320')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^docs/', include('rest_framework_docs.urls')),
     url(r'^$', landing_views.index, name='index'),

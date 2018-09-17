@@ -8,7 +8,7 @@ from django.db.models import Q
 from api.models import Launch
 
 
-class Launches():
+class Launches:
     def __init__(self, bot):
         self.bot = bot
 
@@ -22,11 +22,11 @@ class Launches():
 
         """
         if search:
-            launch = Launch.objects.filter(Q(lsp__name__icontains=search) |
-                                           Q(lsp__abbrev__icontains=search) |
+            launch = Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=search) |
+                                           Q(rocket__configuration__launch_agency__abbrev__icontains=search) |
                                            Q(mission__name__icontains=search) |
                                            Q(mission__description__icontains=search) |
-                                           Q(launcher_config__full_name__icontains=search) |
+                                           Q(rocket__configuration__full_name__icontains=search) |
                                            Q(name__icontains=search)).filter(net__gte=datetime.datetime.now()).order_by(
                 'net').first()
             if launch is None:
@@ -35,7 +35,7 @@ class Launches():
         else:
             await self.bot.say("Try again like this: ?search \"ULA\"")
             return
-        if detailed:
+        if detailed is True:
             embed = launch_to_large_embed(launch)
         else:
             embed = launch_to_small_embed(launch)
@@ -83,11 +83,13 @@ def launch_to_large_embed(launch):
                    " [iOS](https://itunes.apple.com/us/app/space-launch-now/id1399715731)" \
                    " or [on the web](https://spacelaunchnow.me/next)"
     lsp_text = "\n\n**Launch Service Provider**\n%s (%s)\n%s\n%s\n%s" % (
-        launch.lsp.name, launch.lsp.abbrev, launch.lsp.administrator, launch.lsp.info_url, launch.lsp.wiki_url)
+        launch.rocket.configuration.launch_agency.name, launch.rocket.configuration.launch_agency.abbrev,
+        launch.rocket.configuration.launch_agency.administrator, launch.rocket.configuration.launch_agency.info_url,
+        launch.rocket.configuration.launch_agency.wiki_url)
     status = "**Status:** %s\n\n" % launch.launch_status.name
-    vehicle_text = "\n\n**Launch Vehicle**\n" + launch.launcher_config.full_name
-    vehicle_text = vehicle_text + "\nLEO: %s (kg) - GTO: %s (kg)" % (launch.launcher_config.leo_capacity,
-                                                                     launch.launcher_config.gto_capacity)
+    vehicle_text = "\n\n**Launch Vehicle**\n" + launch.rocket.configuration.full_name
+    vehicle_text = vehicle_text + "\nLEO: %s (kg) - GTO: %s (kg)" % (launch.rocket.configuration.leo_capacity,
+                                                                     launch.rocket.configuration.gto_capacity)
     if len(launch.launcher.all()) > 0:
         launchers = launch.launcher.all()
         vehicle_text = vehicle_text + "\n"
@@ -109,8 +111,8 @@ def launch_to_large_embed(launch):
                           color=color,
                           url=launch.get_full_absolute_url())
     # embed.set_image(url=launch.launcher_config.image_url)
-    if launch.launcher_config.image_url is not None:
-        embed.set_thumbnail(url=launch.launcher_config.image_url.url)
+    if launch.rocket.configuration.image_url is not None:
+        embed.set_thumbnail(url=launch.rocket.configuration.image_url.url)
     else:
         embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
     embed.set_footer(text=launch.net.strftime("NET: %A %B %e, %Y %m %M %Z "))
@@ -131,9 +133,9 @@ def launch_to_small_embed(launch, notification=""):
                           color=color,
                           url=launch.get_full_absolute_url())
 
-    if launch.launcher_config.image_url.name is not '':
+    if launch.rocket.configuration.image_url.name is not '':
         try:
-            embed.set_thumbnail(url=launch.launcher_config.image_url.url)
+            embed.set_thumbnail(url=launch.rocket.configuration.image_url.url)
         except ValueError:
             embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
     else:

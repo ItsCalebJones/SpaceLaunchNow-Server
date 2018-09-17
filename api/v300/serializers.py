@@ -5,6 +5,8 @@ from drf_queryfields import QueryFieldsMixin
 from api.models import *
 from rest_framework import serializers
 
+from api.utils.custom_serializers import TimeStampField
+
 
 class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
 
@@ -129,8 +131,8 @@ class MissionSerializer(serializers.ModelSerializer):
 
 class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
-    launcher = LauncherSerializer(many=False, read_only=True, source='launcher_config')
-    lsp = LSPSerializer(many=False, read_only=True)
+    launcher = LauncherSerializer(many=False, read_only=True, source='rocket.configuration')
+    lsp = LSPSerializer(many=False, read_only=True, source='rocket.configuration.launch_agency')
     mission = MissionSerializer(many=False, read_only=True)
     status = serializers.PrimaryKeyRelatedField(many=False, read_only=True, source='launch_status')
 
@@ -144,11 +146,17 @@ class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     pad = PadSerializer(many=False, read_only=True)
-    launcher = LauncherSerializer(many=False, read_only=True, source='launcher_config')
-    lsp = LSPSerializer(many=False, read_only=True)
+    launcher = LauncherSerializer(many=False, read_only=True, source='rocket.configuration')
+    lsp = LSPSerializer(many=False, read_only=True, source='rocket.configuration.launch_agency')
     mission = MissionSerializer(many=False, read_only=True)
     infoURLs = serializers.ReadOnlyField()
     vidURLs = serializers.ReadOnlyField()
+    netstamp = TimeStampField(source='net')
+    wsstamp = TimeStampField(source='window_start')
+    westamp = TimeStampField(source='window_end')
+    isonet = serializers.DateTimeField(format="%Y%m%dT%H%M%SZ", input_formats=None, source='net')
+    isostart = serializers.DateTimeField(format="%Y%m%dT%H%M%SZ", input_formats=None, source='window_start')
+    isoend = serializers.DateTimeField(format="%Y%m%dT%H%M%SZ", input_formats=None, source='window_end')
 
     class Meta:
         depth = 3
@@ -169,12 +177,18 @@ class InfoURLSerializer(serializers.ModelSerializer):
 class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     pad = PadSerializer(many=False, read_only=True)
-    launcher = LauncherDetailSerializerForAgency(many=False, read_only=True, source='launcher_config')
-    lsp = AgencySerializer(many=False, read_only=True)
+    launcher = LauncherDetailSerializerForAgency(many=False, read_only=True, source='rocket.configuration')
+    lsp = AgencySerializer(many=False, read_only=True, source='rocket.configuration.launch_agency')
     mission = MissionSerializer(many=False, read_only=True)
     infoURLs = serializers.StringRelatedField(read_only=True, many=True, source='info_urls')
     vidURLs = serializers.StringRelatedField(read_only=True, many=True, source='vid_urls')
     status = serializers.PrimaryKeyRelatedField(many=False, read_only=True, source='launch_status')
+    netstamp = TimeStampField(source='net')
+    wsstamp = TimeStampField(source='window_start')
+    westamp = TimeStampField(source='window_end')
+    isonet = serializers.DateTimeField(format="%Y%m%dT%H%M%SZ", input_formats=None, source='net')
+    isostart = serializers.DateTimeField(format="%Y%m%dT%H%M%SZ", input_formats=None, source='window_start')
+    isoend = serializers.DateTimeField(format="%Y%m%dT%H%M%SZ", input_formats=None, source='window_end')
 
     class Meta:
         depth = 3

@@ -47,7 +47,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="/3.0.0">API</a>
+                    <a class="nav-link" href="/3.2.0">API</a>
                 </li>
             </ul>
         </div>
@@ -69,8 +69,10 @@
             <hr class="col-lg-8" style="background-color: white">
             <h1 class="title">Space Launch Now</h1>
             <h2>A Spaceflight Tracker</h2>
-            <a style="margin: 5px" href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-                <img alt='Get it on Google Play' src="{% static 'img/button/google.png'%}" width="135" height="40" alt="">
+            <a style="margin: 5px"
+               href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+                <img alt='Get it on Google Play' src="{% static 'img/button/google.png'%}" width="135" height="40"
+                     alt="">
             </a>
             <a style="margin: 5px" href='https://itunes.apple.com/us/app/space-launch-now/id1399715731'>
                 <img alt='Get it on App Store' src="{% static 'img/button/apple.png'%}" width="135" height="40" alt="">
@@ -90,14 +92,15 @@
             <div class="col-md-12 ml-auto mx-auto mr-auto text-center">
                 <div class="profile">
                     <div class="avatar">
-                        {% if agency.logo_url %}
-                        <img src="{{ agency.logo_url.url }}"
+                        {% if launch.rocket.configuration.launch_agency.logo_url %}
+                        <img src="{{ launch.rocket.configuration.launch_agency.logo_url }}"
                              alt="Circle Image"
                              class="img-fluid mx-auto"
                              style="max-width: 45%;">
                         {% else %}
                         <h1 class="title text-center"
-                            style="margin-left: 100px; margin-right:100px;">{{ launch.lsp.name }}</h1>
+                            style="margin-left: 100px; margin-right:100px;">{{
+                            launch.rocket.configuration.launch_agency.name }}</h1>
                         {% endif %}
                     </div>
                 </div>
@@ -122,7 +125,7 @@
                     <h2 class="title" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h2>
                     <h3 style="margin: -5px;" id="date">{{ launch.net }}</h3>
                     <hr class="col-lg-8" style="background-color: white">
-                    <span class="badge badge-pill badge-primary">{{ launch.lsp.name }}</span>
+                    <span class="badge badge-pill badge-primary">{{ launch.rocket.configuration.launch_agency.name }}</span>
                     {% if launch.pad %}
                     <span class="badge badge-pill badge-primary">{{ launch.pad.name }}</span>
                     {% endif %}
@@ -191,9 +194,8 @@
                         <i class="card-header card-header-danger fa fa-4x fa-moon text-center sr-icons"></i>
                         <div class="card-body">
                             <h4 class="card-title">Day/Night Themes</h4>
-                            <p class="text-faded">Get to know all the vehicles that take us to orbit such as the
-                                Soyuz,
-                                Atlas, Delta, Ariane, Proton and Falcon launch vehicle families.</p>
+                            <p class="text-faded">Don't be blinded by the new all-white trends of mobile apps with
+                                always-on night/dark themes!</p>
                         </div>
                     </div>
                 </div>
@@ -331,6 +333,7 @@
         } else {
             document.getElementById("countdown").innerHTML = "L - 00 : 00 : 00 : 00";
         }
+
 
 
 

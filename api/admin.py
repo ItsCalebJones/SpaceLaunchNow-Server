@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.contrib import admin
 
 from api.filters.UpcomingFilter import DateListFilter
+from bot.utils.admin_utils import custom_titled_filter
 from . import models
 
 
@@ -48,8 +49,44 @@ class LandingAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">group</i>'
     list_display = ('name', 'attempt', 'success', 'landing_location', 'landing_type')
 
-    def name(self, x):
-        return x.launch.name
+    def name(self, obj):
+        try:
+            if obj.firststage is not None:
+                return u"Landing: %s" % obj.firststage
+            elif obj.secondstage is not None:
+                return u"Landing: %s" % obj.secondstage
+            else:
+                return u"(%d) Unassigned Landing" % obj.id
+        except (models.Launch.DoesNotExist, models.FirstStage.DoesNotExist) as e:
+            return u"(%d) Unassigned Landing" % obj.id
+
+
+class FirstStageInline(admin.TabularInline):
+    model = models.FirstStage
+
+
+class SecondStageInline(admin.TabularInline):
+    model = models.SecondStage
+
+
+@admin.register(models.Rocket)
+class RocketAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">group</i>'
+    list_display = ('id', 'launch',)
+    search_fields = ('launch__name',)
+    inlines = [FirstStageInline, SecondStageInline]
+
+
+@admin.register(models.FirstStage)
+class FirstStageAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">group</i>'
+    list_display = ('id', 'landing', 'launcher', 'rocket')
+
+
+@admin.register(models.SecondStage)
+class SecondStageAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">group</i>'
+    list_display = ('id', 'landing', 'launcher', 'rocket')
 
 
 @admin.register(models.Orbiter)
@@ -63,18 +100,12 @@ class OrbiterAdmin(admin.ModelAdmin):
 @admin.register(models.Launch)
 class LaunchAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">launch</i>'
-    list_display = ('name', 'net', 'landing', '_launcher', 'orbit')
-    list_filter = (DateListFilter, 'status', 'lsp__name', 'launcher_config__name')
+    list_display = ('name', 'net', 'rocket', 'mission', 'orbit')
+    list_filter = (DateListFilter,  ('launch_status__name', custom_titled_filter('Launch Status')),
+                   ('rocket__configuration__launch_agency__name', custom_titled_filter('LSP Name')),
+                   ('rocket__configuration__name', custom_titled_filter('Launch Configuration Name')))
     ordering = ('net',)
-    search_fields = ('name', 'lsp__name', 'launcher_config__name', 'mission__description')
-
-    def _launcher(self, obj):
-        if obj.launcher.count() > 0:
-            return obj.launcher.first().serial_number
-        else:
-            return None
-
-    _launcher.short_description = 'Launcher'
+    search_fields = ('name', 'rocket__configuration__launch_agency__name', 'mission__description')
 
     def orbit(self, obj):
         if obj.mission is not None and obj.mission.orbit is not None and obj.mission.orbit.name:

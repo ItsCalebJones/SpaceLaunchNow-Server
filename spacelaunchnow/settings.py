@@ -102,7 +102,6 @@ LOGGING = {
         },
         'django': {
             'handlers': ['django_default', 'console'],
-            'level': 'DEBUG',
             'propagate': True,
         },
         'bot.digest': {

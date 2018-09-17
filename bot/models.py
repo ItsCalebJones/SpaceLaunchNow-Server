@@ -17,7 +17,7 @@ class Notification(models.Model):
     last_twitter_post = models.DateTimeField(blank=True, null=True)
     last_notification_sent = models.DateTimeField(blank=True, null=True)
     last_notification_recipient_count = models.IntegerField(blank=True, null=True)
-    last_net_stamp = models.IntegerField(blank=True, null=True)
+    last_net_stamp = models.DateTimeField(blank=True, null=True)
     last_net_stamp_timestamp = models.DateTimeField(blank=True, null=True)
 
     wasNotifiedTwentyFourHourDiscord = models.BooleanField(blank=True, default=False)
@@ -32,14 +32,14 @@ class Notification(models.Model):
 
     def days_to_launch(self):
         if self.last_net_stamp:
-            now = datetime.datetime.utcnow().replace(tzinfo=utc)
-            diff = datetime.datetime.fromtimestamp(self.last_net_stamp, tz=utc) - now
+            now = datetime.datetime.now(tz=utc)
+            diff = self.last_net_stamp - now
             return diff.days
 
     def is_future(self):
         if self.last_net_stamp is not None or 0:
-            now = datetime.datetime.utcnow().replace(tzinfo=utc)
-            diff = datetime.datetime.fromtimestamp(self.last_net_stamp, tz=utc) - now
+            now = datetime.datetime.now(tz=utc)
+            diff = self.last_net_stamp - now
             if diff.total_seconds() > 0:
                 return True
         return False

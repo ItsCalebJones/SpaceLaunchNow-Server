@@ -5,12 +5,12 @@
 {% load tz %}
 {% block extrahead %}
 <meta property="fb:app_id" content="746774215504127"/>
-<meta property="og:title" content="{{ launch.name }} - {{ launch.mission_set.0.name }}"/>
+<meta property="og:title" content="{{ launch.rocket.name }} - {{ launch.mission.name }}"/>
 <meta property="og:type" content="website"/>
-<meta property="og:description" content="{{ launch.mission_description }}"/>
-<meta property="og:url" content="https://spacelaunchnow.me/launch/{{ launch.id }}/"/>
-{% if launch.launcher_config.image_url %}
-<meta property="og:image" content="{{ launch.launcher_config.image_url.url }}"/>
+<meta property="og:description" content="{{ launch.mission.description }}"/>
+<meta property="og:url" content="https://spacelaunchnow.me/launch/{{ launch.slug }}/"/>
+{% if launch.rocket.configuration.image_url %}
+<meta property="og:image" content="{{ launch.rocket.configuration.image_url.url }}"/>
 {% else %}
 <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
 <meta property="og:image:width" content="3000"/>
@@ -70,7 +70,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="/3.0.0">API</a>
+                    <a class="nav-link" href="/3.2.0">API</a>
                 </li>
             </ul>
         </div>
@@ -79,9 +79,9 @@
 {% endblock %}
 
 {% block content %}
-{% if launch.launcher_config.image_url %}
+{% if launch.rocket.configuration.image_url %}
 <div class="page-header header-filter" data-parallax="true"
-     style="background-image: url({{ launch.launcher_config.image_url.url }});">
+     style="background-image: url({{ launch.rocket.configuration.image_url.url }});">
     {% else %}
     <div class="page-header header-filter" data-parallax="true"
          style="background-image: url('{% static 'img/header.jpg'%}');">
@@ -89,7 +89,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-10 ml-auto mr-auto text-center">
-                    <h1 class="title text-white">{{ launch.launcher_config.name }}</h1>
+                    <h1 class="title text-white">{{ launch.rocket.configuration.name }}</h1>
                     <h2 class="text-white" style="margin: 5px;">{{ status }}</h2>
                     {% if launch.failreason %}
                     <span class="badge badge-pill badge-danger">{{ launch.failreason }}</span>
@@ -101,7 +101,7 @@
                     <h2 class="title text-white" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h2>
                     <h3 class="text-white" style="margin: -5px;" id="date">{{ launch.net }}</h3>
                     <hr class="col-lg-8" style="background-color: white">
-                    <span class="badge badge-pill badge-primary">{{ launch.lsp.name }}</span>
+                    <span class="badge badge-pill badge-primary">{{ launch.rocket.configuration.launch_agency.name }}</span>
                     {% if launch.pad %}
                     <span class="badge badge-pill badge-primary">{{ launch.pad.name }}</span>
                     {% endif %}
@@ -142,10 +142,10 @@
                 <div class="card-header card-header-danger text-center">
                     {% if launch.mission %}
                     <h1 class="title text-white">{{ launch.mission.name }}</h1>
-                    <h2 class="subheading text-white">{{ launch.launcher_config.name }}</h2>
+                    <h2 class="subheading text-white">{{ launch.rocket.configuration.name }}</h2>
                     {% else %}
                     <h1 class="title text-white">{{ launch.name }}</h1>
-                    <h2 class="subheading text-white">{{ launch.launcher_config.name }}</h2>
+                    <h2 class="subheading text-white">{{ launch.rocket.configuration.name }}</h2>
                     {% endif %}
 
                 </div>
@@ -200,7 +200,7 @@
                     <!-- Date/Time -->
                     <h3 class="card-title">Launch Vehicle</h3>
                     <hr>
-                    {% with launcher_config=launch.launcher_config %}
+                    {% with launcher_config=launch.rocket.configuration %}
                     <h4 class="mbt-2">{{ launcher_config.name }}</h4>
                     <h6 class="mbt-2">
                         Configuration: {{ launcher_config.variant }}<br>

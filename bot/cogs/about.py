@@ -2,6 +2,8 @@ import discord
 
 from discord.ext import commands
 
+github_url = 'https://github.com/ItsCalebJones/SpaceLaunchNow-Server'
+
 
 class About:
     def __init__(self, bot):
