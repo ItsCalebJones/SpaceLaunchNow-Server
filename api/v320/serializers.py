@@ -139,12 +139,19 @@ class PadSerializer(serializers.ModelSerializer):
         fields = ('id', 'agency_id', 'name', 'info_url', 'wiki_url', 'map_url', 'latitude', 'longitude', 'location')
 
 
+class PadListSerializer(serializers.ModelSerializer):
+    location = LocationSerializer(many=False)
+
+    class Meta:
+        model = Pad
+        fields = ('id', 'name', 'latitude', 'longitude', 'location')
+
+
 class LocationListSerializer(serializers.ModelSerializer):
-    pads = PadSerializer()
 
     class Meta:
         model = Location
-        fields = ('id', 'name', 'country_code', 'pads')
+        fields = ('id', 'name', 'country_code')
 
 
 class LaunchStatusSerializer(serializers.ModelSerializer):
@@ -218,8 +225,8 @@ class RocketSerializer(serializers.ModelSerializer):
     second_stage = SecondStageSerializer(read_only=True, many=False, source='secondstage')
 
     class Meta:
-        model = SecondStage
-        fields = ('configuration', 'first_stage', 'second_stage',)
+        model = Rocket
+        fields = ('reused', 'configuration', 'first_stage', 'second_stage',)
 
 
 class RocketDetailedSerializer(serializers.ModelSerializer):
@@ -228,12 +235,12 @@ class RocketDetailedSerializer(serializers.ModelSerializer):
     second_stage = SecondStageSerializer(read_only=True, many=False, source='secondstage')
 
     class Meta:
-        model = SecondStage
-        fields = ('configuration', 'first_stage', 'second_stage',)
+        model = Rocket
+        fields = ('reused', 'configuration', 'first_stage', 'second_stage',)
 
 
 class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
-    pad = PadSerializer(many=False, read_only=True)
+    pad = PadListSerializer(many=False, read_only=True)
     status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
     slug = serializers.SlugField(source='get_full_absolute_url')
     

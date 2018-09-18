@@ -358,6 +358,7 @@ class Landing(models.Model):
 
 class Rocket(models.Model):
     configuration = models.ForeignKey(LauncherConfig, related_name='rocket')
+    reused = models.NullBooleanField(null=True, blank=True)
 
     def __str__(self):
         try:

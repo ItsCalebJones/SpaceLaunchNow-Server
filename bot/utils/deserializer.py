@@ -92,6 +92,8 @@ def get_location(launch, data):
                 pad.wiki_url = data['location']['pads'][0]['wikiURL']
                 pad.latitude = data['location']['pads'][0]['latitude']
                 pad.longitude = data['location']['pads'][0]['longitude']
+                if data['location']['pads'][0]['agencies'] and len(data['location']['pads'][0]['agencies']) > 0:
+                    pad.agency_id = data['location']['pads'][0]['agencies'][0]['id']
                 launch.pad = pad
                 pad.save()
         return location
