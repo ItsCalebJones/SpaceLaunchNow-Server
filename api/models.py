@@ -203,7 +203,7 @@ class LauncherConfig(models.Model):
     description = models.CharField(max_length=2048, default='', blank=True)
     family = models.CharField(max_length=200, default='', blank=True)
     full_name = models.CharField(max_length=200, default='', blank=True)
-    launch_agency = models.ForeignKey(Agency, related_name='launcher_config', blank=True, null=True)
+    launch_agency = models.ForeignKey(Agency, related_name='launcher_list', blank=True, null=True)
     variant = models.CharField(max_length=200, default='', blank=True)
     alias = models.CharField(max_length=200, default='', blank=True)
     launch_cost = models.CharField(verbose_name="Launch Cost ($)", max_length=200, null=True, blank=True)
