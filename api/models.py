@@ -80,7 +80,7 @@ class Agency(models.Model):
         if count is not None:
             return count
 
-        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(status=3).count()
+        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(status__id=3).count()
         related_agency = self.related_agencies.all()
         for related in related_agency:
             count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).count()
@@ -96,10 +96,10 @@ class Agency(models.Model):
         if count is not None:
             return count
 
-        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(Q(status=4) | Q(status=7)).count()
+        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(Q(status__id=4) | Q(status__id=7)).count()
         related_agency = self.related_agencies.all()
         for related in related_agency:
-            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(Q(status=4) | Q(status=7)).count()
+            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(Q(status__id=4) | Q(status__id=7)).count()
         # set cal_date in cache for later use
 
         cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
@@ -114,10 +114,10 @@ class Agency(models.Model):
         if count is not None:
             return count
 
-        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(Q(status=1) | Q(status=2) | Q(status=5)).count()
+        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(Q(status__id=1) | Q(status__id=2) | Q(status__id=5)).count()
         related_agency = self.related_agencies.all()
         for related in related_agency:
-            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(Q(status=1) | Q(status=2) | Q(status=5)).count()
+            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(Q(status__id=1) | Q(status__id=2) | Q(status__id=5)).count()
 
         # set in cache for later use
         cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
