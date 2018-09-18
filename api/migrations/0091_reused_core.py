@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0089_auto_20180917_1533'),
+        ('api', '0090_auto_20180917_1533'),
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='launch',
-            name='slug',
-            field=models.SlugField(max_length=100, unique=True),
+        migrations.AddField(
+            model_name='rocket',
+            name='reused',
+            field=models.NullBooleanField(),
         ),
     ]
