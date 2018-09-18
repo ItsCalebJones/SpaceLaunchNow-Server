@@ -205,7 +205,7 @@ class LandingSerializer(serializers.ModelSerializer):
 class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     lsp = LSPSerializer(many=False, read_only=True, source='rocket.configuration.launch_agency')
-    status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
+    status = LaunchStatusSerializer(many=False, read_only=True)
     slug = serializers.SlugField(source='get_full_absolute_url')
     
     class Meta:
@@ -221,7 +221,7 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     launcher_config = LauncherConfigSerializer(many=False, read_only=True, source='rocket.configuration')
     lsp = LSPSerializer(many=False, read_only=True, source='rocket.configuration.launch_agency')
     mission = MissionSerializer(many=False, read_only=True)
-    status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
+    status = LaunchStatusSerializer(many=False, read_only=True)
     slug = serializers.SlugField(source='get_full_absolute_url')
 
     infoURLs = serializers.ReadOnlyField()
@@ -241,7 +241,7 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     launcher_config = LauncherConfigDetailSerializerForAgency(many=False, read_only=True, source='rocket.configuration')
     lsp = AgencySerializerDetailed(many=False, read_only=True, source='rocket.configuration.launch_agency')
     mission = MissionSerializer(many=False, read_only=True)
-    status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
+    status = LaunchStatusSerializer(many=False, read_only=True)
     slug = serializers.SlugField(source='get_full_absolute_url')
 
     infoURLs = serializers.StringRelatedField(read_only=True, many=True, source='info_urls')

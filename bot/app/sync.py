@@ -70,7 +70,7 @@ class LaunchLibrarySync:
                                                                       date.strftime("%H:%M %Z (%d/%m)"))
 
         old_diff = notification.last_net_stamp - datetime.now(tz=pytz.utc)
-        if old_diff.total_seconds() < 86400:
+        if old_diff.total_seconds() < 172800:
             logger.info('Netstamp Changed and within window - sending mobile notification.')
             self.send_notification(launch, 'netstampChanged', notification)
         self.send_to_twitter(message, notification)
@@ -254,7 +254,7 @@ class LaunchLibrarySync:
             contents = 'Launch attempt from %s in one hour.' % launch.location.name
 
         else:
-            launch_time = datetime.utcfromtimestamp(int(launch.netstamp))
+            launch_time = launch.net
             contents = 'Launch attempt from %s on %s at %s.' % (launch.location.name,
                                                                 launch_time.strftime("%A, %B %d"),
                                                                 launch_time.strftime("%H:%M UTC"))

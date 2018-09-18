@@ -10,7 +10,7 @@ class AgencySerializerMini(QueryFieldsMixin, serializers.HyperlinkedModelSeriali
 
     class Meta:
         model = Agency
-        fields = ('id', 'url', 'name', 'description', 'parent', 'related_agencies', 'administrator', 'founding_year', 'type')
+        fields = ('id', 'url', 'name', 'description', 'parent', 'administrator', 'founding_year', 'type')
 
 
 class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
@@ -19,10 +19,24 @@ class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer)
     class Meta:
         model = Agency
         fields = ('id', 'url', 'name', 'featured', 'type', 'country_code', 'abbrev', 'description', 'administrator',
-                  'founding_year', 'launchers', 'orbiters', 'parent', 'related_agencies',)
+                  'founding_year', 'launchers', 'orbiters', 'parent', )
 
 
 class AgencySerializerDetailed(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+    parent = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = Agency
+        fields = ('id', 'url', 'name', 'featured', 'type', 'country_code', 'abbrev', 'description', 'administrator',
+                  'founding_year', 'launchers', 'orbiters', 'parent', 'launch_library_url', 'successful_launches',
+                  'failed_launches', 'pending_launches', 'info_url', 'wiki_url', 'logo_url', 'image_url', 'nation_url',)
+
+    def get_fields(self):
+        fields = super(AgencySerializerDetailed, self).get_fields()
+        return fields
+
+
+class AgencySerializerDetailedAndRelated(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     parent = serializers.StringRelatedField(read_only=True)
 
     class Meta:
@@ -33,7 +47,7 @@ class AgencySerializerDetailed(QueryFieldsMixin, serializers.HyperlinkedModelSer
                   'related_agencies',)
 
     def get_fields(self):
-        fields = super(AgencySerializerDetailed, self).get_fields()
+        fields = super(AgencySerializerDetailedAndRelated, self).get_fields()
         fields['related_agencies'] = AgencySerializerDetailed(many=True)
         return fields
 
@@ -241,7 +255,8 @@ class RocketDetailedSerializer(serializers.ModelSerializer):
 
 class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
     pad = PadListSerializer(many=False, read_only=True)
-    status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
+    status = LaunchStatusSerializer(many=False, read_only=True)
+
     slug = serializers.SlugField(source='get_full_absolute_url')
     
     class Meta:
@@ -254,7 +269,7 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     pad = PadSerializer(many=False, read_only=True)
     rocket = RocketSerializer(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
-    status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
+    status = LaunchStatusSerializer(many=False, read_only=True)
     slug = serializers.SlugField(source='get_full_absolute_url')
 
     infoURLs = serializers.ReadOnlyField()
@@ -272,7 +287,7 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     pad = PadSerializer(many=False, read_only=True)
     rocket = RocketDetailedSerializer(many=False, read_only=True)
     mission = MissionSerializer(many=False, read_only=True)
-    status = LaunchStatusSerializer(many=False, read_only=True, source='launch_status')
+    status = LaunchStatusSerializer(many=False, read_only=True)
     slug = serializers.SlugField(source='get_full_absolute_url')
 
     infoURLs = serializers.StringRelatedField(read_only=True, many=True, source='info_urls')

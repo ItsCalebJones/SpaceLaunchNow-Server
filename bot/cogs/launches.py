@@ -77,7 +77,7 @@ def get_color(id):
 
 def launch_to_large_embed(launch):
     title = "%s" % launch.name
-    color = get_color(launch.launch_status.id)
+    color = get_color(launch.status.id)
     follow_along = "\n\n Follow along on [Android](https://play.google.com/store/apps/details?id=me.calebjones." \
                    "spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)," \
                    " [iOS](https://itunes.apple.com/us/app/space-launch-now/id1399715731)" \
@@ -86,7 +86,7 @@ def launch_to_large_embed(launch):
         launch.rocket.configuration.launch_agency.name, launch.rocket.configuration.launch_agency.abbrev,
         launch.rocket.configuration.launch_agency.administrator, launch.rocket.configuration.launch_agency.info_url,
         launch.rocket.configuration.launch_agency.wiki_url)
-    status = "**Status:** %s\n\n" % launch.launch_status.name
+    status = "**Status:** %s\n\n" % launch.status.name
     vehicle_text = "\n\n**Launch Vehicle**\n" + launch.rocket.configuration.full_name
     vehicle_text = vehicle_text + "\nLEO: %s (kg) - GTO: %s (kg)" % (launch.rocket.configuration.leo_capacity,
                                                                      launch.rocket.configuration.gto_capacity)
@@ -121,8 +121,8 @@ def launch_to_large_embed(launch):
 
 def launch_to_small_embed(launch, notification=""):
     title = "%s" % launch.name
-    color = get_color(launch.launch_status.id)
-    status = "**Status:** %s\n\n" % launch.launch_status.name
+    color = get_color(launch.status.id)
+    status = "**Status:** %s\n\n" % launch.status.name
     follow_along = "\n\n Follow along on [Android](https://play.google.com/store/apps/details?id=me.calebjones." \
                    "spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)," \
                    " [iOS](https://itunes.apple.com/us/app/space-launch-now/id1399715731)" \
