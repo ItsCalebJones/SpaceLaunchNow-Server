@@ -117,9 +117,6 @@ class OrbiterDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSeri
                   'image_url', 'nation_url', 'wiki_link', 'info_link')
 
 
-
-
-
 class OrbiterSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Orbiter
@@ -216,7 +213,7 @@ class LandingSerializer(serializers.ModelSerializer):
 
 
 class FirstStageSerializer(serializers.ModelSerializer):
-    launcher = LauncherSerializer(read_only=True, many=False)
+    launcher = LauncherDetailedSerializer(read_only=True, many=False)
     landing = LandingSerializer(read_only=True, many=False)
 
     class Meta:
@@ -225,7 +222,7 @@ class FirstStageSerializer(serializers.ModelSerializer):
 
 
 class SecondStageSerializer(serializers.ModelSerializer):
-    launcher = LauncherSerializer(read_only=True, many=False)
+    launcher = LauncherDetailedSerializer(read_only=True, many=False)
     landing = LandingSerializer(read_only=True, many=False)
 
     class Meta:
