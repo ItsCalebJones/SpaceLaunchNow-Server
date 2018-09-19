@@ -33,6 +33,15 @@ class LaunchStatusAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+@admin.register(models.FirstStageType)
+class FirstStageTypeAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">launch</i>'
+    list_display = ('id', 'name',)
+    list_filter = ('id', 'name',)
+    ordering = ('id', )
+    search_fields = ('name',)
+
+
 @admin.register(models.Orbit)
 class OrbitAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">extension</i>'
