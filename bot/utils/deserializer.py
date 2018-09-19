@@ -16,8 +16,6 @@ def launch_json_to_model(data):
     id = data['id']
     name = data['name']
     status = data['status']
-    if status < 1 or status > 7:
-        print(id)
     inhold = data['inhold']
     net = data['net']
     window_end = data['windowend']
@@ -37,7 +35,8 @@ def launch_json_to_model(data):
     try:
         launch.status = LaunchStatus.objects.get(id=status)
     except ObjectDoesNotExist:
-        print("LaunchStatus %s" % launch.status)
+        launch.status = LaunchStatus.objects.get(id=2)
+        print("Launch did not have a status.")
     launch.inhold = inhold
     launch.probability = probability
     launch.holdreason = holdreason
