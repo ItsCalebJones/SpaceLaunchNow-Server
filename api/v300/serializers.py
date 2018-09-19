@@ -9,7 +9,6 @@ from api.utils.custom_serializers import TimeStampField
 
 
 class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-
     class Meta:
         model = Agency
         fields = ('id', 'url', 'name', 'featured', 'launchers', 'orbiters', 'description', 'image_url', 'nation_url',
@@ -44,7 +43,6 @@ class LauncherDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
 
 
 class LauncherDetailSerializerForAgency(QueryFieldsMixin, serializers.ModelSerializer):
-
     def get_rep(self, obj):
         rep = obj.rep
         serializer_context = {'request': self.context.get('request'),
@@ -98,7 +96,6 @@ class EventsSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class PadSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Pad
         fields = ('id', 'agency_id', 'name', 'info_url', 'wiki_url', 'map_url', 'latitude', 'longitude')
@@ -134,7 +131,10 @@ class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
     launcher = LauncherSerializer(many=False, read_only=True, source='rocket.configuration')
     lsp = LSPSerializer(many=False, read_only=True, source='rocket.configuration.launch_agency')
     mission = MissionSerializer(many=False, read_only=True)
-    status = serializers.PrimaryKeyRelatedField(many=False, read_only=True, source='launch_status')
+    status = serializers.IntegerField(
+        read_only=True,
+        source='status.id'
+    )
 
     class Meta:
         depth = 3
@@ -149,7 +149,10 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     launcher = LauncherSerializer(many=False, read_only=True, source='rocket.configuration')
     lsp = LSPSerializer(many=False, read_only=True, source='rocket.configuration.launch_agency')
     mission = MissionSerializer(many=False, read_only=True)
-    status = serializers.PrimaryKeyRelatedField(many=False, read_only=True, source='launch_status')
+    status = serializers.IntegerField(
+        read_only=True,
+        source='status.id'
+    )
     infoURLs = serializers.ReadOnlyField()
     vidURLs = serializers.ReadOnlyField()
     netstamp = TimeStampField(source='net')
@@ -169,7 +172,6 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class InfoURLSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = InfoURLs
         fields = ('info_url',)
@@ -183,7 +185,10 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     mission = MissionSerializer(many=False, read_only=True)
     infoURLs = serializers.StringRelatedField(read_only=True, many=True, source='info_urls')
     vidURLs = serializers.StringRelatedField(read_only=True, many=True, source='vid_urls')
-    status = serializers.PrimaryKeyRelatedField(many=False, read_only=True, source='launch_status')
+    status = serializers.IntegerField(
+        read_only=True,
+        source='status.id'
+    )
     netstamp = TimeStampField(source='net')
     wsstamp = TimeStampField(source='window_start')
     westamp = TimeStampField(source='window_end')
@@ -196,7 +201,5 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
         model = Launch
         fields = ('id', 'url', 'name', 'img_url', 'status', 'netstamp', 'wsstamp', 'westamp', 'net', 'window_end',
                   'window_start', 'isonet', 'isostart', 'isoend', 'inhold', 'tbdtime', 'tbddate', 'probability',
-                  'holdreason', 'failreason', 'hashtag', 'launcher', 'mission', 'lsp', 'location', 'pad', 'infoURLs', 'vidURLs')
-
-
-
+                  'holdreason', 'failreason', 'hashtag', 'launcher', 'mission', 'lsp', 'location', 'pad', 'infoURLs',
+                  'vidURLs')
