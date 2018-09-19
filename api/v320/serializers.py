@@ -64,6 +64,15 @@ class AgencySerializerDetailed(QueryFieldsMixin, serializers.HyperlinkedModelSer
         return fields
 
 
+class AgencySerializerDetailedForLaunches(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Agency
+        fields = ('id', 'url', 'name', 'featured', 'type', 'country_code', 'abbrev', 'description', 'administrator',
+                  'founding_year', 'launchers', 'orbiters', 'launch_library_url', 'successful_launches',
+                  'failed_launches', 'pending_launches', 'info_url', 'wiki_url', 'logo_url', 'image_url', 'nation_url',)
+
+
 class AgencySerializerDetailedAndRelated(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     parent = serializers.StringRelatedField(read_only=True)
     launcher_list = LauncherConfigDetailSerializerForAgency(many=True, read_only=True)
@@ -91,7 +100,7 @@ class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSer
 
 
 class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
-    launch_service_provider = AgencySerializerDetailed(many=False, read_only=True, source='launch_agency')
+    launch_service_provider = AgencySerializerDetailedForLaunches(many=False, read_only=True, source='launch_agency')
 
     def get_rep(self, obj):
         rep = obj.rep
@@ -218,12 +227,13 @@ class LandingSerializer(serializers.ModelSerializer):
 
 
 class FirstStageSerializer(serializers.ModelSerializer):
+    type = serializers.StringRelatedField()
     launcher = LauncherDetailedSerializer(read_only=True, many=False)
     landing = LandingSerializer(read_only=True, many=False)
 
     class Meta:
         model = FirstStage
-        fields = ('launcher', 'landing',)
+        fields = ('type', 'launcher', 'landing',)
 
 
 class SecondStageSerializer(serializers.ModelSerializer):

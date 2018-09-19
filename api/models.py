@@ -452,6 +452,7 @@ class SecondStage(models.Model):
 
 
 class FirstStage(models.Model):
+    type = models.ForeignKey(FirstStageType, related_name='firststage', blank=True, null=True, on_delete=models.SET_NULL)
     landing = models.OneToOneField(Landing, related_name='firststage', null=True, blank=True, on_delete=models.SET_NULL)
     launcher = models.ForeignKey(Launcher, related_name='firststage', on_delete=models.CASCADE)
     rocket = models.ForeignKey(Rocket, related_name='firststage', on_delete=models.CASCADE)

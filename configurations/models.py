@@ -57,6 +57,17 @@ class MissionType(models.Model):
         return self.name
 
 
+class FirstStageType(models.Model):
+    id = models.IntegerField(primary_key=True, editable=True)
+    name = models.CharField(max_length=50, blank=True, default="")
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
 class LandingType(models.Model):
     id = models.AutoField(primary_key=True, editable=True)
     name = models.CharField(max_length=255, blank=True, default="")
