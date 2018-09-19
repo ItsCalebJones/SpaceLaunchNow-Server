@@ -4,6 +4,8 @@ from zinnia.models import Entry
 from api.models import *
 from rest_framework import serializers
 
+CACHE_TIMEOUT_ONE_DAY = 24 * 60 * 60
+
 
 class LauncherConfigDetailSerializerForAgency(QueryFieldsMixin, serializers.ModelSerializer):
 
@@ -128,7 +130,7 @@ class LauncherDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelS
 
     class Meta:
         model = Launcher
-        fields = ('id', 'url', 'flight_proven', 'serial_number', 'status', 'previous_flights',)
+        fields = ('id', 'url', 'details', 'flight_proven', 'serial_number', 'status', 'previous_flights',)
 
 
 class OrbiterSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
@@ -265,16 +267,76 @@ class RocketDetailedSerializer(serializers.ModelSerializer):
         fields = ('configuration', 'first_stage', 'second_stage',)
 
 
-class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
-    pad = PadListSerializer(many=False, read_only=True)
+class LaunchListSerializer(serializers.ModelSerializer):
+    pad = serializers.StringRelatedField()
+    location = serializers.StringRelatedField(source='pad.location')
     status = LaunchStatusSerializer(many=False, read_only=True)
-
+    landing = serializers.SerializerMethodField()
+    launcher = serializers.SerializerMethodField()
+    mission = serializers.StringRelatedField()
+    mission_type = serializers.StringRelatedField(source='mission.mission_type.name')
     slug = serializers.SlugField(source='get_full_absolute_url')
     
     class Meta:
-        depth = 3
         model = Launch
-        fields = ('id', 'url', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'pad')
+        fields = ('id', 'url', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'mission', 'mission_type',
+                  'pad', 'location', 'landing', 'launcher')
+
+    def get_landing(self, obj):
+        try:
+            cache_key = "%s-%s" % (obj.id, "launch-list-landing")
+            landing = cache.get(cache_key)
+            if landing is not None:
+                return landing
+
+            landings = []
+            for stage in obj.rocket.firststage.all():
+                if stage.landing is not None:
+                    landings.append(stage.landing)
+
+            if len(landings) == 0:
+                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
+                return None
+            elif len(landings) == 1:
+                cache.set(cache_key, landings[0].landing_location.abbrev, CACHE_TIMEOUT_ONE_DAY)
+                return landings[0].landing_location.abbrev
+            elif len(landings) > 1:
+                cache.set(cache_key, "Multiple", CACHE_TIMEOUT_ONE_DAY)
+                return "Multiple"
+            else:
+                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
+                return None
+
+        except Exception as ex:
+            return None
+
+    def get_launcher(self, obj):
+        try:
+            cache_key = "%s-%s" % (obj.id, "launch-list-launcher")
+            launcher = cache.get(cache_key)
+            if launcher is not None:
+                return launcher
+
+            launchers = []
+            for stage in obj.rocket.firststage.all():
+                if stage.launcher is not None:
+                    launchers.append(stage.launcher)
+
+            if len(launchers) == 0:
+                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
+                return None
+            elif len(launchers) == 1:
+                cache.set(cache_key, launchers[0].serial_number, CACHE_TIMEOUT_ONE_DAY)
+                return launchers[0].serial_number
+            elif len(launchers) > 1:
+                cache.set(cache_key, "Multiple", CACHE_TIMEOUT_ONE_DAY)
+                return "Multiple"
+            else:
+                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
+                return None
+
+        except Exception as ex:
+            return None
 
 
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):
