@@ -233,7 +233,7 @@ class FirstStageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FirstStage
-        fields = ('type', 'launcher', 'landing',)
+        fields = ('type', 'reused', 'launcher', 'landing',)
 
 
 class SecondStageSerializer(serializers.ModelSerializer):
@@ -252,7 +252,7 @@ class RocketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Rocket
-        fields = ('reused', 'configuration', 'first_stage', 'second_stage',)
+        fields = ('configuration', 'first_stage', 'second_stage',)
 
 
 class RocketDetailedSerializer(serializers.ModelSerializer):
@@ -262,7 +262,7 @@ class RocketDetailedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Rocket
-        fields = ('reused', 'configuration', 'first_stage', 'second_stage',)
+        fields = ('configuration', 'first_stage', 'second_stage',)
 
 
 class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
