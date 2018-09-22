@@ -449,6 +449,15 @@ class SecondStage(models.Model):
         except ObjectDoesNotExist:
             return u"Unsaved %s" % self.launcher.serial_number
 
+    def __unicode__(self):
+        try:
+            if self.rocket is not None and self.rocket.launch is not None:
+                return u"%s (%s)" % (self.rocket.launch.name, self.launcher.serial_number)
+            else:
+                return u"Unsaved %s" % self.launcher.serial_number
+        except ObjectDoesNotExist:
+            return u"Unsaved %s" % self.launcher.serial_number
+
 
 class FirstStage(models.Model):
     type = models.ForeignKey(FirstStageType, related_name='firststage', on_delete=models.PROTECT)
@@ -458,6 +467,15 @@ class FirstStage(models.Model):
     rocket = models.ForeignKey(Rocket, related_name='firststage', on_delete=models.CASCADE)
 
     def __str__(self):
+        try:
+            if self.rocket is not None and self.rocket.launch is not None:
+                return u"%s (%s)" % (self.rocket.launch.name, self.launcher.serial_number)
+            else:
+                return u"Unsaved %s" % self.launcher.serial_number
+        except ObjectDoesNotExist:
+            return u"Unsaved %s" % self.launcher.serial_number
+
+    def __unicode__(self):
         try:
             if self.rocket is not None and self.rocket.launch is not None:
                 return u"%s (%s)" % (self.rocket.launch.name, self.launcher.serial_number)
