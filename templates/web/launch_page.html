@@ -162,8 +162,8 @@
                              style="max-width: 45%;">
                         {% else %}
                         <h1 class="title text-center"
-                            style="margin-left: 100px; margin-right:100px;">{{ launch.rocket.configuration.launch_agency.name }}</h1>
-                        <h2 class="subheading text-center">({{ launch.rocket.configuration.launch_agency.abbrev }})</h2>
+                            style="margin-left: 100px; margin-right:100px;">{{ launch.lsp.name }}</h1>
+                        <h2 class="subheading text-center">({{ launch.lsp.abbrev }})</h2>
                         {% endif %}
                     </div>
                 </div>
@@ -185,11 +185,11 @@
                 {% if agency.description %}
                 <p>{{ agency.description }}</p>
                 {% endif %}
-                {% if launch.rocket.configuration.launch_agency.info_url %}
-                <a class="btn btn-primary btn-lg" href="{{ launch.rocket.configuration.launch_agency.info_url }}">INFO</a>
+                {% if launch.lsp.info_url %}
+                <a class="btn btn-primary btn-lg" href="{{ launch.lsp.info_url }}">INFO</a>
                 {% endif %}
-                {% if launch.rocket.configuration.launch_agency.wiki_url %}
-                <a class="btn btn-danger btn-lg" href="{{ launch.rocket.configuration.launch_agency.wiki_url }}">WIKI</a>
+                {% if launch.lsp.wiki_url %}
+                <a class="btn btn-danger btn-lg" href="{{ launch.lsp.wiki_url }}">WIKI</a>
                 {% endif %}
             </div>
         </row>
