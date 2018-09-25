@@ -274,6 +274,7 @@ class LaunchListSerializer(serializers.ModelSerializer):
     landing = serializers.SerializerMethodField()
     landing_success = serializers.SerializerMethodField()
     launcher = serializers.SerializerMethodField()
+    orbit = serializers.SerializerMethodField()
     mission = serializers.StringRelatedField()
     mission_type = serializers.StringRelatedField(source='mission.mission_type.name')
     slug = serializers.SlugField(source='get_full_absolute_url')
@@ -281,7 +282,7 @@ class LaunchListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Launch
         fields = ('id', 'url', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'mission', 'mission_type',
-                  'pad', 'location', 'landing', 'landing_success', 'launcher')
+                  'pad', 'location', 'landing', 'landing_success', 'launcher', 'orbit')
 
     def get_landing(self, obj):
         try:
@@ -389,6 +390,20 @@ class LaunchListSerializer(serializers.ModelSerializer):
             else:
                 cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
                 return None
+
+        except Exception as ex:
+            return None
+
+    def get_orbit(self, obj):
+        try:
+            cache_key = "%s-%s" % (obj.id, "launch-list-orbit")
+            orbit = cache.get(cache_key)
+            if orbit is not None:
+                return orbit
+
+            if obj.mission.orbit is not None and obj.mission.orbit.abbrev is not None:
+                cache.set(cache_key, obj.mission.orbit.abbrev, CACHE_TIMEOUT_ONE_DAY)
+                return obj.mission.orbit.abbrev
 
         except Exception as ex:
             return None
