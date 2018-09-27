@@ -97,7 +97,7 @@ def check_next_launch(debug=config.DEBUG):
 
 def launch_tracker():
     logger.info('Task - Running Launch Event Tracker')
-    tracker = LaunchEventTracker
+    tracker = LaunchEventTracker()
     tracker.check_events()
 
 
