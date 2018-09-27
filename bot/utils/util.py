@@ -75,8 +75,8 @@ def get_fcm_topics_and_onesignal_segments(launch, debug=False, flutter=False, no
         else:
             topic_header = "'debug' in topics"
 
-    if launch.location is not None:
-        location_id = launch.location.id
+    if launch.pad.location is not None:
+        location_id = launch.pad.location.id
     lsp_id = launch.rocket.configuration.launch_agency.id
 
     if lsp_id == 44:

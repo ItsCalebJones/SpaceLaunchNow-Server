@@ -7,13 +7,23 @@ from api.models import Launch
 
 class Notification(models.Model):
     launch = models.OneToOneField(Launch, on_delete=models.CASCADE)
+
     wasNotifiedTwentyFourHour = models.BooleanField(blank=True, default=False)
     wasNotifiedOneHour = models.BooleanField(blank=True, default=False)
     wasNotifiedTenMinutes = models.BooleanField(blank=True, default=False)
+    wasNotifiedOneMinute = models.BooleanField(blank=True, default=False)
+    wasNotifiedInFlight = models.BooleanField(blank=True, default=False)
+    wasNotifiedSuccess = models.BooleanField(blank=True, default=False)
+
     wasNotifiedTwentyFourHourTwitter = models.BooleanField(blank=True, default=False)
     wasNotifiedOneHourTwitter = models.BooleanField(blank=True, default=False)
     wasNotifiedTenMinutesTwitter = models.BooleanField(blank=True, default=False)
+    wasNotifiedOneMinuteTwitter = models.BooleanField(blank=True, default=False)
+    wasNotifiedInFlightTwitter = models.BooleanField(blank=True, default=False)
+    wasNotifiedSuccessTwitter = models.BooleanField(blank=True, default=False)
+
     wasNotifiedDailyDigest = models.BooleanField(blank=True, default=False)
+
     last_twitter_post = models.DateTimeField(blank=True, null=True)
     last_notification_sent = models.DateTimeField(blank=True, null=True)
     last_notification_recipient_count = models.IntegerField(blank=True, null=True)

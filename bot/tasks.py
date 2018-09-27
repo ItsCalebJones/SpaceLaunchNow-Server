@@ -8,6 +8,7 @@ from celery.task import periodic_task
 from celery.utils.log import get_task_logger
 
 from bot.app.instagram import InstagramBot
+from bot.app.notifications.launch_event_tracker import LaunchEventTracker
 from bot.app.repository.launches_repository import LaunchRepository
 from bot.app.sync import LaunchLibrarySync
 from bot.models import Notification
@@ -94,7 +95,13 @@ def check_next_launch(debug=config.DEBUG):
     notification.check_next_launch()
 
 
-@periodic_task(run_every=(crontab(minute='*/1')), options={"expires": 60})
+def launch_tracker():
+    logger.info('Task - Running Launch Event Tracker')
+    tracker = LaunchEventTracker
+    tracker.check_events()
+
+
+@periodic_task(run_every=timedelta(seconds=5), options={"expires": 60})
 def get_recent_previous_launches():
     logger.info('Task - Get Recent Previous launches!')
     repository = LaunchRepository()

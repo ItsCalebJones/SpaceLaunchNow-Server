@@ -8,8 +8,8 @@ TAG = 'Digest Server'
 
 
 class Command(BaseCommand):
-    help = 'Run Get Previous Launches manually.'
+    help = 'Run Get Recent Previous Launches manually.'
 
     def handle(self, *args, **options):
-        logger.info('Get Previously Launches')
+        logger.info('Get Recent Previous Launches')
         get_recent_previous_launches()
