@@ -282,13 +282,6 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
 
-CELERYBEAT_SCHEDULE = {
-    'every_five_seconds': {
-        'task': 'bot.tasks.launch_tracker',
-        'schedule': 5.0,
-    },
-}
-
 # Name of cache backend to cache user agents. If it not specified default
 # cache alias will be used. Set to `None` to disable caching.
 USER_AGENTS_CACHE = None
