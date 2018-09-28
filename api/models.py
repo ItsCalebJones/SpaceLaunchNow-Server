@@ -354,7 +354,7 @@ class Launcher(models.Model):
             return count
 
         print("not in cache get from database")
-        count = Launch.objects.values('id').filter(rocket__firststage__launcher__id=self.id).filter(~Q(status__id=2) | ~Q(status__id=5)).count()
+        count = Launch.objects.values('id').filter(rocket__firststage__launcher__id=self.id).filter(~Q(status__id=2) | ~Q(status__id=5) | ~Q(status__id=1)).count()
 
         # set cal_date in cache for later use
         cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
