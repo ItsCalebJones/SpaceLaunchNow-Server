@@ -1,3 +1,5 @@
+[![discord](https://discordapp.com/api/guilds/380226438584074242/embed.png?style=shield)](https://discord.gg/WVfzEDW) [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=102)](https://github.com/ellerbrock/open-source-badge/) [![Semver](http://img.shields.io/SemVer/3.0.0.png)](http://semver.org/spec/v2.0.0.html)
+
 # SpaceLaunchNow Server
 A Django-based Twitter bot, REST API endpoint, and website for [Space Launch Now]().
 
@@ -25,18 +27,6 @@ TODO - Fill this out.
 4. Push to the branch: `git push origin my-new-feature`
 5. Submit a pull request :D
 
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning.
-
-### Summary
-
-Given a version number MAJOR.MINOR.PATCH, increment the:
-
-* MAJOR version when you make incompatible API changes,
-* MINOR version when you add functionality in a backwards-compatible manner, and
-* PATCH version when you make backwards-compatible bug fixes.
-Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
 
 ## Authors
 

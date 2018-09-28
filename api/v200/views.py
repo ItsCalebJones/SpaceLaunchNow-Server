@@ -1,14 +1,15 @@
+import pytz
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from api.models import Launcher, Orbiter, Agency, Events
+from api.models import LauncherConfig, Orbiter, Agency, Events
 
 from api.v200.serializers import OrbiterSerializer, LauncherDetailSerializer, AgencyHyperlinkedSerializer, \
      EventsSerializer
 from rest_framework import viewsets
 from datetime import datetime
-from api.models import Launcher, Orbiter, Agency
+from api.models import LauncherConfig, Orbiter, Agency
 from api.permission import HasGroupPermission
 
 
@@ -62,12 +63,12 @@ class LaunchersViewSet(ModelViewSet):
     Return a list of all the existing launchers.
 
     FILTERS:
-    Fields - 'family', 'agency', 'name', 'launch_agency__name', 'full_name',
+    Fields - 'family', 'name', 'launch_agency__name', 'full_name',
 
     Get all Launchers with the Agency with name NASA.
     Example - /2.0.0/launchers/?launch_agency__name=NASA
     """
-    queryset = Launcher.objects.all()
+    queryset = LauncherConfig.objects.all()
     serializer_class = LauncherDetailSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
@@ -78,7 +79,7 @@ class LaunchersViewSet(ModelViewSet):
         'list': ['_Public']
     }
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('family', 'agency', 'name', 'launch_agency__name', 'full_name',)
+    filter_fields = ('family', 'name', 'launch_agency__name', 'full_name',)
 
 
 class OrbiterViewSet(ModelViewSet):
@@ -107,7 +108,7 @@ class EventViewSet(viewsets.ModelViewSet):
     GET:
     Return a list of future Events
     """
-    now = datetime.now()
+    now = datetime.now(tz=pytz.utc)
     queryset = Events.objects.filter(date__gte=now)
     serializer_class = EventsSerializer
     permission_classes = [HasGroupPermission]

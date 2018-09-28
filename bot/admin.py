@@ -10,6 +10,8 @@ class NotificationAdmin(admin.ModelAdmin):
     list_display = ('launch', 'last_net_stamp', 'last_twitter_post', 'last_notification_sent',
                     'last_notification_recipient_count', 'days_to_launch')
     readonly_fields = ('days_to_launch',)
+    ordering = ('launch__net',)
+    search_fields = ('launch__name',)
 
 
 @admin.register(models.DailyDigestRecord)

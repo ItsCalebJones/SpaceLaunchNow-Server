@@ -1,16 +1,20 @@
-from api.models import Orbiter, Launcher, Agency
+from api.models import Orbiter, LauncherConfig, Agency
 from rest_framework import serializers
 
 
 class LauncherModelSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField('get_legacy_name')
+    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
-        model = Launcher
+        model = LauncherConfig
         fields = ('id', 'url', 'name', 'description', 'agency', 'variant', 'image_url', 'info_url', 'wiki_url')
 
     def get_legacy_name(self, obj):
-        return obj.legacy_image_url
+        if obj.image_url:
+            return obj.image_url.url
+        else:
+            return None
 
 
 class OrbiterSerializer(serializers.HyperlinkedModelSerializer):
@@ -27,10 +31,16 @@ class OrbiterSerializer(serializers.HyperlinkedModelSerializer):
                   'wiki_link')
 
     def get_legacy_name(self, obj):
-        return obj.legacy_image_url
+        if obj.image_url:
+            return obj.image_url.url
+        else:
+            return None
 
     def get_nation_name(self, obj):
-        return obj.legacy_nation_url
+        if obj.nation_url:
+            return obj.nation_url.url
+        else:
+            return None
 
 
 class OrbiterModelSerializer(serializers.ModelSerializer):
@@ -42,10 +52,16 @@ class OrbiterModelSerializer(serializers.ModelSerializer):
         fields = ('id', 'url', 'name', 'agency', 'image_url', 'nation_url')
 
     def get_legacy_name(self, obj):
-        return obj.legacy_image_url
+        if obj.image_url:
+            return obj.image_url.url
+        else:
+            return None
 
     def get_nation_name(self, obj):
-        return obj.legacy_nation_url
+        if obj.nation_url:
+            return obj.nation_url.url
+        else:
+            return None
 
 
 class AgencySerializer(serializers.HyperlinkedModelSerializer):
@@ -64,21 +80,31 @@ class AgencySerializer(serializers.HyperlinkedModelSerializer):
         return obj.name
 
     def get_legacy_name(self, obj):
-        return obj.legacy_image_url
+        if obj.image_url:
+            return obj.image_url.url
+        else:
+            return None
 
     def get_nation_name(self, obj):
-        return obj.legacy_nation_url
+        if obj.nation_url:
+            return obj.nation_url.url
+        else:
+            return None
 
 
 class LauncherDetailSerializer(serializers.HyperlinkedModelSerializer):
     image_url = serializers.SerializerMethodField('get_legacy_name')
+    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
-        model = Launcher
+        model = LauncherConfig
         fields = ('id', 'url', 'name', 'description', 'family', 'full_name', 'agency',
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust',
                   'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url')
 
     def get_legacy_name(self, obj):
-        return obj.legacy_image_url
+        if obj.image_url:
+            return obj.image_url.url
+        else:
+            return None

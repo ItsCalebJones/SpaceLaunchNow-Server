@@ -6,5 +6,5 @@ from django.apps import AppConfig
 
 class ApiConfig(AppConfig):
     name = 'api'
-    verbose_name = 'API'
+    verbose_name = 'API - Launch Data'
     icon = '<i class="material-icons">flag</i>'

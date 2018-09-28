@@ -19,19 +19,17 @@
 
     <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
     <!--     Fonts and icons     -->
-    <link rel="stylesheet" type="text/css"
+    <link rel="preload" as="style" onload="this.rel='stylesheet'" type="text/css"
           href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons"/>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css"
+    <link rel="preload" as="style" onload="this.rel='stylesheet'" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css"
           integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
 
     <!-- CSS Files -->
-    <link href="{% static  'material_kit/css/material-kit.css' %}" rel="stylesheet">
-    <link href="{% static  'material_kit/css/spacelaunchnow.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static  'material_kit/css/material-kit.min.css' %}"  >
+    <link rel="preload" as="style" onload="this.rel='stylesheet'" href="{% static  'material_kit/css/spacelaunchnow.min.css' %}" >
+
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-
-    <link rel="stylesheet" href="{% static  'compiled/flipclock.css' %}">
-    <script src="{% static  'compiled/flipclock.js' %}"></script>
     {% block extrahead %}
     {% endblock %}
 </head>
@@ -44,44 +42,6 @@
 {% block content %}
 {% endblock %}
 <!--  End Modal -->
-<div class="col-lg-12 justify-content-center align-self-center">
-    <div class="row justify-content-center align-items-center align-self-center">
-        <div class="col-lg-5">
-            <div class="card" style="height: 720px;">
-                <a class="twitter-timeline" data-height="720" data-link-color="#981CEB"
-                   href="https://twitter.com/SpaceLaunchNow/lists/space-launch-news?ref_src=twsrc%5Etfw">Space
-                    Launch
-                    News</a>
-                <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-            </div>
-        </div>
-        <div class="col-lg-5">
-            <div class="card" style="height: 720px;">
-                <iframe id="widgetbot"
-                        src="https://widgetbot.io/channels/380226438584074242/380226438584074245/"
-                        scrolling="no" frameborder="0" allowtransparency="true"
-                        style="position: static; width: 100%; height: 100%;"></iframe>
-            </div>
-        </div>
-    </div>
-</div>
-<br>
-<div class="call-to-action bg-dark">
-    <div class="container text-center">
-        <div class="row text-center">
-            <div class="col-sm-6 text-center">
-                <a href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-                    <img style="width:100%" alt='Get it on Google Play'
-                         src="{% static 'img/en_get.svg' %}"/></a>
-            </div>
-            <div class="col-sm-6 text-center">
-                <a href='#'>
-                    <img style="margin:5%; width:88%;" alt='Get it on the App Store'
-                         src="{% static 'img/app_store.svg' %}"/></a>
-            </div>
-        </div>
-    </div>
-</div>
 <footer class="footer" data-background-color="black">
     <div class="container">
         <nav class="float-left">
@@ -132,11 +92,11 @@
 <script src="{% static 'material_kit/js/core/bootstrap-material-design.min.js' %}" type="text/javascript"></script>
 <script src="{% static 'material_kit/js/plugins/moment.min.js' %}"></script>
 <!--	Plugin for the Datepicker, full documentation here: https://github.com/Eonasdan/bootstrap-datetimepicker -->
-<script src="{% static 'material_kit/js/plugins/bootstrap-datetimepicker.js' %}" type="text/javascript"></script>
+<script src="{% static 'material_kit/js/plugins/bootstrap-datetimepicker.min.js' %}" type="text/javascript"></script>
 <!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
 <script src="{% static 'material_kit/js/plugins/nouislider.min.js' %}" type="text/javascript"></script>
 <!-- Control Center for Now Ui Kit: parallax effects, scripts for the example pages etc -->
-<script src="{% static 'material_kit/js/material-kit.js' %}" type="text/javascript"></script>
+<script src="{% static 'material_kit/js/material-kit.min.js' %}" type="text/javascript"></script>
 <script>
     $(document).ready(function () {
         //init DateTimePickers

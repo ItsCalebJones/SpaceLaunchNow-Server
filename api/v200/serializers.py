@@ -1,34 +1,37 @@
-from api.models import Orbiter, Launcher, Agency, Events
+from api.models import Orbiter, Agency, Events, LauncherConfig
 from drf_queryfields import QueryFieldsMixin
 
-from api.models import Orbiter, Launcher, Agency
+from api.models import Orbiter, Agency
 from rest_framework import serializers
 
 
 class LauncherModelSerializer(QueryFieldsMixin, serializers.ModelSerializer):
+    agency = serializers.ReadOnlyField(allow_null=True, read_only=True, source="launch_agency.name")
+
     class Meta:
-        model = Launcher
+        model = LauncherConfig
         fields = ('id', 'url', 'name', 'description', 'agency', 'variant',  'image_url',
-                  'info_url', 'wiki_url', 'in_use', 'capability')
+                  'info_url', 'wiki_url')
 
 
 class OrbiterSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = Orbiter
         fields = ('id', 'url', 'name', 'agency', 'history', 'details', 'image_url',
-                  'legacy_nation_url', 'nation_url', 'wiki_link', 'in_use', 'capability')
+                  'nation_url', 'wiki_link', 'in_use', 'capability')
 
 
 class OrbiterModelSerializer(QueryFieldsMixin, serializers.ModelSerializer):
+
     class Meta:
         model = Orbiter
-        fields = ('id', 'url', 'name', 'agency', 'image_url', 'legacy_nation_url', 'nation_url')
+        fields = ('id', 'url', 'name', 'agency', 'image_url',  'nation_url')
 
 
 class AgencyHyperlinkedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     launcher_list = LauncherModelSerializer(many=True, read_only=True)
     orbiter_list = OrbiterModelSerializer(many=True, read_only=True)
-
     ceo = serializers.SerializerMethodField('get_administrator')
 
     class Meta:
@@ -54,8 +57,10 @@ class AgencyHyperlinkedSerializer(QueryFieldsMixin, serializers.HyperlinkedModel
 
 
 class LauncherDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+    agency = serializers.ReadOnlyField(allow_null=True, read_only=True, source="launch_agency.name")
+
     class Meta:
-        model = Launcher
+        model = LauncherConfig
         fields = ('id', 'url', 'name', 'description', 'family', 'full_name', 'agency',
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust',

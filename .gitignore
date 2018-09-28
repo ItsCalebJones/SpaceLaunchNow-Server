@@ -2,7 +2,9 @@
 *.iml
 django_logs/**
 env/**
-venv/**
+venv3/**
+env3/**
+data/reddit/settings.json
 db.sqlite3
 .idea/**
 django.log
@@ -15,3 +17,5 @@ venv/**
 spacelaunchnow/config.py
 bot/utils/config.py
 assets/**
+instagram.cache
+venv3/get-pip.py

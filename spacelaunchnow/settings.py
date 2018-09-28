@@ -27,10 +27,9 @@ SECRET_KEY = config.DJANGO_SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.DEBUG
 
-ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8', '.spacelaunchnow.me', '127.0.0.1', 'spacelaunchnow.me']
+ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8', '.spacelaunchnow.me', '127.0.0.1', 'spacelaunchnow.me', '10.0.2.2']
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 10,
+    'DEFAULT_PAGINATION_CLASS': 'spacelaunchnow.pagination.SLNLimitOffsetPagination',
     'DEFAULT_MODEL_SERIALIZER_CLASS': 'drf_toolbox.serializers.ModelSerializer',
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
@@ -68,26 +67,39 @@ LOGGING = {
             'maxBytes': 1024 * 1024 * 5,
             'backupCount': 5
         },
+        'django_error': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'log/error.log',
+            'formatter': 'standard',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5
+        },
         'console': {
             'class': 'logging.StreamHandler',
             'formatter': 'standard'
         },
         'digest': {
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'log/bot/daily_digest.log',
+            'filename': 'log/daily_digest.log',
             'formatter': 'standard',
             'maxBytes': 1024 * 1024 * 5,
             'backupCount': 5
         },
         'notifications': {
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'log/bot/notification.log',
+            'filename': 'log/notification.log',
             'formatter': 'standard',
             'maxBytes': 1024 * 1024 * 5,
             'backupCount': 5
         }
     },
     'loggers': {
+        # Again, default Django configuration to email unhandled exceptions
+        'django.request': {
+            'handlers': ['django_default', 'django_error'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
         'django': {
             'handlers': ['django_default', 'console'],
             'propagate': True,
@@ -117,10 +129,11 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'rest_framework_docs',
     'bot',
+    'configurations',
     'djcelery',
     'embed_video',
-    'material',
-    'material.admin',
+    'jet.dashboard',
+    'jet',
     'django.contrib.admin',
     'django_user_agents',
     'django_filters',
@@ -130,7 +143,43 @@ INSTALLED_APPS = [
     'mptt',
     'tagging',
     'zinnia',
+    'collectfast',
+    # 'silk',
 ]
+
+JET_THEMES = [
+    {
+        'theme': 'default', # theme folder name
+        'color': '#47bac1', # color of the theme's button in user menu
+        'title': 'Default' # theme title
+    },
+    {
+        'theme': 'green',
+        'color': '#44b78b',
+        'title': 'Green'
+    },
+    {
+        'theme': 'light-green',
+        'color': '#2faa60',
+        'title': 'Light Green'
+    },
+    {
+        'theme': 'light-violet',
+        'color': '#a464c4',
+        'title': 'Light Violet'
+    },
+    {
+        'theme': 'light-blue',
+        'color': '#5EADDE',
+        'title': 'Light Blue'
+    },
+    {
+        'theme': 'light-gray',
+        'color': '#222',
+        'title': 'Light Gray'
+    }
+]
+
 
 SITE_ID = 1
 
@@ -142,12 +191,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'silk.middleware.SilkyMiddleware',
 ]
+SILKY_PYTHON_PROFILER = True
 
 GEOIP_DATABASE = 'GeoLiteCity.dat'
 GEOIPV6_DATABASE = 'GeoLiteCityv6.dat'
 
 ROOT_URLCONF = 'spacelaunchnow.urls'
+
+JET_MODULE_GOOGLE_ANALYTICS_CLIENT_SECRETS_FILE = os.path.join(BASE_DIR, 'client_secrets.json')
 
 TEMPLATES = [
     {
@@ -169,7 +222,7 @@ TEMPLATES = [
 ]
 
 ZINNIA_ENTRY_CONTENT_TEMPLATES = [
-  ('zinnia/_short_entry_detail.html', 'Short entry template'),
+    ('zinnia/_short_entry_detail.html', 'Short entry template'),
 ]
 
 ZINNIA_ENTRY_DETAIL_TEMPLATES = [
@@ -183,12 +236,7 @@ WSGI_APPLICATION = 'spacelaunchnow.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+DATABASES = config.DATABASE
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -246,7 +294,6 @@ EMAIL_HOST_PASSWORD = config.EMAIL_HOST_PASSWORD
 EMAIL_USE_TLS = config.EMAIL_HOST_TLS
 DEFAULT_FROM_EMAIL = config.EMAIL_FROM_EMAIL
 
-
 # AWS Storage Information
 
 AWS_STORAGE_BUCKET_NAME = config.STORAGE_BUCKET_NAME
@@ -267,10 +314,9 @@ CLOUDFRONT_ID = config.CLOUDFRONT_ID
 AWS_ACCESS_KEY_ID = config.AWS_ACCESS_KEY_ID
 AWS_SECRET_ACCESS_KEY = config.AWS_SECRET_ACCESS_KEY
 
-
 AWS_LOCATION = 'static'
 AWS_S3_OBJECT_PARAMETERS = {
-   'CacheControl': 'max-age=86400',
+    'CacheControl': 'max-age=86400',
 
 }
 
@@ -281,6 +327,7 @@ PROJECT_PATH = os.path.abspath(os.path.dirname(__name__))
 STATICFILES_DIRS = [os.path.join(PROJECT_PATH, 'static')]
 STATICFILES_LOCATION = 'static/home'
 STATICFILES_STORAGE = 'custom_storages.StaticStorage'
+AWS_PRELOAD_METADATA = True
 
 LOGO_LOCATION = MEDIA_LOCATION + '/logo'  # type: str
 LOGO_STORAGE = 'custom_storages.LogoStorage'
@@ -288,19 +335,23 @@ LOGO_STORAGE = 'custom_storages.LogoStorage'
 DEFAULT_LOCATION = MEDIA_LOCATION + '/default'  # type: str
 DEFAULT_STORAGE = 'custom_storages.DefaultStorage'
 
-AGENCY_IMAGE_LOCATION = MEDIA_LOCATION + '/agency_images' #type: str
+AGENCY_IMAGE_LOCATION = MEDIA_LOCATION + '/agency_images'  # type: str
 AGENCY_IMAGE_STORAGE = 'custom_storages.AgencyImageStorage'
 
-AGENCY_NATION_LOCATION = MEDIA_LOCATION + '/agency_nation' #type: str
+AGENCY_NATION_LOCATION = MEDIA_LOCATION + '/agency_nation'  # type: str
 AGENCY_NATION_STORAGE = 'custom_storages.AgencyNationStorage'
 
-ORBITER_IMAGE_LOCATION = MEDIA_LOCATION + '/orbiter_images' #type: str
+ORBITER_IMAGE_LOCATION = MEDIA_LOCATION + '/orbiter_images'  # type: str
 ORBITER_IMAGE_STORAGE = 'custom_storages.OrbiterImageStorage'
 
-LAUNCHER_IMAGE_LOCATION = MEDIA_LOCATION + '/launcher_images' #type: str
+LAUNCHER_IMAGE_LOCATION = MEDIA_LOCATION + '/launcher_images'  # type: str
 LAUNCHER_IMAGE_STORAGE = 'custom_storages.LauncherImageStorage'
 
-EVENT_IMAGE_LOCATION = MEDIA_LOCATION + '/event_images' #type: str
+EVENT_IMAGE_LOCATION = MEDIA_LOCATION + '/event_images'  # type: str
 EVENT_IMAGE_STORAGE = 'custom_storages.EventImageStorage'
 
 DEFAULT_FILE_STORAGE = DEFAULT_STORAGE
+
+AWS_IS_GZIPPED = True
+
+CACHES = config.CACHE

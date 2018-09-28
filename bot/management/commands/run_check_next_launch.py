@@ -10,6 +10,16 @@ TAG = 'Digest Server'
 class Command(BaseCommand):
     help = 'Run Check Next Launch manually.'
 
+    def add_arguments(self, parser):
+        parser.add_argument('-debug', dest="debug", type=bool, const=True, nargs='?')
+
     def handle(self, *args, **options):
         logger.info('Check Next Launch')
-        check_next_launch()
+        debug = options['debug']
+        while debug is None:
+            response = raw_input('Continue in production mode? (Y/N) ')
+            if response == "Y":
+                debug = False
+            if response == "N":
+                debug = True
+        check_next_launch(debug=debug)

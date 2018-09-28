@@ -13,9 +13,9 @@ headers = {
 
 class LaunchLibrarySDK(object):
     # Latest stable Version stored.
-    def __init__(self, version='1.4'):
+    def __init__(self, version='1.4.1'):
         if version is None:
-            version = '1.4'
+            version = '1.4.1'
         self.version = version
         self.api_url = BASE_URL + self.version
 
@@ -47,6 +47,16 @@ class LaunchLibrarySDK(object):
         today = datetime.today().strftime('%Y-%m-%d')
         next_week = (datetime.now() + timedelta(days=7)).strftime('%Y-%m-%d')
         url = self.api_url + '/launch/%s/%s?mode=verbose&offset=%s' % (today, next_week, offset)
+        return send_request(url, method='GET', headers=headers)
+
+    def get_recent_previous_launches(self, offset=0):
+        """
+        Sends a request using `requests` module.
+        :return: Returns a HTTP Response object
+        """
+        today = (datetime.today() + timedelta(days=1)).strftime('%Y-%m-%d')
+        previous = (datetime.today() - timedelta(days=2)).strftime('%Y-%m-%d')
+        url = self.api_url + '/launch/%s/%s?mode=verbose&offset=%s&limit=100' % (previous, today, offset)
         return send_request(url, method='GET', headers=headers)
 
     def get_previous_launches(self, offset=0):

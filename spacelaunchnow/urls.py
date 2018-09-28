@@ -18,16 +18,23 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.generic import TemplateView
 
-from api.v300.router import api_urlpatterns as api_v201
+import web
+from api.v320.router import api_urlpatterns as api_v320
+from api.v310.router import api_urlpatterns as api_v310
+from api.v300.router import api_urlpatterns as api_v300
 from api.v200.router import api_urlpatterns as api_v2
 from api.v1.router import api_urlpatterns as api_v1
 from web import views as landing_views
 
 urlpatterns = [
+    url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
+    url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
     url(r'^admin/', include(admin.site.urls)),
     url(r'^v1/', include(api_v1, namespace='v1')),
     url(r'^2.0.0/', include(api_v2, namespace='v200')),
-    url(r'^3.0.0/', include(api_v201, namespace='v300')),
+    url(r'^3.0.0/', include(api_v300, namespace='v300')),
+    url(r'^3.1.0/', include(api_v310, namespace='v310')),
+    url(r'^3.2.0/', include(api_v320, namespace='v320')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^docs/', include('rest_framework_docs.urls')),
     url(r'^$', landing_views.index, name='index'),
@@ -43,7 +50,11 @@ urlpatterns = [
     url(r'^site/tos', TemplateView.as_view(template_name='web/site/tos.html'), name='tos'),
     # Changing Password
     url('^', include('django.contrib.auth.urls')),
+    url(r'^signup/$', landing_views.signup, name='signup'),
+    # url(r'^silk/', include('silk.urls', namespace='silk'))
 ]
 
+handler404 = web.views.handler404
+handler500 = web.views.handler500
 admin.site.site_header = "Space Launch Now"
 admin.site.site_title = "Administration"

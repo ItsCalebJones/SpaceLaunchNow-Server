@@ -5,12 +5,12 @@
 {% load tz %}
 {% block extrahead %}
 <meta property="fb:app_id" content="746774215504127"/>
-<meta property="og:title" content="{{ launch.name }} - {{ launch.mission_set.0.name }}"/>
+<meta property="og:title" content="{{ launch.rocket.name }} - {{ launch.mission.name }}"/>
 <meta property="og:type" content="website"/>
-<meta property="og:description" content="{{ launch.mission_description }}"/>
-<meta property="og:url" content="https://spacelaunchnow.me/launch/{{ launch.id }}/"/>
-{% if launch.img_url %}
-<meta property="og:image" content="{{ launch.img_url }}"/>
+<meta property="og:description" content="{{ launch.mission.description }}"/>
+<meta property="og:url" content="https://spacelaunchnow.me/launch/{{ launch.slug }}/"/>
+{% if launch.rocket.configuration.image_url %}
+<meta property="og:image" content="{{ launch.rocket.configuration.image_url.url }}"/>
 {% else %}
 <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
 <meta property="og:image:width" content="3000"/>
@@ -23,6 +23,14 @@
             google_ad_client: "ca-pub-9824528399164059",
             enable_page_level_ads: true
         });
+
+
+
+
+
+
+
+
 
 
 
@@ -48,7 +56,7 @@
             <ul class="navbar-nav ml-auto">
 
                 <li class="nav-item">
-                    <a class="nav-link active" href="/">Home</a>
+                    <a class="nav-link" href="/">Home</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="/next">Next</a>
@@ -62,7 +70,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="/3.0.0">API</a>
+                    <a class="nav-link" href="/3.2.0">API</a>
                 </li>
             </ul>
         </div>
@@ -71,17 +79,17 @@
 {% endblock %}
 
 {% block content %}
-{% if launch.img_url %}
+{% if launch.rocket.configuration.image_url %}
 <div class="page-header header-filter" data-parallax="true"
-     style="background-image: url({{ launch.launcher.img_url }});">
+     style="background-image: url({{ launch.rocket.configuration.image_url.url }});">
     {% else %}
     <div class="page-header header-filter" data-parallax="true"
-         style="background-image: url('https://firebasestorage.googleapis.com/v0/b/space-launch-now.appspot.com/o/16072049543_53f7db3aa5_b.jpg?alt=media&token=2b9d5907-7c3a-4af9-9b85-f0a200d9d04b');">
+         style="background-image: url('{% static 'img/header.jpg'%}');">
         {% endif %}
         <div class="container">
             <div class="row">
                 <div class="col-lg-10 ml-auto mr-auto text-center">
-                    <h1 class="title text-white">{{ launch.launcher.name }}</h1>
+                    <h1 class="title text-white">{{ launch.rocket.configuration.name }}</h1>
                     <h2 class="text-white" style="margin: 5px;">{{ status }}</h2>
                     {% if launch.failreason %}
                     <span class="badge badge-pill badge-danger">{{ launch.failreason }}</span>
@@ -93,7 +101,7 @@
                     <h2 class="title text-white" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h2>
                     <h3 class="text-white" style="margin: -5px;" id="date">{{ launch.net }}</h3>
                     <hr class="col-lg-8" style="background-color: white">
-                    <span class="badge badge-pill badge-primary">{{ launch.lsp.name }}</span>
+                    <span class="badge badge-pill badge-primary">{{ launch.rocket.configuration.launch_agency.name }}</span>
                     {% if launch.pad %}
                     <span class="badge badge-pill badge-primary">{{ launch.pad.name }}</span>
                     {% endif %}
@@ -122,10 +130,6 @@
              data-ad-format="auto"></ins>
         <script>
                 (adsbygoogle = window.adsbygoogle || []).push({});
-
-
-
-
         </script>
     </div>
 </div>
@@ -138,16 +142,16 @@
                 <div class="card-header card-header-danger text-center">
                     {% if launch.mission %}
                     <h1 class="title text-white">{{ launch.mission.name }}</h1>
-                    <h2 class="subheading text-white">{{ launch.launcher.name }}</h2>
+                    <h2 class="subheading text-white">{{ launch.rocket.configuration.name }}</h2>
                     {% else %}
                     <h1 class="title text-white">{{ launch.name }}</h1>
-                    <h2 class="subheading text-white">{{ launch.launcher.name }}</h2>
+                    <h2 class="subheading text-white">{{ launch.rocket.configuration.name }}</h2>
                     {% endif %}
 
                 </div>
             </div>
         </div>
-        <div class="row" style="margin:50px;">
+        <div class="row" style="margin: 50px;">
             <div class="col-md-12 ml-auto mx-auto mr-auto text-center">
                 <div class="profile">
                     <div class="avatar">
@@ -158,8 +162,8 @@
                              style="max-width: 45%;">
                         {% else %}
                         <h1 class="title text-center"
-                            style="margin-left: 100px; margin-right:100px;">{{ launch.lsp.name }}</h1>
-                        <h2 class="subheading text-center">({{ launch.lsp.abbrev }})</h2>
+                            style="margin-left: 100px; margin-right:100px;">{{ launch.rocket.configuration.launch_agency.name }}</h1>
+                        <h2 class="subheading text-center">({{ launch.rocket.configuration.launch_agency.abbrev }})</h2>
                         {% endif %}
                     </div>
                 </div>
@@ -168,7 +172,7 @@
         <row>
             <div class="col-md-8 ml-auto mx-auto mr-auto text-center">
                 {% if agency.ceo %}
-                <span class="badge badge-pill badge-primary">CEO: {{ agency.ceo }}</span>
+                <span class="badge badge-pill badge-primary">{{ agency.ceo }}</span>
                 {% endif %}
                 {% if agency.founding_year %}
                 <span class="badge badge-pill badge-warning">Founded: {{ agency.founding_year }}</span>
@@ -181,27 +185,52 @@
                 {% if agency.description %}
                 <p>{{ agency.description }}</p>
                 {% endif %}
-                {% if launch.lsp.info_url %}
-                <a class="btn btn-primary btn-lg" href="{{ launch.lsp.info_url }}">INFO</a>
+                {% if launch.rocket.configuration.launch_agency.info_url %}
+                <a class="btn btn-primary btn-lg" href="{{ launch.rocket.configuration.launch_agency.info_url }}">INFO</a>
                 {% endif %}
-                {% if launch.lsp.wiki_url %}
-                <a class="btn btn-danger btn-lg" href="{{ launch.lsp.wiki_url }}">WIKI</a>
+                {% if launch.rocket.configuration.launch_agency.wiki_url %}
+                <a class="btn btn-danger btn-lg" href="{{ launch.rocket.configuration.launch_agency.wiki_url }}">WIKI</a>
                 {% endif %}
             </div>
         </row>
-        <div class="row justify-content-center">
+        <div class="row">
             <!-- Post Content Column -->
             <div class="col-md-4">
                 <div class="info">
                     <!-- Date/Time -->
                     <h3 class="card-title">Launch Vehicle</h3>
                     <hr>
-                    {% with launcher=launch.launcher %}
-                    <h4>{{ launcher.name }}</h4>
+                    {% with launcher_config=launch.rocket.configuration %}
+                    <h4 class="mbt-2">{{ launcher_config.name }}</h4>
+                    <h6 class="mbt-2">
+                        Configuration: {{ launcher_config.variant }}<br>
+                        Family: {{ launcher_config.family }}</h6>
+                    <p> {{ launcher_config.description}}</p>
 
-                    <p>Configuration: {{ launcher.configuration }}</p>
-
-                    <p>Family: {{ launcher.family }}</p>
+                    <p>
+                        <button class="btn btn-primary btn-link" type="button" data-toggle="collapse"
+                                data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                            Specifications
+                        </button>
+                    </p>
+                    <div class="collapse" id="collapseExample">
+                        <div class="card">
+                            <div class="card-header card-header-danger"> {{ launcher_config.full_name }}
+                            </div>
+                            GTO: {{ launcher_config.gto_capacity }}<br>
+                            LEO: {{ launcher_config.leo_capacity }}<br>
+                            Length: {{ launcher_config.length }} m<br>
+                            Diameter: {{ launcher_config.diameter }} m<br>
+                            Launch Mass: {{ launcher_config.launch_mass }}k kg<br>
+                            Thurst: {{ launcher_config.to_thrust }} kN<br>
+                        </div>
+                    </div>
+                    {% if launcher_config.info_url %}
+                    <a class="btn btn-primary btn-lg" href="{{ launcher_config.info_url }}">INFO</a>
+                    {% endif %}
+                    {% if launcher_config.wiki_url %}
+                    <a class="btn btn-danger btn-lg" href="{{ launcher_config.wiki_url }}">WIKI</a>
+                    {% endif %}
                     {% endwith %}
                 </div>
             </div>
@@ -314,13 +343,21 @@
          data-ad-format="auto"></ins>
     <script>
                 (adsbygoogle = window.adsbygoogle || []).push({});
+
+
+
+
+
+
+
+
     </script>
 </div>
 <script src="{% static 'material_kit/js/dateFormat.js' %}" type="text/javascript"></script>
 <script>
         var countDownDate = new Date("{{launch.net.isoformat}}");
 
-        document.getElementById("date").innerHTML = dateFormat(countDownDate, "mmmm dS, yyyy - h:MM Z");
+        document.getElementById("date").innerHTML = dateFormat(countDownDate, "mmmm dS, yyyy - h:MM TT Z");
         // Set the date we're counting down to
 
         var now = new Date().getTime();
@@ -366,10 +403,7 @@
         } else {
             document.getElementById("countdown").innerHTML = "L - 00 : 00 : 00 : 00";
         }
-
-
-
-
 </script>
+{% include "web/install_buttons.html" %}
 {% endblock %}
 

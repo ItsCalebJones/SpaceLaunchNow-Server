@@ -2,6 +2,7 @@ import logging
 
 from django.core import serializers
 from django.utils.datetime_safe import datetime
+from pytz import utc
 
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.models import Notification, DailyDigestRecord
@@ -18,7 +19,7 @@ class LaunchRepository:
     def __init__(self, version=None):
 
         if version is None:
-            version = '1.3'
+            version = '1.4.1'
         self.launchLibrary = LaunchLibrarySDK(version=version)
 
     def get_next_launches(self, next_count=5, all=False):
@@ -37,6 +38,7 @@ class LaunchRepository:
 
                 for launch in launch_data:
                     launch = launch_json_to_model(launch)
+                    logger.debug("Saving Launch: %s" % launch.name)
                     launch.save()
                     launches.append(launch)
                 if not all:
@@ -53,7 +55,7 @@ class LaunchRepository:
         if response.status_code is 200:
             response_json = response.json()
             launch_data = response_json['launches']
-            logger.info("Found %i launches" % len(launch_data))
+            logger.debug("Found %i launches" % len(launch_data))
             logger.debug("DATA: %s" % launch_data)
             for launch in launch_data:
                 return launch_json_to_model(launch)
@@ -86,7 +88,7 @@ class LaunchRepository:
         return launches
 
     def get_previous_launches(self):
-        logger.info("Getting preivous launches")
+        logger.info("Getting previous launches")
         launches = []
         count = 0
         total = None
@@ -110,14 +112,53 @@ class LaunchRepository:
                 break
         return launches
 
+    def get_recent_previous_launches(self):
+        logger.info("Getting recent previous launches")
+        launches = []
+        count = 0
+        total = None
+        while total is None or count < total:
+            response = self.launchLibrary.get_recent_previous_launches(offset=count)
+            if response.status_code is 200:
+                response_json = response.json()
+                count = response_json['count'] + response_json['offset']
+                total = response_json['total']
+                launch_data = response_json['launches']
+                logger.info("Saving next %i launches - %s out of %s" % (len(launch_data), count, total))
+
+                for launch in launch_data:
+                    launch = launch_json_to_model(launch)
+                    launch.save()
+                    launches.append(launch)
+            else:
+                logger.error('ERROR ' + str(response.status_code))
+                logger.error('RESPONSE: ' + response.text)
+                logger.error('URL: ' + response.url)
+                break
+        return launches
+
+    def is_launch_deleted(self, id):
+        response = self.launchLibrary.get_launch_by_id(id)
+        if response.status_code == 200:
+            logger.debug("Launch is NOT Stale - %s" % id)
+            response_json = response.json()
+            launch_data = response_json['launches']
+            logger.debug("Found %i launches" % len(launch_data))
+            logger.debug("DATA: %s" % launch_data)
+            for launch in launch_data:
+                return launch_json_to_model(launch)
+            return False
+        elif response.status_code == 404:
+            logger.debug("Launch is Stale - %s" % id)
+            return True
+
 
 def update_notification_record(launch):
     notification = Notification.objects.get(launch=launch)
-    notification.last_net_stamp = launch.netstamp
-    notification.last_net_stamp_timestamp = datetime.now()
+    notification.last_net_stamp = launch.net
+    notification.last_net_stamp_timestamp = datetime.now(tz=utc)
     logger.info('Updating Notification %s to timestamp %s' % (notification.launch.name,
-                                                              datetime.fromtimestamp(notification.launch.netstamp)
-                                                              .strftime("%A %d %B %Y")))
+                                                              notification.launch.net.strftime("%A %d %B %Y")))
     notification.save()
 
 
@@ -127,7 +168,7 @@ def create_daily_digest_record(total, messages, launches):
     for launch in launches:
         launch_json = serializers.serialize('json', [launch, ])
         data.append(launch_json)
-    DailyDigestRecord.objects.create(timestamp=datetime.now(),
+    DailyDigestRecord.objects.create(timestamp=datetime.now(tz=utc),
                                      messages=messages,
                                      count=total,
                                      data=data)
