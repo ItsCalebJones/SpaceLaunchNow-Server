@@ -22,6 +22,7 @@ from django.template.defaultfilters import truncatechars, slugify
 import urllib
 
 CACHE_TIMEOUT_ONE_DAY = 24 * 60 * 60
+CACHE_TIMEOUT_TEN_MINUTES = 10 * 60
 
 
 def image_path(instance, filename):
@@ -354,10 +355,10 @@ class Launcher(models.Model):
             return count
 
         print("not in cache get from database")
-        count = Launch.objects.values('id').filter(rocket__firststage__launcher__id=self.id).filter(~Q(status__id=2) | ~Q(status__id=5) | ~Q(status__id=1)).count()
+        count = Launch.objects.values('id').filter(rocket__firststage__launcher__id=self.id).filter(Q(status__id=3) | Q(status__id=4) | Q(status__id=7)).count()
 
         # set cal_date in cache for later use
-        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        cache.set(cache_key, count, CACHE_TIMEOUT_TEN_MINUTES)
 
         return count
 
