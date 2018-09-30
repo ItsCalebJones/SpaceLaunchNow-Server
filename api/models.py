@@ -6,7 +6,7 @@ import os
 from django.core.cache import cache
 from django.contrib.sites.models import Site
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
+from django.db.models import Q, F
 from django.db.models.functions import datetime
 from django.db import models
 
@@ -208,6 +208,7 @@ class LauncherConfig(models.Model):
     variant = models.CharField(max_length=200, default='', blank=True)
     alias = models.CharField(max_length=200, default='', blank=True)
     launch_cost = models.CharField(verbose_name="Launch Cost ($)", max_length=200, null=True, blank=True)
+    maiden_flight = models.DateField(verbose_name="Maiden Flight Date", max_length=255, null=True, blank=True)
     min_stage = models.IntegerField(blank=True, null=True)
     max_stage = models.IntegerField( blank=True, null=True)
     length = models.FloatField(verbose_name="Length (m)", blank=True, null=True)
@@ -466,6 +467,11 @@ class FirstStage(models.Model):
     landing = models.OneToOneField(Landing, related_name='firststage', null=True, blank=True, on_delete=models.SET_NULL)
     launcher = models.ForeignKey(Launcher, related_name='firststage', on_delete=models.CASCADE)
     rocket = models.ForeignKey(Rocket, related_name='firststage', on_delete=models.CASCADE)
+
+    @property
+    def launcher_flight_number(self):
+        count = Launch.objects.values('id').filter(rocket__firststage__launcher__id=self.launcher.id).filter(net__lte=F('net')).count()
+        return count
 
     def __str__(self):
         try:
