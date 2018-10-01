@@ -27,7 +27,7 @@ class LaunchEventTracker:
         self.netstamp = NetstampHandler()
 
     def check_next_stamp_changed(self, launch):
-        logger.info('Running check_next_stamp_changed for %s...', launch.name)
+        logger.debug('Running check_next_stamp_changed for %s...', launch.name)
         notification = Notification.objects.get(launch=launch)
         if launch.net:
             current_time = datetime.now(tz=pytz.utc)
@@ -42,7 +42,7 @@ class LaunchEventTracker:
                         self.netstamp.netstamp_changed(launch, notification, diff)
 
     def check_success(self, time_threshold_past_two_days, time_threshold_24_hour):
-        logger.info('Running check_success...')
+        logger.debug('Running check_success...')
         launches = Launch.objects.filter(status__id=3,
                                          net__lte=time_threshold_24_hour,
                                          net__gte=time_threshold_past_two_days)
@@ -69,7 +69,7 @@ class LaunchEventTracker:
             notification.save()
 
     def check_in_flight(self):
-        logger.info('Running check_in_flight...')
+        logger.debug('Running check_in_flight...')
         launches = Launch.objects.filter(status__id=6)
 
         logger.debug('Found %d launches in flight - checking state.', len(launches))
@@ -94,7 +94,7 @@ class LaunchEventTracker:
             notification.save()
 
     def check_one_minute(self, time_threshold_1_minute):
-        logger.info('Running check_one_minute...')
+        logger.debug('Running check_one_minute...')
         launches = Launch.objects.filter(net__lte=time_threshold_1_minute,
                                          net__gte=dtime.datetime.now(tz=pytz.utc))
 
@@ -121,7 +121,7 @@ class LaunchEventTracker:
             notification.save()
 
     def check_ten_minute(self, time_threshold_10_minute, time_threshold_1_minute):
-        logger.info('Running check_ten_minute...')
+        logger.debug('Running check_ten_minute...')
         launches = Launch.objects.filter(net__lte=time_threshold_10_minute,
                                          net__gte=time_threshold_1_minute)
 
@@ -148,7 +148,7 @@ class LaunchEventTracker:
             notification.save()
 
     def check_twenty_four_hour(self, time_threshold_1_hour, time_threshold_24_hour):
-        logger.info('Running check_twenty_four_hour...')
+        logger.debug('Running check_twenty_four_hour...')
         launches = Launch.objects.filter(net__lte=time_threshold_24_hour,
                                          net__gte=time_threshold_1_hour)
 
@@ -175,7 +175,7 @@ class LaunchEventTracker:
             notification.save()
 
     def check_one_hour(self, time_threshold_10_minute, time_threshold_1_hour):
-        logger.info('Running check_one_hour...')
+        logger.debug('Running check_one_hour...')
         launches = Launch.objects.filter(net__lte=time_threshold_1_hour,
                                          net__gte=time_threshold_10_minute)
 
@@ -202,7 +202,7 @@ class LaunchEventTracker:
             notification.save()
 
     def check_this_week(self, time_threshold_1_week, time_threshold_24_hour):
-        logger.info('Running check_this_week...')
+        logger.debug('Running check_this_week...')
         launches = Launch.objects.filter(net__lte=time_threshold_1_week,
                                          net__gte=time_threshold_24_hour)
 
