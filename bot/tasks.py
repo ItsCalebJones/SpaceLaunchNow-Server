@@ -1,4 +1,5 @@
 # coding=utf-8
+from api.management.commands.run_spacex_api_importer import import_core
 from api.models import Launch
 from datetime import datetime, timedelta
 
@@ -85,6 +86,8 @@ def get_previous_launches():
     logger.info('Task - Get Previous launches!')
     repository = LaunchRepository()
     repository.get_previous_launches()
+    logger.info('Task - Getting SpaceX cores!')
+    import_core()
 
 
 @periodic_task(run_every=(crontab(minute='*/1')), options={"expires": 60})

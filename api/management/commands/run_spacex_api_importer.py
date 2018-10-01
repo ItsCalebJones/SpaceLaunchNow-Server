@@ -1,6 +1,10 @@
 import requests
+from celery.utils.log import get_task_logger
+
 from api.models import *
 from django.core.management import BaseCommand
+
+logger = get_task_logger('bot')
 
 
 def import_core():
@@ -9,6 +13,7 @@ def import_core():
     for data in types:
         launcher, created = Launcher.objects.get_or_create(serial_number=data['core_serial'])
         if created:
+            logger.info('Created new core %s', data['core_serial'])
             launcher.serial_number = data['core_serial']
             launcher.status = data['status']
             if data['details'] is not None:
