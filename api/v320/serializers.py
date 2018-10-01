@@ -20,8 +20,9 @@ class LauncherConfigDetailSerializerForAgency(QueryFieldsMixin, serializers.Mode
         model = LauncherConfig
         fields = ('id', 'url', 'name', 'description', 'family', 'full_name',
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
-                  'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust',
-                  'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url',)
+                  'maiden_flight', 'launch_mass', 'leo_capacity', 'gto_capacity',
+                  'to_thrust', 'apogee', 'vehicle_range', 'image_url', 'info_url',
+                  'wiki_url',)
 
 
 class OrbiterDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
@@ -115,8 +116,9 @@ class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializ
         model = LauncherConfig
         fields = ('id', 'url', 'name', 'description', 'family', 'full_name', 'launch_service_provider',
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
-                  'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust',
-                  'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url',)
+                  'maiden_flight', 'launch_mass', 'leo_capacity', 'gto_capacity',
+                  'to_thrust', 'apogee', 'vehicle_range', 'image_url', 'info_url',
+                  'wiki_url',)
 
 
 class LauncherSerializer(QueryFieldsMixin, serializers.ModelSerializer):
@@ -235,7 +237,7 @@ class FirstStageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FirstStage
-        fields = ('type', 'reused', 'launcher', 'landing',)
+        fields = ('type', 'reused', 'launcher_flight_number', 'launcher', 'landing',)
 
 
 class SecondStageSerializer(serializers.ModelSerializer):
