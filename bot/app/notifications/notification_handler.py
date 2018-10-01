@@ -28,12 +28,12 @@ class NotificationHandler:
             contents = 'UPDATE: New launch attempt scheduled on %s at %s.' % (launch.net.strftime("%A, %B %d"),
                                                                               launch.net.strftime("%H:%M UTC"))
         elif notification_type == 'tenMinutes':
-            minutes = diff / 60
+            minutes = round(diff / 60)
             if minutes is 0:
                 minutes = "less then one"
             contents = 'Launch attempt from %s in %s minute(s).' % (launch.pad.location.name, minutes)
         elif notification_type == 'twentyFourHour':
-            hours = diff / 60 / 60
+            hours = round(diff / 60 / 60)
             if hours is 23:
                 hours = 24
             contents = 'Launch attempt from %s in %s hours.' % (launch.pad.location.name, hours)

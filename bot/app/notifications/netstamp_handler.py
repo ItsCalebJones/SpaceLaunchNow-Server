@@ -28,7 +28,7 @@ class NetstampHandler:
                                                                       date.strftime("%H:%M %Z (%d/%m)"))
 
         old_diff = notification.last_net_stamp - datetime.now(tz=pytz.utc)
-        if old_diff.total_seconds() < 172800:
+        if old_diff.total_seconds() < 604800:
             logger.info('Netstamp Changed and within window - sending mobile notification.')
             self.notification_handler.send_notification(launch, 'netstampChanged', notification)
         self.twitter_handler.send_to_twitter(launch, notification, 'netstampChanged')
