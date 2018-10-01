@@ -102,7 +102,7 @@ def launch_tracker():
     tracker.check_events()
 
 
-@periodic_task(run_every=(crontab(minute='*/1')), options={"expires": 60})
+@periodic_task(run_every=(crontab(minute='*/5')), options={"expires": 60})
 def get_recent_previous_launches():
     logger.info('Task - Get Recent Previous launches!')
     repository = LaunchRepository()
