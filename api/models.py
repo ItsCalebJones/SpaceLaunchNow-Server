@@ -214,7 +214,7 @@ class LauncherConfig(models.Model):
     length = models.FloatField(verbose_name="Length (m)", blank=True, null=True)
     diameter = models.FloatField(verbose_name="Max Diameter (m)", blank=True, null=True)
     fairing_diameter = models.FloatField(verbose_name="Max Fairing Diameter (m)", blank=True, null=True)
-    launch_mass = models.IntegerField(verbose_name="Mass at Launch (kg)", blank=True, null=True)
+    launch_mass = models.IntegerField(verbose_name="Mass at Launch (T)", blank=True, null=True)
     leo_capacity = models.IntegerField(verbose_name="LEO Capacity (kg)", blank=True, null=True)
     gto_capacity = models.IntegerField(verbose_name="GTO Capacity (kg)", blank=True, null=True)
     geo_capacity = models.IntegerField(verbose_name="GEO Capacity (kg)", blank=True, null=True)
