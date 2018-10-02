@@ -5,7 +5,7 @@
 {% load tz %}
 {% block extrahead %}
 <meta property="fb:app_id" content="746774215504127"/>
-<meta property="og:title" content="{{ launch.rocket.name }} - {{ launch.mission.name }}"/>
+<meta property="og:title" content="{{ launch.rocket.configuration.name }} - {{ launch.mission.name }}"/>
 <meta property="og:type" content="website"/>
 <meta property="og:description" content="{{ launch.mission.description }}"/>
 <meta property="og:url" content="https://spacelaunchnow.me/launch/{{ launch.slug }}/"/>
@@ -23,18 +23,6 @@
             google_ad_client: "ca-pub-9824528399164059",
             enable_page_level_ads: true
         });
-
-
-
-
-
-
-
-
-
-
-
-
 </script>
 {% endblock %}
 
