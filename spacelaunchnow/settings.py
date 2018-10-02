@@ -106,12 +106,12 @@ LOGGING = {
         },
         'bot.digest': {
             'handlers': ['django_default', 'digest', 'console'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': True,
         },
         'bot.notifications': {
             'handlers': ['django_default', 'notifications', 'console'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': True,
         }
     },

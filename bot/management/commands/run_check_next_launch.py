@@ -17,7 +17,7 @@ class Command(BaseCommand):
         logger.info('Check Next Launch')
         debug = options['debug']
         while debug is None:
-            response = raw_input('Continue in production mode? (Y/N) ')
+            response = input('Continue in production mode? (Y/N)')
             if response == "Y":
                 debug = False
             if response == "N":

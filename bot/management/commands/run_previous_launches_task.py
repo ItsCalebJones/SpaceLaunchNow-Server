@@ -11,5 +11,5 @@ class Command(BaseCommand):
     help = 'Run Get Previous Launches manually.'
 
     def handle(self, *args, **options):
-        logger.info('Get Previously Launches')
+        logger.info('Get Previous Launches')
         get_previous_launches()

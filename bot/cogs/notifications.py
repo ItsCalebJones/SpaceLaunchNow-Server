@@ -92,8 +92,8 @@ class Notifications:
                 notification.wasNotifiedSuccessDiscord = True
                 notification.save()
                 for channel in bot_channels:
-                    await self.bot.send_message(channel, embed=launch_to_small_embed(launch, "**Launch was a Success!**\n\n"))
-
+                    await self.bot.send_message(channel,
+                                                embed=launch_to_small_embed(launch, "**Launch was a Success!**\n\n"))
 
     async def check_in_flight(self, bot_channels):
         in_flight_launches = Launch.objects.filter(status__id=6)
@@ -103,8 +103,8 @@ class Notifications:
                 notification.wasNotifiedInFlightDiscord = True
                 notification.save()
                 for channel in bot_channels:
-                    await self.bot.send_message(channel, embed=launch_to_small_embed(launch, "**Launch is in flight!**\n\n"))
-
+                    await self.bot.send_message(channel,
+                                                embed=launch_to_small_embed(launch, "**Launch is in flight!**\n\n"))
 
     async def check_one_minute(self, bot_channels, time_threshold_1_minute):
         one_minute_launches = Launch.objects.filter(net__lte=time_threshold_1_minute,
@@ -128,7 +128,8 @@ class Notifications:
                 notification.save()
                 for channel in bot_channels:
                     await self.bot.send_message(channel,
-                                                embed=launch_to_small_embed(launch, "**Launching in ten minutes!**\n\n"))
+                                                embed=launch_to_small_embed(launch,
+                                                                            "**Launching in ten minutes!**\n\n"))
 
     async def check_twenty_four_hour(self, bot_channels, time_threshold_1_hour, time_threshold_24_hour):
         twenty_four_hour_launches = Launch.objects.filter(net__lte=time_threshold_24_hour,
@@ -139,7 +140,8 @@ class Notifications:
                 notification.wasNotifiedTwentyFourHourDiscord = True
                 notification.save()
                 for channel in bot_channels:
-                    await self.bot.send_message(channel, embed=launch_to_small_embed(launch, "**Launching in twenty four hours!**\n\n"))
+                    await self.bot.send_message(channel, embed=launch_to_small_embed(launch,
+                                                                                     "**Launching in twenty four hours!**\n\n"))
 
     async def check_one_hour(self, bot_channels, time_threshold_10_minute, time_threshold_1_hour):
         one_hour_launches = Launch.objects.filter(net__lte=time_threshold_1_hour,
@@ -150,7 +152,8 @@ class Notifications:
                 notification.wasNotifiedOneHourDiscord = True
                 notification.save()
                 for channel in bot_channels:
-                    await self.bot.send_message(channel, embed=launch_to_small_embed(launch, "**Launching in one hour!**\n\n"))
+                    await self.bot.send_message(channel,
+                                                embed=launch_to_small_embed(launch, "**Launching in one hour!**\n\n"))
 
     async def discord_launch_events(self):
         await self.bot.wait_until_ready()
