@@ -42,4 +42,5 @@ def get_mission_type(mission_type):
         12: 'Suborbital',
         13: 'Test Flight',
         14: 'Dedicated Rideshare',
+        15: 'Navigation',
     }[mission_type]

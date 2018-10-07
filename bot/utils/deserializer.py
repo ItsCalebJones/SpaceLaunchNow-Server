@@ -116,7 +116,9 @@ def get_mission(launch, data):
         mission.type = data['missions'][0]['type']
         mission.type_name = get_mission_type(data['missions'][0]['type'])
         if data['missions'][0]['type'] != 0:
-            mission_type = MissionType.objects.get(id=data['missions'][0]['type'])
+            mission_type, created = MissionType.objects.get_or_create(id=data['missions'][0]['type'])
+            if created:
+                mission_type.name = "Unknown"
             mission.mission_type = mission_type
         mission.description = data['missions'][0]['description']
         mission.save()
