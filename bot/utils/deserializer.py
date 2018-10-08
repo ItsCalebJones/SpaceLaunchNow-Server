@@ -2,6 +2,8 @@ import datetime
 import pytz
 import requests
 import tempfile
+import logging
+
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -10,6 +12,8 @@ from api.utils.utilities import get_mission_type, get_agency_type, get_launch_st
 from bot.models import *
 from configurations.models import *
 from django.core import files
+
+logger = logging.getLogger('bot.digest')
 
 
 def launch_json_to_model(data):
@@ -30,8 +34,11 @@ def launch_json_to_model(data):
     tbddate = data['tbddate']
 
     launch, created = Launch.objects.get_or_create(id=id)
-
     launch.name = name
+
+    if created:
+        logger.info("Created - %s (%s)" % (launch.name, launch.id))
+
     try:
         launch.status = LaunchStatus.objects.get(id=status)
     except ObjectDoesNotExist:

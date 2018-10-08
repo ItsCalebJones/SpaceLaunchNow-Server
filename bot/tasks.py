@@ -73,7 +73,7 @@ def check_for_orphaned_launches():
         for launch in launches:
             logger.debug("Stale - %s" % launch.name)
             if repository.is_launch_deleted(launch.id):
-                launch.delete()
+                logger.debug("Delete this launch!" % launch.name)
 
 
 @periodic_task(
@@ -88,7 +88,6 @@ def get_previous_launches():
     repository = LaunchRepository()
     repository.get_previous_launches()
     logger.info('Task - Getting SpaceX cores!')
-    import_core()
 
 
 @periodic_task(run_every=(crontab(minute='*/1')), options={"expires": 60})
