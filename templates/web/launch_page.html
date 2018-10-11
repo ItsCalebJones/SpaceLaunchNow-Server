@@ -80,7 +80,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-10 ml-auto mr-auto text-center">
-                    <h1 class="title text-white">{{ launch.rocket.configuration.name }}</h1>
+                    <h1 class="title text-white">{{ launch.name }}</h1>
                     <h2 class="text-white" style="margin: 5px;">{{ status }}</h2>
                     {% if launch.failreason %}
                     <body class="text-white">{{ launch.failreason }}</body>
@@ -91,8 +91,18 @@
                     <hr class="col-lg-8" style="background-color: white">
                     <h2 class="title text-white" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h2>
                     <h3 class="text-white" style="margin: -5px;" id="date">{{ launch.net }}</h3>
+                    <br>
+                    <a style="margin: 5px"
+                       href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+                        <img alt='Get it on Google Play' src="{% static 'img/button/google.png'%}" width="135" height="40"
+                             alt="">
+                    </a>
+                    <a style="margin: 5px"
+                       href='https://itunes.apple.com/us/app/space-launch-now/id1399715731'>
+                        <img alt='Get it on App Store' src="{% static 'img/button/apple.png'%}" width="135" height="40" alt="">
+                    </a>
                     <hr class="col-lg-8" style="background-color: white">
-                    <span class="badge badge-pill badge-primary">{{ launch.rocket.configuration.launch_agency.name }}</span>
+                    <span class="badge badge-pill badge-success">{{ launch.mission.orbit.name }}</span>
                     {% if launch.pad %}
                     <span class="badge badge-pill badge-primary">{{ launch.pad.name }}</span>
                     {% endif %}
@@ -132,7 +142,7 @@
             <div class="col-lg-12 text-center">
                 <div class="card-header card-header-danger text-center">
                     {% if launch.mission %}
-                    <h1 class="title text-white">{{ launch.mission.name }}</h1>
+                    <h1 class="title text-white">{{ launch.rocket.configuration.launch_agency.name }}</h1>
                     <h2 class="subheading text-white">{{ launch.rocket.configuration.name }}</h2>
                     {% else %}
                     <h1 class="title text-white">{{ launch.name }}</h1>
