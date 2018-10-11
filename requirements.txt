@@ -32,6 +32,7 @@ django-imagekit==4.0.2
 django-js-asset==1.1.0
 django-modelcluster==3.1
 django-mptt==0.9.0
+django-robots==3.1.0
 django-storages==1.6.6
 django-silk==3.0.1
 django-tagging==0.4.6

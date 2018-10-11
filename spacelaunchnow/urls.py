@@ -33,6 +33,7 @@ sitemaps = {
 }
 
 urlpatterns = [
+    url(r'^robots\.txt', include('robots.urls')),
     url(r'^sitemap\.xml/$', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
     url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
     url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS

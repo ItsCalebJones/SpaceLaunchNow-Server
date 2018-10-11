@@ -145,6 +145,7 @@ INSTALLED_APPS = [
     'tagging',
     'zinnia',
     'collectfast',
+    'robots',
     # 'silk',
 ]
 
