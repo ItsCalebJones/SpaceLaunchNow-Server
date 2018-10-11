@@ -16,9 +16,11 @@ Including another URLconf
 
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.contrib.sitemaps.views import sitemap
 from django.views.generic import TemplateView
 
 import web
+from api.sitemaps import LaunchSitemap
 from api.v320.router import api_urlpatterns as api_v320
 from api.v310.router import api_urlpatterns as api_v310
 from api.v300.router import api_urlpatterns as api_v300
@@ -26,7 +28,12 @@ from api.v200.router import api_urlpatterns as api_v2
 from api.v1.router import api_urlpatterns as api_v1
 from web import views as landing_views
 
+sitemaps = {
+    'posts': LaunchSitemap
+}
+
 urlpatterns = [
+    url(r'^sitemap\.xml/$', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
     url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
     url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
     url(r'^admin/', include(admin.site.urls)),

@@ -83,7 +83,7 @@
                     <h1 class="title text-white">{{ launch.rocket.configuration.name }}</h1>
                     <h2 class="text-white" style="margin: 5px;">{{ status }}</h2>
                     {% if launch.failreason %}
-                    <span class="badge badge-pill badge-danger">{{ launch.failreason }}</span>
+                    <body class="text-white">{{ launch.failreason }}</body>
                     {% endif %}
                     {% if launch.holdreason %}
                     <span class="badge badge-pill badge-warning">{{ launch.holdreason }}</span>
