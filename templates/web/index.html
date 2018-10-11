@@ -2,9 +2,12 @@
 {% load staticfiles %}
 
 {% block extrahead %}
+<title>Space Launch Now</title>
+<meta name="title" content="Space Launch Now">
 <meta property="fb:app_id" content="746774215504127"/>
 <meta property="og:title" content="Space Launch Now"/>
 <meta property="og:type" content="website"/>
+<meta name="description" content="Meet Space Launch Now the best resource for keeping up to date on all of your favorite spaceflight missions from around the world.">
 <meta property="og:description"
       content="Meet Space Launch Now the best resource for keeping up to date on all of your favorite spaceflight missions from around the world."/>
 <meta property="og:url" content="https://spacelaunchnow.me/"/>
@@ -87,8 +90,8 @@
 <div class="col-lg-10 ml-auto mr-auto mx-auto text-center">
     <div class="main card text-center">
         <div class="card-header card-header-danger text-center">
-            <h1 class="title">{{ launch.name }}</h1>
-            <h2 class="title">{{ launch.pad.location.name }}</h2>
+            <h2 class="title">{{ launch.name }}</h2>
+            <h3 class="title">{{ launch.pad.location.name }}</h3>
         </div>
         <br>
         <div class="row">
@@ -99,10 +102,10 @@
                         <img src="{{ launch.rocket.configuration.launch_agency.logo_url.url }}"
                              alt="Circle Image"
                              class="img-fluid mx-auto"
-                             style="max-width: 45%;">
+                             style="max-width: 75%;max-height: 400px;">
                         {% else %}
-                        <h1 class="title text-center"
-                            style="margin-left: 100px; margin-right:100px;">{{ launch.rocket.configuration.launch_agency.name }}</h1>
+                        <h2 class="title text-center"
+                            style="margin-left: 100px; margin-right:100px;">{{ launch.rocket.configuration.launch_agency.name }}</h2>
                         {% endif %}
                     </div>
                 </div>

@@ -4,9 +4,12 @@
 {% load embed_video_tags %}
 {% load tz %}
 {% block extrahead %}
+<title>{{ launch.name }}</title>
+<meta name="title" content="{{ launch.name }}">
 <meta property="fb:app_id" content="746774215504127"/>
-<meta property="og:title" content="{{ launch.rocket.configuration.name }} - {{ launch.mission.name }}"/>
+<meta property="og:title" content="{{ launch.name }}"/>
 <meta property="og:type" content="website"/>
+<meta name="description" content="{{ launch.mission.description }}"/>
 <meta property="og:description" content="{{ launch.mission.description }}"/>
 <meta property="og:url" content="https://spacelaunchnow.me/launch/{{ launch.slug }}/"/>
 {% if launch.rocket.configuration.image_url %}
@@ -16,6 +19,7 @@
 <meta property="og:image:width" content="3000"/>
 <meta property="og:image:height" content="2000"/>
 {% endif %}
+<meta name="robots" content="index, follow" />
 
 <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <script>
@@ -142,11 +146,11 @@
             <div class="col-lg-12 text-center">
                 <div class="card-header card-header-danger text-center">
                     {% if launch.mission %}
-                    <h1 class="title text-white">{{ launch.rocket.configuration.launch_agency.name }}</h1>
-                    <h2 class="subheading text-white">{{ launch.rocket.configuration.name }}</h2>
+                    <h2 class="title text-white">{{ launch.rocket.configuration.launch_agency.name }}</h2>
+                    <h3 class="subheading text-white">{{ launch.rocket.configuration.name }}</h3>
                     {% else %}
-                    <h1 class="title text-white">{{ launch.name }}</h1>
-                    <h2 class="subheading text-white">{{ launch.rocket.configuration.name }}</h2>
+                    <h2 class="title text-white">{{ launch.name }}</h2>
+                    <h3 class="subheading text-white">{{ launch.rocket.configuration.name }}</h3>
                     {% endif %}
 
                 </div>
@@ -162,9 +166,9 @@
                              class="img-fluid mx-auto"
                              style="max-width: 75%;max-height: 400px;">
                         {% else %}
-                        <h1 class="title text-center"
-                            style="margin-left: 100px; margin-right:100px;">{{ launch.rocket.configuration.launch_agency.name }}</h1>
-                        <h2 class="subheading text-center">({{ launch.rocket.configuration.launch_agency.abbrev }})</h2>
+                        <h2 class="title text-center"
+                            style="margin-left: 100px; margin-right:100px;">{{ launch.rocket.configuration.launch_agency.name }}</h2>
+                        <h3 class="subheading text-center">({{ launch.rocket.configuration.launch_agency.abbrev }})</h3>
                         {% endif %}
                     </div>
                 </div>
