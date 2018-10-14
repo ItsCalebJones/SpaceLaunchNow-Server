@@ -17,3 +17,4 @@ class NotificationAdmin(admin.ModelAdmin):
 @admin.register(models.DailyDigestRecord)
 class DailyDigestRecordAdmin(admin.ModelAdmin):
     list_display = ('id', 'timestamp', 'messages', 'count', 'data')
+
