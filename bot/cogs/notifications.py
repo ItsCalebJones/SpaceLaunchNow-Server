@@ -1,12 +1,10 @@
 import datetime
-
 import asyncio
 from discord.ext import commands
 
 from api.models import Launch
 from bot.cogs.launches import launch_to_small_embed
 from bot.models import DiscordChannel, Notification
-
 
 class Notifications:
     def __init__(self, bot):
@@ -162,6 +160,7 @@ class Notifications:
         for channel in channels:
             bot_channels.append(self.bot.get_channel(id=channel.channel_id))
         while not self.bot.is_closed:
+            print(bot_channels)
             time_threshold_24_hour = datetime.datetime.now() + datetime.timedelta(hours=24)
             time_threshold_1_hour = datetime.datetime.now() + datetime.timedelta(hours=1)
             time_threshold_10_minute = datetime.datetime.now() + datetime.timedelta(minutes=10)
@@ -180,7 +179,7 @@ class Notifications:
 
             await self.check_success(bot_channels, time_threshold_past_two_days, time_threshold_24_hour)
 
-            await asyncio.sleep(5)
+            await asyncio.sleep(10)
 
 
 def setup(bot):
