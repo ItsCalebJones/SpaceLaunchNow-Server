@@ -17,3 +17,8 @@ class NotificationAdmin(admin.ModelAdmin):
 @admin.register(models.DailyDigestRecord)
 class DailyDigestRecordAdmin(admin.ModelAdmin):
     list_display = ('id', 'timestamp', 'messages', 'count', 'data')
+
+
+@admin.register(models.DiscordChannel)
+class DiscordBotAdmin(admin.ModelAdmin):
+    list_display = ('name', 'channel_id', 'server_id')
