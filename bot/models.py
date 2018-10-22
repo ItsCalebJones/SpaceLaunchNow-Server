@@ -86,3 +86,19 @@ class DiscordChannel(models.Model):
     class Meta:
         verbose_name = "Channel"
         verbose_name_plural = "Channels"
+
+
+class TwitterUser(models.Model):
+    user_id = models.BigIntegerField( null=False, primary_key=True)
+    screen_name = models.CharField(max_length=50, null=False)
+    name = models.CharField(max_length=50, null=False)
+    profile_image = models.CharField(max_length=50, null=False)
+    subscribers = models.ManyToManyField(DiscordChannel)
+
+
+class Tweet(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    user = models.ForeignKey(TwitterUser, related_name='tweets')
+    text = models.CharField(max_length=280, null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)
