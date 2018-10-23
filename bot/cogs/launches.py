@@ -90,22 +90,21 @@ def launch_to_large_embed(launch):
     vehicle_text = "\n\n**Launch Vehicle**\n" + launch.rocket.configuration.full_name
     vehicle_text = vehicle_text + "\nLEO: %s (kg) - GTO: %s (kg)" % (launch.rocket.configuration.leo_capacity,
                                                                      launch.rocket.configuration.gto_capacity)
-    if len(launch.launcher.all()) > 0:
-        launchers = launch.launcher.all()
+    if len(launch.rocket.firststage.all()) > 0:
+        launchers = launch.rocket.firststage.all()
         vehicle_text = vehicle_text + "\n"
         for vehicle in launchers:
             vehicle_text = vehicle_text + "-------------------\n"
             vehicle_text = vehicle_text + "Serial Number: %s \n" % vehicle.serial_number
             vehicle_text = vehicle_text + "Flight Proven: %s \n" % vehicle.flight_proven
+            if vehicle.landing.landing_type is not None:
+                vehicle_text = vehicle_text + "%s landing at %s" % (vehicle.landing.landing_type.name, vehicle.landing.landing_location.name)
         vehicle_text = vehicle_text + "-------------------"
     mission_text = "\n\n**Mission**\n%s\nOrbit: %s\nType: %s" % (launch.mission, launch.mission.orbit,
                                                                  launch.mission.mission_type)
     location = "\n\n**Launch and Landing Location**\n%s\n%s" % (launch.pad.name.split(',', 1)[0],
                                                                 launch.pad.location.name)
-    landing = ""
-    if launch.landing_type is not None:
-        landing = "\n\n%s landing at %s" % (launch.landing_type.name, launch.landing_location.name)
-    description_text = status + launch.mission.description + vehicle_text + mission_text + location + landing + lsp_text + follow_along
+    description_text = status + launch.mission.description + vehicle_text + mission_text + location + lsp_text + follow_along
     embed = discord.Embed(type="rich", title=title,
                           description=description_text,
                           color=color,
