@@ -36,7 +36,7 @@ class Notifications:
 
     @commands.command(pass_context=True)
     async def removeNotificationChannel(self, context):
-        """Remove current channel to launch notifications.
+        """Remove current channel from launch notifications.
 
         Note: Only server owners can perform this action.
 
@@ -59,7 +59,7 @@ class Notifications:
 
     @commands.command(pass_context=True)
     async def listNotificationChannels(self, context):
-        """List all channels to subscribed to launch notifications.
+        """List all channels that are subscribed to launch notifications.
 
         Note: Only server owners can perform this action.
 

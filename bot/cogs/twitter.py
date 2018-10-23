@@ -24,6 +24,13 @@ class Social:
 
     @commands.command(name='addSpaceLaunchNews', pass_context=True)
     async def add_default_twitter_list(self, context):
+        """Subscribe to the Space Launch New's Twitter list.
+
+        https://twitter.com/SpaceLaunchNow/lists/space-launch-news
+
+        Usage: ?addSpaceLaunchNews
+
+        """
         try:
             owner_id = context.message.server.owner_id
             author_id = context.message.author.id
@@ -40,6 +47,11 @@ class Social:
 
     @commands.command(name='removeSpaceLaunchNews', pass_context=True)
     async def remove_default_twitter_list(self, context):
+        """Unsubscribe from the Space Launch New's Twitter list.
+
+        Usage: ?removeSpaceLaunchNews
+
+        """
         try:
             owner_id = context.message.server.owner_id
             author_id = context.message.author.id
@@ -56,6 +68,13 @@ class Social:
 
     @commands.command(name='addTwitterUsername', pass_context=True)
     async def add_twitter_username(self, context, user):
+        """Add a custom Twitter account for notifications.
+
+        Usage: ?addTwitterUsername "<username>"
+
+        Examples: ?addTwitterUsername "elonmusk"
+
+        """
         user = user.lower()
         if ' ' in user:
             await self.bot.send_message(context.message.channel, "No spaces in Twitter usernames!")
@@ -78,6 +97,13 @@ class Social:
 
     @commands.command(name='removeTwitterUsername', pass_context=True)
     async def remove_username(self, context, user):
+        """Remove custom Twitter account from notifications.
+
+        Usage: ?removeTwitterUsername "<username>"
+
+        Examples: ?removeTwitterUsername "elonmusk"
+
+        """
         user = user.lower()
         if ' ' in user:
             await self.bot.send_message(context.message.channel, "No spaces in Twitter usernames!")
@@ -97,6 +123,11 @@ class Social:
 
     @commands.command(name='listTwitterSubscriptions', pass_context=True)
     async def list_username(self, context):
+        """List custom Twitter accounts.
+
+        Usage: ?listTwitterSubscriptions
+
+        """
         try:
             owner_id = context.message.server.owner_id
             author_id = context.message.author.id
@@ -117,7 +148,7 @@ class Social:
             users = None
         if users is None or len(users) == 0:
             await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id),
-                                        "Not subscribed to any custom Twitter accounts in this channel." % screen_name)
+                                        "Not subscribed to any custom Twitter accounts in this channel.")
         else:
             description = 'Custom Twitter Subscriptions: \n\n'
             for user in users:
