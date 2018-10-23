@@ -22,3 +22,18 @@ class DailyDigestRecordAdmin(admin.ModelAdmin):
 @admin.register(models.DiscordChannel)
 class DiscordBotAdmin(admin.ModelAdmin):
     list_display = ('name', 'channel_id', 'server_id')
+
+
+@admin.register(models.TwitterNotificationChannel)
+class TwitterNotificationChannel(admin.ModelAdmin):
+    list_display = ('name', 'channel_id', 'server_id')
+
+
+@admin.register(models.TwitterUser)
+class TwitterUserAdmin(admin.ModelAdmin):
+    list_display = ('user_id', 'screen_name', 'name',)
+
+
+@admin.register(models.Tweet)
+class TweetAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'text', 'created_at', 'read')

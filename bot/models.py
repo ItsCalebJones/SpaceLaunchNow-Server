@@ -88,12 +88,23 @@ class DiscordChannel(models.Model):
         verbose_name_plural = "Channels"
 
 
+class TwitterNotificationChannel(DiscordChannel):
+    default_subscribed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return '{} ({})'.format(self.name, self.channel_id)
+
+    class Meta:
+        verbose_name = "Twitter Notification Channel"
+        verbose_name_plural = "Twitter Notification Channels"
+
+
 class TwitterUser(models.Model):
     user_id = models.BigIntegerField( null=False, primary_key=True)
     screen_name = models.CharField(max_length=50, null=False)
     name = models.CharField(max_length=50, null=False)
     profile_image = models.CharField(max_length=50, null=False)
-    subscribers = models.ManyToManyField(DiscordChannel)
+    subscribers = models.ManyToManyField(TwitterNotificationChannel)
 
 
 class Tweet(models.Model):
@@ -102,3 +113,4 @@ class Tweet(models.Model):
     text = models.CharField(max_length=280, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
+    default = models.BooleanField(default=False)
