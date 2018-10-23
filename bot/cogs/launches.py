@@ -13,12 +13,12 @@ class Launches:
         self.bot = bot
 
     @commands.command(pass_context=True)
-    async def search(self, context, search: str = None, detailed: bool = False):
+    async def search(self, context, search: str = None, detailed: str = False):
         """Search for next upcoming space launch.
 
-        Usage: ?search "<search term>" True (optional detailed response)
+        Usage: ?search "<search term>" detailed (optional detailed response)
 
-        Examples: ?search "SpaceX" True | ?search "ULA"
+        Examples: ?search "SpaceX" detailed | ?search "ULA"
 
         """
         if search:
@@ -35,7 +35,7 @@ class Launches:
         else:
             await self.bot.say("Try again like this: ?search \"ULA\"")
             return
-        if detailed is True:
+        if detailed == 'detailed':
             embed = launch_to_large_embed(launch)
         else:
             embed = launch_to_small_embed(launch)
@@ -45,9 +45,9 @@ class Launches:
     async def next(self, context, detailed: str = None):
         """Retrieve the next upcoming space launch.
 
-        Usage: ?next True (optional detailed response)
+        Usage: ?next detailed (optional detailed response)
 
-        Examples: ?next True | ?next
+        Examples: ?next detailed | ?next
 
         """
         launch = Launch.objects.filter(net__gte=datetime.datetime.now()).order_by('net').first()
@@ -94,12 +94,26 @@ def launch_to_large_embed(launch):
         launchers = launch.rocket.firststage.all()
         vehicle_text = vehicle_text + "\n"
         for vehicle in launchers:
-            vehicle_text = vehicle_text + "-------------------\n"
-            vehicle_text = vehicle_text + "Serial Number: %s \n" % vehicle.serial_number
-            vehicle_text = vehicle_text + "Flight Proven: %s \n" % vehicle.flight_proven
-            if vehicle.landing.landing_type is not None:
-                vehicle_text = vehicle_text + "%s landing at %s" % (vehicle.landing.landing_type.name, vehicle.landing.landing_location.name)
-        vehicle_text = vehicle_text + "-------------------"
+            vehicle_text = vehicle_text + "\n"
+            if vehicle.type is not None:
+                vehicle_text = vehicle_text + "Type: %s \n" % vehicle.type.name
+            if vehicle.launcher is not None:
+                vehicle_text = vehicle_text + "Serial Number: %s \n" % vehicle.launcher.serial_number
+                vehicle_text = vehicle_text + "Flight Proven: %s \n" % vehicle.launcher.flight_proven
+                if vehicle.launcher.flight_proven:
+                    vehicle_text = vehicle_text + "Flight Number: %s \n" % vehicle.launcher_flight_number
+            if vehicle.landing is not None:
+                if vehicle.landing.landing_type is not None and vehicle.landing.landing_location is not None:
+                    if vehicle.landing.success is None:
+                        vehicle_text = vehicle_text + "%s landing at %s\n" % (vehicle.landing.landing_type.abbrev,
+                                                                            vehicle.landing.landing_location.name)
+                    elif vehicle.landing.success:
+                        vehicle_text = vehicle_text + "%s landed at %s\n" % (vehicle.landing.landing_type.abbrev,
+                                                                           vehicle.landing.landing_location.name)
+                    elif not vehicle.landing.success:
+                        vehicle_text = vehicle_text + "%s failed to land at %s\n" % (vehicle.landing.landing_type.abbrev,
+                                                                                   vehicle.landing.landing_location.name)
+        vehicle_text = vehicle_text + "\n"
     mission_text = "\n\n**Mission**\n%s\nOrbit: %s\nType: %s" % (launch.mission, launch.mission.orbit,
                                                                  launch.mission.mission_type)
     location = "\n\n**Launch and Landing Location**\n%s\n%s" % (launch.pad.name.split(',', 1)[0],
@@ -126,7 +140,10 @@ def launch_to_small_embed(launch, notification=""):
                    "spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)," \
                    " [iOS](https://itunes.apple.com/us/app/space-launch-now/id1399715731)" \
                    " or [on the web](https://spacelaunchnow.me/next)"
-    description_text = notification + status + launch.mission.description + follow_along
+    mission_description = ""
+    if launch.mission is not None and launch.mission.description is not None:
+        mission_description = launch.mission.description
+    description_text = notification + status + mission_description + follow_along
     embed = discord.Embed(type="rich", title=title,
                           description=description_text,
                           color=color,
