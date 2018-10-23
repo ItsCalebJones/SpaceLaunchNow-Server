@@ -115,7 +115,7 @@ def launch_to_large_embed(launch):
         embed.set_thumbnail(url=launch.rocket.configuration.image_url.url)
     else:
         embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
-    embed.set_footer(text=launch.net.strftime("NET: %A %B %e, %Y %m:%M %Z"))
+    embed.set_footer(text=launch.net.strftime("NET: %A %B %e, %Y %H:%M %Z"))
     return embed
 
 
@@ -140,7 +140,7 @@ def launch_to_small_embed(launch, notification=""):
             embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
     else:
         embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
-    embed.set_footer(text=launch.net.strftime("NET: %A %B %e, %Y %m %M %Z "))
+    embed.set_footer(text=launch.net.strftime("NET: %A %B %e, %Y %H:%M %Z "))
     return embed
 
 

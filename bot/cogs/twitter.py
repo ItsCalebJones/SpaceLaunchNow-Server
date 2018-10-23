@@ -3,6 +3,7 @@ import datetime
 import time
 
 import discord
+import pytz
 from discord import Colour
 from discord.ext import commands
 from twitter import Twitter, OAuth, TwitterError
@@ -44,6 +45,9 @@ class Social:
             channel.default_subscribed = True
             channel.save()
             await self.bot.send_message(context.message.channel, "Subscribed to Space Launch News!")
+        else:
+            await self.bot.send_message(context.message.channel,
+                                        "Only server owners can add Twitter notification channels.")
 
     @commands.command(name='removeSpaceLaunchNews', pass_context=True)
     async def remove_default_twitter_list(self, context):
@@ -65,6 +69,9 @@ class Social:
             channel.default_subscribed = False
             channel.save()
             await self.bot.send_message(context.message.channel, "Un-subscribed from Space Launch News!")
+        else:
+            await self.bot.send_message(context.message.channel,
+                                        "Only server owners can add Twitter notification channels.")
 
     @commands.command(name='addTwitterUsername', pass_context=True)
     async def add_twitter_username(self, context, user):
@@ -120,6 +127,9 @@ class Social:
                                                                                 server_id=context.message.server.id)
             channel.save()
             await self.remove_notification(screen_name=user, discord_channel=channel)
+        else:
+            await self.bot.send_message(context.message.channel,
+                                        "Only server owners can add Twitter notification channels.")
 
     @commands.command(name='listTwitterSubscriptions', pass_context=True)
     async def list_username(self, context):
@@ -177,7 +187,7 @@ class Social:
         while not self.bot.is_closed:
             await self.get_new_tweets()
             await self.check_tweets()
-            await asyncio.sleep(5)
+            await asyncio.sleep(60)
 
     async def add_notification(self, screen_name, discord_channel):
         tweets = None
@@ -201,8 +211,8 @@ class Social:
         userObj.save()
 
         for tweet in tweets:
-            tweetObj, created = Tweet.objects.get_or_create(id=tweet['id'], user=userObj)
-            tweetObj.text = tweet['text']
+            tweetObj, created = Tweet.objects.get_or_create(id=tweet['id'], user=userObj, tweet_mode='extended')
+            tweetObj.text = tweet['full_text']
             tweetObj.read = True
             tweetObj.created_at = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(tweet['created_at'],
                                                                                    '%a %b %d %H:%M:%S +0000 %Y'))
@@ -213,36 +223,40 @@ class Social:
                                     embed=tweet_to_embed(userObj.tweets.order_by('created_at').first()))
 
     async def get_new_tweets(self):
-        for tweet in twitter.lists.statuses(owner_screen_name="spacelaunchnow", slug="space-launch-news"):
+        tweets = twitter.lists.statuses(owner_screen_name="spacelaunchnow", slug="space-launch-news", tweet_mode='extended')
+        for tweet in tweets:
             userObj, created = TwitterUser.objects.get_or_create(user_id=tweet['user']['id'])
-            if created:
-                break
+            userObj.screen_name = tweet['user']['screen_name']
+            userObj.name = tweet['user']['name']
+            userObj.profile_image = tweet['user']['profile_image_url_https']
+            userObj.save()
             tweetObj, created = Tweet.objects.get_or_create(id=tweet['id'], user=userObj)
             if created:
-                tweetObj.text = tweet['text']
+                tweetObj.text = tweet['full_text']
                 tweetObj.default = True
                 tweetObj.created_at = time.strftime('%Y-%m-%d %H:%M:%S',
                                                     time.strptime(tweet['created_at'],
                                                                   '%a %b %d %H:%M:%S +0000 %Y'))
+                tweetObj.user = userObj
                 tweetObj.save()
         users = TwitterUser.objects.all()
         for user in users:
-            tweets = twitter.statuses.user_timeline(screen_name=user.screen_name, count=5)
+            tweets = twitter.statuses.user_timeline(screen_name=user.screen_name, count=5, tweet_mode='extended')
             for tweet in tweets:
                 userObj, created = TwitterUser.objects.get_or_create(user_id=tweet['user']['id'])
                 if created:
                     break
                 tweetObj, created = Tweet.objects.get_or_create(id=tweet['id'], user=userObj)
                 if created:
-                    tweetObj.text = tweet['text']
+                    tweetObj.text = tweet['full_text']
                     tweetObj.created_at = time.strftime('%Y-%m-%d %H:%M:%S',
                                                         time.strptime(tweet['created_at'],
                                                                       '%a %b %d %H:%M:%S +0000 %Y'))
                     tweetObj.save()
 
     async def check_tweets(self):
-        created_window = datetime.datetime.now() - datetime.timedelta(minutes=30)
-        tweets = Tweet.objects.filter(read=False).filter(created_at__gte=created_window)
+        created_window = datetime.datetime.now(tz=pytz.utc) - datetime.timedelta(minutes=5)
+        tweets = Tweet.objects.filter(read=False).filter(created_at__gte=created_window).order_by('created_at')
         for tweet in tweets:
             tweet.read = True
             tweet.save()
@@ -254,8 +268,6 @@ class Social:
                                                 embed=tweet_to_embed(tweet))
 
 
-
-
 def tweet_to_embed(tweet):
     title = "New Tweet by %s" % tweet.user.name
     color = Colour.green()
@@ -265,30 +277,8 @@ def tweet_to_embed(tweet):
                           url="https://twitter.com/statuses/%s" % tweet.id)
     embed.add_field(name="Twitter Link", value="https://twitter.com/statuses/%s" % tweet.id, inline=True)
     embed.set_thumbnail(url=tweet.user.profile_image)
-    embed.set_footer(text=tweet.created_at.strftime("%A %B %e, %Y %m:%M %Z"))
+    embed.set_footer(text=tweet.created_at.strftime("%A %B %e, %Y %H:%M %Z"))
     return embed
-
-
-# def purge_notifs(screen_name):
-# user_exists = (TwitterNotification.objects.filter(twitter_user=screen_name)
-#                .exists())
-# if not user_exists:
-#     Tweet.objects.filter(user=screen_name).delete()
-
-
-# def add_tweets():
-# users = (TwitterNotification.objects.order_by()
-#          .values_list('twitter_user', flat=True).distinct())
-#
-# for user in users:
-#     t = api.GetUserTimeline(screen_name=user, count=5)
-#     tweets = [i.AsDict() for i in t]
-#     for tweet in tweets:
-#         Tweet.objects.get_or_create(id=tweet['id'],
-#                                     user=tweet['user']['screen_name'],
-#                                     text=tweet['text'])
-
-
 
 
 def setup(bot):
