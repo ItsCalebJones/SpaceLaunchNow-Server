@@ -105,6 +105,8 @@ class TwitterUser(models.Model):
     name = models.CharField(max_length=50, null=False)
     profile_image = models.CharField(max_length=50, null=False)
     subscribers = models.ManyToManyField(TwitterNotificationChannel)
+    custom = models.BooleanField(default=False)
+    default = models.BooleanField(default=False)
 
 
 class Tweet(models.Model):

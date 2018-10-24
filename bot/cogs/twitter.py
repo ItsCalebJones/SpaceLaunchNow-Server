@@ -204,6 +204,8 @@ class Social:
             await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id),
                                         'Already subscribed to %s in this channel.' % screen_name)
             return
+        if not userObj.default:
+            userObj.custom = True
         userObj.screen_name = tweets[0]['user']['screen_name']
         userObj.name = tweets[0]['user']['name']
         userObj.profile_image = tweets[0]['user']['profile_image_url_https']
@@ -226,6 +228,7 @@ class Social:
         tweets = twitter.lists.statuses(owner_screen_name="spacelaunchnow", slug="space-launch-news", tweet_mode='extended')
         for tweet in tweets:
             userObj, created = TwitterUser.objects.get_or_create(user_id=tweet['user']['id'])
+            userObj.default = True
             userObj.screen_name = tweet['user']['screen_name']
             userObj.name = tweet['user']['name']
             userObj.profile_image = tweet['user']['profile_image_url_https']
@@ -239,7 +242,7 @@ class Social:
                                                                   '%a %b %d %H:%M:%S +0000 %Y'))
                 tweetObj.user = userObj
                 tweetObj.save()
-        users = TwitterUser.objects.all()
+        users = TwitterUser.objects.all(custom=True)
         for user in users:
             tweets = twitter.statuses.user_timeline(screen_name=user.screen_name, count=5, tweet_mode='extended')
             for tweet in tweets:
@@ -260,8 +263,9 @@ class Social:
         for tweet in tweets:
             tweet.read = True
             tweet.save()
-            for channel in tweet.user.subscribers.all():
-                await self.bot.send_message(self.bot.get_channel(id=channel.channel_id), embed=tweet_to_embed(tweet))
+            if tweet.user.subscribers is not None:
+                for channel in tweet.user.subscribers.all():
+                    await self.bot.send_message(self.bot.get_channel(id=channel.channel_id), embed=tweet_to_embed(tweet))
             if tweet.default:
                 for channel in TwitterNotificationChannel.objects.filter(default_subscribed=True):
                     await self.bot.send_message(self.bot.get_channel(id=channel.channel_id),

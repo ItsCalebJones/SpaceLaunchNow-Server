@@ -106,13 +106,14 @@ def launch_to_large_embed(launch):
                 if vehicle.landing.landing_type is not None and vehicle.landing.landing_location is not None:
                     if vehicle.landing.success is None:
                         vehicle_text = vehicle_text + "%s landing at %s\n" % (vehicle.landing.landing_type.abbrev,
-                                                                            vehicle.landing.landing_location.name)
+                                                                              vehicle.landing.landing_location.name)
                     elif vehicle.landing.success:
                         vehicle_text = vehicle_text + "%s landed at %s\n" % (vehicle.landing.landing_type.abbrev,
-                                                                           vehicle.landing.landing_location.name)
+                                                                             vehicle.landing.landing_location.name)
                     elif not vehicle.landing.success:
-                        vehicle_text = vehicle_text + "%s failed to land at %s\n" % (vehicle.landing.landing_type.abbrev,
-                                                                                   vehicle.landing.landing_location.name)
+                        vehicle_text = vehicle_text + "%s failed to land at %s\n" % (
+                            vehicle.landing.landing_type.abbrev,
+                            vehicle.landing.landing_location.name)
         vehicle_text = vehicle_text + "\n"
     mission_text = "\n\n**Mission**\n%s\nOrbit: %s\nType: %s" % (launch.mission, launch.mission.orbit,
                                                                  launch.mission.mission_type)
