@@ -185,6 +185,7 @@ class Social:
     async def twitter_events(self):
         await self.bot.wait_until_ready()
         while not self.bot.is_closed:
+            print("Tik Tok.")
             await self.get_new_tweets()
             await self.check_tweets()
             await asyncio.sleep(60)
@@ -216,8 +217,10 @@ class Social:
             tweetObj, created = Tweet.objects.get_or_create(id=tweet['id'], user=userObj, tweet_mode='extended')
             tweetObj.text = tweet['full_text']
             tweetObj.read = True
-            tweetObj.created_at = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(tweet['created_at'],
-                                                                                   '%a %b %d %H:%M:%S +0000 %Y'))
+            time_struct = time.strptime(tweet['created_at'], "%a %b %d %H:%M:%S +0000 %Y")
+            date = datetime.datetime.fromtimestamp(time.mktime(time_struct))
+            date = date.replace(tzinfo=pytz.utc)
+            tweetObj.created_at = date
             tweetObj.user = userObj
             tweetObj.save()
         await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id),
@@ -225,8 +228,12 @@ class Social:
                                     embed=tweet_to_embed(userObj.tweets.order_by('created_at').first()))
 
     async def get_new_tweets(self):
-        tweets = twitter.lists.statuses(owner_screen_name="spacelaunchnow", slug="space-launch-news", tweet_mode='extended')
+        tweets = twitter.lists.statuses(owner_screen_name="spacelaunchnow",
+                                        slug="space-launch-news",
+                                        tweet_mode='extended')
+        print("Saving %s tweets!" % len(tweets))
         for tweet in tweets:
+
             userObj, created = TwitterUser.objects.get_or_create(user_id=tweet['user']['id'])
             userObj.default = True
             userObj.screen_name = tweet['user']['screen_name']
@@ -235,14 +242,16 @@ class Social:
             userObj.save()
             tweetObj, created = Tweet.objects.get_or_create(id=tweet['id'], user=userObj)
             if created:
+                print("Found new tweet - %s" % tweet)
                 tweetObj.text = tweet['full_text']
                 tweetObj.default = True
-                tweetObj.created_at = time.strftime('%Y-%m-%d %H:%M:%S',
-                                                    time.strptime(tweet['created_at'],
-                                                                  '%a %b %d %H:%M:%S +0000 %Y'))
+                time_struct = time.strptime(tweet['created_at'], "%a %b %d %H:%M:%S +0000 %Y")
+                date = datetime.datetime.fromtimestamp(time.mktime(time_struct))
+                date = date.replace(tzinfo=pytz.utc)
+                tweetObj.created_at = date
                 tweetObj.user = userObj
                 tweetObj.save()
-        users = TwitterUser.objects.all(custom=True)
+        users = TwitterUser.objects.filter(custom=True)
         for user in users:
             tweets = twitter.statuses.user_timeline(screen_name=user.screen_name, count=5, tweet_mode='extended')
             for tweet in tweets:
@@ -252,22 +261,29 @@ class Social:
                 tweetObj, created = Tweet.objects.get_or_create(id=tweet['id'], user=userObj)
                 if created:
                     tweetObj.text = tweet['full_text']
-                    tweetObj.created_at = time.strftime('%Y-%m-%d %H:%M:%S',
-                                                        time.strptime(tweet['created_at'],
-                                                                      '%a %b %d %H:%M:%S +0000 %Y'))
+                    time_struct = time.strptime(tweet['created_at'], "%a %b %d %H:%M:%S +0000 %Y")
+                    date = datetime.datetime.fromtimestamp(time.mktime(time_struct))
+                    date = date.replace(tzinfo=pytz.utc)
+                    tweetObj.created_at = date
                     tweetObj.save()
 
     async def check_tweets(self):
+        print("Checking tweets.")
         created_window = datetime.datetime.now(tz=pytz.utc) - datetime.timedelta(minutes=5)
         tweets = Tweet.objects.filter(read=False).filter(created_at__gte=created_window).order_by('created_at')
+        print("Reading %s tweets!" % len(tweets))
         for tweet in tweets:
             tweet.read = True
             tweet.save()
             if tweet.user.subscribers is not None:
+                print("Reading tweet - %s" % tweet.text)
                 for channel in tweet.user.subscribers.all():
+                    print("Sending to %s" % channel.name)
                     await self.bot.send_message(self.bot.get_channel(id=channel.channel_id), embed=tweet_to_embed(tweet))
             if tweet.default:
+                print("Default! Tweet - %s" % tweet.text)
                 for channel in TwitterNotificationChannel.objects.filter(default_subscribed=True):
+                    print("Sending to %s" % channel.name)
                     await self.bot.send_message(self.bot.get_channel(id=channel.channel_id),
                                                 embed=tweet_to_embed(tweet))
 
