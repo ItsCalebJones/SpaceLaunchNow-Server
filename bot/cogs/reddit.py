@@ -4,7 +4,7 @@ import datetime
 import discord
 import prawcore
 import pytz
-from newspaper import Article
+from goose3 import Goose
 from discord import Colour
 from discord.ext import commands
 from prawcore import Redirect
@@ -54,10 +54,12 @@ def submission_to_embed(submission):
                 print(e)
         else:
             try:
-                article = Article(submission.link)
-                article.download()
-                article.parse()
-                text = (article.text[:400] + '...') if len(article.text) > 400 else article.text
+                g = Goose()
+                article = g.extract(url=submission.link)
+                if article.meta_description is not None and article.meta_description is not "":
+                    text = article.meta_description
+                else:
+                    text = (article.text[:300] + '...') if len(article.text) > 300 else article.text
                 embed.add_field(name="Link Summary", value=text, inline=True)
             except Exception as e:
                 print(e)

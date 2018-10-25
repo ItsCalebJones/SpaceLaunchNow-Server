@@ -159,3 +159,26 @@ class RedditSubmission(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
+class NewsNotificationChannel(models.Model):
+    id = models.AutoField(primary_key=True)
+    channel_id = models.CharField(max_length=4000, unique=True)
+    server_id = models.CharField(max_length=4000, unique=False)
+    name = models.CharField(max_length=4000)
+    subscribed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return '{} ({})'.format(self.name, self.channel_id)
+
+    class Meta:
+        verbose_name = "News Notification Channel"
+        verbose_name_plural = "News Notification Channels"
+
+
+class NewsItem(models.Model):
+    id = models.CharField(primary_key=True, max_length=255)
+    title = models.CharField(max_length=255, null=False)
+    link = models.CharField(max_length=255, null=True, blank=True, default="")
+    featured_image = models.CharField(max_length=255, null=True, blank=True, default="")
+    news_site = models.CharField(max_length=255, null=True, blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)
