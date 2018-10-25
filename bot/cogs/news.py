@@ -100,7 +100,7 @@ class News:
         while not self.bot.is_closed:
             await self.get_news()
             await self.check_news()
-            await asyncio.sleep(600)
+            await asyncio.sleep(60)
 
     async def get_news(self):
         print("Getting News Articles")

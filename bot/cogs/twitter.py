@@ -192,7 +192,7 @@ class Twitter:
             print("Tik Tok.")
             await self.get_new_tweets()
             await self.check_tweets()
-            await asyncio.sleep(60)
+            await asyncio.sleep(30)
 
     async def add_notification(self, screen_name, discord_channel):
         tweets = None
