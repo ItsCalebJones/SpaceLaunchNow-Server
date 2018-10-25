@@ -1,6 +1,14 @@
 import asyncio
 
+import datetime
+import discord
+import prawcore
+import pytz
+from newspaper import Article
+from discord import Colour
 from discord.ext import commands
+from prawcore import Redirect
+from twitter import Twitter, OAuth
 
 from bot.models import SubredditNotificationChannel, Subreddit, RedditSubmission
 
@@ -11,9 +19,56 @@ from bot.utils import config
 user_agent = 'Space Launch News Bot'
 reddit = praw.Reddit(client_id=config.REDDIT_CLIENT_ID,
                      client_secret=config.REDDIT_CLIENT_SECRET,
-                     user_agent=config.REDDIT_AGENT,)
+                     user_agent=config.REDDIT_AGENT, )
 
 reddit.read_only = True
+
+twitter = Twitter(auth=OAuth(consumer_key=config.keys['CONSUMER_KEY'],
+                             consumer_secret=config.keys['CONSUMER_SECRET'],
+                             token=config.keys['TOKEN_KEY'],
+                             token_secret=config.keys['TOKEN_SECRET']))
+
+
+def submission_to_embed(submission):
+    title = "New Hot Submission in /r/%s by /u/%s" % (submission.subreddit.name, submission.user)
+    color = Colour.red()
+    description = "[%s](https://reddit.com%s)" % (submission.title, submission.permalink)
+
+    embed = discord.Embed(type="rich", title=title,
+                          color=color,
+                          description=description)
+
+    if submission.selftext:
+        text = (submission.text[:400] + '...') if len(submission.text) > 400 else submission.text
+        embed.add_field(name="Self Text", value=text, inline=True)
+    else:
+        if "twitter.com" in submission.link:
+            try:
+                link = submission.link.split('/')[-1]
+                link = link.split('?')[0]
+                status = twitter.statuses.show(id=link)
+
+                embed.add_field(name="Tweet", value="\"%s\" - %s" % (status['text'], status['user']['name']),
+                                inline=True)
+            except Exception as e:
+                print(e)
+        else:
+            try:
+                article = Article(submission.link)
+                article.download()
+                article.parse()
+                text = (article.text[:400] + '...') if len(article.text) > 400 else article.text
+                embed.add_field(name="Link Summary", value=text, inline=True)
+            except Exception as e:
+                print(e)
+
+    if submission.thumbnail is not None and submission.thumbnail != 'self' and submission.thumbnail != 'default':
+        embed.set_thumbnail(url=submission.thumbnail)
+    else:
+        embed.set_thumbnail(url="https://i.redd.it/rq36kl1xjxr01.png")
+    embed.add_field(name="Comments", value="https://reddit.com%s" % submission.permalink, inline=True)
+    embed.set_footer(text="Score: %s • Comments: %s" % (submission.score, submission.comments))
+    return embed
 
 
 class Reddit:
@@ -22,13 +77,13 @@ class Reddit:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name='addReddit', pass_context=True)
+    @commands.command(name='addSubreddit', pass_context=True)
     async def add_reddit(self, context, subreddit):
-        """Add a custom Twitter account for notifications.
+        """Add notifications for new subreddit posts.
 
-        Usage: ?addTwitterUsername "<username>"
+        Usage: ?addSubreddit "<subreddit>"
 
-        Examples: ?addTwitterUsername "elonmusk"
+        Examples: ?addSubreddit spacex
 
         """
         subreddit = subreddit.lower()
@@ -51,35 +106,107 @@ class Reddit:
             await self.bot.send_message(context.message.channel,
                                         "Only server owners can add Twitter notification channels.")
 
-    @commands.command(name='removeReddit', pass_context=True)
-    async def remove_reddit(self, ctx, reddit_user):
-        return
+    @commands.command(name='removeSubreddit', pass_context=True)
+    async def remove_reddit(self, context, subreddit):
+        """Remove notifications for new subreddit posts.
+
+        Usage: ?removeSubreddit "<subreddit>"
+
+        Examples: ?removeSubreddit spacex
+
+        """
+        subreddit = subreddit.lower()
+        if ' ' in subreddit:
+            await self.bot.send_message(context.message.channel, "No spaces in Subreddit names!")
+            return
+        try:
+            owner_id = context.message.server.owner_id
+            author_id = context.message.author.id
+        except:
+            await self.bot.send_message(context.message.channel, "Only able to run from a server channel.")
+            return
+        if owner_id == author_id:
+            channel, created = SubredditNotificationChannel.objects.get_or_create(name=context.message.channel.name,
+                                                                                  channel_id=context.message.channel.id,
+                                                                                  server_id=context.message.server.id)
+            channel.save()
+            await self.remove_subreddit(subreddit_name=subreddit, discord_channel=channel)
+        else:
+            await self.bot.send_message(context.message.channel,
+                                        "Only server owners can add Twitter notification channels.")
+
+    @commands.command(name='listSubreddits', pass_context=True)
+    async def list_username(self, context):
+        """List subscribed Sub-reddits.
+
+        Usage: ?listSubreddits
+
+        """
+        try:
+            owner_id = context.message.server.owner_id
+            author_id = context.message.author.id
+        except:
+            await self.bot.send_message(context.message.channel, "Only able to run from a server channel.")
+            return
+        if owner_id == author_id:
+            channel, created = SubredditNotificationChannel.objects.get_or_create(name=context.message.channel.name,
+                                                                                  channel_id=context.message.channel.id,
+                                                                                  server_id=context.message.server.id)
+            channel.save()
+            await self.list_subreddit(discord_channel=channel)
 
     async def reddit_events(self):
         await self.bot.wait_until_ready()
         while not self.bot.is_closed:
             await self.get_submissions()
             await self.check_submissions()
-            await asyncio.sleep(5)
+            await asyncio.sleep(600)
+
+    async def list_subreddit(self, discord_channel):
+        try:
+            subreddits = Subreddit.objects.filter(subscribers__channel_id=discord_channel.channel_id)
+        except Subreddit.DoesNotExist:
+            subreddits = None
+        if subreddits is None or len(subreddits) == 0:
+            await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id),
+                                        "Not subscribed to any subreddits in this channel.")
+        else:
+            description = 'Subreddit Subscriptions: \n\n'
+            for subreddit in subreddits:
+                description += '/r/%s\n' % subreddit.name
+            await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id), description)
 
     async def get_submissions(self):
         print("Getting submissions.")
-        subreddits = Subreddit.objects.all()
+        subreddits = Subreddit.objects.filter(initialized=True)
 
         for subreddit in subreddits:
-            for submission in reddit.subreddit(subreddit.name).hot(limit=10):
-                subreddit, created = Subreddit.objects.get_or_create(id=submission.subreddit.id)
-                subreddit.save()
-                submissionObj, created = RedditSubmission.objects.get_or_create(id=submission.id, subreddit=subreddit)
-                if created:
-                    submissionObj.subreddit = subreddit
-                    submissionObj.user = submission.author.name
-                    if submission.is_self:
-                        submissionObj.text = submission.selftext
-                    else:
-                        submissionObj.link = submission.url
-                    submissionObj.permalink = submission.permalink
-                    submissionObj.save()
+            await self.get_posts_by_subreddit(subreddit)
+
+    async def get_posts_by_subreddit(self, subreddit, mark_read=False):
+        for submission in reddit.subreddit(subreddit.name).hot(limit=10):
+            subreddit, created = Subreddit.objects.get_or_create(id=submission.subreddit.id)
+            subreddit.save()
+            submissionObj, created = RedditSubmission.objects.get_or_create(id=submission.id, subreddit=subreddit)
+            if created:
+                if mark_read:
+                    submissionObj.read = True
+                submissionObj.subreddit = subreddit
+                submissionObj.created_at = datetime.datetime.utcfromtimestamp(submission.created_utc).replace(
+                    tzinfo=pytz.utc)
+                submissionObj.user = submission.author.name
+                submissionObj.score = submission.score
+                submissionObj.comments = len(submission.comments)
+                submissionObj.title = submission.title
+                submissionObj.thumbnail = submission.thumbnail
+
+                if submission.is_self:
+                    submissionObj.selftext = True
+                    submissionObj.text = submission.selftext
+                else:
+                    submissionObj.link = submission.url
+                submissionObj.permalink = submission.permalink
+                submissionObj.save()
 
     async def check_submissions(self):
         print("Checking submissions.")
@@ -89,15 +216,58 @@ class Reddit:
             submission.save()
             if submission.subreddit.subscribers is not None:
                 for channel in submission.subreddit.subscribers.all():
-                    await self.bot.send_message(self.bot.get_channel(id=channel.channel_id), "Hello")
-                                                # embed=submission_to_embed(submission))
+                    try:
+                        embed = submission_to_embed(submission)
+                        await self.bot.send_message(self.bot.get_channel(id=channel.channel_id), embed=embed)
+                    except Exception as e:
+                        print(e)
 
     async def add_subreddit(self, subreddit_name, discord_channel):
-        for submission in reddit.subreddit(subreddit_name).hot(limit=1):
-            subreddit, created = Subreddit.objects.get_or_create(id=submission.subreddit.id)
-            subreddit.name = submission.subreddit.display_name
-            subreddit.subscribers.add(discord_channel)
-            subreddit.save()
+        try:
+            for submission in reddit.subreddit(subreddit_name).hot(limit=1):
+                subreddit, created = Subreddit.objects.get_or_create(id=submission.subreddit.id)
+                subreddit.name = submission.subreddit.display_name
+                if subreddit.subscribers is not None and len(
+                        subreddit.subscribers.all().filter(channel_id=discord_channel.channel_id)) > 0:
+                    await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id),
+                                                'Already subscribed to /r/%s in this channel.' % subreddit_name)
+                    return
+                else:
+                    await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id),
+                                                "Checking...one sec!")
+                    subreddit.subscribers.add(discord_channel)
+                    subreddit.save()
+                    await self.get_posts_by_subreddit(subreddit, mark_read=True)
+                    subreddit.initialized = True
+                    subreddit.save()
+                    await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id),
+                                                "Subscribed to /r/%s in this channel.\n\n"
+                                                "Here's the latest Hot post:\n" % subreddit_name,
+                                                embed=submission_to_embed(
+                                                    subreddit.submissions.order_by('created_at').first()))
+        except Redirect as e:
+            await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id), "Subreddit doesn't exist.")
+
+    async def remove_subreddit(self, subreddit_name, discord_channel):
+        try:
+            subreddit = Subreddit.objects.get(name=subreddit_name)
+        except Subreddit.DoesNotExist:
+            subreddit = None
+        if subreddit is None:
+            await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id),
+                                        "Not subscribed to /r/%s in this channel." % subreddit_name)
+        else:
+            if len(Subreddit.objects.filter(subscribers__in=[discord_channel])) > 0:
+                subreddit.subscribers.remove(discord_channel)
+                if len(subreddit.subscribers.all()) == 0:
+                    subreddit.delete()
+                else:
+                    subreddit.save()
+                await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id),
+                                            "Unsubscribed from /r/%s in this channel." % subreddit_name)
+            else:
+                await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id),
+                                            "Not subscribed to /r/%s in this channel." % subreddit_name)
 
 
 def setup(bot):

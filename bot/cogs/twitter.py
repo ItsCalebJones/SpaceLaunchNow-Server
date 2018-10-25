@@ -174,13 +174,17 @@ class Twitter:
             await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id),
                                         "Not subscribed to %s in this channel." % screen_name)
         else:
-            user.subscribers.remove(discord_channel)
-            if len(user.subscribers.all()) == 0:
-                user.delete()
+            if len(TwitterUser.objects.filter(subscribers__in=[discord_channel])) > 0:
+                user.subscribers.remove(discord_channel)
+                if len(user.subscribers.all()) == 0:
+                    user.delete()
+                else:
+                    user.save()
+                await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id),
+                                            "Unsubscribed from %s in this channel." % screen_name)
             else:
-                user.save()
-            await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id),
-                                        "Unsubscribed from %s in this channel." % screen_name)
+                await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id),
+                                            "Not subscribed to %s in this channel." % screen_name)
 
     async def twitter_events(self):
         await self.bot.wait_until_ready()

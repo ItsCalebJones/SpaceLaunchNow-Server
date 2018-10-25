@@ -139,6 +139,7 @@ class SubredditNotificationChannel(models.Model):
 class Subreddit(models.Model):
     id = models.CharField(primary_key=True, max_length=255)
     name = models.CharField(max_length=255, null=False)
+    initialized = models.BooleanField(default=False)
     subscribers = models.ManyToManyField(SubredditNotificationChannel)
 
 
@@ -147,6 +148,10 @@ class RedditSubmission(models.Model):
     subreddit = models.ForeignKey(Subreddit, related_name='submissions')
     user = models.CharField(max_length=255, null=False)
     selftext = models.BooleanField(default=False)
+    score = models.IntegerField(default=0)
+    comments = models.IntegerField(default=0)
+    title = models.CharField(max_length=255, null=True, blank=True, default="")
+    thumbnail = models.CharField(max_length=255, null=True, blank=True, default="")
     text = models.CharField(max_length=40000, null=True, blank=True, default="")
     link = models.CharField(max_length=255, null=True, blank=True, default="")
     permalink = models.CharField(max_length=255, null=False)
