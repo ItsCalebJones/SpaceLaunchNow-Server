@@ -26,8 +26,8 @@ description = """
 Hello! I am a bot written by Koun7erfit with a backbone from R Danny.
 For the nitty gritty, checkout the project GitHub: {0}
 """.format(github_url)
-
-initial_extensions = ["bot.cogs.notifications", "bot.cogs.launches", "bot.cogs.about", "bot.cogs.twitter"]
+# "bot.cogs.notifications", "bot.cogs.launches", "bot.cogs.about", "bot.cogs.twitter",
+initial_extensions = ["bot.cogs.reddit"]
 
 discord_logger = logging.getLogger('discord')
 discord_logger.setLevel(logging.CRITICAL)

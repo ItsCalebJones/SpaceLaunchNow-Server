@@ -17,7 +17,7 @@ twitter = Twitter(auth=OAuth(consumer_key=config.keys['CONSUMER_KEY'],
                              token_secret=config.keys['TOKEN_SECRET']))
 
 
-class Social:
+class Twitter:
     bot = None
 
     def __init__(self, bot):
@@ -286,6 +286,6 @@ def tweet_to_embed(tweet):
 
 
 def setup(bot):
-    social = Social(bot)
-    bot.add_cog(social)
-    bot.loop.create_task(social.twitter_events())
+    twitter_bot = Twitter(bot)
+    bot.add_cog(twitter_bot)
+    bot.loop.create_task(twitter_bot.twitter_events())

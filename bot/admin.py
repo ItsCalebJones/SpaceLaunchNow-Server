@@ -25,7 +25,7 @@ class DiscordBotAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.TwitterNotificationChannel)
-class TwitterNotificationChannel(admin.ModelAdmin):
+class TwitterNotificationChannelAdmin(admin.ModelAdmin):
     list_display = ('name', 'channel_id', 'server_id')
 
 
@@ -37,3 +37,18 @@ class TwitterUserAdmin(admin.ModelAdmin):
 @admin.register(models.Tweet)
 class TweetAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'text', 'created_at', 'read')
+
+
+@admin.register(models.SubredditNotificationChannel)
+class SubredditNotificationChannelAdmin(admin.ModelAdmin):
+    list_display = ('name', 'channel_id', 'server_id')
+
+
+@admin.register(models.Subreddit)
+class SubredditAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+
+
+@admin.register(models.RedditSubmission)
+class RedditSubmissionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'text', 'link', 'read', 'created_at')

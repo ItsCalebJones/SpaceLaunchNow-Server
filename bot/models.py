@@ -88,7 +88,11 @@ class DiscordChannel(models.Model):
         verbose_name_plural = "Channels"
 
 
-class TwitterNotificationChannel(DiscordChannel):
+class TwitterNotificationChannel(models.Model):
+    id = models.AutoField(primary_key=True)
+    channel_id = models.CharField(max_length=4000, unique=True)
+    server_id = models.CharField(max_length=4000, unique=False)
+    name = models.CharField(max_length=4000)
     default_subscribed = models.BooleanField(default=False)
 
     def __str__(self):
@@ -116,3 +120,37 @@ class Tweet(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
     default = models.BooleanField(default=False)
+
+
+class SubredditNotificationChannel(models.Model):
+    id = models.AutoField(primary_key=True)
+    channel_id = models.CharField(max_length=4000, unique=True)
+    server_id = models.CharField(max_length=4000, unique=False)
+    name = models.CharField(max_length=4000)
+
+    def __str__(self):
+        return '{} ({})'.format(self.name, self.channel_id)
+
+    class Meta:
+        verbose_name = "Reddit Notification Channel"
+        verbose_name_plural = "Reddit Notification Channels"
+
+
+class Subreddit(models.Model):
+    id = models.CharField(primary_key=True, max_length=255)
+    name = models.CharField(max_length=255, null=False)
+    subscribers = models.ManyToManyField(SubredditNotificationChannel)
+
+
+class RedditSubmission(models.Model):
+    id = models.CharField(primary_key=True, max_length=255)
+    subreddit = models.ForeignKey(Subreddit, related_name='submissions')
+    user = models.CharField(max_length=255, null=False)
+    selftext = models.BooleanField(default=False)
+    text = models.CharField(max_length=40000, null=True, blank=True, default="")
+    link = models.CharField(max_length=255, null=True, blank=True, default="")
+    permalink = models.CharField(max_length=255, null=False)
+    read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
