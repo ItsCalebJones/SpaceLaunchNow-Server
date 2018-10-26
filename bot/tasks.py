@@ -12,6 +12,9 @@ from bot.app.instagram import InstagramBot
 from bot.app.notifications.launch_event_tracker import LaunchEventTracker
 from bot.app.repository.launches_repository import LaunchRepository
 from bot.app.sync import LaunchLibrarySync
+from bot.cogs.news import get_news
+from bot.cogs.reddit import get_submissions
+from bot.cogs.twitter import get_new_tweets
 from bot.models import Notification
 from bot.utils.util import custom_strftime
 from spacelaunchnow import config
@@ -95,6 +98,24 @@ def check_next_launch(debug=config.DEBUG):
     logger.info('Task - Running Notifications...')
     notification = LaunchLibrarySync(debug=debug)
     notification.check_next_launch()
+
+
+@periodic_task(run_every=(crontab(minute='*/1')), options={"expires": 60})
+def get_tweets_task():
+    logger.info('Task - Running get_new_tweets...')
+    get_new_tweets()
+
+
+@periodic_task(run_every=(crontab(minute='*/5')), options={"expires": 120})
+def get_news_task():
+    logger.info('Task - Running get_news...')
+    get_news()
+
+
+@periodic_task(run_every=(crontab(minute='*/30')), options={"expires": 120})
+def get_reddit_submissions_task():
+    logger.info('Task - Running get_reddit_submissions...')
+    get_submissions()
 
 
 @periodic_task(run_every=timedelta(seconds=5), options={"expires": 60})

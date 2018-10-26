@@ -73,6 +73,40 @@ def submission_to_embed(submission):
     return embed
 
 
+def get_submissions():
+    print("Getting submissions.")
+    subreddits = Subreddit.objects.filter(initialized=True)
+
+    for subreddit in subreddits:
+        get_posts_by_subreddit(subreddit)
+
+
+def get_posts_by_subreddit(subreddit, mark_read=False):
+    for submission in reddit.subreddit(subreddit.name).hot(limit=10):
+        subreddit, created = Subreddit.objects.get_or_create(id=submission.subreddit.id)
+        subreddit.save()
+        submissionObj, created = RedditSubmission.objects.get_or_create(id=submission.id, subreddit=subreddit)
+        if created:
+            if mark_read:
+                submissionObj.read = True
+            submissionObj.subreddit = subreddit
+            submissionObj.created_at = datetime.datetime.utcfromtimestamp(submission.created_utc).replace(
+                tzinfo=pytz.utc)
+            submissionObj.user = submission.author.name
+            submissionObj.score = submission.score
+            submissionObj.comments = len(submission.comments)
+            submissionObj.title = submission.title
+            submissionObj.thumbnail = submission.thumbnail
+
+            if submission.is_self:
+                submissionObj.selftext = True
+                submissionObj.text = submission.selftext
+            else:
+                submissionObj.link = submission.url
+            submissionObj.permalink = submission.permalink
+            submissionObj.save()
+
+
 class Reddit:
     bot = None
 
@@ -160,9 +194,11 @@ class Reddit:
     async def reddit_events(self):
         await self.bot.wait_until_ready()
         while not self.bot.is_closed:
-            await self.get_submissions()
-            await self.check_submissions()
-            await asyncio.sleep(600)
+            try:
+                await self.check_submissions()
+            except Exception as e:
+                print(e)
+            await asyncio.sleep(5)
 
     async def list_subreddit(self, discord_channel):
         try:
@@ -177,38 +213,6 @@ class Reddit:
             for subreddit in subreddits:
                 description += '/r/%s\n' % subreddit.name
             await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id), description)
-
-    async def get_submissions(self):
-        print("Getting submissions.")
-        subreddits = Subreddit.objects.filter(initialized=True)
-
-        for subreddit in subreddits:
-            await self.get_posts_by_subreddit(subreddit)
-
-    async def get_posts_by_subreddit(self, subreddit, mark_read=False):
-        for submission in reddit.subreddit(subreddit.name).hot(limit=10):
-            subreddit, created = Subreddit.objects.get_or_create(id=submission.subreddit.id)
-            subreddit.save()
-            submissionObj, created = RedditSubmission.objects.get_or_create(id=submission.id, subreddit=subreddit)
-            if created:
-                if mark_read:
-                    submissionObj.read = True
-                submissionObj.subreddit = subreddit
-                submissionObj.created_at = datetime.datetime.utcfromtimestamp(submission.created_utc).replace(
-                    tzinfo=pytz.utc)
-                submissionObj.user = submission.author.name
-                submissionObj.score = submission.score
-                submissionObj.comments = len(submission.comments)
-                submissionObj.title = submission.title
-                submissionObj.thumbnail = submission.thumbnail
-
-                if submission.is_self:
-                    submissionObj.selftext = True
-                    submissionObj.text = submission.selftext
-                else:
-                    submissionObj.link = submission.url
-                submissionObj.permalink = submission.permalink
-                submissionObj.save()
 
     async def check_submissions(self):
         print("Checking submissions.")
@@ -239,7 +243,7 @@ class Reddit:
                                                 "Checking...one sec!")
                     subreddit.subscribers.add(discord_channel)
                     subreddit.save()
-                    await self.get_posts_by_subreddit(subreddit, mark_read=True)
+                    get_posts_by_subreddit(subreddit, mark_read=True)
                     subreddit.initialized = True
                     subreddit.save()
                     await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id),

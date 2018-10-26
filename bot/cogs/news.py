@@ -35,6 +35,24 @@ def news_to_embed(news):
     return embed
 
 
+def get_news():
+    print("Getting News Articles")
+    response = requests.get(url='https://api.spaceflightnewsapi.net/articles?limit=5')
+    if response.status_code == 200:
+        for item in response.json():
+            news, created = NewsItem.objects.get_or_create(id=item['_id'])
+            if created:
+                news.title = item['title']
+                news.link = item['url']
+                news.featured_image = item['featured_image']
+                news.news_site = item['news_site_long']
+                news.created_at = datetime.utcfromtimestamp(item['date_published']).replace(tzinfo=pytz.utc)
+                news.read = False
+                print("Added News (%s) - %s - %s" % (news.id, news.title, news.news_site))
+                news.save()
+    return
+
+
 class News:
     bot = None
 
@@ -98,26 +116,11 @@ class News:
     async def news_events(self):
         await self.bot.wait_until_ready()
         while not self.bot.is_closed:
-            await self.get_news()
-            await self.check_news()
-            await asyncio.sleep(60)
-
-    async def get_news(self):
-        print("Getting News Articles")
-        response = requests.get(url='https://api.spaceflightnewsapi.net/articles?limit=5')
-        if response.status_code == 200:
-            for item in response.json():
-                news, created = NewsItem.objects.get_or_create(id=item['_id'])
-                if created:
-                    news.title = item['title']
-                    news.link = item['url']
-                    news.featured_image = item['featured_image']
-                    news.news_site = item['news_site_long']
-                    news.created_at = datetime.utcfromtimestamp(item['date_published']).replace(tzinfo=pytz.utc)
-                    news.read = False
-                    print("Added News (%s) - %s - %s" % (news.id, news.title, news.news_site))
-                    news.save()
-        return
+            try:
+                await self.check_news()
+            except Exception as e:
+                print(e)
+            await asyncio.sleep(5)
 
     async def check_news(self):
         print("Checking News Articles")
