@@ -46,3 +46,8 @@ class EventImageStorage(S3Boto3Storage):
 
     location = settings.EVENT_IMAGE_LOCATION
     file_overwrite = True
+
+class AppImageStorage(S3Boto3Storage):
+
+    location = settings.APP_IMAGE_LOCATION
+    file_overwrite = True
