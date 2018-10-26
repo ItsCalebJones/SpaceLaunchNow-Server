@@ -243,8 +243,9 @@ class Reddit:
                                                 "Checking...one sec!")
                     subreddit.subscribers.add(discord_channel)
                     subreddit.save()
-                    get_posts_by_subreddit(subreddit, mark_read=True)
-                    subreddit.initialized = True
+                    if not subreddit.initialized:
+                        get_posts_by_subreddit(subreddit, mark_read=True)
+                        subreddit.initialized = True
                     subreddit.save()
                     await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id),
                                                 "Subscribed to /r/%s in this channel.\n\n"
