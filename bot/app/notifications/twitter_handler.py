@@ -52,6 +52,12 @@ def get_twitter_message(launch, notification_type):
             return '%s currently in flight from %s. \n %s' % (launch.name, launch.pad.location.name,
                                                               'https://spacelaunchnow.me/launch/%s' %
                                                               launch.slug)
+    elif notification_type == 'oneMinute':
+        return '%s launching from %s by %s in less than one minute. \n %s' % (launch.name, launch.pad.location.name,
+                                                                              launch.rocket.configuration.launch_agency
+                                                                              .name,
+                                                                              'https://spacelaunchnow.me/launch/%s' %
+                                                                              launch.slug)
     else:
         return '%s launching from %s by %s in %s. \n %s' % (launch.name, launch.pad.location.name,
                                                             launch.rocket.configuration.launch_agency.name,

@@ -125,6 +125,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django.contrib.sitemaps',
     'rest_framework',
     'api.apps.ApiConfig',
     'rest_framework_docs',
@@ -144,6 +145,7 @@ INSTALLED_APPS = [
     'tagging',
     'zinnia',
     'collectfast',
+    'robots',
     # 'silk',
 ]
 

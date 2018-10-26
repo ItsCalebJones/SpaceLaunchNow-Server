@@ -114,7 +114,7 @@ class LaunchEventTracker:
             if not notification.wasNotifiedOneMinuteTwitter:
                 logger.info('Sending Twitter notification for %s!', launch.name)
                 self.twitter.send_to_twitter(launch=launch,
-                                             notification_type='tenMinutes',
+                                             notification_type='oneMinute',
                                              notification=notification)
                 notification.wasNotifiedOneMinuteTwitter = True
 

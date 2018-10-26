@@ -1,12 +1,12 @@
 import datetime
-
 import asyncio
+
+import pytz
 from discord.ext import commands
 
 from api.models import Launch
 from bot.cogs.launches import launch_to_small_embed
 from bot.models import DiscordChannel, Notification
-
 
 class Notifications:
     def __init__(self, bot):
@@ -38,7 +38,7 @@ class Notifications:
 
     @commands.command(pass_context=True)
     async def removeNotificationChannel(self, context):
-        """Remove current channel to launch notifications.
+        """Remove current channel from launch notifications.
 
         Note: Only server owners can perform this action.
 
@@ -61,7 +61,7 @@ class Notifications:
 
     @commands.command(pass_context=True)
     async def listNotificationChannels(self, context):
-        """List all channels to subscribed to launch notifications.
+        """List all channels that are subscribed to launch notifications.
 
         Note: Only server owners can perform this action.
 
@@ -108,7 +108,7 @@ class Notifications:
 
     async def check_one_minute(self, bot_channels, time_threshold_1_minute):
         one_minute_launches = Launch.objects.filter(net__lte=time_threshold_1_minute,
-                                                    net__gte=datetime.datetime.now())
+                                                    net__gte=datetime.datetime.now(tz=pytz.utc))
         for launch in one_minute_launches:
             notification, created = Notification.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedOneMinutesDiscord:
@@ -162,11 +162,12 @@ class Notifications:
         for channel in channels:
             bot_channels.append(self.bot.get_channel(id=channel.channel_id))
         while not self.bot.is_closed:
-            time_threshold_24_hour = datetime.datetime.now() + datetime.timedelta(hours=24)
-            time_threshold_1_hour = datetime.datetime.now() + datetime.timedelta(hours=1)
-            time_threshold_10_minute = datetime.datetime.now() + datetime.timedelta(minutes=10)
-            time_threshold_1_minute = datetime.datetime.now() + datetime.timedelta(minutes=1)
-            time_threshold_past_two_days = datetime.datetime.now() - datetime.timedelta(days=2)
+            print("Checking launch windows!")
+            time_threshold_24_hour = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(hours=24)
+            time_threshold_1_hour = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(hours=1)
+            time_threshold_10_minute = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(minutes=10)
+            time_threshold_1_minute = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(minutes=1)
+            time_threshold_past_two_days = datetime.datetime.now(tz=pytz.utc) - datetime.timedelta(days=2)
 
             await self.check_twenty_four_hour(bot_channels, time_threshold_1_hour, time_threshold_24_hour)
 
@@ -180,7 +181,7 @@ class Notifications:
 
             await self.check_success(bot_channels, time_threshold_past_two_days, time_threshold_24_hour)
 
-            await asyncio.sleep(5)
+            await asyncio.sleep(10)
 
 
 def setup(bot):
