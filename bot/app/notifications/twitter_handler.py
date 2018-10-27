@@ -44,7 +44,7 @@ def get_twitter_message(launch, notification_type):
                                                                           launch.slug)
     elif notification_type == 'failure':
         if launch.mission is not None and launch.mission.orbit is not None and launch.mission.orbit.name is not None:
-            return '%s failed to launch successfully from %s to %s by %s. \n %s' % (
+            return '%s failed to launch from %s to %s by %s. \n %s' % (
                 launch.name, launch.pad.location.name,
                 launch.mission.orbit.name,
                 launch.rocket.configuration.
@@ -52,7 +52,7 @@ def get_twitter_message(launch, notification_type):
                 'https://spacelaunchnow.me/launch/%s' %
                 launch.slug)
         else:
-            return '%s failed to launch successfully from %s by %s. \n %s' % (launch.name, launch.pad.location.name,
+            return '%s failed to launch from %s by %s. \n %s' % (launch.name, launch.pad.location.name,
                                                                               launch.rocket.configuration.
                                                                               launch_agency.name,
                                                                               'https://spacelaunchnow.me/launch/%s' %
