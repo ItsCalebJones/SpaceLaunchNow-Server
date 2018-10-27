@@ -53,7 +53,7 @@ class LaunchEventTracker:
         for launch in launches:
             if launch.status.id == 3:
                 status = 'success'
-            elif launch.satus.id == 4:
+            elif launch.status.id == 4:
                 status = 'failure'
             elif launch.status.id == 7:
                 status = 'partial_failure'
