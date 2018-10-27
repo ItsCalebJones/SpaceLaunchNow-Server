@@ -13,3 +13,9 @@ class AppConfigAdmin(admin.ModelAdmin):
 class TranslatorAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">assignment</i>'
     list_display = ('id', 'name',)
+
+
+@admin.register(models.Language)
+class LanguageAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">assignment</i>'
+    list_display = ('id', 'name',)

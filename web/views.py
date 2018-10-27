@@ -14,6 +14,7 @@ from django import forms
 
 # Create your views here.
 from api.models import Agency, Launch
+from app.models import Translator
 
 
 def index(request):
@@ -90,6 +91,16 @@ def launches(request,):
         return render(request, 'web/launches.html', {'launches': _launches,
                                                      'query': query,
                                                      'previous_launches': previous_launches})
+    else:
+        raise Http404
+
+
+def translator_view(request,):
+    translators = Translator.objects.all()
+    previous_launches = Launch.objects.filter(net__lte=datetime.now()).order_by('-net')[:5]
+    if translators:
+        return render(request, 'web/translators.html', {'translators': translators,
+                                                        'previous_launches': previous_launches})
     else:
         raise Http404
 

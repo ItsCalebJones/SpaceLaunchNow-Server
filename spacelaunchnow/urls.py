@@ -52,6 +52,7 @@ urlpatterns = [
     url(r'^launch/(?P<id>\d+)/$', landing_views.launch_by_id, name='launch_by_id'),
     url(r'^launch/(?P<slug>[-\w]+)/$', landing_views.launch_by_slug, name='launch_by_slug'),
     url(r'^launch/$', landing_views.launches, name='launches'),
+    url(r'^translators/', landing_views.translator_view, name='translators'),
     url(r'^news/', include('zinnia.urls')),
     url(r'^comments/', include('django_comments.urls')),
     url(r'^app/privacy', TemplateView.as_view(template_name='web/app/privacy.html'), name='privacy'),
