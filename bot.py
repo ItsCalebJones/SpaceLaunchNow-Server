@@ -13,9 +13,6 @@ from discord.ext import commands
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "spacelaunchnow.settings")
 django.setup()
 
-from bot.cogs.launches import launch_to_small_embed
-from bot.models import Notification, DiscordChannel
-from api.models import Launch
 from spacelaunchnow import config
 
 debug_mode = config.SQUID_BOT_DEBUG_MODE
@@ -29,8 +26,7 @@ description = """
 Hello! I am a bot written by Koun7erfit with a backbone from R Danny.
 For the nitty gritty, checkout the project GitHub: {0}
 """.format(github_url)
-
-initial_extensions = ["bot.cogs.notifications", "bot.cogs.launches", "bot.cogs.about"]
+initial_extensions = ["bot.cogs.reddit", "bot.cogs.notifications", "bot.cogs.launches", "bot.cogs.about", "bot.cogs.twitter", "bot.cogs.news"]
 
 discord_logger = logging.getLogger('discord')
 discord_logger.setLevel(logging.CRITICAL)

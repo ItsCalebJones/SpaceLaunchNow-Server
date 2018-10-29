@@ -1,6 +1,9 @@
 import datetime
 import asyncio
+
+import pytz
 from discord.ext import commands
+from django.db.models import Q
 
 from api.models import Launch
 from bot.cogs.launches import launch_to_small_embed
@@ -36,7 +39,7 @@ class Notifications:
 
     @commands.command(pass_context=True)
     async def removeNotificationChannel(self, context):
-        """Remove current channel to launch notifications.
+        """Remove current channel from launch notifications.
 
         Note: Only server owners can perform this action.
 
@@ -59,7 +62,7 @@ class Notifications:
 
     @commands.command(pass_context=True)
     async def listNotificationChannels(self, context):
-        """List all channels to subscribed to launch notifications.
+        """List all channels that are subscribed to launch notifications.
 
         Note: Only server owners can perform this action.
 
@@ -81,7 +84,7 @@ class Notifications:
             await self.bot.send_message(context.message.channel, "Only server owners list notification channels.")
 
     async def check_success(self, bot_channels, time_threshold_past_two_days, time_threshold_24_hour):
-        recent_success_launches = Launch.objects.filter(status__id=3,
+        recent_success_launches = Launch.objects.filter(Q(status__id=3) | Q(status__id=4) | Q(status__id=7),
                                                         net__lte=time_threshold_24_hour,
                                                         net__gte=time_threshold_past_two_days)
         for launch in recent_success_launches:
@@ -91,7 +94,7 @@ class Notifications:
                 notification.save()
                 for channel in bot_channels:
                     await self.bot.send_message(channel,
-                                                embed=launch_to_small_embed(launch, "**Launch was a Success!**\n\n"))
+                                                embed=launch_to_small_embed(launch, "**Launch was a %s!**\n\n" % launch.status.name))
 
     async def check_in_flight(self, bot_channels):
         in_flight_launches = Launch.objects.filter(status__id=6)
@@ -106,7 +109,7 @@ class Notifications:
 
     async def check_one_minute(self, bot_channels, time_threshold_1_minute):
         one_minute_launches = Launch.objects.filter(net__lte=time_threshold_1_minute,
-                                                    net__gte=datetime.datetime.now())
+                                                    net__gte=datetime.datetime.now(tz=pytz.utc))
         for launch in one_minute_launches:
             notification, created = Notification.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedOneMinutesDiscord:
@@ -160,12 +163,12 @@ class Notifications:
         for channel in channels:
             bot_channels.append(self.bot.get_channel(id=channel.channel_id))
         while not self.bot.is_closed:
-            print(bot_channels)
-            time_threshold_24_hour = datetime.datetime.now() + datetime.timedelta(hours=24)
-            time_threshold_1_hour = datetime.datetime.now() + datetime.timedelta(hours=1)
-            time_threshold_10_minute = datetime.datetime.now() + datetime.timedelta(minutes=10)
-            time_threshold_1_minute = datetime.datetime.now() + datetime.timedelta(minutes=1)
-            time_threshold_past_two_days = datetime.datetime.now() - datetime.timedelta(days=2)
+            print("Checking launch windows!")
+            time_threshold_24_hour = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(hours=24)
+            time_threshold_1_hour = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(hours=1)
+            time_threshold_10_minute = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(minutes=10)
+            time_threshold_1_minute = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(minutes=1)
+            time_threshold_past_two_days = datetime.datetime.now(tz=pytz.utc) - datetime.timedelta(days=2)
 
             await self.check_twenty_four_hour(bot_channels, time_threshold_1_hour, time_threshold_24_hour)
 
