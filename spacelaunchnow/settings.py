@@ -146,6 +146,7 @@ INSTALLED_APPS = [
     'zinnia',
     'collectfast',
     'robots',
+    'app',
     # 'silk',
 ]
 
@@ -351,6 +352,9 @@ LAUNCHER_IMAGE_STORAGE = 'custom_storages.LauncherImageStorage'
 
 EVENT_IMAGE_LOCATION = MEDIA_LOCATION + '/event_images'  # type: str
 EVENT_IMAGE_STORAGE = 'custom_storages.EventImageStorage'
+
+APP_IMAGE_LOCATION = MEDIA_LOCATION + '/app_images'  # type: str
+APP_IMAGE_STORAGE = 'custom_storages.AppImageStorage'
 
 DEFAULT_FILE_STORAGE = DEFAULT_STORAGE
 

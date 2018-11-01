@@ -14,6 +14,7 @@ from django import forms
 
 # Create your views here.
 from api.models import Agency, Launch
+from app.models import Translator
 
 
 def index(request):
@@ -92,6 +93,7 @@ def launches(request,):
                                                      'previous_launches': previous_launches})
     else:
         raise Http404
+
 
 
 def handler404(request):

@@ -20,6 +20,7 @@ from django.contrib.sitemaps.views import sitemap
 from django.views.generic import TemplateView
 
 import web
+from api.v321.router import api_urlpatterns as api_v321
 from api.sitemaps import LaunchSitemap
 from api.v320.router import api_urlpatterns as api_v320
 from api.v310.router import api_urlpatterns as api_v310
@@ -27,6 +28,7 @@ from api.v300.router import api_urlpatterns as api_v300
 from api.v200.router import api_urlpatterns as api_v2
 from api.v1.router import api_urlpatterns as api_v1
 from web import views as landing_views
+from app.views import staff_view, translator_view, about_view
 
 sitemaps = {
     'posts': LaunchSitemap
@@ -43,6 +45,7 @@ urlpatterns = [
     url(r'^3.0.0/', include(api_v300, namespace='v300')),
     url(r'^3.1.0/', include(api_v310, namespace='v310')),
     url(r'^3.2.0/', include(api_v320, namespace='v320')),
+    url(r'^api/3.2.1/', include(api_v321, namespace='v321')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^docs/', include('rest_framework_docs.urls')),
     url(r'^$', landing_views.index, name='index'),
@@ -50,6 +53,9 @@ urlpatterns = [
     url(r'^launch/(?P<id>\d+)/$', landing_views.launch_by_id, name='launch_by_id'),
     url(r'^launch/(?P<slug>[-\w]+)/$', landing_views.launch_by_slug, name='launch_by_slug'),
     url(r'^launch/$', landing_views.launches, name='launches'),
+    url(r'^about/$', about_view, name='staff'),
+    url(r'^about/staff/$', staff_view, name='staff'),
+    url(r'^about/staff/translators/$', translator_view, name='translators'),
     url(r'^news/', include('zinnia.urls')),
     url(r'^comments/', include('django_comments.urls')),
     url(r'^app/privacy', TemplateView.as_view(template_name='web/app/privacy.html'), name='privacy'),
