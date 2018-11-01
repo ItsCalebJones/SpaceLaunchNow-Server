@@ -53,6 +53,12 @@ class Nationality(models.Model):
     name = models.CharField(max_length=200)
     flag = models.FileField(storage=AppImageStorage(), upload_to=language_image_path)
 
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
     class Meta:
         verbose_name = 'Nationality'
         verbose_name_plural = 'Nationalities'
@@ -64,6 +70,12 @@ class Translator(models.Model):
     link = models.CharField(max_length=200, null=True, blank=True,)
     language = models.ForeignKey(Nationality, related_name='translator', null=True, blank=True,
                                  on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
 
     class Meta:
         verbose_name = 'Translator'
@@ -77,6 +89,12 @@ class Staff(models.Model):
     bio = models.CharField(max_length=2048, null=True, blank=True,)
     link = models.CharField(max_length=200, null=True, blank=True,)
     profile = models.FileField(storage=AppImageStorage(), upload_to=profile_image_path)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
 
     class Meta:
         verbose_name = 'Staff'
