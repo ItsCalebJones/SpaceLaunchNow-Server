@@ -1,4 +1,6 @@
 import datetime as dtime
+
+from django.db.models import Q
 from django.utils.datetime_safe import datetime
 
 import logging
@@ -43,26 +45,33 @@ class LaunchEventTracker:
 
     def check_success(self, time_threshold_past_two_days, time_threshold_24_hour):
         logger.debug('Running check_success...')
-        launches = Launch.objects.filter(status__id=3,
+        launches = Launch.objects.filter(Q(status__id=3) | Q(status__id=4) | Q(status__id=7),
                                          net__lte=time_threshold_24_hour,
                                          net__gte=time_threshold_past_two_days)
 
         logger.debug('Found %d launches with recent success - checking state.', len(launches))
-
         for launch in launches:
+            if launch.status.id == 3:
+                status = 'success'
+            elif launch.status.id == 4:
+                status = 'failure'
+            elif launch.status.id == 7:
+                status = 'partial_failure'
+            else:
+                return
             notification, created = Notification.objects.get_or_create(launch=launch)
             logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
             if not notification.wasNotifiedSuccess:
                 logger.info('Sending mobile notification for %s!', launch.name)
                 self.notification_handler.send_notification(launch=launch,
-                                                            notification_type='success',
+                                                            notification_type=status,
                                                             notification=notification)
                 notification.wasNotifiedSuccess = True
 
             if not notification.wasNotifiedSuccessTwitter:
                 logger.info('Sending Twitter notification for %s!', launch.name)
                 self.twitter.send_to_twitter(launch=launch,
-                                             notification_type='success',
+                                             notification_type=status,
                                              notification=notification)
                 notification.wasNotifiedSuccessTwitter = True
 
