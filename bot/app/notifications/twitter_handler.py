@@ -42,6 +42,38 @@ def get_twitter_message(launch, notification_type):
                                                                           launch_agency.name,
                                                                           'https://spacelaunchnow.me/launch/%s' %
                                                                           launch.slug)
+    elif notification_type == 'failure':
+        if launch.mission is not None and launch.mission.orbit is not None and launch.mission.orbit.name is not None:
+            return '%s failed to launch from %s to %s by %s. \n %s' % (
+                launch.name, launch.pad.location.name,
+                launch.mission.orbit.name,
+                launch.rocket.configuration.
+                    launch_agency.name,
+                'https://spacelaunchnow.me/launch/%s' %
+                launch.slug)
+        else:
+            return '%s failed to launch from %s by %s. \n %s' % (launch.name, launch.pad.location.name,
+                                                                              launch.rocket.configuration.
+                                                                              launch_agency.name,
+                                                                              'https://spacelaunchnow.me/launch/%s' %
+                                                                              launch.slug)
+
+    elif notification_type == 'partial_failure':
+        if launch.mission is not None and launch.mission.orbit is not None and launch.mission.orbit.name is not None:
+            return '%s was a partial launch failure from %s to %s by %s. \n %s' % (
+                launch.name, launch.pad.location.name,
+                launch.mission.orbit.name,
+                launch.rocket.configuration.
+                    launch_agency.name,
+                'https://spacelaunchnow.me/launch/%s' %
+                launch.slug)
+        else:
+            return '%s was a partial launch failure from %s by %s. \n %s' % (launch.name, launch.pad.location.name,
+                                                                             launch.rocket.configuration.
+                                                                             launch_agency.name,
+                                                                             'https://spacelaunchnow.me/launch/%s' %
+                                                                             launch.slug)
+
     elif notification_type == 'inFlight':
         if launch.mission is not None and launch.mission.orbit is not None and launch.mission.orbit.name is not None:
             return '%s currently in flight from %s targeting a %s. \n %s' % (launch.name, launch.pad.location.name,

@@ -3,6 +3,7 @@ import asyncio
 
 import pytz
 from discord.ext import commands
+from django.db.models import Q
 
 from api.models import Launch
 from bot.cogs.launches import launch_to_small_embed
@@ -83,7 +84,7 @@ class Notifications:
             await self.bot.send_message(context.message.channel, "Only server owners list notification channels.")
 
     async def check_success(self, bot_channels, time_threshold_past_two_days, time_threshold_24_hour):
-        recent_success_launches = Launch.objects.filter(status__id=3,
+        recent_success_launches = Launch.objects.filter(Q(status__id=3) | Q(status__id=4) | Q(status__id=7),
                                                         net__lte=time_threshold_24_hour,
                                                         net__gte=time_threshold_past_two_days)
         for launch in recent_success_launches:
@@ -93,7 +94,7 @@ class Notifications:
                 notification.save()
                 for channel in bot_channels:
                     await self.bot.send_message(channel,
-                                                embed=launch_to_small_embed(launch, "**Launch was a Success!**\n\n"))
+                                                embed=launch_to_small_embed(launch, "**Launch was a %s!**\n\n" % launch.status.name))
 
     async def check_in_flight(self, bot_channels):
         in_flight_launches = Launch.objects.filter(status__id=6)

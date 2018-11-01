@@ -49,6 +49,12 @@ class NotificationHandler:
             else:
                 contents = 'Successful launch by %s' % launch.rocket.configuration.launch_agency.name
 
+        elif notification_type == 'failure':
+            contents = 'A launch failure has occurred.'
+
+        elif notification_type == 'partial_failure':
+            contents = 'A partial launch failure has occurred.'
+
         elif notification_type == 'inFlight':
 
             if launch.mission is not None\

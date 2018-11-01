@@ -136,15 +136,18 @@ def launch_to_large_embed(launch):
 def launch_to_small_embed(launch, notification=""):
     title = "%s" % launch.name
     color = get_color(launch.status.id)
-    status = "**Status:** %s\n\n" % launch.status.name
+    status = "**Status:** %s\n" % launch.status.name
     follow_along = "\n\n Follow along on [Android](https://play.google.com/store/apps/details?id=me.calebjones." \
                    "spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)," \
                    " [iOS](https://itunes.apple.com/us/app/space-launch-now/id1399715731)" \
                    " or [on the web](https://spacelaunchnow.me/next)"
     mission_description = ""
     if launch.mission is not None and launch.mission.description is not None:
-        mission_description = launch.mission.description
-    description_text = notification + status + mission_description + follow_along
+        mission_description = "\n%s\n" % launch.mission.description
+    fail_reason = ""
+    if launch.failreason is not None and launch.failreason is not '':
+        fail_reason = "\n**Update:** %s\n" % launch.failreason
+    description_text = notification + status + fail_reason + mission_description + follow_along
     embed = discord.Embed(type="rich", title=title,
                           description=description_text,
                           color=color,
