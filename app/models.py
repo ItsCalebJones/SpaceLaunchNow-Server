@@ -68,8 +68,8 @@ class Translator(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
     link = models.CharField(max_length=200, null=True, blank=True,)
-    language = models.ForeignKey(Nationality, related_name='translator', null=True, blank=True,
-                                 on_delete=models.SET_NULL)
+    nationality = models.ForeignKey(Nationality, related_name='translator', null=True, blank=True,
+                                    on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.name
