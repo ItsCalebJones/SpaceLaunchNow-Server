@@ -6,7 +6,7 @@
 <title>Space Launch Now - Launch Schedule</title>
 <meta name="title" content="Space Launch Now - Launch Schedule">
 <meta property="fb:app_id" content="746774215504127"/>
-<meta property="og:title" content="Space Launch Now - Launch Schedule"/>
+<meta property="og:title" content="Space Launch Now - Staff"/>
 <meta property="og:type" content="website"/>
 <meta name="description"
       content="A spaceflight launch schedule - tracking the latest developments in spaceflight, check back often for launch schedule changes.">
@@ -93,13 +93,13 @@
             <div class="row">
                 <div class="col-xs-3 col-md-5 col-lg-3 center">
                     <img class="img-raised rounded-circle img-fluid text-center"
-                         src="{{ staff.profile.url }}"
+                         src="{{ person.profile.url }}"
                          style="width: 125px;height: 125px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                 </div>
                 <div class="col-xs-9 col-md-7 col-lg-9 center">
-                    <h3> {{ staff.name }} </h3>
-                    {{ staff.title.name }}<br>
-                    <a href="{{ staff.link }}">{{ staff.link }}</a>
+                    <h3> {{ person.name }} - {{ person.title }}</h3>
+                    {{ person.bio }}<br>
+                    <a href="{{ person.link }}">{{ person.link }}</a>
                 </div>
             </div>
             <br>

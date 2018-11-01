@@ -74,6 +74,7 @@ class Staff(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
     title = models.CharField(max_length=200, null=True, blank=True,)
+    bio = models.CharField(max_length=2048, null=True, blank=True,)
     link = models.CharField(max_length=200, null=True, blank=True,)
     profile = models.FileField(storage=AppImageStorage(), upload_to=profile_image_path)
 
