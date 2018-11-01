@@ -74,32 +74,33 @@
 <!-- Page Content -->
 <div class="container" style="margin-top:100px; margin-bottom: 16px">
     <h1 class="title">Meet the Staff</h1>
-    <h2>Developers, Translators, and Librarians</h2>
+    <h2>Developers, Librarians, and Translators</h2>
     <h3>Interested in helping maintain our data? <a href="https://goo.gl/forms/qcH1cbZC2psOst3P2">Become a librarian</a>!</h3>
     <br>
     <div class="row">
         <!-- Post Content Column -->
         <div class="col-lg-8 col-md-12 col-xl-8">
 
-            {% if translators|length > 0 %}
+            {% if staff|length > 0 %}
             {% for person in staff %}
             <hr>
             <div class="row">
                 <div class="col-xs-3 col-md-5 col-lg-3 center">
                     <img class="img-raised rounded-circle img-fluid text-center"
-                         src="{{ translator.language.flag.url }}"
+                         src="{{ staff.profile.url }}"
                          style="width: 125px;height: 125px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                 </div>
                 <div class="col-xs-9 col-md-7 col-lg-9 center">
-                    <h3> {{ translator.name }} </h3>
-                    {{ translator.language.name }}<br>
-                    <a href="{{ translator.link }}">{{ translator.link }}</a>
+                    <h3> {{ staff.name }} </h3>
+                    {{ staff.title.name }}<br>
+                    <a href="{{ staff.link }}">{{ staff.link }}</a>
                 </div>
             </div>
             <br>
             {% endfor %}
             <hr>
             {% endif %}
+        <a class= "btn btn-primary btn-raised" href="/about/staff/translators">Meet the Translators</a>
         </div>
         <br>
 

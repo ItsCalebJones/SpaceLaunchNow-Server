@@ -15,7 +15,13 @@ class TranslatorAdmin(admin.ModelAdmin):
     list_display = ('id', 'name',)
 
 
-@admin.register(models.Language)
-class LanguageAdmin(admin.ModelAdmin):
+@admin.register(models.Staff)
+class StaffAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">assignment</i>'
+    list_display = ('id', 'name',)
+
+
+@admin.register(models.Nationality)
+class NationalityAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">assignment</i>'
     list_display = ('id', 'name',)

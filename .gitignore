@@ -19,3 +19,5 @@ assets/**
 instagram.cache
 venv3/get-pip.py
 log/**
+.DS_Store
+.python-version

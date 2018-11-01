@@ -28,6 +28,7 @@ from api.v300.router import api_urlpatterns as api_v300
 from api.v200.router import api_urlpatterns as api_v2
 from api.v1.router import api_urlpatterns as api_v1
 from web import views as landing_views
+from app.views import staff_view, translator_view, about_view
 
 sitemaps = {
     'posts': LaunchSitemap
@@ -52,7 +53,9 @@ urlpatterns = [
     url(r'^launch/(?P<id>\d+)/$', landing_views.launch_by_id, name='launch_by_id'),
     url(r'^launch/(?P<slug>[-\w]+)/$', landing_views.launch_by_slug, name='launch_by_slug'),
     url(r'^launch/$', landing_views.launches, name='launches'),
-    url(r'^translators/', landing_views.translator_view, name='translators'),
+    url(r'^about/$', about_view, name='staff'),
+    url(r'^about/staff/$', staff_view, name='staff'),
+    url(r'^about/staff/translators/$', translator_view, name='translators'),
     url(r'^news/', include('zinnia.urls')),
     url(r'^comments/', include('django_comments.urls')),
     url(r'^app/privacy', TemplateView.as_view(template_name='web/app/privacy.html'), name='privacy'),

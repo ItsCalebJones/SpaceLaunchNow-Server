@@ -25,6 +25,14 @@ def language_image_path(instance, filename):
     return name
 
 
+def profile_image_path(instance, filename):
+    filename, file_extension = os.path.splitext(filename)
+    clean_name = quote(quote(instance.name.encode('utf8')), '')
+    clean_name = "%s_profile_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
+    name = "%s%s" % (str(clean_name), file_extension)
+    return name
+
+
 class AppConfig(SingletonModel):
     navigation_drawer_image = models.FileField(storage=AppImageStorage(), default=None, null=True, blank=True,
                                                upload_to=image_path)
@@ -40,17 +48,37 @@ class AppConfig(SingletonModel):
         verbose_name_plural = 'Android App Config'
 
 
-class Language(models.Model):
+class Nationality(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
     flag = models.FileField(storage=AppImageStorage(), upload_to=language_image_path)
+
+    class Meta:
+        verbose_name = 'Nationality'
+        verbose_name_plural = 'Nationalities'
 
 
 class Translator(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
     link = models.CharField(max_length=200, null=True, blank=True,)
-    language = models.ForeignKey(Language, related_name='translator', null=True, blank=True,
-                                   on_delete=models.SET_NULL)
+    language = models.ForeignKey(Nationality, related_name='translator', null=True, blank=True,
+                                 on_delete=models.SET_NULL)
+
+    class Meta:
+        verbose_name = 'Translator'
+        verbose_name_plural = 'Translators'
+
+
+class Staff(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=200)
+    title = models.CharField(max_length=200, null=True, blank=True,)
+    link = models.CharField(max_length=200, null=True, blank=True,)
+    profile = models.FileField(storage=AppImageStorage(), upload_to=profile_image_path)
+
+    class Meta:
+        verbose_name = 'Staff'
+        verbose_name_plural = 'Staff'
 
 

@@ -95,15 +95,6 @@ def launches(request,):
         raise Http404
 
 
-def translator_view(request,):
-    translators = Translator.objects.all()
-    previous_launches = Launch.objects.filter(net__lte=datetime.now()).order_by('-net')[:5]
-    if translators:
-        return render(request, 'web/translators.html', {'translators': translators,
-                                                        'previous_launches': previous_launches})
-    else:
-        raise Http404
-
 
 def handler404(request):
     return render(request, 'web/404.html', status=404)

@@ -21,17 +21,6 @@
             google_ad_client: "ca-pub-9824528399164059",
             enable_page_level_ads: true
         });
-
-
-
-
-
-
-
-
-
-
-
 </script>
 {% endblock %}
 
@@ -98,12 +87,12 @@
             <div class="row">
                 <div class="col-xs-3 col-md-5 col-lg-3 center">
                     <img class="img-raised rounded-circle img-fluid text-center"
-                         src="{{ translator.language.flag.url }}"
+                         src="{{ translator.nationality.flag.url }}"
                          style="width: 125px;height: 125px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                 </div>
                 <div class="col-xs-9 col-md-7 col-lg-9 center">
                     <h3> {{ translator.name }} </h3>
-                    {{ translator.language.name }}<br>
+                    {{ translator.nationality.name }}<br>
                     <a href="{{ translator.link }}">{{ translator.link }}</a>
                 </div>
             </div>
