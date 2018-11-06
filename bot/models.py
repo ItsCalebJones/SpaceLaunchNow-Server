@@ -104,10 +104,10 @@ class TwitterNotificationChannel(models.Model):
 
 
 class TwitterUser(models.Model):
-    user_id = models.BigIntegerField( null=False, primary_key=True)
-    screen_name = models.CharField(max_length=50, null=False)
-    name = models.CharField(max_length=50, null=False)
-    profile_image = models.CharField(max_length=50, null=False)
+    user_id = models.BigIntegerField(null=False, primary_key=True)
+    screen_name = models.CharField(max_length=255, null=False)
+    name = models.CharField(max_length=255, null=False)
+    profile_image = models.CharField(max_length=1048, null=False)
     subscribers = models.ManyToManyField(TwitterNotificationChannel)
     custom = models.BooleanField(default=False)
     default = models.BooleanField(default=False)
@@ -116,7 +116,7 @@ class TwitterUser(models.Model):
 class Tweet(models.Model):
     id = models.BigIntegerField(primary_key=True)
     user = models.ForeignKey(TwitterUser, related_name='tweets')
-    text = models.CharField(max_length=280, null=False)
+    text = models.CharField(max_length=1048, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
     default = models.BooleanField(default=False)
@@ -138,7 +138,7 @@ class SubredditNotificationChannel(models.Model):
 
 class Subreddit(models.Model):
     id = models.CharField(primary_key=True, max_length=255)
-    name = models.CharField(max_length=255, null=False)
+    name = models.CharField(max_length=1048, null=False)
     initialized = models.BooleanField(default=False)
     subscribers = models.ManyToManyField(SubredditNotificationChannel)
 
@@ -150,11 +150,11 @@ class RedditSubmission(models.Model):
     selftext = models.BooleanField(default=False)
     score = models.IntegerField(default=0)
     comments = models.IntegerField(default=0)
-    title = models.CharField(max_length=255, null=True, blank=True, default="")
-    thumbnail = models.CharField(max_length=255, null=True, blank=True, default="")
+    title = models.CharField(max_length=1048, null=True, blank=True, default="")
+    thumbnail = models.CharField(max_length=1048, null=True, blank=True, default="")
     text = models.CharField(max_length=40000, null=True, blank=True, default="")
-    link = models.CharField(max_length=255, null=True, blank=True, default="")
-    permalink = models.CharField(max_length=255, null=False)
+    link = models.CharField(max_length=1048, null=True, blank=True, default="")
+    permalink = models.CharField(max_length=1048, null=False)
     read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -176,9 +176,9 @@ class NewsNotificationChannel(models.Model):
 
 class NewsItem(models.Model):
     id = models.CharField(primary_key=True, max_length=255)
-    title = models.CharField(max_length=255, null=False)
-    link = models.CharField(max_length=255, null=True, blank=True, default="")
-    featured_image = models.CharField(max_length=255, null=True, blank=True, default="")
-    news_site = models.CharField(max_length=255, null=True, blank=True, default="")
+    title = models.CharField(max_length=1048, null=False)
+    link = models.CharField(max_length=1048, null=True, blank=True, default="")
+    featured_image = models.CharField(max_length=1048, null=True, blank=True, default="")
+    news_site = models.CharField(max_length=1048, null=True, blank=True, default="")
     created_at = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
