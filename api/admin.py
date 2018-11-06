@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 from django.contrib import admin
 
 from api.filters.UpcomingFilter import DateListFilter
+from api.forms.admin_forms import LaunchForm, LandingForm, LauncherForm, PayloadForm, MissionForm, EventsForm, \
+    LauncherConfigForm, OrbiterForm, AgencyForm
 from bot.utils.admin_utils import custom_titled_filter
 from . import models
 
@@ -15,6 +17,7 @@ class LauncherConfigAdmin(admin.ModelAdmin):
     list_filter = ('name', 'family', 'image_url', 'launch_agency__name', 'audited',)
     ordering = ('name', 'id')
     search_fields = ('name', 'launch_agency__name')
+    form = LauncherConfigForm
 
 
 @admin.register(models.Launcher)
@@ -24,6 +27,7 @@ class LauncherAdmin(admin.ModelAdmin):
     list_filter = ('id', 'serial_number', 'flight_proven', 'status', 'launcher_config')
     ordering = ('id', 'serial_number', 'flight_proven', 'status')
     search_fields = ('serial_number', 'launcher_config', 'status', 'details')
+    form = LauncherForm
 
 
 @admin.register(models.Mission)
@@ -33,6 +37,7 @@ class MissionAdmin(admin.ModelAdmin):
     list_filter = ('id', 'name', 'mission_type', 'orbit')
     ordering = ('id', )
     search_fields = ('name', 'description')
+    form = MissionForm
 
 
 @admin.register(models.Agency)
@@ -42,12 +47,14 @@ class AgencyAdmin(admin.ModelAdmin):
     list_filter = ('name', 'featured',)
     ordering = ('name',)
     search_fields = ('name',)
+    form = AgencyForm
 
 
 @admin.register(models.Landing)
 class LandingAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">group</i>'
     list_display = ('name', 'attempt', 'success', 'landing_location', 'landing_type')
+    form = LandingForm
 
     def name(self, obj):
         try:
@@ -95,6 +102,7 @@ class OrbiterAdmin(admin.ModelAdmin):
     list_display = ('name', 'agency')
     list_filter = ('agency',)
     ordering = ('name',)
+    form = OrbiterForm
 
 
 @admin.register(models.Launch)
@@ -106,6 +114,7 @@ class LaunchAdmin(admin.ModelAdmin):
                    ('rocket__configuration__name', custom_titled_filter('Launch Configuration Name')))
     ordering = ('net',)
     search_fields = ('name', 'rocket__configuration__launch_agency__name', 'mission__description')
+    form = LaunchForm
 
     def orbit(self, obj):
         if obj.mission is not None and obj.mission.orbit is not None and obj.mission.orbit.name:
@@ -121,6 +130,7 @@ class EventAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">event</i>'
     list_display = ('name',)
     list_filter = ('name',)
+    form = EventsForm
 
 
 @admin.register(models.Location)
@@ -137,6 +147,15 @@ class PadAdmin(admin.ModelAdmin):
     list_display = ('name', 'location')
     list_filter = ('name', 'agency_id')
     ordering = ('name',)
+
+
+@admin.register(models.Payload)
+class PayloadAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">dashboard</i>'
+    list_display = ('name', 'mission')
+    list_filter = ('name', 'mission')
+    ordering = ('name',)
+    form = PayloadForm
 
 
 @admin.register(models.VidURLs)
