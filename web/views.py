@@ -95,7 +95,6 @@ def launches(request,):
         raise Http404
 
 
-
 def handler404(request):
     return render(request, 'web/404.html', status=404)
 

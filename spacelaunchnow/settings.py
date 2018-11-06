@@ -147,6 +147,7 @@ INSTALLED_APPS = [
     'collectfast',
     'robots',
     'app',
+    'sorl.thumbnail',
     # 'silk',
 ]
 
