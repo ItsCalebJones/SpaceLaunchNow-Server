@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from datetime import datetime
+import datetime as dt
 
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.template.defaultfilters import slugify
-from datetime import datetime
 from django.db.models import Q
 from django.http import Http404, HttpResponseNotFound
 from django.shortcuts import render, redirect
@@ -18,13 +19,19 @@ from app.models import Translator
 
 
 def index(request):
-    launch = Launch.objects.filter(net__gt=datetime.now()).order_by('net').first()
+    launch = Launch.objects.filter(status__id=6).order_by('net').first()
+    if launch:
+        return redirect('launch_by_slug', slug=launch.slug)
+    launch = Launch.objects.filter(net__gt=datetime.now() - dt.timedelta(days=1)).order_by('net').first()
     return render(request, 'web/index.html', {'launch': launch})
 
 
 # Create your views here.
 def next_launch(request):
-    launch = Launch.objects.filter(net__gt=datetime.now()).order_by('net').first()
+    launch = Launch.objects.filter(status__id=6).order_by('net').first()
+    if launch:
+        return redirect('launch_by_slug', slug=launch.slug)
+    launch = Launch.objects.filter(net__gt=datetime.now() - dt.timedelta(days=1)).order_by('net').first()
     if launch:
         return redirect('launch_by_slug', slug=launch.slug)
     else:
@@ -80,10 +87,10 @@ def launches(request,):
     query = request.GET.get('q')
 
     if query is not None:
-        _launches = Launch.objects.filter(net__gte=datetime.now()).order_by('net')
+        _launches = Launch.objects.filter(net__gte=datetime.now() - dt.timedelta(days=1)).order_by('net')
         _launches = _launches.filter(rocket__configuration__launch_agency__abbrev__contains=query)[:5]
     else:
-        _launches = Launch.objects.filter(net__gte=datetime.now()).order_by('net')[:5]
+        _launches = Launch.objects.filter(net__gte=datetime.now() - dt.timedelta(days=1)).order_by('net')[:5]
 
     previous_launches = Launch.objects.filter(net__lte=datetime.now()).order_by('-net')[:5]
 
