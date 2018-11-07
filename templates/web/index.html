@@ -130,6 +130,7 @@
                     <hr class="col-lg-8" style="background-color: white">
                     <h2 class="title" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h2>
                     <h3 style="margin: -5px;" id="date">{{ launch.net }}</h3>
+                    <h3 style="margin: 5px;">Status: {{ launch.status }}</h3>
                     <hr class="col-lg-8" style="background-color: white">
                     <span class="badge badge-pill badge-primary">{{ launch.rocket.configuration.launch_agency.name }}</span>
                     {% if launch.pad %}
@@ -339,17 +340,6 @@
         } else {
             document.getElementById("countdown").innerHTML = "L - 00 : 00 : 00 : 00";
         }
-
-
-
-
-
-
-
-
-
-
-
 
 </script>
 {% include "web/install_buttons.html" %}

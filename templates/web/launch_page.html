@@ -213,24 +213,16 @@
                         Family: {{ launcher_config.family }}</h6>
                     <p> {{ launcher_config.description}}</p>
 
-                    <p>
-                        <button class="btn btn-primary btn-link" type="button" data-toggle="collapse"
-                                data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                            Specifications
-                        </button>
-                    </p>
-                    <div class="collapse" id="collapseExample">
-                        <div class="card">
-                            <div class="card-header card-header-danger"> {{ launcher_config.full_name }}
-                            </div>
-                            GTO: {{ launcher_config.gto_capacity }}<br>
-                            LEO: {{ launcher_config.leo_capacity }}<br>
-                            Length: {{ launcher_config.length }} m<br>
-                            Diameter: {{ launcher_config.diameter }} m<br>
-                            Launch Mass: {{ launcher_config.launch_mass }}k kg<br>
-                            Thurst: {{ launcher_config.to_thrust }} kN<br>
-                        </div>
-                    </div>
+                    <h4>Vehicle Specifications</h4>
+                    <hr>
+                    {{ launcher_config.full_name }}<br>
+                    GTO: {{ launcher_config.gto_capacity }}<br>
+                    LEO: {{ launcher_config.leo_capacity }}<br>
+                    Length: {{ launcher_config.length }} m<br>
+                    Diameter: {{ launcher_config.diameter }} m<br>
+                    Launch Mass: {{ launcher_config.launch_mass }}k kg<br>
+                    Thurst: {{ launcher_config.to_thrust }} kN<br>
+
                     {% if launcher_config.info_url %}
                     <a class="btn btn-primary btn-lg" href="{{ launcher_config.info_url }}">INFO</a>
                     {% endif %}
