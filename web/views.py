@@ -22,7 +22,7 @@ def index(request):
     launch = Launch.objects.filter(status__id=6).order_by('net').first()
     if launch:
         return redirect('launch_by_slug', slug=launch.slug)
-    launch = Launch.objects.filter(net__gt=datetime.now() - dt.timedelta(days=1)).order_by('net').first()
+    launch = Launch.objects.filter(net__gte=datetime.now() - dt.timedelta(days=1)).order_by('net').first()
     return render(request, 'web/index.html', {'launch': launch})
 
 
@@ -31,7 +31,7 @@ def next_launch(request):
     launch = Launch.objects.filter(status__id=6).order_by('net').first()
     if launch:
         return redirect('launch_by_slug', slug=launch.slug)
-    launch = Launch.objects.filter(net__gt=datetime.now() - dt.timedelta(days=1)).order_by('net').first()
+    launch = Launch.objects.filter(net__gte=datetime.now() - dt.timedelta(days=1)).order_by('net').first()
     if launch:
         return redirect('launch_by_slug', slug=launch.slug)
     else:
