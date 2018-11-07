@@ -1,6 +1,6 @@
 {% extends "web/base.html" %}
 {% load staticfiles %}
-
+{% load thumbnail %}
 {% block extrahead %}
 <link rel="canonical" href="https://spacelaunchnow.me/launch/">
 <title>Space Launch Now - Launch Schedule</title>
@@ -138,13 +138,17 @@
                 </div>
                 <div class="card-header card-header-info">
                     {% if launch.rocket.configuration.image_url %}
+                    {% thumbnail launch.rocket.configuration.image_url "200" as im %}
                     <img class="img-raised rounded-circle img-fluid text-center"
-                         src="{{ launch.rocket.configuration.image_url.url }}"
-                         style="max-width: 35%;overflow: hidden;margin: -100px 0 0 0;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                         src="{{ im.url }}"
+                         style="width: 125px;height: 125px;overflow: hidden;margin: -100px 0 0 0;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                    {% endthumbnail %}
                     {% elif launch.rocket.configuration.launch_agency.image_url %}
+                    {% thumbnail launch.rocket.configuration.launch_agency.image_url "200" as im %}
                     <img class="img-raised rounded-circle img-fluid text-center"
-                         src="{{ launch.rocket.configuration.launch_agency.image_url.url }}"
-                         style="max-width: 35%;overflow: hidden;margin: -100px 0 0 0;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                         src="{{ im.url }}"
+                         style="width: 125px;height: 125px;overflow: hidden;margin: -100px 0 0 0;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                    {% endthumbnail %}
                     {% else %}
                     <img class="img-raised rounded-circle img-fluid text-center"
                          src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png"

@@ -33,6 +33,7 @@ REST_FRAMEWORK = {
     'DEFAULT_MODEL_SERIALIZER_CLASS': 'drf_toolbox.serializers.ModelSerializer',
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
+    'DEFAULT_RENDERER_CLASSES': config.API_RENDERER,
     'DEFAULT_THROTTLE_CLASSES': (
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle'
@@ -118,38 +119,7 @@ LOGGING = {
 }
 
 # Application definition
-INSTALLED_APPS = [
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.sites',
-    'django.contrib.sitemaps',
-    'rest_framework',
-    'api.apps.ApiConfig',
-    'rest_framework_docs',
-    'bot',
-    'configurations',
-    'djcelery',
-    'embed_video',
-    'jet.dashboard',
-    'jet',
-    'django.contrib.admin',
-    'django_user_agents',
-    'django_filters',
-    'rest_framework.authtoken',
-    'storages',
-    'django_comments',
-    'mptt',
-    'tagging',
-    'zinnia',
-    'collectfast',
-    'robots',
-    'app',
-    'sorl.thumbnail',
-    # 'silk',
-]
+INSTALLED_APPS = config.INSTALLED_APPS
 
 JET_THEMES = [
     {
