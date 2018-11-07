@@ -34,6 +34,11 @@ from app.views import staff_view, translator_view, about_view
 sitemaps = {
     'posts': LaunchSitemap
 }
+default_settings = [
+    url(r'^robots\.txt', include('robots.urls')),
+    url(r'^sitemap\.xml/$', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
+    url(r'^news/', include('zinnia.urls')),
+]
 api_settings = []
 web_settings = []
 admin_settings = []
@@ -56,14 +61,11 @@ if config.IS_WEBSERVER:
         url(r'^about/$', about_view, name='staff'),
         url(r'^about/staff/$', staff_view, name='staff'),
         url(r'^about/staff/translators/$', translator_view, name='translators'),
-        url(r'^news/', include('zinnia.urls')),
         url(r'^comments/', include('django_comments.urls')),
         url(r'^app/privacy', TemplateView.as_view(template_name='web/app/privacy.html'), name='privacy'),
         url(r'^app/tos', TemplateView.as_view(template_name='web/app/tos.html'), name='tos'),
         url(r'^site/privacy', TemplateView.as_view(template_name='web/site/privacy.html'), name='privacy'),
         url(r'^site/tos', TemplateView.as_view(template_name='web/site/tos.html'), name='tos'),
-        url(r'^robots\.txt', include('robots.urls')),
-        url(r'^sitemap\.xml/$', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
         url(r'^docs/', include('rest_framework_docs.urls')),
         url(r'^$', landing_views.index, name='index'),
     ]
@@ -77,7 +79,7 @@ if config.IS_ADMIN:
         url(r'^signup/$', landing_views.signup, name='signup'),
     ]
 
-urlpatterns = api_settings + web_settings + admin_settings
+urlpatterns = default_settings + api_settings + web_settings + admin_settings
 
 handler404 = web.views.handler404
 handler500 = web.views.handler500
