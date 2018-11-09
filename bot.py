@@ -36,6 +36,16 @@ prefix = ['?']
 bot = commands.Bot(command_prefix=prefix, description=description, pm_help=None, help_attrs=help_attrs)
 bot_start_time = datetime.datetime.utcnow()
 
+
+def writePidFile():
+    pid = str(os.getpid())
+    filename = '/var/run/spacelaunchnow/discord.pid'
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    current_file = open(filename, 'w')
+    current_file.write(pid)
+    current_file.close()
+
+
 @bot.event
 async def on_command_error(error, ctx):
     if isinstance(error, commands.NoPrivateMessage):
@@ -90,6 +100,9 @@ async def on_message(message):
 if __name__ == '__main__':
     if any('debug' in arg.lower() for arg in sys.argv):
         bot.command_prefix = '$'
+
+    if os.name != 'nt':
+        writePidFile()
 
     bot.client_id = config.SQUID_BOT_CLIENT_ID
     bot.commands_used = Counter()
