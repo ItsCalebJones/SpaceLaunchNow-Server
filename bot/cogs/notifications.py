@@ -1,17 +1,24 @@
 import datetime
 import asyncio
+import logging
 
+import discord
 import pytz
 from discord.ext import commands
 from django.db.models import Q
+from django.template import defaultfilters
 
 from api.models import Launch
 from bot.cogs.launches import launch_to_small_embed
 from bot.models import DiscordChannel, Notification
 
+logger = logging.getLogger('bot.discord')
+
+
 class Notifications:
     def __init__(self, bot):
         self.bot = bot
+        self.description = 120
 
     @commands.command(pass_context=True)
     async def addNotificationChannel(self, context):
@@ -26,6 +33,7 @@ class Notifications:
             authorid = context.message.author.id
         except:
             await self.bot.send_message(context.message.channel, "Only able to run from a server channel.")
+            return
         if ownerid == authorid:
             channel = DiscordChannel(name=context.message.channel.name,
                                      channel_id=context.message.channel.id,
@@ -50,6 +58,7 @@ class Notifications:
             authorid = context.message.author.id
         except:
             await self.bot.send_message(context.message.channel, "Only able to run from a server channel.")
+            return
         if ownerid == authorid:
             channel = DiscordChannel.objects.filter(server_id=context.message.server.id,
                                                     channel_id=context.message.channel.id).first()
@@ -73,6 +82,7 @@ class Notifications:
             authorid = context.message.author.id
         except:
             await self.bot.send_message(context.message.channel, "Only able to run from a server channel.")
+            return
         if ownerid == authorid:
             channels = DiscordChannel.objects.filter(server_id=context.message.server.id)
             channel_text = "**Here ya go %s!**" % context.message.author.name
@@ -94,7 +104,8 @@ class Notifications:
                 notification.save()
                 for channel in bot_channels:
                     await self.bot.send_message(channel,
-                                                embed=launch_to_small_embed(launch, "**Launch was a %s!**\n\n" % launch.status.name))
+                                                embed=launch_to_small_embed(launch,
+                                                                            "**Launch was a %s!**\n\n" % launch.status.name))
 
     async def check_in_flight(self, bot_channels):
         in_flight_launches = Launch.objects.filter(status__id=6)
@@ -163,7 +174,6 @@ class Notifications:
         for channel in channels:
             bot_channels.append(self.bot.get_channel(id=channel.channel_id))
         while not self.bot.is_closed:
-            print("Checking launch windows!")
             time_threshold_24_hour = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(hours=24)
             time_threshold_1_hour = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(hours=1)
             time_threshold_10_minute = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(minutes=10)
@@ -182,7 +192,23 @@ class Notifications:
 
             await self.check_success(bot_channels, time_threshold_past_two_days, time_threshold_24_hour)
 
-            await asyncio.sleep(10)
+            await self.set_bot_description()
+
+            await asyncio.sleep(5)
+
+    async def set_bot_description(self):
+        if self.description == 120:
+            launch = Launch.objects.filter(net__gte=datetime.datetime.utcnow()).order_by('net').first()
+            launch_date = launch.net
+            now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+            message = u"""
+            %s in %s.
+            """ % (launch.name, defaultfilters.timeuntil(launch_date, now))
+            squid_bot_game = discord.Game(name=message, url=launch.get_full_absolute_url(), type=0)
+            await self.bot.change_presence(game=squid_bot_game, status=discord.Status.online, afk=False)
+            self.description = 0
+        else:
+            self.description += 1
 
 
 def setup(bot):

@@ -92,6 +92,13 @@ LOGGING = {
             'formatter': 'standard',
             'maxBytes': 1024 * 1024 * 5,
             'backupCount': 5
+        },
+        'discord': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'log/discord.log',
+            'formatter': 'standard',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5
         }
     },
     'loggers': {
@@ -112,6 +119,11 @@ LOGGING = {
         },
         'bot.notifications': {
             'handlers': ['django_default', 'notifications', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'bot.discord': {
+            'handlers': ['django_default', 'discord', 'console'],
             'level': 'INFO',
             'propagate': True,
         }
