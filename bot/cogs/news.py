@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 from datetime import datetime
 
@@ -10,6 +11,8 @@ from discord.ext import commands
 from goose3 import Goose
 
 from bot.models import NewsNotificationChannel, NewsItem
+
+logger = logging.getLogger('bot.discord')
 
 
 def news_to_embed(news):
@@ -29,14 +32,13 @@ def news_to_embed(news):
             text = (article.text[:300] + '...') if len(article.text) > 300 else article.text
         embed.add_field(name="Description", value=text, inline=True)
     except Exception as e:
-        print(e)
+        logger.error(e)
     embed.set_image(url=news.featured_image)
     embed.set_footer(text=news.created_at.strftime("%A %B %e, %Y %H:%M %Z • Powered by SNAPI"))
     return embed
 
 
 def get_news():
-    print("Getting News Articles")
     response = requests.get(url='https://api.spaceflightnewsapi.net/articles?limit=5')
     if response.status_code == 200:
         for item in response.json():
@@ -48,7 +50,7 @@ def get_news():
                 news.news_site = item['news_site_long']
                 news.created_at = datetime.utcfromtimestamp(item['date_published']).replace(tzinfo=pytz.utc)
                 news.read = False
-                print("Added News (%s) - %s - %s" % (news.id, news.title, news.news_site))
+                logger.info("Added News (%s) - %s - %s" % (news.id, news.title, news.news_site))
                 news.save()
     return
 
@@ -117,23 +119,24 @@ class News:
         await self.bot.wait_until_ready()
         while not self.bot.is_closed:
             try:
-                await self.check_news()
+                await asyncio.wait_for(self.check_news(), 30)
             except Exception as e:
-                print(e)
+                logger.error(e)
             await asyncio.sleep(5)
 
     async def check_news(self):
-        print("Checking News Articles")
+
         news = NewsItem.objects.filter(read=False)
         for item in news:
             item.read = True
             item.save()
             for channel in NewsNotificationChannel.objects.filter(subscribed=True):
                 try:
+                    logger.info("Reading News Articles - %s" % item.title)
                     embed = news_to_embed(item)
                     await self.bot.send_message(self.bot.get_channel(id=channel.channel_id), embed=embed)
                 except Exception as e:
-                    print(e)
+                    logger.error(e)
 
 
 def setup(bot):

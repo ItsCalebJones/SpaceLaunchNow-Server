@@ -1,6 +1,8 @@
 import asyncio
 
 import datetime
+import logging
+
 import discord
 import prawcore
 import pytz
@@ -28,6 +30,8 @@ twitter = Twitter(auth=OAuth(consumer_key=config.keys['CONSUMER_KEY'],
                              token=config.keys['TOKEN_KEY'],
                              token_secret=config.keys['TOKEN_SECRET']))
 
+logger = logging.getLogger('bot.discord')
+
 
 def submission_to_embed(submission):
     title = "New Hot Submission in /r/%s by /u/%s" % (submission.subreddit.name, submission.user)
@@ -51,7 +55,7 @@ def submission_to_embed(submission):
                 embed.add_field(name="Tweet", value="\"%s\" - %s" % (status['text'], status['user']['name']),
                                 inline=True)
             except Exception as e:
-                print(e)
+                logger.error(e)
         else:
             try:
                 g = Goose()
@@ -62,7 +66,7 @@ def submission_to_embed(submission):
                     text = (article.text[:300] + '...') if len(article.text) > 300 else article.text
                 embed.add_field(name="Link Summary", value=text, inline=True)
             except Exception as e:
-                print(e)
+                logger.error(e)
 
     if submission.thumbnail is not None and submission.thumbnail != 'self' and submission.thumbnail != 'default':
         embed.set_thumbnail(url=submission.thumbnail)
@@ -74,7 +78,6 @@ def submission_to_embed(submission):
 
 
 def get_submissions():
-    print("Getting submissions.")
     subreddits = Subreddit.objects.filter(initialized=True)
 
     for subreddit in subreddits:
@@ -195,9 +198,9 @@ class Reddit:
         await self.bot.wait_until_ready()
         while not self.bot.is_closed:
             try:
-                await self.check_submissions()
+                await asyncio.wait_for(self.check_submissions(), 30)
             except Exception as e:
-                print(e)
+                logger.error(e)
             await asyncio.sleep(5)
 
     async def list_subreddit(self, discord_channel):
@@ -215,7 +218,6 @@ class Reddit:
             await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id), description)
 
     async def check_submissions(self):
-        print("Checking submissions.")
         submissions = RedditSubmission.objects.filter(read=False)
         for submission in submissions:
             submission.read = True
@@ -226,7 +228,7 @@ class Reddit:
                         embed = submission_to_embed(submission)
                         await self.bot.send_message(self.bot.get_channel(id=channel.channel_id), embed=embed)
                     except Exception as e:
-                        print(e)
+                        logger.error(e)
 
     async def add_subreddit(self, subreddit_name, discord_channel):
         try:

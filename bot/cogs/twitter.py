@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import logging
 import time
 
 import discord
@@ -16,12 +17,14 @@ twitter = Twitter(auth=OAuth(consumer_key=config.keys['CONSUMER_KEY'],
                              token=config.keys['TOKEN_KEY'],
                              token_secret=config.keys['TOKEN_SECRET']))
 
+logger = logging.getLogger('bot.discord')
 
 def get_new_tweets():
     tweets = twitter.lists.statuses(owner_screen_name="spacelaunchnow",
                                     slug="space-launch-news",
                                     tweet_mode='extended')
-    print("Saving %s tweets!" % len(tweets))
+    if len(tweets) > 0:
+        logger.info("Saving %s tweets!" % len(tweets))
     for tweet in tweets:
 
         userObj, created = TwitterUser.objects.get_or_create(user_id=tweet['user']['id'])
@@ -32,7 +35,7 @@ def get_new_tweets():
         userObj.save()
         tweetObj, created = Tweet.objects.get_or_create(id=tweet['id'], user=userObj)
         if created:
-            print("Found new tweet - %s" % tweet)
+            logger.info("Found new tweet - %s" % tweet)
             tweetObj.text = tweet['full_text']
             tweetObj.default = True
             time_struct = time.strptime(tweet['created_at'], "%a %b %d %H:%M:%S +0000 %Y")
@@ -231,9 +234,9 @@ class Twitter:
         await self.bot.wait_until_ready()
         while not self.bot.is_closed:
             try:
-                await self.check_tweets()
+                await asyncio.wait_for(self.check_tweets(), 30)
             except Exception as e:
-                print(e)
+                logger.error(e)
             await asyncio.sleep(5)
 
     async def add_notification(self, screen_name, discord_channel):
@@ -274,22 +277,20 @@ class Twitter:
                                     embed=tweet_to_embed(userObj.tweets.order_by('created_at').first()))
 
     async def check_tweets(self):
-        print("Checking tweets.")
         created_window = datetime.datetime.now(tz=pytz.utc) - datetime.timedelta(minutes=5)
         tweets = Tweet.objects.filter(read=False).filter(created_at__gte=created_window).order_by('created_at')
-        print("Reading %s tweets!" % len(tweets))
         for tweet in tweets:
             tweet.read = True
             tweet.save()
             if tweet.user.subscribers is not None:
-                print("Reading tweet - %s" % tweet.text)
+                logger.info("Reading tweet - %s" % tweet.text)
                 for channel in tweet.user.subscribers.all():
-                    print("Sending to %s" % channel.name)
+                    logger.info("Sending to %s" % channel.name)
                     await self.bot.send_message(self.bot.get_channel(id=channel.channel_id), embed=tweet_to_embed(tweet))
             if tweet.default:
-                print("Default! Tweet - %s" % tweet.text)
+                logger.info("Default! Tweet - %s" % tweet.text)
                 for channel in TwitterNotificationChannel.objects.filter(default_subscribed=True):
-                    print("Sending to %s" % channel.name)
+                    logger.info("Sending to %s" % channel.name)
                     await self.bot.send_message(self.bot.get_channel(id=channel.channel_id),
                                                 embed=tweet_to_embed(tweet))
 
