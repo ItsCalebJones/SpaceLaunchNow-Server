@@ -1,4 +1,8 @@
 # coding=utf-8
+import os
+import stat
+import time
+
 from api.management.commands.run_spacex_api_importer import import_core
 from api.models import Launch
 from datetime import datetime, timedelta
@@ -137,6 +141,13 @@ def get_recent_previous_launches():
 @periodic_task(run_every=(crontab(hour='*/6')), options={"expires": 600})
 def set_instagram():
     logger.info('Task - setting Instagram')
+    try:
+        cache_age = time.time() - os.stat('instagram.cache')[stat.ST_MTIME]
+        if cache_age > 2.592e+6:
+            logger.info('Instagram cache is expired - %d' % cache_age)
+            os.remove('instagram.cache')
+    except FileNotFoundError as error:
+        logger.error(error)
     instagram = InstagramBot()
     launch = Launch.objects.filter(net__gte=datetime.now()).order_by('net').first()
     message = u"""
@@ -147,4 +158,6 @@ def set_instagram():
     """ % (launch.name, launch.mission.type_name, launch.pad.location.name,
            custom_strftime("%B {S} at %I:%M %p %Z", launch.net))
     message = (message[:150]) if len(message) > 150 else message
-    instagram.update_profile(message, launch.get_full_absolute_url())
+    logger.info('Updating Instagram profile to - %s' % message)
+    response = instagram.update_profile(message, launch.get_full_absolute_url())
+    logger.info(response)
