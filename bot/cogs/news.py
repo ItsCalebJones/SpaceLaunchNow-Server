@@ -90,7 +90,7 @@ class News:
 
     @commands.command(name='removeNews', pass_context=True)
     async def remove_news(self, context):
-        """Subscribe to Space Launch New's powered by SNAPI.
+        """Unsubscribe from Space Launch New's powered by SNAPI.
 
         Usage: ?subscribeNews
 

@@ -69,10 +69,6 @@ async def on_ready():
     if not hasattr(bot, 'uptime'):
         bot.uptime = bot_start_time
 
-
-
-
-
 @bot.event
 async def on_resumed():
     log.info('resumed...')

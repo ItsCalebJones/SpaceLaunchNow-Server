@@ -69,6 +69,30 @@ class LaunchLibrarySDK(object):
         url = self.api_url + '/launch/%s/%s?mode=verbose&offset=%s&limit=100' % (previous, today, offset)
         return send_request(url, method='GET', headers=headers)
 
+    def get_launch_status(self):
+        """
+        Sends a request using `requests` module.
+        :return: Returns a HTTP Response object
+        """
+        url = self.api_url + '/launchstatus'
+        return send_request(url, method='GET', headers=headers)
+
+    def get_agency_type(self):
+        """
+        Sends a request using `requests` module.
+        :return: Returns a HTTP Response object
+        """
+        url = self.api_url + '/agencytype'
+        return send_request(url, method='GET', headers=headers)
+
+    def get_mission_type(self):
+        """
+        Sends a request using `requests` module.
+        :return: Returns a HTTP Response object
+        """
+        url = self.api_url + '/missiontype'
+        return send_request(url, method='GET', headers=headers)
+
     def get_location_by_pad(self, location_id):
         url = '%s/pad/%i?fields=name' % (self.api_url, location_id)
         return send_request(url, method='GET', headers=headers)

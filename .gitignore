@@ -4,7 +4,7 @@ env/**
 venv3/**
 env3/**
 data/reddit/settings.json
-db.sqlite3
+db.sqlite3.bak
 .idea/**
 django.log
 celery.log
@@ -21,4 +21,6 @@ venv3/get-pip.py
 log/**
 .python-version
 bot/.DS_Store
-.DS_Store
+*.DS_Store
+*.sqlite3
+*.bak

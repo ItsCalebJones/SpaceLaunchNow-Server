@@ -3,6 +3,11 @@ from __future__ import unicode_literals
 
 import os
 
+try:
+    from urllib import quote  # Python 2.X
+except ImportError:
+    from urllib.parse import quote  # Python 3+
+
 from django.core.cache import cache
 from django.contrib.sites.models import Site
 from django.core.exceptions import ObjectDoesNotExist
@@ -27,7 +32,7 @@ CACHE_TIMEOUT_TEN_MINUTES = 10 * 60
 
 def image_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
-    clean_name = urllib.quote(urllib.quote(instance.name.encode('utf8')), '')
+    clean_name = quote(quote(instance.name.encode('utf8')), '')
     clean_name = "%s_image_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
     name = "%s%s" % (str(clean_name), file_extension)
     return name
@@ -35,7 +40,7 @@ def image_path(instance, filename):
 
 def nation_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
-    clean_name = urllib.quote(urllib.quote(instance.name.encode('utf8')), '')
+    clean_name = quote(quote(instance.name.encode('utf8')), '')
     clean_name = "%s_nation_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
     name = "%s%s" % (str(clean_name), file_extension)
     return name
@@ -43,7 +48,7 @@ def nation_path(instance, filename):
 
 def logo_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
-    clean_name = urllib.quote(urllib.quote(instance.name.encode('utf8')), '')
+    clean_name = quote(quote(instance.name.encode('utf8')), '')
     clean_name = "%s_logo_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
     name = "%s%s" % (str(clean_name), file_extension)
     return name

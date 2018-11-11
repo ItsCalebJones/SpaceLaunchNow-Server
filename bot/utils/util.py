@@ -71,9 +71,9 @@ def get_fcm_topics_and_onesignal_segments(launch, debug=False, flutter=False, no
             topic_header = "'flutter_debug' in topics && '%s' in topics" % notification_type
     else:
         if not debug:
-            topic_header = "'production' in topics"
+            topic_header = "'production' in topics && '%s' in topics" % notification_type
         else:
-            topic_header = "'debug' in topics"
+            topic_header = "'debug' in topics && '%s' in topics" % notification_type
 
     if launch.pad.location is not None:
         location_id = launch.pad.location.id
