@@ -71,7 +71,7 @@ class NotificationHandler:
                                                                 launch_time.strftime("%H:%M UTC"))
 
         # Create a notification
-        topics_and_segments = get_fcm_topics_and_onesignal_segments(launch, debug=self.DEBUG)
+        topics_and_segments = get_fcm_topics_and_onesignal_segments(launch, notification_type=notification_type, debug=self.DEBUG)
         include_segments = topics_and_segments['segments']
         exclude_segments = ['firebase']
         if self.DEBUG:
