@@ -28,6 +28,8 @@ class LauncherConfigDetailSerializerForAgency(QueryFieldsMixin, serializers.Mode
 
 
 class OrbiterDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+
     class Meta:
         model = Orbiter
         fields = ('id', 'url', 'name', 'agency', 'in_use', 'capability', 'history', 'details', 'maiden_flight',

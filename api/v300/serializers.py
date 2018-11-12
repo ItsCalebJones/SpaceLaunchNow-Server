@@ -9,6 +9,8 @@ from api.utils.custom_serializers import TimeStampField
 
 
 class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+    type = serializers.ReadOnlyField(read_only=True, source="agency_type.name")
+
     class Meta:
         model = Agency
         fields = ('id', 'url', 'name', 'featured', 'launchers', 'orbiters', 'description', 'image_url', 'nation_url',
@@ -59,6 +61,8 @@ class LauncherDetailSerializerForAgency(QueryFieldsMixin, serializers.ModelSeria
 
 
 class OrbiterDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+
     class Meta:
         model = Orbiter
         fields = ('id', 'url', 'name', 'agency', 'history', 'details', 'image_url',
@@ -68,6 +72,7 @@ class OrbiterDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSeri
 class AgencyDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     launcher_list = LauncherDetailSerializerForAgency(many=True, read_only=True)
     orbiter_list = OrbiterDetailSerializer(many=True, read_only=True)
+    type = serializers.ReadOnlyField(read_only=True, source="agency_type.name")
 
     class Meta:
         model = Agency

@@ -198,7 +198,6 @@ class Orbiter(models.Model):
 # The LauncherDetail object is meant to define orbital class launch vehicles (past and present).
 #
 # Example: Falcon 9, Saturn V, etc.
-# TODO Deprecate the 'agency' string field now that its linked to launch_agency.
 class LauncherConfig(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=200)

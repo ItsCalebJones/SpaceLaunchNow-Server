@@ -24,6 +24,7 @@ class OrbiterSerializer(serializers.HyperlinkedModelSerializer):
 
     image_url = serializers.SerializerMethodField('get_legacy_name')
     nation_url = serializers.SerializerMethodField('get_nation_name')
+    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
         model = Orbiter
@@ -46,6 +47,7 @@ class OrbiterSerializer(serializers.HyperlinkedModelSerializer):
 class OrbiterModelSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField('get_legacy_name')
     nation_url = serializers.SerializerMethodField('get_nation_name')
+    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
         model = Orbiter
