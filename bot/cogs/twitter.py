@@ -280,16 +280,19 @@ class Twitter:
             tweet.read = True
             tweet.save()
             if tweet.user.subscribers is not None:
-                logger.info("Reading tweet from @%s" % tweet.user)
+                logger.info("Reading tweet from @%s" % tweet.user.name)
                 for channel in tweet.user.subscribers.all():
                     logger.info("Sending to %s" % channel.name)
                     await self.bot.send_message(self.bot.get_channel(id=channel.channel_id), embed=tweet_to_embed(tweet))
             if tweet.default:
-                logger.info("Default! Tweet from @%s" % tweet.user)
+                logger.info("Default! Tweet from @%s" % tweet.user.name)
                 for channel in TwitterNotificationChannel.objects.filter(default_subscribed=True):
                     logger.info("Sending to %s" % channel.name)
-                    await self.bot.send_message(self.bot.get_channel(id=channel.channel_id),
-                                                embed=tweet_to_embed(tweet))
+                    try:
+                        await self.bot.send_message(self.bot.get_channel(id=channel.channel_id),
+                                                    embed=tweet_to_embed(tweet))
+                    except Exception as e:
+                        logger.error(e)
 
 
 def tweet_to_embed(tweet):
