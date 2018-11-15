@@ -102,7 +102,9 @@ class Notifications:
             if not notification.wasNotifiedSuccessDiscord:
                 notification.wasNotifiedSuccessDiscord = True
                 notification.save()
+                logger.info("Success - Launch Notification for %s" % launch.name)
                 for channel in bot_channels:
+                    logger.info("Sending notification to %s" % channel.name)
                     await self.bot.send_message(channel,
                                                 embed=launch_to_small_embed(launch,
                                                                             "**Launch was a %s!**\n\n" % launch.status.name))
@@ -114,7 +116,9 @@ class Notifications:
             if not notification.wasNotifiedInFlightDiscord:
                 notification.wasNotifiedInFlightDiscord = True
                 notification.save()
+                logger.info("In-Flight - Launch Notification for %s" % launch.name)
                 for channel in bot_channels:
+                    logger.info("Sending notification to %s" % channel.name)
                     await self.bot.send_message(channel,
                                                 embed=launch_to_small_embed(launch, "**Launch is in flight!**\n\n"))
 
@@ -126,7 +130,9 @@ class Notifications:
             if not notification.wasNotifiedOneMinutesDiscord:
                 notification.wasNotifiedOneMinutesDiscord = True
                 notification.save()
+                logger.info("One Minute - Launch Notification for %s" % launch.name)
                 for channel in bot_channels:
+                    logger.info("Sending notification to %s" % channel.name)
                     await self.bot.send_message(channel,
                                                 embed=launch_to_small_embed(launch, "**Launching in one minute!**\n\n"))
 
@@ -138,7 +144,9 @@ class Notifications:
             if not notification.wasNotifiedTenMinutesDiscord:
                 notification.wasNotifiedTenMinutesDiscord = True
                 notification.save()
+                logger.info("Ten Minutes - Launch Notification for %s" % launch.name)
                 for channel in bot_channels:
+                    logger.info("Sending notification to %s" % channel.name)
                     await self.bot.send_message(channel,
                                                 embed=launch_to_small_embed(launch,
                                                                             "**Launching in ten minutes!**\n\n"))
@@ -151,7 +159,9 @@ class Notifications:
             if not notification.wasNotifiedTwentyFourHourDiscord:
                 notification.wasNotifiedTwentyFourHourDiscord = True
                 notification.save()
+                logger.info("Twenty Four Hour - Launch Notification for %s" % launch.name)
                 for channel in bot_channels:
+                    logger.info("Sending notification to %s" % channel.name)
                     await self.bot.send_message(channel, embed=launch_to_small_embed(launch,
                                                                                      "**Launching in twenty four hours!**\n\n"))
 
@@ -163,7 +173,9 @@ class Notifications:
             if not notification.wasNotifiedOneHourDiscord:
                 notification.wasNotifiedOneHourDiscord = True
                 notification.save()
+                logger.info("One Hour - Launch Notification for %s" % launch.name)
                 for channel in bot_channels:
+                    logger.info("Sending notification to %s" % channel.name)
                     await self.bot.send_message(channel,
                                                 embed=launch_to_small_embed(launch, "**Launching in one hour!**\n\n"))
 
@@ -194,15 +206,16 @@ class Notifications:
 
             await self.set_bot_description()
 
-            await asyncio.sleep(5)
+            await asyncio.sleep(10)
 
     async def set_bot_description(self):
-        if self.description == 120:
+        if self.description == 60:
+            logger.info("Updating Space Launch Bot's description.")
             launch = Launch.objects.filter(net__gte=datetime.datetime.utcnow()).order_by('net').first()
             launch_date = launch.net
             now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
             message = u"""
-            %s in %s.
+            %s in %s. Use ?help for commands.
             """ % (launch.name, defaultfilters.timeuntil(launch_date, now))
             squid_bot_game = discord.Game(name=message, url=launch.get_full_absolute_url(), type=0)
             await self.bot.change_presence(game=squid_bot_game, status=discord.Status.online, afk=False)
