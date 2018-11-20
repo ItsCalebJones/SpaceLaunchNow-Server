@@ -7,6 +7,7 @@ from rest_framework import serializers
 
 class AgencySerializerMini(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     parent = serializers.StringRelatedField(read_only=True)
+    type = serializers.ReadOnlyField(read_only=True, source="agency_type.name")
 
     class Meta:
         model = Agency
@@ -15,6 +16,7 @@ class AgencySerializerMini(QueryFieldsMixin, serializers.HyperlinkedModelSeriali
 
 class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     parent = serializers.StringRelatedField(read_only=True)
+    type = serializers.ReadOnlyField(read_only=True, source="agency_type.name")
 
     class Meta:
         model = Agency
@@ -24,6 +26,7 @@ class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer)
 
 class AgencySerializerDetailed(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     parent = serializers.StringRelatedField(read_only=True)
+    type = serializers.ReadOnlyField(read_only=True, source="agency_type.name")
 
     class Meta:
         model = Agency
@@ -96,6 +99,8 @@ class LauncherConfigDetailSerializerForAgency(QueryFieldsMixin, serializers.Mode
 
 
 class OrbiterDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+
     class Meta:
         model = Orbiter
         fields = ('id', 'url', 'name', 'agency', 'in_use', 'capability', 'history', 'details', 'maiden_flight',
@@ -106,7 +111,7 @@ class OrbiterDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSeri
 class AgencyDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     launcher_list = LauncherConfigDetailSerializerForAgency(many=True, read_only=True)
     orbiter_list = OrbiterDetailSerializer(many=True, read_only=True)
-
+    type = serializers.ReadOnlyField(read_only=True, source="agency_type.name")
     parent = serializers.StringRelatedField(read_only=True)
 
     class Meta:

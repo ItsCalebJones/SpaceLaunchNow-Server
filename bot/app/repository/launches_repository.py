@@ -6,7 +6,8 @@ from pytz import utc
 
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.models import Notification, DailyDigestRecord
-from bot.utils.deserializer import launch_json_to_model
+from bot.utils.deserializer import launch_json_to_model, launch_status_json_to_model, mission_type_json_to_model, \
+    agency_type_json_to_model
 
 # import the logging library
 
@@ -151,6 +152,52 @@ class LaunchRepository:
         elif response.status_code == 404:
             logger.debug("Launch is Stale - %s" % id)
             return True
+
+    def get_launch_by_id(self, id):
+        response = self.launchLibrary.get_launch_by_id(id)
+        if response.status_code == 200:
+            response_json = response.json()
+            launches_json = response_json['launches']
+            for launch_json in launches_json:
+                launch = launch_json_to_model(launch_json)
+                launch.save()
+                return launch
+
+    def get_launch_status(self):
+        response = self.launchLibrary.get_launch_status()
+        if response.status_code == 200:
+            response_json = response.json()
+            statuses_json = response_json['types']
+            statuses = []
+            for status_json in statuses_json:
+                status = launch_status_json_to_model(status_json)
+                status.save()
+                statuses.append(status)
+            return statuses
+
+    def get_agency_type(self):
+        response = self.launchLibrary.get_agency_type()
+        if response.status_code == 200:
+            response_json = response.json()
+            statuses_json = response_json['types']
+            statuses = []
+            for status_json in statuses_json:
+                status = agency_type_json_to_model(status_json)
+                status.save()
+                statuses.append(status)
+            return statuses
+
+    def get_mission_type(self):
+        response = self.launchLibrary.get_mission_type()
+        if response.status_code == 200:
+            response_json = response.json()
+            statuses_json = response_json['types']
+            statuses = []
+            for status_json in statuses_json:
+                status = mission_type_json_to_model(status_json)
+                status.save()
+                statuses.append(status)
+            return statuses
 
 
 def update_notification_record(launch):

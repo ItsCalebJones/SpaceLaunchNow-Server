@@ -1,6 +1,7 @@
 {% load staticfiles %}
 {% load user_agents %}
 {% load tz %}
+{% load thumbnail %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,11 +13,7 @@
     {% endblock ga %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>Space Launch Now</title>
-
+    <meta name="author" content="Caleb Jones">
     <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
     <!--     Fonts and icons     -->
     <link rel="preload" as="style" onload="this.rel='stylesheet'" type="text/css"
@@ -47,7 +44,7 @@
         <nav class="float-left">
             <ul>
                 <li>
-                    <a href="/site/about">
+                    <a href="/about">
                         About Us
                     </a>
                 </li>
@@ -69,7 +66,7 @@
                     <a href="https://www.instagram.com/spacelaunchnow/" class="twitter"><i class="fab fa-instagram"></i></a>
                 </li>
                 <li>
-                    <a href="https://discord.gg/JMaNs5p" class="twitter"><i class="fab fa-discord"></i></a>
+                    <a href="https://discord.gg/WVfzEDW" class="twitter"><i class="fab fa-discord"></i></a>
                 </li>
                 <li>
                     <a href="https://twitter.com/SpaceLaunchNow" class="twitter"><i class="fab fa-twitter"></i></a>

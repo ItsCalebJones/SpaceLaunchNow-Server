@@ -7,13 +7,23 @@ from api.models import Launch
 
 class Notification(models.Model):
     launch = models.OneToOneField(Launch, on_delete=models.CASCADE)
+
     wasNotifiedTwentyFourHour = models.BooleanField(blank=True, default=False)
     wasNotifiedOneHour = models.BooleanField(blank=True, default=False)
     wasNotifiedTenMinutes = models.BooleanField(blank=True, default=False)
+    wasNotifiedOneMinute = models.BooleanField(blank=True, default=False)
+    wasNotifiedInFlight = models.BooleanField(blank=True, default=False)
+    wasNotifiedSuccess = models.BooleanField(blank=True, default=False)
+
     wasNotifiedTwentyFourHourTwitter = models.BooleanField(blank=True, default=False)
     wasNotifiedOneHourTwitter = models.BooleanField(blank=True, default=False)
     wasNotifiedTenMinutesTwitter = models.BooleanField(blank=True, default=False)
+    wasNotifiedOneMinuteTwitter = models.BooleanField(blank=True, default=False)
+    wasNotifiedInFlightTwitter = models.BooleanField(blank=True, default=False)
+    wasNotifiedSuccessTwitter = models.BooleanField(blank=True, default=False)
+
     wasNotifiedDailyDigest = models.BooleanField(blank=True, default=False)
+
     last_twitter_post = models.DateTimeField(blank=True, null=True)
     last_notification_sent = models.DateTimeField(blank=True, null=True)
     last_notification_recipient_count = models.IntegerField(blank=True, null=True)
@@ -76,3 +86,99 @@ class DiscordChannel(models.Model):
     class Meta:
         verbose_name = "Channel"
         verbose_name_plural = "Channels"
+
+
+class TwitterNotificationChannel(models.Model):
+    id = models.AutoField(primary_key=True)
+    channel_id = models.CharField(max_length=4000, unique=True)
+    server_id = models.CharField(max_length=4000, unique=False)
+    name = models.CharField(max_length=4000)
+    default_subscribed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return '{} ({})'.format(self.name, self.channel_id)
+
+    class Meta:
+        verbose_name = "Twitter Notification Channel"
+        verbose_name_plural = "Twitter Notification Channels"
+
+
+class TwitterUser(models.Model):
+    user_id = models.BigIntegerField(null=False, primary_key=True)
+    screen_name = models.CharField(max_length=255, null=False)
+    name = models.CharField(max_length=255, null=False)
+    profile_image = models.CharField(max_length=1048, null=False)
+    subscribers = models.ManyToManyField(TwitterNotificationChannel)
+    custom = models.BooleanField(default=False)
+    default = models.BooleanField(default=False)
+
+
+class Tweet(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    user = models.ForeignKey(TwitterUser, related_name='tweets')
+    text = models.CharField(max_length=1048, null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)
+    default = models.BooleanField(default=False)
+
+
+class SubredditNotificationChannel(models.Model):
+    id = models.AutoField(primary_key=True)
+    channel_id = models.CharField(max_length=4000, unique=True)
+    server_id = models.CharField(max_length=4000, unique=False)
+    name = models.CharField(max_length=4000)
+
+    def __str__(self):
+        return '{} ({})'.format(self.name, self.channel_id)
+
+    class Meta:
+        verbose_name = "Reddit Notification Channel"
+        verbose_name_plural = "Reddit Notification Channels"
+
+
+class Subreddit(models.Model):
+    id = models.CharField(primary_key=True, max_length=255)
+    name = models.CharField(max_length=1048, null=False)
+    initialized = models.BooleanField(default=False)
+    subscribers = models.ManyToManyField(SubredditNotificationChannel)
+
+
+class RedditSubmission(models.Model):
+    id = models.CharField(primary_key=True, max_length=255)
+    subreddit = models.ForeignKey(Subreddit, related_name='submissions')
+    user = models.CharField(max_length=255, null=False)
+    selftext = models.BooleanField(default=False)
+    score = models.IntegerField(default=0)
+    comments = models.IntegerField(default=0)
+    title = models.CharField(max_length=1048, null=True, blank=True, default="")
+    thumbnail = models.CharField(max_length=1048, null=True, blank=True, default="")
+    text = models.CharField(max_length=40000, null=True, blank=True, default="")
+    link = models.CharField(max_length=1048, null=True, blank=True, default="")
+    permalink = models.CharField(max_length=1048, null=False)
+    read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class NewsNotificationChannel(models.Model):
+    id = models.AutoField(primary_key=True)
+    channel_id = models.CharField(max_length=4000, unique=True)
+    server_id = models.CharField(max_length=4000, unique=False)
+    name = models.CharField(max_length=4000)
+    subscribed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return '{} ({})'.format(self.name, self.channel_id)
+
+    class Meta:
+        verbose_name = "News Notification Channel"
+        verbose_name_plural = "News Notification Channels"
+
+
+class NewsItem(models.Model):
+    id = models.CharField(primary_key=True, max_length=255)
+    title = models.CharField(max_length=1048, null=False)
+    link = models.CharField(max_length=1048, null=True, blank=True, default="")
+    featured_image = models.CharField(max_length=1048, null=True, blank=True, default="")
+    news_site = models.CharField(max_length=1048, null=True, blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)

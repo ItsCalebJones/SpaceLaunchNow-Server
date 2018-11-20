@@ -15,6 +15,7 @@ class LauncherModelSerializer(QueryFieldsMixin, serializers.ModelSerializer):
 
 
 class OrbiterSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
         model = Orbiter
@@ -23,6 +24,7 @@ class OrbiterSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer
 
 
 class OrbiterModelSerializer(QueryFieldsMixin, serializers.ModelSerializer):
+    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
         model = Orbiter

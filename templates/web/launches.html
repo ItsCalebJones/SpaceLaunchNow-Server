@@ -1,12 +1,17 @@
 {% extends "web/base.html" %}
 {% load staticfiles %}
-
+{% load thumbnail %}
 {% block extrahead %}
+<link rel="canonical" href="https://spacelaunchnow.me/launch/">
+<title>Space Launch Now - Launch Schedule</title>
+<meta name="title" content="Space Launch Now - Launch Schedule">
 <meta property="fb:app_id" content="746774215504127"/>
-<meta property="og:title" content="Space Launch Now - Upcoming Launches"/>
+<meta property="og:title" content="Space Launch Now - Launch Schedule"/>
 <meta property="og:type" content="website"/>
+<meta name="description"
+      content="A spaceflight launch schedule - tracking the latest developments in spaceflight, check back often for launch schedule changes.">
 <meta property="og:description"
-      content="Meet Space Launch Now the best resource for keeping up to date on all of your favorite spaceflight missions from around the world."/>
+      content="A spaceflight launch schedule - tracking the latest developments in spaceflight, check back often for launch schedule changes."/>
 <meta property="og:url" content="https://spacelaunchnow.me/launch/"/>
 <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
 <meta property="og:image:width" content="3000"/>
@@ -58,12 +63,15 @@
                     <a class="nav-link js-scroll-trigger active" href="/launch/">Launches</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link twitter" href="https://twitter.com/SpaceLaunchNow"><i
-                            class="fab fa-twitter"></i></a>
-                </li>
-
-                <li class="nav-item">
                     <a class="nav-link" href="/3.2.0">API</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><i
+                            class="fab fa-android"></i> Android</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://itunes.apple.com/us/app/space-launch-now/id1399715731"><i
+                            class="fab fa-apple"></i> iOS</a>
                 </li>
             </ul>
         </div>
@@ -83,10 +91,10 @@
             <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
             <a href="/launch"
                class="btn btn-round {% if query %} btn-link{% else %} btn-primary {% endif %}">All</a>
-            <a href="?q=spx"
-               class="btn btn-round {% if query == 'spx' %} btn-primary{% else %} btn-link {% endif %}">SpaceX</a>
-            <a href="?q=ula"
-               class="btn btn-round {% if query == 'ula' %} btn-primary{% else %} btn-link {% endif %}">ULA</a>
+            <a href="?q=SpX"
+               class="btn btn-round {% if query == 'SpX' %} btn-primary{% else %} btn-link {% endif %}">SpaceX</a>
+            <a href="?q=ULA"
+               class="btn btn-round {% if query == 'ULA' %} btn-primary{% else %} btn-link {% endif %}">ULA</a>
             <a href="?q=NASA"
                class="btn btn-round {% if query == 'NASA' %} btn-primary{% else %} btn-link {% endif %}">NASA</a>
             <a href="?q=RFSA"
@@ -111,17 +119,6 @@
              data-ad-format="auto"></ins>
         <script>
                 (adsbygoogle = window.adsbygoogle || []).push({});
-
-
-
-
-
-
-
-
-
-
-
         </script>
     </div>
 
@@ -141,13 +138,17 @@
                 </div>
                 <div class="card-header card-header-info">
                     {% if launch.rocket.configuration.image_url %}
+                    {% thumbnail launch.rocket.configuration.image_url "200" as im %}
                     <img class="img-raised rounded-circle img-fluid text-center"
-                         src="{{ launch.rocket.configuration.image_url.url }}"
-                         style="max-width: 35%;overflow: hidden;margin: -100px 0 0 0;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                         src="{{ im.url }}"
+                         style="width: 125px;height: 125px;overflow: hidden;margin: -100px 0 0 0;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                    {% endthumbnail %}
                     {% elif launch.rocket.configuration.launch_agency.image_url %}
+                    {% thumbnail launch.rocket.configuration.launch_agency.image_url "200" as im %}
                     <img class="img-raised rounded-circle img-fluid text-center"
-                         src="{{ launch.rocket.configuration.launch_agency.image_url.url }}"
-                         style="max-width: 35%;overflow: hidden;margin: -100px 0 0 0;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                         src="{{ im.url }}"
+                         style="width: 125px;height: 125px;overflow: hidden;margin: -100px 0 0 0;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                    {% endthumbnail %}
                     {% else %}
                     <img class="img-raised rounded-circle img-fluid text-center"
                          src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png"
@@ -218,13 +219,6 @@
             <script>
                     (adsbygoogle = window.adsbygoogle || []).push({});
 
-
-
-
-
-
-
-
             </script>
             <br>
             <iframe src="https://discordapp.com/widget?id=380226438584074242&theme=dark"
@@ -244,13 +238,6 @@
          data-ad-format="auto"></ins>
     <script>
             (adsbygoogle = window.adsbygoogle || []).push({});
-
-
-
-
-
-
-
     </script>
 </div>
 {% include "web/install_buttons.html" %}

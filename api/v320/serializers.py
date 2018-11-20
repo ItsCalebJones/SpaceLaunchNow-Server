@@ -26,6 +26,8 @@ class LauncherConfigDetailSerializerForAgency(QueryFieldsMixin, serializers.Mode
 
 
 class OrbiterDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+
     class Meta:
         model = Orbiter
         fields = ('id', 'url', 'name', 'agency', 'in_use', 'capability', 'history', 'details', 'maiden_flight',
@@ -35,6 +37,7 @@ class OrbiterDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSeri
 
 class AgencySerializerMini(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     parent = serializers.StringRelatedField(read_only=True)
+    type = serializers.ReadOnlyField(read_only=True, source="agency_type.name")
 
     class Meta:
         model = Agency
@@ -43,6 +46,7 @@ class AgencySerializerMini(QueryFieldsMixin, serializers.HyperlinkedModelSeriali
 
 class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     parent = serializers.StringRelatedField(read_only=True)
+    type = serializers.ReadOnlyField(read_only=True, source="agency_type.name")
 
     class Meta:
         model = Agency
@@ -54,6 +58,7 @@ class AgencySerializerDetailed(QueryFieldsMixin, serializers.HyperlinkedModelSer
     parent = serializers.StringRelatedField(read_only=True)
     launcher_list = LauncherConfigDetailSerializerForAgency(many=True, read_only=True)
     orbiter_list = OrbiterDetailSerializer(many=True, read_only=True)
+    type = serializers.ReadOnlyField(read_only=True, source="agency_type.name")
 
     class Meta:
         model = Agency
@@ -279,12 +284,35 @@ class LaunchListSerializer(serializers.ModelSerializer):
     orbit = serializers.SerializerMethodField()
     mission = serializers.StringRelatedField()
     mission_type = serializers.StringRelatedField(source='mission.mission_type.name')
+    image = serializers.SerializerMethodField()
     slug = serializers.SlugField(source='get_full_absolute_url')
     
     class Meta:
         model = Launch
         fields = ('id', 'url', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'mission', 'mission_type',
-                  'pad', 'location', 'landing', 'landing_success', 'launcher', 'orbit')
+                  'pad', 'location', 'landing', 'landing_success', 'launcher', 'orbit', 'image')
+
+    def get_image(self, obj):
+        try:
+            cache_key = "%s-%s" % (obj.id, "launch-list-image")
+            image = cache.get(cache_key)
+            if image is not None:
+                return image
+
+            image_url = obj.rocket.configuration.image_url
+
+            if image_url is None:
+                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
+                return None
+            elif image_url:
+                cache.set(cache_key, image_url.url, CACHE_TIMEOUT_ONE_DAY)
+                return image_url.url
+            else:
+                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
+                return None
+
+        except Exception as ex:
+            return None
 
     def get_landing(self, obj):
         try:

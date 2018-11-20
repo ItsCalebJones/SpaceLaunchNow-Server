@@ -44,9 +44,6 @@ class AgencyViewSet(ModelViewSet):
 
     permission_classes = [HasGroupPermission]
     permission_groups = {
-        'create': ['Developers'],  # Developers can POST
-        'destroy': ['Developers'],  # Developers can DELETE
-        'partial_update': ['Contributors', 'Developers'],  # Designers and Developers can PATCH
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public']
     }
@@ -94,9 +91,6 @@ class OrbiterViewSet(ModelViewSet):
     serializer_class = OrbiterDetailSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
-        'create': ['Developers'],  # Developers can POST
-        'destroy': ['Developers'],  # Developers can POST
-        'partial_update': ['Contributors', 'Developers'],  # Designers and Developers can PATCH
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
@@ -114,9 +108,6 @@ class EventViewSet(ModelViewSet):
     serializer_class = EventsSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
-        'create': ['Developers'],  # Developers can POST
-        'destroy': ['Developers'],  # Developers can POST
-        'partial_update': ['Contributors', 'Developers'],  # Designers and Developers can PATCH
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
@@ -175,9 +166,6 @@ class LaunchViewSet(ModelViewSet):
 
     permission_classes = [HasGroupPermission]
     permission_groups = {
-        'create': ['Developers'],  # Developers can POST
-        'destroy': ['Developers'],  # Developers can POST
-        'partial_update': ['Contributors', 'Developers'],  # Designers and Developers can PATCH
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
@@ -243,9 +231,6 @@ class UpcomingLaunchViewSet(ModelViewSet):
     now = datetime.now()
     permission_classes = [HasGroupPermission]
     permission_groups = {
-        'create': ['Developers'],  # Developers can POST
-        'destroy': ['Developers'],  # Developers can POST
-        'partial_update': ['Contributors', 'Developers'],  # Designers and Developers can PATCH
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
@@ -310,9 +295,6 @@ class PreviousLaunchViewSet(ModelViewSet):
 
     permission_classes = [HasGroupPermission]
     permission_groups = {
-        'create': ['Developers'],  # Developers can POST
-        'destroy': ['Developers'],  # Developers can POST
-        'partial_update': ['Contributors', 'Developers'],  # Designers and Developers can PATCH
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }

@@ -83,12 +83,12 @@ class InstagramBot:
                 print('Cookie Expired. Please discard cached auth and login again.')
 
     def update_profile(self, message, url='https://spacelaunchnow.me'):
-        self.instagram.edit_profile(external_url=url,
-                                    first_name='Space Launch Now',
-                                    biography=message,
-                                    gender='3',
-                                    email=config.INSTAGRAM_EMAIL,
-                                    phone_number='')
+        return self.instagram.edit_profile(external_url=url,
+                                           first_name='Space Launch Now',
+                                           biography=message,
+                                           gender='3',
+                                           email=config.INSTAGRAM_EMAIL,
+                                           phone_number='')
 
     def create_post(self, launch, time_remaining='one hour'):
         MAX_W = 1080
@@ -116,7 +116,6 @@ class InstagramBot:
         text = Image.new('RGBA', size)
         text_shadow = Image.new('RGBA', size)
         shadowcolor = (0, 0, 0, 128)
-
 
         # Create Header Text
         header = launch.name
@@ -182,4 +181,3 @@ class InstagramBot:
         in_file.close()
         os.remove("temp.jpg")
         assert 'ok' in results.get('status')
-

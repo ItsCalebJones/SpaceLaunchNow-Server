@@ -17,3 +17,48 @@ class NotificationAdmin(admin.ModelAdmin):
 @admin.register(models.DailyDigestRecord)
 class DailyDigestRecordAdmin(admin.ModelAdmin):
     list_display = ('id', 'timestamp', 'messages', 'count', 'data')
+
+
+@admin.register(models.DiscordChannel)
+class DiscordBotAdmin(admin.ModelAdmin):
+    list_display = ('name', 'channel_id', 'server_id')
+
+
+@admin.register(models.TwitterNotificationChannel)
+class TwitterNotificationChannelAdmin(admin.ModelAdmin):
+    list_display = ('name', 'channel_id', 'server_id')
+
+
+@admin.register(models.TwitterUser)
+class TwitterUserAdmin(admin.ModelAdmin):
+    list_display = ('user_id', 'screen_name', 'name',)
+
+
+@admin.register(models.Tweet)
+class TweetAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'text', 'created_at', 'read')
+
+
+@admin.register(models.SubredditNotificationChannel)
+class SubredditNotificationChannelAdmin(admin.ModelAdmin):
+    list_display = ('name', 'channel_id', 'server_id')
+
+
+@admin.register(models.Subreddit)
+class SubredditAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+
+
+@admin.register(models.RedditSubmission)
+class RedditSubmissionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'text', 'link', 'read', 'created_at')
+
+
+@admin.register(models.NewsItem)
+class NewsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'news_site', 'created_at')
+
+
+@admin.register(models.NewsNotificationChannel)
+class NewsNotificationChannelAdmin(admin.ModelAdmin):
+    list_display = ('id', 'channel_id', 'server_id', 'name', 'subscribed')

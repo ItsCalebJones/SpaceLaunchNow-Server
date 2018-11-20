@@ -2,14 +2,42 @@ import datetime
 import pytz
 import requests
 import tempfile
+import logging
 
-from django.core.exceptions import ObjectDoesNotExist
+
+try:
+    from urllib import quote  # Python 2.X
+except ImportError:
+    from urllib.parse import quote  # Python 3+
 
 from api.models import *
 from api.utils.utilities import get_mission_type, get_agency_type, get_launch_status
 from bot.models import *
 from configurations.models import *
 from django.core import files
+
+logger = logging.getLogger('bot.digest')
+
+
+def launch_status_json_to_model(data):
+    id = data['id']
+    name = data['name']
+    launch_status, created = LaunchStatus.objects.get_or_create(id=id, name=name)
+    return launch_status
+
+
+def agency_type_json_to_model(data):
+    id = data['id']
+    name = data['name']
+    launch_status, created = AgencyType.objects.get_or_create(id=id, name=name)
+    return launch_status
+
+
+def mission_type_json_to_model(data):
+    id = data['id']
+    name = data['name']
+    launch_status, created = MissionType.objects.get_or_create(id=id, name=name)
+    return launch_status
 
 
 def launch_json_to_model(data):
@@ -30,13 +58,16 @@ def launch_json_to_model(data):
     tbddate = data['tbddate']
 
     launch, created = Launch.objects.get_or_create(id=id)
-
     launch.name = name
+
+    if created:
+        logger.info("Created - %s (%s)" % (launch.name, launch.id))
+
     try:
         launch.status = LaunchStatus.objects.get(id=status)
     except ObjectDoesNotExist:
         launch.status = LaunchStatus.objects.get(id=2)
-        print("Launch did not have a status.")
+        logger.error("Launch did not have a status.")
     launch.inhold = inhold
     launch.probability = probability
     launch.holdreason = holdreason
@@ -116,7 +147,9 @@ def get_mission(launch, data):
         mission.type = data['missions'][0]['type']
         mission.type_name = get_mission_type(data['missions'][0]['type'])
         if data['missions'][0]['type'] != 0:
-            mission_type = MissionType.objects.get(id=data['missions'][0]['type'])
+            mission_type, created = MissionType.objects.get_or_create(id=data['missions'][0]['type'])
+            if created:
+                mission_type.name = "Unknown"
             mission.mission_type = mission_type
         mission.description = data['missions'][0]['description']
         mission.save()
@@ -154,7 +187,7 @@ def download_launcher_image(launcher):
     request = requests.get(webrocket['imageURL'], stream=True)
     filename = webrocket['imageURL'].split('/')[-1]
     filename, file_extension = os.path.splitext(filename)
-    clean_name = urllib.quote(urllib.quote(launcher.name.encode('utf8')), '')
+    clean_name = quote(quote(launcher.name.encode('utf8')), '')
     clean_name = "%s_nation_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
     name = "%s%s" % (str(clean_name), file_extension)
 

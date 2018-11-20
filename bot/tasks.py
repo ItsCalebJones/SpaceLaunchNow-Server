@@ -1,4 +1,8 @@
 # coding=utf-8
+import os
+import stat
+import time
+
 from api.management.commands.run_spacex_api_importer import import_core
 from api.models import Launch
 from datetime import datetime, timedelta
@@ -9,8 +13,12 @@ from celery.task import periodic_task
 from celery.utils.log import get_task_logger
 
 from bot.app.instagram import InstagramBot
+from bot.app.notifications.launch_event_tracker import LaunchEventTracker
 from bot.app.repository.launches_repository import LaunchRepository
 from bot.app.sync import LaunchLibrarySync
+from bot.cogs.news import get_news
+from bot.cogs.reddit import get_submissions
+from bot.cogs.twitter import get_new_tweets
 from bot.models import Notification
 from bot.utils.util import custom_strftime
 from spacelaunchnow import config
@@ -72,7 +80,7 @@ def check_for_orphaned_launches():
         for launch in launches:
             logger.debug("Stale - %s" % launch.name)
             if repository.is_launch_deleted(launch.id):
-                launch.delete()
+                logger.debug("Delete this launch!" % launch.name)
 
 
 @periodic_task(
@@ -87,7 +95,6 @@ def get_previous_launches():
     repository = LaunchRepository()
     repository.get_previous_launches()
     logger.info('Task - Getting SpaceX cores!')
-    import_core()
 
 
 @periodic_task(run_every=(crontab(minute='*/1')), options={"expires": 60})
@@ -95,6 +102,31 @@ def check_next_launch(debug=config.DEBUG):
     logger.info('Task - Running Notifications...')
     notification = LaunchLibrarySync(debug=debug)
     notification.check_next_launch()
+
+
+@periodic_task(run_every=(crontab(minute='*/1')), options={"expires": 60})
+def get_tweets_task():
+    logger.info('Task - Running get_new_tweets...')
+    get_new_tweets()
+
+
+@periodic_task(run_every=(crontab(minute='*/5')), options={"expires": 120})
+def get_news_task():
+    logger.info('Task - Running get_news...')
+    get_news()
+
+
+@periodic_task(run_every=(crontab(minute='*/30')), options={"expires": 120})
+def get_reddit_submissions_task():
+    logger.info('Task - Running get_reddit_submissions...')
+    get_submissions()
+
+
+@periodic_task(run_every=timedelta(seconds=5), options={"expires": 60})
+def launch_tracker():
+    logger.info('Task - Running Launch Event Tracker')
+    tracker = LaunchEventTracker()
+    tracker.check_events()
 
 
 @periodic_task(run_every=(crontab(minute='*/5')), options={"expires": 60})
@@ -109,6 +141,13 @@ def get_recent_previous_launches():
 @periodic_task(run_every=(crontab(hour='*/6')), options={"expires": 600})
 def set_instagram():
     logger.info('Task - setting Instagram')
+    try:
+        cache_age = time.time() - os.stat('instagram.cache')[stat.ST_MTIME]
+        if cache_age > 2.592e+6:
+            logger.info('Instagram cache is expired - %d' % cache_age)
+            os.remove('instagram.cache')
+    except FileNotFoundError as error:
+        logger.error(error)
     instagram = InstagramBot()
     launch = Launch.objects.filter(net__gte=datetime.now()).order_by('net').first()
     message = u"""
@@ -119,4 +158,6 @@ def set_instagram():
     """ % (launch.name, launch.mission.type_name, launch.pad.location.name,
            custom_strftime("%B {S} at %I:%M %p %Z", launch.net))
     message = (message[:150]) if len(message) > 150 else message
-    instagram.update_profile(message, launch.get_full_absolute_url())
+    logger.info('Updating Instagram profile to - %s' % message)
+    response = instagram.update_profile(message, launch.get_full_absolute_url())
+    logger.info(response)

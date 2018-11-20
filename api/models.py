@@ -3,6 +3,11 @@ from __future__ import unicode_literals
 
 import os
 
+try:
+    from urllib import quote  # Python 2.X
+except ImportError:
+    from urllib.parse import quote  # Python 3+
+
 from django.core.cache import cache
 from django.contrib.sites.models import Site
 from django.core.exceptions import ObjectDoesNotExist
@@ -27,7 +32,7 @@ CACHE_TIMEOUT_TEN_MINUTES = 10 * 60
 
 def image_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
-    clean_name = urllib.quote(urllib.quote(instance.name.encode('utf8')), '')
+    clean_name = quote(quote(instance.name.encode('utf8')), '')
     clean_name = "%s_image_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
     name = "%s%s" % (str(clean_name), file_extension)
     return name
@@ -35,7 +40,7 @@ def image_path(instance, filename):
 
 def nation_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
-    clean_name = urllib.quote(urllib.quote(instance.name.encode('utf8')), '')
+    clean_name = quote(quote(instance.name.encode('utf8')), '')
     clean_name = "%s_nation_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
     name = "%s%s" % (str(clean_name), file_extension)
     return name
@@ -43,7 +48,7 @@ def nation_path(instance, filename):
 
 def logo_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
-    clean_name = urllib.quote(urllib.quote(instance.name.encode('utf8')), '')
+    clean_name = quote(quote(instance.name.encode('utf8')), '')
     clean_name = "%s_logo_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
     name = "%s%s" % (str(clean_name), file_extension)
     return name
@@ -54,7 +59,7 @@ class Agency(models.Model):
     name = models.CharField(max_length=200)
     parent = models.ForeignKey('self', related_name='related_agencies', null=True, blank=True)
     featured = models.BooleanField(default=False)
-    country_code = models.CharField(max_length=255, blank=True, default="")
+    country_code = models.CharField(max_length=1048, blank=True, default="")
     abbrev = models.CharField(max_length=255, blank=True, default="")
     type = models.CharField(max_length=255, blank=True, null=True)
     agency_type = models.ForeignKey(AgencyType, related_name='agency', blank=True, null=True, on_delete=models.CASCADE)
@@ -193,7 +198,6 @@ class Orbiter(models.Model):
 # The LauncherDetail object is meant to define orbital class launch vehicles (past and present).
 #
 # Example: Falcon 9, Saturn V, etc.
-# TODO Deprecate the 'agency' string field now that its linked to launch_agency.
 class LauncherConfig(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=200)
@@ -214,7 +218,7 @@ class LauncherConfig(models.Model):
     length = models.FloatField(verbose_name="Length (m)", blank=True, null=True)
     diameter = models.FloatField(verbose_name="Max Diameter (m)", blank=True, null=True)
     fairing_diameter = models.FloatField(verbose_name="Max Fairing Diameter (m)", blank=True, null=True)
-    launch_mass = models.IntegerField(verbose_name="Mass at Launch (kg)", blank=True, null=True)
+    launch_mass = models.IntegerField(verbose_name="Mass at Launch (T)", blank=True, null=True)
     leo_capacity = models.IntegerField(verbose_name="LEO Capacity (kg)", blank=True, null=True)
     gto_capacity = models.IntegerField(verbose_name="GTO Capacity (kg)", blank=True, null=True)
     geo_capacity = models.IntegerField(verbose_name="GEO Capacity (kg)", blank=True, null=True)
@@ -323,7 +327,7 @@ class Mission(models.Model):
 
 class Payload(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
-    name = models.CharField(max_length=255, blank=True, default="")
+    name = models.CharField(max_length=1048, blank=True, default="")
     description = models.CharField(max_length=2048, blank=True, default="")
     weight = models.CharField(max_length=255, blank=True, null=True)
     dimensions = models.CharField(max_length=255, blank=True, null=True)
@@ -343,7 +347,7 @@ class Launcher(models.Model):
     id = models.AutoField(primary_key=True)
     serial_number = models.CharField(max_length=10, blank=True, null=True)
     flight_proven = models.BooleanField(default=False)
-    status = models.CharField(max_length=255, blank=True, default="")
+    status = models.CharField(max_length=2048, blank=True, default="")
     details = models.CharField(max_length=2048, blank=True, default="")
     launcher_config = models.ForeignKey(LauncherConfig, related_name='launcher', null=True, on_delete=models.CASCADE)
 
@@ -495,8 +499,8 @@ class FirstStage(models.Model):
 class Launch(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     launch_library = models.NullBooleanField(default=True)
-    name = models.CharField(max_length=255, blank=True)
-    img_url = models.CharField(max_length=255, blank=True, null=True)
+    name = models.CharField(max_length=2048, blank=True)
+    img_url = models.CharField(max_length=1048, blank=True, null=True)
     status = models.ForeignKey(LaunchStatus, related_name='launch', blank=True, null=True, on_delete=models.SET_NULL)
     net = models.DateTimeField(max_length=255, null=True)
     window_end = models.DateTimeField(max_length=255, null=True)
@@ -505,10 +509,10 @@ class Launch(models.Model):
     tbdtime = models.NullBooleanField(default=False)
     tbddate = models.NullBooleanField(default=False)
     probability = models.IntegerField(blank=True, null=True)
-    holdreason = models.CharField(max_length=255, blank=True, null=True)
-    failreason = models.CharField(max_length=255, blank=True, null=True)
-    hashtag = models.CharField(max_length=255, blank=True, null=True)
-    slug = models.SlugField(unique=True, max_length=100)
+    holdreason = models.CharField(max_length=2048, blank=True, null=True)
+    failreason = models.CharField(max_length=2048, blank=True, null=True)
+    hashtag = models.CharField(max_length=2048, blank=True, null=True)
+    slug = models.SlugField(unique=True, max_length=1048)
     rocket = models.OneToOneField(Rocket, blank=True, null=True, related_name='launch', unique=True)
     pad = models.ForeignKey(Pad, related_name='launch', null=True, on_delete=models.SET_NULL)
     mission = models.ForeignKey(Mission, related_name='launch', null=True, on_delete=models.SET_NULL)

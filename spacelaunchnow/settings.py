@@ -27,12 +27,13 @@ SECRET_KEY = config.DJANGO_SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.DEBUG
 
-ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8', '.spacelaunchnow.me', '127.0.0.1', 'spacelaunchnow.me', '10.0.2.2']
+ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8', '.spacelaunchnow.me', '127.0.0.1', 'spacelaunchnow.me', '10.0.2.2', '159.203.146.211']
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'spacelaunchnow.pagination.SLNLimitOffsetPagination',
     'DEFAULT_MODEL_SERIALIZER_CLASS': 'drf_toolbox.serializers.ModelSerializer',
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
+    'DEFAULT_RENDERER_CLASSES': config.API_RENDERER,
     'DEFAULT_THROTTLE_CLASSES': (
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle'
@@ -91,6 +92,13 @@ LOGGING = {
             'formatter': 'standard',
             'maxBytes': 1024 * 1024 * 5,
             'backupCount': 5
+        },
+        'discord': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'log/discord.log',
+            'formatter': 'standard',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5
         }
     },
     'loggers': {
@@ -106,46 +114,24 @@ LOGGING = {
         },
         'bot.digest': {
             'handlers': ['django_default', 'digest', 'console'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': True,
         },
         'bot.notifications': {
             'handlers': ['django_default', 'notifications', 'console'],
-            'level': 'DEBUG',
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'bot.discord': {
+            'handlers': ['django_default', 'discord', 'console'],
+            'level': 'INFO',
             'propagate': True,
         }
     },
 }
 
 # Application definition
-INSTALLED_APPS = [
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.sites',
-    'rest_framework',
-    'api.apps.ApiConfig',
-    'rest_framework_docs',
-    'bot',
-    'configurations',
-    'djcelery',
-    'embed_video',
-    'jet.dashboard',
-    'jet',
-    'django.contrib.admin',
-    'django_user_agents',
-    'django_filters',
-    'rest_framework.authtoken',
-    'storages',
-    'django_comments',
-    'mptt',
-    'tagging',
-    'zinnia',
-    'collectfast',
-    # 'silk',
-]
+INSTALLED_APPS = config.INSTALLED_APPS
 
 JET_THEMES = [
     {
@@ -349,6 +335,9 @@ LAUNCHER_IMAGE_STORAGE = 'custom_storages.LauncherImageStorage'
 
 EVENT_IMAGE_LOCATION = MEDIA_LOCATION + '/event_images'  # type: str
 EVENT_IMAGE_STORAGE = 'custom_storages.EventImageStorage'
+
+APP_IMAGE_LOCATION = MEDIA_LOCATION + '/app_images'  # type: str
+APP_IMAGE_STORAGE = 'custom_storages.AppImageStorage'
 
 DEFAULT_FILE_STORAGE = DEFAULT_STORAGE
 

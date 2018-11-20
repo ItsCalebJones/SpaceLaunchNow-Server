@@ -1,7 +1,7 @@
 
 
 def get_launch_status(status):
-    return {
+    switcher = {
         0: 'Unknown',
         1: 'Go for Launch',
         2: 'Launch is NO-GO',
@@ -10,11 +10,12 @@ def get_launch_status(status):
         5: 'Unplanned Hold',
         6: 'In Flight',
         7: 'Partial Failure',
-    }[status]
+    }
+    return switcher.get(status, "Unknown")
 
 
 def get_agency_type(agency_type):
-    return {
+    switcher = {
         0: 'Unknown',
         1: 'Government',
         2: 'Multinational',
@@ -22,11 +23,12 @@ def get_agency_type(agency_type):
         4: 'Educational',
         5: 'Private',
         6: 'Unknown',
-    }[agency_type]
+    }
+    return switcher.get(agency_type, "Unknown")
 
 
 def get_mission_type(mission_type):
-    return {
+    switcher = {
         0: 'Unknown',
         1: 'Earth Science',
         2: 'Planetary Science',
@@ -42,4 +44,6 @@ def get_mission_type(mission_type):
         12: 'Suborbital',
         13: 'Test Flight',
         14: 'Dedicated Rideshare',
-    }[mission_type]
+        15: 'Navigation',
+    }
+    return switcher.get(mission_type, "Unknown")
