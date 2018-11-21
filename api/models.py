@@ -204,7 +204,7 @@ class LauncherConfig(models.Model):
     active = models.BooleanField(default=True)
     reusable = models.BooleanField(default=False)
     audited = models.BooleanField(default=False)
-    librarian_notes = models.CharField(max_length=2048, default='', blank=True)
+    librarian_notes = models.CharField(max_length=2048, default='', blank=True, null=True)
     description = models.CharField(max_length=2048, default='', blank=True)
     family = models.CharField(max_length=200, default='', blank=True)
     full_name = models.CharField(max_length=200, default='', blank=True)
