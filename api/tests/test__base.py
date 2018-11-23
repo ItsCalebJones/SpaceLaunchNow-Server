@@ -64,21 +64,21 @@ def setUpModule():
                             status="Some asinine status",
                             details="This weird little detail",
                             launcher_config=launcher_config)
-    Orbiter.objects.create(id=1,
-                           name="Cargo Dragon",
-                           agency="SpaceX String",
-                           launch_agency=spacex,
-                           history="This is a history.",
-                           details="This is a detail",
-                           in_use=False,
-                           capability="This is a capability",
-                           maiden_flight=None,
-                           height=12.0,
-                           diameter=10.0,
-                           human_rated=False,
-                           crew_capacity=None,
-                           payload_capacity=800,
-                           flight_life="One week.", )
+    OrbiterConfiguration.objects.create(id=1,
+                                        name="Cargo Dragon",
+                                        agency="SpaceX String",
+                                        launch_agency=spacex,
+                                        history="This is a history.",
+                                        details="This is a detail",
+                                        in_use=False,
+                                        capability="This is a capability",
+                                        maiden_flight=None,
+                                        height=12.0,
+                                        diameter=10.0,
+                                        human_rated=False,
+                                        crew_capacity=None,
+                                        payload_capacity=800,
+                                        flight_life="One week.", )
 
 
 class SLNAPITests(APITestCase):

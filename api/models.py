@@ -160,7 +160,7 @@ class Agency(models.Model):
 # The Orbiter object is meant to define spacecraft (past and present) that are human-rated for spaceflight.
 #
 # Example: Dragon, Orion, etc.
-class Orbiter(models.Model):
+class OrbiterConfiguration(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=200)
     agency = models.CharField(max_length=200, default='Unknown')
@@ -496,6 +496,10 @@ class FirstStage(models.Model):
             return u"Unsaved %s" % self.launcher.serial_number
 
 
+class LaunchOrbiter(models.Model):
+    rocket = models.ForeignKey(Rocket, related_name='orbiter', on_delete=models.CASCADE)
+
+
 class Launch(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     launch_library = models.NullBooleanField(default=True)
@@ -568,3 +572,37 @@ class InfoURLs(models.Model):
     class Meta:
         verbose_name = 'Info URL'
         verbose_name_plural = 'Info URLs'
+
+
+class Astronauts(models.Model):
+    name = models.CharField(max_length=255)
+    born = models.DateTimeField()
+    nationality = models.CharField(max_length=255)
+    agency = models.ForeignKey(Agency, on_delete=models.SET_NULL, null=True)
+    twitter = models.CharField(max_length=255)
+    bio = models.CharField(max_length=2048)
+
+
+class OrbiterStatus(models.Model):
+    name = models.CharField(max_length=255)
+
+
+class Orbiter(models.Model):
+    name = models.CharField(max_length=255)
+    serial_number = models.CharField(max_length=255)
+    splashdown = models.DateTimeField()
+    launch_crew = models.ManyToManyField(Astronauts, related_name='launch_crew')
+    onboard_crew = models.ManyToManyField(Astronauts, related_name='onboard_crew')
+    landing_crew = models.ManyToManyField(Astronauts, related_name='landing_crew')
+    orbiter_config = models.ForeignKey(OrbiterConfiguration)
+    destination = models.CharField(max_length=255)
+    status = models.ForeignKey(OrbiterStatus)
+
+
+class SpaceStation(models.Model):
+    name = models.CharField(max_length=255)
+    founded = models.DateTimeField()
+    docked_vehicles = models.ManyToManyField(Orbiter)
+    description = models.CharField(max_length=2048)
+    orbit = models.CharField(max_length=255)
+    crew = models.ManyToManyField(Astronauts)

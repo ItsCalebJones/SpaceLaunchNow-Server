@@ -11,7 +11,7 @@ from api.v321.normal.serializers import EntrySerializer, AgencySerializer, Event
     LauncherDetailedSerializer
 from api.models import *
 from datetime import datetime, timedelta
-from api.models import LauncherConfig, Orbiter, Agency
+from api.models import LauncherConfig, OrbiterConfiguration, Agency
 from api.permission import HasGroupPermission
 from bot.models import Launch
 
@@ -155,7 +155,7 @@ class OrbiterViewSet(ModelViewSet):
     GET:
     Return a list of all the existing orbiters.
     """
-    queryset = Orbiter.objects.all()
+    queryset = OrbiterConfiguration.objects.all()
     serializer_class = OrbiterDetailSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {

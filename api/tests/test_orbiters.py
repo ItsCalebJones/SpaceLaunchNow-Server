@@ -2,7 +2,7 @@ import json
 
 from rest_framework import status
 
-from api.models import Orbiter
+from api.models import OrbiterConfiguration
 from api.tests.test__base import SLNAPITests
 
 
@@ -19,7 +19,7 @@ class OrbiterTests(SLNAPITests):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(data['count'], 1)
-        dragon = Orbiter.objects.get(pk=data['results'][0]['id'])
+        dragon = OrbiterConfiguration.objects.get(pk=data['results'][0]['id'])
         self.assertEqual(data['results'][0]['id'], dragon.id)
         self.assertEqual(data['results'][0]['name'], dragon.name)
         self.assertEqual(data['results'][0]['agency'], dragon.launch_agency.name)
@@ -38,7 +38,7 @@ class OrbiterTests(SLNAPITests):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(data['count'], 1)
-        dragon = Orbiter.objects.get(pk=data['results'][0]['id'])
+        dragon = OrbiterConfiguration.objects.get(pk=data['results'][0]['id'])
         self.assertEqual(data['results'][0]['id'], dragon.id)
         self.assertEqual(data['results'][0]['name'], dragon.name)
         self.assertEqual(data['results'][0]['agency'], dragon.launch_agency.name)
@@ -59,7 +59,7 @@ class OrbiterTests(SLNAPITests):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(data['count'], 1)
-        dragon = Orbiter.objects.get(pk=data['results'][0]['id'])
+        dragon = OrbiterConfiguration.objects.get(pk=data['results'][0]['id'])
         self.assertEqual(data['results'][0]['id'], dragon.id)
         self.assertEqual(data['results'][0]['name'], dragon.name)
         self.assertEqual(data['results'][0]['agency'], dragon.launch_agency.name)
@@ -79,7 +79,7 @@ class OrbiterTests(SLNAPITests):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(data['count'], 1)
-        dragon = Orbiter.objects.get(pk=data['results'][0]['id'])
+        dragon = OrbiterConfiguration.objects.get(pk=data['results'][0]['id'])
         self.assertEqual(data['results'][0]['id'], dragon.id)
         self.assertEqual(data['results'][0]['name'], dragon.name)
         self.assertEqual(data['results'][0]['agency'], dragon.launch_agency.name)

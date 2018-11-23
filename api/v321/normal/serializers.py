@@ -31,7 +31,7 @@ class LauncherSerializer(QueryFieldsMixin, serializers.ModelSerializer):
 
 class OrbiterSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Orbiter
+        model = OrbiterConfiguration
         fields = ('id', 'url', 'name', 'in_use')
 
 
