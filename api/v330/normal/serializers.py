@@ -29,7 +29,7 @@ class LauncherSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         fields = ('id', 'url', 'flight_proven', 'serial_number',)
 
 
-class OrbiterSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+class OrbiterConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     class Meta:
         model = OrbiterConfiguration
         fields = ('id', 'url', 'name', 'in_use')
@@ -135,14 +135,61 @@ class SecondStageSerializer(serializers.ModelSerializer):
         fields = ('launcher', 'landing',)
 
 
+class AstronautStatusSerilizer(serializers.ModelSerializer):
+    class Meta:
+        model = AstronautStatus
+        fields = ('name', )
+
+
+class AstronautSerializer(serializers.ModelSerializer):
+    status = AstronautStatusSerilizer(read_only=True, many=False)
+    agency = AgencySerializer(read_only=True, many=False)
+
+    class Meta:
+        model = Astronauts
+        fields = ('name', 'born', 'nationality', 'agency', 'twitter', 'bio',
+                  'status')
+
+
+class OrbiterStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrbiterStatus
+        fields = ('name',)
+
+
+class OrbiterSerializer(serializers.ModelSerializer):
+    launch_crew = AstronautSerializer(read_only=True, many=True)
+    onboard_crew = AstronautSerializer(read_only=True, many=True)
+    landing_crew = AstronautSerializer(read_only=True, many=True)
+    config = OrbiterConfigSerializer(read_only=True, many=False)
+    status = OrbiterStatusSerializer(read_only=True, many=False)
+
+    class Meta:
+        model = Orbiter
+        fields = ('name', 'serial_number', 'splashdown', 'launch_crew',
+                  'onboard_crew', 'landing_crew', 'config', 'destination',
+                  'status')
+
+
+class SpaceStationSerializer(serializers.ModelSerializer):
+    docked_vehicles = OrbiterSerializer(read_only=True, many=True)
+    crew = AstronautSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = SpaceStation
+        fields = ('name', 'founded', 'docked_vehicles', 'description', 'orbit',
+                  'crew')
+
+
 class RocketSerializer(serializers.ModelSerializer):
     configuration = LauncherConfigSerializer(read_only=True, many=False)
     first_stage = FirstStageSerializer(read_only=True, many=True, source='firststage')
     second_stage = SecondStageSerializer(read_only=True, many=False, source='secondstage')
+    orbiter = OrbiterSerializer(read_only=True, many=False)
 
     class Meta:
         model = Rocket
-        fields = ('configuration', 'first_stage', 'second_stage',)
+        fields = ('configuration', 'first_stage', 'second_stage', 'orbiter')
 
 
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):

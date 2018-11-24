@@ -3,7 +3,7 @@ from drf_queryfields import QueryFieldsMixin
 from api.models import *
 from rest_framework import serializers
 
-from api.v321.normal.serializers import AgencySerializer, FirstStageSerializer, SecondStageSerializer, PadSerializer, \
+from api.v330.normal.serializers import AgencySerializer, FirstStageSerializer, SecondStageSerializer, PadSerializer, \
     MissionSerializer, LaunchStatusSerializer
 
 CACHE_TIMEOUT_ONE_DAY = 24 * 60 * 60
