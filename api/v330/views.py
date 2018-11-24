@@ -9,8 +9,8 @@ from api.v330.detailed.serializers import AgencySerializerDetailed, LauncherConf
 from api.v330.list.serializers import LaunchListSerializer
 from api.v330.normal.serializers import EntrySerializer, AgencySerializer, \
     EventsSerializer, LaunchSerializer, \
-    LauncherDetailedSerializer, AstronautSerializer, SpaceStationSerializer, \
-    OrbiterSerializer
+    LauncherDetailedSerializer, AstronautSerializer, SpaceStationSerializer\
+    , OrbiterFlightSerializer
 from api.models import *
 from datetime import datetime, timedelta
 from api.models import LauncherConfig, OrbiterConfiguration, Agency
@@ -198,6 +198,17 @@ class SpaceStationViewSet(ModelViewSet):
     }
 
 
+class OrbiterFlightViewSet(ModelViewSet):
+    queryset = OrbiterFlight.objects.all()
+    serializer_class = OrbiterFlightSerializer
+    permission_classes = [HasGroupPermission]
+    permission_groups = {
+        'retrieve': ['_Public'], # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
+        'list': ['_Public'] # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
+    }
+
+
+
 class EventViewSet(ModelViewSet):
     """
     API endpoint that allows Events to be viewed.
@@ -213,22 +224,6 @@ class EventViewSet(ModelViewSet):
 
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
-    }
-
-
-class OrbiterViewSet(ModelViewSet):
-    """
-    API endpoint that allows Space Stations to be viewed.
-
-    GET:
-    Return a list of all the existing orbiters.
-    """
-    queryset = Orbiter.objects.all()
-    serializer_class = OrbiterSerializer
-    permission_classes = [HasGroupPermission]
-    permission_groups = {
-        'retrieve': ['_Public'], # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
-        'list': ['_Public'] # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
 
 

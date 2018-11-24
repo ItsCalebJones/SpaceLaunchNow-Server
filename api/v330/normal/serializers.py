@@ -158,17 +158,24 @@ class OrbiterStatusSerializer(serializers.ModelSerializer):
 
 
 class OrbiterSerializer(serializers.ModelSerializer):
-    launch_crew = AstronautSerializer(read_only=True, many=True)
-    onboard_crew = AstronautSerializer(read_only=True, many=True)
-    landing_crew = AstronautSerializer(read_only=True, many=True)
     config = OrbiterConfigSerializer(read_only=True, many=False)
     status = OrbiterStatusSerializer(read_only=True, many=False)
 
     class Meta:
         model = Orbiter
-        fields = ('name', 'serial_number', 'splashdown', 'launch_crew',
-                  'onboard_crew', 'landing_crew', 'config', 'destination',
-                  'status')
+        fields = ('name', 'serial_number', 'config', 'status')
+
+
+class OrbiterFlightSerializer(serializers.ModelSerializer):
+    launch_crew = AstronautSerializer(read_only=True, many=True)
+    onboard_crew = AstronautSerializer(read_only=True, many=True)
+    landing_crew = AstronautSerializer(read_only=True, many=True)
+    orbiter = OrbiterSerializer(read_only=True, many=False)
+
+    class Meta:
+        model = OrbiterFlight
+        fields = ('splashdown', 'launch_crew', 'onboard_crew', 'landing_crew',
+                  'orbiter', 'destination')
 
 
 class SpaceStationSerializer(serializers.ModelSerializer):
@@ -185,11 +192,11 @@ class RocketSerializer(serializers.ModelSerializer):
     configuration = LauncherConfigSerializer(read_only=True, many=False)
     first_stage = FirstStageSerializer(read_only=True, many=True, source='firststage')
     second_stage = SecondStageSerializer(read_only=True, many=False, source='secondstage')
-    orbiter = OrbiterSerializer(read_only=True, many=False)
+    orbiter_flight = OrbiterFlightSerializer(read_only=True, many=False, source='orbiterflight')
 
     class Meta:
         model = Rocket
-        fields = ('configuration', 'first_stage', 'second_stage', 'orbiter')
+        fields = ('configuration', 'first_stage', 'second_stage', 'orbiter_flight')
 
 
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):

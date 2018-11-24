@@ -496,8 +496,59 @@ class FirstStage(models.Model):
             return u"Unsaved %s" % self.launcher.serial_number
 
 
-class LaunchOrbiter(models.Model):
-    rocket = models.ForeignKey(Rocket, related_name='orbiter', on_delete=models.CASCADE)
+class AstronautStatus(models.Model):
+    name = models.CharField(max_length=255)
+
+
+class Astronauts(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False)
+    born = models.DateField(null=False, blank=False)
+    status = models.ForeignKey(AstronautStatus, on_delete=models.CASCADE,
+                               null=False, blank=False)
+    nationality = models.CharField(max_length=255, null=False,
+                                   blank=False)
+    agency = models.ForeignKey(Agency, on_delete=models.SET_NULL, null=True,
+                               blank=True)
+    twitter = models.CharField(max_length=255, null=False, blank=False)
+    bio = models.CharField(max_length=2048, null=False, blank=False)
+
+
+class OrbiterStatus(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False)
+
+
+class Orbiter(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False)
+    serial_number = models.CharField(max_length=255, null=True, blank=True)
+    orbiter_config = models.ForeignKey(OrbiterConfiguration,
+                                       null=False)
+    description = models.CharField(max_length=2048, null=False, blank=False)
+    status = models.ForeignKey(OrbiterStatus, null=False, blank=False)
+
+
+class SpaceStation(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False)
+    founded = models.DateField(null=False, blank=False)
+    docked_vehicles = models.ManyToManyField(Orbiter, blank=True)
+    description = models.CharField(max_length=2048, null=False, blank=False)
+    orbit = models.CharField(max_length=255, null=False, blank=False)
+    crew = models.ManyToManyField(Astronauts, blank=True)
+
+
+class OrbiterFlight(models.Model):
+    splashdown = models.DateTimeField(null=True, blank=True)
+    launch_crew = models.ManyToManyField(Astronauts,
+                                         related_name='launch_crew',
+                                         blank=True)
+    onboard_crew = models.ManyToManyField(Astronauts,
+                                          related_name='onboard_crew',
+                                          blank=True)
+    landing_crew = models.ManyToManyField(Astronauts,
+                                          related_name='landing_crew',
+                                          blank=True)
+    orbiter = models.ForeignKey(Orbiter, on_delete=models.CASCADE)
+    rocket = models.ForeignKey(Rocket, related_name='orbiterflight', on_delete=models.CASCADE)
+    destination = models.CharField(max_length=255, null=True, blank=True)
 
 
 class Launch(models.Model):
@@ -574,50 +625,4 @@ class InfoURLs(models.Model):
         verbose_name_plural = 'Info URLs'
 
 
-class AstronautStatus(models.Model):
-    name = models.CharField(max_length=255)
 
-
-class Astronauts(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False)
-    born = models.DateField(null=False, blank=False)
-    status = models.ForeignKey(AstronautStatus, on_delete=models.CASCADE,
-                               null=False, blank=False)
-    nationality = models.CharField(max_length=255, null=False,
-                                   blank=False)
-    agency = models.ForeignKey(Agency, on_delete=models.SET_NULL, null=True,
-                               blank=True)
-    twitter = models.CharField(max_length=255, null=False, blank=False)
-    bio = models.CharField(max_length=2048, null=False, blank=False)
-
-
-class OrbiterStatus(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False)
-
-
-class Orbiter(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False)
-    serial_number = models.CharField(max_length=255, null=False, blank=False)
-    splashdown = models.DateTimeField(null=True, blank=True)
-    launch_crew = models.ManyToManyField(Astronauts,
-                                         related_name='launch_crew',
-                                         blank=True)
-    onboard_crew = models.ManyToManyField(Astronauts,
-                                          related_name='onboard_crew',
-                                          blank=True)
-    landing_crew = models.ManyToManyField(Astronauts,
-                                          related_name='landing_crew',
-                                          blank=True)
-    orbiter_config = models.ForeignKey(OrbiterConfiguration,
-                                       null=False)
-    destination = models.CharField(max_length=255, null=True, blank=True)
-    status = models.ForeignKey(OrbiterStatus, null=False, blank=False)
-
-
-class SpaceStation(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False)
-    founded = models.DateField(null=False, blank=False)
-    docked_vehicles = models.ManyToManyField(Orbiter, blank=True)
-    description = models.CharField(max_length=2048, null=False, blank=False)
-    orbit = models.CharField(max_length=255, null=False, blank=False)
-    crew = models.ManyToManyField(Astronauts, blank=True)

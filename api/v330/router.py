@@ -14,6 +14,6 @@ router.register(r'launcher_config', views.LauncherConfigViewSet)
 router.register(r'news', views.EntryViewSet)
 router.register(r'astronauts', views.AstronautViewSet, base_name='astronaut')
 router.register(r'spacestations', views.SpaceStationViewSet, base_name='spacestation')
-router.register(r'orbiter', views.OrbiterViewSet, base_name='orbiter')
+router.register(r'orbiterflights', views.OrbiterFlightViewSet, base_name='orbiterflight')
 
 api_urlpatterns = router.urls

@@ -76,8 +76,8 @@ class SecondStageInline(admin.TabularInline):
     model = models.SecondStage
 
 
-class LaunchOrbiterInline(admin.TabularInline):
-    model = models.LaunchOrbiter
+class OrbiterFlightInline(admin.TabularInline):
+    model = models.OrbiterFlight
 
 
 @admin.register(models.Rocket)
@@ -85,7 +85,7 @@ class RocketAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">group</i>'
     list_display = ('id', 'launch',)
     search_fields = ('launch__name',)
-    inlines = [FirstStageInline, SecondStageInline, LaunchOrbiterInline]
+    inlines = [FirstStageInline, SecondStageInline, OrbiterFlightInline]
 
 
 @admin.register(models.FirstStage)
