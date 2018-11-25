@@ -547,7 +547,7 @@ class OrbiterFlight(models.Model):
                                           related_name='landing_crew',
                                           blank=True)
     orbiter = models.ForeignKey(Orbiter, on_delete=models.CASCADE)
-    rocket = models.ForeignKey(Rocket, related_name='orbiterflight', on_delete=models.CASCADE)
+    rocket = models.OneToOneField(Rocket, related_name='orbiterflight', on_delete=models.CASCADE)
     destination = models.CharField(max_length=255, null=True, blank=True)
 
 
