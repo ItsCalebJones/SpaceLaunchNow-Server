@@ -499,6 +499,16 @@ class FirstStage(models.Model):
 class AstronautStatus(models.Model):
     name = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    class Meta:
+        verbose_name = 'Astronaut Status'
+        verbose_name_plural = 'Astronaut Status\''
+
 
 class Astronauts(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
@@ -512,9 +522,29 @@ class Astronauts(models.Model):
     twitter = models.CharField(max_length=255, null=False, blank=False)
     bio = models.CharField(max_length=2048, null=False, blank=False)
 
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    class Meta:
+        verbose_name = 'Astronaut'
+        verbose_name_plural = 'Astronauts'
+
 
 class OrbiterStatus(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    class Meta:
+        verbose_name = 'Orbiter Status'
+        verbose_name_plural = 'Orbiter Status\''
 
 
 class Orbiter(models.Model):
@@ -525,6 +555,16 @@ class Orbiter(models.Model):
     description = models.CharField(max_length=2048, null=False, blank=False)
     status = models.ForeignKey(OrbiterStatus, null=False, blank=False)
 
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    class Meta:
+        verbose_name = 'Orbiter'
+        verbose_name_plural = 'Orbiters'
+
 
 class SpaceStation(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
@@ -533,6 +573,16 @@ class SpaceStation(models.Model):
     description = models.CharField(max_length=2048, null=False, blank=False)
     orbit = models.CharField(max_length=255, null=False, blank=False)
     crew = models.ManyToManyField(Astronauts, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    class Meta:
+        verbose_name = 'Space Station'
+        verbose_name_plural = 'Space Stations'
 
 
 class OrbiterFlight(models.Model):
@@ -549,6 +599,16 @@ class OrbiterFlight(models.Model):
     orbiter = models.ForeignKey(Orbiter, on_delete=models.CASCADE)
     rocket = models.OneToOneField(Rocket, related_name='orbiterflight', on_delete=models.CASCADE)
     destination = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return self.orbiter.name
+
+    def __unicode__(self):
+        return u'%s' % self.orbiter.name
+
+    class Meta:
+        verbose_name = 'Orbiter Flight'
+        verbose_name_plural = 'Orbiter Flights'
 
 
 class Launch(models.Model):

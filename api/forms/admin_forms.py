@@ -3,8 +3,8 @@ from api.models import *
 
 
 class LaunchForm(forms.ModelForm):
-    holdreason = forms.CharField(widget=forms.Textarea)
-    failreason = forms.CharField(widget=forms.Textarea)
+    holdreason = forms.CharField(widget=forms.Textarea, required=False)
+    failreason = forms.CharField(widget=forms.Textarea, required=False)
 
     class Meta:
         model = Launch
