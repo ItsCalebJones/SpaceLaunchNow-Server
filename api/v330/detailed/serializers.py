@@ -145,17 +145,25 @@ class OrbiterFlightDetailedSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrbiterFlight
         fields = ('splashdown', 'launch_crew', 'onboard_crew', 'landing_crew',
-                  'orbiter', 'destination')
+                  'orbiter', 'destination', 'spacestation')
+
+
+class SpaceStationStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SpaceStationStatus
+        fields = ('name',)
 
 
 class SpaceStationDetailedSerializer(serializers.ModelSerializer):
     docked_vehicles = OrbiterDetailedSerializer(read_only=True, many=True)
     crew = AstronautDetailedSerializer(read_only=True, many=True)
+    status = SpaceStationStatusSerializer(read_only=True, many=False)
+    owner = AgencySerializerDetailed(read_only=True, many=False)
 
     class Meta:
         model = SpaceStation
         fields = ('name', 'founded', 'docked_vehicles', 'description', 'orbit',
-                  'crew')
+                  'crew', 'status', 'owner')
 
 
 class RocketDetailedSerializer(serializers.ModelSerializer):

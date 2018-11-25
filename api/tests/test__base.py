@@ -1,5 +1,6 @@
 import json
 
+import pytz
 from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -79,6 +80,27 @@ def setUpModule():
                                         crew_capacity=None,
                                         payload_capacity=800,
                                         flight_life="One week.", )
+    astro_status = AstronautStatus.objects.create(name='Active')
+    starman = Astronauts.objects.create(name="Starman",
+                                        born=datetime.datetime.strptime(
+                                            '06/02/2018',
+                                            '%d/%m/%Y'),
+                                        status=astro_status,
+                                        nationality='American',
+                                        agency=spacex,
+                                        twitter="SpaceX",
+                                        bio="Driver of a cherry red roadster")
+    iss_status = SpaceStationStatus.objects.create(name='Active')
+    iss = SpaceStation.objects.create(id=1,
+                                      name="ISS",
+                                      founded=datetime.datetime.strptime(
+                                          '20/11/1998',
+                                          '%d/%m/%Y'),
+                                      owner=spacex,
+                                      status=iss_status,
+                                      description="International Station",
+                                      orbit='LEO')
+    iss.crew.add(starman)
 
 
 class SLNAPITests(APITestCase):

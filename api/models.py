@@ -496,20 +496,6 @@ class FirstStage(models.Model):
             return u"Unsaved %s" % self.launcher.serial_number
 
 
-class AstronautStatus(models.Model):
-    name = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return u'%s' % self.name
-
-    class Meta:
-        verbose_name = 'Astronaut Status'
-        verbose_name_plural = 'Astronaut Status\''
-
-
 class Astronauts(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     born = models.DateField(null=False, blank=False)
@@ -531,20 +517,6 @@ class Astronauts(models.Model):
     class Meta:
         verbose_name = 'Astronaut'
         verbose_name_plural = 'Astronauts'
-
-
-class OrbiterStatus(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False)
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return u'%s' % self.name
-
-    class Meta:
-        verbose_name = 'Orbiter Status'
-        verbose_name_plural = 'Orbiter Status\''
 
 
 class Orbiter(models.Model):
@@ -569,10 +541,12 @@ class Orbiter(models.Model):
 class SpaceStation(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     founded = models.DateField(null=False, blank=False)
-    docked_vehicles = models.ManyToManyField(Orbiter, blank=True)
+    owner = models.ForeignKey(Agency, blank=False, null=False)
+    docked_vehicles = models.ManyToManyField(Orbiter, blank=True, related_name='spacestation')
     description = models.CharField(max_length=2048, null=False, blank=False)
     orbit = models.CharField(max_length=255, null=False, blank=False)
     crew = models.ManyToManyField(Astronauts, blank=True)
+    status = models.ForeignKey(SpaceStationStatus, null=False, blank=False)
 
     def __str__(self):
         return self.name

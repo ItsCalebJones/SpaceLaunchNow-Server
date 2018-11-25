@@ -184,6 +184,11 @@ class AstronautsAdmin(admin.ModelAdmin):
     list_display = ('name', 'nationality')
 
 
+@admin.register(models.SpaceStationStatus)
+class SpaceStationStatusAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+
+
 @admin.register(models.SpaceStation)
 class SpaceStationAdmin(admin.ModelAdmin):
     list_display = ('name', )
