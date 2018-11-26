@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('configurations', '0005_astronautstatus_orbiterstatus_spacestationstatus'),
-        ('api', '0004_auto_20181122_2325'),
+        ('api', '0005_auto_20181122_2325'),
     ]
 
     operations = [
