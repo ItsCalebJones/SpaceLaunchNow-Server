@@ -1,7 +1,7 @@
 from api.models import *
 from rest_framework import serializers
 
-from api.v321.normal.serializers import LaunchStatusSerializer
+from api.v330.normal.serializers import LaunchStatusSerializer
 
 CACHE_TIMEOUT_ONE_DAY = 24 * 60 * 60
 

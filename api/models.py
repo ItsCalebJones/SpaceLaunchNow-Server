@@ -160,7 +160,7 @@ class Agency(models.Model):
 # The Orbiter object is meant to define spacecraft (past and present) that are human-rated for spaceflight.
 #
 # Example: Dragon, Orion, etc.
-class Orbiter(models.Model):
+class OrbiterConfiguration(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=200)
     agency = models.CharField(max_length=200, default='Unknown')
@@ -496,6 +496,95 @@ class FirstStage(models.Model):
             return u"Unsaved %s" % self.launcher.serial_number
 
 
+class Astronauts(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False)
+    born = models.DateField(null=False, blank=False)
+    status = models.ForeignKey(AstronautStatus, on_delete=models.CASCADE,
+                               null=False, blank=False)
+    nationality = models.CharField(max_length=255, null=False,
+                                   blank=False)
+    agency = models.ForeignKey(Agency, on_delete=models.SET_NULL, null=True,
+                               blank=True)
+    twitter = models.CharField(max_length=255, null=False, blank=False)
+    bio = models.CharField(max_length=2048, null=False, blank=False)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    class Meta:
+        verbose_name = 'Astronaut'
+        verbose_name_plural = 'Astronauts'
+
+
+class Orbiter(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False)
+    serial_number = models.CharField(max_length=255, null=True, blank=True)
+    orbiter_config = models.ForeignKey(OrbiterConfiguration,
+                                       null=False)
+    description = models.CharField(max_length=2048, null=False, blank=False)
+    status = models.ForeignKey(OrbiterStatus, null=False, blank=False)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    class Meta:
+        verbose_name = 'Orbiter'
+        verbose_name_plural = 'Orbiters'
+
+
+class SpaceStation(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False)
+    founded = models.DateField(null=False, blank=False)
+    owner = models.ForeignKey(Agency, blank=False, null=False)
+    docked_vehicles = models.ManyToManyField(Orbiter, blank=True, related_name='spacestation')
+    description = models.CharField(max_length=2048, null=False, blank=False)
+    orbit = models.CharField(max_length=255, null=False, blank=False)
+    crew = models.ManyToManyField(Astronauts, blank=True)
+    status = models.ForeignKey(SpaceStationStatus, null=False, blank=False)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    class Meta:
+        verbose_name = 'Space Station'
+        verbose_name_plural = 'Space Stations'
+
+
+class OrbiterFlight(models.Model):
+    splashdown = models.DateTimeField(null=True, blank=True)
+    launch_crew = models.ManyToManyField(Astronauts,
+                                         related_name='launch_crew',
+                                         blank=True)
+    onboard_crew = models.ManyToManyField(Astronauts,
+                                          related_name='onboard_crew',
+                                          blank=True)
+    landing_crew = models.ManyToManyField(Astronauts,
+                                          related_name='landing_crew',
+                                          blank=True)
+    orbiter = models.ForeignKey(Orbiter, on_delete=models.CASCADE)
+    rocket = models.OneToOneField(Rocket, related_name='orbiterflight', on_delete=models.CASCADE)
+    destination = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return self.orbiter.name
+
+    def __unicode__(self):
+        return u'%s' % self.orbiter.name
+
+    class Meta:
+        verbose_name = 'Orbiter Flight'
+        verbose_name_plural = 'Orbiter Flights'
+
+
 class Launch(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     launch_library = models.NullBooleanField(default=True)
@@ -568,3 +657,6 @@ class InfoURLs(models.Model):
     class Meta:
         verbose_name = 'Info URL'
         verbose_name_plural = 'Info URLs'
+
+
+

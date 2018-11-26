@@ -1,5 +1,6 @@
 import json
 
+import pytz
 from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -64,21 +65,42 @@ def setUpModule():
                             status="Some asinine status",
                             details="This weird little detail",
                             launcher_config=launcher_config)
-    Orbiter.objects.create(id=1,
-                           name="Cargo Dragon",
-                           agency="SpaceX String",
-                           launch_agency=spacex,
-                           history="This is a history.",
-                           details="This is a detail",
-                           in_use=False,
-                           capability="This is a capability",
-                           maiden_flight=None,
-                           height=12.0,
-                           diameter=10.0,
-                           human_rated=False,
-                           crew_capacity=None,
-                           payload_capacity=800,
-                           flight_life="One week.", )
+    OrbiterConfiguration.objects.create(id=1,
+                                        name="Cargo Dragon",
+                                        agency="SpaceX String",
+                                        launch_agency=spacex,
+                                        history="This is a history.",
+                                        details="This is a detail",
+                                        in_use=False,
+                                        capability="This is a capability",
+                                        maiden_flight=None,
+                                        height=12.0,
+                                        diameter=10.0,
+                                        human_rated=False,
+                                        crew_capacity=None,
+                                        payload_capacity=800,
+                                        flight_life="One week.", )
+    astro_status = AstronautStatus.objects.create(name='Active')
+    starman = Astronauts.objects.create(name="Starman",
+                                        born=datetime.datetime.strptime(
+                                            '06/02/2018',
+                                            '%d/%m/%Y'),
+                                        status=astro_status,
+                                        nationality='American',
+                                        agency=spacex,
+                                        twitter="SpaceX",
+                                        bio="Driver of a cherry red roadster")
+    iss_status = SpaceStationStatus.objects.create(name='Active')
+    iss = SpaceStation.objects.create(id=1,
+                                      name="ISS",
+                                      founded=datetime.datetime.strptime(
+                                          '20/11/1998',
+                                          '%d/%m/%Y'),
+                                      owner=spacex,
+                                      status=iss_status,
+                                      description="International Station",
+                                      orbit='LEO')
+    iss.crew.add(starman)
 
 
 class SLNAPITests(APITestCase):

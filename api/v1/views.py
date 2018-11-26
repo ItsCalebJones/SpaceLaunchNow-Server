@@ -2,7 +2,7 @@ import django_filters
 from rest_framework import permissions
 from rest_framework import viewsets
 
-from api.models import LauncherConfig, Orbiter, Agency
+from api.models import LauncherConfig, OrbiterConfiguration, Agency
 from api.permission import HasGroupPermission
 from api.v1.serializers import OrbiterSerializer, LauncherDetailSerializer, AgencySerializer
 
@@ -51,7 +51,7 @@ class OrbiterViewSet(viewsets.ModelViewSet):
     GET:
     Return a list of all the existing orbiters.
     """
-    queryset = Orbiter.objects.all()
+    queryset = OrbiterConfiguration.objects.all()
     serializer_class = OrbiterSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {

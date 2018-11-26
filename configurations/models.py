@@ -92,3 +92,45 @@ class LandingLocation(models.Model):
 
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.abbrev)
+
+
+class OrbiterStatus(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    class Meta:
+        verbose_name = 'Orbiter Status'
+        verbose_name_plural = 'Orbiter Status\''
+
+
+class AstronautStatus(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    class Meta:
+        verbose_name = 'Astronaut Status'
+        verbose_name_plural = 'Astronaut Status\''
+
+
+class SpaceStationStatus(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    class Meta:
+        verbose_name = 'Space Station Status'
+        verbose_name_plural = 'Space Station Status\''

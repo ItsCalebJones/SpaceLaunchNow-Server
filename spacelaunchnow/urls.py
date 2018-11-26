@@ -20,7 +20,7 @@ from django.contrib.sitemaps.views import sitemap
 from django.views.generic import TemplateView
 
 import web
-from api.v321.router import api_urlpatterns as api_v321
+from api.v330.router import api_urlpatterns as api_v321
 from api.sitemaps import LaunchSitemap
 from api.v320.router import api_urlpatterns as api_v320
 from api.v310.router import api_urlpatterns as api_v310
@@ -49,7 +49,7 @@ if config.IS_API:
         url(r'^3.0.0/', include(api_v300, namespace='v300')),
         url(r'^3.1.0/', include(api_v310, namespace='v310')),
         url(r'^3.2.0/', include(api_v320, namespace='v320')),
-        url(r'^api/3.2.1/', include(api_v321, namespace='v321')),
+        url(r'^api/3.3.0/', include(api_v321, namespace='v330')),
         url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     ]
 if config.IS_WEBSERVER:

@@ -64,7 +64,7 @@ class OrbiterDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSeri
     agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
-        model = Orbiter
+        model = OrbiterConfiguration
         fields = ('id', 'url', 'name', 'agency', 'history', 'details', 'image_url',
                   'nation_url', 'wiki_link', 'capability')
 
@@ -83,7 +83,7 @@ class AgencyDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSer
 
 class OrbiterSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Orbiter
+        model = OrbiterConfiguration
         fields = ('id', 'url', 'name')
 
 
