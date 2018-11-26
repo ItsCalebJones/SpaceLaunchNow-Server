@@ -4,14 +4,17 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 from zinnia.models import Entry
-from api.v321.detailed.serializers import AgencySerializerDetailed, LauncherConfigDetailSerializer,\
-    OrbiterDetailSerializer, LaunchDetailedSerializer
-from api.v321.list.serializers import LaunchListSerializer
-from api.v321.normal.serializers import EntrySerializer, AgencySerializer, EventsSerializer, LaunchSerializer, \
+from api.v330.detailed.serializers import AgencySerializerDetailed, \
+    LauncherConfigDetailSerializer, \
+    OrbiterConfigurationDetailSerializer, LaunchDetailedSerializer, AstronautDetailedSerializer, \
+    SpaceStationDetailedSerializer, OrbiterFlightDetailedSerializer
+from api.v330.list.serializers import LaunchListSerializer
+from api.v330.normal.serializers import EntrySerializer, AgencySerializer, \
+    EventsSerializer, LaunchSerializer, \
     LauncherDetailedSerializer
 from api.models import *
 from datetime import datetime, timedelta
-from api.models import LauncherConfig, Orbiter, Agency
+from api.models import LauncherConfig, OrbiterConfiguration, Agency
 from api.permission import HasGroupPermission
 from bot.models import Launch
 
@@ -148,20 +151,63 @@ class LauncherViewSet(ModelViewSet):
     filter_fields = ('id', 'serial_number',)
 
 
-class OrbiterViewSet(ModelViewSet):
+class OrbiterConfigViewSet(ModelViewSet):
     """
-    API endpoint that allows Orbiters to be viewed.
+    API endpoint that allows Orbiter Configs to be viewed.
 
     GET:
     Return a list of all the existing orbiters.
     """
-    queryset = Orbiter.objects.all()
-    serializer_class = OrbiterDetailSerializer
+    queryset = OrbiterConfiguration.objects.all()
+    serializer_class = OrbiterConfigurationDetailSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
+
+
+class AstronautViewSet(ModelViewSet):
+    """
+    API endpoint that allows Astronauts to be viewed.
+
+    GET:
+    Return a list of all the existing orbiters.
+    """
+    queryset = Astronauts.objects.all()
+    serializer_class = AstronautDetailedSerializer
+    permission_classes = [HasGroupPermission]
+    permission_groups = {
+        'retrieve': ['_Public'], # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
+        'list': ['_Public'] # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
+    }
+
+
+class SpaceStationViewSet(ModelViewSet):
+    """
+    API endpoint that allows Space Stations to be viewed.
+
+    GET:
+    Return a list of all the existing orbiters.
+    """
+    queryset = SpaceStation.objects.all()
+    serializer_class = SpaceStationDetailedSerializer
+    permission_classes = [HasGroupPermission]
+    permission_groups = {
+        'retrieve': ['_Public'], # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
+        'list': ['_Public'] # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
+    }
+
+
+class OrbiterFlightViewSet(ModelViewSet):
+    queryset = OrbiterFlight.objects.all()
+    serializer_class = OrbiterFlightDetailedSerializer
+    permission_classes = [HasGroupPermission]
+    permission_groups = {
+        'retrieve': ['_Public'], # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
+        'list': ['_Public'] # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
+    }
+
 
 
 class EventViewSet(ModelViewSet):

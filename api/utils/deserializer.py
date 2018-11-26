@@ -1,4 +1,4 @@
-from api.models import Orbiter, Launcher
+from api.models import OrbiterConfiguration, Launcher
 
 
 def launcher_json_to_model(data):
@@ -24,7 +24,7 @@ def orbiter_json_to_model(data):
     details = data['details']
     wiki_link = data['wikiLink']
 
-    Orbiter.objects.create(
+    OrbiterConfiguration.objects.create(
         name=name,
         agency=agency,
         nation_url=nation_url,

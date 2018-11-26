@@ -1,7 +1,7 @@
-from api.models import Orbiter, Agency, Events, LauncherConfig
+from api.models import OrbiterConfiguration, Agency, Events, LauncherConfig
 from drf_queryfields import QueryFieldsMixin
 
-from api.models import Orbiter, Agency
+from api.models import OrbiterConfiguration, Agency
 from rest_framework import serializers
 
 
@@ -18,7 +18,7 @@ class OrbiterSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer
     agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
-        model = Orbiter
+        model = OrbiterConfiguration
         fields = ('id', 'url', 'name', 'agency', 'history', 'details', 'image_url',
                   'nation_url', 'wiki_link', 'in_use', 'capability')
 
@@ -27,7 +27,7 @@ class OrbiterModelSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
-        model = Orbiter
+        model = OrbiterConfiguration
         fields = ('id', 'url', 'name', 'agency', 'image_url',  'nation_url')
 
 

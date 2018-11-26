@@ -76,12 +76,16 @@ class SecondStageInline(admin.TabularInline):
     model = models.SecondStage
 
 
+class OrbiterFlightInline(admin.TabularInline):
+    model = models.OrbiterFlight
+
+
 @admin.register(models.Rocket)
 class RocketAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">group</i>'
     list_display = ('id', 'launch',)
     search_fields = ('launch__name',)
-    inlines = [FirstStageInline, SecondStageInline]
+    inlines = [FirstStageInline, SecondStageInline, OrbiterFlightInline]
 
 
 @admin.register(models.FirstStage)
@@ -96,8 +100,8 @@ class SecondStageAdmin(admin.ModelAdmin):
     list_display = ('id', 'landing', 'launcher', 'rocket')
 
 
-@admin.register(models.Orbiter)
-class OrbiterAdmin(admin.ModelAdmin):
+@admin.register(models.OrbiterConfiguration)
+class OrbiterConfigurationAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">public</i>'
     list_display = ('name', 'agency')
     list_filter = ('agency',)
@@ -168,3 +172,18 @@ class VidAdmin(admin.ModelAdmin):
 class InfoAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">link</i>'
     list_display = ('info_url', 'launch')
+
+
+@admin.register(models.Astronauts)
+class AstronautsAdmin(admin.ModelAdmin):
+    list_display = ('name', 'nationality')
+
+
+@admin.register(models.SpaceStation)
+class SpaceStationAdmin(admin.ModelAdmin):
+    list_display = ('name', )
+
+
+@admin.register(models.Orbiter)
+class OrbiterAdmin(admin.ModelAdmin):
+    list_display = ('name', 'serial_number')
