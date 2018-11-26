@@ -174,28 +174,13 @@ class InfoAdmin(admin.ModelAdmin):
     list_display = ('info_url', 'launch')
 
 
-@admin.register(models.AstronautStatus)
-class AstronautStatusAdmin(admin.ModelAdmin):
-    list_display = ('name',)
-
-
 @admin.register(models.Astronauts)
 class AstronautsAdmin(admin.ModelAdmin):
     list_display = ('name', 'nationality')
 
 
-@admin.register(models.SpaceStationStatus)
-class SpaceStationStatusAdmin(admin.ModelAdmin):
-    list_display = ('name',)
-
-
 @admin.register(models.SpaceStation)
 class SpaceStationAdmin(admin.ModelAdmin):
-    list_display = ('name', )
-
-
-@admin.register(models.OrbiterStatus)
-class OrbiterStatusAdmin(admin.ModelAdmin):
     list_display = ('name', )
 
 

@@ -67,3 +67,18 @@ class LandingTypeAdmin(admin.ModelAdmin):
     list_filter = ('name', )
     ordering = ('name', )
     search_fields = ('name',)
+
+
+@admin.register(models.SpaceStationStatus)
+class SpaceStationStatusAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+
+
+@admin.register(models.AstronautStatus)
+class AstronautStatusAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+
+
+@admin.register(models.OrbiterStatus)
+class OrbiterStatusAdmin(admin.ModelAdmin):
+    list_display = ('name', )
