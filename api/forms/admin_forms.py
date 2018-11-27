@@ -60,7 +60,7 @@ class EventsForm(forms.ModelForm):
 
 
 class LauncherConfigForm(forms.ModelForm):
-    librarian_notes = forms.CharField(widget=forms.Textarea)
+    librarian_notes = forms.CharField(widget=forms.Textarea, required=False)
     description = forms.CharField(widget=forms.Textarea)
 
     class Meta:
