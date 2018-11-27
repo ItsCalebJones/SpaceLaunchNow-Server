@@ -339,6 +339,9 @@ EVENT_IMAGE_STORAGE = 'custom_storages.EventImageStorage'
 APP_IMAGE_LOCATION = MEDIA_LOCATION + '/app_images'  # type: str
 APP_IMAGE_STORAGE = 'custom_storages.AppImageStorage'
 
+ASTRONAUT_IMAGE_LOCATION = MEDIA_LOCATION + '/astronaut_images'  # type: str
+ASTRONAUT_IMAGE_STORAGE = 'custom_storages.AstronautImageStorage'
+
 DEFAULT_FILE_STORAGE = DEFAULT_STORAGE
 
 AWS_IS_GZIPPED = True

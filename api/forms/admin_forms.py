@@ -85,3 +85,11 @@ class AgencyForm(forms.ModelForm):
     class Meta:
         model = Agency
         fields = '__all__'
+
+
+class AstronautForm(forms.ModelForm):
+    bio = forms.CharField(widget=forms.Textarea)
+
+    class Meta:
+        model = Astronauts
+        fields = '__all__'

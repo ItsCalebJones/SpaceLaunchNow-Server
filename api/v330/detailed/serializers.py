@@ -122,7 +122,7 @@ class AstronautDetailedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Astronauts
         fields = ('name', 'born', 'nationality', 'agency', 'twitter', 'bio',
-                  'status')
+                  'status', 'profile_image', 'wiki', 'flights')
 
 
 class OrbiterDetailedSerializer(serializers.ModelSerializer):
