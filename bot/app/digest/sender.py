@@ -8,7 +8,7 @@ from bot.utils.config import keys
 # import the logging library
 
 # Get an instance of a logger
-logger = logging.getLogger('bot.digest')
+logger = logging.getLogger('digest')
 
 token_key = keys['TOKEN_KEY']
 token_secret = keys['TOKEN_SECRET']

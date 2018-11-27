@@ -9,7 +9,7 @@ from bot.app.repository.launches_repository import *
 # Get an instance of a logger
 from bot.utils.util import custom_strftime
 
-logger = logging.getLogger('bot.digest')
+logger = logging.getLogger('digest')
 
 
 def check_launch_daily(DEBUG=True):

@@ -9,7 +9,7 @@ from bot.utils.config import keys
 # Get an instance of a logger
 from spacelaunchnow import config
 
-logger = logging.getLogger('bot.digest')
+logger = logging.getLogger('digest')
 
 AUTH_TOKEN_HERE = keys['AUTH_TOKEN_HERE']
 APP_ID = keys['APP_ID']
