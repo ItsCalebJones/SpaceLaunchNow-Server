@@ -6,7 +6,7 @@ from bot.app.repository.launches_repository import *
 # import the logging library
 
 # Get an instance of a logger
-logger = logging.getLogger('bot.digest')
+logger = logging.getLogger('digest')
 
 
 def check_launch_weekly(DEBUG=True):
