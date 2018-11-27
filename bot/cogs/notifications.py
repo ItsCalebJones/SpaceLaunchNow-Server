@@ -206,7 +206,7 @@ class Notifications:
 
             await self.set_bot_description()
 
-            await asyncio.sleep(10)
+            await asyncio.sleep(30)
 
     async def set_bot_description(self):
         if self.description == 60:
