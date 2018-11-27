@@ -498,8 +498,8 @@ class FirstStage(models.Model):
 
 class Astronauts(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
-    born = models.DateField(null=False, blank=False)
-    died = models.DateField(null=True, blank=True)
+    date_of_birth = models.DateField(null=False, blank=False)
+    date_of_death = models.DateField(null=True, blank=True)
     status = models.ForeignKey(AstronautStatus, on_delete=models.CASCADE,
                                null=False, blank=False)
     nationality = models.CharField(max_length=255, null=False,
