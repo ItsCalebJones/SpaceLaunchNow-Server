@@ -10,7 +10,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0005_astronauts_orbiter_orbiterflight_spacestation'),
+        ('api', '0006_astronauts_orbiter_orbiterflight_spacestation'),
     ]
 
     operations = [
