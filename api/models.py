@@ -17,7 +17,7 @@ from django.db import models
 
 from configurations.models import *
 from custom_storages import LogoStorage, AgencyImageStorage, OrbiterImageStorage, LauncherImageStorage, \
-    AgencyNationStorage, EventImageStorage
+    AgencyNationStorage, EventImageStorage, AstronautImageStorage
 
 # The Agency object is meant to define a agency that operates launchers and orbiters.
 #
@@ -507,6 +507,19 @@ class Astronauts(models.Model):
                                blank=True)
     twitter = models.CharField(max_length=255, null=False, blank=False)
     bio = models.CharField(max_length=2048, null=False, blank=False)
+    profile_image = models.FileField(default=None, storage=AstronautImageStorage(), upload_to=image_path, null=True,
+                                     blank=True)
+    wiki = models.CharField(max_length=255, null=True, blank=True)
+
+    @property
+    def flights(self):
+        listi = list((Launch.objects.filter(Q(rocket__orbiterflight__launch_crew__id=self.pk) |
+                                            Q(rocket__orbiterflight__onboard_crew__id=self.pk) |
+                                            Q(rocket__orbiterflight__landing_crew__id=self.pk))
+                      .values_list('pk', flat=True)
+                      .distinct()))
+        launches = Launch.objects.filter(pk__in=listi)
+        return launches
 
     def __str__(self):
         return self.name
