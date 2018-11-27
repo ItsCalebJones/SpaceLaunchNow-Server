@@ -507,6 +507,7 @@ class Astronauts(models.Model):
     agency = models.ForeignKey(Agency, on_delete=models.SET_NULL, null=True,
                                blank=True)
     twitter = models.CharField(max_length=255, null=True, blank=True)
+    instagram = models.CharField(max_length=255, null=True, blank=True)
     bio = models.CharField(max_length=2048, null=False, blank=False)
     profile_image = models.FileField(default=None, storage=AstronautImageStorage(), upload_to=image_path, null=True,
                                      blank=True)
