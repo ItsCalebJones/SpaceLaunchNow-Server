@@ -12,7 +12,7 @@ from bot.utils.deserializer import launch_json_to_model, launch_status_json_to_m
 # import the logging library
 
 # Get an instance of a logger
-logger = logging.getLogger('bot.digest')
+logger = logging.getLogger('digest')
 
 
 class LaunchRepository:
