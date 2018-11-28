@@ -23,7 +23,7 @@ from bot.models import Notification
 from bot.utils.util import custom_strftime
 from spacelaunchnow import config
 
-logger = get_task_logger('bot')
+logger = get_task_logger('digest')
 
 TAG = 'Digest Server'
 
