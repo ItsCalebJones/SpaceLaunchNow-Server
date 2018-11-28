@@ -74,7 +74,8 @@
     <!-- Page Content -->
     <div class="container" style="margin-top:100px; margin-bottom: 16px">
         <h1 class="title">{{ astronaut.name }}</h1>
-        <h2>{{ astronaut.nationality }} - {{ astronaut.agency.name }}</h2>
+        <h2>{{ astronaut.nationality }} {% if astronaut.agency %}- ({{ astronaut.agency.abbrev }}) {% endif %}</h2>
+        <hr>
         <div class="row">
             <!-- Post Content Column -->
             <div class="col-lg-8 col-md-12 col-xl-8">
@@ -85,21 +86,23 @@
                                 {% if astronaut.profile_image %}
                                     <img src="{{ astronaut.profile_image.url }}"
                                          alt="Circle Image"
-                                         class="img-fluid mx-auto"
+                                         class="img-fluid mx-auto img-raised"
                                          style="max-width: 75%;max-height: 400px;">
                                 {% else %}
                                     <img src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png"
                                          alt="Circle Image"
-                                         class="img-fluid mx-auto"
+                                         class="img-fluid mx-auto img-raised"
                                          style="max-width: 75%;max-height: 400px;">
                                 {% endif %}
                             </div>
-                            Date of Birth: {{ astronaut.date_of_birth }}<br>
-                            {% if astronaut.date_of_death %}
-                                Date of Death: {{ astronaut.date_of_death }}
-                            {% else %}
-                                Age: {{ astronaut.age }}
-                            {% endif %}
+                            <p class="figure-caption">
+                                Date of Birth: {{ astronaut.date_of_birth }}<br>
+                                {% if astronaut.date_of_death %}
+                                    Date of Death: {{ astronaut.date_of_death }}
+                                {% else %}
+                                    Age: {{ astronaut.age }}
+                                {% endif %}
+                            </p>
                             <div class="justify-content-center">
                                 {% if astronaut.twitter %}
                                     <a href="{{ astronaut.twitter }}"
@@ -120,24 +123,68 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row card-body">
 
-                    <p class="card-body">{{ astronaut.bio }} </p>
+                    <p>{{ astronaut.bio }} </p>
+
+                    {% if launches|length > 0 %}
+                        <div class="card bg-warning">
+                            <div class="card-body">
+                                <h5 class="card-category card-category-social">
+                                    <i class="fa fa-rocket"></i> Flights
+                                </h5>
+                                <h4 class="card-title">
+                                    <a>{{ launches|length }}</a>
+                                </h4>
+                            </div>
+                        </div>
+                        {% for launch in launches %}
+                            <div class="row">
+                                {{ launch.name }}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="card bg-warning">
+                            <div class="card-body">
+                                <h5 class="card-category card-category-social">
+                                    <i class="fa fa-rocket"></i> Flights
+                                </h5>
+                                <h4 class="card-title">
+                                    <a>No launches found for {{ astronaut.name }}.</a>
+                                </h4>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
                 <hr>
-                {% if launches|length > 0 %}
-                    <h3>Flights</h3>
-                    {% for launch in launches %}
-                        <div class="row">
-                            {{ launch.name }}
+                <div class="col-md-8 ml-auto mx-auto mr-auto text-center">
+                    <div class="profile">
+                        <div class="avatar">
+                            {% if astronaut.agency.logo_url %}
+                                <img src="{{ astronaut.agency.logo_url.url }}"
+                                     alt="Circle Image"
+                                     class="img-fluid mx-auto"
+                                     style="max-width: 75%;max-height: 400px;">
+                            {% endif %}
                         </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="row">
-                        <p class="card-body">No flights on record.</p>
                     </div>
-                {% endif %}
+                </div>
+                <row>
+                    <div class="col-md-12 text-center">
+                        {% if astronaut.agency.administrator %}
+                            <span class="badge badge-pill badge-primary">{{ astronaut.agency.administrator }}</span>
+                        {% endif %}
+                        {% if agency.founding_year %}
+                            <span class="badge badge-pill badge-warning">Founded: {{ astronaut.agency.founding_year }}</span>
+                        {% endif %}
+                        <br>
+                        {% if astronaut.agency.description %}
+                            <p class="card-body">{{ astronaut.agency.description }}</p>
+                        {% endif %}
+                    </div>
+                </row>
             </div>
+
 
             <!-- Sidebar Widgets Column -->
             <div class="col-lg-4 col-md-12 col-xl-4">
@@ -160,29 +207,6 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div class="card" style="height: 1500px;">
-                    <a class="twitter-timeline" data-height="1500" data-link-color="#981CEB"
-                       href="https://twitter.com/SpaceLaunchNow/lists/space-launch-news?ref_src=twsrc%5Etfw">Space
-                        Launch
-                        News</a>
-                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-                </div>
-                <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                <!-- Space Launch Now -->
-                <ins class="adsbygoogle"
-                     style="display:block;"
-                     data-ad-client="ca-pub-9824528399164059"
-                     data-ad-slot="8772606898"
-                     data-ad-format="auto"></ins>
-                <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-
-                </script>
-                <br>
-                <iframe src="https://discordapp.com/widget?id=380226438584074242&theme=dark"
-                        width="100%" height="500"
-                        allowtransparency="true"
-                        frameborder="0"></iframe>
             </div>
         </div>
     </div>

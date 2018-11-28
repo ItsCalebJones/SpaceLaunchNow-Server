@@ -91,7 +91,7 @@
         </div>
         <div class="row">
             <!-- Post Content Column -->
-            <div class="col-lg-8 col-md-12 col-xl-8">
+            <div class="col-lg-9 col-md-12 col-xl-9">
                 <div class="card" style="margin-bottom: 50px;">
                     <div class="card-header card-header-success title">Active</div>
                     <div class="section text-center">
@@ -99,14 +99,14 @@
                             <div class="row">
                                 {% if active_astronauts|length > 0 %}
                                     {% for astronaut in active_astronauts %}
-                                        <div class="col-md-4">
+                                        <div class="col-md-4" style="margin-bottom: 20px">
                                             <div class="team-player">
-                                                <div class="col-md-6 ml-auto mr-auto"
-                                                     style="padding-left: 2em; padding-right: 2em;">
+                                                <div class="col-md-10 ml-auto mr-auto">
                                                     {% if astronaut.profile_image %}
-                                                        {% thumbnail astronaut.profile_image "200" as im %}
-                                                            <img class="img-raised rounded-circle img-fluid"
-                                                                 src="{{ im.url }}">
+                                                        {% thumbnail astronaut.profile_image "300x300" crop="center" as im %}
+                                                            <img class="img-raised rounded-circle img-fluid text-center"
+                                                                 src="{{ im.url }}"
+                                                                 style="padding:1px;border:1px solid #cccccc;">
                                                         {% endthumbnail %}
                                                     {% else %}
                                                         <img class="img-raised rounded-circle img-fluid"
@@ -121,7 +121,7 @@
                                                     <p class="card-description">{{ astronaut.bio|truncatechars:180 }}
                                                     </p>
                                                 </div>
-                                                <div class="card-footer justify-content-center">
+                                                <div class="card-footer justify-content-center" style="min-height: 66px">
                                                     {% if astronaut.twitter %}
                                                         <a href="{{ astronaut.twitter }}"
                                                            class="btn btn-link btn-just-icon"><i
@@ -155,14 +155,14 @@
                             <div class="row">
                                 {% if training_astronauts|length > 0 %}
                                     {% for astronaut in training_astronauts %}
-                                        <div class="col-md-4">
+                                        <div class="col-md-4" style="margin-bottom: 20px">
                                             <div class="team-player">
-                                                <div class="col-md-6 ml-auto mr-auto"
-                                                     style="padding-left: 2em; padding-right: 2em;">
+                                                <div class="col-md-10 ml-auto mr-auto">
                                                     {% if astronaut.profile_image %}
-                                                        {% thumbnail astronaut.profile_image "200" as im %}
-                                                            <img class="img-raised rounded-circle img-fluid"
-                                                                 src="{{ im.url }}">
+                                                        {% thumbnail astronaut.profile_image "300x300" crop="center" as im %}
+                                                            <img class="img-raised rounded-circle img-fluid text-center"
+                                                                 src="{{ im.url }}"
+                                                            style="padding:1px;border:1px solid #cccccc;">
                                                         {% endthumbnail %}
                                                     {% else %}
                                                         <img class="img-raised rounded-circle img-fluid"
@@ -211,14 +211,14 @@
                             <div class="row">
                                 {% if retired_astronauts|length > 0 %}
                                     {% for astronaut in retired_astronauts %}
-                                        <div class="col-md-4">
+                                        <div class="col-md-4" style="margin-bottom: 20px">
                                             <div class="team-player">
-                                                <div class="col-md-6 ml-auto mr-auto"
-                                                     style="padding-left: 2em; padding-right: 2em;">
+                                                <div class="col-md-10 ml-auto mr-auto">
                                                     {% if astronaut.profile_image %}
-                                                        {% thumbnail astronaut.profile_image "200" as im %}
-                                                            <img class="img-raised rounded-circle img-fluid"
-                                                                 src="{{ im.url }}">
+                                                        {% thumbnail astronaut.profile_image "300x300" crop="center" as im %}
+                                                            <img class="img-raised rounded-circle img-fluid text-center"
+                                                                 src="{{ im.url }}"
+                                                                 style="padding:1px;border:1px solid #cccccc;">
                                                         {% endthumbnail %}
                                                     {% else %}
                                                         <img class="img-raised rounded-circle img-fluid"
@@ -233,7 +233,7 @@
                                                     <p class="card-description">{{ astronaut.bio|truncatechars:180 }}
                                                     </p>
                                                 </div>
-                                                <div class="card-footer justify-content-center">
+                                                <div class="card-footer justify-content-center" style="min-height: 66px">
                                                     {% if astronaut.twitter %}
                                                         <a href="{{ astronaut.twitter }}"
                                                            class="btn btn-link btn-just-icon"><i
@@ -263,7 +263,7 @@
             </div>
 
             <!-- Sidebar Widgets Column -->
-            <div class="col-lg-4 col-md-12 col-xl-4">
+            <div class="col-lg-3 col-md-12 col-xl-3">
                 <!-- Categories Widget -->
                 <div class="card">
                     <div class="card-header card-header-danger">Recent Launches</div>

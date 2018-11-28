@@ -111,7 +111,10 @@ def astronaut(request, id):
                       .values_list('pk', flat=True)
                       .distinct()))
         _launches = Launch.objects.filter(pk__in=listi)
-        return render(request, 'web/astronaut/astronaut_detail.html', {'astronaut': _astronaut, 'launches': _launches})
+        previous_launches = Launch.objects.filter(net__lte=datetime.now()).order_by('-net')[:5]
+        return render(request, 'web/astronaut/astronaut_detail.html', {'astronaut': _astronaut,
+                                                                       'launches': _launches,
+                                                                       'previous_launches': previous_launches})
     except ObjectDoesNotExist:
         raise Http404
 
@@ -120,9 +123,9 @@ def astronaut_list(request,):
 
     active_astronauts = Astronauts.objects.filter(status=1)
 
-    training_astronauts = Astronauts.objects.filter(status=2)
+    training_astronauts = Astronauts.objects.filter(status=3)
 
-    retired_astronauts = Astronauts.objects.filter(Q(status=3) | Q(status=4))
+    retired_astronauts = Astronauts.objects.filter(Q(status=2) | Q(status=4))
 
     previous_launches = Launch.objects.filter(net__lte=datetime.now()).order_by('-net')[:5]
 
