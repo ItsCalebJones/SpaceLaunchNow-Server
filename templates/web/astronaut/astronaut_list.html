@@ -1,0 +1,327 @@
+{% extends "web/base.html" %}
+{% load staticfiles %}
+{% load thumbnail %}
+{% block extrahead %}
+    <link rel="canonical" href="https://spacelaunchnow.me/launch/">
+    <title>Space Launch Now - Launch Schedule</title>
+    <meta name="title" content="Space Launch Now - Launch Schedule">
+    <meta property="fb:app_id" content="746774215504127"/>
+    <meta property="og:title" content="Space Launch Now - Launch Schedule"/>
+    <meta property="og:type" content="website"/>
+    <meta name="description"
+          content="A spaceflight launch schedule - tracking the latest developments in spaceflight, check back often for launch schedule changes.">
+    <meta property="og:description"
+          content="A spaceflight launch schedule - tracking the latest developments in spaceflight, check back often for launch schedule changes."/>
+    <meta property="og:url" content="https://spacelaunchnow.me/launch/"/>
+    <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
+    <meta property="og:image:width" content="3000"/>
+    <meta property="og:image:height" content="2000"/>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-9824528399164059",
+            enable_page_level_ads: true
+        });
+    </script>
+{% endblock %}
+
+
+{% block navigation %}
+    <nav class="navbar bg-primary fixed-top navbar-expand-lg">
+        <div class="container">
+            <div class="navbar-translate">
+                <a class="navbar-brand" href="#page-top"><b>Space Launch Now</b></a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                    <span class="navbar-toggler-icon"></span>
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+
+            <div class="collapse navbar-collapse">
+
+                <ul class="navbar-nav ml-auto">
+
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger " href="/next">Next</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger active" href="/launch/">Launches</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/3.2.0">API</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           href="https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><i
+                                class="fab fa-android"></i> Android</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://itunes.apple.com/us/app/space-launch-now/id1399715731"><i
+                                class="fab fa-apple"></i> iOS</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    {% load embed_video_tags %}
+    <!-- Page Content -->
+    <div class="container" style="margin-top:100px; margin-bottom: 16px">
+        <h1 class="title">Astronauts</h1>
+        <h2>Meet the exceptional people that have ventured into space.</h2>
+        <hr>
+
+        <div class="container">
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- Space Launch Now -->
+            <ins class="adsbygoogle"
+                 style="display:block; margin-top:16px; margin-bottom:16px;"
+                 data-ad-client="ca-pub-9824528399164059"
+                 data-ad-slot="8772606898"
+                 data-ad-format="auto"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+        <div class="row">
+            <!-- Post Content Column -->
+            <div class="col-lg-8 col-md-12 col-xl-8">
+                <div class="card" style="margin-bottom: 50px;">
+                    <div class="card-header card-header-success title">Active</div>
+                    <div class="section text-center">
+                        <div class="team">
+                            <div class="row">
+                                {% if active_astronauts|length > 0 %}
+                                    {% for astronaut in active_astronauts %}
+                                        <div class="col-md-4">
+                                            <div class="team-player">
+                                                <div class="col-md-6 ml-auto mr-auto"
+                                                     style="padding-left: 2em; padding-right: 2em;">
+                                                    {% if astronaut.profile_image %}
+                                                        {% thumbnail astronaut.profile_image "200" as im %}
+                                                            <img class="img-raised rounded-circle img-fluid"
+                                                                 src="{{ im.url }}">
+                                                        {% endthumbnail %}
+                                                    {% else %}
+                                                        <img class="img-raised rounded-circle img-fluid"
+                                                             src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
+                                                    {% endif %}
+                                                </div>
+                                                <h4 class="card-title">{{ astronaut.name }}
+                                                    <br>
+                                                    <small class="card-description text-muted">{{ astronaut.nationality }}</small>
+                                                </h4>
+                                                <div class="card-body" style="height: 175px; overflow: hidden;">
+                                                    <p class="card-description">{{ astronaut.bio|truncatechars:180 }}
+                                                    </p>
+                                                </div>
+                                                <div class="card-footer justify-content-center">
+                                                    {% if astronaut.twitter %}
+                                                        <a href="{{ astronaut.twitter }}"
+                                                           class="btn btn-link btn-just-icon"><i
+                                                                class="fab fa-twitter"></i></a>
+                                                    {% endif %}
+                                                    {% if astronaut.instagram %}
+                                                        <a href="{{ astronaut.instagram }}"
+                                                           class="btn btn-link btn-just-icon"><i
+                                                                class="fab fa-instagram"></i></a>
+                                                    {% endif %}
+                                                    {% if astronaut.wikipedia %}
+                                                        <a href="{{ astronaut.wikipedia }}"
+                                                           class="btn btn-link btn-just-icon"><i
+                                                                class="fab fa-wikipedia-w"></i></a>
+                                                    {% endif %}
+                                                </div>
+                                                <a class="btn btn-primary"
+                                                   href="/astronaut/{{ astronaut.id }}">Explore</a>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="margin-bottom: 50px;">
+                    <div class="card-header card-header-info title">In-Training</div>
+                    <div class="section text-center">
+                        <div class="team">
+                            <div class="row">
+                                {% if training_astronauts|length > 0 %}
+                                    {% for astronaut in training_astronauts %}
+                                        <div class="col-md-4">
+                                            <div class="team-player">
+                                                <div class="col-md-6 ml-auto mr-auto"
+                                                     style="padding-left: 2em; padding-right: 2em;">
+                                                    {% if astronaut.profile_image %}
+                                                        {% thumbnail astronaut.profile_image "200" as im %}
+                                                            <img class="img-raised rounded-circle img-fluid"
+                                                                 src="{{ im.url }}">
+                                                        {% endthumbnail %}
+                                                    {% else %}
+                                                        <img class="img-raised rounded-circle img-fluid"
+                                                             src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
+                                                    {% endif %}
+                                                </div>
+                                                <h4 class="card-title">{{ astronaut.name }}
+                                                    <br>
+                                                    <small class="card-description text-muted">{{ astronaut.nationality }}</small>
+                                                </h4>
+                                                <div class="card-body" style="height: 175px; overflow: hidden;">
+                                                    <p class="card-description">{{ astronaut.bio|truncatechars:180 }}
+                                                    </p>
+                                                </div>
+                                                <div class="card-footer justify-content-center">
+                                                    {% if astronaut.twitter %}
+                                                        <a href="{{ astronaut.twitter }}"
+                                                           class="btn btn-link btn-just-icon"><i
+                                                                class="fab fa-twitter"></i></a>
+                                                    {% endif %}
+                                                    {% if astronaut.instagram %}
+                                                        <a href="{{ astronaut.instagram }}"
+                                                           class="btn btn-link btn-just-icon"><i
+                                                                class="fab fa-instagram"></i></a>
+                                                    {% endif %}
+                                                    {% if astronaut.wikipedia %}
+                                                        <a href="{{ astronaut.wikipedia }}"
+                                                           class="btn btn-link btn-just-icon"><i
+                                                                class="fab fa-wikipedia-w"></i></a>
+                                                    {% endif %}
+                                                </div>
+                                                <a class="btn btn-primary"
+                                                   href="/astronaut/{{ astronaut.id }}">Explore</a>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="margin-bottom: 50px;">
+                    <div class="card-header card-header-warning title">Retired</div>
+                    <div class="section text-center">
+                        <div class="team">
+                            <div class="row">
+                                {% if retired_astronauts|length > 0 %}
+                                    {% for astronaut in retired_astronauts %}
+                                        <div class="col-md-4">
+                                            <div class="team-player">
+                                                <div class="col-md-6 ml-auto mr-auto"
+                                                     style="padding-left: 2em; padding-right: 2em;">
+                                                    {% if astronaut.profile_image %}
+                                                        {% thumbnail astronaut.profile_image "200" as im %}
+                                                            <img class="img-raised rounded-circle img-fluid"
+                                                                 src="{{ im.url }}">
+                                                        {% endthumbnail %}
+                                                    {% else %}
+                                                        <img class="img-raised rounded-circle img-fluid"
+                                                             src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
+                                                    {% endif %}
+                                                </div>
+                                                <h4 class="card-title">{{ astronaut.name }}
+                                                    <br>
+                                                    <small class="card-description text-muted">{{ astronaut.nationality }}</small>
+                                                </h4>
+                                                <div class="card-body" style="height: 175px; overflow: hidden;">
+                                                    <p class="card-description">{{ astronaut.bio|truncatechars:180 }}
+                                                    </p>
+                                                </div>
+                                                <div class="card-footer justify-content-center">
+                                                    {% if astronaut.twitter %}
+                                                        <a href="{{ astronaut.twitter }}"
+                                                           class="btn btn-link btn-just-icon"><i
+                                                                class="fab fa-twitter"></i></a>
+                                                    {% endif %}
+                                                    {% if astronaut.instagram %}
+                                                        <a href="{{ astronaut.instagram }}"
+                                                           class="btn btn-link btn-just-icon"><i
+                                                                class="fab fa-instagram"></i></a>
+                                                    {% endif %}
+                                                    {% if astronaut.wikipedia %}
+                                                        <a href="{{ astronaut.wikipedia }}"
+                                                           class="btn btn-link btn-just-icon"><i
+                                                                class="fab fa-wikipedia-w"></i></a>
+                                                    {% endif %}
+                                                </div>
+                                                <a class="btn btn-primary"
+                                                   href="/astronaut/{{ astronaut.id }}">Explore</a>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Widgets Column -->
+            <div class="col-lg-4 col-md-12 col-xl-4">
+                <!-- Categories Widget -->
+                <div class="card">
+                    <div class="card-header card-header-danger">Recent Launches</div>
+                    <div class="list-group list-group-flush">
+                        {% for launch in previous_launches %}
+                            <a href="{{ launch.slug }}"
+                               class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <div>
+                                        <h5 class="mb-1">{{ launch.rocket.configuration.name }}</h5>
+                                        <h6 class="mb-1">{{ launch.mission.name }} - {{ launch.status_name }}</h6>
+                                    </div>
+                                    <small class="text-muted">{{ launch.net|timesince }}</small>
+                                </div>
+                                <p class="mb-1">{{ launch.mission.description }}</p>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card" style="height: 1500px;">
+                    <a class="twitter-timeline" data-height="1500" data-link-color="#981CEB"
+                       href="https://twitter.com/SpaceLaunchNow/lists/space-launch-news?ref_src=twsrc%5Etfw">Space
+                        Launch
+                        News</a>
+                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                </div>
+                <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                <!-- Space Launch Now -->
+                <ins class="adsbygoogle"
+                     style="display:block;"
+                     data-ad-client="ca-pub-9824528399164059"
+                     data-ad-slot="8772606898"
+                     data-ad-format="auto"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+
+                </script>
+                <br>
+                <iframe src="https://discordapp.com/widget?id=380226438584074242&theme=dark"
+                        width="100%" height="500"
+                        allowtransparency="true"
+                        frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- Space Launch Now -->
+        <ins class="adsbygoogle"
+             style="display:block; margin-top:16px; margin-bottom:16px;"
+             data-ad-client="ca-pub-9824528399164059"
+             data-ad-slot="8772606898"
+             data-ad-format="auto"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    {% include "web/install_buttons.html" %}
+{% endblock %}
+
+

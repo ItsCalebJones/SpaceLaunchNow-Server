@@ -14,7 +14,7 @@ from django.shortcuts import render, redirect
 from django import forms
 
 # Create your views here.
-from api.models import Agency, Launch
+from api.models import Agency, Launch, Astronauts
 from app.models import Translator
 
 
@@ -100,6 +100,36 @@ def launches(request,):
                                                      'previous_launches': previous_launches})
     else:
         raise Http404
+
+
+def astronaut(request, id):
+    try:
+        _astronaut = Astronauts.objects.get(pk=id)
+        listi = list((Launch.objects.filter(Q(rocket__orbiterflight__launch_crew__id=_astronaut.pk) |
+                                            Q(rocket__orbiterflight__onboard_crew__id=_astronaut.pk) |
+                                            Q(rocket__orbiterflight__landing_crew__id=_astronaut.pk))
+                      .values_list('pk', flat=True)
+                      .distinct()))
+        _launches = Launch.objects.filter(pk__in=listi)
+        return render(request, 'web/astronaut/astronaut_detail.html', {'astronaut': _astronaut, 'launches': _launches})
+    except ObjectDoesNotExist:
+        raise Http404
+
+
+def astronaut_list(request,):
+
+    active_astronauts = Astronauts.objects.filter(status=1)
+
+    training_astronauts = Astronauts.objects.filter(status=2)
+
+    retired_astronauts = Astronauts.objects.filter(Q(status=3) | Q(status=4))
+
+    previous_launches = Launch.objects.filter(net__lte=datetime.now()).order_by('-net')[:5]
+
+    return render(request, 'web/astronaut/astronaut_list.html', {'active_astronauts': active_astronauts,
+                                                                 'training_astronauts': training_astronauts,
+                                                                 'retired_astronauts': retired_astronauts,
+                                                                 'previous_launches': previous_launches})
 
 
 def handler404(request):

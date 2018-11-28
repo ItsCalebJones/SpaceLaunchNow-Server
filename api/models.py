@@ -523,6 +523,11 @@ class Astronauts(models.Model):
         launches = Launch.objects.filter(pk__in=listi)
         return launches
 
+    @property
+    def age(self):
+        import datetime
+        return int((datetime.date.today() - self.date_of_birth).days / 365.25)
+
     def __str__(self):
         return self.name
 

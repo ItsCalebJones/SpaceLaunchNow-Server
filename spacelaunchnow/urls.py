@@ -58,6 +58,8 @@ if config.IS_WEBSERVER:
         url(r'^launch/(?P<id>\d+)/$', landing_views.launch_by_id, name='launch_by_id'),
         url(r'^launch/(?P<slug>[-\w]+)/$', landing_views.launch_by_slug, name='launch_by_slug'),
         url(r'^launch/$', landing_views.launches, name='launches'),
+        url(r'^astronaut/$', landing_views.astronaut_list, name='astronauts'),
+        url(r'^astronaut/(?P<id>\d+)/$$', landing_views.astronaut, name='astronaut_by_id'),
         url(r'^about/$', about_view, name='staff'),
         url(r'^about/staff/$', staff_view, name='staff'),
         url(r'^about/staff/translators/$', translator_view, name='translators'),
