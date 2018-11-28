@@ -80,7 +80,7 @@ def check_for_orphaned_launches():
         for launch in launches:
             logger.debug("Stale - %s" % launch.name)
             if repository.is_launch_deleted(launch.id):
-                logger.debug("Delete this launch!" % launch.name)
+                logger.debug("Delete this launch! - %s ID: %d" % (launch.name, launch.id))
 
 
 @periodic_task(
