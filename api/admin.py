@@ -177,6 +177,7 @@ class InfoAdmin(admin.ModelAdmin):
 @admin.register(models.Astronauts)
 class AstronautsAdmin(admin.ModelAdmin):
     list_display = ('name', 'nationality')
+    readonly_fields = ["slug"]
     form = AstronautForm
 
 
