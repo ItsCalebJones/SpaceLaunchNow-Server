@@ -104,7 +104,14 @@ def launches(request,):
 
 def astronaut(request, id):
     try:
-        _astronaut = Astronauts.objects.get(pk=id)
+        return redirect('astronaut_by_slug', slug=Astronauts.objects.get(pk=id).slug)
+    except ObjectDoesNotExist:
+        raise Http404
+
+
+def astronaut_by_slug(request, slug):
+    try:
+        _astronaut = Astronauts.objects.get(slug=slug)
         listi = list((Launch.objects.filter(Q(rocket__orbiterflight__launch_crew__id=_astronaut.pk) |
                                             Q(rocket__orbiterflight__onboard_crew__id=_astronaut.pk) |
                                             Q(rocket__orbiterflight__landing_crew__id=_astronaut.pk))

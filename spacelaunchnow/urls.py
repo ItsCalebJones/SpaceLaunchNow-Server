@@ -60,6 +60,7 @@ if config.IS_WEBSERVER:
         url(r'^launch/$', landing_views.launches, name='launches'),
         url(r'^astronaut/$', landing_views.astronaut_list, name='astronauts'),
         url(r'^astronaut/(?P<id>\d+)/$$', landing_views.astronaut, name='astronaut_by_id'),
+        url(r'^astronaut/(?P<slug>[-\w]+)/$', landing_views.astronaut_by_slug, name='astronaut_by_slug'),
         url(r'^about/$', about_view, name='staff'),
         url(r'^about/staff/$', staff_view, name='staff'),
         url(r'^about/staff/translators/$', translator_view, name='translators'),

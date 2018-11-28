@@ -512,6 +512,17 @@ class Astronauts(models.Model):
     profile_image = models.FileField(default=None, storage=AstronautImageStorage(), upload_to=image_path, null=True,
                                      blank=True)
     wiki = models.CharField(max_length=255, null=True, blank=True)
+    slug = models.SlugField(unique=True, max_length=100)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify('%s-%s' % (self.name, self.id))
+        super(Astronauts, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return self.slug
+
+    def get_full_absolute_url(self):
+        return 'https://spacelaunchnow.me/astronaut/%s' % (self.get_absolute_url())
 
     @property
     def flights(self):

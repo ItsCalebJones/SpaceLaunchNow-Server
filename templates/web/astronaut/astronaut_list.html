@@ -4,14 +4,14 @@
 {% block extrahead %}
     <link rel="canonical" href="https://spacelaunchnow.me/launch/">
     <title>Space Launch Now - Launch Schedule</title>
-    <meta name="title" content="Space Launch Now - Launch Schedule">
+    <meta name="title" content="Space Launch Now - Astronauts">
     <meta property="fb:app_id" content="746774215504127"/>
-    <meta property="og:title" content="Space Launch Now - Launch Schedule"/>
+    <meta property="og:title" content="Space Launch Now - Astronauts"/>
     <meta property="og:type" content="website"/>
     <meta name="description"
-          content="A spaceflight launch schedule - tracking the latest developments in spaceflight, check back often for launch schedule changes.">
+          content="A collection of active, in-training and retired astronauts.">
     <meta property="og:description"
-          content="A spaceflight launch schedule - tracking the latest developments in spaceflight, check back often for launch schedule changes."/>
+          content="A collection of active, in-training and retired astronauts."/>
     <meta property="og:url" content="https://spacelaunchnow.me/launch/"/>
     <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
     <meta property="og:image:width" content="3000"/>
@@ -139,7 +139,7 @@
                                                     {% endif %}
                                                 </div>
                                                 <a class="btn btn-primary"
-                                                   href="/astronaut/{{ astronaut.id }}">Explore</a>
+                                                   href="/astronaut/{{ astronaut.slug }}">Explore</a>
                                             </div>
                                         </div>
                                     {% endfor %}
@@ -195,7 +195,7 @@
                                                     {% endif %}
                                                 </div>
                                                 <a class="btn btn-primary"
-                                                   href="/astronaut/{{ astronaut.id }}">Explore</a>
+                                                   href="/astronaut/{{ astronaut.slug }}">Explore</a>
                                             </div>
                                         </div>
                                     {% endfor %}
@@ -251,7 +251,7 @@
                                                     {% endif %}
                                                 </div>
                                                 <a class="btn btn-primary"
-                                                   href="/astronaut/{{ astronaut.id }}">Explore</a>
+                                                   href="/astronaut/{{ astronaut.slug }}">Explore</a>
                                             </div>
                                         </div>
                                     {% endfor %}

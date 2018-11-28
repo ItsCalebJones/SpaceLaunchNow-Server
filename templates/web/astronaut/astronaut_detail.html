@@ -4,14 +4,14 @@
 {% block extrahead %}
     <link rel="canonical" href="https://spacelaunchnow.me/launch/">
     <title>Space Launch Now - Launch Schedule</title>
-    <meta name="title" content="Space Launch Now - Launch Schedule">
+    <meta name="title" content="Space Launch Now - {{ astronaut.name }}">
     <meta property="fb:app_id" content="746774215504127"/>
-    <meta property="og:title" content="Space Launch Now - Launch Schedule"/>
+    <meta property="og:title" content="Space Launch Now - {{ astronaut.name }}"/>
     <meta property="og:type" content="website"/>
     <meta name="description"
-          content="A spaceflight launch schedule - tracking the latest developments in spaceflight, check back often for launch schedule changes.">
+          content="{{ astronaut.name }} - {{ astronaut.bio|truncatechars:100 }}">
     <meta property="og:description"
-          content="A spaceflight launch schedule - tracking the latest developments in spaceflight, check back often for launch schedule changes."/>
+          content="{{ astronaut.name }} - {{ astronaut.bio|truncatechars:100 }}">
     <meta property="og:url" content="https://spacelaunchnow.me/launch/"/>
     <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
     <meta property="og:image:width" content="3000"/>
