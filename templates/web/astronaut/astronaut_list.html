@@ -26,7 +26,7 @@
 
 
 {% block navigation %}
-    <nav class="navbar bg-primary fixed-top navbar-expand-lg">
+    <nav class="navbar bg-primary fixed-top navbar-expand-lg navbar-dark">
         <div class="container">
             <div class="navbar-translate">
                 <a class="navbar-brand" href="#page-top"><b>Space Launch Now</b></a>
@@ -38,7 +38,17 @@
                 </button>
             </div>
 
+
             <div class="collapse navbar-collapse">
+
+                <form class="form-inline ml-auto">
+                    <div class="form-group has-white">
+                        <input type="text" class="form-control" placeholder="Search">
+                    </div>
+                    <button type="submit" class="btn btn-white btn-just-icon btn-round">
+                        <i class="material-icons">search</i>
+                    </button>
+                </form>
 
                 <ul class="navbar-nav ml-auto">
 
@@ -93,7 +103,9 @@
             <!-- Post Content Column -->
             <div class="col-lg-9 col-md-12 col-xl-9">
                 <div class="card" style="margin-bottom: 50px;">
-                    <div class="card-header card-header-success title">Active</div>
+                    <div class="card-header card-header-success title">
+                        <h1 class="title text-white text-center">Active</h1>
+                    </div>
                     <div class="section text-center">
                         <div class="team">
                             <div class="row">
@@ -121,7 +133,8 @@
                                                     <p class="card-description">{{ astronaut.bio|truncatechars:180 }}
                                                     </p>
                                                 </div>
-                                                <div class="card-footer justify-content-center" style="min-height: 66px">
+                                                <div class="card-footer justify-content-center"
+                                                     style="min-height: 66px">
                                                     {% if astronaut.twitter %}
                                                         <a href="{{ astronaut.twitter }}"
                                                            class="btn btn-link btn-just-icon"><i
@@ -149,7 +162,9 @@
                     </div>
                 </div>
                 <div class="card" style="margin-bottom: 50px;">
-                    <div class="card-header card-header-info title">In-Training</div>
+                    <div class="card-header card-header-info title">
+                        <h1 class="title text-white text-center">In-Training</h1>
+                    </div>
                     <div class="section text-center">
                         <div class="team">
                             <div class="row">
@@ -162,7 +177,7 @@
                                                         {% thumbnail astronaut.profile_image "300x300" crop="center" as im %}
                                                             <img class="img-raised rounded-circle img-fluid text-center"
                                                                  src="{{ im.url }}"
-                                                            style="padding:1px;border:1px solid #cccccc;">
+                                                                 style="padding:1px;border:1px solid #cccccc;">
                                                         {% endthumbnail %}
                                                     {% else %}
                                                         <img class="img-raised rounded-circle img-fluid"
@@ -205,7 +220,9 @@
                     </div>
                 </div>
                 <div class="card" style="margin-bottom: 50px;">
-                    <div class="card-header card-header-warning title">Retired</div>
+                    <div class="card-header card-header-warning title">
+                        <h1 class="title text-white text-center">Retired</h1>
+                    </div>
                     <div class="section text-center">
                         <div class="team">
                             <div class="row">
@@ -233,7 +250,8 @@
                                                     <p class="card-description">{{ astronaut.bio|truncatechars:180 }}
                                                     </p>
                                                 </div>
-                                                <div class="card-footer justify-content-center" style="min-height: 66px">
+                                                <div class="card-footer justify-content-center"
+                                                     style="min-height: 66px">
                                                     {% if astronaut.twitter %}
                                                         <a href="{{ astronaut.twitter }}"
                                                            class="btn btn-link btn-just-icon"><i
@@ -244,8 +262,8 @@
                                                            class="btn btn-link btn-just-icon"><i
                                                                 class="fab fa-instagram"></i></a>
                                                     {% endif %}
-                                                    {% if astronaut.wikipedia %}
-                                                        <a href="{{ astronaut.wikipedia }}"
+                                                    {% if astronaut.wiki %}
+                                                        <a href="{{ astronaut.wiki }}"
                                                            class="btn btn-link btn-just-icon"><i
                                                                 class="fab fa-wikipedia-w"></i></a>
                                                     {% endif %}
@@ -261,51 +279,8 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Sidebar Widgets Column -->
             <div class="col-lg-3 col-md-12 col-xl-3">
-                <!-- Categories Widget -->
-                <div class="card">
-                    <div class="card-header card-header-danger">Recent Launches</div>
-                    <div class="list-group list-group-flush">
-                        {% for launch in previous_launches %}
-                            <a href="{{ launch.slug }}"
-                               class="list-group-item list-group-item-action flex-column align-items-start">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <div>
-                                        <h5 class="mb-1">{{ launch.rocket.configuration.name }}</h5>
-                                        <h6 class="mb-1">{{ launch.mission.name }} - {{ launch.status_name }}</h6>
-                                    </div>
-                                    <small class="text-muted">{{ launch.net|timesince }}</small>
-                                </div>
-                                <p class="mb-1">{{ launch.mission.description }}</p>
-                            </a>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="card" style="height: 1500px;">
-                    <a class="twitter-timeline" data-height="1500" data-link-color="#981CEB"
-                       href="https://twitter.com/SpaceLaunchNow/lists/space-launch-news?ref_src=twsrc%5Etfw">Space
-                        Launch
-                        News</a>
-                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-                </div>
-                <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                <!-- Space Launch Now -->
-                <ins class="adsbygoogle"
-                     style="display:block;"
-                     data-ad-client="ca-pub-9824528399164059"
-                     data-ad-slot="8772606898"
-                     data-ad-format="auto"></ins>
-                <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-
-                </script>
-                <br>
-                <iframe src="https://discordapp.com/widget?id=380226438584074242&theme=dark"
-                        width="100%" height="500"
-                        allowtransparency="true"
-                        frameborder="0"></iframe>
+                {% include "web/sidebar_full.html" %}
             </div>
         </div>
     </div>
