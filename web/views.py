@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+import json
 from datetime import datetime
 import datetime as dt
 
@@ -7,15 +9,13 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-from django.template.defaultfilters import slugify
 from django.db.models import Q
-from django.http import Http404, HttpResponseNotFound
+from django.http import Http404, HttpResponse
 from django.shortcuts import render, redirect
 from django import forms
 
 # Create your views here.
 from api.models import Agency, Launch, Astronauts
-from app.models import Translator
 
 
 def index(request):
@@ -73,7 +73,8 @@ def create_launch_view(request, launch):
     agency = launch.rocket.configuration.launch_agency
     launches_good = Launch.objects.filter(rocket__configuration__launch_agency=agency, status=3)
     launches_bad = Launch.objects.filter(Q(rocket__configuration__launch_agency=agency) & Q(Q(status=4) | Q(status=7)))
-    launches_pending = Launch.objects.filter(Q(rocket__configuration__launch_agency=agency) & Q(Q(status=1) | Q(status=2) | Q(status=5)))
+    launches_pending = Launch.objects.filter(
+        Q(rocket__configuration__launch_agency=agency) & Q(Q(status=1) | Q(status=2) | Q(status=5)))
     launches = {'good': launches_good, 'bad': launches_bad, 'pending': launches_pending}
     for url in vids:
         if 'youtube' in url.vid_url:
@@ -83,7 +84,7 @@ def create_launch_view(request, launch):
 
 
 # Create your views here.
-def launches(request,):
+def launches(request, ):
     query = request.GET.get('q')
 
     if query is not None:
@@ -126,20 +127,22 @@ def astronaut_by_slug(request, slug):
         raise Http404
 
 
-def astronaut_list(request,):
+def astronaut_list(request, ):
+    active_astronauts = Astronauts.objects.filter(status=1).order_by('name')
 
-    active_astronauts = Astronauts.objects.filter(status=1)
+    training_astronauts = Astronauts.objects.filter(status=3).order_by('name')
 
-    training_astronauts = Astronauts.objects.filter(status=3)
+    retired_astronauts = Astronauts.objects.filter(status=2).order_by('name')
 
-    retired_astronauts = Astronauts.objects.filter(Q(status=2) | Q(status=4))
+    lost_astronauts = Astronauts.objects.filter(Q(status=5) | Q(status=4)).order_by('name')
 
     previous_launches = Launch.objects.filter(net__lte=datetime.now()).order_by('-net')[:5]
 
     return render(request, 'web/astronaut/astronaut_list.html', {'active_astronauts': active_astronauts,
                                                                  'training_astronauts': training_astronauts,
                                                                  'retired_astronauts': retired_astronauts,
-                                                                 'previous_launches': previous_launches})
+                                                                 'previous_launches': previous_launches,
+                                                                 'lost_astronauts': lost_astronauts})
 
 
 def handler404(request):
@@ -150,7 +153,7 @@ def handler500(request):
     return render(request, 'web/500.html', status=500)
 
 
-def launches_redirect(request,):
+def launches_redirect(request, ):
     return redirect('launches')
 
 
@@ -167,7 +170,7 @@ class SignUpForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', )
+        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2',)
         help_texts = {
             'password1': None,
         }
@@ -186,3 +189,28 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
+
+
+def astronaut_search(request):
+    query = request.GET.get('q')
+
+    if query is not None:
+        _astronauts = Astronauts.objects.filter(name__icontains=query).order_by('name')
+        previous_launches = Launch.objects.filter(net__lte=datetime.now()).order_by('-net')[:5]
+        return render(request, 'web/astronaut/astronaut_search.html', {'astronauts': _astronauts,
+                                                                       'query': query,
+                                                                       'previous_launches': previous_launches})
+    else:
+        return redirect('astronauts')
+
+
+def astronaut_search_ajax(request):
+    query = request.GET.get('q')
+
+    if not query:
+        return HttpResponse(json.dumps([{}]), content_type='application/json')
+    majors = Astronauts.objects.filter(name__icontains=query)
+    return HttpResponse(
+        json.dumps(majors),
+        content_type='application/json',
+    )

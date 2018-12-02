@@ -515,7 +515,7 @@ class Astronauts(models.Model):
     slug = models.SlugField(unique=True, max_length=100)
 
     def save(self, *args, **kwargs):
-        self.slug = slugify('%s-%s' % (self.name, self.id))
+        self.slug = slugify(self.name)
         super(Astronauts, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
