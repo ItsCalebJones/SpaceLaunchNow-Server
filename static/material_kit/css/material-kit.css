@@ -12697,7 +12697,7 @@ textarea {
   font-size: 30px;
   padding: 15px 0;
 }
-.nav-link.nav-link-primary.active {
+.nav-link.nav-link-primary.active, .nav-link.nav-link-primary.active:hover, .nav-link.nav-link-primary.active:focus {
   background-color: #2196f3;
   box-shadow: 0 5px 20px 0px rgba(0, 0, 0, 0.2), 0 13px 24px -11px rgba(85, 162, 243, 0.6);
   color: #fff;
