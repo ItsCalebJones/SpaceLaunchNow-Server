@@ -146,7 +146,7 @@ class OrbiterFlightDetailedSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrbiterFlight
         fields = ('splashdown', 'launch_crew', 'onboard_crew', 'landing_crew',
-                  'orbiter', 'destination', 'spacestation')
+                  'orbiter', 'destination')
 
 
 class SpaceStationStatusSerializer(serializers.ModelSerializer):
