@@ -12689,7 +12689,7 @@ textarea {
   padding: 10px 15px;
 }
 .nav-pills .nav-item .nav-link:hover {
-  background-color: rgba(200, 200, 200, 0.2);
+  /*background-color: rgba(200, 200, 200, 0.2);*/
 }
 
 .nav-pills .nav-item i {
@@ -12702,7 +12702,6 @@ textarea {
   box-shadow: 0 5px 20px 0px rgba(0, 0, 0, 0.2), 0 13px 24px -11px rgba(85, 162, 243, 0.6);
   color: #fff;
 }
-
 
 .nav-link.nav-link-info.active, .nav-link.nav-link-info.active:hover, .nav-link.nav-link-info.active:focus {
   background-color: #00bcd4;
