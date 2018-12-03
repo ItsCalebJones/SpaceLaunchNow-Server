@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+import json
 from datetime import datetime
 import datetime as dt
 
@@ -7,15 +9,13 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-from django.template.defaultfilters import slugify
 from django.db.models import Q
-from django.http import Http404, HttpResponseNotFound
+from django.http import Http404, HttpResponse
 from django.shortcuts import render, redirect
 from django import forms
 
 # Create your views here.
 from api.models import Agency, Launch, Astronauts
-from app.models import Translator
 
 
 def get_youtube_url(launch):
@@ -145,18 +145,21 @@ def astronaut_by_slug(request, slug):
 
 
 def astronaut_list(request, ):
-    active_astronauts = Astronauts.objects.filter(status=1)
+    active_astronauts = Astronauts.objects.filter(status=1).order_by('name')
 
-    training_astronauts = Astronauts.objects.filter(status=3)
+    training_astronauts = Astronauts.objects.filter(status=3).order_by('name')
 
-    retired_astronauts = Astronauts.objects.filter(Q(status=2) | Q(status=4))
+    retired_astronauts = Astronauts.objects.filter(status=2).order_by('name')
+
+    lost_astronauts = Astronauts.objects.filter(Q(status=5) | Q(status=4)).order_by('name')
 
     previous_launches = Launch.objects.filter(net__lte=datetime.now()).order_by('-net')[:5]
 
     return render(request, 'web/astronaut/astronaut_list.html', {'active_astronauts': active_astronauts,
                                                                  'training_astronauts': training_astronauts,
                                                                  'retired_astronauts': retired_astronauts,
-                                                                 'previous_launches': previous_launches})
+                                                                 'previous_launches': previous_launches,
+                                                                 'lost_astronauts': lost_astronauts})
 
 
 def handler404(request):
@@ -203,3 +206,28 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
+
+
+def astronaut_search(request):
+    query = request.GET.get('q')
+
+    if query is not None:
+        _astronauts = Astronauts.objects.filter(name__icontains=query).order_by('name')
+        previous_launches = Launch.objects.filter(net__lte=datetime.now()).order_by('-net')[:5]
+        return render(request, 'web/astronaut/astronaut_search.html', {'astronauts': _astronauts,
+                                                                       'query': query,
+                                                                       'previous_launches': previous_launches})
+    else:
+        return redirect('astronauts')
+
+
+def astronaut_search_ajax(request):
+    query = request.GET.get('q')
+
+    if not query:
+        return HttpResponse(json.dumps([{}]), content_type='application/json')
+    majors = Astronauts.objects.filter(name__icontains=query)
+    return HttpResponse(
+        json.dumps(majors),
+        content_type='application/json',
+    )
