@@ -30,13 +30,13 @@ def index(request):
         return render(request, 'web/index.html', {'launch': in_flight_launch,
                                                   'youtube_url': get_youtube_url(in_flight_launch)})
 
-    recently_launched = Launch.objects.filter(net__gte=datetime.now() - dt.timedelta(hours=6),
-                                              net__lte=datetime.now()).order_by('-net').first()
+    recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - dt.timedelta(hours=6),
+                                              net__lte=datetime.utcnow()).order_by('-net').first()
     if recently_launched:
         return render(request, 'web/index.html', {'launch': recently_launched,
                                                   'youtube_url': get_youtube_url(recently_launched)})
     else:
-        _next_launch = Launch.objects.filter(net__gte=datetime.now()).order_by('net').first()
+        _next_launch = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net').first()
         return render(request, 'web/index.html', {'launch': _next_launch,
                                                   'youtube_url': get_youtube_url(_next_launch)})
 
@@ -46,12 +46,12 @@ def next_launch(request):
     in_flight_launch = Launch.objects.filter(status__id=6).order_by('-net').first()
     if in_flight_launch:
         return redirect('launch_by_slug', slug=in_flight_launch.slug)
-    recently_launched = Launch.objects.filter(net__gte=datetime.now() - dt.timedelta(hours=6),
-                                              net__lte=datetime.now()).order_by('-net').first()
+    recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - dt.timedelta(hours=6),
+                                              net__lte=datetime.utcnow()).order_by('-net').first()
     if recently_launched:
         return redirect('launch_by_slug', slug=recently_launched.slug)
     else:
-        _next_launch = Launch.objects.filter(net__gte=datetime.now()).order_by('net').first()
+        _next_launch = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net').first()
         return redirect('launch_by_slug', slug=_next_launch.slug)
 
 
@@ -105,12 +105,12 @@ def launches(request, ):
     query = request.GET.get('q')
 
     if query is not None:
-        _launches = Launch.objects.filter(net__gte=datetime.now() - dt.timedelta(days=1)).order_by('net')
+        _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
         _launches = _launches.filter(rocket__configuration__launch_agency__abbrev__contains=query)[:5]
     else:
-        _launches = Launch.objects.filter(net__gte=datetime.now() - dt.timedelta(days=1)).order_by('net')[:5]
+        _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')[:5]
 
-    previous_launches = Launch.objects.filter(net__lte=datetime.now()).order_by('-net')[:5]
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
 
     if _launches:
         return render(request, 'web/launches.html', {'launches': _launches,
@@ -136,7 +136,7 @@ def astronaut_by_slug(request, slug):
                       .values_list('pk', flat=True)
                       .distinct()))
         _launches = Launch.objects.filter(pk__in=listi)
-        previous_launches = Launch.objects.filter(net__lte=datetime.now()).order_by('-net')[:5]
+        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
         return render(request, 'web/astronaut/astronaut_detail.html', {'astronaut': _astronaut,
                                                                        'launches': _launches,
                                                                        'previous_launches': previous_launches})
@@ -153,7 +153,7 @@ def astronaut_list(request, ):
 
     lost_astronauts = Astronauts.objects.filter(Q(status=5) | Q(status=4)).order_by('name')
 
-    previous_launches = Launch.objects.filter(net__lte=datetime.now()).order_by('-net')[:5]
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
 
     return render(request, 'web/astronaut/astronaut_list.html', {'active_astronauts': active_astronauts,
                                                                  'training_astronauts': training_astronauts,
@@ -213,7 +213,7 @@ def astronaut_search(request):
 
     if query is not None:
         _astronauts = Astronauts.objects.filter(name__icontains=query).order_by('name')
-        previous_launches = Launch.objects.filter(net__lte=datetime.now()).order_by('-net')[:5]
+        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
         return render(request, 'web/astronaut/astronaut_search.html', {'astronauts': _astronauts,
                                                                        'query': query,
                                                                        'previous_launches': previous_launches})

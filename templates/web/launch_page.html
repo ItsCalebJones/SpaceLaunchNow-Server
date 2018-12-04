@@ -260,17 +260,34 @@
             {% if launch.rocket.firststage.all|length > 0 %}
                 <div class="row text-center">
                     {% for stage in launch.rocket.firststage.all %}
-                        <div class="col-md-4 mx-auto">
-                            <div class="info">
-                                <!-- Date/Time -->
-                                <h3 class="text-center card-title">{{ stage.launcher.serial_number }}</h3>
-                                <hr>
-                                <b>Type: {{ stage.type }}</b><br>
-                                <b>Flight Proven: {{ stage.reused|yesno:"Yes,No" }}</b>
-                                {% if stage.landing.attempt %}
+                        {% if stage.landing != None %}
+                            <div class="col-md-4 mx-auto">
+                                <div class="info">
+                                    <!-- Date/Time -->
+                                    <h3 class="text-center card-title">{{ stage.launcher.serial_number }}</h3>
+                                    <hr>
+                                    <b>Type: {{ stage.type }}</b><br>
+                                    <b>Flight Proven: {{ stage.reused|yesno:"Yes,No" }}</b>
+                                    {% if stage.landing.attempt %}
+                                        {% if stage.landing.success != None %}
+                                            <h5>
+                                                <b>{{ stage.landing.success|yesno:"Successful Landing,Unsuccessful Landing" }}</b>
+                                            </h5>
+                                        {% else %}
+                                            <h5>
+                                                <b>Landing Attempt Confirmed</b>
+                                            </h5>
+                                        {% endif %}
+                                    {% elif stage.landing.attempt != True %}
+                                        <h5>
+                                            <b>{{ stage.type }} will be expended.</b>
+                                        </h5>
+                                    {% else %}
+                                        <h5>
+                                            <b>Landing Attempt Unconfirmed</b>
+                                        </h5>
+                                    {% endif %}
                                     <p>{{ stage.landing.description }}</p>
-                                    <b>Landing Location</b><br>
-                                    {{ stage.landing.success|yesno:"Successful Landing,Unsuccessful Landing" }}<br>
                                     <button
                                             data-trigger="focus"
                                             data-toggle="popover"
@@ -289,91 +306,89 @@
                                             data-placement="top"
                                             data-container="body"
                                             data-original-title="{{ stage.landing.landing_type.name }}"
-                                            data-content="{{ stage.landing.landing_type.description }}">{{ stage.landing.landing_type.abbrev }}</button>
+                                            data-content="{{ stage.landing.landing_type.description }}">
+                                        {{ stage.landing.landing_type.abbrev }}</button>
                                     <br>
-
-                                {% else %}
-                                    <b>Booster Expended</b><br>
-                                {% endif %}
-
+                                </div>
                             </div>
+                        {% endif %}
                         </div>
                     {% endfor %}
                 </div>
             {% endif %}
-            <div class="row text-center">
-                <div class="container">
-                    <div class="col-lg-12">
-                        <h3 class="text-center card-title"><b>Watch the Launch</b></h3>
-                        <hr>
-                        <!-- Title -->
-                        {% if youtube_urls|length > 0 %}
-                            {% for url in youtube_urls %}
-                                {% video url as my_video %}
-                                    <div class="videoWrapper">
-                                        {% if request|is_mobile %}
-                                            {% video my_video '85% x 25%' %}
-                                        {% else %}
-                                            {% video my_video '100% x 100%' %}
-                                        {% endif %}
-                                    </div>
-                                    <br>
-                                {% endvideo %}
-                            {% endfor %}
-                        {% else %}
-                            <p>Check back later for live embedded streams.</p>
-                        {% endif %}
-                    </div>
+        <div class="row text-center">
+            <div class="container">
+                <div class="col-lg-12">
+                    <h3 class="text-center card-title"><b>Watch the Launch</b></h3>
+                    <hr>
+                    <!-- Title -->
+                    {% if youtube_urls|length > 0 %}
+                        {% for url in youtube_urls %}
+                            {% video url as my_video %}
+                                <div class="videoWrapper">
+                                    {% if request|is_mobile %}
+                                        {% video my_video '85% x 25%' %}
+                                    {% else %}
+                                        {% video my_video '100% x 100%' %}
+                                    {% endif %}
+                                </div>
+                                <br>
+                            {% endvideo %}
+                        {% endfor %}
+                    {% else %}
+                        <p>Check back later for live embedded streams.</p>
+                    {% endif %}
                 </div>
             </div>
-            <div class="row text-center">
-                <div class="container">
-                    <h3 class="text-center card-title"><b>{{ launch.pad.location.name }}</b></h3>
-                    <h4 class="text-center">{{ launch.pad.name }}</h4>
-                    <hr>
-                    <div class="col-lg-12">
-                        <iframe
-                                width="100%"
-                                height="400"
-                                frameborder="0" style="border:0"
-                                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBkjvMIaP-KQrHWJ_aFndxsNS7KbDPu9Zw
+        </div>
+        <div class="row text-center">
+            <div class="container">
+                <h3 class="text-center card-title"><b>{{ launch.pad.location.name }}</b></h3>
+                <h4 class="text-center">{{ launch.pad.name }}</h4>
+                <hr>
+                <div class="col-lg-12">
+                    <iframe
+                            width="100%"
+                            height="400"
+                            frameborder="0" style="border:0"
+                            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBkjvMIaP-KQrHWJ_aFndxsNS7KbDPu9Zw
     &q={{ launch.pad.location.name }}&zoom=10" allowfullscreen>
 
-                        </iframe>
-                    </div>
+                    </iframe>
                 </div>
             </div>
-            <div class="row text-center">
-                <div class="container">
-                    <div class="col-lg-12">
-                        <h3 class="mt-4 card-title">Links</h3>
-                        <hr>
-                        <h4>Videos</h4>
-                        {% if launch.vid_urls.all|length > 0 %}
-                            {% for url in launch.vid_urls.all %}
-                                <a href="{{ url.vid_url }}">{{ url.vid_url }}</a><br>
-
-                            {% endfor %}
-                        {% else %}
-                            <p>No videos available for this launch!</p>
-                        {% endif %}
-                        <h4>Information</h4>
-                        {% if launch.vid_urls.all|length > 0 %}
-                            {% for i_url in launch.info_urls.all %}
-                                <a href="{{ i_url.info_url }}">{{ i_url.info_url }}</a><br>
-                            {% endfor %}
-                        {% else %}
-                            <p>No information links available for this launch!</p>
-                        {% endif %}
-                        <hr>
-                        <h5>Help <a href="https://launchlibrary.net/about.html">Launch Library</a> keep this launch up
-                            to date!</h5>
-                        <br>
-                    </div>
-                </div>
-            </div>
-
         </div>
+        <div class="row text-center">
+            <div class="container">
+                <div class="col-lg-12">
+                    <h3 class="mt-4 card-title">Links</h3>
+                    <hr>
+                    <h4>Videos</h4>
+                    {% if launch.vid_urls.all|length > 0 %}
+                        {% for url in launch.vid_urls.all %}
+                            <a href="{{ url.vid_url }}">{{ url.vid_url }}</a><br>
+
+                        {% endfor %}
+                    {% else %}
+                        <p>No videos available for this launch!</p>
+                    {% endif %}
+                    <h4>Information</h4>
+                    {% if launch.vid_urls.all|length > 0 %}
+                        {% for i_url in launch.info_urls.all %}
+                            <a href="{{ i_url.info_url }}">{{ i_url.info_url }}</a><br>
+                        {% endfor %}
+                    {% else %}
+                        <p>No information links available for this launch!</p>
+                    {% endif %}
+                    <hr>
+                    <h5>Help <a href="https://launchlibrary.net/about.html">Launch Library</a> keep this launch up
+                        to date!</h5>
+                    <br>
+                </div>
+            </div>
+        </div>
+
+    </div>
     </div>
     <!-- /.row -->
 
