@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import os
+import uuid
 
 try:
     from urllib import quote  # Python 2.X
@@ -617,7 +618,8 @@ class OrbiterFlight(models.Model):
 
 
 class Launch(models.Model):
-    id = models.IntegerField(primary_key=True, editable=True)
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True)
+    launch_library_id = models.IntegerField(editable=True)
     launch_library = models.NullBooleanField(default=True)
     name = models.CharField(max_length=2048, blank=True)
     img_url = models.CharField(max_length=1048, blank=True, null=True)
