@@ -19,9 +19,9 @@ from configurations.models import *
 from custom_storages import LogoStorage, AgencyImageStorage, OrbiterImageStorage, LauncherImageStorage, \
     AgencyNationStorage, EventImageStorage, AstronautImageStorage
 
-# The Agency object is meant to define a agency that operates launchers and orbiters.
+# The Agency object is meant to define a agency that operates launchers and spacecrafts.
 #
-# Example: SpaceX has Falcon 9 Launchers and Dragon orbiters
+# Example: SpaceX has Falcon 9 Launchers and Dragon spacecrafts
 #
 from django.template.defaultfilters import truncatechars, slugify
 import urllib
@@ -67,7 +67,7 @@ class Agency(models.Model):
     wiki_url = models.URLField(blank=True, null=True)
     description = models.CharField(max_length=2048, blank=True, null=True, default=None)
     launchers = models.CharField(max_length=500, default='', blank=True)
-    orbiters = models.CharField(max_length=500, default='', blank=True)
+    spacecraft = models.CharField(max_length=500, default='', blank=True)
     administrator = models.CharField(max_length=200, blank=True, null=True, default=None)
     founding_year = models.CharField(blank=True, null=True, default=None, max_length=20)
     legacy_image_url = models.URLField(blank=True, null=True, default=None)
@@ -157,14 +157,14 @@ class Agency(models.Model):
             return None
 
 
-# The Orbiter object is meant to define spacecraft (past and present) that are human-rated for spaceflight.
+# The Spacecraft object is meant to define spacecraft (past and present) that are human-rated for spaceflight.
 #
 # Example: Dragon, Orion, etc.
-class OrbiterConfiguration(models.Model):
+class SpacecraftConfiguration(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=200)
     agency = models.CharField(max_length=200, default='Unknown')
-    launch_agency = models.ForeignKey(Agency, related_name='orbiter_list', blank=True, null=True)
+    launch_agency = models.ForeignKey(Agency, related_name='spacecraft_list', blank=True, null=True)
     history = models.CharField(max_length=1000, default='')
     details = models.CharField(max_length=1000, default='')
     in_use = models.BooleanField(default=True)
@@ -191,8 +191,8 @@ class OrbiterConfiguration(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = 'Spacecraft'
-        verbose_name_plural = 'Spacecraft'
+        verbose_name = 'Spacecraft Configuration'
+        verbose_name_plural = 'Spacecraft Configurations'
 
 
 # The LauncherDetail object is meant to define orbital class launch vehicles (past and present).
@@ -526,9 +526,9 @@ class Astronauts(models.Model):
 
     @property
     def flights(self):
-        listi = list((Launch.objects.filter(Q(rocket__orbiterflight__launch_crew__id=self.pk) |
-                                            Q(rocket__orbiterflight__onboard_crew__id=self.pk) |
-                                            Q(rocket__orbiterflight__landing_crew__id=self.pk))
+        listi = list((Launch.objects.filter(Q(rocket__spacecraftflight__launch_crew__id=self.pk) |
+                                            Q(rocket__spacecraftflight__onboard_crew__id=self.pk) |
+                                            Q(rocket__spacecraftflight__landing_crew__id=self.pk))
                       .values_list('pk', flat=True)
                       .distinct()))
         launches = Launch.objects.filter(pk__in=listi)
@@ -550,10 +550,10 @@ class Astronauts(models.Model):
         verbose_name_plural = 'Astronauts'
 
 
-class Orbiter(models.Model):
+class Spacecraft(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     serial_number = models.CharField(max_length=255, null=True, blank=True)
-    orbiter_config = models.ForeignKey(OrbiterConfiguration,
+    spacecraft_config = models.ForeignKey(SpacecraftConfiguration,
                                        null=False)
     description = models.CharField(max_length=2048, null=False, blank=False)
     status = models.ForeignKey(OrbiterStatus, null=False, blank=False)
@@ -565,15 +565,15 @@ class Orbiter(models.Model):
         return u'%s' % self.name
 
     class Meta:
-        verbose_name = 'Orbiter'
-        verbose_name_plural = 'Orbiters'
+        verbose_name = 'Spacecraft'
+        verbose_name_plural = 'Spacecrafts'
 
 
 class SpaceStation(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     founded = models.DateField(null=False, blank=False)
     owner = models.ForeignKey(Agency, blank=False, null=False)
-    docked_vehicles = models.ManyToManyField(Orbiter, blank=True, related_name='spacestation')
+    docked_vehicles = models.ManyToManyField(Spacecraft, blank=True, related_name='spacestation')
     description = models.CharField(max_length=2048, null=False, blank=False)
     orbit = models.CharField(max_length=255, null=False, blank=False)
     crew = models.ManyToManyField(Astronauts, blank=True)
@@ -590,7 +590,7 @@ class SpaceStation(models.Model):
         verbose_name_plural = 'Space Stations'
 
 
-class OrbiterFlight(models.Model):
+class SpacecraftFlight(models.Model):
     splashdown = models.DateTimeField(null=True, blank=True)
     launch_crew = models.ManyToManyField(Astronauts,
                                          related_name='launch_crew',
@@ -601,19 +601,19 @@ class OrbiterFlight(models.Model):
     landing_crew = models.ManyToManyField(Astronauts,
                                           related_name='landing_crew',
                                           blank=True)
-    orbiter = models.ForeignKey(Orbiter, on_delete=models.CASCADE)
-    rocket = models.OneToOneField(Rocket, related_name='orbiterflight', on_delete=models.CASCADE)
+    spacecraft = models.ForeignKey(Spacecraft, on_delete=models.CASCADE)
+    rocket = models.OneToOneField(Rocket, related_name='spacecraftflight', on_delete=models.CASCADE)
     destination = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
-        return self.orbiter.name
+        return self.spacecraft.name
 
     def __unicode__(self):
-        return u'%s' % self.orbiter.name
+        return u'%s' % self.spacecraft.name
 
     class Meta:
-        verbose_name = 'Orbiter Flight'
-        verbose_name_plural = 'Orbiter Flights'
+        verbose_name = 'Spacecraft Flight'
+        verbose_name_plural = 'Spacecraft Flights'
 
 
 class Launch(models.Model):

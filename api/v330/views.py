@@ -7,14 +7,14 @@ from zinnia.models import Entry
 from api.v330.detailed.serializers import AgencySerializerDetailed, \
     LauncherConfigDetailSerializer, \
     OrbiterConfigurationDetailSerializer, LaunchDetailedSerializer, AstronautDetailedSerializer, \
-    SpaceStationDetailedSerializer, OrbiterFlightDetailedSerializer
+    SpaceStationDetailedSerializer, SpacecraftFlightDetailedSerializer
 from api.v330.list.serializers import LaunchListSerializer
 from api.v330.normal.serializers import EntrySerializer, AgencySerializer, \
     EventsSerializer, LaunchSerializer, \
     LauncherDetailedSerializer
 from api.models import *
 from datetime import datetime, timedelta
-from api.models import LauncherConfig, OrbiterConfiguration, Agency
+from api.models import LauncherConfig, SpacecraftConfiguration, Agency
 from api.permission import HasGroupPermission
 from bot.models import Launch
 
@@ -158,7 +158,7 @@ class OrbiterConfigViewSet(ModelViewSet):
     GET:
     Return a list of all the existing orbiters.
     """
-    queryset = OrbiterConfiguration.objects.all()
+    queryset = SpacecraftConfiguration.objects.all()
     serializer_class = OrbiterConfigurationDetailSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
@@ -199,9 +199,9 @@ class SpaceStationViewSet(ModelViewSet):
     }
 
 
-class OrbiterFlightViewSet(ModelViewSet):
-    queryset = OrbiterFlight.objects.all()
-    serializer_class = OrbiterFlightDetailedSerializer
+class SpaceflightFlightViewSet(ModelViewSet):
+    queryset = SpacecraftFlight.objects.all()
+    serializer_class = SpacecraftFlightDetailedSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
         'retrieve': ['_Public'], # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')

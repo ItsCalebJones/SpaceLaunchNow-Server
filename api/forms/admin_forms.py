@@ -75,7 +75,7 @@ class OrbiterForm(forms.ModelForm):
     flight_life = forms.CharField(widget=forms.Textarea)
 
     class Meta:
-        model = OrbiterConfiguration
+        model = SpacecraftConfiguration
         fields = '__all__'
 
 

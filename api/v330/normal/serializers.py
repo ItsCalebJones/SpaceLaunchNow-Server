@@ -31,7 +31,7 @@ class LauncherSerializer(QueryFieldsMixin, serializers.ModelSerializer):
 
 class OrbiterConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = OrbiterConfiguration
+        model = SpacecraftConfiguration
         fields = ('id', 'url', 'name', 'in_use')
 
 
@@ -146,7 +146,7 @@ class OrbiterSerializer(serializers.ModelSerializer):
     orbiter_config = OrbiterConfigSerializer(read_only=True, many=False)
 
     class Meta:
-        model = Orbiter
+        model = Spacecraft
         fields = ('name', 'serial_number', 'status',
                   'orbiter_config')
 
@@ -158,7 +158,7 @@ class OrbiterFlightSerializer(serializers.ModelSerializer):
     orbiter = OrbiterSerializer(read_only=True, many=False)
 
     class Meta:
-        model = OrbiterFlight
+        model = SpacecraftFlight
         fields = ('splashdown', 'launch_crew', 'onboard_crew', 'landing_crew',
                   'orbiter')
 

@@ -32,7 +32,7 @@ class OrbiterConfigurationDetailSerializer(QueryFieldsMixin, serializers.Hyperli
     agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
-        model = OrbiterConfiguration
+        model = SpacecraftConfiguration
         fields = ('id', 'url', 'name', 'agency', 'in_use', 'capability', 'history', 'details', 'maiden_flight',
                   'height', 'diameter', 'human_rated', 'crew_capacity', 'payload_capacity', 'flight_life',
                   'image_url', 'nation_url', 'wiki_link', 'info_link')
@@ -132,19 +132,19 @@ class OrbiterDetailedSerializer(serializers.ModelSerializer):
                                                           many=False)
 
     class Meta:
-        model = Orbiter
+        model = Spacecraft
         fields = ('name', 'serial_number', 'status',
                   'orbiter_config')
 
 
-class OrbiterFlightDetailedSerializer(serializers.ModelSerializer):
+class SpacecraftFlightDetailedSerializer(serializers.ModelSerializer):
     launch_crew = AstronautDetailedSerializer(read_only=True, many=True)
     onboard_crew = AstronautDetailedSerializer(read_only=True, many=True)
     landing_crew = AstronautDetailedSerializer(read_only=True, many=True)
     orbiter = OrbiterDetailedSerializer(read_only=True, many=False)
 
     class Meta:
-        model = OrbiterFlight
+        model = SpacecraftFlight
         fields = ('splashdown', 'launch_crew', 'onboard_crew', 'landing_crew',
                   'orbiter', 'destination')
 
@@ -171,7 +171,7 @@ class RocketDetailedSerializer(serializers.ModelSerializer):
     configuration = LauncherConfigDetailSerializer(read_only=True, many=False)
     first_stage = FirstStageSerializer(read_only=True, many=True, source='firststage')
     second_stage = SecondStageSerializer(read_only=True, many=False, source='secondstage')
-    orbiter_flight = OrbiterFlightDetailedSerializer(read_only=True, many=False, source='orbiterflight')
+    orbiter_flight = SpacecraftFlightDetailedSerializer(read_only=True, many=False, source='orbiterflight')
 
     class Meta:
         model = Rocket
