@@ -102,10 +102,12 @@ class Agency(models.Model):
         if count is not None:
             return count
 
-        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(Q(status__id=4) | Q(status__id=7)).count()
+        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(
+            Q(status__id=4) | Q(status__id=7)).count()
         related_agency = self.related_agencies.all()
         for related in related_agency:
-            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(Q(status__id=4) | Q(status__id=7)).count()
+            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(
+                Q(status__id=4) | Q(status__id=7)).count()
         # set cal_date in cache for later use
 
         cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
@@ -120,10 +122,12 @@ class Agency(models.Model):
         if count is not None:
             return count
 
-        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(Q(status__id=1) | Q(status__id=2) | Q(status__id=5)).count()
+        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(
+            Q(status__id=1) | Q(status__id=2) | Q(status__id=5)).count()
         related_agency = self.related_agencies.all()
         for related in related_agency:
-            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(Q(status__id=1) | Q(status__id=2) | Q(status__id=5)).count()
+            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(
+                Q(status__id=1) | Q(status__id=2) | Q(status__id=5)).count()
 
         # set in cache for later use
         cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
@@ -214,7 +218,7 @@ class LauncherConfig(models.Model):
     launch_cost = models.CharField(verbose_name="Launch Cost ($)", max_length=200, null=True, blank=True)
     maiden_flight = models.DateField(verbose_name="Maiden Flight Date", max_length=255, null=True, blank=True)
     min_stage = models.IntegerField(blank=True, null=True)
-    max_stage = models.IntegerField( blank=True, null=True)
+    max_stage = models.IntegerField(blank=True, null=True)
     length = models.FloatField(verbose_name="Length (m)", blank=True, null=True)
     diameter = models.FloatField(verbose_name="Max Diameter (m)", blank=True, null=True)
     fairing_diameter = models.FloatField(verbose_name="Max Fairing Diameter (m)", blank=True, null=True)
@@ -229,7 +233,8 @@ class LauncherConfig(models.Model):
     info_url = models.CharField(max_length=200, default='', blank=True, null=True)
     wiki_url = models.CharField(max_length=200, default='', blank=True, null=True)
     legacy_image_url = models.CharField(max_length=200, default='', blank=True)
-    image_url = models.FileField(default=None, storage=LauncherImageStorage(), upload_to=image_path, null=True, blank=True)
+    image_url = models.FileField(default=None, storage=LauncherImageStorage(), upload_to=image_path, null=True,
+                                 blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -252,7 +257,8 @@ class Events(models.Model):
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=2048, default='', blank=True)
     location = models.CharField(max_length=100, default='', blank=True)
-    feature_image = models.FileField(storage=EventImageStorage(), default=None, null=True, blank=True, upload_to=image_path)
+    feature_image = models.FileField(storage=EventImageStorage(), default=None, null=True, blank=True,
+                                     upload_to=image_path)
     date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
@@ -311,7 +317,8 @@ class Mission(models.Model):
     description = models.CharField(max_length=2048, blank=True, default="")
     type = models.IntegerField(blank=True, null=True)
     type_name = models.CharField(max_length=255, blank=True, default="")
-    mission_type = models.ForeignKey(MissionType, related_name='mission', blank=True, null=True, on_delete=models.CASCADE)
+    mission_type = models.ForeignKey(MissionType, related_name='mission', blank=True, null=True,
+                                     on_delete=models.CASCADE)
     orbit = models.ForeignKey(Orbit, related_name='mission', null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -360,7 +367,8 @@ class Launcher(models.Model):
             return count
 
         print("not in cache get from database")
-        count = Launch.objects.values('id').filter(rocket__firststage__launcher__id=self.id).filter(Q(status__id=3) | Q(status__id=4) | Q(status__id=7)).count()
+        count = Launch.objects.values('id').filter(rocket__firststage__launcher__id=self.id).filter(
+            Q(status__id=3) | Q(status__id=4) | Q(status__id=7)).count()
 
         # set cal_date in cache for later use
         cache.set(cache_key, count, CACHE_TIMEOUT_TEN_MINUTES)
@@ -389,8 +397,10 @@ class Landing(models.Model):
     attempt = models.NullBooleanField(blank=False, null=False, default=False)
     success = models.NullBooleanField(blank=True, null=True)
     description = models.CharField(max_length=2048, blank=True, default="")
-    landing_type = models.ForeignKey(LandingType, related_name='landing', null=True, blank=True, on_delete=models.SET_NULL)
-    landing_location = models.ForeignKey(LandingLocation, related_name='landing', null=True, blank=True, on_delete=models.SET_NULL)
+    landing_type = models.ForeignKey(LandingType, related_name='landing', null=True, blank=True,
+                                     on_delete=models.SET_NULL)
+    landing_location = models.ForeignKey(LandingLocation, related_name='landing', null=True, blank=True,
+                                         on_delete=models.SET_NULL)
 
     def __str__(self):
         try:
@@ -442,7 +452,8 @@ class Rocket(models.Model):
 
 
 class SecondStage(models.Model):
-    landing = models.OneToOneField(Landing, related_name='secondstage', null=True, blank=True, on_delete=models.SET_NULL)
+    landing = models.OneToOneField(Landing, related_name='secondstage', null=True, blank=True,
+                                   on_delete=models.SET_NULL)
     launcher = models.ForeignKey(Launcher, related_name='secondstage', on_delete=models.CASCADE)
     rocket = models.ForeignKey(Rocket, related_name='secondstage', on_delete=models.CASCADE)
 
@@ -474,7 +485,8 @@ class FirstStage(models.Model):
 
     @property
     def launcher_flight_number(self):
-        count = Launch.objects.values('id').filter(rocket__firststage__launcher__id=self.launcher.id).filter(net__lte=F('net')).count()
+        count = Launch.objects.values('id').filter(rocket__firststage__launcher__id=self.launcher.id).filter(
+            net__lte=F('net')).count()
         return count
 
     def __str__(self):
@@ -554,9 +566,9 @@ class Spacecraft(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     serial_number = models.CharField(max_length=255, null=True, blank=True)
     spacecraft_config = models.ForeignKey(SpacecraftConfiguration,
-                                       null=False)
+                                          null=False)
     description = models.CharField(max_length=2048, null=False, blank=False)
-    status = models.ForeignKey(OrbiterStatus, null=False, blank=False)
+    status = models.ForeignKey(SpacecraftStatus, null=False, blank=False)
 
     def __str__(self):
         return self.name
@@ -688,6 +700,3 @@ class InfoURLs(models.Model):
     class Meta:
         verbose_name = 'Info URL'
         verbose_name_plural = 'Info URLs'
-
-
-

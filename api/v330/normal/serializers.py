@@ -137,7 +137,7 @@ class AstronautSerializer(serializers.ModelSerializer):
 
 class OrbiterStatusSerializer(serializers.ModelSerializer):
     class Meta:
-        model = OrbiterStatus
+        model = SpacecraftStatus
         fields = ('name',)
 
 

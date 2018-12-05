@@ -94,7 +94,7 @@ class LandingLocation(models.Model):
         return u"%s (%s)" % (self.name, self.abbrev)
 
 
-class OrbiterStatus(models.Model):
+class SpacecraftStatus(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
 
     def __str__(self):
@@ -104,8 +104,8 @@ class OrbiterStatus(models.Model):
         return u'%s' % self.name
 
     class Meta:
-        verbose_name = 'Orbiter Status'
-        verbose_name_plural = 'Orbiter Status\''
+        verbose_name = 'Spacecraft Status'
+        verbose_name_plural = 'Spacecraft Status\''
 
 
 class AstronautStatus(models.Model):
