@@ -20,7 +20,7 @@ class AstronautTest(SLNAPITests):
         self.assertEqual(data['count'], 1)
         starman = Astronauts.objects.get(name=data['results'][0]['name'])
         self.assertEqual(data['results'][0]['name'], starman.name)
-        self.assertEqual(data['results'][0]['born'],
+        self.assertEqual(data['results'][0]['date_of_birth'],
                          "2018-02-06")
         self.assertEqual(data['results'][0]['status']['name'],
                          starman.status.name)

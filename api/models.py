@@ -550,11 +550,21 @@ class Astronauts(models.Model):
         verbose_name_plural = 'Astronauts'
 
 
+class AstronautFlight(models.Model):
+    tag = models.CharField(max_length=255, null=False, blank=False)
+    astronaut = models.ForeignKey(Astronauts, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return u'%s: %s' % (self.tag, self.astronaut)
+
+    def __unicode__(self):
+        return u'%s: %s' % (self.tag, self.astronaut)
+
+
 class Orbiter(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     serial_number = models.CharField(max_length=255, null=True, blank=True)
-    orbiter_config = models.ForeignKey(OrbiterConfiguration,
-                                       null=False)
+    orbiter_config = models.ForeignKey(OrbiterConfiguration, null=False)
     description = models.CharField(max_length=2048, null=False, blank=False)
     status = models.ForeignKey(OrbiterStatus, null=False, blank=False)
 
@@ -592,13 +602,13 @@ class SpaceStation(models.Model):
 
 class OrbiterFlight(models.Model):
     splashdown = models.DateTimeField(null=True, blank=True)
-    launch_crew = models.ManyToManyField(Astronauts,
+    launch_crew = models.ManyToManyField(AstronautFlight,
                                          related_name='launch_crew',
                                          blank=True)
-    onboard_crew = models.ManyToManyField(Astronauts,
+    onboard_crew = models.ManyToManyField(AstronautFlight,
                                           related_name='onboard_crew',
                                           blank=True)
-    landing_crew = models.ManyToManyField(Astronauts,
+    landing_crew = models.ManyToManyField(AstronautFlight,
                                           related_name='landing_crew',
                                           blank=True)
     orbiter = models.ForeignKey(Orbiter, on_delete=models.CASCADE)

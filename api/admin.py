@@ -5,7 +5,7 @@ from django.contrib import admin
 
 from api.filters.UpcomingFilter import DateListFilter
 from api.forms.admin_forms import LaunchForm, LandingForm, LauncherForm, PayloadForm, MissionForm, EventsForm, \
-    LauncherConfigForm, OrbiterForm, AgencyForm, AstronautForm
+    LauncherConfigForm, OrbiterForm, AgencyForm, AstronautForm, OrbiterFlightForm
 from bot.utils.admin_utils import custom_titled_filter
 from . import models
 
@@ -76,8 +76,13 @@ class SecondStageInline(admin.TabularInline):
     model = models.SecondStage
 
 
-class OrbiterFlightInline(admin.TabularInline):
+    model = models.AstronautFlight
+
+
+class OrbiterFlightInline(admin.StackedInline):
     model = models.OrbiterFlight
+    form = OrbiterFlightForm
+    inlines = [LaunchCrewInline]
 
 
 @admin.register(models.Rocket)
@@ -118,6 +123,7 @@ class LaunchAdmin(admin.ModelAdmin):
                    ('rocket__configuration__name', custom_titled_filter('Launch Configuration Name')))
     ordering = ('net',)
     search_fields = ('name', 'rocket__configuration__launch_agency__name', 'mission__description')
+    readonly_fields = ["slug"]
     form = LaunchForm
 
     def orbit(self, obj):
@@ -181,6 +187,11 @@ class AstronautsAdmin(admin.ModelAdmin):
     search_fields = ('name', 'agency__name')
     readonly_fields = ["slug"]
     form = AstronautForm
+
+
+@admin.register(models.AstronautFlight)
+class AstronautFlightAdmin(admin.ModelAdmin):
+    list_display = ('id', 'astronaut', 'tag')
 
 
 @admin.register(models.SpaceStation)
