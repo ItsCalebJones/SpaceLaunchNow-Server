@@ -68,7 +68,7 @@ class OrbiterModelSerializer(serializers.ModelSerializer):
 
 class AgencySerializer(serializers.HyperlinkedModelSerializer):
     launcher_list = LauncherModelSerializer(many=True, read_only=True)
-    orbiter_list = OrbiterModelSerializer(many=True, read_only=True)
+    orbiter_list = OrbiterModelSerializer(many=True, read_only=True, source='spacecraft_list')
     agency = serializers.SerializerMethodField('get_alternate_name')
     image_url = serializers.SerializerMethodField('get_legacy_name')
     nation_url = serializers.SerializerMethodField('get_nation_name')
