@@ -561,6 +561,15 @@ class Astronauts(models.Model):
         verbose_name = 'Astronaut'
         verbose_name_plural = 'Astronauts'
 
+class AstronautFlight(models.Model):
+    tag = models.CharField(max_length=255, null=False, blank=False)
+    astronaut = models.ForeignKey(Astronauts, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return u'%s: %s' % (self.tag, self.astronaut)
+
+    def __unicode__(self):
+        return u'%s: %s' % (self.tag, self.astronaut)
 
 class Spacecraft(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
@@ -604,13 +613,13 @@ class SpaceStation(models.Model):
 
 class SpacecraftFlight(models.Model):
     splashdown = models.DateTimeField(null=True, blank=True)
-    launch_crew = models.ManyToManyField(Astronauts,
+    launch_crew = models.ManyToManyField(AstronautFlight,
                                          related_name='launch_crew',
                                          blank=True)
-    onboard_crew = models.ManyToManyField(Astronauts,
+    onboard_crew = models.ManyToManyField(AstronautFlight,
                                           related_name='onboard_crew',
                                           blank=True)
-    landing_crew = models.ManyToManyField(Astronauts,
+    landing_crew = models.ManyToManyField(AstronautFlight,
                                           related_name='landing_crew',
                                           blank=True)
     spacecraft = models.ForeignKey(Spacecraft, on_delete=models.CASCADE)

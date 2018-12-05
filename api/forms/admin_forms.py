@@ -93,3 +93,11 @@ class AstronautForm(forms.ModelForm):
     class Meta:
         model = Astronauts
         fields = '__all__'
+
+
+class OrbiterFlightForm(forms.ModelForm):
+    destination = forms.CharField(widget=forms.Textarea)
+
+    class Meta:
+        model = OrbiterFlight
+        fields = '__all__'

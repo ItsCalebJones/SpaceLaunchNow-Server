@@ -39,11 +39,10 @@ class OrbiterConfigurationDetailSerializer(QueryFieldsMixin, serializers.Hyperli
 
 
 class AgencySerializerMini(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    parent = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Agency
-        fields = ('id', 'url', 'name', 'description', 'parent', 'administrator', 'founding_year', 'type')
+        fields = ('id', 'url', 'name', 'type')
 
 
 class AgencySerializerDetailed(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
@@ -109,21 +108,30 @@ class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializ
                   'wiki_url',)
 
 
-class AstronautStatusDetailedSerilizer(serializers.ModelSerializer):
+class AstronautStatusDetailedSerializer(serializers.ModelSerializer):
     class Meta:
         model = AstronautStatus
-        fields = ('name', )
+        fields = ('id', 'name', )
 
 
 class AstronautDetailedSerializer(serializers.ModelSerializer):
-    status = AstronautStatusDetailedSerilizer(read_only=True, many=False)
-    agency = AgencySerializer(read_only=True, many=False)
+    status = AstronautStatusDetailedSerializer(read_only=True, many=False)
+    agency = AgencySerializerMini(read_only=True, many=False)
 
     class Meta:
         model = Astronauts
-        fields = ('name', 'date_of_birth', 'date_of_death', 'nationality',
-                  'agency', 'twitter', 'instagram', 'bio', 'status', 'profile_image',
-                  'wiki', 'flights')
+        # fields = ('name',)
+        fields = ('name', 'status', 'agency', 'date_of_birth', 'date_of_death', 'nationality',
+                  'twitter', 'instagram', 'bio', 'profile_image',
+                  'wiki')
+
+
+class AstronautFlightSerializer(serializers.ModelSerializer):
+    astronaut = AstronautDetailedSerializer(read_only=True, many=False)
+
+    class Meta:
+        model = AstronautFlight
+        fields = ('tag', 'astronaut')
 
 
 class OrbiterDetailedSerializer(serializers.ModelSerializer):
@@ -136,11 +144,10 @@ class OrbiterDetailedSerializer(serializers.ModelSerializer):
         fields = ('name', 'serial_number', 'status',
                   'orbiter_config')
 
-
 class SpacecraftFlightDetailedSerializer(serializers.ModelSerializer):
-    launch_crew = AstronautDetailedSerializer(read_only=True, many=True)
-    onboard_crew = AstronautDetailedSerializer(read_only=True, many=True)
-    landing_crew = AstronautDetailedSerializer(read_only=True, many=True)
+    launch_crew = AstronautFlightSerializer(read_only=True, many=True)
+    onboard_crew = AstronautFlightSerializer(read_only=True, many=True)
+    landing_crew = AstronautFlightSerializer(read_only=True, many=True)
     orbiter = OrbiterDetailedSerializer(read_only=True, many=False)
 
     class Meta:

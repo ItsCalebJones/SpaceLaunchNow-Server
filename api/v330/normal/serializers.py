@@ -129,10 +129,28 @@ class SecondStageSerializer(serializers.ModelSerializer):
         fields = ('launcher', 'landing',)
 
 
+class AstronautStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AstronautStatus
+        fields = ('id', 'name', )
+
+
 class AstronautSerializer(serializers.ModelSerializer):
+    status = AstronautStatusSerializer(read_only=True, many=False)
+    agency = serializers.StringRelatedField(read_only=True, source='agency.name')
+
     class Meta:
         model = Astronauts
-        fields = ('name',)
+        # fields = ('name',)
+        fields = ('name', 'status', 'agency', 'profile_image')
+
+
+class AstronautFlightSerializer(serializers.ModelSerializer):
+    astronaut = AstronautSerializer(read_only=True, many=False)
+
+    class Meta:
+        model = AstronautFlight
+        fields = ('tag', 'astronaut')
 
 
 class OrbiterStatusSerializer(serializers.ModelSerializer):
@@ -152,9 +170,9 @@ class OrbiterSerializer(serializers.ModelSerializer):
 
 
 class OrbiterFlightSerializer(serializers.ModelSerializer):
-    launch_crew = AstronautSerializer(read_only=True, many=True)
-    onboard_crew = AstronautSerializer(read_only=True, many=True)
-    landing_crew = AstronautSerializer(read_only=True, many=True)
+    launch_crew = AstronautFlightSerializer(read_only=True, many=True)
+    onboard_crew = AstronautFlightSerializer(read_only=True, many=True)
+    landing_crew = AstronautFlightSerializer(read_only=True, many=True)
     orbiter = OrbiterSerializer(read_only=True, many=False)
 
     class Meta:
