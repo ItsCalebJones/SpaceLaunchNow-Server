@@ -72,6 +72,7 @@ class AgencySerializer(serializers.HyperlinkedModelSerializer):
     agency = serializers.SerializerMethodField('get_alternate_name')
     image_url = serializers.SerializerMethodField('get_legacy_name')
     nation_url = serializers.SerializerMethodField('get_nation_name')
+    orbiters = serializers.ReadOnlyField(read_only=True, source="spacecraft")
 
     class Meta:
         model = Agency

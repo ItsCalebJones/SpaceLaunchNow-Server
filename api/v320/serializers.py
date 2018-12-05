@@ -47,6 +47,7 @@ class AgencySerializerMini(QueryFieldsMixin, serializers.HyperlinkedModelSeriali
 class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     parent = serializers.StringRelatedField(read_only=True)
     type = serializers.ReadOnlyField(read_only=True, source="agency_type.name")
+    orbiters = serializers.ReadOnlyField(read_only=True, source="spacecraft")
 
     class Meta:
         model = Agency
@@ -59,6 +60,7 @@ class AgencySerializerDetailed(QueryFieldsMixin, serializers.HyperlinkedModelSer
     launcher_list = LauncherConfigDetailSerializerForAgency(many=True, read_only=True)
     orbiter_list = OrbiterDetailSerializer(many=True, read_only=True)
     type = serializers.ReadOnlyField(read_only=True, source="agency_type.name")
+    orbiters = serializers.ReadOnlyField(read_only=True, source="spacecraft")
 
     class Meta:
         model = Agency
@@ -73,6 +75,7 @@ class AgencySerializerDetailed(QueryFieldsMixin, serializers.HyperlinkedModelSer
 
 
 class AgencySerializerDetailedForLaunches(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+    orbiters = serializers.ReadOnlyField(read_only=True, source="spacecraft")
 
     class Meta:
         model = Agency
@@ -85,6 +88,7 @@ class AgencySerializerDetailedAndRelated(QueryFieldsMixin, serializers.Hyperlink
     parent = serializers.StringRelatedField(read_only=True)
     launcher_list = LauncherConfigDetailSerializerForAgency(many=True, read_only=True)
     orbiter_list = OrbiterDetailSerializer(many=True, read_only=True)
+    orbiters = serializers.ReadOnlyField(read_only=True, source="spacecraft")
 
     class Meta:
         model = Agency

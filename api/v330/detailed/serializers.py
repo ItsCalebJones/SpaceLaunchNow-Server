@@ -49,14 +49,14 @@ class AgencySerializerMini(QueryFieldsMixin, serializers.HyperlinkedModelSeriali
 class AgencySerializerDetailed(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     parent = serializers.StringRelatedField(read_only=True)
     launcher_list = LauncherConfigDetailSerializerForAgency(many=True, read_only=True)
-    orbiter_list = OrbiterConfigurationDetailSerializer(many=True, read_only=True)
+    spacecraft_list = OrbiterConfigurationDetailSerializer(many=True, read_only=True)
 
     class Meta:
         model = Agency
         fields = ('id', 'url', 'name', 'featured', 'type', 'country_code', 'abbrev', 'description', 'administrator',
-                  'founding_year', 'launchers', 'orbiters', 'parent', 'launch_library_url', 'successful_launches',
+                  'founding_year', 'launchers', 'spacecraft', 'parent', 'launch_library_url', 'successful_launches',
                   'failed_launches', 'pending_launches', 'info_url', 'wiki_url', 'logo_url', 'image_url', 'nation_url',
-                  'launcher_list', 'orbiter_list')
+                  'launcher_list', 'spacecraft_list')
 
     def get_fields(self):
         fields = super(AgencySerializerDetailed, self).get_fields()
@@ -68,21 +68,21 @@ class AgencySerializerDetailedForLaunches(QueryFieldsMixin, serializers.Hyperlin
     class Meta:
         model = Agency
         fields = ('id', 'url', 'name', 'featured', 'type', 'country_code', 'abbrev', 'description', 'administrator',
-                  'founding_year', 'launchers', 'orbiters', 'launch_library_url', 'successful_launches',
+                  'founding_year', 'launchers', 'spacecraft', 'launch_library_url', 'successful_launches',
                   'failed_launches', 'pending_launches', 'info_url', 'wiki_url', 'logo_url', 'image_url', 'nation_url',)
 
 
 class AgencySerializerDetailedAndRelated(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     parent = serializers.StringRelatedField(read_only=True)
     launcher_list = LauncherConfigDetailSerializerForAgency(many=True, read_only=True)
-    orbiter_list = OrbiterConfigurationDetailSerializer(many=True, read_only=True)
+    spacecraft_list = OrbiterConfigurationDetailSerializer(many=True, read_only=True)
 
     class Meta:
         model = Agency
         fields = ('id', 'url', 'name', 'featured', 'type', 'country_code', 'abbrev', 'description', 'administrator',
-                  'founding_year', 'launchers', 'orbiters', 'parent', 'launch_library_url', 'successful_launches',
+                  'founding_year', 'launchers', 'spacecraft', 'parent', 'launch_library_url', 'successful_launches',
                   'failed_launches', 'pending_launches', 'info_url', 'wiki_url', 'logo_url', 'image_url', 'nation_url',
-                  'related_agencies', 'launcher_list', 'orbiter_list')
+                  'related_agencies', 'launcher_list', 'spacecraft_list')
 
     def get_fields(self):
         fields = super(AgencySerializerDetailedAndRelated, self).get_fields()

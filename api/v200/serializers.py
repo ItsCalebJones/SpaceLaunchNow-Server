@@ -32,8 +32,9 @@ class OrbiterModelSerializer(QueryFieldsMixin, serializers.ModelSerializer):
 
 class AgencyHyperlinkedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     launcher_list = LauncherModelSerializer(many=True, read_only=True)
-    orbiter_list = OrbiterModelSerializer(many=True, read_only=True)
+    orbiter_list = OrbiterModelSerializer(many=True, read_only=True, source='spacecraft_list')
     ceo = serializers.SerializerMethodField('get_administrator')
+    orbiters = serializers.ReadOnlyField(read_only=True, source="spacecraft")
 
     class Meta:
         model = Agency
