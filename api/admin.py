@@ -76,6 +76,7 @@ class SecondStageInline(admin.TabularInline):
     model = models.SecondStage
 
 
+class LaunchCrewInline(admin.StackedInline):
     model = models.AstronautFlight
 
 
