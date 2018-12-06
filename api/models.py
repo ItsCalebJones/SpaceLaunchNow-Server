@@ -571,6 +571,7 @@ class AstronautFlight(models.Model):
     def __unicode__(self):
         return u'%s: %s' % (self.tag, self.astronaut)
 
+
 class Spacecraft(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     serial_number = models.CharField(max_length=255, null=True, blank=True)

@@ -58,7 +58,7 @@ class AgencyViewSet(ModelViewSet):
     def get_queryset(self):
         orbiters = self.request.query_params.get("orbiters", False)
         if orbiters:
-            return Agency.objects.annotate(orbiter_count=Count('orbiter_list')).filter(orbiter_count__gt=0)
+            return Agency.objects.annotate(spacecraft_count=Count('spacecraft_list')).filter(spacecraft_count__gt=0)
         else:
             return Agency.objects.all()
 

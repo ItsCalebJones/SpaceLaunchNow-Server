@@ -70,14 +70,14 @@ class LandingAdmin(admin.ModelAdmin):
 
 class FirstStageInline(admin.TabularInline):
     model = models.FirstStage
+    verbose_name = "Launcher Stage"
+    verbose_name_plural = "Launcher Stages"
 
 
-class SecondStageInline(admin.TabularInline):
-    model = models.SecondStage
-
-
-class SpacecraftFlightInline(admin.TabularInline):
+class SpacecraftFlightInline(admin.StackedInline):
     model = models.SpacecraftFlight
+    verbose_name = "Spacecraft Stage"
+    verbose_name_plural = "Spacecraft Stage"
 
 
 @admin.register(models.Rocket)
@@ -85,7 +85,7 @@ class RocketAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">group</i>'
     list_display = ('id', 'launch',)
     search_fields = ('launch__name',)
-    inlines = [FirstStageInline, SecondStageInline, SpacecraftFlightInline]
+    inlines = [FirstStageInline, SpacecraftFlightInline]
 
 
 @admin.register(models.FirstStage)
