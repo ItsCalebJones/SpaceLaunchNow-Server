@@ -82,3 +82,8 @@ class AstronautStatusAdmin(admin.ModelAdmin):
 @admin.register(models.SpacecraftStatus)
 class SpacecraftStatusAdmin(admin.ModelAdmin):
     list_display = ('name', )
+
+
+@admin.register(models.AstronautRole)
+class AstronautRoleAdmin(admin.ModelAdmin):
+    list_display = ('role', )
