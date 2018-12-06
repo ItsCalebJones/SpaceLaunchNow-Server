@@ -186,7 +186,7 @@ class AstronautsAdmin(admin.ModelAdmin):
 
 @admin.register(models.AstronautFlight)
 class AstronautFlightAdmin(admin.ModelAdmin):
-    list_display = ('id', 'astronaut', 'tag')
+    list_display = ('id', 'astronaut', 'role')
 
 
 @admin.register(models.SpaceStation)

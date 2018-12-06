@@ -562,14 +562,14 @@ class Astronauts(models.Model):
         verbose_name_plural = 'Astronauts'
 
 class AstronautFlight(models.Model):
-    tag = models.CharField(max_length=255, null=False, blank=False)
+    role = models.ForeignKey(AstronautRole, null=True, blank=True, on_delete=models.CASCADE)
     astronaut = models.ForeignKey(Astronauts, on_delete=models.CASCADE)
 
     def __str__(self):
-        return u'%s: %s' % (self.tag, self.astronaut)
+        return u'%s: %s' % (self.role, self.astronaut)
 
     def __unicode__(self):
-        return u'%s: %s' % (self.tag, self.astronaut)
+        return u'%s: %s' % (self.role, self.astronaut)
 
 
 class Spacecraft(models.Model):

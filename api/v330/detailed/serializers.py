@@ -127,11 +127,12 @@ class AstronautDetailedSerializer(serializers.ModelSerializer):
 
 
 class AstronautFlightSerializer(serializers.ModelSerializer):
+    role = serializers.StringRelatedField(read_only=True, source='role.role')
     astronaut = AstronautDetailedSerializer(read_only=True, many=False)
 
     class Meta:
         model = AstronautFlight
-        fields = ('tag', 'astronaut')
+        fields = ('role', 'astronaut')
 
 
 class SpacecraftDetailedSerializer(serializers.ModelSerializer):

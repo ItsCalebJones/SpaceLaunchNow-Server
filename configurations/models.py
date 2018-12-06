@@ -122,6 +122,20 @@ class AstronautStatus(models.Model):
         verbose_name_plural = 'Astronaut Status\''
 
 
+class AstronautRole(models.Model):
+    role = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.role
+
+    def __unicode__(self):
+        return u'%s' % self.role
+
+    class Meta:
+        verbose_name = 'Astronaut Role'
+        verbose_name_plural = 'Astronaut Roles'
+
+
 class SpaceStationStatus(models.Model):
     name = models.CharField(max_length=255)
 

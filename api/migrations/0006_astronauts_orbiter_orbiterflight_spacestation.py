@@ -31,6 +31,8 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Astronauts',
             },
         ),
+        # For some reason there seems to be a django bug with dependencies across apps,
+        # if this fails change status back to OrbiterStatus.
         migrations.CreateModel(
             name='Orbiter',
             fields=[
@@ -39,7 +41,7 @@ class Migration(migrations.Migration):
                 ('serial_number', models.CharField(blank=True, max_length=255, null=True)),
                 ('description', models.CharField(max_length=2048)),
                 ('orbiter_config', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.OrbiterConfiguration')),
-                ('status', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='configurations.OrbiterStatus')),
+                ('status', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='configurations.SpacecraftStatus')),
             ],
             options={
                 'verbose_name': 'Orbiter',
