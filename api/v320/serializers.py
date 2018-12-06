@@ -290,11 +290,15 @@ class LaunchListSerializer(serializers.ModelSerializer):
     mission_type = serializers.StringRelatedField(source='mission.mission_type.name')
     image = serializers.SerializerMethodField()
     slug = serializers.SlugField(source='get_full_absolute_url')
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
     
     class Meta:
         model = Launch
         fields = ('id', 'url', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'mission', 'mission_type',
                   'pad', 'location', 'landing', 'landing_success', 'launcher', 'orbit', 'image')
+        extra_kwargs = {
+            'url': {'lookup_field': 'launch_library_id'},
+        }
 
     def get_image(self, obj):
         try:
@@ -449,7 +453,7 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     mission = MissionSerializer(many=False, read_only=True)
     status = LaunchStatusSerializer(many=False, read_only=True)
     slug = serializers.SlugField(source='get_full_absolute_url')
-
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
     infoURLs = serializers.ReadOnlyField()
     vidURLs = serializers.ReadOnlyField()
 
@@ -459,6 +463,9 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'url', 'slug', 'name', 'img_url', 'status', 'net', 'window_end', 'window_start', 'inhold',
                   'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'rocket',
                   'mission', 'pad', 'infoURLs', 'vidURLs')
+        extra_kwargs = {
+            'url': {'lookup_field': 'launch_library_id'},
+        }
 
 
 class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
@@ -467,7 +474,7 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     mission = MissionSerializer(many=False, read_only=True)
     status = LaunchStatusSerializer(many=False, read_only=True)
     slug = serializers.SlugField(source='get_full_absolute_url')
-
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
     infoURLs = serializers.StringRelatedField(read_only=True, many=True, source='info_urls')
     vidURLs = serializers.StringRelatedField(read_only=True, many=True, source='vid_urls')
 
@@ -477,6 +484,9 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'url', 'slug', 'name', 'img_url', 'status', 'net', 'window_end', 'window_start', 'inhold',
                   'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'rocket',
                   'mission', 'pad', 'infoURLs', 'vidURLs')
+        extra_kwargs = {
+            'url': {'lookup_field': 'launch_library_id'},
+        }
 
 
 class EntrySerializer(serializers.ModelSerializer):

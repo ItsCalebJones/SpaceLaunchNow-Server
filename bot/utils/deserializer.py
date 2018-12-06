@@ -57,7 +57,7 @@ def launch_json_to_model(data):
     tbdtime = data['tbdtime']
     tbddate = data['tbddate']
 
-    launch, created = Launch.objects.get_or_create(id=id)
+    launch, created = Launch.objects.get_or_create(launch_library_id=id)
     launch.name = name
 
     if created:

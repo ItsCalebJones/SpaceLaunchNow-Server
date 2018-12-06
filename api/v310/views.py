@@ -12,6 +12,7 @@ from api.models import LauncherConfig, SpacecraftConfiguration, Agency
 from api.permission import HasGroupPermission
 from bot.models import Launch
 
+
 class EntryViewSet(ModelViewSet):
     """
     API endpoint that allows News posts to be viewed.
@@ -239,7 +240,8 @@ class LaunchViewSet(ModelViewSet):
     filter_fields = ('name',)
     search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
                      '$mission__name')
-    ordering_fields = ('id', 'name', 'net',)
+    ordering_fields = ('launch_library_id', 'name', 'net',)
+    lookup_field = 'launch_library_id'
 
 
 class UpcomingLaunchViewSet(ModelViewSet):
@@ -310,6 +312,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
     search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
                      '$mission__name')
     ordering_fields = ('id', 'name', 'net',)
+    lookup_field = 'launch_library_id'
 
 
 class PreviousLaunchViewSet(ModelViewSet):
@@ -377,3 +380,4 @@ class PreviousLaunchViewSet(ModelViewSet):
     search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
                      '$mission__name')
     ordering_fields = ('id', 'name', 'net',)
+    lookup_field = 'launch_library_id'

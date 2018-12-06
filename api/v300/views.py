@@ -173,7 +173,8 @@ class LaunchViewSet(ModelViewSet):
     filter_fields = ('name',)
     search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
                      '$mission__name')
-    ordering_fields = ('id', 'name', 'net',)
+    ordering_fields = ('launch_library_id', 'name', 'net',)
+    lookup_field = 'launch_library_id'
 
 
 class UpcomingLaunchViewSet(ModelViewSet):

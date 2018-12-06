@@ -323,6 +323,7 @@ class LaunchViewSet(ModelViewSet):
                      '$rocket__configuration__launch_agency__abbrev', '$mission__name', '$pad__location__name',
                      '$pad__name')
     ordering_fields = ('id', 'name', 'net',)
+    lookup_field = 'launch_library_id'
 
 
 class UpcomingLaunchViewSet(ModelViewSet):
@@ -480,6 +481,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
                      '$rocket__configuration__launch_agency__abbrev', '$mission__name', '$pad__location__name',
                      '$pad__name')
     ordering_fields = ('id', 'name', 'net',)
+    lookup_field = 'launch_library_id'
 
 
 class PreviousLaunchViewSet(ModelViewSet):
@@ -623,3 +625,4 @@ class PreviousLaunchViewSet(ModelViewSet):
                      '$rocket__configuration__launch_agency__abbrev', '$mission__name', '$pad__location__name',
                      '$pad__name')
     ordering_fields = ('id', 'name', 'net',)
+    lookup_field = 'launch_library_id'
