@@ -17,6 +17,7 @@ class AgencySerializerMini(QueryFieldsMixin, serializers.HyperlinkedModelSeriali
 class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     parent = serializers.StringRelatedField(read_only=True)
     type = serializers.ReadOnlyField(read_only=True, source="agency_type.name")
+    orbiters = serializers.ReadOnlyField(read_only=True, source="spacecraft")
 
     class Meta:
         model = Agency
@@ -27,6 +28,7 @@ class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer)
 class AgencySerializerDetailed(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     parent = serializers.StringRelatedField(read_only=True)
     type = serializers.ReadOnlyField(read_only=True, source="agency_type.name")
+    orbiters = serializers.ReadOnlyField(read_only=True, source="spacecraft")
 
     class Meta:
         model = Agency
@@ -102,7 +104,7 @@ class OrbiterDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSeri
     agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
-        model = OrbiterConfiguration
+        model = SpacecraftConfiguration
         fields = ('id', 'url', 'name', 'agency', 'in_use', 'capability', 'history', 'details', 'maiden_flight',
                   'height', 'diameter', 'human_rated', 'crew_capacity', 'payload_capacity', 'flight_life',
                   'image_url', 'nation_url', 'wiki_link', 'info_link')
@@ -110,9 +112,10 @@ class OrbiterDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSeri
 
 class AgencyDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     launcher_list = LauncherConfigDetailSerializerForAgency(many=True, read_only=True)
-    orbiter_list = OrbiterDetailSerializer(many=True, read_only=True)
+    orbiter_list = OrbiterDetailSerializer(many=True, read_only=True, source='spacecraft_list')
     type = serializers.ReadOnlyField(read_only=True, source="agency_type.name")
     parent = serializers.StringRelatedField(read_only=True)
+    orbiters = serializers.ReadOnlyField(read_only=True, source="spacecraft")
 
     class Meta:
         model = Agency
@@ -129,7 +132,7 @@ class AgencyDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSer
 
 class OrbiterSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = OrbiterConfiguration
+        model = SpacecraftConfiguration
         fields = ('id', 'url', 'name', 'in_use')
 
 

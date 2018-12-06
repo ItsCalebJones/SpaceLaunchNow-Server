@@ -5,7 +5,7 @@ from django.contrib import admin
 
 from api.filters.UpcomingFilter import DateListFilter
 from api.forms.admin_forms import LaunchForm, LandingForm, LauncherForm, PayloadForm, MissionForm, EventsForm, \
-    LauncherConfigForm, OrbiterForm, AgencyForm, AstronautForm
+    LauncherConfigForm, OrbiterForm, AgencyForm, AstronautForm, SpacecraftFlightForm
 from bot.utils.admin_utils import custom_titled_filter
 from . import models
 
@@ -43,7 +43,7 @@ class MissionAdmin(admin.ModelAdmin):
 @admin.register(models.Agency)
 class AgencyAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">group</i>'
-    list_display = ('short_name', 'featured', 'launchers', 'orbiters', 'short_description')
+    list_display = ('short_name', 'featured', 'launchers', 'spacecraft', 'short_description')
     list_filter = ('name', 'featured',)
     ordering = ('name',)
     search_fields = ('name',)
@@ -70,14 +70,14 @@ class LandingAdmin(admin.ModelAdmin):
 
 class FirstStageInline(admin.TabularInline):
     model = models.FirstStage
+    verbose_name = "Launcher Stage"
+    verbose_name_plural = "Launcher Stages"
 
 
-class SecondStageInline(admin.TabularInline):
-    model = models.SecondStage
-
-
-class OrbiterFlightInline(admin.TabularInline):
-    model = models.OrbiterFlight
+class SpacecraftFlightInline(admin.StackedInline):
+    model = models.SpacecraftFlight
+    verbose_name = "Spacecraft Stage"
+    verbose_name_plural = "Spacecraft Stage"
 
 
 @admin.register(models.Rocket)
@@ -85,7 +85,7 @@ class RocketAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">group</i>'
     list_display = ('id', 'launch',)
     search_fields = ('launch__name',)
-    inlines = [FirstStageInline, SecondStageInline, OrbiterFlightInline]
+    inlines = [FirstStageInline, SpacecraftFlightInline]
 
 
 @admin.register(models.FirstStage)
@@ -100,7 +100,7 @@ class SecondStageAdmin(admin.ModelAdmin):
     list_display = ('id', 'landing', 'launcher', 'rocket')
 
 
-@admin.register(models.OrbiterConfiguration)
+@admin.register(models.SpacecraftConfiguration)
 class OrbiterConfigurationAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">public</i>'
     list_display = ('name', 'agency')
@@ -118,6 +118,7 @@ class LaunchAdmin(admin.ModelAdmin):
                    ('rocket__configuration__name', custom_titled_filter('Launch Configuration Name')))
     ordering = ('net',)
     search_fields = ('name', 'rocket__configuration__launch_agency__name', 'mission__description')
+    readonly_fields = ["slug"]
     form = LaunchForm
 
     def orbit(self, obj):
@@ -183,11 +184,16 @@ class AstronautsAdmin(admin.ModelAdmin):
     form = AstronautForm
 
 
+@admin.register(models.AstronautFlight)
+class AstronautFlightAdmin(admin.ModelAdmin):
+    list_display = ('id', 'astronaut', 'role')
+
+
 @admin.register(models.SpaceStation)
 class SpaceStationAdmin(admin.ModelAdmin):
     list_display = ('name', )
 
 
-@admin.register(models.Orbiter)
-class OrbiterAdmin(admin.ModelAdmin):
+@admin.register(models.Spacecraft)
+class SpacecraftAdmin(admin.ModelAdmin):
     list_display = ('name', 'serial_number')

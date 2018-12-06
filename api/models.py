@@ -20,9 +20,9 @@ from configurations.models import *
 from custom_storages import LogoStorage, AgencyImageStorage, OrbiterImageStorage, LauncherImageStorage, \
     AgencyNationStorage, EventImageStorage, AstronautImageStorage
 
-# The Agency object is meant to define a agency that operates launchers and orbiters.
+# The Agency object is meant to define a agency that operates launchers and spacecrafts.
 #
-# Example: SpaceX has Falcon 9 Launchers and Dragon orbiters
+# Example: SpaceX has Falcon 9 Launchers and Dragon spacecrafts
 #
 from django.template.defaultfilters import truncatechars, slugify
 import urllib
@@ -68,7 +68,7 @@ class Agency(models.Model):
     wiki_url = models.URLField(blank=True, null=True)
     description = models.CharField(max_length=2048, blank=True, null=True, default=None)
     launchers = models.CharField(max_length=500, default='', blank=True)
-    orbiters = models.CharField(max_length=500, default='', blank=True)
+    spacecraft = models.CharField(max_length=500, default='', blank=True)
     administrator = models.CharField(max_length=200, blank=True, null=True, default=None)
     founding_year = models.CharField(blank=True, null=True, default=None, max_length=20)
     legacy_image_url = models.URLField(blank=True, null=True, default=None)
@@ -103,10 +103,12 @@ class Agency(models.Model):
         if count is not None:
             return count
 
-        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(Q(status__id=4) | Q(status__id=7)).count()
+        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(
+            Q(status__id=4) | Q(status__id=7)).count()
         related_agency = self.related_agencies.all()
         for related in related_agency:
-            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(Q(status__id=4) | Q(status__id=7)).count()
+            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(
+                Q(status__id=4) | Q(status__id=7)).count()
         # set cal_date in cache for later use
 
         cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
@@ -121,10 +123,12 @@ class Agency(models.Model):
         if count is not None:
             return count
 
-        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(Q(status__id=1) | Q(status__id=2) | Q(status__id=5)).count()
+        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(
+            Q(status__id=1) | Q(status__id=2) | Q(status__id=5)).count()
         related_agency = self.related_agencies.all()
         for related in related_agency:
-            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(Q(status__id=1) | Q(status__id=2) | Q(status__id=5)).count()
+            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(
+                Q(status__id=1) | Q(status__id=2) | Q(status__id=5)).count()
 
         # set in cache for later use
         cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
@@ -158,14 +162,14 @@ class Agency(models.Model):
             return None
 
 
-# The Orbiter object is meant to define spacecraft (past and present) that are human-rated for spaceflight.
+# The Spacecraft object is meant to define spacecraft (past and present) that are human-rated for spaceflight.
 #
 # Example: Dragon, Orion, etc.
-class OrbiterConfiguration(models.Model):
+class SpacecraftConfiguration(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=200)
     agency = models.CharField(max_length=200, default='Unknown')
-    launch_agency = models.ForeignKey(Agency, related_name='orbiter_list', blank=True, null=True)
+    launch_agency = models.ForeignKey(Agency, related_name='spacecraft_list', blank=True, null=True)
     history = models.CharField(max_length=1000, default='')
     details = models.CharField(max_length=1000, default='')
     in_use = models.BooleanField(default=True)
@@ -192,8 +196,8 @@ class OrbiterConfiguration(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = 'Spacecraft'
-        verbose_name_plural = 'Spacecraft'
+        verbose_name = 'Spacecraft Configuration'
+        verbose_name_plural = 'Spacecraft Configurations'
 
 
 # The LauncherDetail object is meant to define orbital class launch vehicles (past and present).
@@ -215,7 +219,7 @@ class LauncherConfig(models.Model):
     launch_cost = models.CharField(verbose_name="Launch Cost ($)", max_length=200, null=True, blank=True)
     maiden_flight = models.DateField(verbose_name="Maiden Flight Date", max_length=255, null=True, blank=True)
     min_stage = models.IntegerField(blank=True, null=True)
-    max_stage = models.IntegerField( blank=True, null=True)
+    max_stage = models.IntegerField(blank=True, null=True)
     length = models.FloatField(verbose_name="Length (m)", blank=True, null=True)
     diameter = models.FloatField(verbose_name="Max Diameter (m)", blank=True, null=True)
     fairing_diameter = models.FloatField(verbose_name="Max Fairing Diameter (m)", blank=True, null=True)
@@ -230,7 +234,8 @@ class LauncherConfig(models.Model):
     info_url = models.CharField(max_length=200, default='', blank=True, null=True)
     wiki_url = models.CharField(max_length=200, default='', blank=True, null=True)
     legacy_image_url = models.CharField(max_length=200, default='', blank=True)
-    image_url = models.FileField(default=None, storage=LauncherImageStorage(), upload_to=image_path, null=True, blank=True)
+    image_url = models.FileField(default=None, storage=LauncherImageStorage(), upload_to=image_path, null=True,
+                                 blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -253,7 +258,8 @@ class Events(models.Model):
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=2048, default='', blank=True)
     location = models.CharField(max_length=100, default='', blank=True)
-    feature_image = models.FileField(storage=EventImageStorage(), default=None, null=True, blank=True, upload_to=image_path)
+    feature_image = models.FileField(storage=EventImageStorage(), default=None, null=True, blank=True,
+                                     upload_to=image_path)
     date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
@@ -312,7 +318,8 @@ class Mission(models.Model):
     description = models.CharField(max_length=2048, blank=True, default="")
     type = models.IntegerField(blank=True, null=True)
     type_name = models.CharField(max_length=255, blank=True, default="")
-    mission_type = models.ForeignKey(MissionType, related_name='mission', blank=True, null=True, on_delete=models.CASCADE)
+    mission_type = models.ForeignKey(MissionType, related_name='mission', blank=True, null=True,
+                                     on_delete=models.CASCADE)
     orbit = models.ForeignKey(Orbit, related_name='mission', null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -361,7 +368,8 @@ class Launcher(models.Model):
             return count
 
         print("not in cache get from database")
-        count = Launch.objects.values('id').filter(rocket__firststage__launcher__id=self.id).filter(Q(status__id=3) | Q(status__id=4) | Q(status__id=7)).count()
+        count = Launch.objects.values('id').filter(rocket__firststage__launcher__id=self.id).filter(
+            Q(status__id=3) | Q(status__id=4) | Q(status__id=7)).count()
 
         # set cal_date in cache for later use
         cache.set(cache_key, count, CACHE_TIMEOUT_TEN_MINUTES)
@@ -390,8 +398,10 @@ class Landing(models.Model):
     attempt = models.NullBooleanField(blank=False, null=False, default=False)
     success = models.NullBooleanField(blank=True, null=True)
     description = models.CharField(max_length=2048, blank=True, default="")
-    landing_type = models.ForeignKey(LandingType, related_name='landing', null=True, blank=True, on_delete=models.SET_NULL)
-    landing_location = models.ForeignKey(LandingLocation, related_name='landing', null=True, blank=True, on_delete=models.SET_NULL)
+    landing_type = models.ForeignKey(LandingType, related_name='landing', null=True, blank=True,
+                                     on_delete=models.SET_NULL)
+    landing_location = models.ForeignKey(LandingLocation, related_name='landing', null=True, blank=True,
+                                         on_delete=models.SET_NULL)
 
     def __str__(self):
         try:
@@ -443,7 +453,8 @@ class Rocket(models.Model):
 
 
 class SecondStage(models.Model):
-    landing = models.OneToOneField(Landing, related_name='secondstage', null=True, blank=True, on_delete=models.SET_NULL)
+    landing = models.OneToOneField(Landing, related_name='secondstage', null=True, blank=True,
+                                   on_delete=models.SET_NULL)
     launcher = models.ForeignKey(Launcher, related_name='secondstage', on_delete=models.CASCADE)
     rocket = models.ForeignKey(Rocket, related_name='secondstage', on_delete=models.CASCADE)
 
@@ -475,7 +486,8 @@ class FirstStage(models.Model):
 
     @property
     def launcher_flight_number(self):
-        count = Launch.objects.values('id').filter(rocket__firststage__launcher__id=self.launcher.id).filter(net__lte=F('net')).count()
+        count = Launch.objects.values('id').filter(rocket__firststage__launcher__id=self.launcher.id).filter(
+            net__lte=F('net')).count()
         return count
 
     def __str__(self):
@@ -527,9 +539,9 @@ class Astronauts(models.Model):
 
     @property
     def flights(self):
-        listi = list((Launch.objects.filter(Q(rocket__orbiterflight__launch_crew__id=self.pk) |
-                                            Q(rocket__orbiterflight__onboard_crew__id=self.pk) |
-                                            Q(rocket__orbiterflight__landing_crew__id=self.pk))
+        listi = list((Launch.objects.filter(Q(rocket__spacecraftflight__launch_crew__id=self.pk) |
+                                            Q(rocket__spacecraftflight__onboard_crew__id=self.pk) |
+                                            Q(rocket__spacecraftflight__landing_crew__id=self.pk))
                       .values_list('pk', flat=True)
                       .distinct()))
         launches = Launch.objects.filter(pk__in=listi)
@@ -550,14 +562,24 @@ class Astronauts(models.Model):
         verbose_name = 'Astronaut'
         verbose_name_plural = 'Astronauts'
 
+class AstronautFlight(models.Model):
+    role = models.ForeignKey(AstronautRole, null=True, blank=True, on_delete=models.CASCADE)
+    astronaut = models.ForeignKey(Astronauts, on_delete=models.CASCADE)
 
-class Orbiter(models.Model):
+    def __str__(self):
+        return u'%s: %s' % (self.role, self.astronaut)
+
+    def __unicode__(self):
+        return u'%s: %s' % (self.role, self.astronaut)
+
+
+class Spacecraft(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     serial_number = models.CharField(max_length=255, null=True, blank=True)
-    orbiter_config = models.ForeignKey(OrbiterConfiguration,
-                                       null=False)
+    spacecraft_config = models.ForeignKey(SpacecraftConfiguration,
+                                          null=False)
     description = models.CharField(max_length=2048, null=False, blank=False)
-    status = models.ForeignKey(OrbiterStatus, null=False, blank=False)
+    status = models.ForeignKey(SpacecraftStatus, null=False, blank=False)
 
     def __str__(self):
         return self.name
@@ -566,15 +588,15 @@ class Orbiter(models.Model):
         return u'%s' % self.name
 
     class Meta:
-        verbose_name = 'Orbiter'
-        verbose_name_plural = 'Orbiters'
+        verbose_name = 'Spacecraft'
+        verbose_name_plural = 'Spacecrafts'
 
 
 class SpaceStation(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     founded = models.DateField(null=False, blank=False)
     owner = models.ForeignKey(Agency, blank=False, null=False)
-    docked_vehicles = models.ManyToManyField(Orbiter, blank=True, related_name='spacestation')
+    docked_vehicles = models.ManyToManyField(Spacecraft, blank=True, related_name='spacestation')
     description = models.CharField(max_length=2048, null=False, blank=False)
     orbit = models.CharField(max_length=255, null=False, blank=False)
     crew = models.ManyToManyField(Astronauts, blank=True)
@@ -591,30 +613,30 @@ class SpaceStation(models.Model):
         verbose_name_plural = 'Space Stations'
 
 
-class OrbiterFlight(models.Model):
+class SpacecraftFlight(models.Model):
     splashdown = models.DateTimeField(null=True, blank=True)
-    launch_crew = models.ManyToManyField(Astronauts,
+    launch_crew = models.ManyToManyField(AstronautFlight,
                                          related_name='launch_crew',
                                          blank=True)
-    onboard_crew = models.ManyToManyField(Astronauts,
+    onboard_crew = models.ManyToManyField(AstronautFlight,
                                           related_name='onboard_crew',
                                           blank=True)
-    landing_crew = models.ManyToManyField(Astronauts,
+    landing_crew = models.ManyToManyField(AstronautFlight,
                                           related_name='landing_crew',
                                           blank=True)
-    orbiter = models.ForeignKey(Orbiter, on_delete=models.CASCADE)
-    rocket = models.OneToOneField(Rocket, related_name='orbiterflight', on_delete=models.CASCADE)
+    spacecraft = models.ForeignKey(Spacecraft, on_delete=models.CASCADE)
+    rocket = models.OneToOneField(Rocket, related_name='spacecraftflight', on_delete=models.CASCADE)
     destination = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
-        return self.orbiter.name
+        return self.spacecraft.name
 
     def __unicode__(self):
-        return u'%s' % self.orbiter.name
+        return u'%s' % self.spacecraft.name
 
     class Meta:
-        verbose_name = 'Orbiter Flight'
-        verbose_name_plural = 'Orbiter Flights'
+        verbose_name = 'Spacecraft Flight'
+        verbose_name_plural = 'Spacecraft Flights'
 
 
 class Launch(models.Model):
@@ -690,6 +712,3 @@ class InfoURLs(models.Model):
     class Meta:
         verbose_name = 'Info URL'
         verbose_name_plural = 'Info URLs'
-
-
-
