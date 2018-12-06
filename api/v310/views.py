@@ -8,7 +8,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 
 from api.v310.serializers import *
 from datetime import datetime, timedelta
-from api.models import LauncherConfig, OrbiterConfiguration, Agency
+from api.models import LauncherConfig, SpacecraftConfiguration, Agency
 from api.permission import HasGroupPermission
 from bot.models import Launch
 
@@ -58,7 +58,7 @@ class AgencyViewSet(ModelViewSet):
     def get_queryset(self):
         orbiters = self.request.query_params.get("orbiters", False)
         if orbiters:
-            return Agency.objects.annotate(orbiter_count=Count('orbiter_list')).filter(orbiter_count__gt=0)
+            return Agency.objects.annotate(spacecraft_count=Count('spacecraft_list')).filter(spacecraft_count__gt=0)
         else:
             return Agency.objects.all()
 
@@ -146,7 +146,7 @@ class OrbiterViewSet(ModelViewSet):
     GET:
     Return a list of all the existing orbiters.
     """
-    queryset = OrbiterConfiguration.objects.all()
+    queryset = SpacecraftConfiguration.objects.all()
     serializer_class = OrbiterDetailSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {

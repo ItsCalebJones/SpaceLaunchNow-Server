@@ -1,7 +1,6 @@
-from api.models import OrbiterConfiguration, Agency, Events, LauncherConfig
+from api.models import SpacecraftConfiguration, Agency, Events, LauncherConfig
 from drf_queryfields import QueryFieldsMixin
 
-from api.models import OrbiterConfiguration, Agency
 from rest_framework import serializers
 
 
@@ -18,7 +17,7 @@ class OrbiterSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer
     agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
-        model = OrbiterConfiguration
+        model = SpacecraftConfiguration
         fields = ('id', 'url', 'name', 'agency', 'history', 'details', 'image_url',
                   'nation_url', 'wiki_link', 'in_use', 'capability')
 
@@ -27,14 +26,15 @@ class OrbiterModelSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
-        model = OrbiterConfiguration
+        model = SpacecraftConfiguration
         fields = ('id', 'url', 'name', 'agency', 'image_url',  'nation_url')
 
 
 class AgencyHyperlinkedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     launcher_list = LauncherModelSerializer(many=True, read_only=True)
-    orbiter_list = OrbiterModelSerializer(many=True, read_only=True)
+    orbiter_list = OrbiterModelSerializer(many=True, read_only=True, source='spacecraft_list')
     ceo = serializers.SerializerMethodField('get_administrator')
+    orbiters = serializers.ReadOnlyField(read_only=True, source="spacecraft")
 
     class Meta:
         model = Agency

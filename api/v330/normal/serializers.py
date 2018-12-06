@@ -11,7 +11,7 @@ class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer)
     class Meta:
         model = Agency
         fields = ('id', 'url', 'name', 'featured', 'type', 'country_code', 'abbrev', 'description', 'administrator',
-                  'founding_year', 'launchers', 'orbiters', 'parent', )
+                  'founding_year', 'launchers', 'spacecraft', 'parent', )
 
 
 class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
@@ -29,9 +29,9 @@ class LauncherSerializer(QueryFieldsMixin, serializers.ModelSerializer):
         fields = ('id', 'url', 'flight_proven', 'serial_number',)
 
 
-class OrbiterConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+class SpacecraftConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = OrbiterConfiguration
+        model = SpacecraftConfiguration
         fields = ('id', 'url', 'name', 'in_use')
 
 
@@ -153,44 +153,40 @@ class AstronautFlightSerializer(serializers.ModelSerializer):
         fields = ('tag', 'astronaut')
 
 
-class OrbiterStatusSerializer(serializers.ModelSerializer):
+class SpacecraftStatusSerializer(serializers.ModelSerializer):
     class Meta:
-        model = OrbiterStatus
+        model = SpacecraftStatus
         fields = ('name',)
 
 
-class OrbiterSerializer(serializers.ModelSerializer):
-    status = OrbiterStatusSerializer(read_only=True, many=False)
-    orbiter_config = OrbiterConfigSerializer(read_only=True, many=False)
+class SpacecraftSerializer(serializers.ModelSerializer):
+    status = SpacecraftStatusSerializer(read_only=True, many=False)
+    spacecraft_config = SpacecraftConfigSerializer(read_only=True, many=False)
 
     class Meta:
-        model = Orbiter
-        fields = ('name', 'serial_number', 'status',
-                  'orbiter_config')
+        model = Spacecraft
+        fields = ('name', 'serial_number', 'status', 'spacecraft_config')
 
 
-class OrbiterFlightSerializer(serializers.ModelSerializer):
+class SpacecraftFlightSerializer(serializers.ModelSerializer):
     launch_crew = AstronautFlightSerializer(read_only=True, many=True)
     onboard_crew = AstronautFlightSerializer(read_only=True, many=True)
     landing_crew = AstronautFlightSerializer(read_only=True, many=True)
-    orbiter = OrbiterSerializer(read_only=True, many=False)
+    spacecraft = SpacecraftSerializer(read_only=True, many=False)
 
     class Meta:
-        model = OrbiterFlight
-        fields = ('splashdown', 'launch_crew', 'onboard_crew', 'landing_crew',
-                  'orbiter')
+        model = SpacecraftFlight
+        fields = ('splashdown', 'launch_crew', 'onboard_crew', 'landing_crew', 'spacecraft')
 
 
 class RocketSerializer(serializers.ModelSerializer):
     configuration = LauncherConfigSerializer(read_only=True, many=False)
-    first_stage = FirstStageSerializer(read_only=True, many=True, source='firststage')
-    second_stage = SecondStageSerializer(read_only=True, many=False, source='secondstage')
-    orbiter_flight = OrbiterFlightSerializer(read_only=True, many=False, source='orbiterflight')
+    launcher_stage = FirstStageSerializer(read_only=True, many=True, source='firststage')
+    spacecraft_stage = SpacecraftFlightSerializer(read_only=True, many=False, source='spacecraftflight')
 
     class Meta:
         model = Rocket
-        fields = ('configuration', 'first_stage', 'second_stage',
-                  'orbiter_flight')
+        fields = ('configuration', 'launcher_stage', 'spacecraft_stage')
 
 
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):

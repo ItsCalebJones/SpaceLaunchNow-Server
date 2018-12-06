@@ -75,7 +75,7 @@ class OrbiterForm(forms.ModelForm):
     flight_life = forms.CharField(widget=forms.Textarea)
 
     class Meta:
-        model = OrbiterConfiguration
+        model = SpacecraftConfiguration
         fields = '__all__'
 
 
@@ -95,9 +95,9 @@ class AstronautForm(forms.ModelForm):
         fields = '__all__'
 
 
-class OrbiterFlightForm(forms.ModelForm):
+class SpacecraftFlightForm(forms.ModelForm):
     destination = forms.CharField(widget=forms.Textarea)
 
     class Meta:
-        model = OrbiterFlight
+        model = SpacecraftFlight
         fields = '__all__'

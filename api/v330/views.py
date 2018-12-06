@@ -6,15 +6,15 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from zinnia.models import Entry
 from api.v330.detailed.serializers import AgencySerializerDetailed, \
     LauncherConfigDetailSerializer, \
-    OrbiterConfigurationDetailSerializer, LaunchDetailedSerializer, AstronautDetailedSerializer, \
-    SpaceStationDetailedSerializer, OrbiterFlightDetailedSerializer
+    SpacecraftConfigurationDetailSerializer, LaunchDetailedSerializer, AstronautDetailedSerializer, \
+    SpaceStationDetailedSerializer, SpacecraftFlightDetailedSerializer
 from api.v330.list.serializers import LaunchListSerializer
 from api.v330.normal.serializers import EntrySerializer, AgencySerializer, \
     EventsSerializer, LaunchSerializer, \
     LauncherDetailedSerializer
 from api.models import *
 from datetime import datetime, timedelta
-from api.models import LauncherConfig, OrbiterConfiguration, Agency
+from api.models import LauncherConfig, SpacecraftConfiguration, Agency
 from api.permission import HasGroupPermission
 from bot.models import Launch
 
@@ -53,7 +53,7 @@ class AgencyViewSet(ModelViewSet):
     Return a list of all the existing users.
 
     FILTERS:
-    Parameters - 'featured', 'launch_library_id', 'detailed', 'orbiters'
+    Parameters - 'featured', 'launch_library_id', 'detailed',
     Example - /3.2.0/agencies/?featured=true&launch_library_id=44&detailed
 
     SEARCH EXAMPLE:
@@ -66,18 +66,18 @@ class AgencyViewSet(ModelViewSet):
     """
 
     def get_queryset(self):
-        orbiters = self.request.query_params.get("orbiters", False)
-        if orbiters:
-            return Agency.objects.annotate(orbiter_count=Count('orbiter_list')).filter(orbiter_count__gt=0)
+        spacecraft = self.request.query_params.get("spacecraft", False)
+        if spacecraft:
+            return Agency.objects.annotate(spacecraft_count=Count('spacecraft_list')).filter(spacecraft_count__gt=0)
         else:
             return Agency.objects.all()
 
     def get_serializer_class(self):
         mode = self.request.query_params.get("mode", "normal")
-        orbiters = self.request.query_params.get("orbiters", False)
+        spacecraft = self.request.query_params.get("spacecraft", False)
         if mode == "detailed":
             return AgencySerializerDetailed
-        if orbiters:
+        if spacecraft:
             return AgencySerializerDetailed
         else:
             return AgencySerializer
@@ -151,15 +151,15 @@ class LauncherViewSet(ModelViewSet):
     filter_fields = ('id', 'serial_number',)
 
 
-class OrbiterConfigViewSet(ModelViewSet):
+class SpacecraftConfigViewSet(ModelViewSet):
     """
-    API endpoint that allows Orbiter Configs to be viewed.
+    API endpoint that allows Spacecraft Configs to be viewed.
 
     GET:
-    Return a list of all the existing orbiters.
+    Return a list of all the existing spacecraft.
     """
-    queryset = OrbiterConfiguration.objects.all()
-    serializer_class = OrbiterConfigurationDetailSerializer
+    queryset = SpacecraftConfiguration.objects.all()
+    serializer_class = SpacecraftConfigurationDetailSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
@@ -172,7 +172,7 @@ class AstronautViewSet(ModelViewSet):
     API endpoint that allows Astronauts to be viewed.
 
     GET:
-    Return a list of all the existing orbiters.
+    Return a list of all the existing spacecraft.
     """
     queryset = Astronauts.objects.all()
     serializer_class = AstronautDetailedSerializer
@@ -188,7 +188,7 @@ class SpaceStationViewSet(ModelViewSet):
     API endpoint that allows Space Stations to be viewed.
 
     GET:
-    Return a list of all the existing orbiters.
+    Return a list of all the existing spacecraft.
     """
     queryset = SpaceStation.objects.all()
     serializer_class = SpaceStationDetailedSerializer
@@ -199,15 +199,14 @@ class SpaceStationViewSet(ModelViewSet):
     }
 
 
-class OrbiterFlightViewSet(ModelViewSet):
-    queryset = OrbiterFlight.objects.all()
-    serializer_class = OrbiterFlightDetailedSerializer
+class SpaceflightFlightViewSet(ModelViewSet):
+    queryset = SpacecraftFlight.objects.all()
+    serializer_class = SpacecraftFlightDetailedSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
         'retrieve': ['_Public'], # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public'] # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
-
 
 
 class EventViewSet(ModelViewSet):
