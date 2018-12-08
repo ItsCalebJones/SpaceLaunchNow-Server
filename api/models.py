@@ -166,7 +166,7 @@ class Agency(models.Model):
 #
 # Example: Dragon, Orion, etc.
 class SpacecraftConfiguration(models.Model):
-    id = models.IntegerField(primary_key=True, editable=True)
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
     agency = models.CharField(max_length=200, default='Unknown')
     launch_agency = models.ForeignKey(Agency, related_name='spacecraft_list', blank=True, null=True)

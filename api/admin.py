@@ -5,7 +5,7 @@ from django.contrib import admin
 
 from api.filters.UpcomingFilter import DateListFilter
 from api.forms.admin_forms import LaunchForm, LandingForm, LauncherForm, PayloadForm, MissionForm, EventsForm, \
-    LauncherConfigForm, OrbiterForm, AgencyForm, AstronautForm, SpacecraftFlightForm
+    LauncherConfigForm, OrbiterForm, AgencyForm, AstronautForm, SpacecraftFlightForm, SpacecraftForm
 from bot.utils.admin_utils import custom_titled_filter
 from . import models
 
@@ -118,7 +118,7 @@ class LaunchAdmin(admin.ModelAdmin):
                    ('rocket__configuration__name', custom_titled_filter('Launch Configuration Name')))
     ordering = ('net',)
     search_fields = ('name', 'rocket__configuration__launch_agency__name', 'mission__description')
-    readonly_fields = ["slug"]
+    readonly_fields = ['slug', 'launch_library_id', 'launch_library']
     form = LaunchForm
 
     def orbit(self, obj):
@@ -197,3 +197,4 @@ class SpaceStationAdmin(admin.ModelAdmin):
 @admin.register(models.Spacecraft)
 class SpacecraftAdmin(admin.ModelAdmin):
     list_display = ('name', 'serial_number')
+    form = SpacecraftForm
