@@ -11,10 +11,4 @@ class Migration(migrations.Migration):
         ('api', '0022_launch_new_id_part3'),
     ]
 
-    operations = [
-        migrations.AlterField(
-            model_name='launch',
-            name='new_id',
-            field=models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False),
-        ),
-    ]
+    operations = []
