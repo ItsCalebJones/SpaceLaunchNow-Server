@@ -26,24 +26,4 @@ class Migration(migrations.Migration):
             field=models.UUIDField(default=uuid.uuid4),
         ),
         migrations.RunPython(code=create_ids),
-        migrations.RenameField(
-            model_name='launch',
-            old_name='id',
-            new_name='launch_library_id',
-        ),
-        migrations.AlterField(
-            model_name='launch',
-            name='launch_library_id',
-            field=models.IntegerField(),
-        ),
-        migrations.AlterField(
-            model_name='launch',
-            name='new_id',
-            field=models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False),
-        ),
-        migrations.RenameField(
-            model_name='launch',
-            old_name='new_id',
-            new_name='id',
-        ),
     ]
