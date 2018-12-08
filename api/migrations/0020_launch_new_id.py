@@ -12,6 +12,12 @@ def create_ids(apps, schema_editor):
         m.new_id = uuid.uuid4()
         m.save()
 
+def remove_ids(apps, schema_editor):
+    Launch = apps.get_model('api', 'Launch')
+    for m in Launch.objects.all():
+        m.uuid = None
+        m.save()
+
 
 class Migration(migrations.Migration):
 
@@ -25,5 +31,5 @@ class Migration(migrations.Migration):
             name='new_id',
             field=models.UUIDField(default=uuid.uuid4),
         ),
-        migrations.RunPython(code=create_ids),
+        migrations.RunPython(code=create_ids, reverse_code=remove_ids),
     ]
