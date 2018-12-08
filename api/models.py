@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import os
+import uuid
 
 try:
     from urllib import quote  # Python 2.X
@@ -165,7 +166,7 @@ class Agency(models.Model):
 #
 # Example: Dragon, Orion, etc.
 class SpacecraftConfiguration(models.Model):
-    id = models.IntegerField(primary_key=True, editable=True)
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
     agency = models.CharField(max_length=200, default='Unknown')
     launch_agency = models.ForeignKey(Agency, related_name='spacecraft_list', blank=True, null=True)
@@ -561,6 +562,7 @@ class Astronauts(models.Model):
         verbose_name = 'Astronaut'
         verbose_name_plural = 'Astronauts'
 
+
 class AstronautFlight(models.Model):
     role = models.ForeignKey(AstronautRole, null=True, blank=True, on_delete=models.CASCADE)
     astronaut = models.ForeignKey(Astronauts, on_delete=models.CASCADE)
@@ -639,8 +641,9 @@ class SpacecraftFlight(models.Model):
 
 
 class Launch(models.Model):
-    id = models.IntegerField(primary_key=True, editable=True)
-    launch_library = models.NullBooleanField(default=True)
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    launch_library_id = models.IntegerField(editable=True, null=True, blank=True)
+    launch_library = models.NullBooleanField(default=False)
     name = models.CharField(max_length=2048, blank=True)
     img_url = models.CharField(max_length=1048, blank=True, null=True)
     status = models.ForeignKey(LaunchStatus, related_name='launch', blank=True, null=True, on_delete=models.SET_NULL)
@@ -668,7 +671,10 @@ class Launch(models.Model):
         return u'%s' % self.name
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.name + "-" + str(self.id))
+        if self.launch_library and self.launch_library_id is not None:
+            self.slug = slugify(self.name + "-" + str(self.launch_library_id))
+        else:
+            self.slug = slugify(self.name + "-" + str(self.id))
         super(Launch, self).save(*args, **kwargs)
 
     def get_absolute_url(self):

@@ -5,7 +5,7 @@ from django.contrib import admin
 
 from api.filters.UpcomingFilter import DateListFilter
 from api.forms.admin_forms import LaunchForm, LandingForm, LauncherForm, PayloadForm, MissionForm, EventsForm, \
-    LauncherConfigForm, OrbiterForm, AgencyForm, AstronautForm, SpacecraftFlightForm
+    LauncherConfigForm, OrbiterForm, AgencyForm, AstronautForm, SpacecraftFlightForm, SpacecraftForm
 from bot.utils.admin_utils import custom_titled_filter
 from . import models
 
@@ -68,6 +68,18 @@ class LandingAdmin(admin.ModelAdmin):
             return u"(%d) Unassigned Landing" % obj.id
 
 
+class InfoURLs(admin.TabularInline):
+    model = models.InfoURLs
+    verbose_name = "Information URL"
+    verbose_name_plural = "Information URLs"
+
+
+class VideoURLs(admin.TabularInline):
+    model = models.VidURLs
+    verbose_name = "Video URL"
+    verbose_name_plural = "Videos URLs"
+
+
 class FirstStageInline(admin.TabularInline):
     model = models.FirstStage
     verbose_name = "Launcher Stage"
@@ -118,8 +130,9 @@ class LaunchAdmin(admin.ModelAdmin):
                    ('rocket__configuration__name', custom_titled_filter('Launch Configuration Name')))
     ordering = ('net',)
     search_fields = ('name', 'rocket__configuration__launch_agency__name', 'mission__description')
-    readonly_fields = ["slug"]
+    readonly_fields = ['slug', 'launch_library_id', 'launch_library']
     form = LaunchForm
+    inlines = [InfoURLs, VideoURLs]
 
     def orbit(self, obj):
         if obj.mission is not None and obj.mission.orbit is not None and obj.mission.orbit.name:
@@ -197,3 +210,4 @@ class SpaceStationAdmin(admin.ModelAdmin):
 @admin.register(models.Spacecraft)
 class SpacecraftAdmin(admin.ModelAdmin):
     list_display = ('name', 'serial_number')
+    form = SpacecraftForm

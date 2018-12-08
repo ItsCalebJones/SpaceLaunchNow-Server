@@ -66,7 +66,7 @@ def launch_by_slug(request, slug):
 # Create your views here.
 def launch_by_id(request, id):
     try:
-        return redirect('launch_by_slug', slug=Launch.objects.get(pk=id).slug)
+        return redirect('launch_by_slug', slug=Launch.objects.get(launch_library_id=id).slug)
     except ObjectDoesNotExist:
         raise Http404
 

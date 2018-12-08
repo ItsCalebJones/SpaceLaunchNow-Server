@@ -95,6 +95,14 @@ class AstronautForm(forms.ModelForm):
         fields = '__all__'
 
 
+class SpacecraftForm(forms.ModelForm):
+    description = forms.CharField(widget=forms.Textarea)
+
+    class Meta:
+        model = Spacecraft
+        fields = '__all__'
+
+
 class SpacecraftFlightForm(forms.ModelForm):
     destination = forms.CharField(widget=forms.Textarea)
 

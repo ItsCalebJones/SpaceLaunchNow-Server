@@ -92,7 +92,7 @@ class NotificationHandler:
             isAndroid=True,
             data={"silent": True,
                   "background": True,
-                  "launch_id": launch.id,
+                  "launch_id": launch.launch_library_id,
                   "launch_name": launch.name,
                   "launch_image": image,
                   "launch_net": launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),

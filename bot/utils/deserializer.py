@@ -57,8 +57,9 @@ def launch_json_to_model(data):
     tbdtime = data['tbdtime']
     tbddate = data['tbddate']
 
-    launch, created = Launch.objects.get_or_create(id=id)
+    launch, created = Launch.objects.get_or_create(launch_library_id=id)
     launch.name = name
+    launch.launch_library = True
 
     if created:
         logger.info("Created - %s (%s)" % (launch.name, launch.id))

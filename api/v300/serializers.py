@@ -137,6 +137,7 @@ class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     launcher = LauncherSerializer(many=False, read_only=True, source='rocket.configuration')
     lsp = LSPSerializer(many=False, read_only=True, source='rocket.configuration.launch_agency')
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
     mission = MissionSerializer(many=False, read_only=True)
     status = serializers.IntegerField(
         read_only=True,
@@ -148,6 +149,9 @@ class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
         model = Launch
         fields = ('id', 'url', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold', 'tbdtime', 'tbddate',
                   'launcher', 'mission', 'lsp', 'location')
+        extra_kwargs = {
+            'url': {'lookup_field': 'launch_library_id'},
+        }
 
 
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):
@@ -168,6 +172,7 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     isonet = serializers.DateTimeField(format="%Y%m%dT%H%M%SZ", input_formats=None, source='net')
     isostart = serializers.DateTimeField(format="%Y%m%dT%H%M%SZ", input_formats=None, source='window_start')
     isoend = serializers.DateTimeField(format="%Y%m%dT%H%M%SZ", input_formats=None, source='window_end')
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:
         depth = 3
@@ -176,6 +181,9 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
                   'window_start', 'isonet', 'isostart', 'isoend', 'inhold', 'tbdtime', 'tbddate', 'probability',
                   'holdreason', 'failreason', 'hashtag', 'launcher', 'mission', 'lsp', 'location', 'pad', 'infoURLs',
                   'vidURLs')
+        extra_kwargs = {
+            'url': {'lookup_field': 'launch_library_id'},
+        }
 
 
 class InfoURLSerializer(serializers.ModelSerializer):
@@ -202,6 +210,7 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     isonet = serializers.DateTimeField(format="%Y%m%dT%H%M%SZ", input_formats=None, source='net')
     isostart = serializers.DateTimeField(format="%Y%m%dT%H%M%SZ", input_formats=None, source='window_start')
     isoend = serializers.DateTimeField(format="%Y%m%dT%H%M%SZ", input_formats=None, source='window_end')
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:
         depth = 3
@@ -210,3 +219,6 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
                   'window_start', 'isonet', 'isostart', 'isoend', 'inhold', 'tbdtime', 'tbddate', 'probability',
                   'holdreason', 'failreason', 'hashtag', 'launcher', 'mission', 'lsp', 'location', 'pad', 'infoURLs',
                   'vidURLs')
+        extra_kwargs = {
+            'url': {'lookup_field': 'launch_library_id'},
+        }
