@@ -68,6 +68,18 @@ class LandingAdmin(admin.ModelAdmin):
             return u"(%d) Unassigned Landing" % obj.id
 
 
+class InfoURLs(admin.TabularInline):
+    model = models.InfoURLs
+    verbose_name = "Information URL"
+    verbose_name_plural = "Information URLs"
+
+
+class VideoURLs(admin.TabularInline):
+    model = models.VidURLs
+    verbose_name = "Video URL"
+    verbose_name_plural = "Videos URLs"
+
+
 class FirstStageInline(admin.TabularInline):
     model = models.FirstStage
     verbose_name = "Launcher Stage"
@@ -120,6 +132,7 @@ class LaunchAdmin(admin.ModelAdmin):
     search_fields = ('name', 'rocket__configuration__launch_agency__name', 'mission__description')
     readonly_fields = ['slug', 'launch_library_id', 'launch_library']
     form = LaunchForm
+    inlines = [InfoURLs, VideoURLs]
 
     def orbit(self, obj):
         if obj.mission is not None and obj.mission.orbit is not None and obj.mission.orbit.name:
