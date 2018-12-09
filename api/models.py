@@ -313,7 +313,8 @@ class Pad(models.Model):
 
 
 class Mission(models.Model):
-    id = models.IntegerField(primary_key=True, editable=True)
+    id = models.AutoField(primary_key=True)
+    launch_library_id = models.IntegerField(editable=True, blank=True, null=True, unique=True)
     name = models.CharField(max_length=255, blank=True, default="")
     description = models.CharField(max_length=2048, blank=True, default="")
     type = models.IntegerField(blank=True, null=True)
