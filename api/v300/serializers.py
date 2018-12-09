@@ -127,6 +127,7 @@ class LSPSerializer(serializers.ModelSerializer):
 class MissionSerializer(serializers.ModelSerializer):
     type = serializers.PrimaryKeyRelatedField(read_only=True, many=False, source='mission_type')
     type_name = serializers.StringRelatedField(many=False, source='mission_type')
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:
         model = Mission

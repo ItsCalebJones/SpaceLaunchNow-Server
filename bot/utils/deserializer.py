@@ -143,7 +143,7 @@ def get_rocket(launch, data):
 
 def get_mission(launch, data):
     if data['missions'] is not None and len(data['missions']) > 0:
-        mission, created = Mission.objects.get_or_create(id=data['missions'][0]['id'])
+        mission, created = Mission.objects.get_or_create(launch_library_id=data['missions'][0]['id'])
         mission.name = data['missions'][0]['name']
         mission.type = data['missions'][0]['type']
         mission.type_name = get_mission_type(data['missions'][0]['type'])

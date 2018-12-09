@@ -183,6 +183,7 @@ class MissionSerializer(serializers.ModelSerializer):
     type = serializers.StringRelatedField(many=False, source='mission_type')
     orbit = serializers.StringRelatedField(many=False)
     orbit_abbrev = serializers.StringRelatedField(many=False, source='orbit.abbrev')
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:
         model = Mission

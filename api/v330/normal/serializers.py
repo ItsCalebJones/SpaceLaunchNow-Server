@@ -79,7 +79,7 @@ class MissionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Mission
-        fields = ('id', 'name', 'description', 'type', 'orbit', 'orbit_abbrev')
+        fields = ('id', 'launch_library_id', 'name', 'description', 'type', 'orbit', 'orbit_abbrev')
 
 
 class LandingTypeSerializer(serializers.ModelSerializer):
