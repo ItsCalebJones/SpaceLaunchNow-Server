@@ -434,13 +434,13 @@ class Rocket(models.Model):
     def __str__(self):
         try:
             if self.launch is not None and self.launch.mission is not None:
-                return u"%s (Rocket)" % self.launch.mission.name
+                return u"%s: %s (Rocket)" % (self.id, self.launch.mission.name)
             elif self.launch is not None:
-                return u"%s (Rocket)" % self.launch.name
+                return u"%s: %s (Rocket)" % (self.id, self.launch.name)
             else:
-                return u"Unsaved %s" % self.configuration.name
+                return u"%s: Unsaved %s" % (self.id, self.configuration.name)
         except ObjectDoesNotExist:
-            return u"Unsaved %s" % self.configuration.name
+            return u"%s: Unsaved %s" % (self.id, self.configuration.name)
 
     def __unicode__(self):
         try:
