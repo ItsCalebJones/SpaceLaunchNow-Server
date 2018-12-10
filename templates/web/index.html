@@ -1,154 +1,231 @@
 {% extends "web/base.html" %}
 {% load staticfiles %}
-
+{% load embed_video_tags %}
+{% load user_agents %}
 {% block extrahead %}
-<title>Space Launch Now</title>
-<meta name="title" content="Space Launch Now">
-<link rel="canonical" href="https://spacelaunchnow.me/">
-<meta property="fb:app_id" content="746774215504127"/>
-<meta property="og:title" content="Space Launch Now"/>
-<meta property="og:type" content="website"/>
-<meta name="description" content="Meet Space Launch Now the best resource for keeping up to date on all of your favorite spaceflight missions from around the world.">
-<meta property="og:description"
-      content="Meet Space Launch Now the best resource for keeping up to date on all of your favorite spaceflight missions from around the world."/>
-<meta property="og:url" content="https://spacelaunchnow.me/"/>
-<meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
-<meta property="og:image:width" content="3000"/>
-<meta property="og:image:height" content="2000"/>
+    <title>Space Launch Now</title>
+    <meta name="title" content="Space Launch Now">
+    <link rel="canonical" href="https://spacelaunchnow.me/">
+    <meta property="fb:app_id" content="746774215504127"/>
+    <meta property="og:title" content="Space Launch Now"/>
+    <meta property="og:type" content="website"/>
+    <meta name="description"
+          content="Meet Space Launch Now the best resource for keeping up to date on all of your favorite spaceflight missions from around the world.">
+    <meta property="og:description"
+          content="Meet Space Launch Now the best resource for keeping up to date on all of your favorite spaceflight missions from around the world."/>
+    <meta property="og:url" content="https://spacelaunchnow.me/"/>
+    <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
+    <meta property="og:image:width" content="3000"/>
+    <meta property="og:image:height" content="2000"/>
 {% endblock %}
 
 
 {% block navigation %}
-<!-- Navigation -->
-<nav class="navbar navbar-transparent navbar-color-on-scroll bg-primary fixed-top navbar-expand-lg">
-    <div class="container">
-        <div class="navbar-translate">
-            <a class="navbar-brand" href="#page-top"><b>Space Launch Now</b></a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-                <span class="navbar-toggler-icon"></span>
-                <span class="navbar-toggler-icon"></span>
-            </button>
+    <!-- Navigation -->
+    <nav class="navbar navbar-transparent navbar-color-on-scroll bg-primary fixed-top navbar-expand-lg">
+        <div class="container">
+            <div class="navbar-translate">
+                <a class="navbar-brand" href="#page-top"><b>Space Launch Now</b></a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                    <span class="navbar-toggler-icon"></span>
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+
+            <div class="collapse navbar-collapse">
+
+                <ul class="navbar-nav ml-auto">
+
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/next">Next</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/launch">Launches</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/3.2.0">API</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           href="https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><i
+                                class="fab fa-android"></i> Android</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://itunes.apple.com/us/app/space-launch-now/id1399715731"><i
+                                class="fab fa-apple"></i> iOS</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-
-        <div class="collapse navbar-collapse">
-
-            <ul class="navbar-nav ml-auto">
-
-                <li class="nav-item">
-                    <a class="nav-link active" href="/">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/next">Next</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/launch">Launches</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/3.2.0">API</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><i
-                            class="fab fa-android"></i> Android</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="https://itunes.apple.com/us/app/space-launch-now/id1399715731"><i
-                            class="fab fa-apple"></i> iOS</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+    </nav>
 {% endblock %}
 
 {% block content %}
-<div class="page-header header-filter" data-parallax="true"
-     style="background-image: url('{% static 'img/header.jpg'%}');">
-    <div class="container">
-        <div class="name text-center">
-            <div class="avatar" style="max-height: 280px;">
-                <img src="{% static 'img/launcher.png'%}"
-                     alt="Circle Image"
-                     class="img-raised rounded-circle img-fluid "
-                     style="max-width: 15%">
+    <div class="page-header header-filter" data-parallax="true"
+         style="background-image: url('{% static 'img/header.jpg' %}');">
+        <div class="container">
+            <div class="name text-center">
+                <div class="avatar" style="max-height: 280px;">
+                    <img src="{% static 'img/launcher.png' %}"
+                         alt="Circle Image"
+                         class="img-raised rounded-circle img-fluid "
+                         style="max-width: 15%">
+                </div>
+                <hr class="col-lg-8" style="background-color: white">
+                <h1 class="title">Space Launch Now</h1>
+                <h2>A Spaceflight Tracker</h2>
+                <a style="margin: 5px"
+                   href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+                    <img alt='Get it on Google Play' src="{% static 'img/button/google.png' %}" width="135" height="40"
+                         alt="">
+                </a>
+                <a style="margin: 5px" href='https://itunes.apple.com/us/app/space-launch-now/id1399715731'>
+                    <img alt='Get it on App Store' src="{% static 'img/button/apple.png' %}" width="135" height="40"
+                         alt="">
+                </a>
+                <hr class="col-lg-8" style="background-color: white">
             </div>
-            <hr class="col-lg-8" style="background-color: white">
-            <h1 class="title">Space Launch Now</h1>
-            <h2>A Spaceflight Tracker</h2>
-            <a style="margin: 5px"
-               href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-                <img alt='Get it on Google Play' src="{% static 'img/button/google.png'%}" width="135" height="40"
-                     alt="">
-            </a>
-            <a style="margin: 5px" href='https://itunes.apple.com/us/app/space-launch-now/id1399715731'>
-                <img alt='Get it on App Store' src="{% static 'img/button/apple.png'%}" width="135" height="40" alt="">
-            </a>
-            <hr class="col-lg-8" style="background-color: white">
         </div>
     </div>
-</div>
-<div class="col-lg-10 ml-auto mr-auto mx-auto text-center">
-    <div class="main card text-center">
-        <div class="card-header card-header-danger text-center">
-            <h2 class="title">{{ launch.name }}</h2>
-            <h3 class="title">{{ launch.pad.location.name }}</h3>
-        </div>
-        <br>
-        <div class="row">
-            <div class="col-md-12 ml-auto mx-auto mr-auto text-center">
-                <div class="profile">
-                    <div class="avatar">
-                        {% if launch.rocket.configuration.launch_agency.logo_url %}
-                        <img src="{{ launch.rocket.configuration.launch_agency.logo_url.url }}"
-                             alt="Circle Image"
-                             class="img-fluid mx-auto"
-                             style="max-width: 75%;max-height: 400px;">
-                        {% else %}
-                        <h2 class="title text-center"
-                            style="margin-left: 100px; margin-right:100px;">{{ launch.rocket.configuration.launch_agency.name }}</h2>
-                        {% endif %}
+    <div class="col-lg-10 ml-auto mr-auto mx-auto text-center">
+        <div class="main card text-center">
+            <div class="card-header card-header-danger text-center">
+                <h2 class="title">{{ launch.name }}</h2>
+                <h3 class="title">{{ launch.pad.location.name }}</h3>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-12 ml-auto mx-auto mr-auto text-center">
+                    <div class="profile">
+                        <div class="avatar">
+                            {% if launch.rocket.configuration.launch_agency.logo_url %}
+                                <img src="{{ launch.rocket.configuration.launch_agency.logo_url.url }}"
+                                     alt="Circle Image"
+                                     class="img-fluid mx-auto"
+                                     style="max-width: 75%;max-height: 400px;">
+                            {% else %}
+                                <h2 class="title text-center"
+                                    style="margin-left: 100px; margin-right:100px;">{{ launch.rocket.configuration.launch_agency.name }}</h2>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="container">
-            <div class="row text-center">
-                <div class="col-md-12 ml-auto mr-auto text-center">
-                    <!--<h1 class="title" class="text-center"-->
-                    <!--style="margin-left: 100px; margin-right:100px;">{{ launch.lsp.name }}</h1>-->
-                    <!--<div class="col-md-8 ml-auto mr-auto text-center">-->
-                    <!--<p>{{ launch.mission.description }}</p>-->
-                    <!--</div>-->
-                    <h2 style="margin: 5px;">{{ status }}</h2>
-                    {% if launch.failreason %}
-                    <span class="badge badge-pill badge-danger">{{ launch.failreason }}</span>
+            <div class="container">
+                <div class="row text-center">
+                    <div class="col-md-12 ml-auto mr-auto text-center">
+                        <!--<h1 class="title" class="text-center"-->
+                        <!--style="margin-left: 100px; margin-right:100px;">{{ launch.lsp.name }}</h1>-->
+                        <!--<div class="col-md-8 ml-auto mr-auto text-center">-->
+                        <!--<p>{{ launch.mission.description }}</p>-->
+                        <!--</div>-->
+                        <h2 style="margin: 5px;">{{ status }}</h2>
+                        {% if launch.failreason %}
+                            <span class="badge badge-pill badge-danger">{{ launch.failreason }}</span>
+                        {% endif %}
+                        {% if launch.holdreason %}
+                            <span class="badge badge-pill badge-warning">{{ launch.holdreason }}</span>
+                        {% endif %}
+                        <hr class="col-lg-8" style="background-color: white">
+                        <h2 class="title" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h2>
+                        <h3 style="margin: -5px;" id="date">{{ launch.net }}</h3>
+                        <h3 style="margin: 5px;"><b>Status:</b> {{ launch.status }}</h3>
+
+                        <span class="badge badge-pill badge-primary">{{ launch.rocket.configuration.launch_agency.name }}</span>
+                        {% if launch.pad %}
+                            <span class="badge badge-pill badge-primary">{{ launch.pad.name }}</span>
+                        {% endif %}
+                        {% if launch.pad.location.name %}
+                            <span class="badge badge-pill badge-primary">{{ launch.pad.location.name }}</span>
+                        {% endif %}
+                        {% if launch.probability > 0 %}
+                            <span class="badge badge-pill badge-primary">Probability: {{ launch.probability }}%</span>
+                        {% endif %}
+                        {% if launch.hashtag %}
+                            <span class="badge badge-pill badge-primary">{{ launch.hashtag }}</span>
+                        {% endif %}
+                        <hr class="col-lg-8" style="background-color: white">
+                        {% if launch.rocket.firststage.all|length > 0 %}
+                            <div class="row text-center">
+                                {% for stage in launch.rocket.firststage.all %}
+                                    {% if stage.landing != None %}
+                                        <div class="col-md-4 mx-auto">
+                                            <div class="info">
+                                                <!-- Date/Time -->
+                                                <h3 class="text-center card-title">{{ stage.launcher.serial_number }}</h3>
+                                                <hr>
+                                                <b>Type: {{ stage.type }}</b><br>
+                                                <b>Flight Proven: {{ stage.reused|yesno:"Yes,No" }}</b>
+                                                {% if stage.landing.attempt %}
+                                                    {% if stage.landing.success != None %}
+                                                        <h5>
+                                                            <b>{{ stage.landing.success|yesno:"Successful Landing,Unsuccessful Landing" }}</b>
+                                                        </h5>
+                                                    {% else %}
+                                                        <h5>
+                                                            <b>Landing Attempt Confirmed</b>
+                                                        </h5>
+                                                    {% endif %}
+                                                {% elif stage.landing.attempt != True %}
+                                                    <h5>
+                                                        <b>{{ stage.type }} will be expended.</b>
+                                                    </h5>
+                                                {% else %}
+                                                    <h5>
+                                                        <b>Landing Attempt Unconfirmed</b>
+                                                    </h5>
+                                                {% endif %}
+                                                <p>{{ stage.landing.description }}</p>
+                                                <button
+                                                        data-trigger="focus"
+                                                        data-toggle="popover"
+                                                        data-placement="top"
+                                                        data-container="body"
+                                                        data-original-title="{{ stage.landing.landing_location.name }}"
+                                                        data-content="{{ stage.landing.landing_location.description }}"
+                                                        class="btn btn-raised btn-round btn-sm
+                                    {% if stage.landing.success %} btn-success
+                                    {% elif not stage.landing.success %}btn-danger
+                                    {% else %} btn-primary {% endif %}">
+                                                    {{ stage.landing.landing_location.abbrev }}</button>
+                                                <button class="btn btn-raised btn-round btn-sm btn-info"
+                                                        data-trigger="focus"
+                                                        data-toggle="popover"
+                                                        data-placement="top"
+                                                        data-container="body"
+                                                        data-original-title="{{ stage.landing.landing_type.name }}"
+                                                        data-content="{{ stage.landing.landing_type.description }}">
+                                                    {{ stage.landing.landing_type.abbrev }}</button>
+                                                <br>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <hr class="col-lg-8" style="background-color: white">
+                        {% endif %}
+                    <br>
+                    {% if youtube_url %}
+                        {% video youtube_url as my_video %}
+                            <div class="videoWrapper" style="margin-top: 10px">
+                                {% if request|is_mobile %}
+                                    {% video my_video '85% x 25%' %}
+                                {% else %}
+                                    {% video my_video '80% x 80%' %}
+                                {% endif %}
+                            </div>
+                            <br>
+                        {% endvideo %}
+                    {% else %}
+                        <p>Check back later for live embedded streams.</p>
                     {% endif %}
-                    {% if launch.holdreason %}
-                    <span class="badge badge-pill badge-warning">{{ launch.holdreason }}</span>
-                    {% endif %}
-                    <hr class="col-lg-8" style="background-color: white">
-                    <h2 class="title" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h2>
-                    <h3 style="margin: -5px;" id="date">{{ launch.net }}</h3>
-                    <h3 style="margin: 5px;">Status: {{ launch.status }}</h3>
-                    <hr class="col-lg-8" style="background-color: white">
-                    <span class="badge badge-pill badge-primary">{{ launch.rocket.configuration.launch_agency.name }}</span>
-                    {% if launch.pad %}
-                    <span class="badge badge-pill badge-primary">{{ launch.pad.name }}</span>
-                    {% endif %}
-                    {% if launch.pad.location.name %}
-                    <span class="badge badge-pill badge-primary">{{ launch.pad.location.name }}</span>
-                    {% endif %}
-                    {% if launch.probability > 0 %}
-                    <span class="badge badge-pill badge-primary">Probability: {{ launch.probability }}%</span>
-                    {% endif %}
-                    {% if launch.hashtag %}
-                    <span class="badge badge-pill badge-primary">{{ launch.hashtag }}</span>
-                    {% endif %}
-                    {% if launch.vid_urls.all|length > 0 %}
-                    <a href="{{ url.vid_url }}">{{ launch.vid_urls.0.vid_url }}</a><br>
-                    {% endif %}
-                    <br><br>
+                    <br>
                     <a class="btn btn-primary btn-raised btn-lg center-block" href="/next">View Launch</a>
                 </div>
             </div>
@@ -289,9 +366,9 @@
             </div>
         </div>
     </div>
-</div>
-<script src="{% static 'material_kit/js/dateFormat.js' %}" type="text/javascript"></script>
-<script>
+    </div>
+    <script src="{% static 'material_kit/js/dateFormat.js' %}" type="text/javascript"></script>
+    <script>
         var countDownDate = new Date("{{launch.net.isoformat}}");
 
         document.getElementById("date").innerHTML = dateFormat(countDownDate, "mmmm dS, yyyy - h:MM TT Z");
@@ -341,6 +418,6 @@
             document.getElementById("countdown").innerHTML = "L - 00 : 00 : 00 : 00";
         }
 
-</script>
-{% include "web/install_buttons.html" %}
+    </script>
+    {% include "web/install_buttons.html" %}
 {% endblock %}

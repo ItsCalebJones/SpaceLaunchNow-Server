@@ -2,7 +2,7 @@ import django_filters
 from rest_framework import permissions
 from rest_framework import viewsets
 
-from api.models import LauncherConfig, OrbiterConfiguration, Agency
+from api.models import LauncherConfig, SpacecraftConfiguration, Agency
 from api.permission import HasGroupPermission
 from api.v1.serializers import OrbiterSerializer, LauncherDetailSerializer, AgencySerializer
 
@@ -42,6 +42,7 @@ class LauncherDetailViewSet(viewsets.ModelViewSet):
     }
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
     filter_fields = ('family', 'name', 'launch_agency__name', 'full_name',)
+    lookup_field = 'launch_library_id'
 
 
 class OrbiterViewSet(viewsets.ModelViewSet):
@@ -51,7 +52,7 @@ class OrbiterViewSet(viewsets.ModelViewSet):
     GET:
     Return a list of all the existing orbiters.
     """
-    queryset = OrbiterConfiguration.objects.all()
+    queryset = SpacecraftConfiguration.objects.all()
     serializer_class = OrbiterSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {

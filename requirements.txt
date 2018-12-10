@@ -18,7 +18,7 @@ Collectfast==0.6.2
 dict.sorted==1.0.0
 distlib==0.2.7
 discord.py==0.16.12
-Django==1.11.15
+Django==1.11.17
 django-appconf==1.0.2
 django-cachalot==2.0.1
 django-blog-zinnia==0.19

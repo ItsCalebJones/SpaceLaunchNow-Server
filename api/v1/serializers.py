@@ -1,14 +1,18 @@
-from api.models import OrbiterConfiguration, LauncherConfig, Agency
+from api.models import SpacecraftConfiguration, LauncherConfig, Agency
 from rest_framework import serializers
 
 
 class LauncherModelSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField('get_legacy_name')
     agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:
         model = LauncherConfig
         fields = ('id', 'url', 'name', 'description', 'agency', 'variant', 'image_url', 'info_url', 'wiki_url')
+        extra_kwargs = {
+            'url': {'lookup_field': 'launch_library_id'},
+        }
 
     def get_legacy_name(self, obj):
         if obj.image_url:
@@ -27,7 +31,7 @@ class OrbiterSerializer(serializers.HyperlinkedModelSerializer):
     agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
-        model = OrbiterConfiguration
+        model = SpacecraftConfiguration
         fields = ('id', 'url', 'name', 'agency', 'history', 'details', 'image_url', 'nation_url',
                   'wiki_link')
 
@@ -50,7 +54,7 @@ class OrbiterModelSerializer(serializers.ModelSerializer):
     agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
-        model = OrbiterConfiguration
+        model = SpacecraftConfiguration
         fields = ('id', 'url', 'name', 'agency', 'image_url', 'nation_url')
 
     def get_legacy_name(self, obj):
@@ -68,10 +72,11 @@ class OrbiterModelSerializer(serializers.ModelSerializer):
 
 class AgencySerializer(serializers.HyperlinkedModelSerializer):
     launcher_list = LauncherModelSerializer(many=True, read_only=True)
-    orbiter_list = OrbiterModelSerializer(many=True, read_only=True)
+    orbiter_list = OrbiterModelSerializer(many=True, read_only=True, source='spacecraft_list')
     agency = serializers.SerializerMethodField('get_alternate_name')
     image_url = serializers.SerializerMethodField('get_legacy_name')
     nation_url = serializers.SerializerMethodField('get_nation_name')
+    orbiters = serializers.ReadOnlyField(read_only=True, source="spacecraft")
 
     class Meta:
         model = Agency
@@ -97,6 +102,7 @@ class AgencySerializer(serializers.HyperlinkedModelSerializer):
 class LauncherDetailSerializer(serializers.HyperlinkedModelSerializer):
     image_url = serializers.SerializerMethodField('get_legacy_name')
     agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:
         model = LauncherConfig
@@ -104,6 +110,9 @@ class LauncherDetailSerializer(serializers.HyperlinkedModelSerializer):
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust',
                   'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url')
+        extra_kwargs = {
+            'url': {'lookup_field': 'launch_library_id'},
+        }
 
     def get_legacy_name(self, obj):
         if obj.image_url:

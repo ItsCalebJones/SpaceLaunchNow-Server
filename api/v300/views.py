@@ -6,7 +6,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 
 from api.v300.serializers import *
 from datetime import datetime, timedelta
-from api.models import LauncherConfig, OrbiterConfiguration, Agency
+from api.models import LauncherConfig, SpacecraftConfiguration, Agency
 from api.permission import HasGroupPermission
 from bot.models import Launch
 
@@ -78,6 +78,7 @@ class LaunchersViewSet(ModelViewSet):
     }
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('family', 'name', 'launch_agency__name', 'full_name', 'id')
+    lookup_field = 'launch_library_id'
 
 
 class OrbiterViewSet(ModelViewSet):
@@ -87,7 +88,7 @@ class OrbiterViewSet(ModelViewSet):
     GET:
     Return a list of all the existing orbiters.
     """
-    queryset = OrbiterConfiguration.objects.all()
+    queryset = SpacecraftConfiguration.objects.all()
     serializer_class = OrbiterDetailSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
@@ -141,18 +142,18 @@ class LaunchViewSet(ModelViewSet):
         launcher_config__id = self.request.query_params.get('launcher_config__id', None)
         if ids:
             ids = ids.split(',')
-            return Launch.objects.filter(id__in=ids)
+            return Launch.objects.filter(launch_library_id__in=ids)
         elif lsp_id:
-            return Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id)
+            return Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id).filter(launch_library=True)
         elif lsp_name:
             return Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
-                                         | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name))
+                                         | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)).filter(launch_library=True)
         elif launcher_config__id:
-            return Launch.objects.filter(rocket__configuration__id=launcher_config__id)
+            return Launch.objects.filter(rocket__configuration__id=launcher_config__id).filter(launch_library=True)
         else:
             return Launch.objects.order_by('net').prefetch_related('info_urls').prefetch_related(
                 'vid_urls').prefetch_related('rocket').prefetch_related('pad__location').select_related(
-                'mission').select_related('pad').all()
+                'mission').select_related('pad').filter(launch_library=True)
 
     def get_serializer_class(self):
         print(self.request.query_params.keys())
@@ -173,7 +174,8 @@ class LaunchViewSet(ModelViewSet):
     filter_fields = ('name',)
     search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
                      '$mission__name')
-    ordering_fields = ('id', 'name', 'net',)
+    ordering_fields = ('launch_library_id', 'name', 'net',)
+    lookup_field = 'launch_library_id'
 
 
 class UpcomingLaunchViewSet(ModelViewSet):
@@ -204,19 +206,19 @@ class UpcomingLaunchViewSet(ModelViewSet):
         launcher_config__id = self.request.query_params.get('launcher_config__id', None)
         if ids:
             ids = ids.split(',')
-            return Launch.objects.filter(id__in=ids).filter(net__gte=now).order_by('net')
+            return Launch.objects.filter(launch_library_id__in=ids).filter(net__gte=now).filter(launch_library=True).order_by('net')
         elif lsp_id:
-            return Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id).filter(net__gte=now)
+            return Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id).filter(net__gte=now).filter(launch_library=True)
         elif lsp_name:
             return Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
                                          | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)).filter(
-                net__gte=now)
+                net__gte=now).filter(launch_library=True)
         elif launcher_config__id:
-            return Launch.objects.filter(rocket__configuration__id=launcher_config__id).filter(net__gte=now)
+            return Launch.objects.filter(rocket__configuration__id=launcher_config__id).filter(net__gte=now).filter(launch_library=True)
         else:
             return Launch.objects.filter(net__gte=now).prefetch_related('info_urls').prefetch_related(
                 'vid_urls').prefetch_related('rocket').prefetch_related(
-                'pad__location').select_related('mission').select_related('pad').order_by('net').all()
+                'pad__location').select_related('mission').select_related('pad').order_by('net').filter(launch_library=True)
 
     def get_serializer_class(self):
         print(self.request.query_params.keys())
@@ -269,19 +271,19 @@ class PreviousLaunchViewSet(ModelViewSet):
         launcher_config__id = self.request.query_params.get('launcher_config__id', None)
         if ids:
             ids = ids.split(',')
-            return Launch.objects.filter(id__in=ids).filter(net__lte=now)
+            return Launch.objects.filter(launch_library_id__in=ids).filter(net__lte=now).filter(launch_library=True)
         elif lsp_id:
-            return Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id).filter(net__lte=now)
+            return Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id).filter(net__lte=now).filter(launch_library=True)
         elif lsp_name:
             return Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
                                          | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)).filter(
-                net__lte=now)
+                net__lte=now).filter(launch_library=True)
         elif launcher_config__id:
-            return Launch.objects.filter(rocket__configuration__id=launcher_config__id).filter(net__lte=now)
+            return Launch.objects.filter(rocket__configuration__id=launcher_config__id).filter(net__lte=now).filter(launch_library=True)
         else:
             return Launch.objects.filter(net__lte=now).prefetch_related('info_urls').prefetch_related(
                 'vid_urls').prefetch_related('rocket').prefetch_related(
-                'pad__location').select_related('mission').select_related('pad').order_by('-net').all()
+                'pad__location').select_related('mission').select_related('pad').order_by('-net').filter(launch_library=True)
 
     def get_serializer_class(self):
         print(self.request.query_params.keys())

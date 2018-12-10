@@ -3,13 +3,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from api.models import LauncherConfig, OrbiterConfiguration, Agency, Events
+from api.models import LauncherConfig, SpacecraftConfiguration, Agency, Events
 
 from api.v200.serializers import OrbiterSerializer, LauncherDetailSerializer, AgencyHyperlinkedSerializer, \
      EventsSerializer
 from rest_framework import viewsets
 from datetime import datetime
-from api.models import LauncherConfig, OrbiterConfiguration, Agency
 from api.permission import HasGroupPermission
 
 
@@ -74,6 +73,7 @@ class LaunchersViewSet(ModelViewSet):
     }
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('family', 'name', 'launch_agency__name', 'full_name',)
+    lookup_field = 'launch_library_id'
 
 
 class OrbiterViewSet(ModelViewSet):
@@ -83,7 +83,7 @@ class OrbiterViewSet(ModelViewSet):
     GET:
     Return a list of all the existing orbiters.
     """
-    queryset = OrbiterConfiguration.objects.all()
+    queryset = SpacecraftConfiguration.objects.all()
     serializer_class = OrbiterSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {

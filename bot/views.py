@@ -4,9 +4,9 @@ from __future__ import unicode_literals
 # Create your views here.
 from rest_framework import viewsets
 
-from bot.models import Launch, Notification, DailyDigestRecord
+from bot.models import Notification, DailyDigestRecord
 from bot.permission import HasGroupPermission
-from bot.serializer import LaunchSerializer, NotificationSerializer, DailyDigestRecordSerializer
+from bot.serializer import NotificationSerializer, DailyDigestRecordSerializer
 
 
 class NotificationViewSet(viewsets.ModelViewSet):

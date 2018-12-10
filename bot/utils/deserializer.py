@@ -57,8 +57,9 @@ def launch_json_to_model(data):
     tbdtime = data['tbdtime']
     tbddate = data['tbddate']
 
-    launch, created = Launch.objects.get_or_create(id=id)
+    launch, created = Launch.objects.get_or_create(launch_library_id=id)
     launch.name = name
+    launch.launch_library = True
 
     if created:
         logger.info("Created - %s (%s)" % (launch.name, launch.id))
@@ -127,7 +128,7 @@ def get_location(launch, data):
 
 def get_rocket(launch, data):
     if 'rocket' in data and data['rocket'] is not None:
-        launcher_config, created = LauncherConfig.objects.get_or_create(id=data['rocket']['id'])
+        launcher_config, created = LauncherConfig.objects.get_or_create(launch_library_id=data['rocket']['id'])
         if created:
             launcher_config.name = data['rocket']['name']
             launcher_config.family_name = data['rocket']['familyname']
@@ -142,7 +143,7 @@ def get_rocket(launch, data):
 
 def get_mission(launch, data):
     if data['missions'] is not None and len(data['missions']) > 0:
-        mission, created = Mission.objects.get_or_create(id=data['missions'][0]['id'])
+        mission, created = Mission.objects.get_or_create(launch_library_id=data['missions'][0]['id'])
         mission.name = data['missions'][0]['name']
         mission.type = data['missions'][0]['type']
         mission.type_name = get_mission_type(data['missions'][0]['type'])

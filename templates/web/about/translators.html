@@ -86,7 +86,7 @@
         <br>
         <div class="row">
             <!-- Post Content Column -->
-            <div class="col-lg-8 col-md-12 col-xl-8">
+            <div class="col-lg-9 col-md-12 col-xl-9">
 
                 {% if translators|length > 0 %}
                     {% for translator in translators %}
@@ -115,28 +115,7 @@
             <br>
 
             <!-- Sidebar Widgets Column -->
-            <div class="col-lg-4 col-md-12 col-xl-4">
-                <!-- Categories Widget -->
-                <div class="card">
-                    <div class="card-header card-header-danger">Recent Launches
-                    </div>
-                    <div class="list-group list-group-flush">
-                        {% for launch in previous_launches %}
-                            <a href="{{ launch.slug }}"
-                               class="list-group-item list-group-item-action flex-column align-items-start">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <div>
-                                        <h5 class="mb-1">{{ launch.rocket.configuration.name }}</h5>
-                                        <h6 class="mb-1">{{ launch.mission.name }} - {{ launch.status_name }}</h6>
-                                    </div>
-                                    <small class="text-muted">{{ launch.net|timesince }}</small>
-                                </div>
-                                <p class="mb-1">{{ launch.mission.description }}</p>
-                            </a>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
+        {% include "web/sidebar_launches_only.html" %}
         </div>
         <div class="text-center">Icons made by <a href="http://www.freepik.com/" title="Freepik">Freepik</a> from <a
                 href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a

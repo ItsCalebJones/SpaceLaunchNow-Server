@@ -2,156 +2,138 @@
 {% load staticfiles %}
 {% load thumbnail %}
 {% block extrahead %}
-<link rel="canonical" href="https://spacelaunchnow.me/launch/">
-<title>Space Launch Now - Launch Schedule</title>
-<meta name="title" content="Space Launch Now - Launch Schedule">
-<meta property="fb:app_id" content="746774215504127"/>
-<meta property="og:title" content="Space Launch Now - Staff"/>
-<meta property="og:type" content="website"/>
-<meta name="description"
-      content="A spaceflight launch schedule - tracking the latest developments in spaceflight, check back often for launch schedule changes.">
-<meta property="og:description"
-      content="A spaceflight launch schedule - tracking the latest developments in spaceflight, check back often for launch schedule changes."/>
-<meta property="og:url" content="https://spacelaunchnow.me/launch/"/>
-<meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
-<meta property="og:image:width" content="3000"/>
-<meta property="og:image:height" content="2000"/>
-<script>
+    <link rel="canonical" href="https://spacelaunchnow.me/launch/">
+    <title>Space Launch Now - Launch Schedule</title>
+    <meta name="title" content="Space Launch Now - Launch Schedule">
+    <meta property="fb:app_id" content="746774215504127"/>
+    <meta property="og:title" content="Space Launch Now - Staff"/>
+    <meta property="og:type" content="website"/>
+    <meta name="description"
+          content="A spaceflight launch schedule - tracking the latest developments in spaceflight, check back often for launch schedule changes.">
+    <meta property="og:description"
+          content="A spaceflight launch schedule - tracking the latest developments in spaceflight, check back often for launch schedule changes."/>
+    <meta property="og:url" content="https://spacelaunchnow.me/launch/"/>
+    <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
+    <meta property="og:image:width" content="3000"/>
+    <meta property="og:image:height" content="2000"/>
+    <script>
         (adsbygoogle = window.adsbygoogle || []).push({
             google_ad_client: "ca-pub-9824528399164059",
             enable_page_level_ads: true
         });
-</script>
+    </script>
 {% endblock %}
 
 
 {% block navigation %}
-<nav class="navbar bg-primary fixed-top navbar-expand-lg">
-    <div class="container">
-        <div class="navbar-translate">
-            <a class="navbar-brand" href="#page-top"><b>Space Launch Now</b></a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-                <span class="navbar-toggler-icon"></span>
-                <span class="navbar-toggler-icon"></span>
-            </button>
+    <nav class="navbar bg-primary fixed-top navbar-expand-lg">
+        <div class="container">
+            <div class="navbar-translate">
+                <a class="navbar-brand" href="#page-top"><b>Space Launch Now</b></a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                    <span class="navbar-toggler-icon"></span>
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+
+            <div class="collapse navbar-collapse">
+
+                <ul class="navbar-nav ml-auto">
+
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger " href="/next">Next</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger active" href="/launch/">Launches</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/3.2.0">API</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           href="https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><i
+                                class="fab fa-android"></i> Android</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://itunes.apple.com/us/app/space-launch-now/id1399715731"><i
+                                class="fab fa-apple"></i> iOS</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-
-        <div class="collapse navbar-collapse">
-
-            <ul class="navbar-nav ml-auto">
-
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="/">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger " href="/next">Next</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger active" href="/launch/">Launches</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/3.2.0">API</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link"
-                       href="https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><i
-                            class="fab fa-android"></i> Android</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="https://itunes.apple.com/us/app/space-launch-now/id1399715731"><i
-                            class="fab fa-apple"></i> iOS</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+    </nav>
 {% endblock %}
 
 {% block content %}
-{% load embed_video_tags %}
-<!-- Page Content -->
-<div class="container" style="margin-top:100px; margin-bottom: 16px">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/about/">About</a></li>
-        <li class="breadcrumb-item active" aria-current="/about/staff">Staff</li>
-      </ol>
-    </nav>
-    <h1 class="title">Meet the Staff</h1>
-    <h2>Developers, Librarians, and Translators</h2>
-    <h3>Interested in helping maintain our data? <a href="https://goo.gl/forms/qcH1cbZC2psOst3P2">Become a librarian</a>!</h3>
-    <br>
-    <div class="row">
-        <!-- Post Content Column -->
-        <div class="col-lg-8 col-md-12 col-xl-8">
+    {% load embed_video_tags %}
+    <!-- Page Content -->
+    <div class="container" style="margin-top:100px; margin-bottom: 16px">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/about/">About</a></li>
+                <li class="breadcrumb-item active" aria-current="/about/staff">Staff</li>
+            </ol>
+        </nav>
+        <h1 class="title">Meet the Staff</h1>
+        <h2>Developers, Librarians, and Translators</h2>
+        <h3>Interested in helping maintain our data? <a href="https://goo.gl/forms/qcH1cbZC2psOst3P2">Become a
+            librarian</a>!</h3>
+        <br>
+        <div class="row">
+            <!-- Post Content Column -->
+            <div class="col-lg-9 col-md-12 col-xl-8">
 
-            {% if staff|length > 0 %}
-            {% for person in staff %}
-            <hr>
-            <div class="row">
-                <div class="col-xs-3 col-md-5 col-lg-3 center">
-                    {% thumbnail person.profile "200" as im %}
-                        <img class="img-raised rounded-circle img-fluid text-center"
-                             src="{{ im.url }}"
-                             style="width: 125px;height: 125px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                    {% endthumbnail %}
-                </div>
-                <div class="col-xs-9 col-md-7 col-lg-9 center">
-                    <h3> {{ person.name }} - {{ person.title }}</h3>
-                    {{ person.bio }}<br>
-                    {% if person.link %}
-                        <a href="{{ person.link }}">{{ person.link }}</a>
-                    {% endif %}
-                </div>
+                {% if staff|length > 0 %}
+                    {% for person in staff %}
+                        <hr>
+                        <div class="row">
+                            <div class="col-xs-3 col-md-5 col-lg-3 center">
+                                {% thumbnail person.profile "200" as im %}
+                                    <img class="img-raised rounded-circle img-fluid text-center"
+                                         src="{{ im.url }}"
+                                         style="width: 125px;height: 125px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                                {% endthumbnail %}
+                            </div>
+                            <div class="col-xs-9 col-md-7 col-lg-9 center">
+                                <h3> {{ person.name }} - {{ person.title }}</h3>
+                                {{ person.bio }}<br>
+                                {% if person.link %}
+                                    <a href="{{ person.link }}">{{ person.link }}</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <br>
+                    {% endfor %}
+                    <hr>
+                {% endif %}
+                <a class="btn btn-primary btn-raised" href="/about/staff/translators">Meet the Translators</a>
             </div>
             <br>
-            {% endfor %}
-            <hr>
-            {% endif %}
-        <a class= "btn btn-primary btn-raised" href="/about/staff/translators">Meet the Translators</a>
-        </div>
-        <br>
 
-        <!-- Sidebar Widgets Column -->
-        <div class="col-lg-4 col-md-12 col-xl-4">
-            <!-- Categories Widget -->
-            <div class="card">
-                <div class="card-header card-header-danger">Recent Launches
-                </div>
-                <div class="list-group list-group-flush">
-                    {% for launch in previous_launches %}
-                    <a href="{{ launch.slug }}"
-                       class="list-group-item list-group-item-action flex-column align-items-start">
-                        <div class="d-flex w-100 justify-content-between">
-                            <div>
-                                <h5 class="mb-1">{{ launch.rocket.configuration.name }}</h5>
-                                <h6 class="mb-1">{{ launch.mission.name }} - {{ launch.status_name }}</h6>
-                            </div>
-                            <small class="text-muted">{{ launch.net|timesince }}</small>
-                        </div>
-                        <p class="mb-1">{{ launch.mission.description }}</p>
-                    </a>
-                    {% endfor %}
-                </div>
+            <!-- Sidebar Widgets Column -->
+            <div class="col-lg-3 col-md-12 col-xl-3">
+                {% include "web/sidebar_launches_only.html" %}
             </div>
         </div>
     </div>
-</div>
-<div class="container">
-    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <!-- Space Launch Now -->
-    <ins class="adsbygoogle"
-         style="display:block; margin-top:16px; margin-bottom:16px;"
-         data-ad-client="ca-pub-9824528399164059"
-         data-ad-slot="8772606898"
-         data-ad-format="auto"></ins>
-    <script>
+    <div class="container">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- Space Launch Now -->
+        <ins class="adsbygoogle"
+             style="display:block; margin-top:16px; margin-bottom:16px;"
+             data-ad-client="ca-pub-9824528399164059"
+             data-ad-slot="8772606898"
+             data-ad-format="auto"></ins>
+        <script>
             (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-</div>
-{% include "web/install_buttons.html" %}
+        </script>
+    </div>
+    {% include "web/install_buttons.html" %}
 {% endblock %}
 
 

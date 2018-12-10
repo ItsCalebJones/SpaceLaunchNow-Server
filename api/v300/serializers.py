@@ -10,6 +10,7 @@ from api.utils.custom_serializers import TimeStampField
 
 class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     type = serializers.ReadOnlyField(read_only=True, source="agency_type.name")
+    orbiters = serializers.ReadOnlyField(read_only=True, source="spacecraft")
 
     class Meta:
         model = Agency
@@ -20,14 +21,19 @@ class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer)
 
 class LauncherSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:
         model = LauncherConfig
         fields = ('id', 'url', 'name', 'agency')
+        extra_kwargs = {
+            'url': {'lookup_field': 'launch_library_id'},
+        }
 
 
 class LauncherDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     agency = AgencySerializer(many=False, read_only=True, source='launch_agency')
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     def get_rep(self, obj):
         rep = obj.rep
@@ -42,9 +48,14 @@ class LauncherDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust',
                   'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url',)
+        extra_kwargs = {
+            'url': {'lookup_field': 'launch_library_id'},
+        }
 
 
 class LauncherDetailSerializerForAgency(QueryFieldsMixin, serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
+
     def get_rep(self, obj):
         rep = obj.rep
         serializer_context = {'request': self.context.get('request'),
@@ -58,32 +69,36 @@ class LauncherDetailSerializerForAgency(QueryFieldsMixin, serializers.ModelSeria
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust',
                   'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url',)
+        extra_kwargs = {
+            'url': {'lookup_field': 'launch_library_id'},
+        }
 
 
 class OrbiterDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
 
     class Meta:
-        model = OrbiterConfiguration
+        model = SpacecraftConfiguration
         fields = ('id', 'url', 'name', 'agency', 'history', 'details', 'image_url',
                   'nation_url', 'wiki_link', 'capability')
 
 
 class AgencyDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     launcher_list = LauncherDetailSerializerForAgency(many=True, read_only=True)
-    orbiter_list = OrbiterDetailSerializer(many=True, read_only=True)
+    orbiter_list = OrbiterDetailSerializer(many=True, read_only=True, source='spacecraft_list')
     type = serializers.ReadOnlyField(read_only=True, source="agency_type.name")
+    orbiters = serializers.ReadOnlyField(read_only=True, source="spacecraft")
 
     class Meta:
         model = Agency
         fields = ('id', 'url', 'name', 'featured', 'launchers', 'orbiters', 'description', 'image_url', 'nation_url',
                   'administrator', 'founding_year', 'logo_url', 'launch_library_url', 'country_code', 'abbrev',
-                  'launcher_list', 'orbiter_list',)
+                  'launcher_list', 'orbiter_list', 'type')
 
 
 class OrbiterSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = OrbiterConfiguration
+        model = SpacecraftConfiguration
         fields = ('id', 'url', 'name')
 
 
@@ -125,6 +140,7 @@ class LSPSerializer(serializers.ModelSerializer):
 class MissionSerializer(serializers.ModelSerializer):
     type = serializers.PrimaryKeyRelatedField(read_only=True, many=False, source='mission_type')
     type_name = serializers.StringRelatedField(many=False, source='mission_type')
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:
         model = Mission
@@ -135,6 +151,7 @@ class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     launcher = LauncherSerializer(many=False, read_only=True, source='rocket.configuration')
     lsp = LSPSerializer(many=False, read_only=True, source='rocket.configuration.launch_agency')
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
     mission = MissionSerializer(many=False, read_only=True)
     status = serializers.IntegerField(
         read_only=True,
@@ -146,6 +163,9 @@ class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
         model = Launch
         fields = ('id', 'url', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold', 'tbdtime', 'tbddate',
                   'launcher', 'mission', 'lsp', 'location')
+        extra_kwargs = {
+            'url': {'lookup_field': 'launch_library_id'},
+        }
 
 
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):
@@ -166,6 +186,7 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     isonet = serializers.DateTimeField(format="%Y%m%dT%H%M%SZ", input_formats=None, source='net')
     isostart = serializers.DateTimeField(format="%Y%m%dT%H%M%SZ", input_formats=None, source='window_start')
     isoend = serializers.DateTimeField(format="%Y%m%dT%H%M%SZ", input_formats=None, source='window_end')
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:
         depth = 3
@@ -174,6 +195,9 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
                   'window_start', 'isonet', 'isostart', 'isoend', 'inhold', 'tbdtime', 'tbddate', 'probability',
                   'holdreason', 'failreason', 'hashtag', 'launcher', 'mission', 'lsp', 'location', 'pad', 'infoURLs',
                   'vidURLs')
+        extra_kwargs = {
+            'url': {'lookup_field': 'launch_library_id'},
+        }
 
 
 class InfoURLSerializer(serializers.ModelSerializer):
@@ -200,6 +224,7 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     isonet = serializers.DateTimeField(format="%Y%m%dT%H%M%SZ", input_formats=None, source='net')
     isostart = serializers.DateTimeField(format="%Y%m%dT%H%M%SZ", input_formats=None, source='window_start')
     isoend = serializers.DateTimeField(format="%Y%m%dT%H%M%SZ", input_formats=None, source='window_end')
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:
         depth = 3
@@ -208,3 +233,6 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
                   'window_start', 'isonet', 'isostart', 'isoend', 'inhold', 'tbdtime', 'tbddate', 'probability',
                   'holdreason', 'failreason', 'hashtag', 'launcher', 'mission', 'lsp', 'location', 'pad', 'infoURLs',
                   'vidURLs')
+        extra_kwargs = {
+            'url': {'lookup_field': 'launch_library_id'},
+        }

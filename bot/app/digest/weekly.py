@@ -66,7 +66,7 @@ def build_weekly_message(possible, confirmed, DEBUG=True):
 
     if len(confirmed) == 1:
         launch = confirmed[0]
-        day = datetime.fromtimestamp(int(launch.netstamp)).replace(tzinfo=pytz.UTC).strftime("%A")
+        day = launch.net.strftime("%A")
         message = "%s %s launching from %s on %s. (1/%i)" % (
             compact_header, launch.name, launch.location.name, day,
             total)
@@ -75,9 +75,7 @@ def build_weekly_message(possible, confirmed, DEBUG=True):
         for index, launch in enumerate(confirmed, start=1):
             message = "%s %s launching from %s on %s. (%i/%i)" % (compact_header, launch.name,
                                                                   launch.location.name,
-                                                                  datetime
-                                                                  .fromtimestamp(int(launch.netstamp))
-                                                                  .replace(tzinfo=pytz.UTC)
+                                                                  launch.net
                                                                   .strftime("%A"),
                                                                   index,
                                                                   total)

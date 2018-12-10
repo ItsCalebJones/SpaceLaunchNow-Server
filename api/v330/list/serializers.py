@@ -20,7 +20,7 @@ class LaunchListSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Launch
-        fields = ('id', 'url', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'mission', 'mission_type',
+        fields = ('id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'mission', 'mission_type',
                   'pad', 'location', 'landing', 'landing_success', 'launcher', 'orbit')
 
     def get_landing(self, obj):

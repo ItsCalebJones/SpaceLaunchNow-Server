@@ -5,7 +5,7 @@ from django.contrib import admin
 
 from api.filters.UpcomingFilter import DateListFilter
 from api.forms.admin_forms import LaunchForm, LandingForm, LauncherForm, PayloadForm, MissionForm, EventsForm, \
-    LauncherConfigForm, OrbiterForm, AgencyForm, AstronautForm
+    OrbiterForm, AgencyForm, AstronautForm, SpacecraftFlightForm, SpacecraftForm, LauncherConfigForm
 from bot.utils.admin_utils import custom_titled_filter
 from . import models
 
@@ -26,7 +26,7 @@ class LauncherAdmin(admin.ModelAdmin):
     list_display = ('id', 'serial_number', 'flight_proven', 'status', 'launcher_config')
     list_filter = ('id', 'serial_number', 'flight_proven', 'status', 'launcher_config')
     ordering = ('id', 'serial_number', 'flight_proven', 'status')
-    search_fields = ('serial_number', 'launcher_config', 'status', 'details')
+    search_fields = ('serial_number', 'launcher_config__name', 'status', 'details')
     form = LauncherForm
 
 
@@ -43,7 +43,7 @@ class MissionAdmin(admin.ModelAdmin):
 @admin.register(models.Agency)
 class AgencyAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">group</i>'
-    list_display = ('short_name', 'featured', 'launchers', 'orbiters', 'short_description')
+    list_display = ('short_name', 'featured', 'launchers', 'spacecraft', 'short_description')
     list_filter = ('name', 'featured',)
     ordering = ('name',)
     search_fields = ('name',)
@@ -68,16 +68,28 @@ class LandingAdmin(admin.ModelAdmin):
             return u"(%d) Unassigned Landing" % obj.id
 
 
+class InfoURLs(admin.TabularInline):
+    model = models.InfoURLs
+    verbose_name = "Information URL"
+    verbose_name_plural = "Information URLs"
+
+
+class VideoURLs(admin.TabularInline):
+    model = models.VidURLs
+    verbose_name = "Video URL"
+    verbose_name_plural = "Videos URLs"
+
+
 class FirstStageInline(admin.TabularInline):
     model = models.FirstStage
+    verbose_name = "Launcher Stage"
+    verbose_name_plural = "Launcher Stages"
 
 
-class SecondStageInline(admin.TabularInline):
-    model = models.SecondStage
-
-
-class OrbiterFlightInline(admin.TabularInline):
-    model = models.OrbiterFlight
+class SpacecraftFlightInline(admin.StackedInline):
+    model = models.SpacecraftFlight
+    verbose_name = "Spacecraft Stage"
+    verbose_name_plural = "Spacecraft Stage"
 
 
 @admin.register(models.Rocket)
@@ -85,7 +97,7 @@ class RocketAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">group</i>'
     list_display = ('id', 'launch',)
     search_fields = ('launch__name',)
-    inlines = [FirstStageInline, SecondStageInline, OrbiterFlightInline]
+    inlines = [FirstStageInline, SpacecraftFlightInline]
 
 
 @admin.register(models.FirstStage)
@@ -100,7 +112,7 @@ class SecondStageAdmin(admin.ModelAdmin):
     list_display = ('id', 'landing', 'launcher', 'rocket')
 
 
-@admin.register(models.OrbiterConfiguration)
+@admin.register(models.SpacecraftConfiguration)
 class OrbiterConfigurationAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">public</i>'
     list_display = ('name', 'agency')
@@ -118,7 +130,9 @@ class LaunchAdmin(admin.ModelAdmin):
                    ('rocket__configuration__name', custom_titled_filter('Launch Configuration Name')))
     ordering = ('net',)
     search_fields = ('name', 'rocket__configuration__launch_agency__name', 'mission__description')
+    readonly_fields = ['slug', 'launch_library_id', 'launch_library']
     form = LaunchForm
+    inlines = [InfoURLs, VideoURLs]
 
     def orbit(self, obj):
         if obj.mission is not None and obj.mission.orbit is not None and obj.mission.orbit.name:
@@ -176,8 +190,16 @@ class InfoAdmin(admin.ModelAdmin):
 
 @admin.register(models.Astronauts)
 class AstronautsAdmin(admin.ModelAdmin):
-    list_display = ('name', 'nationality')
+    list_display = ('name', 'nationality', 'status', 'agency')
+    list_filter = ('name', 'nationality', 'status', 'agency')
+    search_fields = ('name', 'agency__name')
+    readonly_fields = ["slug"]
     form = AstronautForm
+
+
+@admin.register(models.AstronautFlight)
+class AstronautFlightAdmin(admin.ModelAdmin):
+    list_display = ('id', 'astronaut', 'role')
 
 
 @admin.register(models.SpaceStation)
@@ -185,6 +207,7 @@ class SpaceStationAdmin(admin.ModelAdmin):
     list_display = ('name', )
 
 
-@admin.register(models.Orbiter)
-class OrbiterAdmin(admin.ModelAdmin):
+@admin.register(models.Spacecraft)
+class SpacecraftAdmin(admin.ModelAdmin):
     list_display = ('name', 'serial_number')
+    form = SpacecraftForm

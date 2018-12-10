@@ -23,7 +23,7 @@ from bot.models import Notification
 from bot.utils.util import custom_strftime
 from spacelaunchnow import config
 
-logger = get_task_logger('bot')
+logger = get_task_logger('bot.digest')
 
 TAG = 'Digest Server'
 
@@ -79,8 +79,8 @@ def check_for_orphaned_launches():
         repository = LaunchRepository()
         for launch in launches:
             logger.debug("Stale - %s" % launch.name)
-            if repository.is_launch_deleted(launch.id):
-                logger.debug("Delete this launch!" % launch.name)
+            if repository.is_launch_deleted(launch.launch_library_id):
+                logger.error("Delete this launch! - %s ID: %d" % (launch.name, launch.launch_library_id))
 
 
 @periodic_task(

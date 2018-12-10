@@ -58,6 +58,10 @@ if config.IS_WEBSERVER:
         url(r'^launch/(?P<id>\d+)/$', landing_views.launch_by_id, name='launch_by_id'),
         url(r'^launch/(?P<slug>[-\w]+)/$', landing_views.launch_by_slug, name='launch_by_slug'),
         url(r'^launch/$', landing_views.launches, name='launches'),
+        url(r'^astronaut/$', landing_views.astronaut_list, name='astronauts'),
+        url(r'^astronaut/search/?$', landing_views.astronaut_search, name='astronaut_search'),
+        url(r'^astronaut/(?P<id>\d+)/$', landing_views.astronaut, name='astronaut_by_id'),
+        url(r'^astronaut/(?P<slug>[-\w]+)/$', landing_views.astronaut_by_slug, name='astronaut_by_slug'),
         url(r'^about/$', about_view, name='staff'),
         url(r'^about/staff/$', staff_view, name='staff'),
         url(r'^about/staff/translators/$', translator_view, name='translators'),
@@ -67,6 +71,7 @@ if config.IS_WEBSERVER:
         url(r'^site/privacy', TemplateView.as_view(template_name='web/site/privacy.html'), name='privacy'),
         url(r'^site/tos', TemplateView.as_view(template_name='web/site/tos.html'), name='tos'),
         url(r'^docs/', include('rest_framework_docs.urls')),
+        url(r'^ajax/astronaut/$', landing_views.astronaut_search_ajax, name='ajax-astronaut'),
         url(r'^$', landing_views.index, name='index'),
     ]
 
