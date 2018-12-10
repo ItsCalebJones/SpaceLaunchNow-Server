@@ -59,14 +59,19 @@ class LauncherDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelS
 
 class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:
         model = LauncherConfig
         fields = ('id', 'url', 'name', 'agency')
+        extra_kwargs = {
+            'url': {'lookup_field': 'launch_library_id'},
+        }
 
 
 class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     agency = AgencySerializer(many=False, read_only=True, source='launch_agency')
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     def get_rep(self, obj):
         rep = obj.rep
@@ -81,9 +86,13 @@ class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializ
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust',
                   'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url',)
+        extra_kwargs = {
+            'url': {'lookup_field': 'launch_library_id'},
+        }
 
 
 class LauncherConfigDetailSerializerForAgency(QueryFieldsMixin, serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     def get_rep(self, obj):
         rep = obj.rep
@@ -98,6 +107,9 @@ class LauncherConfigDetailSerializerForAgency(QueryFieldsMixin, serializers.Mode
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter', 'launch_cost',
                   'launch_mass', 'leo_capacity', 'gto_capacity', 'geo_capacity', 'sso_capacity', 'to_thrust',
                   'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url',)
+        extra_kwargs = {
+            'url': {'lookup_field': 'launch_library_id'},
+        }
 
 
 class OrbiterDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
@@ -226,7 +238,6 @@ class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'lookup_field': 'launch_library_id'},
         }
-
 
 
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):

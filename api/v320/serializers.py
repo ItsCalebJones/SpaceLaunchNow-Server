@@ -8,6 +8,7 @@ CACHE_TIMEOUT_ONE_DAY = 24 * 60 * 60
 
 
 class LauncherConfigDetailSerializerForAgency(QueryFieldsMixin, serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     def get_rep(self, obj):
         rep = obj.rep
@@ -23,6 +24,9 @@ class LauncherConfigDetailSerializerForAgency(QueryFieldsMixin, serializers.Mode
                   'maiden_flight', 'launch_mass', 'leo_capacity', 'gto_capacity',
                   'to_thrust', 'apogee', 'vehicle_range', 'image_url', 'info_url',
                   'wiki_url',)
+        extra_kwargs = {
+            'url': {'lookup_field': 'launch_library_id'},
+        }
 
 
 class OrbiterDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
@@ -105,14 +109,19 @@ class AgencySerializerDetailedAndRelated(QueryFieldsMixin, serializers.Hyperlink
 
 class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     launch_service_provider = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:
         model = LauncherConfig
         fields = ('id', 'url', 'name', 'launch_service_provider',)
+        extra_kwargs = {
+            'url': {'lookup_field': 'launch_library_id'},
+        }
 
 
 class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     launch_service_provider = AgencySerializerDetailedForLaunches(many=False, read_only=True, source='launch_agency')
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     def get_rep(self, obj):
         rep = obj.rep
@@ -128,6 +137,9 @@ class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializ
                   'maiden_flight', 'launch_mass', 'leo_capacity', 'gto_capacity',
                   'to_thrust', 'apogee', 'vehicle_range', 'image_url', 'info_url',
                   'wiki_url',)
+        extra_kwargs = {
+            'url': {'lookup_field': 'launch_library_id'},
+        }
 
 
 class LauncherSerializer(QueryFieldsMixin, serializers.ModelSerializer):

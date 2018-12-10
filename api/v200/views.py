@@ -73,6 +73,7 @@ class LaunchersViewSet(ModelViewSet):
     }
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('family', 'name', 'launch_agency__name', 'full_name',)
+    lookup_field = 'launch_library_id'
 
 
 class OrbiterViewSet(ModelViewSet):

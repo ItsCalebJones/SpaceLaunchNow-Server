@@ -128,7 +128,7 @@ def get_location(launch, data):
 
 def get_rocket(launch, data):
     if 'rocket' in data and data['rocket'] is not None:
-        launcher_config, created = LauncherConfig.objects.get_or_create(id=data['rocket']['id'])
+        launcher_config, created = LauncherConfig.objects.get_or_create(launch_library_id=data['rocket']['id'])
         if created:
             launcher_config.name = data['rocket']['name']
             launcher_config.family_name = data['rocket']['familyname']

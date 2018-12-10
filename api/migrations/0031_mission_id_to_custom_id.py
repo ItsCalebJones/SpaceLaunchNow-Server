@@ -31,6 +31,7 @@ def rebuild_fk(apps, schema_editor):
                 m.mission = mission
         m.save()
 
+
 def reverse_code(apps, schema_editor):
     pass
 

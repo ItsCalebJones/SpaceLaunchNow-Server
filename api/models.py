@@ -204,7 +204,8 @@ class SpacecraftConfiguration(models.Model):
 #
 # Example: Falcon 9, Saturn V, etc.
 class LauncherConfig(models.Model):
-    id = models.IntegerField(primary_key=True, editable=True)
+    id = models.AutoField(primary_key=True)
+    launch_library_id = models.IntegerField(null=True, blank=True)
     name = models.CharField(max_length=200)
     active = models.BooleanField(default=True)
     reusable = models.BooleanField(default=False)
@@ -247,7 +248,7 @@ class LauncherConfig(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = 'Launcher Configurations'
+        verbose_name = 'Launcher Configuration'
         verbose_name_plural = 'Launcher Configurations'
 
 

@@ -19,7 +19,7 @@ class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSer
 
     class Meta:
         model = LauncherConfig
-        fields = ('id', 'url', 'name', 'launch_service_provider',)
+        fields = ('id', 'launch_library_id', 'url', 'name', 'launch_service_provider',)
 
 
 class LauncherSerializer(QueryFieldsMixin, serializers.ModelSerializer):

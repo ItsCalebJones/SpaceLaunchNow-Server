@@ -32,7 +32,7 @@ def setUpModule():
                                    spacecraft="Do I use this?",
                                    administrator="Mr. Tesla",
                                    founding_year="2018", )
-    launcher_config = LauncherConfig.objects.create(id=1,
+    launcher_config = LauncherConfig.objects.create(id=10000001,
                                                     name="Falcon 9",
                                                     active=True,
                                                     reusable=True,

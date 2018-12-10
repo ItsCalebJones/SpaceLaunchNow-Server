@@ -130,9 +130,9 @@ def astronaut(request, id):
 def astronaut_by_slug(request, slug):
     try:
         _astronaut = Astronauts.objects.get(slug=slug)
-        listi = list((Launch.objects.filter(Q(rocket__orbiterflight__launch_crew__id=_astronaut.pk) |
-                                            Q(rocket__orbiterflight__onboard_crew__id=_astronaut.pk) |
-                                            Q(rocket__orbiterflight__landing_crew__id=_astronaut.pk))
+        listi = list((Launch.objects.filter(Q(rocket__spacecraftflight__launch_crew__id=_astronaut.pk) |
+                                            Q(rocket__spacecraftflight__onboard_crew__id=_astronaut.pk) |
+                                            Q(rocket__spacecraftflight__landing_crew__id=_astronaut.pk))
                       .values_list('pk', flat=True)
                       .distinct()))
         _launches = Launch.objects.filter(pk__in=listi)
