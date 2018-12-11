@@ -116,6 +116,8 @@ class EventsSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class PadSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
+
     class Meta:
         model = Pad
         fields = ('id', 'agency_id', 'name', 'info_url', 'wiki_url', 'map_url', 'latitude', 'longitude')
@@ -123,6 +125,7 @@ class PadSerializer(serializers.ModelSerializer):
 
 class LocationSerializer(serializers.ModelSerializer):
     pads = PadSerializer(many=True, read_only=True)
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:
         model = Location

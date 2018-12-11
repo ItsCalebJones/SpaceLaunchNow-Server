@@ -276,7 +276,8 @@ class Events(models.Model):
 
 
 class Location(models.Model):
-    id = models.IntegerField(primary_key=True, editable=True)
+    id = models.AutoField(primary_key=True)
+    launch_library_id = models.IntegerField(blank=True, null=True)
     name = models.CharField(max_length=255, blank=True, default="")
     country_code = models.CharField(max_length=255, blank=True, default="")
 
@@ -292,7 +293,8 @@ class Location(models.Model):
 
 
 class Pad(models.Model):
-    id = models.IntegerField(primary_key=True, editable=True)
+    id = models.AutoField(primary_key=True)
+    launch_library_id = models.IntegerField(blank=True, null=True)
     agency_id = models.IntegerField(blank=True, null=True)
     name = models.CharField(max_length=255, blank=True, default="")
     info_url = models.URLField(blank=True, null=True)
@@ -300,7 +302,7 @@ class Pad(models.Model):
     map_url = models.URLField(blank=True, null=True)
     latitude = models.CharField(blank=True, null=True, max_length=30)
     longitude = models.CharField(blank=True, null=True, max_length=30)
-    location = models.ForeignKey(Location, related_name='pad', blank=True, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, related_name='pad', blank=True, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

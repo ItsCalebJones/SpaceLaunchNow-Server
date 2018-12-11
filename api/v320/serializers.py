@@ -175,6 +175,7 @@ class EventsSerializer(serializers.HyperlinkedModelSerializer):
 #         fields = ('id', 'name', 'imageURL', 'family_name')
 
 class LocationSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:
         model = Location
@@ -183,6 +184,7 @@ class LocationSerializer(serializers.ModelSerializer):
 
 class PadSerializer(serializers.ModelSerializer):
     location = LocationSerializer(many=False)
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:
         model = Pad
@@ -191,6 +193,7 @@ class PadSerializer(serializers.ModelSerializer):
 
 class PadListSerializer(serializers.ModelSerializer):
     location = LocationSerializer(many=False)
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:
         model = Pad
@@ -198,6 +201,7 @@ class PadListSerializer(serializers.ModelSerializer):
 
 
 class LocationListSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:
         model = Location

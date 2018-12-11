@@ -17,6 +17,7 @@ class LauncherConfigAdmin(admin.ModelAdmin):
     list_filter = ('name', 'family', 'image_url', 'launch_agency__name', 'audited',)
     ordering = ('name', 'id')
     search_fields = ('name', 'launch_agency__name')
+    readonly_fields = ['launch_library_id']
     form = LauncherConfigForm
 
 
@@ -35,6 +36,7 @@ class MissionAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">assignment</i>'
     list_display = ('id', 'name', 'mission_type', 'orbit')
     list_filter = ('id', 'name', 'mission_type', 'orbit')
+    readonly_fields = ['launch_library_id']
     ordering = ('id', )
     search_fields = ('name', 'description')
     form = MissionForm
@@ -156,6 +158,7 @@ class LocationAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">place</i>'
     list_display = ('name', 'country_code')
     list_filter = ('name', 'country_code')
+    readonly_fields = ['launch_library_id']
     ordering = ('name',)
 
 
@@ -164,6 +167,7 @@ class PadAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">dashboard</i>'
     list_display = ('name', 'location')
     list_filter = ('name', 'agency_id')
+    readonly_fields = ['launch_library_id']
     ordering = ('name',)
 
 
