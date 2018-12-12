@@ -25,33 +25,48 @@ class NotificationHandler:
         logger.info('Creating %s notification for %s' % (notification_type, launch.name))
 
         if notification_type == 'netstampChanged':
-            if launch.status == 1:
+            if launch.status.id == 1:
                 contents = 'UPDATE: New launch attempt scheduled on %s at %s.' % (launch.net.strftime("%A, %B %d"),
                                                                                   launch.net.strftime("%H:%M UTC"))
-            if launch.status == 2 or launch.status == 5:
+            elif launch.status.id == 2 or launch.status == 5:
                 contents = 'UPDATE: Launch has slipped, new launch date is unconfirmed.'
+            else:
+                logger.error("Invalid state for sending a notification - Launch: %s" % launch)
+                return
         elif notification_type == 'tenMinutes':
             minutes = round(diff / 60)
             if minutes is 0:
                 minutes = "less then one"
-            if launch.status == 1:
+            if launch.status.id == 1:
                 contents = 'Launch attempt from %s in %s minute(s).' % (launch.pad.location.name, minutes)
+            else:
+                logger.error("Invalid state for sending a notification - Launch: %s" % launch)
+                return
         elif notification_type == 'oneMinute':
-            if launch.status == 1:
-                contents = 'Launch attempt from %s in less then one minute.' % (launch.pad.location.name, minutes)
+            if launch.status.id == 1:
+                contents = 'Launch attempt from %s in less then one minute.' % launch.pad.location.name
+            else:
+                logger.error("Invalid state for sending a notification - Launch: %s" % launch)
+                return
         elif notification_type == 'twentyFourHour':
             hours = round(diff / 60 / 60)
             if hours is 23:
                 hours = 24
-            if launch.status == 1:
+            if launch.status.id == 1:
                 contents = 'Launch attempt from %s in %s hours.' % (launch.pad.location.name, hours)
-            if launch.status == 2 or launch.status == 5:
+            elif launch.status.id == 2 or launch.status.id == 5:
                 contents = 'Launch might be launching from %s in %s hours.' % (launch.pad.location.name, hours)
+            else:
+                logger.error("Invalid state for sending a notification - Launch: %s" % launch)
+                return
         elif notification_type == 'oneHour':
-            if launch.status == 1:
+            if launch.status.id == 1:
                 contents = 'Launch attempt from %s in one hour.' % launch.pad.location.name
-            if launch.status == 2 or launch.status == 5:
+            elif launch.status.id == 2 or launch.status.id == 5:
                 contents = 'Launch might be launching from %s in one hour.' % launch.pad.location.name
+            else:
+                logger.error("Invalid state for sending a notification - Launch: %s" % launch)
+                return
         elif notification_type == 'success':
             if launch.mission is not None\
                     and launch.mission.orbit is not None\
@@ -83,7 +98,9 @@ class NotificationHandler:
                                                                 launch_time.strftime("%H:%M UTC"))
 
         # Create a notification
-        topics_and_segments = get_fcm_topics_and_onesignal_segments(launch, notification_type=notification_type, debug=self.DEBUG)
+        topics_and_segments = get_fcm_topics_and_onesignal_segments(launch,
+                                                                    notification_type=notification_type,
+                                                                    debug=self.DEBUG)
         include_segments = topics_and_segments['segments']
         exclude_segments = ['firebase']
         if self.DEBUG:
