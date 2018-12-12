@@ -22,7 +22,7 @@ class NotificationHandler:
         current_time = datetime.now(tz=pytz.utc)
         launch_time = launch.net
         diff = int((launch_time - current_time).total_seconds())
-        logger.info('Creating notification for %s' % launch.name)
+        logger.info('Creating %s notification for %s' % (notification_type, launch.name))
 
         if notification_type == 'netstampChanged':
             if launch.status == 1:
