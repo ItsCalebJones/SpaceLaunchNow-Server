@@ -106,13 +106,13 @@ def check_notification(launch):
 
 def get_location(launch, data):
     if 'location' in data and data['location'] is not None:
-        location, created = Location.objects.get_or_create(id=data['location']['id'])
+        location, created = Location.objects.get_or_create(launch_library_id=data['location']['id'])
         if created:
             location.name = data['location']['name']
             location.country_code = data['location']['countryCode']
         location.save()
         if data['location']['pads'] is not None and len(data['location']['pads']) > 0:
-                pad, created = Pad.objects.get_or_create(id=data['location']['pads'][0]['id'], location=location)
+                pad, created = Pad.objects.get_or_create(launch_library_id=data['location']['pads'][0]['id'], location=location)
                 if created:
                     pad.name = data['location']['pads'][0]['name'].split(',', 1)[0]
                 pad.map_url = data['location']['pads'][0]['mapURL']

@@ -454,8 +454,8 @@ class LaunchTests(SLNAPITests):
         self.assertEqual(data['launcher']['id'], launch.rocket.configuration.launch_library_id)
         self.assertEqual(data['mission']['id'], launch.mission.launch_library_id)
         self.assertEqual(data['lsp']['id'], launch.rocket.configuration.launch_agency.id)
-        self.assertEqual(data['location']['id'], launch.pad.location.id)
-        self.assertEqual(data['pad']['id'], launch.pad.id)
+        self.assertEqual(data['location']['id'], launch.pad.location.launch_library_id)
+        self.assertEqual(data['pad']['id'], launch.pad.launch_library_id)
 
     def test_v320_launch_with_landings(self):
         launch = Launch.objects.get(launch_library_id=864)
@@ -498,5 +498,5 @@ class LaunchTests(SLNAPITests):
             self.assertEqual(stage_data['landing']['location']['name'], stage.landing.location.name)
             self.assertEqual(stage_data['landing']['type']['name'], stage.landing.type.name)
         self.assertEqual(data['mission']['id'], launch.mission.launch_library_id)
-        self.assertEqual(data['pad']['id'], launch.pad.id)
-        self.assertEqual(data['pad']['location']['id'], launch.pad.location.id)
+        self.assertEqual(data['pad']['id'], launch.pad.launch_library_id)
+        self.assertEqual(data['pad']['location']['id'], launch.pad.location.launch_library_id)

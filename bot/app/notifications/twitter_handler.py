@@ -24,77 +24,128 @@ def get_twitter_message(launch, notification_type):
     diff = int((launch_time - current_time).total_seconds())
 
     if notification_type == 'netstampChanged':
-        return 'SCHEDULE UPDATE: %s now launching from %s in %s. \n %s' % (launch.name, launch.pad.location.name,
-                                                                           seconds_to_time(diff),
-                                                                           'https://spacelaunchnow.me/launch/%s' %
-                                                                           launch.slug)
+        if launch.status == 1:
+            content = 'SCHEDULE UPDATE: %s now launching from %s in %s.' % (launch.name, launch.pad.location.name,
+                                                                            seconds_to_time(diff))
+            if launch.hashtag:
+                content = content + " %s" % launch.hashtag
+
+            return content
+        if launch.status == 2 or launch.status == 5:
+            content = 'UPDATE: %s launch date has slipped, new date currently unavailable.' % launch.name
+
+            if launch.hashtag:
+                content = content + " %s" % launch.hashtag
+
+            return content
     elif notification_type == 'success':
         if launch.mission is not None and launch.mission.orbit is not None and launch.mission.orbit.name is not None:
-            return '%s was launched successfully from %s to %s by %s. \n %s' % (launch.name, launch.pad.location.name,
-                                                                                launch.mission.orbit.name,
-                                                                                launch.rocket.configuration.
-                                                                                launch_agency.name,
-                                                                                'https://spacelaunchnow.me/launch/%s' %
-                                                                                launch.slug)
+            content = '%s was launched successfully from %s to %s by %s.' % (launch.name, launch.pad.location.name,
+                                                                             launch.mission.orbit.name,
+                                                                             launch.rocket.configuration.
+                                                                             launch_agency.name)
+            if launch.hashtag:
+                content = content + " %s" % launch.hashtag
+
+            return content
         else:
-            return '%s was launched successfully from %s by %s. \n %s' % (launch.name, launch.pad.location.name,
-                                                                          launch.rocket.configuration.
-                                                                          launch_agency.name,
-                                                                          'https://spacelaunchnow.me/launch/%s' %
-                                                                          launch.slug)
+            content = '%s was launched successfully from %s by %s.' % (launch.name, launch.pad.location.name,
+                                                                       launch.rocket.configuration.
+                                                                       launch_agency.name)
+            if launch.hashtag:
+                content = content + " %s" % launch.hashtag
+
+            return content
     elif notification_type == 'failure':
         if launch.mission is not None and launch.mission.orbit is not None and launch.mission.orbit.name is not None:
-            return '%s failed to launch from %s to %s by %s. \n %s' % (
+            content = '%s failed to launch from %s to %s by %s.' % (
                 launch.name, launch.pad.location.name,
                 launch.mission.orbit.name,
-                launch.rocket.configuration.
-                    launch_agency.name,
-                'https://spacelaunchnow.me/launch/%s' %
-                launch.slug)
+                launch.rocket.configuration.launch_agency.name)
+
+            if launch.hashtag:
+                content = content + " %s" % launch.hashtag
+
+            return content
         else:
-            return '%s failed to launch from %s by %s. \n %s' % (launch.name, launch.pad.location.name,
-                                                                              launch.rocket.configuration.
-                                                                              launch_agency.name,
-                                                                              'https://spacelaunchnow.me/launch/%s' %
-                                                                              launch.slug)
+            content = '%s failed to launch from %s by %s.' % (launch.name, launch.pad.location.name,
+                                                              launch.rocket.configuration.
+                                                              launch_agency.name)
+            if launch.hashtag:
+                content = content + " %s" % launch.hashtag
+
+            return content
 
     elif notification_type == 'partial_failure':
         if launch.mission is not None and launch.mission.orbit is not None and launch.mission.orbit.name is not None:
-            return '%s was a partial launch failure from %s to %s by %s. \n %s' % (
+            content = '%s was a partial launch failure from %s to %s by %s.' % (
                 launch.name, launch.pad.location.name,
                 launch.mission.orbit.name,
-                launch.rocket.configuration.
-                    launch_agency.name,
-                'https://spacelaunchnow.me/launch/%s' %
-                launch.slug)
+                launch.rocket.configuration.launch_agency.name)
+
+            if launch.hashtag:
+                content = content + " %s" % launch.hashtag
+
+            return content
         else:
-            return '%s was a partial launch failure from %s by %s. \n %s' % (launch.name, launch.pad.location.name,
-                                                                             launch.rocket.configuration.
-                                                                             launch_agency.name,
-                                                                             'https://spacelaunchnow.me/launch/%s' %
-                                                                             launch.slug)
+            content = '%s was a partial launch failure from %s by %s.' % (launch.name, launch.pad.location.name,
+                                                                          launch.rocket.configuration.
+                                                                          launch_agency.name)
+            if launch.hashtag:
+                content = content + " %s" % launch.hashtag
+
+            return content
 
     elif notification_type == 'inFlight':
         if launch.mission is not None and launch.mission.orbit is not None and launch.mission.orbit.name is not None:
-            return '%s currently in flight from %s targeting a %s. \n %s' % (launch.name, launch.pad.location.name,
-                                                                             launch.mission.orbit.name,
-                                                                             'https://spacelaunchnow.me/launch/%s' %
-                                                                             launch.slug)
+            content = '%s currently in flight from %s targeting a %s.' % (launch.name, launch.pad.location.name,
+                                                                          launch.mission.orbit.name)
+            if launch.hashtag:
+                content = content + " %s" % launch.hashtag
+
+            return content
         else:
-            return '%s currently in flight from %s. \n %s' % (launch.name, launch.pad.location.name,
-                                                              'https://spacelaunchnow.me/launch/%s' %
-                                                              launch.slug)
+            content = '%s currently in flight from %s.' % (launch.name, launch.pad.location.name)
+
+            if launch.hashtag:
+                content = content + " %s" % launch.hashtag
+
+            return content
     elif notification_type == 'oneMinute':
-        return '%s launching from %s by %s in less than one minute. \n %s' % (launch.name, launch.pad.location.name,
-                                                                              launch.rocket.configuration.launch_agency
-                                                                              .name,
-                                                                              'https://spacelaunchnow.me/launch/%s' %
-                                                                              launch.slug)
+        if launch.status == 1:
+            content = '%s launching from %s by %s in less than one minute.' % (launch.name, launch.pad.location.name,
+                                                                               launch.rocket.configuration.launch_agency.name)
+
+            if launch.hashtag:
+                content = content + " %s" % launch.hashtag
+
+            return content
+    elif notification_type == 'tenMinutes':
+        if launch.status == 1:
+            content = '%s launching from %s by %s in less than ten minutes.' % (launch.name, launch.pad.location.name,
+                                                                                launch.rocket.configuration.launch_agency.name)
+            if launch.hashtag:
+                content = content + " %s" % launch.hashtag
+
+            if len(launch.vid_urls) > 0:
+                watch = "\nWatch Live: %s" % launch.get_full_absolute_url
+                if len(content + watch) < 280:
+                    content = content + watch
+            else:
+                if len(content + launch.get_full_absolute_url) < 280:
+                    content = content + "\n %s" % launch.get_full_absolute_url
+
+            return content
+
     else:
-        return '%s launching from %s by %s in %s. \n %s' % (launch.name, launch.pad.location.name,
-                                                            launch.rocket.configuration.launch_agency.name,
-                                                            seconds_to_time(diff),
-                                                            'https://spacelaunchnow.me/launch/%s' % launch.slug)
+        if launch.status == 1:
+            return '%s launching from %s by %s in %s.' % (launch.name, launch.pad.location.name,
+                                                          launch.rocket.configuration.launch_agency.name,
+                                                          seconds_to_time(diff))
+        if launch.status == 2 or launch.status == 5:
+            return '%s might launch from %s by %s in %s.' % (launch.name, launch.pad.location.name,
+                                                             launch.rocket.configuration.launch_agency.name,
+                                                             seconds_to_time(diff))
 
 
 class TwitterEvents:

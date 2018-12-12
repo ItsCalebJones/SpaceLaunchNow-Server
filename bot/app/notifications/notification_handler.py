@@ -25,21 +25,33 @@ class NotificationHandler:
         logger.info('Creating notification for %s' % launch.name)
 
         if notification_type == 'netstampChanged':
-            contents = 'UPDATE: New launch attempt scheduled on %s at %s.' % (launch.net.strftime("%A, %B %d"),
-                                                                              launch.net.strftime("%H:%M UTC"))
+            if launch.status == 1:
+                contents = 'UPDATE: New launch attempt scheduled on %s at %s.' % (launch.net.strftime("%A, %B %d"),
+                                                                                  launch.net.strftime("%H:%M UTC"))
+            if launch.status == 2 or launch.status == 5:
+                contents = 'UPDATE: Launch has slipped, new launch date is unconfirmed.'
         elif notification_type == 'tenMinutes':
             minutes = round(diff / 60)
             if minutes is 0:
                 minutes = "less then one"
-            contents = 'Launch attempt from %s in %s minute(s).' % (launch.pad.location.name, minutes)
+            if launch.status == 1:
+                contents = 'Launch attempt from %s in %s minute(s).' % (launch.pad.location.name, minutes)
+        elif notification_type == 'oneMinute':
+            if launch.status == 1:
+                contents = 'Launch attempt from %s in less then one minute.' % (launch.pad.location.name, minutes)
         elif notification_type == 'twentyFourHour':
             hours = round(diff / 60 / 60)
             if hours is 23:
                 hours = 24
-            contents = 'Launch attempt from %s in %s hours.' % (launch.pad.location.name, hours)
+            if launch.status == 1:
+                contents = 'Launch attempt from %s in %s hours.' % (launch.pad.location.name, hours)
+            if launch.status == 2 or launch.status == 5:
+                contents = 'Launch might be launching from %s in %s hours.' % (launch.pad.location.name, hours)
         elif notification_type == 'oneHour':
-            contents = 'Launch attempt from %s in one hour.' % launch.pad.location.name
-
+            if launch.status == 1:
+                contents = 'Launch attempt from %s in one hour.' % launch.pad.location.name
+            if launch.status == 2 or launch.status == 5:
+                contents = 'Launch might be launching from %s in one hour.' % launch.pad.location.name
         elif notification_type == 'success':
             if launch.mission is not None\
                     and launch.mission.orbit is not None\
