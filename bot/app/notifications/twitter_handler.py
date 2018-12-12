@@ -24,14 +24,14 @@ def get_twitter_message(launch, notification_type):
     diff = int((launch_time - current_time).total_seconds())
 
     if notification_type == 'netstampChanged':
-        if launch.status == 1:
+        if launch.status.id == 1:
             content = 'SCHEDULE UPDATE: %s now launching from %s in %s.' % (launch.name, launch.pad.location.name,
                                                                             seconds_to_time(diff))
             if launch.hashtag:
                 content = content + " %s" % launch.hashtag
 
             return content
-        if launch.status == 2 or launch.status == 5:
+        if launch.status.id == 2 or launch.status.id == 5:
             content = 'UPDATE: %s launch date has slipped, new date currently unavailable.' % launch.name
 
             if launch.hashtag:
@@ -112,7 +112,7 @@ def get_twitter_message(launch, notification_type):
 
             return content
     elif notification_type == 'oneMinute':
-        if launch.status == 1:
+        if launch.status.id == 1:
             content = '%s launching from %s by %s in less than one minute.' % (launch.name, launch.pad.location.name,
                                                                                launch.rocket.configuration.launch_agency.name)
 
@@ -121,7 +121,7 @@ def get_twitter_message(launch, notification_type):
 
             return content
     elif notification_type == 'tenMinutes':
-        if launch.status == 1:
+        if launch.status.id == 1:
             content = '%s launching from %s by %s in less than ten minutes.' % (launch.name, launch.pad.location.name,
                                                                                 launch.rocket.configuration.launch_agency.name)
             if launch.hashtag:
@@ -138,11 +138,11 @@ def get_twitter_message(launch, notification_type):
             return content
 
     else:
-        if launch.status == 1:
+        if launch.status.id == 1:
             return '%s launching from %s by %s in %s.' % (launch.name, launch.pad.location.name,
                                                           launch.rocket.configuration.launch_agency.name,
                                                           seconds_to_time(diff))
-        if launch.status == 2 or launch.status == 5:
+        if launch.status.id == 2 or launch.status.id == 5:
             return '%s might launch from %s by %s in %s.' % (launch.name, launch.pad.location.name,
                                                              launch.rocket.configuration.launch_agency.name,
                                                              seconds_to_time(diff))
