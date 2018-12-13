@@ -214,4 +214,6 @@ class SpaceStationAdmin(admin.ModelAdmin):
 @admin.register(models.Spacecraft)
 class SpacecraftAdmin(admin.ModelAdmin):
     list_display = ('name', 'serial_number')
+    list_filter = ('status', 'spacecraft_config',)
     form = SpacecraftForm
+    search_fields = ('name', 'spacecraft_config__name')
