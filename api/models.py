@@ -597,27 +597,6 @@ class Spacecraft(models.Model):
         verbose_name_plural = 'Spacecrafts'
 
 
-class SpaceStation(models.Model):
-    name = models.CharField(max_length=255, null=False, blank=False)
-    founded = models.DateField(null=False, blank=False)
-    owner = models.ForeignKey(Agency, blank=False, null=False)
-    docked_vehicles = models.ManyToManyField(Spacecraft, blank=True, related_name='spacestation')
-    description = models.CharField(max_length=2048, null=False, blank=False)
-    orbit = models.CharField(max_length=255, null=False, blank=False)
-    crew = models.ManyToManyField(Astronauts, blank=True)
-    status = models.ForeignKey(SpaceStationStatus, null=False, blank=False)
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return u'%s' % self.name
-
-    class Meta:
-        verbose_name = 'Space Station'
-        verbose_name_plural = 'Space Stations'
-
-
 class SpacecraftFlight(models.Model):
     splashdown = models.DateTimeField(null=True, blank=True)
     launch_crew = models.ManyToManyField(AstronautFlight,
@@ -642,6 +621,53 @@ class SpacecraftFlight(models.Model):
     class Meta:
         verbose_name = 'Spacecraft Flight'
         verbose_name_plural = 'Spacecraft Flights'
+
+
+class Expedition(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False)
+    start = models.DateTimeField(null=False, blank=False)
+    end = models.DateTimeField(null=True, blank=True)
+    crew = models.ManyToManyField(AstronautFlight, related_name='expeditions')
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+
+class DockedVehicle(models.Model):
+    flight_vehicle = models.OneToOneField(SpacecraftFlight, on_delete=models.CASCADE)
+    docking = models.DateTimeField(null=False, blank=False)
+    departure = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return '{}-{}'.format(self.flight_vehicle.__str__(), self.docking)
+
+    def __unicode__(self):
+        return '{}-{}'.format(self.flight_vehicle.__str__(), self.docking)
+
+
+class SpaceStation(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False)
+    founded = models.DateField(null=False, blank=False)
+    owner = models.ForeignKey(Agency, blank=False, null=False)
+    description = models.CharField(max_length=2048, null=False, blank=False)
+    orbit = models.CharField(max_length=255, null=False, blank=False)
+    crew = models.ManyToManyField(Astronauts, blank=True)
+    status = models.ForeignKey(SpaceStationStatus, null=False, blank=False)
+    expeditions = models.ManyToManyField(Expedition, null=True, blank=True)
+    visiting_vehicles = models.ManyToManyField(DockedVehicle, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    class Meta:
+        verbose_name = 'Space Station'
+        verbose_name_plural = 'Space Stations'
 
 
 class Launch(models.Model):

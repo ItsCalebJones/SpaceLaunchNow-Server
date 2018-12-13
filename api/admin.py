@@ -215,3 +215,13 @@ class SpaceStationAdmin(admin.ModelAdmin):
 class SpacecraftAdmin(admin.ModelAdmin):
     list_display = ('name', 'serial_number')
     form = SpacecraftForm
+
+
+@admin.register(models.DockedVehicle)
+class DockedVehicleAdmin(admin.ModelAdmin):
+    list_display = ('flight_vehicle', 'docking')
+
+
+@admin.register(models.Expedition)
+class Expedition(admin.ModelAdmin):
+    list_display = ('name',)
