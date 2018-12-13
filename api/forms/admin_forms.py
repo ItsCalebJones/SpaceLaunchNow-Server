@@ -109,3 +109,11 @@ class SpacecraftFlightForm(forms.ModelForm):
     class Meta:
         model = SpacecraftFlight
         fields = '__all__'
+
+
+class SpaceStationForm(forms.ModelForm):
+    description = forms.CharField(widget=forms.Textarea)
+
+    class Meta:
+        model = SpaceStation
+        fields = '__all__'

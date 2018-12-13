@@ -613,10 +613,10 @@ class SpacecraftFlight(models.Model):
     destination = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
-        return self.spacecraft.name
+        return self.spacecraft.name + self.rocket.__str__()
 
     def __unicode__(self):
-        return u'%s' % self.spacecraft.name
+        return u'%s' % self.spacecraft.name + self.rocket.__str__()
 
     class Meta:
         verbose_name = 'Spacecraft Flight'
@@ -636,10 +636,11 @@ class Expedition(models.Model):
         return u'%s' % self.name
 
 
-class DockedVehicle(models.Model):
-    flight_vehicle = models.OneToOneField(SpacecraftFlight, on_delete=models.CASCADE)
+class DockingEvent(models.Model):
+    flight_vehicle = models.ForeignKey(SpacecraftFlight, on_delete=models.CASCADE)
     docking = models.DateTimeField(null=False, blank=False)
     departure = models.DateTimeField(null=True, blank=True)
+    docking_location = models.ForeignKey(DockingLocation, null=False, blank=False)
 
     def __str__(self):
         return '{}-{}'.format(self.flight_vehicle.__str__(), self.docking)
@@ -653,11 +654,10 @@ class SpaceStation(models.Model):
     founded = models.DateField(null=False, blank=False)
     owner = models.ForeignKey(Agency, blank=False, null=False)
     description = models.CharField(max_length=2048, null=False, blank=False)
-    orbit = models.CharField(max_length=255, null=False, blank=False)
-    crew = models.ManyToManyField(Astronauts, blank=True)
+    orbit = models.ForeignKey(Orbit, null=False, blank=False)
     status = models.ForeignKey(SpaceStationStatus, null=False, blank=False)
-    expeditions = models.ManyToManyField(Expedition, null=True, blank=True)
-    visiting_vehicles = models.ManyToManyField(DockedVehicle, null=True, blank=True)
+    expeditions = models.ManyToManyField(Expedition)
+    visiting_vehicles = models.ManyToManyField(DockingEvent)
 
     def __str__(self):
         return self.name

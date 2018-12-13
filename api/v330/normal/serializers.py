@@ -220,3 +220,24 @@ class EntrySerializer(serializers.ModelSerializer):
         depth = 3
         model = Entry
         fields = ('id', 'title', 'slug', 'publication_date', 'content', 'lead', 'excerpt', 'image', 'featured',)
+
+
+class SpacecraftFlightSerializer(serializers.ModelSerializer):
+    launch_crew = AstronautFlightSerializer(read_only=True, many=True)
+    onboard_crew = AstronautFlightSerializer(read_only=True, many=True)
+    landing_crew = AstronautFlightSerializer(read_only=True, many=True)
+    spacecraft = SpacecraftSerializer(read_only=True, many=False)
+
+    id = serializers.IntegerField(source='pk')
+
+    class Meta:
+        model = SpacecraftFlight
+        fields = ('id', 'splashdown', 'launch_crew', 'onboard_crew', 'landing_crew', 'spacecraft', 'destination')
+
+
+class ExpeditionSerializer(serializers.ModelSerializer):
+    crew = AstronautFlightSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Expedition
+        fields = ('name', 'start', 'end', 'crew')

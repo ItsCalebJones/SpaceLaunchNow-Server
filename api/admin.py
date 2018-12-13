@@ -5,7 +5,7 @@ from django.contrib import admin
 
 from api.filters.UpcomingFilter import DateListFilter
 from api.forms.admin_forms import LaunchForm, LandingForm, LauncherForm, PayloadForm, MissionForm, EventsForm, \
-    OrbiterForm, AgencyForm, AstronautForm, SpacecraftFlightForm, SpacecraftForm, LauncherConfigForm
+    OrbiterForm, AgencyForm, AstronautForm, SpacecraftFlightForm, SpacecraftForm, LauncherConfigForm, SpaceStationForm
 from bot.utils.admin_utils import custom_titled_filter
 from . import models
 
@@ -209,6 +209,7 @@ class AstronautFlightAdmin(admin.ModelAdmin):
 @admin.register(models.SpaceStation)
 class SpaceStationAdmin(admin.ModelAdmin):
     list_display = ('name', )
+    form = SpaceStationForm
 
 
 @admin.register(models.Spacecraft)
@@ -217,7 +218,7 @@ class SpacecraftAdmin(admin.ModelAdmin):
     form = SpacecraftForm
 
 
-@admin.register(models.DockedVehicle)
+@admin.register(models.DockingEvent)
 class DockedVehicleAdmin(admin.ModelAdmin):
     list_display = ('flight_vehicle', 'docking')
 
