@@ -206,23 +206,26 @@ class AstronautFlightAdmin(admin.ModelAdmin):
     list_display = ('id', 'astronaut', 'role')
 
 
+class ExpeditionInline(admin.StackedInline):
+    model = models.Expedition
+    verbose_name = "Expedition"
+    verbose_name_plural = "Expeditions"
+
+
+class DockingEventInline(admin.StackedInline):
+    model = models.DockingEvent
+    verbose_name = "Docking Event"
+    verbose_name_plural = "Docking Events"
+
+
 @admin.register(models.SpaceStation)
 class SpaceStationAdmin(admin.ModelAdmin):
     list_display = ('name', )
     form = SpaceStationForm
+    inlines = [ExpeditionInline, DockingEventInline]
 
 
 @admin.register(models.Spacecraft)
 class SpacecraftAdmin(admin.ModelAdmin):
     list_display = ('name', 'serial_number')
     form = SpacecraftForm
-
-
-@admin.register(models.DockingEvent)
-class DockedVehicleAdmin(admin.ModelAdmin):
-    list_display = ('flight_vehicle', 'docking')
-
-
-@admin.register(models.Expedition)
-class Expedition(admin.ModelAdmin):
-    list_display = ('name',)
