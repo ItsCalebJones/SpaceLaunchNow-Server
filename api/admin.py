@@ -88,8 +88,15 @@ class FirstStageInline(admin.TabularInline):
     verbose_name_plural = "Launcher Stages"
 
 
+class DockingEventInline(admin.StackedInline):
+    model = models.DockingEvent
+    verbose_name = "Docking Event"
+    verbose_name_plural = "Docking Events"
+
+
 class SpacecraftFlightInline(admin.StackedInline):
     model = models.SpacecraftFlight
+    fields = ('splashdown', 'docking_events')
     verbose_name = "Spacecraft Stage"
     verbose_name_plural = "Spacecraft Stage"
 
@@ -212,17 +219,16 @@ class ExpeditionInline(admin.StackedInline):
     verbose_name_plural = "Expeditions"
 
 
-class DockingEventInline(admin.StackedInline):
-    model = models.DockingEvent
-    verbose_name = "Docking Event"
-    verbose_name_plural = "Docking Events"
+@admin.register(models.DockingEvent)
+class DockingEventAdmin(admin.ModelAdmin):
+    list_display = ('space_station', 'flight_vehicle')
 
 
 @admin.register(models.SpaceStation)
 class SpaceStationAdmin(admin.ModelAdmin):
     list_display = ('name', )
     form = SpaceStationForm
-    inlines = [ExpeditionInline, DockingEventInline]
+    inlines = [ExpeditionInline,]
 
 
 @admin.register(models.Spacecraft)

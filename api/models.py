@@ -660,7 +660,8 @@ class Expedition(models.Model):
 class DockingEvent(models.Model):
     space_station = models.ForeignKey(SpaceStation, on_delete=models.CASCADE,
                                      related_name='docking_events')
-    flight_vehicle = models.ForeignKey(SpacecraftFlight, on_delete=models.CASCADE)
+    flight_vehicle = models.ForeignKey(SpacecraftFlight, on_delete=models.CASCADE,
+                                       related_name='docking_events')
     docking = models.DateTimeField(null=False, blank=False)
     departure = models.DateTimeField(null=True, blank=True)
     docking_location = models.ForeignKey(DockingLocation, null=False, blank=False)
