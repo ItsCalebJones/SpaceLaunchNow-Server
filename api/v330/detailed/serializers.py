@@ -178,12 +178,12 @@ class SpaceStationDetailedSerializer(serializers.ModelSerializer):
     status = SpaceStationStatusSerializer(read_only=True, many=False)
     owner = AgencySerializerDetailed(read_only=True, many=False)
     orbit = serializers.StringRelatedField(many=False, read_only=True)
-    visiting_vehicles = DockingEventDetailedSerializer(read_only=True, many=True)
-    expeditions = ExpeditionSerializer(read_only=True, many=True)
+    docking_events = DockingEventDetailedSerializer(read_only=True, many=True)
+    expedition = ExpeditionSerializer(read_only=True, many=True)
 
     class Meta:
         model = SpaceStation
-        fields = ('name', 'founded', 'description', 'orbit', 'status', 'owner', 'visiting_vehicles', 'expeditions')
+        fields = ('name', 'founded', 'description', 'orbit', 'status', 'owner', 'docking_events', 'expedition')
 
 
 class RocketDetailedSerializer(serializers.ModelSerializer):
