@@ -675,6 +675,8 @@ class Launch(models.Model):
         return u'%s' % self.name
 
     def save(self, *args, **kwargs):
+        if self.launch_library_id is not None:
+            self.launch_library = True
         if self.launch_library and self.launch_library_id is not None:
             self.slug = slugify(self.name + "-" + str(self.launch_library_id))
         else:
