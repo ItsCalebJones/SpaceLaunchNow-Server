@@ -149,7 +149,7 @@ class LaunchViewSet(ModelViewSet):
             return Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
                                          | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)).filter(launch_library=True)
         elif launcher_config__id:
-            return Launch.objects.filter(rocket__configuration__id=launcher_config__id).filter(launch_library=True)
+            return Launch.objects.filter(rocket__configuration__launch_library_id=launcher_config__id).filter(launch_library=True)
         else:
             return Launch.objects.order_by('net').prefetch_related('info_urls').prefetch_related(
                 'vid_urls').prefetch_related('rocket').prefetch_related('pad__location').select_related(
@@ -214,7 +214,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
                                          | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)).filter(
                 net__gte=now).filter(launch_library=True)
         elif launcher_config__id:
-            return Launch.objects.filter(rocket__configuration__id=launcher_config__id).filter(net__gte=now).filter(launch_library=True)
+            return Launch.objects.filter(rocket__configuration__launch_library_id=launcher_config__id).filter(net__gte=now).filter(launch_library=True)
         else:
             return Launch.objects.filter(net__gte=now).prefetch_related('info_urls').prefetch_related(
                 'vid_urls').prefetch_related('rocket').prefetch_related(
@@ -279,7 +279,7 @@ class PreviousLaunchViewSet(ModelViewSet):
                                          | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)).filter(
                 net__lte=now).filter(launch_library=True)
         elif launcher_config__id:
-            return Launch.objects.filter(rocket__configuration__id=launcher_config__id).filter(net__lte=now).filter(launch_library=True)
+            return Launch.objects.filter(rocket__configuration__launch_library_id=launcher_config__id).filter(net__lte=now).filter(launch_library=True)
         else:
             return Launch.objects.filter(net__lte=now).prefetch_related('info_urls').prefetch_related(
                 'vid_urls').prefetch_related('rocket').prefetch_related(
