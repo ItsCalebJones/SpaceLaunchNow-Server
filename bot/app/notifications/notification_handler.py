@@ -135,12 +135,14 @@ class NotificationHandler:
         time_since_last_notification = None
         if notification.last_notification_sent is not None:
             time_since_last_notification = datetime.now(tz=pytz.utc) - notification.last_notification_sent
-        if time_since_last_notification is not None and time_since_last_notification.total_seconds() < 600 and not self.DEBUG:
+        if time_since_last_notification is not None and time_since_last_notification.total_seconds() < 30 and not self.DEBUG:
             logger.info('Cannot send notification - too soon since last notification!')
         else:
             logger.info('----------------------------------------------------------')
             logger.info('Sending notification - %s' % contents)
             logger.info('Notification Data - %s' % kwargs)
+            notification.last_notification_sent = datetime.now(tz=pytz.utc)
+            notification.save()
             push_service = FCMNotification(api_key=keys['FCM_KEY'])
             android_topics = topics_and_segments['topics']
             flutter_topics = get_fcm_topics_and_onesignal_segments(launch,
@@ -149,17 +151,23 @@ class NotificationHandler:
                                                                    notification_type=notification_type)['topics']
             logger.info("Flutter Topics: %s" % flutter_topics)
             logger.info(topics_and_segments)
-            android_result = push_service.notify_topic_subscribers(data_message=kwargs['data'],
-                                                                   condition=android_topics,
-                                                                   time_to_live=86400, )
 
-            flutter_result = push_service.notify_topic_subscribers(data_message=kwargs['data'],
-                                                                   condition=flutter_topics,
-                                                                   time_to_live=86400,
-                                                                   message_title=launch.name,
-                                                                   message_body=contents)
-            logger.debug(android_result)
-            logger.debug(flutter_result)
-            notification.last_notification_sent = datetime.now(tz=pytz.utc)
-            notification.save()
+            # Catch any issue with sending notification.
+            try:
+                android_result = push_service.notify_topic_subscribers(data_message=kwargs['data'],
+                                                                       condition=android_topics,
+                                                                       time_to_live=86400, )
+                logger.debug(android_result)
+            except Exception as e:
+                logger.error(e)
+
+            try:
+                flutter_result = push_service.notify_topic_subscribers(data_message=kwargs['data'],
+                                                                       condition=flutter_topics,
+                                                                       time_to_live=86400,
+                                                                       message_title=launch.name,
+                                                                       message_body=contents)
+                logger.debug(flutter_result)
+            except Exception as e:
+                logger.error(e)
             logger.info('----------------------------------------------------------')
