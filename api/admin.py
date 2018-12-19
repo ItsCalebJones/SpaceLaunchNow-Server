@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
+from django.urls import reverse
+from django.utils.html import escape
 
 from api.filters.UpcomingFilter import DateListFilter
 from api.forms.admin_forms import LaunchForm, LandingForm, LauncherForm, PayloadForm, MissionForm, EventsForm, \
@@ -96,9 +98,13 @@ class DockingEventInline(admin.StackedInline):
 
 class SpacecraftFlightInline(admin.StackedInline):
     model = models.SpacecraftFlight
-    fields = ('splashdown', 'docking_events')
     verbose_name = "Spacecraft Stage"
     verbose_name_plural = "Spacecraft Stage"
+
+class SpacecraftFlightInlineForSpacecraft(admin.StackedInline):
+    model = models.SpacecraftFlight
+    verbose_name = "Flight"
+    verbose_name_plural = "Flights"
 
 
 @admin.register(models.Rocket)
@@ -228,12 +234,34 @@ class DockingEventAdmin(admin.ModelAdmin):
 class SpaceStationAdmin(admin.ModelAdmin):
     list_display = ('name', )
     form = SpaceStationForm
-    inlines = [ExpeditionInline,]
+    inlines = [ExpeditionInline, ]
+
+
+@admin.register(models.SpacecraftFlight)
+class SpacecraftFlightAdmin(admin.ModelAdmin):
+    list_display = ('spacecraft_name', )
+    list_filter = ('spacecraft__spacecraft_config', 'spacecraft__status',
+                   'rocket__configuration__launch_agency__name')
+    search_fields = ('spacecraft__name', 'rocket__name', 'rocket__launch_name')
+    inlines = [DockingEventInline,]
+
+    def spacecraft_name(self, obj):
+        return obj.spacecraft.name + " | " + obj.rocket.launch.name
 
 
 @admin.register(models.Spacecraft)
 class SpacecraftAdmin(admin.ModelAdmin):
-    list_display = ('name', 'serial_number')
+    list_display = ('name', 'serial_number', 'status', 'flights')
     list_filter = ('status', 'spacecraft_config',)
     form = SpacecraftForm
+    read_only_fields = ('flights',)
     search_fields = ('name', 'spacecraft_config__name')
+    inlines = [SpacecraftFlightInlineForSpacecraft, ]
+
+    def status(self, obj):
+        return obj.status.name
+
+    def flights(self, obj):
+        return '<a href="/admin/api/spacecraftflight/?spacecraft__spacecraft_config__id__exact=%d">%s Flights</a>' % (obj.spacecraft_config.id, obj.name)
+
+    flights.allow_tags = True
