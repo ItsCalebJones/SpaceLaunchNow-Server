@@ -238,7 +238,7 @@
                     <div class="col-md-4 mx-auto">
                         <div class="info">
                             <!-- Date/Time -->
-                            <h3 class="card-title">{{ launch.mission.type_name }}</h3>
+                            <h3 class="card-title">{{ launch.mission.mission_type.name }}</h3>
                             <hr>
                             <p>{{ launch.mission.description }}</p>
                         </div>
@@ -249,11 +249,17 @@
                         <!-- Date/Time -->
                         <h3 class="card-title">Launch Window</h3>
                         <hr>
+                        {% if launch.window_start == launch.window_end %}
+                            <p>NET: {{ launch.net|date:"F jS Y - H:i T" }}</p>
+                            <p>Instantaneous launch window.</p>
+                        {% else %}
                         <p>NET: {{ launch.net|date:"F jS Y - H:i T" }}</p>
 
+                        <b>Launch Window</b>
                         <p>Open: {{ launch.window_start|date:"F jS Y - H:i T" }}</p>
 
                         <p>Close: {{ launch.window_end|date:"F jS Y - H:i T" }}</p>
+                        {% endif %}
                     </div>
                 </div>
             </div>

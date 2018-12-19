@@ -61,21 +61,27 @@ class LaunchEventTracker:
                 return
             notification, created = Notification.objects.get_or_create(launch=launch)
             logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
-            if not notification.wasNotifiedSuccess:
-                logger.info('Sending mobile notification for %s!', launch.name)
-                self.notification_handler.send_notification(launch=launch,
-                                                            notification_type=status,
-                                                            notification=notification)
-                notification.wasNotifiedSuccess = True
+            try:
+                if not notification.wasNotifiedSuccess:
+                    logger.info('Sending mobile notification for %s!', launch.name)
+                    notification.wasNotifiedSuccess = True
+                    notification.save()
+                    self.notification_handler.send_notification(launch=launch,
+                                                                notification_type=status,
+                                                                notification=notification)
+            except Exception as e:
+                logger.error(e)
 
-            if not notification.wasNotifiedSuccessTwitter:
-                logger.info('Sending Twitter notification for %s!', launch.name)
-                self.twitter.send_to_twitter(launch=launch,
-                                             notification_type=status,
-                                             notification=notification)
-                notification.wasNotifiedSuccessTwitter = True
-
-            notification.save()
+            try:
+                if not notification.wasNotifiedSuccessTwitter:
+                    logger.info('Sending Twitter notification for %s!', launch.name)
+                    notification.wasNotifiedSuccessTwitter = True
+                    notification.save()
+                    self.twitter.send_to_twitter(launch=launch,
+                                                 notification_type=status,
+                                                 notification=notification)
+            except Exception as e:
+                logger.error(e)
 
     def check_in_flight(self):
         logger.debug('Running check_in_flight...')
@@ -86,21 +92,27 @@ class LaunchEventTracker:
         for launch in launches:
             notification, created = Notification.objects.get_or_create(launch=launch)
             logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
-            if not notification.wasNotifiedInFlight:
-                logger.info('Sending mobile notification for %s!', launch.name)
-                self.notification_handler.send_notification(launch=launch,
-                                                            notification_type='inFlight',
-                                                            notification=notification)
-                notification.wasNotifiedInFlight = True
+            try:
+                if not notification.wasNotifiedInFlight:
+                    logger.info('Sending mobile notification for %s!', launch.name)
+                    notification.wasNotifiedInFlight = True
+                    notification.save()
+                    self.notification_handler.send_notification(launch=launch,
+                                                                notification_type='inFlight',
+                                                                notification=notification)
+            except Exception as e:
+                logger.error(e)
 
-            if not notification.wasNotifiedInFlightTwitter:
-                logger.info('Sending Twitter notification for %s!', launch.name)
-                self.twitter.send_to_twitter(launch=launch,
-                                             notification_type='inFlight',
-                                             notification=notification)
-                notification.wasNotifiedInFlightTwitter = True
-
-            notification.save()
+            try:
+                if not notification.wasNotifiedInFlightTwitter:
+                    logger.info('Sending Twitter notification for %s!', launch.name)
+                    notification.wasNotifiedInFlightTwitter = True
+                    notification.save()
+                    self.twitter.send_to_twitter(launch=launch,
+                                                 notification_type='inFlight',
+                                                 notification=notification)
+            except Exception as e:
+                logger.error(e)
 
     def check_one_minute(self, time_threshold_1_minute):
         logger.debug('Running check_one_minute...')
@@ -113,21 +125,28 @@ class LaunchEventTracker:
             self.check_next_stamp_changed(launch)
             notification, created = Notification.objects.get_or_create(launch=launch)
             logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
-            if not notification.wasNotifiedOneMinute:
-                logger.info('Sending mobile notification for %s!', launch.name)
-                self.notification_handler.send_notification(launch=launch,
-                                                            notification_type='oneMinute',
-                                                            notification=notification)
-                notification.wasNotifiedOneMinute = True
 
-            if not notification.wasNotifiedOneMinuteTwitter:
-                logger.info('Sending Twitter notification for %s!', launch.name)
-                self.twitter.send_to_twitter(launch=launch,
-                                             notification_type='oneMinute',
-                                             notification=notification)
-                notification.wasNotifiedOneMinuteTwitter = True
+            try:
+                if not notification.wasNotifiedOneMinute:
+                    logger.info('Sending mobile notification for %s!', launch.name)
+                    notification.wasNotifiedOneMinute = True
+                    notification.save()
+                    self.notification_handler.send_notification(launch=launch,
+                                                                notification_type='oneMinute',
+                                                                notification=notification)
+            except Exception as e:
+                logger.error(e)
 
-            notification.save()
+            try:
+                if not notification.wasNotifiedOneMinuteTwitter:
+                    logger.info('Sending Twitter notification for %s!', launch.name)
+                    notification.wasNotifiedOneMinuteTwitter = True
+                    notification.save()
+                    self.twitter.send_to_twitter(launch=launch,
+                                                 notification_type='oneMinute',
+                                                 notification=notification)
+            except Exception as e:
+                logger.error(e)
 
     def check_ten_minute(self, time_threshold_10_minute, time_threshold_1_minute):
         logger.debug('Running check_ten_minute...')
@@ -140,21 +159,28 @@ class LaunchEventTracker:
             self.check_next_stamp_changed(launch)
             notification, created = Notification.objects.get_or_create(launch=launch)
             logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
-            if not notification.wasNotifiedTenMinutes:
-                logger.info('Sending mobile notification for %s!', launch.name)
-                self.notification_handler.send_notification(launch=launch,
-                                                            notification_type='tenMinutes',
-                                                            notification=notification)
-                notification.wasNotifiedTenMinutes = True
 
-            if not notification.wasNotifiedTenMinutesTwitter:
-                logger.info('Sending Twitter notification for %s!', launch.name)
-                self.twitter.send_to_twitter(launch=launch,
-                                             notification_type='tenMinutes',
-                                             notification=notification)
-                notification.wasNotifiedTenMinutesTwitter = True
+            try:
+                if not notification.wasNotifiedTenMinutes:
+                    logger.info('Sending mobile notification for %s!', launch.name)
+                    notification.wasNotifiedTenMinutes = True
+                    notification.save()
+                    self.notification_handler.send_notification(launch=launch,
+                                                                notification_type='tenMinutes',
+                                                                notification=notification)
+            except Exception as e:
+                logger.error(e)
 
-            notification.save()
+            try:
+                if not notification.wasNotifiedTenMinutesTwitter:
+                    logger.info('Sending Twitter notification for %s!', launch.name)
+                    self.twitter.send_to_twitter(launch=launch,
+                                                 notification_type='tenMinutes',
+                                                 notification=notification)
+                    notification.wasNotifiedTenMinutesTwitter = True
+                    notification.save()
+            except Exception as e:
+                logger.error(e)
 
     def check_twenty_four_hour(self, time_threshold_1_hour, time_threshold_24_hour):
         logger.debug('Running check_twenty_four_hour...')
@@ -167,21 +193,28 @@ class LaunchEventTracker:
             self.check_next_stamp_changed(launch)
             notification, created = Notification.objects.get_or_create(launch=launch)
             logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
-            if not notification.wasNotifiedTwentyFourHour:
-                logger.info('Sending mobile notification for %s!', launch.name)
-                self.notification_handler.send_notification(launch=launch,
-                                                            notification_type='twentyFourHour',
-                                                            notification=notification)
-                notification.wasNotifiedTwentyFourHour = True
 
-            if not notification.wasNotifiedTwentyFourHourTwitter:
-                logger.info('Sending Twitter notification for %s!', launch.name)
-                self.twitter.send_to_twitter(launch=launch,
-                                             notification_type='twentyFourHour',
-                                             notification=notification)
-                notification.wasNotifiedTwentyFourHourTwitter = True
+            try:
+                if not notification.wasNotifiedTwentyFourHour:
+                    logger.info('Sending mobile notification for %s!', launch.name)
+                    notification.wasNotifiedTwentyFourHour = True
+                    notification.save()
+                    self.notification_handler.send_notification(launch=launch,
+                                                                notification_type='twentyFourHour',
+                                                                notification=notification)
+            except Exception as e:
+                logger.error(e)
 
-            notification.save()
+            try:
+                if not notification.wasNotifiedTwentyFourHourTwitter:
+                    logger.info('Sending Twitter notification for %s!', launch.name)
+                    notification.wasNotifiedTwentyFourHourTwitter = True
+                    notification.save()
+                    self.twitter.send_to_twitter(launch=launch,
+                                                 notification_type='twentyFourHour',
+                                                 notification=notification)
+            except Exception as e:
+                logger.error(e)
 
     def check_one_hour(self, time_threshold_10_minute, time_threshold_1_hour):
         logger.debug('Running check_one_hour...')
@@ -194,21 +227,28 @@ class LaunchEventTracker:
             self.check_next_stamp_changed(launch)
             notification, created = Notification.objects.get_or_create(launch=launch)
             logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
-            if not notification.wasNotifiedOneHour:
-                logger.info('Sending mobile notification for %s!', launch.name)
-                self.notification_handler.send_notification(launch=launch,
-                                                            notification_type='oneHour',
-                                                            notification=notification)
-                notification.wasNotifiedOneHour = True
 
-            if not notification.wasNotifiedOneHourTwitter:
-                logger.info('Sending Twitter notification for %s!', launch.name)
-                self.twitter.send_to_twitter(launch=launch,
-                                             notification_type='oneHour',
-                                             notification=notification)
-                notification.wasNotifiedOneHourTwitter = True
+            try:
+                if not notification.wasNotifiedOneHour:
+                    logger.info('Sending mobile notification for %s!', launch.name)
+                    notification.wasNotifiedOneHour = True
+                    notification.save()
+                    self.notification_handler.send_notification(launch=launch,
+                                                                notification_type='oneHour',
+                                                                notification=notification)
+            except Exception as e:
+                logger.error(e)
 
-            notification.save()
+            try:
+                if not notification.wasNotifiedOneHourTwitter:
+                    logger.info('Sending Twitter notification for %s!', launch.name)
+                    notification.wasNotifiedOneHourTwitter = True
+                    notification.save()
+                    self.twitter.send_to_twitter(launch=launch,
+                                                 notification_type='oneHour',
+                                                 notification=notification)
+            except Exception as e:
+                logger.error(e)
 
     def check_this_week(self, time_threshold_1_week, time_threshold_24_hour):
         logger.debug('Running check_this_week...')

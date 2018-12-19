@@ -22,36 +22,51 @@ class NotificationHandler:
         current_time = datetime.now(tz=pytz.utc)
         launch_time = launch.net
         diff = int((launch_time - current_time).total_seconds())
-        logger.info('Creating notification for %s' % launch.name)
+        logger.info('Creating %s notification for %s' % (notification_type, launch.name))
 
         if notification_type == 'netstampChanged':
-            if launch.status == 1:
+            if launch.status.id == 1:
                 contents = 'UPDATE: New launch attempt scheduled on %s at %s.' % (launch.net.strftime("%A, %B %d"),
                                                                                   launch.net.strftime("%H:%M UTC"))
-            if launch.status == 2 or launch.status == 5:
+            elif launch.status.id == 2 or launch.status == 5:
                 contents = 'UPDATE: Launch has slipped, new launch date is unconfirmed.'
+            else:
+                logger.error("Invalid state for sending a notification - Launch: %s" % launch)
+                return
         elif notification_type == 'tenMinutes':
             minutes = round(diff / 60)
             if minutes is 0:
                 minutes = "less then one"
-            if launch.status == 1:
+            if launch.status.id == 1:
                 contents = 'Launch attempt from %s in %s minute(s).' % (launch.pad.location.name, minutes)
+            else:
+                logger.error("Invalid state for sending a notification - Launch: %s" % launch)
+                return
         elif notification_type == 'oneMinute':
-            if launch.status == 1:
-                contents = 'Launch attempt from %s in less then one minute.' % (launch.pad.location.name, minutes)
+            if launch.status.id == 1:
+                contents = 'Launch attempt from %s in less then one minute.' % launch.pad.location.name
+            else:
+                logger.error("Invalid state for sending a notification - Launch: %s" % launch)
+                return
         elif notification_type == 'twentyFourHour':
             hours = round(diff / 60 / 60)
             if hours is 23:
                 hours = 24
-            if launch.status == 1:
+            if launch.status.id == 1:
                 contents = 'Launch attempt from %s in %s hours.' % (launch.pad.location.name, hours)
-            if launch.status == 2 or launch.status == 5:
+            elif launch.status.id == 2 or launch.status.id == 5:
                 contents = 'Launch might be launching from %s in %s hours.' % (launch.pad.location.name, hours)
+            else:
+                logger.error("Invalid state for sending a notification - Launch: %s" % launch)
+                return
         elif notification_type == 'oneHour':
-            if launch.status == 1:
+            if launch.status.id == 1:
                 contents = 'Launch attempt from %s in one hour.' % launch.pad.location.name
-            if launch.status == 2 or launch.status == 5:
+            elif launch.status.id == 2 or launch.status.id == 5:
                 contents = 'Launch might be launching from %s in one hour.' % launch.pad.location.name
+            else:
+                logger.error("Invalid state for sending a notification - Launch: %s" % launch)
+                return
         elif notification_type == 'success':
             if launch.mission is not None\
                     and launch.mission.orbit is not None\
@@ -83,7 +98,9 @@ class NotificationHandler:
                                                                 launch_time.strftime("%H:%M UTC"))
 
         # Create a notification
-        topics_and_segments = get_fcm_topics_and_onesignal_segments(launch, notification_type=notification_type, debug=self.DEBUG)
+        topics_and_segments = get_fcm_topics_and_onesignal_segments(launch,
+                                                                    notification_type=notification_type,
+                                                                    debug=self.DEBUG)
         include_segments = topics_and_segments['segments']
         exclude_segments = ['firebase']
         if self.DEBUG:
@@ -118,12 +135,14 @@ class NotificationHandler:
         time_since_last_notification = None
         if notification.last_notification_sent is not None:
             time_since_last_notification = datetime.now(tz=pytz.utc) - notification.last_notification_sent
-        if time_since_last_notification is not None and time_since_last_notification.total_seconds() < 600 and not self.DEBUG:
+        if time_since_last_notification is not None and time_since_last_notification.total_seconds() < 30 and not self.DEBUG:
             logger.info('Cannot send notification - too soon since last notification!')
         else:
             logger.info('----------------------------------------------------------')
             logger.info('Sending notification - %s' % contents)
             logger.info('Notification Data - %s' % kwargs)
+            notification.last_notification_sent = datetime.now(tz=pytz.utc)
+            notification.save()
             push_service = FCMNotification(api_key=keys['FCM_KEY'])
             android_topics = topics_and_segments['topics']
             flutter_topics = get_fcm_topics_and_onesignal_segments(launch,
@@ -132,17 +151,23 @@ class NotificationHandler:
                                                                    notification_type=notification_type)['topics']
             logger.info("Flutter Topics: %s" % flutter_topics)
             logger.info(topics_and_segments)
-            android_result = push_service.notify_topic_subscribers(data_message=kwargs['data'],
-                                                                   condition=android_topics,
-                                                                   time_to_live=86400, )
 
-            flutter_result = push_service.notify_topic_subscribers(data_message=kwargs['data'],
-                                                                   condition=flutter_topics,
-                                                                   time_to_live=86400,
-                                                                   message_title=launch.name,
-                                                                   message_body=contents)
-            logger.debug(android_result)
-            logger.debug(flutter_result)
-            notification.last_notification_sent = datetime.now(tz=pytz.utc)
-            notification.save()
+            # Catch any issue with sending notification.
+            try:
+                android_result = push_service.notify_topic_subscribers(data_message=kwargs['data'],
+                                                                       condition=android_topics,
+                                                                       time_to_live=86400, )
+                logger.debug(android_result)
+            except Exception as e:
+                logger.error(e)
+
+            try:
+                flutter_result = push_service.notify_topic_subscribers(data_message=kwargs['data'],
+                                                                       condition=flutter_topics,
+                                                                       time_to_live=86400,
+                                                                       message_title=launch.name,
+                                                                       message_body=contents)
+                logger.debug(flutter_result)
+            except Exception as e:
+                logger.error(e)
             logger.info('----------------------------------------------------------')
