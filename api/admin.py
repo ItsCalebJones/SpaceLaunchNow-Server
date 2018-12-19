@@ -5,7 +5,7 @@ from django.contrib import admin
 
 from api.filters.UpcomingFilter import DateListFilter
 from api.forms.admin_forms import LaunchForm, LandingForm, LauncherForm, PayloadForm, MissionForm, EventsForm, \
-    OrbiterForm, AgencyForm, AstronautForm, SpacecraftFlightForm, SpacecraftForm, LauncherConfigForm
+    OrbiterForm, AgencyForm, AstronautForm, SpacecraftFlightForm, SpacecraftForm, LauncherConfigForm, SpaceStationForm
 from bot.utils.admin_utils import custom_titled_filter
 from . import models
 
@@ -88,8 +88,15 @@ class FirstStageInline(admin.TabularInline):
     verbose_name_plural = "Launcher Stages"
 
 
+class DockingEventInline(admin.StackedInline):
+    model = models.DockingEvent
+    verbose_name = "Docking Event"
+    verbose_name_plural = "Docking Events"
+
+
 class SpacecraftFlightInline(admin.StackedInline):
     model = models.SpacecraftFlight
+    fields = ('splashdown', 'docking_events')
     verbose_name = "Spacecraft Stage"
     verbose_name_plural = "Spacecraft Stage"
 
@@ -206,9 +213,22 @@ class AstronautFlightAdmin(admin.ModelAdmin):
     list_display = ('id', 'astronaut', 'role')
 
 
+class ExpeditionInline(admin.StackedInline):
+    model = models.Expedition
+    verbose_name = "Expedition"
+    verbose_name_plural = "Expeditions"
+
+
+@admin.register(models.DockingEvent)
+class DockingEventAdmin(admin.ModelAdmin):
+    list_display = ('space_station', 'flight_vehicle')
+
+
 @admin.register(models.SpaceStation)
 class SpaceStationAdmin(admin.ModelAdmin):
     list_display = ('name', )
+    form = SpaceStationForm
+    inlines = [ExpeditionInline,]
 
 
 @admin.register(models.Spacecraft)

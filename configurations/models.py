@@ -148,3 +148,17 @@ class SpaceStationStatus(models.Model):
     class Meta:
         verbose_name = 'Space Station Status'
         verbose_name_plural = 'Space Station Status\''
+
+
+class DockingLocation(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    class Meta:
+        verbose_name = 'Docking Location'
+        verbose_name_plural = 'Docking Locations'

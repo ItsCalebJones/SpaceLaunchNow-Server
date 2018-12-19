@@ -5,7 +5,8 @@ from rest_framework import serializers
 
 from api.v330.normal.serializers import AgencySerializer, FirstStageSerializer, \
     SecondStageSerializer, PadSerializer, \
-    MissionSerializer, LaunchStatusSerializer, SpacecraftStatusSerializer
+    MissionSerializer, LaunchStatusSerializer, SpacecraftStatusSerializer, SpacecraftFlightSerializer, \
+    ExpeditionSerializer
 
 CACHE_TIMEOUT_ONE_DAY = 24 * 60 * 60
 
@@ -151,9 +152,11 @@ class SpacecraftFlightDetailedSerializer(serializers.ModelSerializer):
     landing_crew = AstronautFlightSerializer(read_only=True, many=True)
     spacecraft = SpacecraftDetailedSerializer(read_only=True, many=False)
 
+    id = serializers.IntegerField(source='pk')
+
     class Meta:
         model = SpacecraftFlight
-        fields = ('splashdown', 'launch_crew', 'onboard_crew', 'landing_crew', 'spacecraft', 'destination')
+        fields = ('id', 'splashdown', 'launch_crew', 'onboard_crew', 'landing_crew', 'spacecraft', 'destination')
 
 
 class SpaceStationStatusSerializer(serializers.ModelSerializer):
@@ -162,16 +165,25 @@ class SpaceStationStatusSerializer(serializers.ModelSerializer):
         fields = ('name',)
 
 
+class DockingEventDetailedSerializer(serializers.ModelSerializer):
+    flight_vehicle = SpacecraftFlightSerializer(read_only=True)
+    docking_location = serializers.StringRelatedField(many=False, read_only=True)
+
+    class Meta:
+        model = DockingEvent
+        fields = ('docking', 'departure', 'flight_vehicle', 'docking_location')
+
+
 class SpaceStationDetailedSerializer(serializers.ModelSerializer):
-    docked_vehicles = SpacecraftDetailedSerializer(read_only=True, many=True)
-    crew = AstronautDetailedSerializer(read_only=True, many=True)
     status = SpaceStationStatusSerializer(read_only=True, many=False)
     owner = AgencySerializerDetailed(read_only=True, many=False)
+    orbit = serializers.StringRelatedField(many=False, read_only=True)
+    docking_events = DockingEventDetailedSerializer(read_only=True, many=True)
+    expedition = ExpeditionSerializer(read_only=True, many=True)
 
     class Meta:
         model = SpaceStation
-        fields = ('name', 'founded', 'docked_vehicles', 'description', 'orbit',
-                  'crew', 'status', 'owner')
+        fields = ('name', 'founded', 'description', 'orbit', 'status', 'owner', 'docking_events', 'expedition')
 
 
 class RocketDetailedSerializer(serializers.ModelSerializer):
