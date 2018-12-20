@@ -207,22 +207,29 @@
                                     </div>
                                 {% endfor %}
                         {% endif %}
-                        <hr class="col-lg-8" style="background-color: white">
-                        {% if youtube_url %}
-                            <div class="row text-center">
-                                {% video youtube_url as my_video %}
-                                    <div class="videoWrapper" style="margin-top: 10px">
-                                        {% if request|is_mobile %}
-                                            {% video my_video '85% x 25%' %}
-                                        {% else %}
-                                            {% video my_video '75% x 75%' %}
-                                        {% endif %}
-                                    </div>
+                        <div class="row text-center">
+                            <div class="container">
+                                <div class="col-lg-12">
+                                    <!-- Title -->
+                                    {% if youtube_url %}
+                                        {% video youtube_url as my_video %}
+                                            <h3 class="text-center card-title"><b>Watch the Launch</b></h3>
+                                            <hr>
+                                            <div class="videoWrapper">
+                                                {% if request|is_mobile %}
+                                                    {% video my_video '85% x 25%' %}
+                                                {% else %}
+                                                    {% video my_video '80% x 80%' %}
+                                                {% endif %}
+                                            </div>
+                                            <br>
+                                        {% endvideo %}
+                                    {% else %}
+                                        <p>Check back later for live embedded streams.</p>
+                                    {% endif %}
+                                </div>
                             </div>
-                                {% endvideo %}
-                        {% else %}
-                            <p>Check back later for live embedded streams.</p>
-                        {% endif %}
+                        </div>
                         <div class="row text-center">
                             <div class="col-md-10 ml-auto mr-auto text-center">
                                 <a class="btn btn-primary btn-raised btn-lg center-block" href="/next">View Launch</a>
