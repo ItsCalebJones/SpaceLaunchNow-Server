@@ -149,7 +149,6 @@
                         {% if launch.hashtag %}
                             <span class="badge badge-pill badge-primary">{{ launch.hashtag }}</span>
                         {% endif %}
-                        <hr class="col-lg-8" style="background-color: white">
                         {% if launch.rocket.firststage.all|length > 0 %}
                             <div class="row text-center">
                                 {% for stage in launch.rocket.firststage.all %}
@@ -207,165 +206,167 @@
                                     {% endif %}
                                     </div>
                                 {% endfor %}
-                            </div>
-                            <hr class="col-lg-8" style="background-color: white">
                         {% endif %}
-                    <br>
-                    {% if youtube_url %}
-                        {% video youtube_url as my_video %}
-                            <div class="videoWrapper" style="margin-top: 10px">
-                                {% if request|is_mobile %}
-                                    {% video my_video '85% x 25%' %}
-                                {% else %}
-                                    {% video my_video '80% x 80%' %}
-                                {% endif %}
+                        <hr class="col-lg-8" style="background-color: white">
+                        {% if youtube_url %}
+                            <div class="row text-center">
+                                {% video youtube_url as my_video %}
+                                    <div class="videoWrapper" style="margin-top: 10px">
+                                        {% if request|is_mobile %}
+                                            {% video my_video '85% x 25%' %}
+                                        {% else %}
+                                            {% video my_video '75% x 75%' %}
+                                        {% endif %}
+                                    </div>
                             </div>
-                            <br>
-                        {% endvideo %}
-                    {% else %}
-                        <p>Check back later for live embedded streams.</p>
-                    {% endif %}
-                    <br>
-                    <a class="btn btn-primary btn-raised btn-lg center-block" href="/next">View Launch</a>
-                </div>
-            </div>
-            <hr>
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <div class="col-md-10 ml-auto mr-auto text-center">
-                        <h2 class="title text-center">Never miss another spaceflight launch!</h2>
-                        <h3 class="text-faded">Follow along with the world of spaceflight as humanity
-                            continues
-                            its
-                            exploration
-                            of the solar system. We track every orbital launch and even the occasional
-                            experimental test flight.</h3>
-
-                    </div>
-
-                    <hr>
-                    <h2 class="section-heading">Top Features</h2>
-                    <hr class="primary">
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
-                    <div class="card card-nav-tabs">
-                        <i class="card-header card-header-danger fa fa-4x fa-bell text-center sr-icons"></i>
-                        <div class="card-body">
-                            <h4 class="card-title">Notifications</h4>
-                            <p>Get notified for launches from all the major launch providers like SpaceX, ULA, and
-                                Orbital/ATK as well as
-                                international launches from NASA, ROSCOSMOS, JAXA and ESA.</p>
+                                {% endvideo %}
+                        {% else %}
+                            <p>Check back later for live embedded streams.</p>
+                        {% endif %}
+                        <div class="row text-center">
+                            <div class="col-md-10 ml-auto mr-auto text-center">
+                                <a class="btn btn-primary btn-raised btn-lg center-block" href="/next">View Launch</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
-                    <div class="card card-nav-tabs">
-                        <i class="card-header card-header-danger fa fa-4x fa-history text-center sr-icons"></i>
-                        <div class="card-body">
-                            <h4 class="card-title">Mission Information</h4>
-                            <p class="text-faded">Learn about resupply missions to the International Space Station,
-                                commercial satellite launches from providers like IRIDIUM and science missions like
-                                ExoMars!</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
-                    <div class="card card-nav-tabs">
-                        <i class="card-header card-header-danger fa fa-4x fa-moon text-center sr-icons"></i>
-                        <div class="card-body">
-                            <h4 class="card-title">Day/Night Themes</h4>
-                            <p class="text-faded">Don't be blinded by the new all-white trends of mobile apps with
-                                always-on night/dark themes!</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
-                    <div class="card card-nav-tabs">
-                        <i class="card-header card-header-danger fa fa-4x fa-clock text-center sr-icons"></i>
-                        <div class="card-body">
-                            <h4 class="card-title">Launch Countdowns</h4>
-                            <p class="text-faded">Follow every launch with a live countdown, either on the web,
-                                in a widget or in the app! Watch live as spaceflight events occur around the
-                                world.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
-                    <div class="card card-nav-tabs">
-                        <i class="card-header card-header-danger fa fa-4x fa-space-shuttle text-center sr-icons"></i>
-                        <div class="card-body">
-                            <h4 class="card-title">Launch Vehicles</h4>
-                            <p class="text-faded">Get to know all the vehicles that take us to orbit such as the
-                                Soyuz,
-                                Atlas,
-                                Delta, Ariane, Proton
-                                and Falcon launch vehicle families.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
-                    <div class="card card-nav-tabs">
-                        <i class="card-header card-header-danger fa fa-4x fa-stopwatch text-center sr-icons"></i>
-                        <div class="card-body">
-                            <h4 class="card-title">Android Wear OS</h4>
-                            <p class="text-faded">A standalone Wear OS application to get all the information you
-                                need
-                                on the go, including watchface and Wear OS complications to use on your favorite
-                                watchface.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <h2 class="section-heading text-center">Watch Live</h2>
-            <hr class="light">
-            <div class="row text-center">
-                <div class="col-md-10 ml-auto mr-auto text-center">
-                    <a class="btn btn-primary btn-raised btn-lg center-block" href="/next">What's
-                        Launching
-                        Next?</a>
-                </div>
-            </div>
-        </div>
-        <br>
-        <br>
-        <div class="row">
-            <div class="col-md-10 mx-auto text-center">
-                <h2 class="section-heading">Let's Get In Touch!</h2>
-                <hr class="primary">
-                <h3>Enjoying the app? Have questions? Feel free to reach out!</h3>
+                <hr>
                 <div class="row">
-                    <div class="col-md-4 text-center">
-                        <i class="fab fa-reddit fa-3x sr-contact"></i>
+                    <div class="col-lg-12 text-center">
+                        <div class="col-md-10 ml-auto mr-auto text-center">
+                            <h2 class="title text-center">Never miss another spaceflight launch!</h2>
+                            <h3 class="text-faded">Follow along with the world of spaceflight as humanity
+                                continues
+                                its
+                                exploration
+                                of the solar system. We track every orbital launch and even the occasional
+                                experimental test flight.</h3>
 
-                        <p>
-                            <a href='https://www.reddit.com/r/spacelaunchnow/'>/r/spacelaunchnow</a>
-                        </p>
-                    </div>
-                    <div class="col-md-4 text-center">
-                        <i class="fa fa-envelope fa-3x sr-contact"></i>
+                        </div>
 
-                        <p>
-                            <a href="mailto:support@spacelaunchnow.me">support@calebjones.me</a>
-                        </p>
-                    </div>
-                    <div class="col-md-4 text-center">
-                        <i class="fa fa-comments fa-3x sr-contact"></i>
-
-                        <p>
-                            <a href='https://discord.gg/WVfzEDW'>Discord</a>
-                        </p>
+                        <hr>
+                        <h2 class="section-heading">Top Features</h2>
+                        <hr class="primary">
                     </div>
                 </div>
-                <br>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
+                        <div class="card card-nav-tabs">
+                            <i class="card-header card-header-danger fa fa-4x fa-bell text-center sr-icons"></i>
+                            <div class="card-body">
+                                <h4 class="card-title">Notifications</h4>
+                                <p>Get notified for launches from all the major launch providers like SpaceX, ULA, and
+                                    Orbital/ATK as well as
+                                    international launches from NASA, ROSCOSMOS, JAXA and ESA.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
+                        <div class="card card-nav-tabs">
+                            <i class="card-header card-header-danger fa fa-4x fa-history text-center sr-icons"></i>
+                            <div class="card-body">
+                                <h4 class="card-title">Mission Information</h4>
+                                <p class="text-faded">Learn about resupply missions to the International Space Station,
+                                    commercial satellite launches from providers like IRIDIUM and science missions like
+                                    ExoMars!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
+                        <div class="card card-nav-tabs">
+                            <i class="card-header card-header-danger fa fa-4x fa-moon text-center sr-icons"></i>
+                            <div class="card-body">
+                                <h4 class="card-title">Day/Night Themes</h4>
+                                <p class="text-faded">Don't be blinded by the new all-white trends of mobile apps with
+                                    always-on night/dark themes!</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
+                        <div class="card card-nav-tabs">
+                            <i class="card-header card-header-danger fa fa-4x fa-clock text-center sr-icons"></i>
+                            <div class="card-body">
+                                <h4 class="card-title">Launch Countdowns</h4>
+                                <p class="text-faded">Follow every launch with a live countdown, either on the web,
+                                    in a widget or in the app! Watch live as spaceflight events occur around the
+                                    world.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
+                        <div class="card card-nav-tabs">
+                            <i class="card-header card-header-danger fa fa-4x fa-space-shuttle text-center sr-icons"></i>
+                            <div class="card-body">
+                                <h4 class="card-title">Launch Vehicles</h4>
+                                <p class="text-faded">Get to know all the vehicles that take us to orbit such as the
+                                    Soyuz,
+                                    Atlas,
+                                    Delta, Ariane, Proton
+                                    and Falcon launch vehicle families.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 d-flex align-items-stretch">
+                        <div class="card card-nav-tabs">
+                            <i class="card-header card-header-danger fa fa-4x fa-stopwatch text-center sr-icons"></i>
+                            <div class="card-body">
+                                <h4 class="card-title">Android Wear OS</h4>
+                                <p class="text-faded">A standalone Wear OS application to get all the information you
+                                    need
+                                    on the go, including watchface and Wear OS complications to use on your favorite
+                                    watchface.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h2 class="section-heading text-center">Watch Live</h2>
+                <hr class="light">
+                <div class="row text-center">
+                    <div class="col-md-10 ml-auto mr-auto text-center">
+                        <a class="btn btn-primary btn-raised btn-lg center-block" href="/next">What's
+                            Launching
+                            Next?</a>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <br>
+            <div class="row">
+                <div class="col-md-10 mx-auto text-center">
+                    <h2 class="section-heading">Let's Get In Touch!</h2>
+                    <hr class="primary">
+                    <h3>Enjoying the app? Have questions? Feel free to reach out!</h3>
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <i class="fab fa-reddit fa-3x sr-contact"></i>
+
+                            <p>
+                                <a href='https://www.reddit.com/r/spacelaunchnow/'>/r/spacelaunchnow</a>
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fa fa-envelope fa-3x sr-contact"></i>
+
+                            <p>
+                                <a href="mailto:support@spacelaunchnow.me">support@calebjones.me</a>
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fa fa-comments fa-3x sr-contact"></i>
+
+                            <p>
+                                <a href='https://discord.gg/WVfzEDW'>Discord</a>
+                            </p>
+                        </div>
+                    </div>
+                    <br>
+                </div>
             </div>
         </div>
-    </div>
     </div>
     <script src="{% static 'material_kit/js/dateFormat.js' %}" type="text/javascript"></script>
     <script>
