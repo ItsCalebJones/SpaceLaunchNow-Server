@@ -97,13 +97,13 @@ def get_fcm_topics_and_onesignal_segments(launch, debug=False, flutter=False, no
     if lsp_id == 88:
         topics_set.append('casc')
         segments.append('CASC')
-    if location_id == 16:
+    if location_id == 27:
         topics_set.append('ksc')
         segments.append('KSC')
-    if location_id == 11:
+    if location_id == 6:
         topics_set.append('ples')
         segments.append('Ples')
-    if location_id == 18:
+    if location_id == 11:
         topics_set.append('van')
         segments.append('Van')
     topics = build_topics(topic_header, topics_set)

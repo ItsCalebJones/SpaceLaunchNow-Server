@@ -626,7 +626,7 @@ class SpacecraftFlight(models.Model):
 class SpaceStation(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     founded = models.DateField(null=False, blank=False)
-    owner = models.ForeignKey(Agency, blank=False, null=False)
+    owners = models.ManyToManyField(Agency, blank=False, null=False)
     description = models.CharField(max_length=2048, null=False, blank=False)
     orbit = models.ForeignKey(Orbit, null=False, blank=False)
     status = models.ForeignKey(SpaceStationStatus, null=False, blank=False)
