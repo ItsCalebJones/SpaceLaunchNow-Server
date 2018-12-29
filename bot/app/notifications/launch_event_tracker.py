@@ -30,7 +30,7 @@ class LaunchEventTracker:
 
     def check_next_stamp_changed(self, launch):
         logger.debug('Running check_next_stamp_changed for %s...', launch.name)
-        notification = Notification.objects.get(launch=launch)
+        notification, created = Notification.objects.get_or_create(launch=launch)
         if launch.net:
             current_time = datetime.now(tz=pytz.utc)
             launch_time = launch.net
