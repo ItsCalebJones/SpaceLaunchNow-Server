@@ -8,10 +8,10 @@ from api.v330.detailed.serializers import AgencySerializerDetailed, \
     LauncherConfigDetailSerializer, \
     SpacecraftConfigurationDetailSerializer, LaunchDetailedSerializer, AstronautDetailedSerializer, \
     SpaceStationDetailedSerializer, SpacecraftFlightDetailedSerializer
-from api.v330.list.serializers import LaunchListSerializer
+from api.v330.list.serializers import LaunchListSerializer, AstronautListSerializer
 from api.v330.normal.serializers import EntrySerializer, AgencySerializer, \
     EventsSerializer, LaunchSerializer, \
-    LauncherDetailedSerializer
+    LauncherDetailedSerializer, AstronautNormalSerializer
 from api.models import *
 from datetime import datetime, timedelta
 from api.models import LauncherConfig, SpacecraftConfiguration, Agency
@@ -175,12 +175,21 @@ class AstronautViewSet(ModelViewSet):
     Return a list of all the existing spacecraft.
     """
     queryset = Astronauts.objects.all()
-    serializer_class = AstronautDetailedSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
         'retrieve': ['_Public'], # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public'] # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
+
+    def get_serializer_class(self):
+        print(self.request.query_params.keys())
+        mode = self.request.query_params.get("mode", "normal")
+        if mode == "detailed" or self.action == 'retrieve':
+            return AstronautDetailedSerializer
+        elif mode == "list":
+            return AstronautListSerializer
+        else:
+            return AstronautNormalSerializer
 
 
 class SpaceStationViewSet(ModelViewSet):

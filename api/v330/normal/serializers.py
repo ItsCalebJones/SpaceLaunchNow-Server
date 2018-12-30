@@ -241,3 +241,13 @@ class ExpeditionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Expedition
         fields = ('name', 'start', 'end', 'crew')
+
+
+class AstronautNormalSerializer(serializers.HyperlinkedModelSerializer):
+    agency = AgencySerializer(read_only=True, many=False)
+    status = serializers.StringRelatedField(source='status.name')
+
+    class Meta:
+        model = Astronauts
+        fields = ('id', 'url', 'name', 'status', 'date_of_birth', 'date_of_death', 'nationality', 'bio', 'twitter', 'instagram', 'wiki', 'agency', 'profile_image')
+
