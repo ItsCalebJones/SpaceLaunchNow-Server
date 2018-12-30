@@ -6,6 +6,15 @@ from api.v330.normal.serializers import LaunchStatusSerializer
 CACHE_TIMEOUT_ONE_DAY = 24 * 60 * 60
 
 
+class AstronautListSerializer(serializers.HyperlinkedModelSerializer):
+    status = serializers.StringRelatedField(source='status.name')
+    agency = serializers.ReadOnlyField(read_only=True, source="agency.name")
+
+    class Meta:
+        model = Astronauts
+        fields = ('id', 'url', 'name', 'status', 'agency', 'nationality', 'profile_image')
+
+
 class LaunchListSerializer(serializers.ModelSerializer):
     pad = serializers.StringRelatedField()
     location = serializers.StringRelatedField(source='pad.location')

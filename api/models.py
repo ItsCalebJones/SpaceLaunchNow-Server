@@ -543,12 +543,12 @@ class Astronauts(models.Model):
 
     @property
     def flights(self):
-        listi = list((Launch.objects.filter(Q(rocket__spacecraftflight__launch_crew__id=self.pk) |
-                                            Q(rocket__spacecraftflight__onboard_crew__id=self.pk) |
-                                            Q(rocket__spacecraftflight__landing_crew__id=self.pk))
-                      .values_list('pk', flat=True)
+        listi = list((Launch.objects.filter(Q(rocket__spacecraftflight__launch_crew__id=self.id) |
+                                            Q(rocket__spacecraftflight__onboard_crew__id=self.id) |
+                                            Q(rocket__spacecraftflight__landing_crew__id=self.id))
+                      .values_list('id', flat=True)
                       .distinct()))
-        launches = Launch.objects.filter(pk__in=listi)
+        launches = Launch.objects.filter(id__in=listi)
         return launches
 
     @property

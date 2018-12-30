@@ -3,6 +3,7 @@ from drf_queryfields import QueryFieldsMixin
 from api.models import *
 from rest_framework import serializers
 
+from api.v330.list.serializers import LaunchListSerializer
 from api.v330.normal.serializers import AgencySerializer, FirstStageSerializer, \
     SecondStageSerializer, PadSerializer, \
     MissionSerializer, LaunchStatusSerializer, SpacecraftStatusSerializer, SpacecraftFlightSerializer, \
@@ -109,22 +110,16 @@ class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializ
                   'wiki_url',)
 
 
-class AstronautStatusDetailedSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AstronautStatus
-        fields = ('id', 'name', )
-
-
-class AstronautDetailedSerializer(serializers.ModelSerializer):
-    status = AstronautStatusDetailedSerializer(read_only=True, many=False)
+class AstronautDetailedSerializer(serializers.HyperlinkedModelSerializer):
+    status = serializers.StringRelatedField(source='status.name')
     agency = AgencySerializerMini(read_only=True, many=False)
+    flights = LaunchListSerializer(read_only=True, many=True)
 
     class Meta:
         model = Astronauts
         # fields = ('name',)
-        fields = ('name', 'status', 'agency', 'date_of_birth', 'date_of_death', 'nationality',
-                  'twitter', 'instagram', 'bio', 'profile_image',
-                  'wiki')
+        fields = ('id', 'url', 'name', 'status', 'agency', 'date_of_birth', 'date_of_death', 'nationality',
+                  'twitter', 'instagram', 'bio', 'profile_image', 'wiki', 'flights')
 
 
 class AstronautFlightSerializer(serializers.ModelSerializer):
@@ -176,7 +171,7 @@ class DockingEventDetailedSerializer(serializers.ModelSerializer):
 
 class SpaceStationDetailedSerializer(serializers.ModelSerializer):
     status = SpaceStationStatusSerializer(read_only=True, many=False)
-    owner = AgencySerializerDetailed(read_only=True, many=False)
+    owner = AgencySerializer(read_only=True, many=False)
     orbit = serializers.StringRelatedField(many=False, read_only=True)
     docking_events = DockingEventDetailedSerializer(read_only=True, many=True)
     expedition = ExpeditionSerializer(read_only=True, many=True)

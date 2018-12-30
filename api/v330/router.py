@@ -4,7 +4,7 @@ from . import views
 
 router = Router()
 router.register(r'agencies', views.AgencyViewSet, base_name='agency')
-router.register(r'astronauts', views.AstronautViewSet, base_name='astronaut')
+router.register(r'astronauts', views.AstronautViewSet, base_name='astronauts')
 router.register(r'events', views.EventViewSet)
 router.register(r'launch/previous', views.PreviousLaunchViewSet, base_name='launch/previous')
 router.register(r'launch/upcoming', views.UpcomingLaunchViewSet,  base_name='launch/upcoming')
