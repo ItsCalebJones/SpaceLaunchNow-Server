@@ -166,24 +166,76 @@ class SpacecraftStatusSerializer(serializers.ModelSerializer):
         fields = ('name',)
 
 
-class SpacecraftSerializer(serializers.ModelSerializer):
+class SpacecraftSerializer(serializers.HyperlinkedModelSerializer):
     status = SpacecraftStatusSerializer(read_only=True, many=False)
     spacecraft_config = SpacecraftConfigSerializer(read_only=True, many=False)
 
     class Meta:
         model = Spacecraft
-        fields = ('name', 'serial_number', 'status', 'spacecraft_config')
+        fields = ('id', 'url', 'name', 'serial_number', 'status', 'spacecraft_config')
 
 
-class SpacecraftFlightSerializer(serializers.ModelSerializer):
-    launch_crew = AstronautFlightSerializer(read_only=True, many=True)
-    onboard_crew = AstronautFlightSerializer(read_only=True, many=True)
-    landing_crew = AstronautFlightSerializer(read_only=True, many=True)
+class AstronautListSerializer(serializers.HyperlinkedModelSerializer):
+    status = serializers.StringRelatedField(source='status.name')
+    agency = serializers.ReadOnlyField(read_only=True, source="agency.name")
+
+    class Meta:
+        model = Astronauts
+        fields = ('id', 'url', 'name', 'status', 'agency', 'nationality', 'profile_image')
+
+
+class AstronautFlightListSerializer(serializers.ModelSerializer):
+    role = serializers.StringRelatedField(read_only=True, source='role.role')
+    astronaut = AstronautListSerializer(read_only=True, many=False)
+
+    class Meta:
+        model = AstronautFlight
+        fields = ('role', 'astronaut')
+
+
+class ExpeditionSerializer(serializers.HyperlinkedModelSerializer):
+    crew = AstronautFlightListSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Expedition
+        fields = ('id', 'url', 'name', 'start', 'end', 'crew')
+
+
+class SpaceStationStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SpaceStationStatus
+        fields = ('name',)
+
+
+class SpacecraftFlightSerializer(serializers.HyperlinkedModelSerializer):
+    launch_crew = AstronautFlightListSerializer(read_only=True, many=True)
+    onboard_crew = AstronautFlightListSerializer(read_only=True, many=True)
+    landing_crew = AstronautFlightListSerializer(read_only=True, many=True)
     spacecraft = SpacecraftSerializer(read_only=True, many=False)
 
     class Meta:
         model = SpacecraftFlight
-        fields = ('splashdown', 'launch_crew', 'onboard_crew', 'landing_crew', 'spacecraft')
+        fields = ('id', 'url', 'splashdown', 'launch_crew', 'onboard_crew', 'landing_crew', 'spacecraft')
+
+
+class DockingEventSerializer(serializers.ModelSerializer):
+    flight_vehicle = SpacecraftFlightSerializer(read_only=True)
+    docking_location = serializers.StringRelatedField(many=False, read_only=True)
+
+    class Meta:
+        model = DockingEvent
+        fields = ('docking', 'departure', 'flight_vehicle', 'docking_location')
+
+
+class SpaceStationSerializer(serializers.HyperlinkedModelSerializer):
+    status = serializers.StringRelatedField(read_only=True, many=False, source='status.name')
+    owner = AgencySerializer(read_only=True, many=False)
+    orbit = serializers.StringRelatedField(many=False, read_only=True)
+    expedition = ExpeditionSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = SpaceStation
+        fields = ('id', 'url', 'name', 'founded', 'description', 'orbit', 'status', 'owner', 'expedition')
 
 
 class RocketSerializer(serializers.ModelSerializer):
@@ -221,26 +273,6 @@ class EntrySerializer(serializers.ModelSerializer):
         model = Entry
         fields = ('id', 'title', 'slug', 'publication_date', 'content', 'lead', 'excerpt', 'image', 'featured',)
 
-
-class SpacecraftFlightSerializer(serializers.ModelSerializer):
-    launch_crew = AstronautFlightSerializer(read_only=True, many=True)
-    onboard_crew = AstronautFlightSerializer(read_only=True, many=True)
-    landing_crew = AstronautFlightSerializer(read_only=True, many=True)
-    spacecraft = SpacecraftSerializer(read_only=True, many=False)
-
-    id = serializers.IntegerField(source='pk')
-
-    class Meta:
-        model = SpacecraftFlight
-        fields = ('id', 'splashdown', 'launch_crew', 'onboard_crew', 'landing_crew', 'spacecraft', 'destination')
-
-
-class ExpeditionSerializer(serializers.ModelSerializer):
-    crew = AstronautFlightSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Expedition
-        fields = ('name', 'start', 'end', 'crew')
 
 
 class AstronautNormalSerializer(serializers.HyperlinkedModelSerializer):

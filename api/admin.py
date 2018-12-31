@@ -225,6 +225,13 @@ class ExpeditionInline(admin.StackedInline):
     verbose_name_plural = "Expeditions"
 
 
+@admin.register(models.Expedition)
+class ExpeditionAdmin(admin.ModelAdmin):
+    list_display = ('name', 'start', 'end', 'space_station')
+    list_filter = ('space_station', 'space_station__owners__name')
+    search_fields = ('space_station__name', 'crew__name')
+
+
 @admin.register(models.DockingEvent)
 class DockingEventAdmin(admin.ModelAdmin):
     list_display = ('space_station', 'flight_vehicle')

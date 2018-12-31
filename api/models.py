@@ -543,9 +543,9 @@ class Astronauts(models.Model):
 
     @property
     def flights(self):
-        listi = list((Launch.objects.filter(Q(rocket__spacecraftflight__launch_crew__id=self.id) |
-                                            Q(rocket__spacecraftflight__onboard_crew__id=self.id) |
-                                            Q(rocket__spacecraftflight__landing_crew__id=self.id))
+        listi = list((Launch.objects.filter(Q(rocket__spacecraftflight__launch_crew__astronaut__id=self.id) |
+                                            Q(rocket__spacecraftflight__onboard_crew__astronaut__id=self.id) |
+                                            Q(rocket__spacecraftflight__landing_crew__astronaut__id=self.id))
                       .values_list('id', flat=True)
                       .distinct()))
         launches = Launch.objects.filter(id__in=listi)
@@ -608,7 +608,7 @@ class SpacecraftFlight(models.Model):
     landing_crew = models.ManyToManyField(AstronautFlight,
                                           related_name='landing_crew',
                                           blank=True)
-    spacecraft = models.ForeignKey(Spacecraft, on_delete=models.CASCADE)
+    spacecraft = models.ForeignKey(Spacecraft, related_name='spacecraftflight', on_delete=models.CASCADE)
     rocket = models.OneToOneField(Rocket, related_name='spacecraftflight', on_delete=models.CASCADE)
     destination = models.CharField(max_length=255, null=True, blank=True)
 
@@ -626,7 +626,7 @@ class SpacecraftFlight(models.Model):
 class SpaceStation(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     founded = models.DateField(null=False, blank=False)
-    owners = models.ManyToManyField(Agency, blank=False, null=False)
+    owners = models.ManyToManyField(Agency, blank=False)
     description = models.CharField(max_length=2048, null=False, blank=False)
     orbit = models.ForeignKey(Orbit, null=False, blank=False)
     status = models.ForeignKey(SpaceStationStatus, null=False, blank=False)

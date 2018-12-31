@@ -7,11 +7,13 @@ from zinnia.models import Entry
 from api.v330.detailed.serializers import AgencySerializerDetailed, \
     LauncherConfigDetailSerializer, \
     SpacecraftConfigurationDetailSerializer, LaunchDetailedSerializer, AstronautDetailedSerializer, \
-    SpaceStationDetailedSerializer, SpacecraftFlightDetailedSerializer
+    SpaceStationDetailedSerializer, SpacecraftFlightDetailedSerializer, SpacecraftDetailedSerializer, \
+    ExpeditionDetailSerializer
 from api.v330.list.serializers import LaunchListSerializer, AstronautListSerializer
 from api.v330.normal.serializers import EntrySerializer, AgencySerializer, \
     EventsSerializer, LaunchSerializer, \
-    LauncherDetailedSerializer, AstronautNormalSerializer
+    LauncherDetailedSerializer, AstronautNormalSerializer, SpacecraftFlightSerializer, SpacecraftSerializer, \
+    SpaceStationSerializer, ExpeditionSerializer
 from api.models import *
 from datetime import datetime, timedelta
 from api.models import LauncherConfig, SpacecraftConfiguration, Agency
@@ -167,6 +169,27 @@ class SpacecraftConfigViewSet(ModelViewSet):
     }
 
 
+class ExpeditionViewSet(ModelViewSet):
+    """
+    API endpoint that allows Spacecraft Configs to be viewed.
+
+    GET:
+    Return a list of all the existing spacecraft.
+    """
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return ExpeditionDetailSerializer
+        else:
+            return ExpeditionSerializer
+
+    queryset = Expedition.objects.all()
+    permission_classes = [HasGroupPermission]
+    permission_groups = {
+        'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
+        'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
+    }
+
+
 class AstronautViewSet(ModelViewSet):
     """
     API endpoint that allows Astronauts to be viewed.
@@ -199,18 +222,53 @@ class SpaceStationViewSet(ModelViewSet):
     GET:
     Return a list of all the existing spacecraft.
     """
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return SpaceStationDetailedSerializer
+        else:
+            return SpaceStationSerializer
+
     queryset = SpaceStation.objects.all()
-    serializer_class = SpaceStationDetailedSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
         'retrieve': ['_Public'], # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public'] # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filter_fields = ('name', 'status')
+    search_fields = ('$name', 'spacecraft_config__name',)
+    ordering_fields = ('id', )
+
+
+class SpacecraftViewSet(ModelViewSet):
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return SpacecraftDetailedSerializer
+        else:
+            return SpacecraftSerializer
+
+    queryset = Spacecraft.objects.all()
+    permission_classes = [HasGroupPermission]
+    permission_groups = {
+        'retrieve': ['_Public'], # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
+        'list': ['_Public'] # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
+    }
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filter_fields = ('name', 'status')
+    search_fields = ('$name', 'spacecraft_config__name',)
+    ordering_fields = ('id', )
 
 
 class SpaceflightFlightViewSet(ModelViewSet):
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return SpacecraftFlightDetailedSerializer
+        else:
+            return SpacecraftFlightSerializer
+
     queryset = SpacecraftFlight.objects.all()
-    serializer_class = SpacecraftFlightDetailedSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
         'retrieve': ['_Public'], # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
