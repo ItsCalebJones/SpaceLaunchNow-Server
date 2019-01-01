@@ -1,13 +1,13 @@
 from api.models import *
 from rest_framework import serializers
 
-from api.v330.normal.serializers import LaunchStatusSerializer
+from api.v330.normal.serializers import LaunchStatusSerializer, AstronautStatusSerializer
 
 CACHE_TIMEOUT_ONE_DAY = 24 * 60 * 60
 
 
 class AstronautListSerializer(serializers.HyperlinkedModelSerializer):
-    status = serializers.StringRelatedField(source='status.name')
+    status = AstronautStatusSerializer(read_only=True)
     agency = serializers.ReadOnlyField(read_only=True, source="agency.name")
 
     class Meta:

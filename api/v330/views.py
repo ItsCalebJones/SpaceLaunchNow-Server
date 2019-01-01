@@ -1,19 +1,23 @@
+
+import django_filters
 import pytz
 from django.db.models import Q, Count
-from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import filters
+from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 from zinnia.models import Entry
+from django.utils.translation import ugettext as _
 from api.v330.detailed.serializers import AgencySerializerDetailed, \
     LauncherConfigDetailSerializer, \
     SpacecraftConfigurationDetailSerializer, LaunchDetailedSerializer, AstronautDetailedSerializer, \
     SpaceStationDetailedSerializer, SpacecraftFlightDetailedSerializer, SpacecraftDetailedSerializer, \
-    ExpeditionDetailSerializer
+    ExpeditionDetailSerializer, DockingEventDetailedSerializer
 from api.v330.list.serializers import LaunchListSerializer, AstronautListSerializer
 from api.v330.normal.serializers import EntrySerializer, AgencySerializer, \
     EventsSerializer, LaunchSerializer, \
     LauncherDetailedSerializer, AstronautNormalSerializer, SpacecraftFlightSerializer, SpacecraftSerializer, \
-    SpaceStationSerializer, ExpeditionSerializer
+    SpaceStationSerializer, ExpeditionSerializer, DockingEventSerializer
 from api.models import *
 from datetime import datetime, timedelta
 from api.models import LauncherConfig, SpacecraftConfiguration, Agency
@@ -169,6 +173,27 @@ class SpacecraftConfigViewSet(ModelViewSet):
     }
 
 
+class DockingEventViewSet(ModelViewSet):
+    """
+    API endpoint that allows Docking Events to be viewed.
+
+    GET:
+    Return a list of all the existing spacecraft.
+    """
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return DockingEventDetailedSerializer
+        else:
+            return DockingEventSerializer
+
+    queryset = DockingEvent.objects.all()
+    permission_classes = [HasGroupPermission]
+    permission_groups = {
+        'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
+        'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
+    }
+
+
 class ExpeditionViewSet(ModelViewSet):
     """
     API endpoint that allows Spacecraft Configs to be viewed.
@@ -188,6 +213,47 @@ class ExpeditionViewSet(ModelViewSet):
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
+
+
+class AstronautsFilter(django_filters.FilterSet):
+    date_of_birth__gt = filters.DateFilter(
+        field_name='date_of_birth', lookup_expr='gt',
+        label=_('%s is greater than' % _('Date of Birth'))
+    )
+    date_of_birth__lt = filters.DateFilter(
+        field_name='date_of_birth', lookup_expr='lt',
+        label=_('%s is less than' % _('Date of Birth'))
+    )
+    date_of_birth__gte = filters.DateFilter(
+        field_name='date_of_birth', lookup_expr='gt',
+        label=_('%s is greater than or equal to' % _('Date of Birth'))
+    )
+    date_of_birth__lte = filters.DateFilter(
+        field_name='date_of_birth', lookup_expr='lt',
+        label=_('%s is greater than or equal to' % _('Date of Birth'))
+    )
+    date_of_death__gt = filters.DateFilter(
+        field_name='date_of_birth', lookup_expr='gt',
+        label=_('%s is greater than' % _('Date of Birth'))
+    )
+    date_of_death__lt = filters.DateFilter(
+        field_name='date_of_death', lookup_expr='lt',
+        label=_('%s is less than' % _('Date of death'))
+    )
+    date_of_death__gte = filters.DateFilter(
+        field_name='date_of_death', lookup_expr='gt',
+        label=_('%s is greater than or equal to' % _('Date of death'))
+    )
+    date_of_death__lte = filters.DateFilter(
+        field_name='date_of_death', lookup_expr='lt',
+        label=_('%s is greater than or equal to' % _('Date of death'))
+    )
+
+    class Meta:
+        model = Astronauts
+        fields = {
+            'name', 'status', 'nationality', 'agency__name', 'agency__abbrev', 'date_of_birth', 'date_of_death'
+        }
 
 
 class AstronautViewSet(ModelViewSet):
@@ -213,6 +279,11 @@ class AstronautViewSet(ModelViewSet):
             return AstronautListSerializer
         else:
             return AstronautNormalSerializer
+
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filter_class = AstronautsFilter
+    search_fields = ('$name', 'nationality', 'agency__name')
+    ordering_fields = ('name', 'status', )
 
 
 class SpaceStationViewSet(ModelViewSet):
@@ -292,6 +363,31 @@ class EventViewSet(ModelViewSet):
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
+
+
+class LaunchFilter(django_filters.FilterSet):
+    net__gt = filters.DateFilter(
+        field_name='net', lookup_expr='gt',
+        label=_('%s is greater than' % _('NET'))
+    )
+    net__lt = filters.DateFilter(
+        field_name='net', lookup_expr='lt',
+        label=_('%s is less than' % _('NET'))
+    )
+    net__gte = filters.DateFilter(
+        field_name='net', lookup_expr='gte',
+        label=_('%s is greater than or equal to' % _('NET'))
+    )
+    net__lte = filters.DateFilter(
+        field_name='net', lookup_expr='lte',
+        label=_('%s is less than or equal to' % _('NET'))
+    )
+
+    class Meta:
+        model = Launch
+        fields = {
+            'name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status'
+        }
 
 
 class LaunchViewSet(ModelViewSet):
@@ -437,7 +533,7 @@ class LaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status')
+    filter_class = LaunchFilter
     search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
                      '$rocket__configuration__launch_agency__abbrev', '$mission__name', '$pad__location__name',
                      '$pad__name')

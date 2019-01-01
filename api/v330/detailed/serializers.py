@@ -7,7 +7,7 @@ from api.v330.list.serializers import LaunchListSerializer
 from api.v330.normal.serializers import AgencySerializer, FirstStageSerializer, \
     SecondStageSerializer, PadSerializer, \
     MissionSerializer, LaunchStatusSerializer, SpacecraftStatusSerializer, SpacecraftFlightSerializer, \
-    ExpeditionSerializer
+    AstronautStatusSerializer, SpaceStationStatusSerializer
 
 CACHE_TIMEOUT_ONE_DAY = 24 * 60 * 60
 
@@ -111,7 +111,7 @@ class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializ
 
 
 class AstronautDetailedSerializer(serializers.HyperlinkedModelSerializer):
-    status = serializers.StringRelatedField(source='status.name')
+    status = AstronautStatusSerializer(read_only=True)
     agency = AgencySerializerMini(read_only=True, many=False)
     flights = LaunchListSerializer(read_only=True, many=True)
 
@@ -122,23 +122,33 @@ class AstronautDetailedSerializer(serializers.HyperlinkedModelSerializer):
                   'twitter', 'instagram', 'bio', 'profile_image', 'wiki', 'flights')
 
 
-class AstronautFlightSerializer(serializers.ModelSerializer):
-    role = serializers.StringRelatedField(read_only=True, source='role.role')
-    astronaut = AstronautDetailedSerializer(read_only=True, many=False)
-
-    class Meta:
-        model = AstronautFlight
-        fields = ('role', 'astronaut')
-
-
-class AstronautSerializer(serializers.HyperlinkedModelSerializer):
-    status = serializers.StringRelatedField(read_only=True, many=False, source='status.name')
-    agency = serializers.StringRelatedField(read_only=True, source='agency.name')
+class AstronautDetailedSerializerNoFlights(serializers.HyperlinkedModelSerializer):
+    status = AstronautStatusSerializer(read_only=True)
+    agency = AgencySerializerMini(read_only=True, many=False)
 
     class Meta:
         model = Astronauts
         # fields = ('name',)
+        fields = ('id', 'url', 'name', 'status', 'agency', 'date_of_birth', 'date_of_death', 'nationality',
+                  'twitter', 'instagram', 'bio', 'profile_image', 'wiki',)
+
+
+class AstronautSerializer(serializers.HyperlinkedModelSerializer):
+    status = AstronautStatusSerializer(read_only=True)
+    agency = serializers.StringRelatedField(read_only=True, source='agency.name')
+
+    class Meta:
+        model = Astronauts
         fields = ('id', 'url', 'name', 'status', 'agency', 'profile_image')
+
+
+class AstronautFlightSerializer(serializers.ModelSerializer):
+    role = serializers.StringRelatedField(read_only=True, source='role.role')
+    astronaut = AstronautDetailedSerializerNoFlights(read_only=True, many=False)
+
+    class Meta:
+        model = AstronautFlight
+        fields = ('role', 'astronaut')
 
 
 class AstronautFlightForExpeditionSerializer(serializers.ModelSerializer):
@@ -150,12 +160,30 @@ class AstronautFlightForExpeditionSerializer(serializers.ModelSerializer):
         fields = ('role', 'astronaut')
 
 
+class AgencyListSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Agency
+        fields = ('id', 'url', 'name', 'abbrev',)
+
+
+class SpaceStationDetailedSerializerForExpedition(serializers.HyperlinkedModelSerializer):
+    status = SpaceStationStatusSerializer(read_only=True, many=False)
+    owners = AgencyListSerializer(read_only=True, many=False)
+    orbit = serializers.StringRelatedField(many=False, read_only=True)
+
+    class Meta:
+        model = SpaceStation
+        fields = ('id', 'url', 'name', 'status', 'founded', 'description', 'orbit', 'owners',)
+
+
 class ExpeditionDetailSerializer(serializers.HyperlinkedModelSerializer):
     crew = AstronautFlightForExpeditionSerializer(many=True, read_only=True)
+    spacestation = SpaceStationDetailedSerializerForExpedition(many=False, read_only=True, source='space_station')
 
     class Meta:
         model = Expedition
-        fields = ('id', 'url', 'name', 'start', 'end', 'crew')
+        fields = ('id', 'url', 'name', 'start', 'end', 'spacestation', 'crew')
 
 
 class SpacecraftDetailedSerializer(serializers.HyperlinkedModelSerializer):
@@ -168,38 +196,90 @@ class SpacecraftDetailedSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'url', 'name', 'serial_number', 'status', 'spacecraft_config', 'flights')
 
 
+class SpacecraftDetailedNoFlightsSerializer(serializers.HyperlinkedModelSerializer):
+    status = serializers.StringRelatedField(source='status.name', read_only=True, many=False)
+    spacecraft_config = SpacecraftConfigurationDetailSerializer(read_only=True, many=False)
+
+    class Meta:
+        model = Spacecraft
+        fields = ('id', 'url', 'name', 'serial_number', 'status', 'spacecraft_config',)
+
+
+class SpacecraftFlightSerializer(serializers.HyperlinkedModelSerializer):
+    spacecraft = serializers.StringRelatedField(read_only=True, many=False)
+
+    class Meta:
+        model = SpacecraftFlight
+        fields = ('id', 'url', 'destination', 'splashdown', 'spacecraft')
+
+
+class DockingEventDetailedSerializerForSpacestation(serializers.HyperlinkedModelSerializer):
+    flight_vehicle = serializers.StringRelatedField(read_only=True, many=False)
+    docking_location = serializers.StringRelatedField(many=False, read_only=True)
+
+    class Meta:
+        model = DockingEvent
+        fields = ('id', 'url', 'docking', 'departure', 'flight_vehicle', 'docking_location')
+
+
+class DockingEventDetailedSerializer(serializers.HyperlinkedModelSerializer):
+    flight_vehicle = SpacecraftFlightSerializer(read_only=True, many=False)
+    docking_location = serializers.StringRelatedField(many=False, read_only=True)
+
+    class Meta:
+        model = DockingEvent
+        fields = ('id', 'url', 'docking', 'departure', 'flight_vehicle', 'docking_location')
+
+
+class SpaceStationSerializerForDockingEvent(serializers.HyperlinkedModelSerializer):
+    status = SpaceStationStatusSerializer(read_only=True, many=False)
+    orbit = serializers.StringRelatedField(many=False, read_only=True)
+
+    class Meta:
+        model = SpaceStation
+        fields = ('id', 'url', 'name', 'status', 'founded', 'description', 'orbit',)
+
+
+class DockingEventSerializerForSpacecraftFlight(serializers.ModelSerializer):
+    docking_location = serializers.StringRelatedField(many=False, read_only=True)
+    spacestation = SpaceStationSerializerForDockingEvent(many=False, read_only=True, source='space_station')
+
+    class Meta:
+        model = DockingEvent
+        fields = ('spacestation', 'docking', 'departure', 'docking_location')
+
+
 class SpacecraftFlightDetailedSerializer(serializers.HyperlinkedModelSerializer):
     launch_crew = AstronautFlightSerializer(read_only=True, many=True)
     onboard_crew = AstronautFlightSerializer(read_only=True, many=True)
     landing_crew = AstronautFlightSerializer(read_only=True, many=True)
-    spacecraft = SpacecraftDetailedSerializer(read_only=True, many=False)
+    spacecraft = SpacecraftDetailedNoFlightsSerializer(read_only=True, many=False)
+    docking_events = DockingEventSerializerForSpacecraftFlight(read_only=True, many=True)
     launch = LaunchListSerializer(read_only=True, many=False, source='rocket.launch')
     id = serializers.IntegerField(source='pk')
 
     class Meta:
         model = SpacecraftFlight
-        fields = ('id', 'url', 'splashdown', 'launch_crew', 'onboard_crew', 'landing_crew', 'spacecraft', 'destination', 'launch')
+        fields = ('id', 'url', 'splashdown', 'destination', 'launch_crew', 'onboard_crew', 'landing_crew', 'spacecraft', 'launch', 'docking_events')
 
 
-class DockingEventDetailedSerializer(serializers.ModelSerializer):
-    flight_vehicle = SpacecraftFlightSerializer(read_only=True)
-    docking_location = serializers.StringRelatedField(many=False, read_only=True)
+class ExpeditionSerializerForSpacestation(serializers.HyperlinkedModelSerializer):
 
     class Meta:
-        model = DockingEvent
-        fields = ('docking', 'departure', 'flight_vehicle', 'docking_location')
+        model = Expedition
+        fields = ('id', 'url', 'name', 'start', 'end',)
 
 
 class SpaceStationDetailedSerializer(serializers.HyperlinkedModelSerializer):
-    status = serializers.StringRelatedField(read_only=True, many=False, source='status.name')
-    owner = AgencySerializer(read_only=True, many=False)
+    status = SpaceStationStatusSerializer(read_only=True, many=False)
+    owners = AgencySerializer(read_only=True, many=True)
     orbit = serializers.StringRelatedField(many=False, read_only=True)
-    docking_events = DockingEventDetailedSerializer(read_only=True, many=True)
-    expedition = ExpeditionSerializer(read_only=True, many=True)
+    docking_events = DockingEventDetailedSerializerForSpacestation(read_only=True, many=True)
+    expedition = ExpeditionSerializerForSpacestation(read_only=True, many=True)
 
     class Meta:
         model = SpaceStation
-        fields = ('id', 'url', 'name', 'founded', 'description', 'orbit', 'status', 'owner', 'docking_events', 'expedition')
+        fields = ('id', 'url', 'name', 'status', 'founded', 'description', 'orbit', 'owners', 'docking_events', 'expedition')
 
 
 class RocketDetailedSerializer(serializers.ModelSerializer):

@@ -249,7 +249,8 @@ class SpacecraftFlightAdmin(admin.ModelAdmin):
     list_display = ('spacecraft_name', )
     list_filter = ('spacecraft__spacecraft_config', 'spacecraft__status',
                    'rocket__configuration__launch_agency__name')
-    search_fields = ('spacecraft__name', 'rocket__name', 'rocket__launch_name')
+    search_fields = ('id', 'spacecraft__name', 'landing_crew__astronaut__name', 'launch_crew__astronaut__name',
+                     'onboard_crew__astronaut__name')
     inlines = [DockingEventInline,]
 
     def spacecraft_name(self, obj):
