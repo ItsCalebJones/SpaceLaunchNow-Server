@@ -2,6 +2,12 @@
 {% load rest_framework %}
 {% load staticfiles%}
 
+
+
+{% block head %}
+
+<title>{% block title %}{% if name and 'Space Launch' not in name%}{{ name }} | {% endif %}Space Launch Now - API{% endblock %}</title>
+
 {% block style %}
 {{ block.super }}
 <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.ico' %}" />
@@ -9,6 +15,8 @@
 
 {% block bootstrap_theme %}
     <link href="{% static  'material_kit/css/bootswatch-paper.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% endblock %}
 
 {% load i18n %}
