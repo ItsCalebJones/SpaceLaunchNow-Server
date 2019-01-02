@@ -9,6 +9,23 @@ from api.v330.spacecraft.serializers import SpacecraftDetailedSerializer, Spacec
 
 # TODO docs and filters
 class SpacecraftViewSet(ModelViewSet):
+    """
+    API endpoint that allows Spacecraft to be viewed.
+
+    GET:
+    Return a list of all the existing spacecraft.
+
+    FILTERS:
+    Parameters - 'name', 'status'
+    Example - /3.3.0/spacecraft/?status=Active
+
+    SEARCH EXAMPLE:
+    Example - /3.3.0/spacecraft/?search=Dragon
+
+    ORDERING:
+    Fields - 'id'
+    Example - /3.3.0/spacecraft/?order=id
+    """
 
     def get_serializer_class(self):
         if self.action == 'retrieve':

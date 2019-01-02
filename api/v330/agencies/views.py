@@ -8,7 +8,6 @@ from api.v330.agencies.serializers import AgencySerializerDetailed, AgencySerial
 from api.permission import HasGroupPermission
 
 
-# TODO docs
 class AgencyViewSet(ModelViewSet):
     """
     API endpoint that allows Agencies to be viewed.
@@ -18,14 +17,14 @@ class AgencyViewSet(ModelViewSet):
 
     FILTERS:
     Parameters - 'featured', 'launch_library_id', 'detailed',
-    Example - /3.2.0/agencies/?featured=true&launch_library_id=44&detailed
+    Example - /3.3.0/agencies/?featured=true&launch_library_id=44&detailed
 
     SEARCH EXAMPLE:
-    /3.2.0/agencies/?search=nasa
+    /3.3.0/agencies/?search=nasa
 
     ORDERING:
     Fields - 'id', 'name', 'featured', 'launch_library_id'
-    Example - /3.2.0/agencies/?ordering=featured
+    Example - /3.3.0/agencies/?ordering=featured
 
     """
 

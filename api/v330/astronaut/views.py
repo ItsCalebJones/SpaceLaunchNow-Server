@@ -8,14 +8,27 @@ from api.v330.astronaut.filters import AstronautsFilter
 from api.v330.astronaut.serializers import AstronautDetailedSerializer, AstronautListSerializer, AstronautNormalSerializer
 
 
-# TODO docs
 class AstronautViewSet(ModelViewSet):
     """
     API endpoint that allows Astronauts to be viewed.
 
     GET:
-    Return a list of all the existing spacecraft.
+    Return a list of all the existing astronauts.
+
+    FILTERS:
+    Parameters - 'name', 'status', 'nationality', 'agency__name', 'agency__abbrev', 'date_of_birth', 'date_of_death'
+    Example - /3.3.0/astronaut/?nationality=American
+
+    SEARCH EXAMPLE:
+    /3.3.0/astronaut/?search=armstrong
+    Searches through name, nationality and agency name
+
+    ORDERING:
+    Fields - 'name', 'status'
+    Example - /3.3.0/astronaut/?order=name
+
     """
+
     queryset = Astronauts.objects.all()
     permission_classes = [HasGroupPermission]
     permission_groups = {

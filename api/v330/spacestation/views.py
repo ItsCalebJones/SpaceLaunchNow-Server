@@ -7,14 +7,26 @@ from api.permission import HasGroupPermission
 from api.v330.spacestation.serializers import SpaceStationDetailedSerializer, SpaceStationSerializer
 
 
-# TODO docs
 class SpaceStationViewSet(ModelViewSet):
     """
     API endpoint that allows Space Stations to be viewed.
 
     GET:
     Return a list of all the existing space stations.
+
+    FILTERS:
+    Parameters - 'name', 'status'
+    Example - /3.3.0/spacestation/?status=Active
+
+    SEARCH EXAMPLE:
+    Example - /3.3.0/spacestation/?search=ISS
+    Searches through name and spacecraft config name.
+
+    ORDERING:
+    Fields - 'id'
+    Example - /3.3.0/spacestation/?order=id
     """
+
     def get_serializer_class(self):
         if self.action == 'retrieve':
             return SpaceStationDetailedSerializer
