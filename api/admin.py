@@ -208,7 +208,7 @@ class InfoAdmin(admin.ModelAdmin):
 @admin.register(models.Astronauts)
 class AstronautsAdmin(admin.ModelAdmin):
     list_display = ('name', 'nationality', 'status', 'agency')
-    list_filter = ('name', 'nationality', 'status', 'agency')
+    list_filter = ('nationality', 'status', 'agency')
     search_fields = ('name', 'agency__name')
     readonly_fields = ["slug"]
     form = AstronautForm
