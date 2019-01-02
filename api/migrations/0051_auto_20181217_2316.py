@@ -49,7 +49,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='spacestation',
             name='orbit',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='configurations.Orbit'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='configurations.Orbit', null=True, blank=True),
         ),
         migrations.AddField(
             model_name='expedition',
