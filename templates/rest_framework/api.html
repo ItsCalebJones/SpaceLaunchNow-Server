@@ -1,6 +1,12 @@
 {% extends "rest_framework/base.html" %}
 {% load rest_framework %}
 {% load staticfiles%}
+
+{% block style %}
+{{ block.super }}
+<link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.ico' %}" />
+{% endblock %}
+
 {% block bootstrap_theme %}
     <link href="{% static  'material_kit/css/bootswatch-paper.css' %}" rel="stylesheet">
 {% endblock %}
