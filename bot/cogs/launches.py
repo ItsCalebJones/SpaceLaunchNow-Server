@@ -1,6 +1,7 @@
 import datetime
 
 import discord
+import pytz
 from discord import Colour
 from discord.ext import commands
 from django.db.models import Q
@@ -82,7 +83,7 @@ def launch_to_large_embed(launch):
                    "spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)," \
                    " [iOS](https://itunes.apple.com/us/app/space-launch-now/id1399715731)" \
                    " or [on the web](https://spacelaunchnow.me/next)"
-    lsp_text = "\n\n**Launch Service Provider**\n%s (%s)\n%s\n%s\n%s" % (
+    lsp_text = "\n\n**Launch Service Provider**\n%s (%s)\n%s\n%s\n%s\n" % (
         launch.rocket.configuration.launch_agency.name, launch.rocket.configuration.launch_agency.abbrev,
         launch.rocket.configuration.launch_agency.administrator, launch.rocket.configuration.launch_agency.info_url,
         launch.rocket.configuration.launch_agency.wiki_url)
@@ -105,21 +106,39 @@ def launch_to_large_embed(launch):
             if vehicle.landing is not None:
                 if vehicle.landing.landing_type is not None and vehicle.landing.landing_location is not None:
                     if vehicle.landing.success is None:
-                        vehicle_text = vehicle_text + "%s landing at %s\n" % (vehicle.landing.landing_type.abbrev,
+                        vehicle_text = vehicle_text + "%s landing at %s" % (vehicle.landing.landing_type.abbrev,
                                                                               vehicle.landing.landing_location.name)
                     elif vehicle.landing.success:
-                        vehicle_text = vehicle_text + "%s landed at %s\n" % (vehicle.landing.landing_type.abbrev,
+                        vehicle_text = vehicle_text + "%s landed at %s" % (vehicle.landing.landing_type.abbrev,
                                                                              vehicle.landing.landing_location.name)
                     elif not vehicle.landing.success:
-                        vehicle_text = vehicle_text + "%s failed to land at %s\n" % (
+                        vehicle_text = vehicle_text + "%s failed to land at %s" % (
                             vehicle.landing.landing_type.abbrev,
                             vehicle.landing.landing_location.name)
-        vehicle_text = vehicle_text + "\n"
+        vehicle_text = vehicle_text
+
+    countdown = launch.net - datetime.datetime.now(pytz.utc)
+    seconds = countdown.total_seconds()
+    days, remainder = divmod(seconds, 86400)
+    hours, remainder = divmod(remainder, 3600)
+    minutes, seconds = divmod(remainder, 60)
+
+    formatted_countdown = ''
+
+    if days != 0:
+        formatted_countdown += str(int(days)) + ' Days '
+    if hours != 0:
+        formatted_countdown += str(int(hours)) + ' Hours '
+    if minutes != 0:
+        formatted_countdown += str(int(minutes)) + ' Minutes '
+
+    formatted_countdown = '\n**NET In ' + formatted_countdown + '**'
+
     mission_text = "\n\n**Mission**\n%s\nOrbit: %s\nType: %s" % (launch.mission, launch.mission.orbit,
                                                                  launch.mission.mission_type)
     location = "\n\n**Launch and Landing Location**\n%s\n%s" % (launch.pad.name.split(',', 1)[0],
                                                                 launch.pad.location.name)
-    description_text = status + launch.mission.description + vehicle_text + mission_text + location + lsp_text + follow_along
+    description_text = status + launch.mission.description + vehicle_text + mission_text + location + lsp_text + formatted_countdown + follow_along
     embed = discord.Embed(type="rich", title=title,
                           description=description_text,
                           color=color,
@@ -137,6 +156,15 @@ def launch_to_small_embed(launch, notification=""):
     title = "%s" % launch.name
     color = get_color(launch.status.id)
     status = "**Status:** %s\n" % launch.status.name
+    location = "**Location:** %s\n" % launch.pad.name
+    landing = ''
+    if len(launch.rocket.firststage.all()) > 0:
+        launchers = launch.rocket.firststage.all()
+        for vehicle in launchers:
+            if vehicle.landing.attempt and vehicle.landing.landing_location:
+                landing = "**Landing:** %s (%s)\n" % (vehicle.landing.landing_location.name,
+                                                      vehicle.landing.landing_type.abbrev)
+                break
     follow_along = "\n\n Follow along on [Android](https://play.google.com/store/apps/details?id=me.calebjones." \
                    "spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)," \
                    " [iOS](https://itunes.apple.com/us/app/space-launch-now/id1399715731)" \
@@ -147,7 +175,26 @@ def launch_to_small_embed(launch, notification=""):
     fail_reason = ""
     if launch.failreason is not None and launch.failreason is not '':
         fail_reason = "\n**Update:** %s\n" % launch.failreason
-    description_text = notification + status + fail_reason + mission_description + follow_along
+
+    countdown = launch.net - datetime.datetime.now(pytz.utc)
+    seconds = countdown.total_seconds()
+    days, remainder = divmod(seconds, 86400)
+    hours, remainder = divmod(remainder, 3600)
+    minutes, seconds = divmod(remainder, 60)
+
+    formatted_countdown = ''
+
+    if days != 0:
+        formatted_countdown += str(int(days)) + ' Days '
+    if hours != 0:
+        formatted_countdown += str(int(hours)) + ' Hours '
+    if minutes != 0:
+        formatted_countdown += str(int(minutes)) + ' Minutes '
+
+    formatted_countdown = '\n**NET In ' + formatted_countdown + '**'
+
+    description_text = notification + status + location + landing + fail_reason + mission_description + formatted_countdown + follow_along
+
     embed = discord.Embed(type="rich", title=title,
                           description=description_text,
                           color=color,
@@ -160,7 +207,7 @@ def launch_to_small_embed(launch, notification=""):
             embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
     else:
         embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
-    embed.set_footer(text=launch.net.strftime("NET: %A %B %e, %Y %H:%M %Z "))
+    embed.set_footer(text=launch.net.strftime("NET: %A %B %e, %Y %H:%M %Z"))
     return embed
 
 
