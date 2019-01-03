@@ -7,7 +7,6 @@ from api.permission import HasGroupPermission
 from api.v330.launcher.serializers import LauncherDetailSerializer, LauncherSerializer
 
 
-# TODO docs
 class LauncherViewSet(ModelViewSet):
     """
     API endpoint that allows Launcher instances to be viewed.
@@ -16,13 +15,10 @@ class LauncherViewSet(ModelViewSet):
     Return a list of all the existing launcher instances.
 
     FILTERS:
-
-    Get all Launchers with the Launch Library ID of 44.
-    Example - /3.2.0/launcher
-
-    Get all Launchers with the Agency with name NASA.
-    Example - /3.2.0/launcher/?launch_agency__name=NASA
+    Parameters - 'id', 'serial_number'
+    Example - /3.3.0/launcher/?serial_number=B1046
     """
+
     def get_serializer_class(self):
         if self.action == 'retrieve':
             return LauncherDetailSerializer

@@ -12,10 +12,10 @@ from api.v330.expedition.serializers import ExpeditionDetailSerializer, Expediti
 # TODO docs and filters
 class ExpeditionViewSet(ModelViewSet):
     """
-    API endpoint that allows Spacecraft Configs to be viewed.
+    API endpoint that allows Expeditions to be viewed.
 
     GET:
-    Return a list of all the existing spacecraft.
+    Return a list of all the existing expeditions.
     """
     def get_serializer_class(self):
         if self.action == 'retrieve':
