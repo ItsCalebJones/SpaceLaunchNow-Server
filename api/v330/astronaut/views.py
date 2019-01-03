@@ -15,6 +15,10 @@ class AstronautViewSet(ModelViewSet):
     GET:
     Return a list of all the existing astronauts.
 
+    MODE:
+    Normal, List and Detailed
+    /3.3.0/astronaut/?mode=detailed
+
     FILTERS:
     Parameters - 'name', 'status', 'nationality', 'agency__name', 'agency__abbrev', 'date_of_birth', 'date_of_death'
     Example - /3.3.0/astronaut/?nationality=American
@@ -37,7 +41,6 @@ class AstronautViewSet(ModelViewSet):
     }
 
     def get_serializer_class(self):
-        print(self.request.query_params.keys())
         mode = self.request.query_params.get("mode", "normal")
         if mode == "detailed" or self.action == 'retrieve':
             return AstronautDetailedSerializer

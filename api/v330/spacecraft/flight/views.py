@@ -7,11 +7,20 @@ from api.permission import HasGroupPermission
 from api.v330.common.serializers import SpacecraftFlightDetailedSerializer, SpacecraftFlightSerializer
 
 
-# TODO docs and filters
 class SpaceflightFlightViewSet(ModelViewSet):
+    """
+    API endpoint that allows a flight of a specific Spacecraft instances to be viewed.
 
+    GET:
+    Return a list of all the existing Spacecraft flights.
+
+    FILTERS:
+    Parameters - 'spacecraft'
+    Example - /api/3.3.0/launcher/?spacecraft=37
+    """
     def get_serializer_class(self):
-        if self.action == 'retrieve':
+        mode = self.request.query_params.get("mode", "normal")
+        if self.action == 'retrieve' or mode == "detailed":
             return SpacecraftFlightDetailedSerializer
         else:
             return SpacecraftFlightSerializer
@@ -22,3 +31,5 @@ class SpaceflightFlightViewSet(ModelViewSet):
         'retrieve': ['_Public'], # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public'] # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('spacecraft',)
