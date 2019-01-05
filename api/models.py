@@ -630,6 +630,19 @@ class SpaceStation(models.Model):
     description = models.CharField(max_length=2048, null=False, blank=False)
     orbit = models.ForeignKey(Orbit, null=False, blank=False)
     status = models.ForeignKey(SpaceStationStatus, null=False, blank=False)
+    active_expeditions = models.ManyToManyField('Expedition')
+
+    @property
+    def onboard_crew(self):
+        count = 0
+        onboard = Astronauts.objects.values('id').filter(astronautflight__expeditions__in=self.active_expeditions.all()).count()
+        count += onboard
+        return count
+
+    @property
+    def docked_vehicles(self):
+        docked = SpacecraftFlight.objects.filter(docking_events__space_station__active_expeditions__in=self.active_expeditions.all())
+        return docked
 
     def __str__(self):
         return self.name
@@ -644,7 +657,7 @@ class SpaceStation(models.Model):
 
 class Expedition(models.Model):
     space_station = models.ForeignKey(SpaceStation, on_delete=models.CASCADE,
-                                      related_name='expedition')
+                                      related_name='expeditions')
     name = models.CharField(max_length=255, null=False, blank=False)
     start = models.DateTimeField(null=False, blank=False)
     end = models.DateTimeField(null=True, blank=True)

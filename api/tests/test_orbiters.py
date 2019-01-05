@@ -101,7 +101,7 @@ class OrbiterTests(SLNAPITests):
         """
         Ensure orbiter endpoints work as expected. Now config.
         """
-        path = '/api/3.3.0/spacecraft_config/'
+        path = '/api/3.3.0/config/spacecraft/?mode=detailed'
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content.decode('utf-8'))

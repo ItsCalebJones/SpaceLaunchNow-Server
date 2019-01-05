@@ -91,16 +91,17 @@ def setUpModule():
                                         twitter="SpaceX",
                                         bio="Driver of a cherry red roadster")
     iss_status = SpaceStationStatus.objects.create(name='Active')
+    orbit, created = Orbit.objects.get_or_create(name="Low Earth Orbit",
+                                        abbrev="LEO")
     iss = SpaceStation.objects.create(id=1,
                                       name="ISS",
                                       founded=datetime.datetime.strptime(
                                           '20/11/1998',
                                           '%d/%m/%Y'),
-                                      owner=spacex,
                                       status=iss_status,
                                       description="International Station",
-                                      orbit='LEO')
-    iss.crew.add(starman)
+                                      orbit=orbit)
+    iss.owners.add(spacex)
 
 
 class SLNAPITests(APITestCase):
