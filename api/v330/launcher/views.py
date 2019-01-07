@@ -7,7 +7,6 @@ from api.permission import HasGroupPermission
 from api.v330.launcher.serializers import LauncherDetailSerializer, LauncherSerializer
 
 
-# TODO docs
 class LauncherViewSet(ModelViewSet):
     """
     API endpoint that allows Launcher instances to be viewed.
@@ -16,15 +15,21 @@ class LauncherViewSet(ModelViewSet):
     Return a list of all the existing launcher instances.
 
     FILTERS:
+    Parameters - 'id', 'serial_number', 'flight_proven', 'launcher_config', 'launcher_config__launch_agency'
+    Example - /api/3.3.0/launcher/?serial_number=B1046
 
-    Get all Launchers with the Launch Library ID of 44.
-    Example - /3.2.0/launcher
+    SEARCH EXAMPLE:
+    /api/3.3.0/launcher/?search=expended
+    Searches through serial number or status
 
-    Get all Launchers with the Agency with name NASA.
-    Example - /3.2.0/launcher/?launch_agency__name=NASA
+    ORDERING:
+    Fields - 'id', 'flight_proven',
+    Example - /api/3.3.0/launcher/?order=flight_proven
     """
+
     def get_serializer_class(self):
-        if self.action == 'retrieve':
+        mode = self.request.query_params.get("mode", "normal")
+        if self.action == 'retrieve' or mode == "detailed":
             return LauncherDetailSerializer
         else:
             return LauncherSerializer
@@ -36,5 +41,7 @@ class LauncherViewSet(ModelViewSet):
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public']
     }
-    filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('id', 'serial_number',)
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filter_fields = ('id', 'serial_number', 'flight_proven', 'launcher_config', 'launcher_config__launch_agency')
+    search_fields = ('^serial_number', '^status',)
+    ordering_fields = ('id', 'flight_proven',)

@@ -8,14 +8,37 @@ from api.v330.astronaut.filters import AstronautsFilter
 from api.v330.astronaut.serializers import AstronautDetailedSerializer, AstronautListSerializer, AstronautNormalSerializer
 
 
-# TODO docs
 class AstronautViewSet(ModelViewSet):
     """
     API endpoint that allows Astronauts to be viewed.
 
     GET:
-    Return a list of all the existing spacecraft.
+    Return a list of all the existing astronauts.
+
+    MODE:
+    Normal, List and Detailed
+    /3.3.0/astronaut/?mode=detailed
+
+    FILTERS:
+    Parameters - 'name', 'status', 'nationality', 'agency__name', 'agency__abbrev', 'date_of_birth', 'date_of_death', 'status_ids'
+    Example - /3.3.0/astronaut/?nationality=American
+
+    SEARCH EXAMPLE:
+    /3.3.0/astronaut/?search=armstrong
+    Searches through name, nationality and agency name
+
+    ORDERING:
+    Fields - 'name', 'status'
+    Example - /3.3.0/astronaut/?order=name
+
     """
+    def get_queryset(self):
+        ids = self.request.query_params.get('status_ids', None)
+        if ids:
+            ids = ids.split(',')
+            return Astronauts.objects.filter(status_id__in=ids)
+        else:
+            return Astronauts.objects.all()
     queryset = Astronauts.objects.all()
     permission_classes = [HasGroupPermission]
     permission_groups = {
@@ -24,7 +47,6 @@ class AstronautViewSet(ModelViewSet):
     }
 
     def get_serializer_class(self):
-        print(self.request.query_params.keys())
         mode = self.request.query_params.get("mode", "normal")
         if mode == "detailed" or self.action == 'retrieve':
             return AstronautDetailedSerializer

@@ -9,9 +9,28 @@ from api.v330.spacecraft.serializers import SpacecraftDetailedSerializer, Spacec
 
 # TODO docs and filters
 class SpacecraftViewSet(ModelViewSet):
+    """
+    API endpoint that allows Spacecrafts to be viewed.
+    A Spacecraft is a physically manufactured instance of a Spacecraft Configuration
+
+    GET:
+    Return a list of all the existing spacecraft.
+
+    FILTERS:
+    Parameters - 'name', 'status', 'spacecraft_config'
+    Example - /api/3.3.0/spacecraft/?status=Active
+
+    SEARCH EXAMPLE:
+    Example - /api/3.3.0/spacecraft/?search=Dragon
+
+    ORDERING:
+    Fields - 'id'
+    Example - /api/3.3.0/spacecraft/?order=id
+    """
 
     def get_serializer_class(self):
-        if self.action == 'retrieve':
+        mode = self.request.query_params.get("mode", "normal")
+        if self.action == 'retrieve' or mode == "detailed":
             return SpacecraftDetailedSerializer
         else:
             return SpacecraftSerializer
@@ -23,6 +42,6 @@ class SpacecraftViewSet(ModelViewSet):
         'list': ['_Public'] # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'status')
+    filter_fields = ('name', 'status', 'spacecraft_config')
     search_fields = ('$name', 'spacecraft_config__name',)
     ordering_fields = ('id', )

@@ -29,3 +29,7 @@ class SpacecraftConfigViewSet(ModelViewSet):
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filter_fields = ('name', 'launch_agency', 'in_use', 'human_rated')
+    search_fields = ('^name', '^launch_agency__name',)
+    ordering_fields = ('name', 'launch_mass', 'leo_capacity', 'gto_capacity', 'launch_cost')

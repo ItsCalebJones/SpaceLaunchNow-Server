@@ -8,7 +8,6 @@ from api.v330.agencies.serializers import AgencySerializerDetailed, AgencySerial
 from api.permission import HasGroupPermission
 
 
-# TODO docs
 class AgencyViewSet(ModelViewSet):
     """
     API endpoint that allows Agencies to be viewed.
@@ -16,16 +15,20 @@ class AgencyViewSet(ModelViewSet):
     GET:
     Return a list of all the existing users.
 
+    MODE:
+    Normal and Detailed
+    /3.3.0/agencies/?mode=detailed
+
     FILTERS:
-    Parameters - 'featured', 'launch_library_id', 'detailed',
-    Example - /3.2.0/agencies/?featured=true&launch_library_id=44&detailed
+    Parameters - 'featured', 'agency_type', 'country_code'
+    Example - /3.3.0/agencies/?featured=true
 
     SEARCH EXAMPLE:
-    /3.2.0/agencies/?search=nasa
+    /3.3.0/agencies/?search=nasa
 
     ORDERING:
-    Fields - 'id', 'name', 'featured', 'launch_library_id'
-    Example - /3.2.0/agencies/?ordering=featured
+    Fields - 'id', 'name', 'featured'
+    Example - /3.3.0/agencies/?ordering=featured
 
     """
 
@@ -50,6 +53,6 @@ class AgencyViewSet(ModelViewSet):
         'list': ['_Public']
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('featured',)
+    filter_fields = ('featured', 'agency_type', 'country_code')
     search_fields = ('^name',)
     ordering_fields = ('id', 'name', 'featured')

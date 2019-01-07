@@ -13,8 +13,9 @@ class DockingEventViewSet(ModelViewSet):
     API endpoint that allows Docking Events to be viewed.
 
     GET:
-    Return a list of all the existing spacecraft.
+    Return a list of all the docking events.
     """
+
     def get_serializer_class(self):
         if self.action == 'retrieve':
             return DockingEventDetailedSerializer

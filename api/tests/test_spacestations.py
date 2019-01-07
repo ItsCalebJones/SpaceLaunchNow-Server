@@ -12,7 +12,7 @@ class SpaceStationTest(SLNAPITests):
         """
         Ensure spacestation endpoints work as expected.
         """
-        path = '/api/3.3.0/spacestations/'
+        path = '/api/3.3.0/spacestation/'
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content.decode('utf-8'))
