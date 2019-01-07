@@ -2,8 +2,7 @@ from api.v330.common.serializers import *
 
 
 class LaunchListSerializerForAstronaut(serializers.ModelSerializer):
-    pad = serializers.StringRelatedField()
-    location = serializers.StringRelatedField(source='pad.location')
+    pad = PadSerializerMini(read_only=True, many=False)
     status = LaunchStatusSerializer(many=False, read_only=True)
     orbit = serializers.SerializerMethodField()
     mission = MissionSerializerMini(read_only=True, many=False)
@@ -12,7 +11,7 @@ class LaunchListSerializerForAstronaut(serializers.ModelSerializer):
     class Meta:
         model = Launch
         fields = ('id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start',
-                  'mission', 'pad', 'location', 'orbit')
+                  'mission', 'pad', 'orbit')
 
     def get_orbit(self, obj):
         try:
