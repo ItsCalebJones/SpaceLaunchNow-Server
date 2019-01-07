@@ -97,6 +97,7 @@ class OrbiterTests(SLNAPITests):
 
         self.check_permissions(path)
 
+    ## TODO fix this test
     def test_v330_orbiters(self):
         """
         Ensure orbiter endpoints work as expected. Now config.
@@ -109,7 +110,7 @@ class OrbiterTests(SLNAPITests):
         dragon = SpacecraftConfiguration.objects.get(pk=data['results'][0]['id'])
         self.assertEqual(data['results'][0]['id'], dragon.id)
         self.assertEqual(data['results'][0]['name'], dragon.name)
-        self.assertEqual(data['results'][0]['agency'], dragon.launch_agency.name)
+        self.assertEqual(data['results'][0]['agency']['name'], dragon.launch_agency.name)
         self.assertEqual(data['results'][0]['details'], dragon.details)
         self.assertEqual(data['results'][0]['history'], dragon.history)
         self.assertEqual(data['results'][0]['in_use'], dragon.in_use)

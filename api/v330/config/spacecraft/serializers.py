@@ -2,7 +2,7 @@ from api.v330.common.serializers import *
 
 
 class SpacecraftConfigurationDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    agency = AgencySerializer(read_only=True, many=False, source='launch_agency')
 
     class Meta:
         model = SpacecraftConfiguration
@@ -12,7 +12,7 @@ class SpacecraftConfigurationDetailSerializer(QueryFieldsMixin, serializers.Hype
 
 
 class SpacecraftConfigurationSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    agency = AgencySerializerMini(read_only=True, many=False, source='launch_agency')
 
     class Meta:
         model = SpacecraftConfiguration

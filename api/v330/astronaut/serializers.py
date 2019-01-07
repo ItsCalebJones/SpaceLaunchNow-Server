@@ -1,10 +1,38 @@
 from api.v330.common.serializers import *
 
 
+class LaunchListSerializerForAstronaut(serializers.ModelSerializer):
+    pad = serializers.StringRelatedField()
+    location = serializers.StringRelatedField(source='pad.location')
+    status = LaunchStatusSerializer(many=False, read_only=True)
+    orbit = serializers.SerializerMethodField()
+    mission = MissionSerializerMini(read_only=True, many=False)
+    slug = serializers.SlugField(source='get_full_absolute_url')
+
+    class Meta:
+        model = Launch
+        fields = ('id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start',
+                  'mission', 'pad', 'location', 'orbit')
+
+    def get_orbit(self, obj):
+        try:
+            cache_key = "%s-%s" % (obj.id, "launch-list-orbit")
+            orbit = cache.get(cache_key)
+            if orbit is not None:
+                return orbit
+
+            if obj.mission.orbit is not None and obj.mission.orbit.abbrev is not None:
+                cache.set(cache_key, obj.mission.orbit.abbrev, CACHE_TIMEOUT_ONE_DAY)
+                return obj.mission.orbit.abbrev
+
+        except Exception as ex:
+            return None
+
+
 class AstronautDetailedSerializer(serializers.HyperlinkedModelSerializer):
     status = AstronautStatusSerializer(read_only=True)
     agency = AgencySerializerMini(read_only=True, many=False)
-    flights = LaunchListSerializer(read_only=True, many=True)
+    flights = LaunchListSerializerForAstronaut(read_only=True, many=True)
 
     class Meta:
         model = Astronauts

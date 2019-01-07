@@ -92,10 +92,41 @@ class DockingEventSerializerForSpacecraftFlight(serializers.ModelSerializer):
         fields = ('spacestation', 'docking', 'departure', 'docking_location')
 
 
+class SpacecraftFlightDetailedSerializerForLaunch(serializers.HyperlinkedModelSerializer):
+    launch_crew = AstronautFlightSerializer(read_only=True, many=True)
+    onboard_crew = AstronautFlightSerializer(read_only=True, many=True)
+    landing_crew = AstronautFlightSerializer(read_only=True, many=True)
+    spacecraft = SpacecraftDetailedNoFlightsSerializer(read_only=True, many=False)
+    docking_events = DockingEventSerializerForSpacecraftFlight(read_only=True, many=True)
+    id = serializers.IntegerField(source='pk')
+
+    class Meta:
+        model = SpacecraftFlight
+        fields = ('id', 'url', 'splashdown', 'destination', 'launch_crew', 'onboard_crew', 'landing_crew', 'spacecraft',
+                  'docking_events')
+
+
+class SpacecraftFlightSerializerForLaunch(serializers.HyperlinkedModelSerializer):
+    spacecraft = SpacecraftSerializer(read_only=True, many=False)
+
+    class Meta:
+        model = SpacecraftFlight
+        fields = ('id', 'url', 'destination', 'splashdown', 'spacecraft',)
+
+
+class AgencySerializerDetailedForLaunches(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Agency
+        fields = ('id', 'url', 'name', 'featured', 'type', 'country_code', 'abbrev', 'description', 'administrator',
+                  'founding_year', 'launchers', 'spacecraft', 'launch_library_url', 'successful_launches',
+                  'failed_launches', 'pending_launches', 'info_url', 'wiki_url', 'logo_url', 'image_url', 'nation_url',)
+
+
 class RocketDetailedSerializer(serializers.ModelSerializer):
     configuration = LauncherConfigDetailSerializer(read_only=True, many=False)
     launcher_stage = FirstStageSerializer(read_only=True, many=True, source='firststage')
-    spacecraft_stage = SpacecraftFlightDetailedSerializer(read_only=True, many=False, source='spacecraftflight')
+    spacecraft_stage = SpacecraftFlightDetailedSerializerForLaunch(read_only=True, many=False, source='spacecraftflight')
 
     class Meta:
         model = Rocket
@@ -105,7 +136,7 @@ class RocketDetailedSerializer(serializers.ModelSerializer):
 class RocketSerializer(serializers.ModelSerializer):
     configuration = LauncherConfigSerializer(read_only=True, many=False)
     launcher_stage = FirstStageSerializer(read_only=True, many=True, source='firststage')
-    spacecraft_stage = SpacecraftFlightSerializer(read_only=True, many=False, source='spacecraftflight')
+    spacecraft_stage = SpacecraftFlightSerializerForLaunch(read_only=True, many=False, source='spacecraftflight')
 
     class Meta:
         model = Rocket

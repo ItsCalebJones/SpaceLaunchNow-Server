@@ -102,6 +102,14 @@ class MissionSerializer(serializers.ModelSerializer):
         fields = ('id', 'launch_library_id', 'name', 'description', 'type', 'orbit', 'orbit_abbrev')
 
 
+class MissionSerializerMini(serializers.ModelSerializer):
+    type = serializers.StringRelatedField(many=False, source='mission_type')
+
+    class Meta:
+        model = Mission
+        fields = ('id', 'launch_library_id', 'name', 'type')
+
+
 class AstronautDetailedSerializerNoFlights(serializers.HyperlinkedModelSerializer):
     status = AstronautStatusSerializer(read_only=True)
     agency = AgencySerializerMini(read_only=True, many=False)
