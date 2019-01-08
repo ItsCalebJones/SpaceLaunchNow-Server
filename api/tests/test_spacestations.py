@@ -23,10 +23,20 @@ class SpaceStationTest(SLNAPITests):
         self.assertEqual(data['results'][0]['description'], iss.description)
         self.assertEqual(data['results'][0]['orbit'], iss.orbit.name)
 
-        ## TODO detailed Spacestation test.
-        # self.assertEqual(data['results'][0]['crew'][0]['name'],
-        #                  iss.crew.all()[0].name)
-        # self.assertEqual(data['results'][0]['status']['name'],
-        #                  iss.status.name)
-        # self.assertEqual(data['results'][0]['owner']['name'],
-        #                  iss.owner.name)
+    def test_v330_spacestations_detailed(self):
+        """
+        Ensure spacestation endpoints work as expected.
+        """
+        path = '/api/3.3.0/spacestation/?mode=detailed'
+        response = self.client.get(path)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = json.loads(response.content.decode('utf-8'))
+        self.assertEqual(data['count'], 1)
+        iss = SpaceStation.objects.get(name=data['results'][0]['name'])
+        self.assertEqual(data['results'][0]['name'], iss.name)
+        self.assertEqual(data['results'][0]['founded'], "1998-11-20")
+        self.assertEqual(data['results'][0]['description'], iss.description)
+        self.assertEqual(data['results'][0]['orbit'], iss.orbit.name)
+        self.assertIn('owners', data['results'][0])
+        self.assertIn('docked_vehicles', data['results'][0])
+        self.assertIn('active_expeditions', data['results'][0])

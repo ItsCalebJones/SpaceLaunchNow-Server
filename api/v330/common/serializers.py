@@ -56,7 +56,7 @@ class AgencySerializerMini(QueryFieldsMixin, serializers.HyperlinkedModelSeriali
 
 
 class SpacecraftConfigurationDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    agency = AgencySerializerMini(read_only=True, source="launch_agency")
 
     class Meta:
         model = SpacecraftConfiguration

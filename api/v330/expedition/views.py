@@ -9,7 +9,6 @@ from api.v330.expedition.filters import ExpeditionFilter
 from api.v330.expedition.serializers import ExpeditionDetailSerializer, ExpeditionSerializer
 
 
-# TODO docs and filters
 class ExpeditionViewSet(ModelViewSet):
     """
     API endpoint that allows Expeditions to be viewed.

@@ -5,8 +5,6 @@ from datetime import datetime, timedelta
 
 from api.models import *
 from api.permission import HasGroupPermission
-
-# TODO docs and filters
 from api.v330.launch.filters import LaunchFilter
 from api.v330.launch.serializers import LaunchDetailedSerializer, LaunchListSerializer, LaunchSerializer
 
@@ -138,7 +136,6 @@ class LaunchViewSet(ModelViewSet):
                 'rocket__configuration__launch_agency').all()
 
     def get_serializer_class(self):
-        print(self.request.query_params.keys())
         mode = self.request.query_params.get("mode", "normal")
         if mode == "detailed":
             return LaunchDetailedSerializer
@@ -295,7 +292,6 @@ class UpcomingLaunchViewSet(ModelViewSet):
                 'rocket__configuration__launch_agency').order_by('net').all()
 
     def get_serializer_class(self):
-        print(self.request.query_params.keys())
         mode = self.request.query_params.get("mode", "normal")
         if mode == "detailed":
             return LaunchDetailedSerializer

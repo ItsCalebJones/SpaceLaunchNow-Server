@@ -9,7 +9,6 @@ from api.permission import HasGroupPermission
 from api.v330.config.launcher.serializers import LauncherConfigDetailSerializer, LauncherConfigSerializer
 
 
-# TODO docs and filters
 class LauncherConfigViewSet(ModelViewSet):
     """
     API endpoint that allows Launcher Configurations to be viewed.

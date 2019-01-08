@@ -302,7 +302,7 @@ class LaunchViewSet(ModelViewSet):
                 'rocket__configuration__launch_agency').filter(launch_library=True).order_by('net')
 
     def get_serializer_class(self):
-        print(self.request.query_params.keys())
+
         mode = self.request.query_params.get("mode", "normal")
         if mode == "detailed":
             return LaunchDetailedSerializer
@@ -459,7 +459,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
                 'rocket__configuration__launch_agency').filter(launch_library=True).order_by('net')
 
     def get_serializer_class(self):
-        print(self.request.query_params.keys())
+
         mode = self.request.query_params.get("mode", "normal")
         if mode == "detailed":
             return LaunchDetailedSerializer

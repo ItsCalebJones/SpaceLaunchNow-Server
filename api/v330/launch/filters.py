@@ -25,5 +25,6 @@ class LaunchFilter(FilterSet):
     class Meta:
         model = Launch
         fields = {
-            'name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status'
+            'name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status',
+            'launch_library_id',
         }

@@ -7,7 +7,6 @@ from api.permission import HasGroupPermission
 from api.v330.spacecraft.serializers import SpacecraftDetailedSerializer, SpacecraftSerializer
 
 
-# TODO docs and filters
 class SpacecraftViewSet(ModelViewSet):
     """
     API endpoint that allows Spacecrafts to be viewed.

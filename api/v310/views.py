@@ -223,7 +223,6 @@ class LaunchViewSet(ModelViewSet):
                 'pad__location').select_related('mission').select_related('pad').filter(launch_library=True)
 
     def get_serializer_class(self):
-        print(self.request.query_params.keys())
         mode = self.request.query_params.get("mode", "normal")
         if mode == "detailed":
             return LaunchDetailedSerializer
@@ -293,7 +292,6 @@ class UpcomingLaunchViewSet(ModelViewSet):
                 'net').filter(launch_library=True)
 
     def get_serializer_class(self):
-        print(self.request.query_params.keys())
         mode = self.request.query_params.get("mode", "normal")
         if mode == "detailed":
             return LaunchDetailedSerializer
@@ -362,7 +360,7 @@ class PreviousLaunchViewSet(ModelViewSet):
                 'vid_urls').prefetch_related('pad__location').select_related('mission').select_related('pad').order_by('-net').filter(launch_library=True)
 
     def get_serializer_class(self):
-        print(self.request.query_params.keys())
+
         mode = self.request.query_params.get("mode", "normal")
         if mode == "detailed":
             return LaunchDetailedSerializer

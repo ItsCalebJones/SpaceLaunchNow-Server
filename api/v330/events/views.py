@@ -3,13 +3,12 @@ from api.models import *
 from api.permission import HasGroupPermission
 import pytz
 
-# TODO docs and filters
 from api.v330.events.serializers import EventsSerializer
 
 
 class EventViewSet(ModelViewSet):
     """
-    API endpoint that allows Events to be viewed.
+    API endpoint that allows future Events to be viewed.
 
     GET:
     Return a list of future Events

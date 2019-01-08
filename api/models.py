@@ -370,8 +370,6 @@ class Launcher(models.Model):
         count = cache.get(cache_key)
         if count is not None:
             return count
-
-        print("not in cache get from database")
         count = Launch.objects.values('id').filter(rocket__firststage__launcher__id=self.id).filter(
             Q(status__id=3) | Q(status__id=4) | Q(status__id=7)).count()
 
@@ -393,6 +391,7 @@ class Launcher(models.Model):
             return u'%s' % self.serial_number
 
     class Meta:
+        ordering = ['serial_number', ]
         ordering = ['serial_number', ]
         verbose_name = 'Launch Vehicle'
         verbose_name_plural = 'Launch Vehicles'
