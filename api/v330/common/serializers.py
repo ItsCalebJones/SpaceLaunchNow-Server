@@ -181,6 +181,7 @@ class LaunchListSerializer(serializers.ModelSerializer):
     launcher = serializers.SerializerMethodField()
     orbit = serializers.SerializerMethodField()
     mission = serializers.StringRelatedField()
+    image = serializers.SerializerMethodField()
     mission_type = serializers.StringRelatedField(source='mission.mission_type.name')
     slug = serializers.SlugField(source='get_full_absolute_url')
 
@@ -188,8 +189,7 @@ class LaunchListSerializer(serializers.ModelSerializer):
         model = Launch
         fields = (
         'id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'mission',
-        'mission_type',
-        'pad', 'location', 'landing', 'landing_success', 'launcher', 'orbit')
+        'mission_type', 'pad', 'location', 'landing', 'landing_success', 'launcher', 'orbit', 'image')
 
     def get_landing(self, obj):
         try:
