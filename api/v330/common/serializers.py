@@ -95,6 +95,22 @@ class PadSerializerMini(serializers.ModelSerializer):
         fields = ('id', 'name', 'location')
 
 
+class RocketConfigurationSerializerMini(serializers.ModelSerializer):
+    launch_service_provider = AgencySerializerMini(many=False, source='launch_agency')
+
+    class Meta:
+        model = LauncherConfig
+        fields = ('id', 'url', 'name', 'full_name', 'launch_service_provider', 'image_url')
+
+
+class RocketSerializerMini(serializers.ModelSerializer):
+    configuration = RocketConfigurationSerializerMini(many=False)
+
+    class Meta:
+        model = Rocket
+        fields = ('configuration',)
+
+
 class LandingTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = LandingType
