@@ -108,7 +108,7 @@ class RocketSerializerMini(serializers.ModelSerializer):
 
     class Meta:
         model = Rocket
-        fields = ('configuration',)
+        fields = ('id', 'configuration',)
 
 
 class LandingTypeSerializer(serializers.ModelSerializer):

@@ -140,7 +140,7 @@ class RocketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Rocket
-        fields = ('configuration', 'launcher_stage', 'spacecraft_stage')
+        fields = ('id', 'configuration', 'launcher_stage', 'spacecraft_stage')
 
 
 class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
