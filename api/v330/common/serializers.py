@@ -80,6 +80,21 @@ class PadSerializer(serializers.ModelSerializer):
         fields = ('id', 'agency_id', 'name', 'info_url', 'wiki_url', 'map_url', 'latitude', 'longitude', 'location')
 
 
+class LocationSerializerMini(serializers.ModelSerializer):
+
+    class Meta:
+        model = Location
+        fields = ('id', 'name',)
+
+
+class PadSerializerMini(serializers.ModelSerializer):
+    location = LocationSerializerMini(many=False)
+
+    class Meta:
+        model = Pad
+        fields = ('id', 'name', 'location')
+
+
 class LandingTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = LandingType
