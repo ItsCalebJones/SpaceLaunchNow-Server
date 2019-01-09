@@ -7,11 +7,12 @@ class LaunchListSerializerForAstronaut(serializers.ModelSerializer):
     orbit = serializers.SerializerMethodField()
     mission = MissionSerializerMini(read_only=True, many=False)
     slug = serializers.SlugField(source='get_full_absolute_url')
+    rocket = RocketSerializerMini(read_only=True, many=False)
 
     class Meta:
         model = Launch
         fields = ('id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start',
-                  'mission', 'pad', 'orbit')
+                  'mission', 'pad', 'orbit', 'rocket')
 
     def get_orbit(self, obj):
         try:
