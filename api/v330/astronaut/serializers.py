@@ -1,3 +1,5 @@
+from sorl_thumbnail_serializer.fields import HyperlinkedSorlImageField
+
 from api.v330.common.serializers import *
 
 
@@ -33,6 +35,13 @@ class AstronautDetailedSerializer(serializers.HyperlinkedModelSerializer):
     status = AstronautStatusSerializer(read_only=True)
     agency = AgencySerializerMini(read_only=True, many=False)
     flights = LaunchListSerializerForAstronaut(read_only=True, many=True)
+    # A thumbnail image, sorl options and read-only
+    thumbnail = HyperlinkedSorlImageField(
+        '128x128',
+        options={"crop": "80% top"},
+        source='image',
+        read_only=True
+    )
 
     class Meta:
         model = Astronauts
@@ -44,17 +53,30 @@ class AstronautDetailedSerializer(serializers.HyperlinkedModelSerializer):
 class AstronautListSerializer(serializers.HyperlinkedModelSerializer):
     status = AstronautStatusSerializer(read_only=True)
     agency = serializers.ReadOnlyField(read_only=True, source="agency.name")
+    # A thumbnail image, sorl options and read-only
+    profile_image_thumbnail = HyperlinkedSorlImageField(
+        '128x128',
+        options={"crop": "80% top"},
+        source='profile_image',
+        read_only=True
+    )
 
     class Meta:
         model = Astronauts
-        fields = ('id', 'url', 'name', 'status', 'agency', 'nationality', 'profile_image')
+        fields = ('id', 'url', 'name', 'status', 'agency', 'nationality', 'profile_image', 'profile_image_thumbnail')
 
 
 class AstronautNormalSerializer(serializers.HyperlinkedModelSerializer):
     agency = AgencySerializer(read_only=True, many=False)
     status = AstronautStatusSerializer(read_only=True)
+    profile_image_thumbnail = HyperlinkedSorlImageField(
+        '128x128',
+        options={"crop": "80% top"},
+        source='profile_image',
+        read_only=True
+    )
 
     class Meta:
         model = Astronauts
         fields = ('id', 'url', 'name', 'status', 'date_of_birth', 'date_of_death', 'nationality', 'bio', 'twitter',
-                  'instagram', 'wiki', 'agency', 'profile_image')
+                  'instagram', 'wiki', 'agency', 'profile_image', 'profile_image_thumbnail')
