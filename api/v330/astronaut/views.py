@@ -57,5 +57,5 @@ class AstronautViewSet(ModelViewSet):
 
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filter_class = AstronautsFilter
-    search_fields = ('$name', 'nationality', 'agency__name')
+    search_fields = ('$name', 'nationality', 'agency__name', 'agency__abbrev')
     ordering_fields = ('name', 'status', )
