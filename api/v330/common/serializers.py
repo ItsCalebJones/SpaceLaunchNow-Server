@@ -7,18 +7,16 @@ from rest_framework import serializers
 class SpaceStationStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = SpaceStationStatus
-        fields = ('id', 'name', )
+        fields = ('id', 'name',)
 
 
 class AgencyListSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-
     class Meta:
         model = Agency
         fields = ('id', 'url', 'name', 'abbrev',)
 
 
 class LaunchStatusSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = LaunchStatus
         fields = ('id', 'name',)
@@ -27,7 +25,7 @@ class LaunchStatusSerializer(serializers.ModelSerializer):
 class AstronautStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = AstronautStatus
-        fields = ('id', 'name', )
+        fields = ('id', 'name',)
 
 
 class AstronautSerializer(serializers.HyperlinkedModelSerializer):
@@ -45,11 +43,10 @@ class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer)
     class Meta:
         model = Agency
         fields = ('id', 'url', 'name', 'featured', 'type', 'country_code', 'abbrev', 'description', 'administrator',
-                  'founding_year', 'launchers', 'spacecraft', 'parent', )
+                  'founding_year', 'launchers', 'spacecraft', 'parent',)
 
 
 class AgencySerializerMini(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-
     class Meta:
         model = Agency
         fields = ('id', 'url', 'name', 'type')
@@ -66,7 +63,6 @@ class SpacecraftConfigurationDetailSerializer(QueryFieldsMixin, serializers.Hype
 
 
 class LocationSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Location
         fields = ('id', 'name', 'country_code',)
@@ -81,7 +77,6 @@ class PadSerializer(serializers.ModelSerializer):
 
 
 class LocationSerializerMini(serializers.ModelSerializer):
-
     class Meta:
         model = Location
         fields = ('id', 'name',)
@@ -188,8 +183,30 @@ class LaunchListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Launch
         fields = (
-        'id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'mission',
-        'mission_type', 'pad', 'location', 'landing', 'landing_success', 'launcher', 'orbit', 'image')
+            'id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'mission',
+            'mission_type', 'pad', 'location', 'landing', 'landing_success', 'launcher', 'orbit', 'image')
+
+    def get_image(self, obj):
+        try:
+            cache_key = "%s-%s" % (obj.id, "launch-list-image")
+            image = cache.get(cache_key)
+            if image is not None:
+                return image
+
+            image_url = obj.rocket.configuration.image_url
+
+            if image_url is None:
+                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
+                return None
+            elif image_url:
+                cache.set(cache_key, image_url.url, CACHE_TIMEOUT_ONE_DAY)
+                return image_url.url
+            else:
+                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
+                return None
+
+        except Exception as ex:
+            return None
 
     def get_landing(self, obj):
         try:
@@ -357,11 +374,12 @@ class SpacecraftFlightDetailedSerializer(serializers.HyperlinkedModelSerializer)
 
     class Meta:
         model = SpacecraftFlight
-        fields = ('id', 'url', 'splashdown', 'destination', 'launch_crew', 'onboard_crew', 'landing_crew', 'spacecraft', 'launch', 'docking_events')
+        fields = (
+        'id', 'url', 'splashdown', 'destination', 'launch_crew', 'onboard_crew', 'landing_crew', 'spacecraft', 'launch',
+        'docking_events')
 
 
 class AgencySerializerDetailedForLaunches(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-
     class Meta:
         model = Agency
         fields = ('id', 'url', 'name', 'featured', 'type', 'country_code', 'abbrev', 'description', 'administrator',
@@ -370,10 +388,9 @@ class AgencySerializerDetailedForLaunches(QueryFieldsMixin, serializers.Hyperlin
 
 
 class LauncherConfigListSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-
     class Meta:
         model = LauncherConfig
-        fields = ('id', 'launch_library_id', 'url', 'name', 'family', 'full_name', 'variant', )
+        fields = ('id', 'launch_library_id', 'url', 'name', 'family', 'full_name', 'variant',)
 
 
 class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):

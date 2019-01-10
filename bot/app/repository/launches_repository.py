@@ -23,13 +23,13 @@ class LaunchRepository:
             version = '1.4.1'
         self.launchLibrary = LaunchLibrarySDK(version=version)
 
-    def get_next_launches(self, next_count=5, all=False):
+    def get_next_launches(self, next_count=5, all=False, status=None):
         logger.info("Daily Digest running...")
         launches = []
         count = 0
         total = None
         while total is None or count < total:
-            response = self.launchLibrary.get_next_launches(next_count=next_count, offset=count)
+            response = self.launchLibrary.get_next_launches(next_count=next_count, offset=count, status=status)
             if response.status_code is 200:
                 response_json = response.json()
                 count = response_json['count'] + response_json['offset']
