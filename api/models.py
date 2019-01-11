@@ -2,7 +2,12 @@
 from __future__ import unicode_literals
 
 import os
+import sys
 import uuid
+
+from PIL import Image
+from compat import BytesIO
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 try:
     from urllib import quote  # Python 2.X
@@ -18,7 +23,7 @@ from django.db import models
 
 from configurations.models import *
 from custom_storages import LogoStorage, AgencyImageStorage, OrbiterImageStorage, LauncherImageStorage, \
-    AgencyNationStorage, EventImageStorage, AstronautImageStorage
+    AgencyNationStorage, EventImageStorage, AstronautImageStorage, SpaceStationImageStorage
 
 # The Agency object is meant to define a agency that operates launchers and spacecrafts.
 #
@@ -250,6 +255,29 @@ class LauncherConfig(models.Model):
         ordering = ['name']
         verbose_name = 'Launcher Configuration'
         verbose_name_plural = 'Launcher Configurations'
+
+    def save(self):
+        basewidth = 1920
+        image = Image.open(self.image_url)
+        wpercent = (basewidth/float(image.size[0]))
+        hsize = int((float(image.size[1]) * float(wpercent)))
+
+        output = BytesIO()
+        image = image.resize((basewidth, hsize), Image.ANTIALIAS)
+
+        if image.format == 'PNG':
+            imageformat = 'PNG'
+        else:
+            imageformat = 'JPEG'
+
+        image.save(output, format=imageformat, optimize=True)
+        output.seek(0)
+
+        self.image_url = InMemoryUploadedFile(output, 'FileField',
+                                              ("%s."+imageformat.lower()) % self.image_url.name.split('.')[0],
+                                              'image/' + imageformat.lower(),
+                                              sys.getsizeof(output), None)
+        super(LauncherConfig, self).save()
 
 
 # The Events object is meant to define events (past and present).
@@ -629,7 +657,9 @@ class SpaceStation(models.Model):
     description = models.CharField(max_length=2048, null=False, blank=False)
     orbit = models.ForeignKey(Orbit, null=False, blank=False)
     status = models.ForeignKey(SpaceStationStatus, null=False, blank=False)
-    active_expeditions = models.ManyToManyField('Expedition')
+    image_url = models.FileField(default=None, storage=SpaceStationImageStorage(), upload_to=image_path, null=True,
+                                 blank=True)
+    active_expeditions = models.ManyToManyField('Expedition', blank=True)
 
     @property
     def onboard_crew(self):

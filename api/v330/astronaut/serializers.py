@@ -36,10 +36,10 @@ class AstronautDetailedSerializer(serializers.HyperlinkedModelSerializer):
     agency = AgencySerializerMini(read_only=True, many=False)
     flights = LaunchListSerializerForAstronaut(read_only=True, many=True)
     # A thumbnail image, sorl options and read-only
-    thumbnail = HyperlinkedSorlImageField(
+    profile_image_thumbnail = HyperlinkedSorlImageField(
         '128x128',
         options={"crop": "80% top"},
-        source='image',
+        source='profile_image',
         read_only=True
     )
 
@@ -47,7 +47,7 @@ class AstronautDetailedSerializer(serializers.HyperlinkedModelSerializer):
         model = Astronauts
         # fields = ('name',)
         fields = ('id', 'url', 'name', 'status', 'agency', 'date_of_birth', 'date_of_death', 'nationality',
-                  'twitter', 'instagram', 'bio', 'profile_image', 'wiki', 'flights')
+                  'twitter', 'instagram', 'bio', 'profile_image', 'profile_image_thumbnail', 'wiki', 'flights')
 
 
 class AstronautListSerializer(serializers.HyperlinkedModelSerializer):
