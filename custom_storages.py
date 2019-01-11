@@ -50,3 +50,8 @@ class AppImageStorage(S3Boto3Storage):
 class AstronautImageStorage(S3Boto3Storage):
     location = settings.ASTRONAUT_IMAGE_LOCATION
     file_overwrite = True
+
+
+class SpaceStationImageStorage(S3Boto3Storage):
+    location = settings.SPACESTATION_IMAGE_LOCATION
+    file_overwrite = True

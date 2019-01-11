@@ -26,7 +26,7 @@ class SpaceStationSerializerForExpedition(serializers.HyperlinkedModelSerializer
 
     class Meta:
         model = SpaceStation
-        fields = ('id', 'url', 'name', 'status', 'orbit')
+        fields = ('id', 'url', 'name', 'status', 'orbit', 'image_url',)
 
 
 class ExpeditionDetailSerializer(serializers.HyperlinkedModelSerializer):

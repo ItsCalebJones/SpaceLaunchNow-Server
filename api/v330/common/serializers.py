@@ -171,7 +171,7 @@ class SpaceStationSerializerForDockingEvent(serializers.HyperlinkedModelSerializ
 
     class Meta:
         model = SpaceStation
-        fields = ('id', 'url', 'name', 'status', 'founded', 'description', 'orbit',)
+        fields = ('id', 'url', 'name', 'status', 'founded', 'description', 'orbit', 'image_url',)
 
 
 class DockingEventSerializerForSpacecraftFlight(serializers.ModelSerializer):
