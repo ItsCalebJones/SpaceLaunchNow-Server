@@ -9,6 +9,8 @@ from PIL import Image
 from compat import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
+from api.utils.utilities import resize_for_upload
+
 try:
     from urllib import quote  # Python 2.X
 except ImportError:
@@ -83,6 +85,12 @@ class Agency(models.Model):
     logo_url = models.FileField(default=None, storage=LogoStorage(), upload_to=logo_path, null=True, blank=True)
     nation_url = models.FileField(default=None, storage=AgencyNationStorage(), upload_to=nation_path, null=True,
                                   blank=True)
+
+    def save(self, **kwargs):
+        self.image_url = resize_for_upload(self.image_url)
+        self.logo_url = resize_for_upload(self.logo_url)
+        self.nation_url = resize_for_upload(self.nation_url)
+        super(Agency, self).save()
 
     @property
     def successful_launches(self):
@@ -193,6 +201,11 @@ class SpacecraftConfiguration(models.Model):
     nation_url = models.FileField(default=None, storage=AgencyNationStorage(), upload_to=image_path, null=True,
                                   blank=True)
 
+    def save(self, **kwargs):
+        self.image_url = resize_for_upload(self.image_url)
+        self.nation_url = resize_for_upload( self.nation_url)
+        super(SpacecraftConfiguration, self).save()
+
     def __str__(self):
         return self.name
 
@@ -256,27 +269,8 @@ class LauncherConfig(models.Model):
         verbose_name = 'Launcher Configuration'
         verbose_name_plural = 'Launcher Configurations'
 
-    def save(self):
-        basewidth = 1920
-        image = Image.open(self.image_url)
-        wpercent = (basewidth/float(image.size[0]))
-        hsize = int((float(image.size[1]) * float(wpercent)))
-
-        output = BytesIO()
-        image = image.resize((basewidth, hsize), Image.ANTIALIAS)
-
-        if image.format == 'PNG':
-            imageformat = 'PNG'
-        else:
-            imageformat = 'JPEG'
-
-        image.save(output, format=imageformat, optimize=True)
-        output.seek(0)
-
-        self.image_url = InMemoryUploadedFile(output, 'FileField',
-                                              ("%s."+imageformat.lower()) % self.image_url.name.split('.')[0],
-                                              'image/' + imageformat.lower(),
-                                              sys.getsizeof(output), None)
+    def save(self, **kwargs):
+        self.image_url = resize_for_upload(self.image_url)
         super(LauncherConfig, self).save()
 
 
@@ -301,6 +295,10 @@ class Events(models.Model):
         ordering = ['name']
         verbose_name = 'Event'
         verbose_name_plural = 'Events'
+
+    def save(self, **kwargs):
+        self.feature_image = resize_for_upload(self.feature_image)
+        super(Events, self).save()
 
 
 class Location(models.Model):
@@ -560,6 +558,7 @@ class Astronauts(models.Model):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
+        self.profile_image = resize_for_upload(self.profile_image)
         super(Astronauts, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
@@ -660,6 +659,10 @@ class SpaceStation(models.Model):
     image_url = models.FileField(default=None, storage=SpaceStationImageStorage(), upload_to=image_path, null=True,
                                  blank=True)
     active_expeditions = models.ManyToManyField('Expedition', blank=True)
+
+    def save(self, *args, **kwargs):
+        self.image_url = resize_for_upload(self.image_url)
+        super(SpaceStation, self).save(*args, **kwargs)
 
     @property
     def onboard_crew(self):

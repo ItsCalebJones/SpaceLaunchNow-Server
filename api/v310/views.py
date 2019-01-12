@@ -191,7 +191,7 @@ class LaunchViewSet(ModelViewSet):
         lsp_id = self.request.query_params.get('rocket__configuration__launch_agency__id', None)
         if ids:
             ids = ids.split(',')
-            return Launch.objects.filter(launch_library_id__in=ids).filter(launch_library=True).order_by('net')
+            return Launch.objects.filter(launch_library_id__in=ids).filter(launch_library=True).order_by('net', 'id')
         if lsp_name:
             launches = Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
                                              | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)).filter(launch_library=True)
@@ -204,7 +204,7 @@ class LaunchViewSet(ModelViewSet):
                     total_launches = launches | related_launches
             except Agency.DoesNotExist:
                 print("Cant find agency.")
-            return total_launches.order_by('net')
+            return total_launches.order_by('net', 'id')
         if lsp_id:
             launches = Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id).filter(launch_library=True)
             total_launches = launches
@@ -216,9 +216,9 @@ class LaunchViewSet(ModelViewSet):
                     total_launches = launches | related_launches
             except Agency.DoesNotExist:
                 print("Cant find agency.")
-            return total_launches.order_by('net')
+            return total_launches.order_by('net', 'id')
         else:
-            return Launch.objects.order_by('net').prefetch_related('info_urls').prefetch_related(
+            return Launch.objects.order_by('net', 'id').prefetch_related('info_urls').prefetch_related(
                 'vid_urls').prefetch_related(
                 'pad__location').select_related('mission').select_related('pad').filter(launch_library=True)
 
@@ -260,7 +260,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
         now = now - timedelta(days=1)
         if ids:
             ids = ids.split(',')
-            return Launch.objects.filter(launch_library_id__in=ids).filter(net__gte=now).filter(launch_library=True).order_by('net')
+            return Launch.objects.filter(launch_library_id__in=ids).filter(net__gte=now).filter(launch_library=True).order_by('net', 'id')
         if lsp_name:
             launches = Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
                                              | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)).filter(net__gte=now).filter(launch_library=True)
@@ -273,7 +273,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
                     total_launches = launches | related_launches
             except Agency.DoesNotExist:
                 print ("Cant find agency.")
-            return total_launches.order_by('net')
+            return total_launches.order_by('net', 'id')
         if lsp_id:
             launches = Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id).filter(net__gte=now).filter(launch_library=True)
             total_launches = launches
@@ -285,7 +285,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
                     total_launches = launches | related_launches
             except Agency.DoesNotExist:
                 print("Cant find agency.")
-            return total_launches.order_by('net')
+            return total_launches.order_by('net', 'id')
         else:
             return Launch.objects.filter(net__gte=now).prefetch_related('info_urls').prefetch_related(
                 'vid_urls').prefetch_related('pad__location').select_related('mission').select_related('pad').order_by(
@@ -342,7 +342,7 @@ class PreviousLaunchViewSet(ModelViewSet):
                     total_launches = launches | related_launches
             except Agency.DoesNotExist:
                 print ("Cant find agency.")
-            return total_launches.order_by('-net')
+            return total_launches.order_by('-net', 'id')
         if lsp_id:
             launches = Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id).filter(net__lte=now).filter(launch_library=True)
             total_launches = launches
@@ -354,10 +354,10 @@ class PreviousLaunchViewSet(ModelViewSet):
                     total_launches = launches | related_launches
             except Agency.DoesNotExist:
                 print ("Cant find agency.")
-            return total_launches.order_by('-net')
+            return total_launches.order_by('-net', 'id')
         else:
             return Launch.objects.filter(net__lte=now).prefetch_related('info_urls').prefetch_related(
-                'vid_urls').prefetch_related('pad__location').select_related('mission').select_related('pad').order_by('-net').filter(launch_library=True)
+                'vid_urls').prefetch_related('pad__location').select_related('mission').select_related('pad').order_by('-net', 'id').filter(launch_library=True)
 
     def get_serializer_class(self):
 
