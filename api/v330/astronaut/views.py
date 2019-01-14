@@ -5,7 +5,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from api.models import *
 from api.permission import HasGroupPermission
 from api.v330.astronaut.filters import AstronautsFilter
-from api.v330.astronaut.serializers import AstronautDetailedSerializer, AstronautListSerializer, AstronautNormalSerializer
+from api.v330.astronaut.serializers import AstronautDetailedSerializer, AstronautListSerializer, \
+    AstronautNormalSerializer, AstronautDetailedWithLaunchListSerializer
 
 
 class AstronautViewSet(ModelViewSet):
