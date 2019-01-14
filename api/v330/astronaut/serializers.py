@@ -31,6 +31,25 @@ class LaunchListSerializerForAstronaut(serializers.ModelSerializer):
             return None
 
 
+class AstronautDetailedWithLaunchListSerializer(serializers.HyperlinkedModelSerializer):
+    status = AstronautStatusSerializer(read_only=True)
+    agency = AgencySerializerMini(read_only=True, many=False)
+    flights = LaunchListSerializer(read_only=True, many=True)
+    # A thumbnail image, sorl options and read-only
+    profile_image_thumbnail = HyperlinkedSorlImageField(
+        '128x128',
+        options={"crop": "80% top"},
+        source='profile_image',
+        read_only=True
+    )
+
+    class Meta:
+        model = Astronauts
+        # fields = ('name',)
+        fields = ('id', 'url', 'name', 'status', 'agency', 'date_of_birth', 'date_of_death', 'nationality',
+                  'twitter', 'instagram', 'bio', 'profile_image', 'profile_image_thumbnail', 'wiki', 'flights')
+
+
 class AstronautDetailedSerializer(serializers.HyperlinkedModelSerializer):
     status = AstronautStatusSerializer(read_only=True)
     agency = AgencySerializerMini(read_only=True, many=False)
