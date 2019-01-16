@@ -49,7 +49,7 @@ class AstronautViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         mode = self.request.query_params.get("mode", "normal")
-        if mode == "list" and self.action == 'retrieve':
+        if mode == "launch_list" and self.action == 'retrieve':
             return AstronautDetailedWithLaunchListSerializer
         elif mode == "detailed" or self.action == 'retrieve':
             return AstronautDetailedSerializer
