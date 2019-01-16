@@ -345,6 +345,12 @@ ASTRONAUT_IMAGE_STORAGE = 'custom_storages.AstronautImageStorage'
 SPACESTATION_IMAGE_LOCATION = MEDIA_LOCATION + '/spacestation_images'  # type: str
 SPACESTATION_IMAGE_STORAGE = 'custom_storages.SpaceStationImageStorage'
 
+SPACESTATION_IMAGE_LOCATION = MEDIA_LOCATION + '/spacestation_images'  # type: str
+SPACESTATION_IMAGE_STORAGE = 'custom_storages.SpaceStationImageStorage'
+
+LAUNCHER_CORE_IMAGE_LOCATION = MEDIA_LOCATION + '/launcher_core_images'  # type: str
+LAUNCHER_CORE_IMAGE_STORAGE = 'custom_storages.LauncherCoreImageStorage'
+
 DEFAULT_FILE_STORAGE = DEFAULT_STORAGE
 
 AWS_IS_GZIPPED = True

@@ -25,7 +25,7 @@ from django.db import models
 
 from configurations.models import *
 from custom_storages import LogoStorage, AgencyImageStorage, OrbiterImageStorage, LauncherImageStorage, \
-    AgencyNationStorage, EventImageStorage, AstronautImageStorage, SpaceStationImageStorage
+    AgencyNationStorage, EventImageStorage, AstronautImageStorage, SpaceStationImageStorage, LauncherCoreImageStorage
 
 # The Agency object is meant to define a agency that operates launchers and spacecrafts.
 #
@@ -387,6 +387,8 @@ class Launcher(models.Model):
     flight_proven = models.BooleanField(default=False)
     status = models.CharField(max_length=2048, blank=True, default="")
     details = models.CharField(max_length=2048, blank=True, default="")
+    image_url = models.FileField(default=None, storage=LauncherCoreImageStorage(), upload_to=image_path, null=True,
+                                 blank=True)
     launcher_config = models.ForeignKey(LauncherConfig, related_name='launcher', null=True, on_delete=models.CASCADE)
 
     @property
@@ -421,6 +423,10 @@ class Launcher(models.Model):
         ordering = ['serial_number', ]
         verbose_name = 'Launch Vehicle'
         verbose_name_plural = 'Launch Vehicles'
+
+    def save(self, *args, **kwargs):
+        self.image_url = resize_for_upload(self.image_url)
+        super(Launcher, self).save(*args, **kwargs)
 
 
 class Landing(models.Model):
