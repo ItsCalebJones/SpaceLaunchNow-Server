@@ -424,6 +424,10 @@ class Launcher(models.Model):
         verbose_name = 'Launch Vehicle'
         verbose_name_plural = 'Launch Vehicles'
 
+    def save(self, *args, **kwargs):
+        self.image_url = resize_for_upload(self.image_url)
+        super(Launcher, self).save(*args, **kwargs)
+
 
 class Landing(models.Model):
     attempt = models.NullBooleanField(blank=False, null=False, default=False)
