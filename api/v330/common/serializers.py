@@ -32,6 +32,12 @@ class AstronautStatusSerializer(serializers.ModelSerializer):
         fields = ('id', 'name',)
 
 
+class AstronautTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AstronautType
+        fields = ('id', 'name',)
+
+
 class AstronautSerializer(serializers.HyperlinkedModelSerializer):
     status = AstronautStatusSerializer(read_only=True)
     agency = serializers.StringRelatedField(read_only=True, source='agency.name')

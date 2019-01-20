@@ -549,12 +549,18 @@ class FirstStage(models.Model):
             return u"Unsaved %s" % self.launcher.serial_number
 
 
+def get_default_astronaut_config_type():
+    obj, created = AstronautType.objects.get_or_create(id=1, name="Unknown")
+    return obj.id
+
+
 class Astronaut(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     date_of_birth = models.DateField(null=False, blank=False)
     date_of_death = models.DateField(null=True, blank=True)
     status = models.ForeignKey(AstronautStatus, on_delete=models.CASCADE,
                                null=False, blank=False)
+    type = models.ForeignKey(AstronautType, on_delete=models.CASCADE, default=get_default_astronaut_config_type)
     nationality = models.CharField(max_length=255, null=False,
                                    blank=False)
     agency = models.ForeignKey(Agency, on_delete=models.SET_NULL, null=True,

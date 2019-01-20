@@ -55,23 +55,26 @@ def get_mission_type(mission_type):
 
 
 def resize_for_upload(item):
-    basewidth = 1920
-    image = Image.open(item)
-    wpercent = (basewidth / float(image.size[0]))
-    hsize = int((float(image.size[1]) * float(wpercent)))
+    if item and hasattr(item, 'url'):
+        basewidth = 1920
+        image = Image.open(item)
+        wpercent = (basewidth / float(image.size[0]))
+        hsize = int((float(image.size[1]) * float(wpercent)))
 
-    output = BytesIO()
-    image = image.resize((basewidth, hsize), Image.ANTIALIAS)
+        output = BytesIO()
+        image = image.resize((basewidth, hsize), Image.ANTIALIAS)
 
-    if image.format == 'PNG':
-        imageformat = 'PNG'
+        if image.format == 'PNG':
+            imageformat = 'PNG'
+        else:
+            imageformat = 'JPEG'
+
+        image.save(output, format=imageformat, optimize=True)
+        output.seek(0)
+
+        return InMemoryUploadedFile(output, 'FileField',
+                                    ("%s." + imageformat.lower()) % item.name.split('.')[0],
+                                    'image/' + imageformat.lower(),
+                                    sys.getsizeof(output), None)
     else:
-        imageformat = 'JPEG'
-
-    image.save(output, format=imageformat, optimize=True)
-    output.seek(0)
-
-    return InMemoryUploadedFile(output, 'FileField',
-                                ("%s." + imageformat.lower()) % item.name.split('.')[0],
-                                'image/' + imageformat.lower(),
-                                sys.getsizeof(output), None)
+        return None
