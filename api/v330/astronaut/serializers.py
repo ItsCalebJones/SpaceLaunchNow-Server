@@ -44,7 +44,7 @@ class AstronautDetailedWithLaunchListSerializer(serializers.HyperlinkedModelSeri
     )
 
     class Meta:
-        model = Astronauts
+        model = Astronaut
         # fields = ('name',)
         fields = ('id', 'url', 'name', 'status', 'agency', 'date_of_birth', 'date_of_death', 'nationality',
                   'twitter', 'instagram', 'bio', 'profile_image', 'profile_image_thumbnail', 'wiki', 'flights')
@@ -63,7 +63,7 @@ class AstronautDetailedSerializer(serializers.HyperlinkedModelSerializer):
     )
 
     class Meta:
-        model = Astronauts
+        model = Astronaut
         # fields = ('name',)
         fields = ('id', 'url', 'name', 'status', 'agency', 'date_of_birth', 'date_of_death', 'nationality',
                   'twitter', 'instagram', 'bio', 'profile_image', 'profile_image_thumbnail', 'wiki', 'flights')
@@ -81,7 +81,7 @@ class AstronautListSerializer(serializers.HyperlinkedModelSerializer):
     )
 
     class Meta:
-        model = Astronauts
+        model = Astronaut
         fields = ('id', 'url', 'name', 'status', 'agency', 'nationality', 'profile_image', 'profile_image_thumbnail')
 
 
@@ -96,6 +96,6 @@ class AstronautNormalSerializer(serializers.HyperlinkedModelSerializer):
     )
 
     class Meta:
-        model = Astronauts
+        model = Astronaut
         fields = ('id', 'url', 'name', 'status', 'date_of_birth', 'date_of_death', 'nationality', 'bio', 'twitter',
                   'instagram', 'wiki', 'agency', 'profile_image', 'profile_image_thumbnail')

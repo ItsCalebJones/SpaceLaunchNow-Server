@@ -549,7 +549,7 @@ class FirstStage(models.Model):
             return u"Unsaved %s" % self.launcher.serial_number
 
 
-class Astronauts(models.Model):
+class Astronaut(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     date_of_birth = models.DateField(null=False, blank=False)
     date_of_death = models.DateField(null=True, blank=True)
@@ -570,7 +570,7 @@ class Astronauts(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
         self.profile_image = resize_for_upload(self.profile_image)
-        super(Astronauts, self).save(*args, **kwargs)
+        super(Astronaut, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
         return self.slug
@@ -601,12 +601,12 @@ class Astronauts(models.Model):
 
     class Meta:
         verbose_name = 'Astronaut'
-        verbose_name_plural = 'Astronauts'
+        verbose_name_plural = 'Astronaut'
 
 
 class AstronautFlight(models.Model):
     role = models.ForeignKey(AstronautRole, null=True, blank=True, on_delete=models.CASCADE)
-    astronaut = models.ForeignKey(Astronauts, on_delete=models.CASCADE)
+    astronaut = models.ForeignKey(Astronaut, on_delete=models.CASCADE)
 
     def __str__(self):
         return u'%s: %s' % (self.role, self.astronaut)
@@ -678,7 +678,7 @@ class SpaceStation(models.Model):
     @property
     def onboard_crew(self):
         count = 0
-        onboard = Astronauts.objects.values('id').filter(astronautflight__expeditions__in=self.active_expeditions.all()).count()
+        onboard = Astronaut.objects.values('id').filter(astronautflight__expeditions__in=self.active_expeditions.all()).count()
         count += onboard
         return count
 

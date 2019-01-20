@@ -81,15 +81,15 @@ def setUpModule():
                                            payload_capacity=800,
                                            flight_life="One week.", )
     astro_status = AstronautStatus.objects.create(name='Active')
-    starman = Astronauts.objects.create(name="Starman",
-                                        date_of_birth=datetime.datetime.strptime(
+    starman = Astronaut.objects.create(name="Starman",
+                                       date_of_birth=datetime.datetime.strptime(
                                             '06/02/2018',
                                             '%d/%m/%Y'),
-                                        status=astro_status,
-                                        nationality='American',
-                                        agency=spacex,
-                                        twitter="SpaceX",
-                                        bio="Driver of a cherry red roadster")
+                                       status=astro_status,
+                                       nationality='American',
+                                       agency=spacex,
+                                       twitter="SpaceX",
+                                       bio="Driver of a cherry red roadster")
     iss_status = SpaceStationStatus.objects.create(name='Active')
     orbit, created = Orbit.objects.get_or_create(name="Low Earth Orbit",
                                         abbrev="LEO")

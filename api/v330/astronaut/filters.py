@@ -1,6 +1,6 @@
 from django_filters import filters, FilterSet
 from django.utils.translation import ugettext as _
-from api.models import Astronauts
+from api.models import Astronaut
 
 
 class AstronautsFilter(FilterSet):
@@ -38,7 +38,7 @@ class AstronautsFilter(FilterSet):
     )
 
     class Meta:
-        model = Astronauts
+        model = Astronaut
         fields = {
             'name', 'status', 'nationality', 'agency__name', 'agency__abbrev', 'date_of_birth', 'date_of_death'
         }
