@@ -162,3 +162,17 @@ class DockingLocation(models.Model):
     class Meta:
         verbose_name = 'Docking Location'
         verbose_name_plural = 'Docking Locations'
+
+
+class SpacecraftConfigurationType(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    class Meta:
+        verbose_name = 'Spacecraft Configuration Type'
+        verbose_name_plural = 'Spacecraft Configuration Types'

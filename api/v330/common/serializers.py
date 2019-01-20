@@ -3,6 +3,10 @@ from drf_queryfields import QueryFieldsMixin
 from api.models import *
 from rest_framework import serializers
 
+class SpacecraftConfigTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SpacecraftConfigurationType
+        fields = ('id', 'name',)
 
 class SpaceStationStatusSerializer(serializers.ModelSerializer):
     class Meta:
@@ -54,6 +58,7 @@ class AgencySerializerMini(QueryFieldsMixin, serializers.HyperlinkedModelSeriali
 
 class SpacecraftConfigurationDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     agency = AgencySerializerMini(read_only=True, source="launch_agency")
+    type = SpacecraftConfigTypeSerializer(read_only=True, many=False)
 
     class Meta:
         model = SpacecraftConfiguration
@@ -355,10 +360,15 @@ class SpacecraftStatusSerializer(serializers.ModelSerializer):
         fields = ('id', 'name',)
 
 
+
+
+
 class SpacecraftConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+    type = SpacecraftConfigTypeSerializer(read_only=True, many=False)
+
     class Meta:
         model = SpacecraftConfiguration
-        fields = ('id', 'url', 'name', 'in_use')
+        fields = ('id', 'url', 'name', 'type', 'in_use')
 
 
 class SpacecraftSerializer(serializers.HyperlinkedModelSerializer):

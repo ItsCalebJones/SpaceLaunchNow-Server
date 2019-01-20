@@ -175,12 +175,17 @@ class Agency(models.Model):
             return None
 
 
+def get_default_config_type():
+    obj, created = SpacecraftConfigurationType.objects.get_or_create(id=1, name="Unknown")
+    return obj.id
+
+
 # The Spacecraft object is meant to define spacecraft (past and present) that are human-rated for spaceflight.
-#
 # Example: Dragon, Orion, etc.
 class SpacecraftConfiguration(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
+    type = models.ForeignKey(SpacecraftConfigurationType, default=get_default_config_type)
     agency = models.CharField(max_length=200, default='Unknown')
     launch_agency = models.ForeignKey(Agency, related_name='spacecraft_list', blank=True, null=True)
     history = models.CharField(max_length=1000, default='')
