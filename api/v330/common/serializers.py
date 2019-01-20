@@ -68,7 +68,7 @@ class SpacecraftConfigurationDetailSerializer(QueryFieldsMixin, serializers.Hype
 
     class Meta:
         model = SpacecraftConfiguration
-        fields = ('id', 'url', 'name', 'agency', 'in_use', 'capability', 'history', 'details', 'maiden_flight',
+        fields = ('id', 'url', 'name', 'type', 'agency', 'in_use', 'capability', 'history', 'details', 'maiden_flight',
                   'height', 'diameter', 'human_rated', 'crew_capacity', 'payload_capacity', 'flight_life',
                   'image_url', 'nation_url', 'wiki_link', 'info_link')
 
