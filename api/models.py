@@ -591,7 +591,7 @@ class Astronaut(models.Model):
                                             Q(rocket__spacecraftflight__landing_crew__astronaut__id=self.id))
                       .values_list('id', flat=True)
                       .distinct()))
-        launches = Launch.objects.filter(id__in=listi)
+        launches = Launch.objects.filter(id__in=listi).order_by('net')
         return launches
 
     @property
