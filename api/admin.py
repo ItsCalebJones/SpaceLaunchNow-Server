@@ -205,7 +205,7 @@ class InfoAdmin(admin.ModelAdmin):
     list_display = ('info_url', 'launch')
 
 
-@admin.register(models.Astronauts)
+@admin.register(models.Astronaut)
 class AstronautsAdmin(admin.ModelAdmin):
     list_display = ('name', 'nationality', 'status', 'agency')
     list_filter = ('nationality', 'status', 'agency')

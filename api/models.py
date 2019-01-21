@@ -2,7 +2,14 @@
 from __future__ import unicode_literals
 
 import os
+import sys
 import uuid
+
+from PIL import Image
+from compat import BytesIO
+from django.core.files.uploadedfile import InMemoryUploadedFile
+
+from api.utils.utilities import resize_for_upload
 
 try:
     from urllib import quote  # Python 2.X
@@ -18,7 +25,7 @@ from django.db import models
 
 from configurations.models import *
 from custom_storages import LogoStorage, AgencyImageStorage, OrbiterImageStorage, LauncherImageStorage, \
-    AgencyNationStorage, EventImageStorage, AstronautImageStorage
+    AgencyNationStorage, EventImageStorage, AstronautImageStorage, SpaceStationImageStorage, LauncherCoreImageStorage
 
 # The Agency object is meant to define a agency that operates launchers and spacecrafts.
 #
@@ -78,6 +85,12 @@ class Agency(models.Model):
     logo_url = models.FileField(default=None, storage=LogoStorage(), upload_to=logo_path, null=True, blank=True)
     nation_url = models.FileField(default=None, storage=AgencyNationStorage(), upload_to=nation_path, null=True,
                                   blank=True)
+
+    def save(self, **kwargs):
+        self.image_url = resize_for_upload(self.image_url)
+        self.logo_url = resize_for_upload(self.logo_url)
+        self.nation_url = resize_for_upload(self.nation_url)
+        super(Agency, self).save()
 
     @property
     def successful_launches(self):
@@ -162,19 +175,24 @@ class Agency(models.Model):
             return None
 
 
+def get_default_config_type():
+    obj, created = SpacecraftConfigurationType.objects.get_or_create(id=1, name="Unknown")
+    return obj.id
+
+
 # The Spacecraft object is meant to define spacecraft (past and present) that are human-rated for spaceflight.
-#
 # Example: Dragon, Orion, etc.
 class SpacecraftConfiguration(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
+    type = models.ForeignKey(SpacecraftConfigurationType, default=get_default_config_type)
     agency = models.CharField(max_length=200, default='Unknown')
     launch_agency = models.ForeignKey(Agency, related_name='spacecraft_list', blank=True, null=True)
     history = models.CharField(max_length=1000, default='')
     details = models.CharField(max_length=1000, default='')
     in_use = models.BooleanField(default=True)
     capability = models.CharField(max_length=2048, default='')
-    maiden_flight = models.DateField(max_length=255, null=True)
+    maiden_flight = models.DateField(max_length=255, null=True, blank=True)
     height = models.FloatField(verbose_name="Length (m)", blank=True, null=True)
     diameter = models.FloatField(verbose_name="Diameter (m)", blank=True, null=True)
     human_rated = models.BooleanField(default=False)
@@ -187,6 +205,11 @@ class SpacecraftConfiguration(models.Model):
                                  blank=True)
     nation_url = models.FileField(default=None, storage=AgencyNationStorage(), upload_to=image_path, null=True,
                                   blank=True)
+
+    def save(self, **kwargs):
+        self.image_url = resize_for_upload(self.image_url)
+        self.nation_url = resize_for_upload( self.nation_url)
+        super(SpacecraftConfiguration, self).save()
 
     def __str__(self):
         return self.name
@@ -251,6 +274,10 @@ class LauncherConfig(models.Model):
         verbose_name = 'Launcher Configuration'
         verbose_name_plural = 'Launcher Configurations'
 
+    def save(self, **kwargs):
+        self.image_url = resize_for_upload(self.image_url)
+        super(LauncherConfig, self).save()
+
 
 # The Events object is meant to define events (past and present).
 # Example: Blue Origin Launches, ISS Crew returns, etc.
@@ -273,6 +300,10 @@ class Events(models.Model):
         ordering = ['name']
         verbose_name = 'Event'
         verbose_name_plural = 'Events'
+
+    def save(self, **kwargs):
+        self.feature_image = resize_for_upload(self.feature_image)
+        super(Events, self).save()
 
 
 class Location(models.Model):
@@ -361,6 +392,8 @@ class Launcher(models.Model):
     flight_proven = models.BooleanField(default=False)
     status = models.CharField(max_length=2048, blank=True, default="")
     details = models.CharField(max_length=2048, blank=True, default="")
+    image_url = models.FileField(default=None, storage=LauncherCoreImageStorage(), upload_to=image_path, null=True,
+                                 blank=True)
     launcher_config = models.ForeignKey(LauncherConfig, related_name='launcher', null=True, on_delete=models.CASCADE)
 
     @property
@@ -395,6 +428,10 @@ class Launcher(models.Model):
         ordering = ['serial_number', ]
         verbose_name = 'Launch Vehicle'
         verbose_name_plural = 'Launch Vehicles'
+
+    def save(self, *args, **kwargs):
+        self.image_url = resize_for_upload(self.image_url)
+        super(Launcher, self).save(*args, **kwargs)
 
 
 class Landing(models.Model):
@@ -512,12 +549,18 @@ class FirstStage(models.Model):
             return u"Unsaved %s" % self.launcher.serial_number
 
 
-class Astronauts(models.Model):
+def get_default_astronaut_config_type():
+    obj, created = AstronautType.objects.get_or_create(id=1, name="Unknown")
+    return obj.id
+
+
+class Astronaut(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     date_of_birth = models.DateField(null=False, blank=False)
     date_of_death = models.DateField(null=True, blank=True)
     status = models.ForeignKey(AstronautStatus, on_delete=models.CASCADE,
                                null=False, blank=False)
+    type = models.ForeignKey(AstronautType, on_delete=models.CASCADE, default=get_default_astronaut_config_type)
     nationality = models.CharField(max_length=255, null=False,
                                    blank=False)
     agency = models.ForeignKey(Agency, on_delete=models.SET_NULL, null=True,
@@ -532,7 +575,8 @@ class Astronauts(models.Model):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
-        super(Astronauts, self).save(*args, **kwargs)
+        self.profile_image = resize_for_upload(self.profile_image)
+        super(Astronaut, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
         return self.slug
@@ -563,12 +607,12 @@ class Astronauts(models.Model):
 
     class Meta:
         verbose_name = 'Astronaut'
-        verbose_name_plural = 'Astronauts'
+        verbose_name_plural = 'Astronaut'
 
 
 class AstronautFlight(models.Model):
     role = models.ForeignKey(AstronautRole, null=True, blank=True, on_delete=models.CASCADE)
-    astronaut = models.ForeignKey(Astronauts, on_delete=models.CASCADE)
+    astronaut = models.ForeignKey(Astronaut, on_delete=models.CASCADE)
 
     def __str__(self):
         return u'%s: %s' % (self.role, self.astronaut)
@@ -629,12 +673,18 @@ class SpaceStation(models.Model):
     description = models.CharField(max_length=2048, null=False, blank=False)
     orbit = models.ForeignKey(Orbit, null=False, blank=False)
     status = models.ForeignKey(SpaceStationStatus, null=False, blank=False)
-    active_expeditions = models.ManyToManyField('Expedition')
+    image_url = models.FileField(default=None, storage=SpaceStationImageStorage(), upload_to=image_path, null=True,
+                                 blank=True)
+    active_expeditions = models.ManyToManyField('Expedition', blank=True)
+
+    def save(self, *args, **kwargs):
+        self.image_url = resize_for_upload(self.image_url)
+        super(SpaceStation, self).save(*args, **kwargs)
 
     @property
     def onboard_crew(self):
         count = 0
-        onboard = Astronauts.objects.values('id').filter(astronautflight__expeditions__in=self.active_expeditions.all()).count()
+        onboard = Astronaut.objects.values('id').filter(astronautflight__expeditions__in=self.active_expeditions.all()).count()
         count += onboard
         return count
 

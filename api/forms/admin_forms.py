@@ -91,7 +91,7 @@ class AstronautForm(forms.ModelForm):
     bio = forms.CharField(widget=forms.Textarea)
 
     class Meta:
-        model = Astronauts
+        model = Astronaut
         fields = '__all__'
 
 

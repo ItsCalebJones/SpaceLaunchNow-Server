@@ -5,12 +5,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 from api.models import *
 from api.permission import HasGroupPermission
 from api.v330.astronaut.filters import AstronautsFilter
-from api.v330.astronaut.serializers import AstronautDetailedSerializer, AstronautListSerializer, AstronautNormalSerializer
+from api.v330.astronaut.serializers import AstronautDetailedSerializer, AstronautListSerializer, \
+    AstronautNormalSerializer, AstronautDetailedWithLaunchListSerializer
 
 
 class AstronautViewSet(ModelViewSet):
     """
-    API endpoint that allows Astronauts to be viewed.
+    API endpoint that allows Astronaut to be viewed.
 
     GET:
     Return a list of all the existing astronauts.
@@ -36,10 +37,10 @@ class AstronautViewSet(ModelViewSet):
         ids = self.request.query_params.get('status_ids', None)
         if ids:
             ids = ids.split(',')
-            return Astronauts.objects.filter(status_id__in=ids)
+            return Astronaut.objects.filter(status_id__in=ids)
         else:
-            return Astronauts.objects.all()
-    queryset = Astronauts.objects.all()
+            return Astronaut.objects.all()
+    queryset = Astronaut.objects.all()
     permission_classes = [HasGroupPermission]
     permission_groups = {
         'retrieve': ['_Public'], # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
@@ -48,7 +49,9 @@ class AstronautViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         mode = self.request.query_params.get("mode", "normal")
-        if mode == "detailed" or self.action == 'retrieve':
+        if mode == "launch_list" and self.action == 'retrieve':
+            return AstronautDetailedWithLaunchListSerializer
+        elif mode == "detailed" or self.action == 'retrieve':
             return AstronautDetailedSerializer
         elif mode == "list":
             return AstronautListSerializer

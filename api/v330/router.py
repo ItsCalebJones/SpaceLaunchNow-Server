@@ -15,7 +15,7 @@ from ..utils.base_router import Router
 
 router = Router()
 router.register(r'agencies', AgencyViewSet, base_name='agency')
-router.register(r'astronaut', AstronautViewSet, base_name='astronauts')
+router.register(r'astronaut', AstronautViewSet, base_name='astronaut')
 router.register(r'config/launcher', LauncherConfigViewSet)
 router.register(r'config/spacecraft', SpacecraftConfigViewSet)
 router.register(r'docking_event', DockingEventViewSet)

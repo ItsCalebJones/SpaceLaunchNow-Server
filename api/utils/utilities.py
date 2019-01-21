@@ -1,3 +1,8 @@
+import sys
+
+from PIL import Image
+from compat import BytesIO
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
 def get_launch_status(status):
@@ -47,3 +52,29 @@ def get_mission_type(mission_type):
         15: 'Navigation',
     }
     return switcher.get(mission_type, "Unknown")
+
+
+def resize_for_upload(item):
+    if item and hasattr(item, 'url'):
+        basewidth = 1920
+        image = Image.open(item)
+        wpercent = (basewidth / float(image.size[0]))
+        hsize = int((float(image.size[1]) * float(wpercent)))
+
+        output = BytesIO()
+        image = image.resize((basewidth, hsize), Image.ANTIALIAS)
+
+        if image.format == 'PNG':
+            imageformat = 'PNG'
+        else:
+            imageformat = 'JPEG'
+
+        image.save(output, format=imageformat, optimize=True)
+        output.seek(0)
+
+        return InMemoryUploadedFile(output, 'FileField',
+                                    ("%s." + imageformat.lower()) % item.name.split('.')[0],
+                                    'image/' + imageformat.lower(),
+                                    sys.getsizeof(output), None)
+    else:
+        return None

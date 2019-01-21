@@ -3,6 +3,10 @@ from drf_queryfields import QueryFieldsMixin
 from api.models import *
 from rest_framework import serializers
 
+class SpacecraftConfigTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SpacecraftConfigurationType
+        fields = ('id', 'name',)
 
 class SpaceStationStatusSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,12 +32,18 @@ class AstronautStatusSerializer(serializers.ModelSerializer):
         fields = ('id', 'name',)
 
 
+class AstronautTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AstronautType
+        fields = ('id', 'name',)
+
+
 class AstronautSerializer(serializers.HyperlinkedModelSerializer):
     status = AstronautStatusSerializer(read_only=True)
     agency = serializers.StringRelatedField(read_only=True, source='agency.name')
 
     class Meta:
-        model = Astronauts
+        model = Astronaut
         fields = ('id', 'url', 'name', 'status', 'agency', 'profile_image')
 
 
@@ -54,10 +64,11 @@ class AgencySerializerMini(QueryFieldsMixin, serializers.HyperlinkedModelSeriali
 
 class SpacecraftConfigurationDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     agency = AgencySerializerMini(read_only=True, source="launch_agency")
+    type = SpacecraftConfigTypeSerializer(read_only=True, many=False)
 
     class Meta:
         model = SpacecraftConfiguration
-        fields = ('id', 'url', 'name', 'agency', 'in_use', 'capability', 'history', 'details', 'maiden_flight',
+        fields = ('id', 'url', 'name', 'type', 'agency', 'in_use', 'capability', 'history', 'details', 'maiden_flight',
                   'height', 'diameter', 'human_rated', 'crew_capacity', 'payload_capacity', 'flight_life',
                   'image_url', 'nation_url', 'wiki_link', 'info_link')
 
@@ -141,7 +152,7 @@ class AstronautDetailedSerializerNoFlights(serializers.HyperlinkedModelSerialize
     agency = AgencySerializerMini(read_only=True, many=False)
 
     class Meta:
-        model = Astronauts
+        model = Astronaut
         # fields = ('name',)
         fields = ('id', 'url', 'name', 'status', 'agency', 'date_of_birth', 'date_of_death', 'nationality',
                   'twitter', 'instagram', 'bio', 'profile_image', 'wiki',)
@@ -171,7 +182,7 @@ class SpaceStationSerializerForDockingEvent(serializers.HyperlinkedModelSerializ
 
     class Meta:
         model = SpaceStation
-        fields = ('id', 'url', 'name', 'status', 'founded', 'description', 'orbit',)
+        fields = ('id', 'url', 'name', 'status', 'founded', 'description', 'orbit', 'image_url',)
 
 
 class DockingEventSerializerForSpacecraftFlight(serializers.ModelSerializer):
@@ -355,10 +366,15 @@ class SpacecraftStatusSerializer(serializers.ModelSerializer):
         fields = ('id', 'name',)
 
 
+
+
+
 class SpacecraftConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+    type = SpacecraftConfigTypeSerializer(read_only=True, many=False)
+
     class Meta:
         model = SpacecraftConfiguration
-        fields = ('id', 'url', 'name', 'in_use')
+        fields = ('id', 'url', 'name', 'type', 'in_use')
 
 
 class SpacecraftSerializer(serializers.HyperlinkedModelSerializer):

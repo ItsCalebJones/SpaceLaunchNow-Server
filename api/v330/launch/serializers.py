@@ -6,7 +6,7 @@ class AstronautDetailedSerializerNoFlights(serializers.HyperlinkedModelSerialize
     agency = AgencySerializerMini(read_only=True, many=False)
 
     class Meta:
-        model = Astronauts
+        model = Astronaut
         # fields = ('name',)
         fields = ('id', 'url', 'name', 'status', 'agency', 'date_of_birth', 'date_of_death', 'nationality',
                   'twitter', 'instagram', 'bio', 'profile_image', 'wiki',)
