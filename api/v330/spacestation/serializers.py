@@ -43,8 +43,8 @@ class SpaceStationDetailedSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = SpaceStation
-        fields = ('id', 'url', 'name', 'status', 'founded', 'description', 'orbit', 'onboard_crew', 'owners', 'docked_vehicles',
-                  'active_expeditions',)
+        fields = ('id', 'url', 'name', 'status', 'founded', 'height', 'width', 'mass', 'volume', 'description', 'orbit', 'onboard_crew', 'owners', 'docked_vehicles',
+                  'active_expeditions', 'image_url')
 
 
 class SpaceStationSerializer(serializers.HyperlinkedModelSerializer):

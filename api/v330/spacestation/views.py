@@ -41,6 +41,6 @@ class SpaceStationViewSet(ModelViewSet):
         'list': ['_Public'] # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'status', 'owners', 'orbit')
+    filter_fields = ('name', 'status', 'owners', 'orbit', 'type')
     search_fields = ('$name', 'owners__name', 'owners__abbrev')
-    ordering_fields = ('id', )
+    ordering_fields = ('id', 'status', 'type')

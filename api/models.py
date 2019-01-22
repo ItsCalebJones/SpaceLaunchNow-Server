@@ -673,6 +673,11 @@ class SpaceStation(models.Model):
     description = models.CharField(max_length=2048, null=False, blank=False)
     orbit = models.ForeignKey(Orbit, null=False, blank=False)
     status = models.ForeignKey(SpaceStationStatus, null=False, blank=False)
+    type = models.ForeignKey(SpaceStationType, null=False, blank=False, default=1)
+    height = models.FloatField(verbose_name="Height (m)", blank=True, null=True)
+    width = models.FloatField(verbose_name="Width (m)", blank=True, null=True)
+    mass = models.FloatField(verbose_name="Mass (T)", blank=True, null=True)
+    volume = models.IntegerField(verbose_name="Volume (m^3)", blank=True, null=True)
     image_url = models.FileField(default=None, storage=SpaceStationImageStorage(), upload_to=image_path, null=True,
                                  blank=True)
     active_expeditions = models.ManyToManyField('Expedition', blank=True)

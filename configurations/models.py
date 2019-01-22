@@ -164,6 +164,20 @@ class SpaceStationStatus(models.Model):
         verbose_name_plural = 'Space Station Status\''
 
 
+class SpaceStationType(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    class Meta:
+        verbose_name = 'Space Station Type'
+        verbose_name_plural = 'Space Station Types'
+
+
 class DockingLocation(models.Model):
     name = models.CharField(max_length=255)
 
