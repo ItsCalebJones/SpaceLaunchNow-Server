@@ -3,12 +3,20 @@ from drf_queryfields import QueryFieldsMixin
 from api.models import *
 from rest_framework import serializers
 
+
 class SpacecraftConfigTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = SpacecraftConfigurationType
         fields = ('id', 'name',)
 
+
 class SpaceStationStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SpaceStationStatus
+        fields = ('id', 'name',)
+
+
+class SpaceStationTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = SpaceStationStatus
         fields = ('id', 'name',)

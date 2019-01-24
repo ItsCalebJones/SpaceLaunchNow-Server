@@ -669,6 +669,7 @@ class SpacecraftFlight(models.Model):
 class SpaceStation(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     founded = models.DateField(null=False, blank=False)
+    deorbited = models.DateField(null=True, blank=True)
     owners = models.ManyToManyField(Agency, blank=False)
     description = models.CharField(max_length=2048, null=False, blank=False)
     orbit = models.ForeignKey(Orbit, null=False, blank=False)
