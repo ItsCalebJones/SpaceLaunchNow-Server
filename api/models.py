@@ -696,8 +696,8 @@ class SpaceStation(models.Model):
 
     @property
     def docked_vehicles(self):
-        docked = SpacecraftFlight.objects.filter(docking_events__space_station__active_expeditions__in=self.active_expeditions.all())
-        return docked
+        spacecraft = SpacecraftFlight.objects.filter(docking_events__space_station=self.id).filter(docking_events__docked=True).all()
+        return spacecraft
 
     def __str__(self):
         return self.name
@@ -730,6 +730,7 @@ class DockingEvent(models.Model):
                                      related_name='docking_events')
     flight_vehicle = models.ForeignKey(SpacecraftFlight, on_delete=models.CASCADE,
                                        related_name='docking_events')
+    docked = models.BooleanField(default=False)
     docking = models.DateTimeField(null=False, blank=False)
     departure = models.DateTimeField(null=True, blank=True)
     docking_location = models.ForeignKey(DockingLocation, null=False, blank=False)
