@@ -75,7 +75,7 @@ class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSer
 
 
 class SpacecraftDetailedNoFlightsSerializer(serializers.HyperlinkedModelSerializer):
-    status = serializers.StringRelatedField(source='status.name', read_only=True, many=False)
+    status = SpacecraftStatusSerializer(read_only=True, many=False)
     spacecraft_config = SpacecraftConfigurationDetailSerializer(read_only=True, many=False)
 
     class Meta:

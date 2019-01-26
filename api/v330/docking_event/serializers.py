@@ -2,7 +2,7 @@ from api.v330.common.serializers import *
 
 
 class SpacecraftFlightSerializerForDockingEvent(serializers.HyperlinkedModelSerializer):
-    spacecraft = serializers.StringRelatedField(read_only=True, many=False)
+    spacecraft = SpacecraftSerializer(read_only=True, many=False)
 
     class Meta:
         model = SpacecraftFlight
