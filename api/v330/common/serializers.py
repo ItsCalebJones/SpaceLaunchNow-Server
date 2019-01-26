@@ -22,6 +22,12 @@ class SpaceStationTypeSerializer(serializers.ModelSerializer):
         fields = ('id', 'name',)
 
 
+class SpacecraftStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SpacecraftStatus
+        fields = ('id', 'name',)
+
+
 class AgencyListSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Agency
@@ -176,7 +182,7 @@ class AstronautFlightSerializer(serializers.ModelSerializer):
 
 
 class SpacecraftDetailedNoFlightsSerializer(serializers.HyperlinkedModelSerializer):
-    status = serializers.StringRelatedField(source='status.name', read_only=True, many=False)
+    status = status = SpacecraftStatusSerializer(read_only=True, many=False)
     spacecraft_config = SpacecraftConfigurationDetailSerializer(read_only=True, many=False)
 
     class Meta:
@@ -366,12 +372,6 @@ class LaunchListSerializer(serializers.ModelSerializer):
 
         except Exception as ex:
             return None
-
-
-class SpacecraftStatusSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SpacecraftStatus
-        fields = ('id', 'name',)
 
 
 class SpacecraftConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
