@@ -39,7 +39,7 @@ class SpaceStationDetailedSerializer(serializers.HyperlinkedModelSerializer):
     owners = AgencySerializer(read_only=True, many=True)
     type = SpaceStationTypeSerializer(read_only=True, many=False)
     orbit = serializers.StringRelatedField(many=False, read_only=True)
-    docked_vehicles = SpacecraftFlightSerializer(read_only=True, many=True)
+    docked_vehicles = SpacecraftFlightDetailedSerializer(read_only=True, many=True)
     active_expeditions = ExpeditionDetailedSerializerForSpacestation(read_only=True, many=True)
 
     class Meta:

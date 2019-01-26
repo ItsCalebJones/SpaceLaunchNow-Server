@@ -413,8 +413,7 @@ class SpacecraftFlightDetailedSerializer(serializers.HyperlinkedModelSerializer)
         model = SpacecraftFlight
         fields = (
             'id', 'url', 'splashdown', 'destination', 'launch_crew', 'onboard_crew', 'landing_crew', 'spacecraft',
-            'launch',
-            'docking_events')
+            'launch', 'docking_events')
 
 
 class AgencySerializerDetailedForLaunches(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
