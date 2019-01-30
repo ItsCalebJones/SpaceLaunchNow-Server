@@ -11,7 +11,9 @@ Suggest using a Linux or MacOS device however can be ran with Windows.
 1. Download/Extract and navigate to the correct directory.
 2. (Optional) Create a python [virtual environment](https://virtualenv.pypa.io/en/stable/installation/) for this project.
 2. Run: `$ pip install -r requirements.txt` to install required Python packages.
-3. Initiate the DB with `python manage.py runmigrations`
+3. Create a log directory with `mkdir log`
+3. Create an empty logfile with `nano log/daily_digest.log`, then save the file and exit.
+3. Initiate the DB with `python manage.py migrate`
 4. Run the server - `python manage.py runserver`
 5. Open a browser and navigate to 127.0.0.1:8000
 
