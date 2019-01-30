@@ -11,7 +11,7 @@ Suggest using a Linux or MacOS device however can be ran with Windows.
 1. Download/Extract and navigate to the correct directory.
 2. (Optional) Create a python [virtual environment](https://virtualenv.pypa.io/en/stable/installation/) for this project.
 2. Run: `$ pip install -r requirements.txt` to install required Python packages.
-3. Create a config file copy with `cp spacelaunchnow/example_config.py spacelaunchnow/config.py` (Linux/MacOS) or `copy .\spacelaunchnow\example_config.py .\spacelaunchnow\config.py`
+3. Create a config file copy with `cp spacelaunchnow/example_config.py spacelaunchnow/config.py` (Linux/MacOS) or `copy .\spacelaunchnow\example_config.py .\spacelaunchnow\config.py` (Windows)
 3. Initiate the DB with `python manage.py migrate`
 4. Run the server - `python manage.py runserver`
 5. Open a browser and navigate to 127.0.0.1:8000
