@@ -376,10 +376,11 @@ class LaunchListSerializer(serializers.ModelSerializer):
 
 class SpacecraftConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     type = SpacecraftConfigTypeSerializer(read_only=True, many=False)
+    agency = AgencySerializerMini(read_only=True, source="launch_agency")
 
     class Meta:
         model = SpacecraftConfiguration
-        fields = ('id', 'url', 'name', 'type', 'in_use')
+        fields = ('id', 'url', 'name', 'type', 'agency', 'in_use', 'image_url')
 
 
 class SpacecraftSerializer(serializers.HyperlinkedModelSerializer):
