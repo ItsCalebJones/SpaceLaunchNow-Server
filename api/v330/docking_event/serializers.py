@@ -21,7 +21,8 @@ class DockingEventSerializer(serializers.HyperlinkedModelSerializer):
 class DockingEventDetailedSerializer(serializers.HyperlinkedModelSerializer):
     flight_vehicle = SpacecraftFlightSerializerForDockingEvent(read_only=True, many=False)
     docking_location = serializers.StringRelatedField(many=False, read_only=True)
+    image_url = serializers.FileField(read_only=True, source="flight_vehicle.spacecraft.spacecraft_config.image_url")
 
     class Meta:
         model = DockingEvent
-        fields = ('id', 'url', 'docking', 'departure', 'flight_vehicle', 'docking_location')
+        fields = ('id', 'url', 'docking', 'departure', 'flight_vehicle', 'docking_location', 'image_url')
