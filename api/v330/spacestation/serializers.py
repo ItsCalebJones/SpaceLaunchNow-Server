@@ -37,23 +37,26 @@ class ExpeditionDetailedSerializerForSpacestation(serializers.HyperlinkedModelSe
 class SpaceStationDetailedSerializer(serializers.HyperlinkedModelSerializer):
     status = SpaceStationStatusSerializer(read_only=True, many=False)
     owners = AgencySerializer(read_only=True, many=True)
+    type = SpaceStationTypeSerializer(read_only=True, many=False)
     orbit = serializers.StringRelatedField(many=False, read_only=True)
-    docked_vehicles = SpacecraftFlightSerializer(read_only=True, many=True)
+    docked_vehicles = SpacecraftFlightDetailedSerializer(read_only=True, many=True)
     active_expeditions = ExpeditionDetailedSerializerForSpacestation(read_only=True, many=True)
 
     class Meta:
         model = SpaceStation
-        fields = ('id', 'url', 'name', 'status', 'founded', 'height', 'width', 'mass', 'volume', 'description', 'orbit', 'onboard_crew', 'owners', 'docked_vehicles',
-                  'active_expeditions', 'image_url')
+        fields = ('id', 'url', 'name', 'status', 'type', 'founded', 'deorbited', 'height', 'width', 'mass', 'volume',
+                  'description', 'orbit', 'onboard_crew', 'owners', 'docked_vehicles', 'active_expeditions',
+                  'image_url')
 
 
 class SpaceStationSerializer(serializers.HyperlinkedModelSerializer):
     status = SpaceStationStatusSerializer(read_only=True, many=False)
+    type = SpaceStationTypeSerializer(read_only=True, many=False)
     owners = AgencyListSerializer(read_only=True, many=True)
     orbit = serializers.StringRelatedField(many=False, read_only=True)
     active_expedition = ExpeditionSerializerForSpacestation(read_only=True, many=True)
 
     class Meta:
         model = SpaceStation
-        fields = ('id', 'url', 'name', 'status', 'founded', 'description', 'orbit',  'owners', 'active_expedition',
-                  'image_url',)
+        fields = ('id', 'url', 'name', 'status', 'type', 'founded', 'deorbited', 'description', 'orbit',  'owners',
+                  'active_expedition', 'image_url',)
