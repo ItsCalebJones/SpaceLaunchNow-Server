@@ -16,6 +16,12 @@ class SpaceStationStatusSerializer(serializers.ModelSerializer):
         fields = ('id', 'name',)
 
 
+class EventTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EventType
+        fields = ('id', 'name',)
+
+
 class SpaceStationTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = SpaceStationStatus

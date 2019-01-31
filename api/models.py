@@ -279,13 +279,20 @@ class LauncherConfig(models.Model):
         super(LauncherConfig, self).save()
 
 
+def get_default_event_config_type():
+    obj, created = EventType.objects.get_or_create(id=1, name="Unknown")
+    return obj.id
+
+
 # The Events object is meant to define events (past and present).
 # Example: Blue Origin Launches, ISS Crew returns, etc.
 class Events(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=2048, default='', blank=True)
-    location = models.CharField(max_length=100, default='', blank=True)
+    type = models.ForeignKey(EventType, default=get_default_event_config_type)
+    location = models.CharField(max_length=100, default='', blank=True, null=True)
+    news_url = models.URLField(max_length=250, blank=True, null=True)
     feature_image = models.FileField(storage=EventImageStorage(), default=None, null=True, blank=True,
                                      upload_to=image_path)
     date = models.DateTimeField(blank=True, null=True)
