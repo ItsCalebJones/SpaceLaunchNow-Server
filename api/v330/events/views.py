@@ -14,7 +14,7 @@ class EventViewSet(ModelViewSet):
     Return a list of future Events
     """
     now = datetime.datetime.now(tz=pytz.utc)
-    queryset = Events.objects.filter(date__gte=now)
+    queryset = Events.objects.filter(date__gte=now).order_by('date')
     serializer_class = EventsSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {
