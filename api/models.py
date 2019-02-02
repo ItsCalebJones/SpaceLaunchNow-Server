@@ -641,7 +641,7 @@ class Spacecraft(models.Model):
 
 
 class SpacecraftFlight(models.Model):
-    splashdown = models.DateTimeField(null=True, blank=True)
+    mission_end = models.DateTimeField(null=True, blank=True)
     launch_crew = models.ManyToManyField(AstronautFlight,
                                          related_name='launch_crew',
                                          blank=True)
