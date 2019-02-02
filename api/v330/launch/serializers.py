@@ -102,7 +102,7 @@ class SpacecraftFlightDetailedSerializerForLaunch(serializers.HyperlinkedModelSe
 
     class Meta:
         model = SpacecraftFlight
-        fields = ('id', 'url', 'splashdown', 'destination', 'launch_crew', 'onboard_crew', 'landing_crew', 'spacecraft',
+        fields = ('id', 'url', 'mission_end', 'destination', 'launch_crew', 'onboard_crew', 'landing_crew', 'spacecraft',
                   'docking_events')
 
 
@@ -111,7 +111,7 @@ class SpacecraftFlightSerializerForLaunch(serializers.HyperlinkedModelSerializer
 
     class Meta:
         model = SpacecraftFlight
-        fields = ('id', 'url', 'destination', 'splashdown', 'spacecraft',)
+        fields = ('id', 'url', 'destination', 'mission_end', 'spacecraft',)
 
 
 class AgencySerializerDetailedForLaunches(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):

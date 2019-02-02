@@ -6,7 +6,7 @@ class SpacecraftFlightSerializerForDockingEvent(serializers.HyperlinkedModelSeri
 
     class Meta:
         model = SpacecraftFlight
-        fields = ('id', 'url', 'destination', 'splashdown', 'spacecraft')
+        fields = ('id', 'url', 'destination', 'mission_end', 'spacecraft')
 
 
 class SpacecraftFlightDetailedSerializerForDockingEvent(serializers.HyperlinkedModelSerializer):
@@ -14,7 +14,7 @@ class SpacecraftFlightDetailedSerializerForDockingEvent(serializers.HyperlinkedM
 
     class Meta:
         model = SpacecraftFlight
-        fields = ('id', 'url', 'destination', 'splashdown', 'spacecraft')
+        fields = ('id', 'url', 'destination', 'mission_end', 'spacecraft')
 
 
 class SpaceStationSerializerForDockingEvent(serializers.HyperlinkedModelSerializer):

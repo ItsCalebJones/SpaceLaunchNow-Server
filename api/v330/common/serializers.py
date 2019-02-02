@@ -404,7 +404,7 @@ class SpacecraftFlightSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = SpacecraftFlight
-        fields = ('id', 'url', 'destination', 'splashdown', 'spacecraft', 'launch')
+        fields = ('id', 'url', 'destination', 'mission_end', 'spacecraft', 'launch')
 
 
 class SpacecraftFlightDetailedSerializer(serializers.HyperlinkedModelSerializer):
@@ -419,7 +419,7 @@ class SpacecraftFlightDetailedSerializer(serializers.HyperlinkedModelSerializer)
     class Meta:
         model = SpacecraftFlight
         fields = (
-            'id', 'url', 'splashdown', 'destination', 'launch_crew', 'onboard_crew', 'landing_crew', 'spacecraft',
+            'id', 'url', 'mission_end', 'destination', 'launch_crew', 'onboard_crew', 'landing_crew', 'spacecraft',
             'launch', 'docking_events')
 
 

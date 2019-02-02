@@ -285,7 +285,7 @@ def get_default_event_config_type():
 
 
 # The Events object is meant to define events (past and present).
-# Example: Blue Origin Launches, ISS Crew returns, etc.
+# Example: ISS Crew returns, etc.
 class Events(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
