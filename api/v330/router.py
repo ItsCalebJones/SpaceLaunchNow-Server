@@ -3,7 +3,7 @@ from api.v330.astronaut.views import AstronautViewSet
 from api.v330.config.launcher.views import LauncherConfigViewSet
 from api.v330.config.spacecraft.views import SpacecraftConfigViewSet
 from api.v330.docking_event.views import DockingEventViewSet
-from api.v330.events.views import EventViewSet
+from api.v330.events.views import EventViewSet, PreviousEventViewSet, UpcomingEventViewSet
 from api.v330.expedition.views import ExpeditionViewSet
 from api.v330.launch.views import PreviousLaunchViewSet, UpcomingLaunchViewSet, LaunchViewSet
 from api.v330.launcher.views import LauncherViewSet
@@ -19,7 +19,7 @@ router.register(r'astronaut', AstronautViewSet, base_name='astronaut')
 router.register(r'config/launcher', LauncherConfigViewSet)
 router.register(r'config/spacecraft', SpacecraftConfigViewSet)
 router.register(r'docking_event', DockingEventViewSet)
-router.register(r'event', EventViewSet)
+router.register(r'event/previous', PreviousEventViewSet, base_name='events/previous')
 router.register(r'expedition', ExpeditionViewSet, base_name='expedition')
 router.register(r'launch/previous', PreviousLaunchViewSet, base_name='launch/previous')
 router.register(r'launch/upcoming', UpcomingLaunchViewSet,  base_name='launch/upcoming')
