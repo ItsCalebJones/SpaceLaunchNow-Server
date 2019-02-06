@@ -76,6 +76,12 @@ class AgencySerializerMini(QueryFieldsMixin, serializers.HyperlinkedModelSeriali
 class AstronautSerializer(serializers.HyperlinkedModelSerializer):
     status = AstronautStatusSerializer(read_only=True)
     agency = AgencySerializerMini(read_only=True)
+    profile_image_thumbnail = HyperlinkedSorlImageField(
+        '128x128',
+        options={"crop": "80% top"},
+        source='profile_image',
+        read_only=True
+    )
 
     class Meta:
         model = Astronaut
