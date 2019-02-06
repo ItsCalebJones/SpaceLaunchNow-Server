@@ -1,4 +1,5 @@
 from drf_queryfields import QueryFieldsMixin
+from sorl_thumbnail_serializer.fields import HyperlinkedSorlImageField
 
 from api.models import *
 from rest_framework import serializers
