@@ -79,7 +79,7 @@ class AstronautSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Astronaut
-        fields = ('id', 'url', 'name', 'status', 'agency', 'profile_image')
+        fields = ('id', 'url', 'name', 'status', 'agency', 'profile_image', 'profile_image_thumbnail')
 
 
 class SpacecraftConfigurationDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
