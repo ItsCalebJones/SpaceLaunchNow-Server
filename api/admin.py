@@ -101,6 +101,7 @@ class SpacecraftFlightInline(admin.StackedInline):
     verbose_name = "Spacecraft Stage"
     verbose_name_plural = "Spacecraft Stage"
 
+
 class SpacecraftFlightInlineForSpacecraft(admin.StackedInline):
     model = models.SpacecraftFlight
     verbose_name = "Flight"
@@ -259,17 +260,16 @@ class SpacecraftFlightAdmin(admin.ModelAdmin):
 
 @admin.register(models.Spacecraft)
 class SpacecraftAdmin(admin.ModelAdmin):
-    list_display = ('name', 'serial_number', 'status', 'flights')
+    list_display = ('name', 'serial_number', 'status',)
     list_filter = ('status', 'spacecraft_config',)
     form = SpacecraftForm
-    read_only_fields = ('flights',)
     search_fields = ('name', 'spacecraft_config__name')
-    inlines = [SpacecraftFlightInlineForSpacecraft, ]
+    # inlines = [SpacecraftFlightInlineForSpacecraft, ]
 
     def status(self, obj):
         return obj.status.name
 
-    def flights(self, obj):
-        return '<a href="/admin/api/spacecraftflight/?spacecraft__spacecraft_config__id__exact=%d">%s Flights</a>' % (obj.spacecraft_config.id, obj.name)
-
-    flights.allow_tags = True
+    # def flights(self, obj):
+    #     return '<a href="/admin/api/spacecraftflight/?spacecraft__spacecraft_config__id__exact=%d">%s Flights</a>' % (obj.spacecraft_config.id, obj.name)
+    #
+    # flights.allow_tags = True
