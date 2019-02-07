@@ -57,6 +57,17 @@ class MissionType(models.Model):
         return self.name
 
 
+class EventType(models.Model):
+    id = models.IntegerField(primary_key=True, editable=True)
+    name = models.CharField(max_length=255, blank=True, default="")
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
 class FirstStageType(models.Model):
     id = models.IntegerField(primary_key=True, editable=True)
     name = models.CharField(max_length=50, blank=True, default="")
@@ -122,6 +133,20 @@ class AstronautStatus(models.Model):
         verbose_name_plural = 'Astronaut Status\''
 
 
+class AstronautType(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    class Meta:
+        verbose_name = 'Astronaut Type'
+        verbose_name_plural = 'Astronaut Types'
+
+
 class AstronautRole(models.Model):
     role = models.CharField(max_length=255)
 
@@ -148,3 +173,45 @@ class SpaceStationStatus(models.Model):
     class Meta:
         verbose_name = 'Space Station Status'
         verbose_name_plural = 'Space Station Status\''
+
+
+class SpaceStationType(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    class Meta:
+        verbose_name = 'Space Station Type'
+        verbose_name_plural = 'Space Station Types'
+
+
+class DockingLocation(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    class Meta:
+        verbose_name = 'Docking Location'
+        verbose_name_plural = 'Docking Locations'
+
+
+class SpacecraftConfigurationType(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return u'%s' % self.name
+
+    class Meta:
+        verbose_name = 'Spacecraft Configuration Type'
+        verbose_name_plural = 'Spacecraft Configuration Types'

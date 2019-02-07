@@ -3,7 +3,7 @@ import json
 
 from rest_framework import status
 
-from api.models import Astronauts
+from api.models import Astronaut
 from api.tests.test__base import SLNAPITests
 
 
@@ -13,12 +13,12 @@ class AstronautTest(SLNAPITests):
         """
         Ensure astronaut endpoints work as expected.
         """
-        path = '/api/3.3.0/astronauts/'
+        path = '/api/3.3.0/astronaut/'
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content.decode('utf-8'))
         self.assertEqual(data['count'], 1)
-        starman = Astronauts.objects.get(name=data['results'][0]['name'])
+        starman = Astronaut.objects.get(name=data['results'][0]['name'])
         self.assertEqual(data['results'][0]['name'], starman.name)
         self.assertEqual(data['results'][0]['date_of_birth'],
                          "2018-02-06")

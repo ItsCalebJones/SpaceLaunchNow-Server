@@ -1,8 +1,22 @@
 {% extends "rest_framework/base.html" %}
 {% load rest_framework %}
 {% load staticfiles%}
+
+
+
+{% block head %}
+
+<title>{% block title %}{% if name and 'Space Launch' not in name%}{{ name }} | {% endif %}Space Launch Now - API{% endblock %}</title>
+
+{% block style %}
+{{ block.super }}
+<link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.ico' %}" />
+{% endblock %}
+
 {% block bootstrap_theme %}
-    <link href="{% static  'material_kit/css/bootswatch-paper.min.css' %}" rel="stylesheet">
+    <link href="{% static  'material_kit/css/bootswatch-paper.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% endblock %}
 
 {% load i18n %}
@@ -23,6 +37,7 @@
                             <li><a href="/2.0.0">Version 2.0.0</a></li>
                             <li><a href="/3.0.0">Version 3.0.0</a></li>
                             <li><a href="/3.2.0">Version 3.2.0</a></li>
+                            <li><a href="/api/3.3.0">Version 3.3.0</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="https://github.com/ItsCalebJones/SpaceLaunchNow-Server/releases">Changelog</a></li>
                             <li role="separator" class="divider"></li>

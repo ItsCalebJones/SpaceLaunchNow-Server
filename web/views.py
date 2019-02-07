@@ -15,7 +15,7 @@ from django.shortcuts import render, redirect
 from django import forms
 
 # Create your views here.
-from api.models import Agency, Launch, Astronauts
+from api.models import Agency, Launch, Astronaut
 
 
 def get_youtube_url(launch):
@@ -122,14 +122,14 @@ def launches(request, ):
 
 def astronaut(request, id):
     try:
-        return redirect('astronaut_by_slug', slug=Astronauts.objects.get(pk=id).slug)
+        return redirect('astronaut_by_slug', slug=Astronaut.objects.get(pk=id).slug)
     except ObjectDoesNotExist:
         raise Http404
 
 
 def astronaut_by_slug(request, slug):
     try:
-        _astronaut = Astronauts.objects.get(slug=slug)
+        _astronaut = Astronaut.objects.get(slug=slug)
         listi = list((Launch.objects.filter(Q(rocket__spacecraftflight__launch_crew__id=_astronaut.pk) |
                                             Q(rocket__spacecraftflight__onboard_crew__id=_astronaut.pk) |
                                             Q(rocket__spacecraftflight__landing_crew__id=_astronaut.pk))
@@ -145,13 +145,13 @@ def astronaut_by_slug(request, slug):
 
 
 def astronaut_list(request, ):
-    active_astronauts = Astronauts.objects.filter(status=1).order_by('name')
+    active_astronauts = Astronaut.objects.filter(status=1).order_by('name')
 
-    training_astronauts = Astronauts.objects.filter(status=3).order_by('name')
+    training_astronauts = Astronaut.objects.filter(status=3).order_by('name')
 
-    retired_astronauts = Astronauts.objects.filter(status=2).order_by('name')
+    retired_astronauts = Astronaut.objects.filter(status=2).order_by('name')
 
-    lost_astronauts = Astronauts.objects.filter(Q(status=5) | Q(status=4)).order_by('name')
+    lost_astronauts = Astronaut.objects.filter(Q(status=5) | Q(status=4)).order_by('name')
 
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
 
@@ -212,7 +212,7 @@ def astronaut_search(request):
     query = request.GET.get('q')
 
     if query is not None:
-        _astronauts = Astronauts.objects.filter(name__icontains=query).order_by('name')
+        _astronauts = Astronaut.objects.filter(name__icontains=query).order_by('name')
         previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
         return render(request, 'web/astronaut/astronaut_search.html', {'astronauts': _astronauts,
                                                                        'query': query,
@@ -226,7 +226,7 @@ def astronaut_search_ajax(request):
 
     if not query:
         return HttpResponse(json.dumps([{}]), content_type='application/json')
-    majors = Astronauts.objects.filter(name__icontains=query)
+    majors = Astronaut.objects.filter(name__icontains=query)
     return HttpResponse(
         json.dumps(majors),
         content_type='application/json',

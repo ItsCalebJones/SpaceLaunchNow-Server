@@ -45,7 +45,6 @@ djangorestframework-bulk==0.2.1
 djangorestframework-queryfields==1.0.0
 docutils==0.14
 drf-toolbox==0.1.7
-drfdocs==0.0.11
 funcsigs==1.0.2
 futures==3.1.1
 google-api-python-client==1.4.1
@@ -90,6 +89,7 @@ s3transfer==0.1.13
 simplejson==3.10.0
 six==1.10.0
 sorl-thumbnail==12.5.0
+sorl-thumbnail-serializer-field==0.2.1
 twitter==1.18.0
 tzlocal==1.4
 ua-parser==0.7.3
@@ -103,3 +103,4 @@ webencodings==0.5.1
 Willow==1.0
 -e git://github.com/ping/instagram_private_api.git@1.5.7#egg=instagram_private_api
 -e git://github.com/ItsCalebJones/django-jet.git@dev-unicode-fix#egg=django-jet
+-e git://github.com/ItsCalebJones/django-rest-framework-docs.git@master#egg=drfdocs

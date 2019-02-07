@@ -2,10 +2,12 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
+from django.urls import reverse
+from django.utils.html import escape
 
 from api.filters.UpcomingFilter import DateListFilter
 from api.forms.admin_forms import LaunchForm, LandingForm, LauncherForm, PayloadForm, MissionForm, EventsForm, \
-    OrbiterForm, AgencyForm, AstronautForm, SpacecraftFlightForm, SpacecraftForm, LauncherConfigForm
+    OrbiterForm, AgencyForm, AstronautForm, SpacecraftFlightForm, SpacecraftForm, LauncherConfigForm, SpaceStationForm
 from bot.utils.admin_utils import custom_titled_filter
 from . import models
 
@@ -88,10 +90,21 @@ class FirstStageInline(admin.TabularInline):
     verbose_name_plural = "Launcher Stages"
 
 
+class DockingEventInline(admin.StackedInline):
+    model = models.DockingEvent
+    verbose_name = "Docking Event"
+    verbose_name_plural = "Docking Events"
+
+
 class SpacecraftFlightInline(admin.StackedInline):
     model = models.SpacecraftFlight
     verbose_name = "Spacecraft Stage"
     verbose_name_plural = "Spacecraft Stage"
+
+class SpacecraftFlightInlineForSpacecraft(admin.StackedInline):
+    model = models.SpacecraftFlight
+    verbose_name = "Flight"
+    verbose_name_plural = "Flights"
 
 
 @admin.register(models.Rocket)
@@ -192,10 +205,10 @@ class InfoAdmin(admin.ModelAdmin):
     list_display = ('info_url', 'launch')
 
 
-@admin.register(models.Astronauts)
+@admin.register(models.Astronaut)
 class AstronautsAdmin(admin.ModelAdmin):
     list_display = ('name', 'nationality', 'status', 'agency')
-    list_filter = ('name', 'nationality', 'status', 'agency')
+    list_filter = ('nationality', 'status', 'agency')
     search_fields = ('name', 'agency__name')
     readonly_fields = ["slug"]
     form = AstronautForm
@@ -206,14 +219,57 @@ class AstronautFlightAdmin(admin.ModelAdmin):
     list_display = ('id', 'astronaut', 'role')
 
 
+class ExpeditionInline(admin.StackedInline):
+    model = models.Expedition
+    verbose_name = "Expedition"
+    verbose_name_plural = "Expeditions"
+
+
+@admin.register(models.Expedition)
+class ExpeditionAdmin(admin.ModelAdmin):
+    list_display = ('name', 'start', 'end', 'space_station')
+    list_filter = ('space_station', 'space_station__owners__name')
+    search_fields = ('space_station__name', 'crew__name')
+
+
+@admin.register(models.DockingEvent)
+class DockingEventAdmin(admin.ModelAdmin):
+    list_display = ('space_station', 'flight_vehicle')
+
+
 @admin.register(models.SpaceStation)
 class SpaceStationAdmin(admin.ModelAdmin):
     list_display = ('name', )
+    form = SpaceStationForm
+    inlines = [ExpeditionInline, ]
+
+
+@admin.register(models.SpacecraftFlight)
+class SpacecraftFlightAdmin(admin.ModelAdmin):
+    list_display = ('spacecraft_name', )
+    list_filter = ('spacecraft__spacecraft_config', 'spacecraft__status',
+                   'rocket__configuration__launch_agency__name')
+    search_fields = ('id', 'spacecraft__name', 'landing_crew__astronaut__name', 'launch_crew__astronaut__name',
+                     'onboard_crew__astronaut__name')
+    inlines = [DockingEventInline,]
+
+    def spacecraft_name(self, obj):
+        return obj.spacecraft.name + " | " + obj.rocket.launch.name
 
 
 @admin.register(models.Spacecraft)
 class SpacecraftAdmin(admin.ModelAdmin):
-    list_display = ('name', 'serial_number')
+    list_display = ('name', 'serial_number', 'status', 'flights')
     list_filter = ('status', 'spacecraft_config',)
     form = SpacecraftForm
+    read_only_fields = ('flights',)
     search_fields = ('name', 'spacecraft_config__name')
+    inlines = [SpacecraftFlightInlineForSpacecraft, ]
+
+    def status(self, obj):
+        return obj.status.name
+
+    def flights(self, obj):
+        return '<a href="/admin/api/spacecraftflight/?spacecraft__spacecraft_config__id__exact=%d">%s Flights</a>' % (obj.spacecraft_config.id, obj.name)
+
+    flights.allow_tags = True

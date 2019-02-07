@@ -19,9 +19,10 @@ class LaunchLibrarySDK(object):
         self.version = version
         self.api_url = BASE_URL + self.version
 
-    def get_next_launches(self, tbd=False, launch_service_provider=None, next_count=1, offset=0):
+    def get_next_launches(self, tbd=False, launch_service_provider=None, next_count=1, offset=0, status=None):
         """
         Builds a URL and fetches response from LL
+        :param status:
         :param tbd:
         :param offset:
         :param next_count:
@@ -34,6 +35,9 @@ class LaunchLibrarySDK(object):
             url = self.api_url + '/launch/next/%d?mode=verbose&tbdtime=0&tbddate=0&offset=%s' % (next_count, offset)
         else:
             url = self.api_url + '/launch/next/%d?mode=verbose&offset=%s' % (next_count, offset)
+
+        if status:
+            url = url + "&status=%s" % status
 
         if launch_service_provider:
             url = url + "&lsp=" + launch_service_provider

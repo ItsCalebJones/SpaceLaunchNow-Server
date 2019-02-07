@@ -1,5 +1,8 @@
 from datetime import date, datetime
+
+import django_filters
 from django.contrib import admin
+from api.models import Astronaut
 
 
 class DateListFilter(admin.SimpleListFilter):

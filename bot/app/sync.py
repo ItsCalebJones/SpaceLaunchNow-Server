@@ -24,4 +24,6 @@ class LaunchLibrarySync:
             self.DEBUG = debug
 
     def check_next_launch(self):
-        self.repository.get_next_launches(next_count=10)
+        self.repository.get_next_launches(next_count=5, status=1)
+        self.repository.get_next_launches(next_count=5, status=2)
+        self.repository.get_next_launches(next_count=15)
