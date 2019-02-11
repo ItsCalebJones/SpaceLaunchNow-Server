@@ -101,6 +101,7 @@ class SpacecraftFlightInline(admin.StackedInline):
     verbose_name = "Spacecraft Stage"
     verbose_name_plural = "Spacecraft Stage"
 
+
 class SpacecraftFlightInlineForSpacecraft(admin.StackedInline):
     model = models.SpacecraftFlight
     verbose_name = "Flight"
@@ -234,7 +235,8 @@ class ExpeditionAdmin(admin.ModelAdmin):
 
 @admin.register(models.DockingEvent)
 class DockingEventAdmin(admin.ModelAdmin):
-    list_display = ('space_station', 'flight_vehicle')
+    list_display = ('space_station', 'docked', 'flight_vehicle')
+    list_filter = ('space_station', 'docked', 'docking_location')
 
 
 @admin.register(models.SpaceStation)
