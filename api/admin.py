@@ -218,6 +218,8 @@ class AstronautsAdmin(admin.ModelAdmin):
 @admin.register(models.AstronautFlight)
 class AstronautFlightAdmin(admin.ModelAdmin):
     list_display = ('id', 'astronaut', 'role')
+    search_fields = ('astronaut__name', 'role__role')
+    list_filter = ('astronaut', 'role')
 
 
 class ExpeditionInline(admin.StackedInline):
