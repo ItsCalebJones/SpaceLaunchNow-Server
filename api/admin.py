@@ -235,7 +235,7 @@ class ExpeditionAdmin(admin.ModelAdmin):
 
 @admin.register(models.DockingEvent)
 class DockingEventAdmin(admin.ModelAdmin):
-    list_display = ('space_station', 'docked', 'flight_vehicle')
+    list_display = ('space_station', 'docked', 'flight_vehicle', 'docking_location')
     list_filter = ('space_station', 'docked', 'docking_location')
 
 
