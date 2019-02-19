@@ -4,6 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from api.models import *
 from api.permission import HasGroupPermission
+from api.v330.docking_event.filters import DockingEventFilter
 from api.v330.docking_event.serializers import DockingEventSerializer, DockingEventDetailedSerializer
 
 
@@ -21,6 +22,11 @@ class DockingEventViewSet(ModelViewSet):
     MODE:
     'detailed'
     EXAMPLE: ?mode=detailed
+
+    ORDERING:
+    Fields - 'id', 'docking', 'departure'
+    Order reverse via Docking date.
+    Example - /3.3.0/docking_event/?ordering=-docking
     """
 
     def get_serializer_class(self):
@@ -36,6 +42,7 @@ class DockingEventViewSet(ModelViewSet):
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
-    filter_backends = (DjangoFilterBackend, SearchFilter)
-    filter_fields = ('space_station', 'flight_vehicle', 'docking_location',)
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filter_class = DockingEventFilter
     search_fields = ('space_station__name',)
+    ordering_fields = ('docking', 'departure',)
