@@ -245,7 +245,6 @@ class DockingEventAdmin(admin.ModelAdmin):
 class SpaceStationAdmin(admin.ModelAdmin):
     list_display = ('name', )
     form = SpaceStationForm
-    inlines = [ExpeditionInline, ]
 
 
 @admin.register(models.SpacecraftFlight)
