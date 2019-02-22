@@ -27,7 +27,8 @@ SECRET_KEY = config.DJANGO_SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.DEBUG
 
-ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8', '.spacelaunchnow.me', '127.0.0.1', 'spacelaunchnow.me', '10.0.2.2', '159.203.146.211']
+ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8', '.spacelaunchnow.me', '127.0.0.1', 'spacelaunchnow.me',
+                 '10.0.2.2', '159.203.146.211']
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'spacelaunchnow.pagination.SLNLimitOffsetPagination',
     'DEFAULT_MODEL_SERIALIZER_CLASS': 'drf_toolbox.serializers.ModelSerializer',
@@ -50,6 +51,12 @@ REST_FRAMEWORK = {
 }
 
 LOGIN_REDIRECT_URL = '/'
+if DEBUG:
+    import logging
+
+    l = logging.getLogger('django.db.backends')
+    l.setLevel(logging.DEBUG)
+    l.addHandler(logging.StreamHandler())
 
 LOGGING = {
     'version': 1,
@@ -76,6 +83,7 @@ LOGGING = {
             'backupCount': 5
         },
         'console': {
+            'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'standard'
         },
@@ -126,7 +134,7 @@ LOGGING = {
             'handlers': ['django_default', 'discord', 'console'],
             'level': 'INFO',
             'propagate': True,
-        }
+        },
     },
 }
 
@@ -135,9 +143,9 @@ INSTALLED_APPS = config.INSTALLED_APPS
 
 JET_THEMES = [
     {
-        'theme': 'default', # theme folder name
-        'color': '#47bac1', # color of the theme's button in user menu
-        'title': 'Default' # theme title
+        'theme': 'default',  # theme folder name
+        'color': '#47bac1',  # color of the theme's button in user menu
+        'title': 'Default'  # theme title
     },
     {
         'theme': 'green',
@@ -166,7 +174,6 @@ JET_THEMES = [
     }
 ]
 
-
 SITE_ID = 1
 
 MIDDLEWARE = [
@@ -177,8 +184,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     # 'silk.middleware.SilkyMiddleware',
 ]
+
 SILKY_PYTHON_PROFILER = True
 
 GEOIP_DATABASE = 'GeoLiteCity.dat'
@@ -192,7 +201,6 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR + '/templates/'],
-        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -202,6 +210,12 @@ TEMPLATES = [
                 'spacelaunchnow.context_processor.ga_tracking_id',
                 'spacelaunchnow.context_processor.use_google_analytics',
                 'zinnia.context_processors.version',  # Optional
+            ],
+            'loaders': [
+                ('django.template.loaders.cached.Loader', [
+                    'django.template.loaders.filesystem.Loader',
+                    'django.template.loaders.app_directories.Loader',
+                ]),
             ],
         },
     },
@@ -356,3 +370,23 @@ DEFAULT_FILE_STORAGE = DEFAULT_STORAGE
 AWS_IS_GZIPPED = True
 
 CACHES = config.CACHE
+
+DEBUG_TOOLBAR_PANELS = [
+    'debug_toolbar.panels.timer.TimerPanel',
+    'debug_toolbar.panels.request.RequestPanel',
+    'debug_toolbar.panels.sql.SQLPanel',
+    'debug_toolbar.panels.cache.CachePanel',
+]
+
+DEBUG_TOOLBAR_CONFIG = {
+    'INTERCEPT_REDIRECTS': True,
+}
+
+
+def show_toolbar(request):
+    return True
+
+
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK": show_toolbar,
+}

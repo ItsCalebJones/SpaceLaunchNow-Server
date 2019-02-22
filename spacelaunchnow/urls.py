@@ -13,7 +13,6 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
@@ -84,7 +83,19 @@ if config.IS_ADMIN:
         url(r'^signup/$', landing_views.signup, name='signup'),
     ]
 
+
 urlpatterns = default_settings + api_settings + web_settings + admin_settings
+
+if config.DEBUG:
+    import debug_toolbar
+
+    urlpatterns = [
+                      url(r'^__debug__/', include(debug_toolbar.urls)),
+
+                      # For django versions before 2.0:
+                      # url(r'^__debug__/', include(debug_toolbar.urls)),
+
+                  ] + urlpatterns
 
 handler404 = web.views.handler404
 handler500 = web.views.handler500
