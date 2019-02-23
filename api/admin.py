@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
-from django.forms import BaseInlineFormSet
+from django.forms import BaseInlineFormSet, ModelForm
 from django.urls import reverse
 from django.utils.html import escape
 
@@ -91,9 +91,8 @@ class FirstStageInlineFormset(BaseInlineFormSet):
     def __init__(self, data=None, files=None, instance=None,
                  save_as_new=False, prefix=None, queryset=None, **kwargs):
         super(FirstStageInlineFormset, self).__init__(data, files, instance,
-                                                            save_as_new, prefix, queryset, **kwargs)
-        self.queryset = models.FirstStage.objects.filter(rocket=instance)\
-            .select_related('landing', 'launcher', 'rocket', 'type')\
+                                                      save_as_new, prefix, queryset, **kwargs)
+        self.queryset = models.FirstStage.objects.filter(rocket=instance) \
             .prefetch_related('rocket__launch', 'launcher', 'landing', 'rocket__configuration')
 
 
@@ -108,7 +107,7 @@ class FirstStageInline(admin.StackedInline):
 
     def get_queryset(self, request):
         qs = super(FirstStageInline, self).get_queryset(request)
-        return qs.select_related('landing', 'launcher', 'rocket', 'type')
+        return qs.prefetch_related('rocket__launch', 'launcher', 'landing', 'rocket__configuration')
 
 
 class DockingEventInline(admin.StackedInline):
@@ -123,12 +122,6 @@ class SpacecraftFlightInlineFormset(BaseInlineFormSet):
         super(SpacecraftFlightInlineFormset, self).__init__(data, files, instance,
                                                             save_as_new, prefix, queryset, **kwargs)
         self.queryset = models.SpacecraftFlight.objects.filter(rocket=instance) \
-            .select_related('rocket',
-                            'rocket__launch',
-                            'rocket__spacecraftflight',
-                            'rocket__spacecraftflight__spacecraft',
-                            'spacecraft',
-                            'spacecraft__spacecraft_config', ) \
             .prefetch_related('docking_events',
                               'rocket__launch',
                               'spacecraft__spacecraft_config',
@@ -158,30 +151,24 @@ class SpacecraftFlightInline(admin.TabularInline):
 
     def get_queryset(self, request):
         qs = super(SpacecraftFlightInline, self).get_queryset(request)
-        return qs.select_related('rocket',
-                                 'rocket__launch',
-                                 'rocket__spacecraftflight',
-                                 'rocket__spacecraftflight__spacecraft',
-                                 'spacecraft',
-                                 'spacecraft__spacecraft_config', ) \
-            .prefetch_related(
-                              'docking_events',
-                              'rocket__launch',
-                              'spacecraft__spacecraft_config',
-                              'spacecraft',
-                              'rocket__launch__mission',
-                              'rocket__spacecraftflight',
-                              'rocket__spacecraftflight__spacecraft',
-                              'rocket__spacecraftflight__launch_crew',
-                              'rocket__spacecraftflight__landing_crew',
-                              'rocket__spacecraftflight__onboard_crew',
-                              'rocket__spacecraftflight__launch_crew__astronaut',
-                              'rocket__spacecraftflight__landing_crew__astronaut',
-                              'rocket__spacecraftflight__onboard_crew__astronaut',
-                              'rocket__spacecraftflight__launch_crew__role',
-                              'rocket__spacecraftflight__landing_crew__role',
-                              'rocket__spacecraftflight__onboard_crew__role'
-                              )
+        return qs.prefetch_related(
+            'docking_events',
+            'rocket__launch',
+            'spacecraft__spacecraft_config',
+            'spacecraft',
+            'rocket__launch__mission',
+            'rocket__spacecraftflight',
+            'rocket__spacecraftflight__spacecraft',
+            'rocket__spacecraftflight__launch_crew',
+            'rocket__spacecraftflight__landing_crew',
+            'rocket__spacecraftflight__onboard_crew',
+            'rocket__spacecraftflight__launch_crew__astronaut',
+            'rocket__spacecraftflight__landing_crew__astronaut',
+            'rocket__spacecraftflight__onboard_crew__astronaut',
+            'rocket__spacecraftflight__launch_crew__role',
+            'rocket__spacecraftflight__landing_crew__role',
+            'rocket__spacecraftflight__onboard_crew__role'
+        )
 
 
 class SpacecraftFlightInlineForSpacecraft(admin.StackedInline):
@@ -200,13 +187,13 @@ class RocketAdmin(admin.ModelAdmin):
     inlines = [FirstStageInline, SpacecraftFlightInline]
 
     def get_queryset(self, request):
-        return super(RocketAdmin, self).get_queryset(request).select_related('configuration')\
+        return super(RocketAdmin, self).get_queryset(request) \
             .prefetch_related(
             'configuration__launch_agency', 'firststage',
             'secondstage', 'spacecraftflight',
             'spacecraftflight__launch_crew',
             'spacecraftflight__onboard_crew',
-            'spacecraftflight__landing_crew', 'launch',
+            'spacecraftflight__landing_crew',
         )
 
 
@@ -214,6 +201,28 @@ class RocketAdmin(admin.ModelAdmin):
 class FirstStageAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">group</i>'
     list_display = ('id', 'landing', 'launcher', 'rocket')
+    list_display_links = ['rocket', 'launcher']
+
+    list_select_related = (
+        'rocket',
+        'launcher',
+        'type',
+    )
+
+    def render_change_form(self, request, context, *args, **kwargs):
+        context['adminform'].form.fields['rocket'].queryset = Rocket.objects.select_related(
+            'configuration').prefetch_related(
+            'launch__mission', 'launch', 'configuration', 'spacecraftflight', 'firststage',).all()
+        context['adminform'].form.fields['launcher'].queryset = models.Launcher.objects \
+            .select_related('launcher_config') \
+            .prefetch_related('launcher_config', 'firststage', 'firststage__rocket__launch', 'launcher_config__rocket').all()
+        context['adminform'].form.fields['landing'].queryset = models.Landing.objects \
+            .prefetch_related('firststage').all()
+        return super(FirstStageAdmin, self).render_change_form(request, context, *args, **kwargs)
+
+    def get_queryset(self, request):
+        return super(FirstStageAdmin, self).get_queryset(request).select_related('rocket__launch', 'rocket') \
+            .prefetch_related('rocket', 'rocket__launch',)
 
 
 @admin.register(models.SecondStage)
@@ -375,6 +384,42 @@ class SpacecraftFlightAdmin(admin.ModelAdmin):
 
     def spacecraft_name(self, obj):
         return obj.spacecraft.name + " | " + obj.rocket.launch.name
+
+    def render_change_form(self, request, context, *args, **kwargs):
+        context['adminform'].form.fields['launch_crew'].queryset = models.AstronautFlight.objects.prefetch_related(
+            'astronaut').prefetch_related('role').all()
+        context['adminform'].form.fields['landing_crew'].queryset = models.AstronautFlight.objects.prefetch_related(
+            'astronaut').prefetch_related('role').all()
+        context['adminform'].form.fields['onboard_crew'].queryset = models.AstronautFlight.objects.prefetch_related(
+            'astronaut').prefetch_related('role').all()
+        context['adminform'].form.fields['rocket'].queryset = Rocket.objects.prefetch_related(
+            'launch__mission', 'launch', 'configuration', 'spacecraftflight').all()
+        context['adminform'].form.fields['spacecraft'].queryset = models.Spacecraft.objects.prefetch_related(
+            'spacecraft_config', 'status', ).all()
+        return super(SpacecraftFlightAdmin, self).render_change_form(request, context, *args, **kwargs)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.prefetch_related('launch_crew', 'rocket', 'launch_crew__astronaut__name',
+                                 'launch_crew__astronaut__role')
+        qs = qs.defer('launch_crew__astronaut', 'launch_crew__role', 'rocket__spacecraftflight__launch_crew')
+        # qs = qs.prefetch_related('rocket', 'spacecraft', 'launch_crew', 'onboard_crew', 'landing_crew',
+        #                          'launch_crew__astronaut', 'landing_crew__astronaut', 'onboard_crew__astronaut',
+        #                          'launch_crew__role', 'landing_crew__role', 'onboard_crew__role',
+        #                          'rocket__spacecraftflight__launch_crew',
+        #                          'rocket__spacecraftflight__onboard_crew',
+        #                          'rocket__spacecraftflight__landing_crew',
+        #                          'rocket__spacecraftflight__launch_crew__role',
+        #                          'rocket__spacecraftflight__onboard_crew__role',
+        #                          'rocket__spacecraftflight__landing_crew__role',
+        #                          'rocket__spacecraftflight__launch_crew__astronaut',
+        #                          'rocket__spacecraftflight__onboard_crew__astronaut',
+        #                          'rocket__spacecraftflight__landing_crew__astronaut',
+        #                          'spacecraft__spacecraft_config',
+        #                          'landing_crew__astronaut__name',
+        #                          'launch_crew__astronaut__name',
+        #                          'onboard_crew__astronaut__name')
+        return qs
 
 
 @admin.register(models.Spacecraft)
