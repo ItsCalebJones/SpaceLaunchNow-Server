@@ -55,11 +55,24 @@ def get_mission_type(mission_type):
     return switcher.get(mission_type, "Unknown")
 
 
+def resize_needed(item):
+    if item and hasattr(item, 'url'):
+        try:
+            image = Image.open(item)
+            if image.size[0] > 1920:
+                return True
+        except:
+            return False
+    return False
+
+
 def resize_for_upload(item):
     if item and hasattr(item, 'url'):
         try:
             basewidth = 1920
             image = Image.open(item)
+            if image.size[0] <= 1920:
+                return item
             wpercent = (basewidth / float(image.size[0]))
             hsize = int((float(image.size[1]) * float(wpercent)))
 

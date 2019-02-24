@@ -9,7 +9,7 @@ from PIL import Image
 from compat import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
-from api.utils.utilities import resize_for_upload
+from api.utils.utilities import resize_for_upload, resize_needed
 
 try:
     from urllib import quote  # Python 2.X
@@ -87,9 +87,12 @@ class Agency(models.Model):
                                   blank=True)
 
     def save(self, **kwargs):
-        self.image_url = resize_for_upload(self.image_url)
-        self.logo_url = resize_for_upload(self.logo_url)
-        self.nation_url = resize_for_upload(self.nation_url)
+        if resize_needed(self.image_url):
+            self.image_url = resize_for_upload(self.image_url)
+        if resize_needed(self.logo_url):
+            self.logo_url = resize_for_upload(self.logo_url)
+        if resize_needed(self.nation_url):
+            self.nation_url = resize_for_upload(self.nation_url)
         super(Agency, self).save()
 
     @property
@@ -207,8 +210,10 @@ class SpacecraftConfiguration(models.Model):
                                   blank=True)
 
     def save(self, **kwargs):
-        self.image_url = resize_for_upload(self.image_url)
-        self.nation_url = resize_for_upload( self.nation_url)
+        if resize_needed(self.image_url):
+            self.image_url = resize_for_upload(self.image_url)
+        if resize_needed(self.nation_url):
+            self.nation_url = resize_for_upload( self.nation_url)
         super(SpacecraftConfiguration, self).save()
 
     def __str__(self):
@@ -275,7 +280,8 @@ class LauncherConfig(models.Model):
         verbose_name_plural = 'Launcher Configurations'
 
     def save(self, **kwargs):
-        self.image_url = resize_for_upload(self.image_url)
+        if resize_needed(self.image_url):
+            self.image_url = resize_for_upload(self.image_url)
         super(LauncherConfig, self).save()
 
 
@@ -309,7 +315,8 @@ class Events(models.Model):
         verbose_name_plural = 'Events'
 
     def save(self, **kwargs):
-        self.feature_image = resize_for_upload(self.feature_image)
+        if resize_needed(self.feature_image):
+            self.feature_image = resize_for_upload(self.feature_image)
         super(Events, self).save()
 
 
@@ -437,7 +444,8 @@ class Launcher(models.Model):
         verbose_name_plural = 'Launch Vehicles'
 
     def save(self, *args, **kwargs):
-        self.image_url = resize_for_upload(self.image_url)
+        if resize_needed(self.image_url):
+            self.image_url = resize_for_upload(self.image_url)
         super(Launcher, self).save(*args, **kwargs)
 
 
@@ -582,7 +590,8 @@ class Astronaut(models.Model):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
-        self.profile_image = resize_for_upload(self.profile_image)
+        if resize_needed(self.profile_image):
+            self.profile_image = resize_for_upload(self.profile_image)
         super(Astronaut, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
@@ -691,7 +700,8 @@ class SpaceStation(models.Model):
     active_expeditions = models.ManyToManyField('Expedition', blank=True)
 
     def save(self, *args, **kwargs):
-        self.image_url = resize_for_upload(self.image_url)
+        if resize_needed(self.image_url):
+            self.image_url = resize_for_upload(self.image_url)
         super(SpaceStation, self).save(*args, **kwargs)
 
     @property
