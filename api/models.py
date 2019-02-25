@@ -46,6 +46,14 @@ def image_path(instance, filename):
     return name
 
 
+def launcher_path(instance, filename):
+    filename, file_extension = os.path.splitext(filename)
+    clean_name = quote(quote(instance.id.encode('utf8')), '')
+    clean_name = "%s_image_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
+    name = "%s%s" % (str(clean_name), file_extension)
+    return name
+
+
 def nation_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
     clean_name = quote(quote(instance.name.encode('utf8')), '')
@@ -406,7 +414,7 @@ class Launcher(models.Model):
     flight_proven = models.BooleanField(default=False)
     status = models.CharField(max_length=2048, blank=True, default="")
     details = models.CharField(max_length=2048, blank=True, default="")
-    image_url = models.FileField(default=None, storage=LauncherCoreImageStorage(), upload_to=image_path, null=True,
+    image_url = models.FileField(default=None, storage=LauncherCoreImageStorage(), upload_to=launcher_path, null=True,
                                  blank=True)
     launcher_config = models.ForeignKey(LauncherConfig, related_name='launcher', null=True, on_delete=models.CASCADE)
 
