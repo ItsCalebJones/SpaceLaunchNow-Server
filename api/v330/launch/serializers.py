@@ -34,7 +34,7 @@ class LauncherDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelS
 
     class Meta:
         model = Launcher
-        fields = ('id', 'url', 'details', 'flight_proven', 'serial_number', 'status', 'previous_flights',)
+        fields = ('id', 'url', 'details', 'flight_proven', 'serial_number', 'status', 'previous_flights', 'image_url')
 
 
 class FirstStageSerializer(serializers.ModelSerializer):
