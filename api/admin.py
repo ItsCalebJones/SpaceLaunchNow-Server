@@ -93,21 +93,26 @@ class FirstStageInlineFormset(BaseInlineFormSet):
         super(FirstStageInlineFormset, self).__init__(data, files, instance,
                                                       save_as_new, prefix, queryset, **kwargs)
         self.queryset = models.FirstStage.objects.filter(rocket=instance) \
-            .prefetch_related('rocket__launch', 'launcher', 'landing', 'rocket__configuration')
+            .select_related('rocket__launch', 'rocket', 'launcher', 'launcher__launcher_config') \
+            .prefetch_related('rocket', 'rocket__launch', 'rocket__configuration', 'launcher__launcher_config',
+                              'launcher_config')
 
 
 class FirstStageInline(admin.StackedInline):
     model = models.FirstStage
-    fields = ('type',)
+    fields = ('type', 'launcher')
     verbose_name = "Launcher Stage"
     verbose_name_plural = "Launcher Stages"
     formset = FirstStageInlineFormset
     show_change_link = True
     max_num = 3
+    raw_id_fields = ('launcher',)
 
     def get_queryset(self, request):
-        qs = super(FirstStageInline, self).get_queryset(request)
-        return qs.prefetch_related('rocket__launch', 'launcher', 'landing', 'rocket__configuration')
+        return super(FirstStageInline, self).get_queryset(request).select_related('rocket__launch', 'rocket') \
+            .select_related('rocket__launch', 'rocket', 'launcher', 'launcher__launcher_config') \
+            .prefetch_related('rocket', 'rocket__launch', 'rocket__configuration', 'launcher__launcher_config',
+                              'launcher_config')
 
 
 class DockingEventInline(admin.StackedInline):
@@ -212,17 +217,18 @@ class FirstStageAdmin(admin.ModelAdmin):
     def render_change_form(self, request, context, *args, **kwargs):
         context['adminform'].form.fields['rocket'].queryset = Rocket.objects.select_related(
             'configuration').prefetch_related(
-            'launch__mission', 'launch', 'configuration', 'spacecraftflight', 'firststage',).all()
+            'launch__mission', 'launch', 'configuration', 'spacecraftflight', 'firststage', ).all()
         context['adminform'].form.fields['launcher'].queryset = models.Launcher.objects \
             .select_related('launcher_config') \
-            .prefetch_related('launcher_config', 'firststage', 'firststage__rocket__launch', 'launcher_config__rocket').all()
+            .prefetch_related('launcher_config', 'firststage', 'firststage__rocket__launch',
+                              'launcher_config__rocket').all()
         context['adminform'].form.fields['landing'].queryset = models.Landing.objects \
             .prefetch_related('firststage').all()
         return super(FirstStageAdmin, self).render_change_form(request, context, *args, **kwargs)
 
     def get_queryset(self, request):
         return super(FirstStageAdmin, self).get_queryset(request).select_related('rocket__launch', 'rocket') \
-            .prefetch_related('rocket', 'rocket__launch',)
+            .prefetch_related('rocket', 'rocket__launch', )
 
 
 @admin.register(models.SecondStage)
