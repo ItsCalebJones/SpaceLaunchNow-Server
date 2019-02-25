@@ -48,7 +48,7 @@ def image_path(instance, filename):
 
 def launcher_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
-    clean_name = quote(quote(instance.id.encode('utf8')), '')
+    clean_name = str(instance.id)
     clean_name = "%s_image_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
     name = "%s%s" % (str(clean_name), file_extension)
     return name
