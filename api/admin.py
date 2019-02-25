@@ -94,8 +94,7 @@ class FirstStageInlineFormset(BaseInlineFormSet):
                                                       save_as_new, prefix, queryset, **kwargs)
         self.queryset = models.FirstStage.objects.filter(rocket=instance) \
             .select_related('rocket__launch', 'rocket', 'launcher', 'launcher__launcher_config') \
-            .prefetch_related('rocket', 'rocket__launch', 'rocket__configuration', 'launcher__launcher_config',
-                              'launcher_config')
+            .prefetch_related('rocket', 'rocket__launch', 'rocket__configuration', 'launcher__launcher_config',)
 
 
 class FirstStageInline(admin.StackedInline):
@@ -111,8 +110,7 @@ class FirstStageInline(admin.StackedInline):
     def get_queryset(self, request):
         return super(FirstStageInline, self).get_queryset(request).select_related('rocket__launch', 'rocket') \
             .select_related('rocket__launch', 'rocket', 'launcher', 'launcher__launcher_config') \
-            .prefetch_related('rocket', 'rocket__launch', 'rocket__configuration', 'launcher__launcher_config',
-                              'launcher_config')
+            .prefetch_related('rocket', 'rocket__launch', 'rocket__configuration', 'launcher__launcher_config',)
 
 
 class DockingEventInline(admin.StackedInline):
