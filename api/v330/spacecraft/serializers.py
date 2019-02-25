@@ -8,7 +8,7 @@ class SpacecraftDetailedSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Spacecraft
-        fields = ('id', 'url', 'name', 'serial_number', 'status', 'spacecraft_config', 'flights')
+        fields = ('id', 'url', 'name', 'serial_number', 'status', 'description', 'spacecraft_config', 'flights')
 
 
 class SpacecraftSerializer(serializers.HyperlinkedModelSerializer):
@@ -17,4 +17,4 @@ class SpacecraftSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Spacecraft
-        fields = ('id', 'url', 'name', 'serial_number', 'status', 'configuration')
+        fields = ('id', 'url', 'name', 'serial_number', 'status', 'description', 'configuration')
