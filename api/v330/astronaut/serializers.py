@@ -36,6 +36,7 @@ class AstronautDetailedWithLaunchListSerializer(serializers.HyperlinkedModelSeri
     type = AstronautTypeSerializer(read_only=True)
     agency = AgencySerializerDetailedForLaunches(read_only=True, many=False)
     flights = LaunchListSerializer(read_only=True, many=True)
+    landings = SpacecraftFlightSerializer(read_only=True, many=True)
     # A thumbnail image, sorl options and read-only
     profile_image_thumbnail = HyperlinkedSorlImageField(
         '128x128',
@@ -48,7 +49,8 @@ class AstronautDetailedWithLaunchListSerializer(serializers.HyperlinkedModelSeri
         model = Astronaut
         # fields = ('name',)
         fields = ('id', 'url', 'name', 'status', 'type', 'agency', 'date_of_birth', 'date_of_death', 'nationality',
-                  'twitter', 'instagram', 'bio', 'profile_image', 'profile_image_thumbnail', 'wiki', 'flights')
+                  'twitter', 'instagram', 'bio', 'profile_image', 'profile_image_thumbnail', 'wiki', 'flights',
+                  'landings')
 
 
 class AstronautDetailedSerializer(serializers.HyperlinkedModelSerializer):
@@ -56,6 +58,7 @@ class AstronautDetailedSerializer(serializers.HyperlinkedModelSerializer):
     type = AstronautTypeSerializer(read_only=True)
     agency = AgencySerializerMini(read_only=True, many=False)
     flights = LaunchListSerializerForAstronaut(read_only=True, many=True)
+    landings = SpacecraftFlightSerializer(read_only=True, many=True)
     # A thumbnail image, sorl options and read-only
     profile_image_thumbnail = HyperlinkedSorlImageField(
         '128x128',
@@ -68,7 +71,8 @@ class AstronautDetailedSerializer(serializers.HyperlinkedModelSerializer):
         model = Astronaut
         # fields = ('name',)
         fields = ('id', 'url', 'name', 'status', 'type', 'agency', 'date_of_birth', 'date_of_death', 'nationality',
-                  'twitter', 'instagram', 'bio', 'profile_image', 'profile_image_thumbnail', 'wiki', 'flights')
+                  'twitter', 'instagram', 'bio', 'profile_image', 'profile_image_thumbnail', 'wiki', 'flights',
+                  'landings')
 
 
 class AstronautListSerializer(serializers.HyperlinkedModelSerializer):

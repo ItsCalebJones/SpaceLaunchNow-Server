@@ -610,13 +610,20 @@ class Astronaut(models.Model):
 
     @property
     def flights(self):
-        listi = list((Launch.objects.filter(Q(rocket__spacecraftflight__launch_crew__astronaut__id=self.id) |
-                                            Q(rocket__spacecraftflight__onboard_crew__astronaut__id=self.id) |
-                                            Q(rocket__spacecraftflight__landing_crew__astronaut__id=self.id))
+        listi = list((Launch.objects.filter(rocket__spacecraftflight__launch_crew__astronaut__id=self.id)
                       .values_list('id', flat=True)
                       .distinct()))
         launches = Launch.objects.filter(id__in=listi).order_by('net')
         return launches
+
+    @property
+    def landings(self):
+        listi = list((SpacecraftFlight.objects.filter(landing_crew__astronaut__id=self.id)
+                      .values_list('id', flat=True)
+                      .distinct()))
+        landings = SpacecraftFlight.objects.filter(id__in=listi).order_by(
+            'mission_end')
+        return landings
 
     @property
     def age(self):
