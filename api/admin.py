@@ -404,25 +404,7 @@ class SpacecraftFlightAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        qs = qs.prefetch_related('launch_crew', 'rocket', 'launch_crew__astronaut__name',
-                                 'launch_crew__astronaut__role')
-        qs = qs.defer('launch_crew__astronaut', 'launch_crew__role', 'rocket__spacecraftflight__launch_crew')
-        # qs = qs.prefetch_related('rocket', 'spacecraft', 'launch_crew', 'onboard_crew', 'landing_crew',
-        #                          'launch_crew__astronaut', 'landing_crew__astronaut', 'onboard_crew__astronaut',
-        #                          'launch_crew__role', 'landing_crew__role', 'onboard_crew__role',
-        #                          'rocket__spacecraftflight__launch_crew',
-        #                          'rocket__spacecraftflight__onboard_crew',
-        #                          'rocket__spacecraftflight__landing_crew',
-        #                          'rocket__spacecraftflight__launch_crew__role',
-        #                          'rocket__spacecraftflight__onboard_crew__role',
-        #                          'rocket__spacecraftflight__landing_crew__role',
-        #                          'rocket__spacecraftflight__launch_crew__astronaut',
-        #                          'rocket__spacecraftflight__onboard_crew__astronaut',
-        #                          'rocket__spacecraftflight__landing_crew__astronaut',
-        #                          'spacecraft__spacecraft_config',
-        #                          'landing_crew__astronaut__name',
-        #                          'launch_crew__astronaut__name',
-        #                          'onboard_crew__astronaut__name')
+        qs = qs.prefetch_related('launch_crew', 'rocket',)
         return qs
 
 
