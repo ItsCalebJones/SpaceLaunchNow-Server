@@ -85,7 +85,7 @@ class SpacecraftDetailedNoFlightsSerializer(serializers.HyperlinkedModelSerializ
 
 class DockingEventSerializerForSpacecraftFlight(serializers.ModelSerializer):
     docking_location = serializers.StringRelatedField(many=False, read_only=True)
-    spacestation = SpaceStationSerializerForDockingEvent(many=False, read_only=True, source='space_station')
+    spacestation = SpaceStationSerializerForCommon(many=False, read_only=True, source='space_station')
 
     class Meta:
         model = DockingEvent

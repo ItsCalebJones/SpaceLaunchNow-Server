@@ -307,8 +307,13 @@ class Events(models.Model):
     type = models.ForeignKey(EventType, default=get_default_event_config_type)
     location = models.CharField(max_length=100, default='', blank=True, null=True)
     news_url = models.URLField(max_length=250, blank=True, null=True)
+    video_url = models.URLField(max_length=250, blank=True, null=True)
+    webcast_live = models.BooleanField(default=False)
     feature_image = models.FileField(storage=EventImageStorage(), default=None, null=True, blank=True,
                                      upload_to=image_path)
+    expedition = models.ManyToManyField('Expedition')
+    spacestation = models.ManyToManyField('Spacestation')
+    launch = models.ManyToManyField('Launch')
     date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):

@@ -294,6 +294,7 @@ class EventAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">event</i>'
     list_display = ('name',)
     list_filter = ('name',)
+    raw_id_fields = ('expedition', 'spacestation', 'launch')
     form = EventsForm
 
 
