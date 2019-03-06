@@ -203,7 +203,7 @@ class SpacecraftDetailedNoFlightsSerializer(serializers.HyperlinkedModelSerializ
         fields = ('id', 'url', 'name', 'serial_number', 'status', 'description', 'spacecraft_config',)
 
 
-class SpaceStationSerializerForDockingEvent(serializers.HyperlinkedModelSerializer):
+class SpaceStationSerializerForCommon(serializers.HyperlinkedModelSerializer):
     status = SpaceStationStatusSerializer(read_only=True, many=False)
     orbit = serializers.StringRelatedField(many=False, read_only=True)
 
@@ -214,7 +214,7 @@ class SpaceStationSerializerForDockingEvent(serializers.HyperlinkedModelSerializ
 
 class DockingEventSerializerForSpacecraftFlight(serializers.ModelSerializer):
     docking_location = serializers.StringRelatedField(many=False, read_only=True)
-    spacestation = SpaceStationSerializerForDockingEvent(many=False, read_only=True, source='space_station')
+    spacestation = SpaceStationSerializerForCommon(many=False, read_only=True, source='space_station')
 
     class Meta:
         model = DockingEvent
@@ -469,3 +469,20 @@ class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializ
                   'launch_service_provider', 'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'maiden_flight', 'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust', 'apogee',
                   'vehicle_range', 'image_url', 'info_url', 'wiki_url',)
+
+
+class SpaceStationSerializerForExpedition(serializers.HyperlinkedModelSerializer):
+    status = SpaceStationStatusSerializer(read_only=True, many=False)
+    orbit = serializers.StringRelatedField(many=False, read_only=True)
+
+    class Meta:
+        model = SpaceStation
+        fields = ('id', 'url', 'name', 'status', 'orbit', 'image_url',)
+
+
+class ExpeditionSerializer(serializers.HyperlinkedModelSerializer):
+    spacestation = SpaceStationSerializerForExpedition(many=False, read_only=True, source='space_station')
+
+    class Meta:
+        model = Expedition
+        fields = ('id', 'url', 'name', 'start', 'end', 'spacestation')

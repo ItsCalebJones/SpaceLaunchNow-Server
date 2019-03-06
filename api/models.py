@@ -307,8 +307,13 @@ class Events(models.Model):
     type = models.ForeignKey(EventType, default=get_default_event_config_type)
     location = models.CharField(max_length=100, default='', blank=True, null=True)
     news_url = models.URLField(max_length=250, blank=True, null=True)
+    video_url = models.URLField(max_length=250, blank=True, null=True)
+    webcast_live = models.BooleanField(default=False)
     feature_image = models.FileField(storage=EventImageStorage(), default=None, null=True, blank=True,
                                      upload_to=image_path)
+    expedition = models.ManyToManyField('Expedition')
+    spacestation = models.ManyToManyField('Spacestation')
+    launch = models.ManyToManyField('Launch')
     date = models.DateTimeField(blank=True, null=True)
 
     notifications_enabled = models.BooleanField(blank=True, default=False)
@@ -621,13 +626,20 @@ class Astronaut(models.Model):
 
     @property
     def flights(self):
-        listi = list((Launch.objects.filter(Q(rocket__spacecraftflight__launch_crew__astronaut__id=self.id) |
-                                            Q(rocket__spacecraftflight__onboard_crew__astronaut__id=self.id) |
-                                            Q(rocket__spacecraftflight__landing_crew__astronaut__id=self.id))
+        listi = list((Launch.objects.filter(rocket__spacecraftflight__launch_crew__astronaut__id=self.id)
                       .values_list('id', flat=True)
                       .distinct()))
         launches = Launch.objects.filter(id__in=listi).order_by('net')
         return launches
+
+    @property
+    def landings(self):
+        listi = list((SpacecraftFlight.objects.filter(landing_crew__astronaut__id=self.id)
+                      .values_list('id', flat=True)
+                      .distinct()))
+        landings = SpacecraftFlight.objects.filter(id__in=listi).order_by(
+            'mission_end')
+        return landings
 
     @property
     def age(self):

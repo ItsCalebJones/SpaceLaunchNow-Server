@@ -20,15 +20,6 @@ class SpaceStationDetailedSerializerForExpedition(serializers.HyperlinkedModelSe
         fields = ('id', 'url', 'name', 'status', 'founded', 'description', 'orbit', 'owners',)
 
 
-class SpaceStationSerializerForExpedition(serializers.HyperlinkedModelSerializer):
-    status = SpaceStationStatusSerializer(read_only=True, many=False)
-    orbit = serializers.StringRelatedField(many=False, read_only=True)
-
-    class Meta:
-        model = SpaceStation
-        fields = ('id', 'url', 'name', 'status', 'orbit', 'image_url',)
-
-
 class ExpeditionDetailSerializer(serializers.HyperlinkedModelSerializer):
     crew = AstronautFlightForExpeditionSerializer(many=True, read_only=True)
     spacestation = SpaceStationDetailedSerializerForExpedition(many=False, read_only=True, source='space_station')
@@ -37,10 +28,3 @@ class ExpeditionDetailSerializer(serializers.HyperlinkedModelSerializer):
         model = Expedition
         fields = ('id', 'url', 'name', 'start', 'end', 'spacestation', 'crew')
 
-
-class ExpeditionSerializer(serializers.HyperlinkedModelSerializer):
-    spacestation = SpaceStationSerializerForExpedition(many=False, read_only=True, source='space_station')
-
-    class Meta:
-        model = Expedition
-        fields = ('id', 'url', 'name', 'start', 'end', 'spacestation')
