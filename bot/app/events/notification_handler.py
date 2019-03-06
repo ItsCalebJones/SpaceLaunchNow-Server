@@ -27,6 +27,11 @@ class EventNotificationHandler:
                                self.build_data(event, 'event_webcast'))
 
     def build_data(self, event, type):
+        if event.video_url:
+            webcast = True
+        else:
+            webcast = False
+
         return {
             "notification_type": type,
             "event_id": event.id,
@@ -39,7 +44,8 @@ class EventNotificationHandler:
             "event_news_url": event.news_url,
             "event_video_url": event.video_url,
             "event_webcast_live": event.webcast_live,
-            "event_feature_image": event.feature_image
+            "event_feature_image": event.feature_image,
+            "webcast": webcast
         }
 
     def build_topics(self, event):
