@@ -311,6 +311,17 @@ class Events(models.Model):
                                      upload_to=image_path)
     date = models.DateTimeField(blank=True, null=True)
 
+    notifications_enabled = models.BooleanField(blank=True, default=False)
+
+    was_notified_ten_minutes = models.BooleanField(blank=True, default=False)
+    was_notified_webcast_live = models.BooleanField(blank=True, default=False)
+
+    was_tweeted_ten_minutes = models.BooleanField(blank=True, default=False)
+    was_tweeted_webcast_live = models.BooleanField(blank=True, default=False)
+
+    was_discorded_ten_minutes = models.BooleanField(blank=True, default=False)
+    was_discorded_webcast_live = models.BooleanField(blank=True, default=False)
+
     def __str__(self):
         return self.name
 

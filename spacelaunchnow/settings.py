@@ -101,6 +101,13 @@ LOGGING = {
             'maxBytes': 1024 * 1024 * 5,
             'backupCount': 5
         },
+        'events': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'log/events.log',
+            'formatter': 'standard',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5
+        },
         'discord': {
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'log/discord.log',
