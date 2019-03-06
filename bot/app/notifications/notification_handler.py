@@ -113,17 +113,26 @@ class NotificationHandler:
             image = launch.rocket.configuration.launch_agency.image_url.url
         elif launch.rocket.configuration.launch_agency.legacy_image_url:
             image = launch.rocket.configuration.launch_agency.legacy_image_url
-        data = {"silent": True,
-                "background": True,
-                "launch_id": launch.launch_library_id,
-                "launch_uuid": str(launch.id),
-                "launch_name": launch.name,
-                "launch_image": image,
-                "launch_net": launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
-                "launch_location": launch.pad.location.name,
-                "notification_type": notification_type,
-                "webcast": webcast
-                }
+        v1_data = {"silent": True,
+                   "background": True,
+                   "launch_id": launch.launch_library_id,
+                   "launch_uuid": str(launch.id),
+                   "launch_name": launch.name,
+                   "launch_image": image,
+                   "launch_net": launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
+                   "launch_location": launch.pad.location.name,
+                   "notification_type": notification_type,
+                   "webcast": webcast
+                   }
+        v2_data = {"notification_type": notification_type,
+                   "launch_id": launch.launch_library_id,
+                   "launch_uuid": str(launch.id),
+                   "launch_name": launch.name,
+                   "launch_image": image,
+                   "launch_net": launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
+                   "launch_location": launch.pad.location.name,
+                   "webcast": webcast
+                   }
         time_since_last_notification = None
         if notification.last_notification_sent is not None:
             time_since_last_notification = datetime.now(tz=pytz.utc) - notification.last_notification_sent
@@ -132,9 +141,6 @@ class NotificationHandler:
         else:
             logger.info('----------------------------------------------------------')
             logger.info('Sending notification - %s' % contents)
-            logger.info('Notification Data - %s' % data)
-            logger.info('Topic Data v1- %s' % topics_v1)
-            logger.info('Topic Data v2- %s' % topics_v1)
             notification.last_notification_sent = datetime.now(tz=pytz.utc)
             notification.save()
             push_service = FCMNotification(api_key=keys['FCM_KEY'])
@@ -146,7 +152,9 @@ class NotificationHandler:
             # Send notifications to SLN Android before 3.0.0
             # Catch any issue with sending notification.
             try:
-                android_result_v1 = push_service.notify_topic_subscribers(data_message=data,
+                logger.info('Notification v1 Data - %s' % v1_data)
+                logger.info('Topic Data v1- %s' % topics_v1)
+                android_result_v1 = push_service.notify_topic_subscribers(data_message=v1_data,
                                                                           condition=topics_v1,
                                                                           time_to_live=86400, )
                 logger.debug(android_result_v1)
@@ -155,9 +163,10 @@ class NotificationHandler:
 
             # Send notifications to SLN Android after 3.0.0
             # Catch any issue with sending notification.
-            # TODO FINISH THIS
             try:
-                android_result_v2 = push_service.notify_topic_subscribers(data_message=data,
+                logger.info('Notification v2 Data - %s' % v1_data)
+                logger.info('Topic Data v2- %s' % topics_v1)
+                android_result_v2 = push_service.notify_topic_subscribers(data_message=v2_data,
                                                                           condition=topics_v2,
                                                                           time_to_live=86400, )
                 logger.debug(android_result_v2)
@@ -165,7 +174,7 @@ class NotificationHandler:
                 logger.error(e)
 
             try:
-                flutter_result = push_service.notify_topic_subscribers(data_message=data,
+                flutter_result = push_service.notify_topic_subscribers(data_message=v1_data,
                                                                        condition=flutter_topics,
                                                                        time_to_live=86400,
                                                                        message_title=launch.name,

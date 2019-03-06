@@ -311,9 +311,9 @@ class Events(models.Model):
     webcast_live = models.BooleanField(default=False)
     feature_image = models.FileField(storage=EventImageStorage(), default=None, null=True, blank=True,
                                      upload_to=image_path)
-    expedition = models.ManyToManyField('Expedition')
-    spacestation = models.ManyToManyField('Spacestation')
-    launch = models.ManyToManyField('Launch')
+    expedition = models.ManyToManyField('Expedition', blank=True)
+    spacestation = models.ManyToManyField('Spacestation', blank=True)
+    launch = models.ManyToManyField('Launch', blank=True)
     date = models.DateTimeField(blank=True, null=True)
 
     notifications_enabled = models.BooleanField(blank=True, default=False)
