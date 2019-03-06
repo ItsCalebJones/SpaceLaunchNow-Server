@@ -12,6 +12,7 @@ from celery.schedules import crontab
 from celery.task import periodic_task
 from celery.utils.log import get_task_logger
 
+from bot.app.events.event_tracker import EventTracker
 from bot.app.instagram import InstagramBot
 from bot.app.notifications.launch_event_tracker import LaunchEventTracker
 from bot.app.repository.launches_repository import LaunchRepository
@@ -126,6 +127,13 @@ def get_reddit_submissions_task():
 def launch_tracker():
     logger.info('Task - Running Launch Event Tracker')
     tracker = LaunchEventTracker()
+    tracker.check_events()
+
+
+@periodic_task(run_every=(crontab(minute='*/1')), options={"expires": 60})
+def launch_tracker():
+    logger.info('Task - Running Event Tracker')
+    tracker = EventTracker()
     tracker.check_events()
 
 
