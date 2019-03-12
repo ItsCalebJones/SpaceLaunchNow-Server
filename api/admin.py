@@ -363,7 +363,7 @@ class ExpeditionInline(admin.StackedInline):
 class ExpeditionAdmin(admin.ModelAdmin):
     list_display = ('name', 'start', 'end', 'space_station')
     list_filter = ('space_station', 'space_station__owners__name')
-    search_fields = ('space_station__name', 'crew__name')
+    search_fields = ('name', 'space_station__name', 'crew__astronaut__name', 'space_station__owners__name')
 
 
 @admin.register(models.DockingEvent)
@@ -383,7 +383,7 @@ class SpacecraftFlightAdmin(admin.ModelAdmin):
     list_display = ('spacecraft_name',)
     list_filter = ('spacecraft__spacecraft_config', 'spacecraft__status',
                    'rocket__configuration__launch_agency__name')
-    search_fields = ('id', 'spacecraft__name', 'landing_crew__astronaut__name', 'launch_crew__astronaut__name',
+    search_fields = ('id', 'spacecraft__name', 'spacecraft__serial_number', 'landing_crew__astronaut__name', 'launch_crew__astronaut__name',
                      'onboard_crew__astronaut__name')
     inlines = [DockingEventInline, ]
 
@@ -414,7 +414,7 @@ class SpacecraftAdmin(admin.ModelAdmin):
     list_display = ('name', 'serial_number', 'status',)
     list_filter = ('status', 'spacecraft_config',)
     form = SpacecraftForm
-    search_fields = ('name', 'spacecraft_config__name')
+    search_fields = ('name', 'spacecraft_config__name', 'serial_number', 'description')
 
     # inlines = [SpacecraftFlightInlineForSpacecraft, ]
 
