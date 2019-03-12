@@ -137,6 +137,11 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
+        'bot.events': {
+            'handlers': ['django_default', 'events', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
         'bot.discord': {
             'handlers': ['django_default', 'discord', 'console'],
             'level': 'INFO',
