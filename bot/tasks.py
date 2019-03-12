@@ -131,7 +131,7 @@ def launch_tracker():
 
 
 @periodic_task(run_every=(crontab(minute='*/1')), options={"expires": 60})
-def launch_tracker():
+def event_tracker():
     logger.info('Task - Running Event Tracker')
     tracker = EventTracker()
     tracker.check_events()

@@ -23,7 +23,7 @@ class EventTracker:
         time_threshold_10_minute = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(minutes=10)
         time_threshold_1_hour = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(hours=1)
         events = Events.objects.filter(date__lte=time_threshold_10_minute,
-                                       net__gte=datetime.datetime.now(tz=pytz.utc))
+                                       date__gte=datetime.datetime.now(tz=pytz.utc))
 
         for event in events:
             if event.notifications_enabled:
@@ -37,7 +37,7 @@ class EventTracker:
                     self.notification_handler.send_ten_minute_notification(event)
 
         webcast_events = Events.objects.filter(date__lte=time_threshold_1_hour,
-                                               net__gte=datetime.datetime.now(tz=pytz.utc))
+                                               date__gte=datetime.datetime.now(tz=pytz.utc))
 
         for event in webcast_events:
             if event.notifications_enabled:
