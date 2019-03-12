@@ -5,7 +5,7 @@ import pytz
 from pyfcm import FCMNotification
 
 from bot.utils.config import keys
-from bot.utils.util import get_fcm_topics_and_onesignal_segments
+from bot.utils.util import get_fcm_topics_v1, get_fcm_topics_v2
 from spacelaunchnow import config
 
 logger = logging.getLogger('notifications')
@@ -68,8 +68,8 @@ class NotificationHandler:
                 logger.error("Invalid state for sending a notification - Launch: %s" % launch)
                 return
         elif notification_type == 'success':
-            if launch.mission is not None\
-                    and launch.mission.orbit is not None\
+            if launch.mission is not None \
+                    and launch.mission.orbit is not None \
                     and launch.mission.orbit.name is not None:
                 contents = 'Successful launch to %s by %s' % (launch.mission.orbit.name,
                                                               launch.rocket.configuration.launch_agency.name)
@@ -84,8 +84,8 @@ class NotificationHandler:
 
         elif notification_type == 'inFlight':
 
-            if launch.mission is not None\
-                    and launch.mission.orbit is not None\
+            if launch.mission is not None \
+                    and launch.mission.orbit is not None \
                     and launch.mission.orbit.name is not None:
                 contents = '%s is in flight to %s!' % (launch.rocket.configuration.name, launch.mission.orbit.name)
             else:
@@ -98,13 +98,12 @@ class NotificationHandler:
                                                                 launch_time.strftime("%H:%M UTC"))
 
         # Create a notification
-        topics_and_segments = get_fcm_topics_and_onesignal_segments(launch,
-                                                                    notification_type=notification_type,
-                                                                    debug=self.DEBUG)
-        include_segments = topics_and_segments['segments']
-        exclude_segments = ['firebase']
-        if self.DEBUG:
-            exclude_segments.append('Production')
+        topics_v1 = get_fcm_topics_v1(launch,
+                                      notification_type=notification_type,
+                                      debug=self.DEBUG)
+        topics_v2 = get_fcm_topics_v2(launch,
+                                      notification_type=notification_type,
+                                      debug=self.DEBUG)
         if len(launch.vid_urls.all()) > 0:
             webcast = True
         else:
@@ -114,25 +113,26 @@ class NotificationHandler:
             image = launch.rocket.configuration.launch_agency.image_url.url
         elif launch.rocket.configuration.launch_agency.legacy_image_url:
             image = launch.rocket.configuration.launch_agency.legacy_image_url
-        kwargs = dict(
-            content_available=True,
-            excluded_segments=exclude_segments,
-            included_segments=include_segments,
-            isAndroid=True,
-            data={"silent": True,
-                  "background": True,
-                  "launch_id": launch.launch_library_id,
-                  "launch_uuid": str(launch.id),
-                  "launch_name": launch.name,
-                  "launch_image": image,
-                  "launch_net": launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
-                  "launch_location": launch.pad.location.name,
-                  "notification_type": notification_type,
-                  "webcast": webcast
-                  }
-        )
-        # url = 'https://spacelaunchnow.me/launch/%d/' % launch.id
-        heading = 'Space Launch Now'
+        v1_data = {"silent": True,
+                   "background": True,
+                   "launch_id": launch.launch_library_id,
+                   "launch_uuid": str(launch.id),
+                   "launch_name": launch.name,
+                   "launch_image": image,
+                   "launch_net": launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
+                   "launch_location": launch.pad.location.name,
+                   "notification_type": notification_type,
+                   "webcast": webcast
+                   }
+        v2_data = {"notification_type": notification_type,
+                   "launch_id": launch.launch_library_id,
+                   "launch_uuid": str(launch.id),
+                   "launch_name": launch.name,
+                   "launch_image": image,
+                   "launch_net": launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
+                   "launch_location": launch.pad.location.name,
+                   "webcast": webcast
+                   }
         time_since_last_notification = None
         if notification.last_notification_sent is not None:
             time_since_last_notification = datetime.now(tz=pytz.utc) - notification.last_notification_sent
@@ -141,29 +141,40 @@ class NotificationHandler:
         else:
             logger.info('----------------------------------------------------------')
             logger.info('Sending notification - %s' % contents)
-            logger.info('Notification Data - %s' % kwargs)
             notification.last_notification_sent = datetime.now(tz=pytz.utc)
             notification.save()
             push_service = FCMNotification(api_key=keys['FCM_KEY'])
-            android_topics = topics_and_segments['topics']
-            flutter_topics = get_fcm_topics_and_onesignal_segments(launch,
-                                                                   debug=self.DEBUG,
-                                                                   flutter=True,
-                                                                   notification_type=notification_type)['topics']
-            logger.info("Flutter Topics: %s" % flutter_topics)
-            logger.info(topics_and_segments)
+            flutter_topics = get_fcm_topics_v1(launch,
+                                               debug=self.DEBUG,
+                                               flutter=True,
+                                               notification_type=notification_type)
 
+            # Send notifications to SLN Android before 3.0.0
             # Catch any issue with sending notification.
             try:
-                android_result = push_service.notify_topic_subscribers(data_message=kwargs['data'],
-                                                                       condition=android_topics,
-                                                                       time_to_live=86400, )
-                logger.debug(android_result)
+                logger.info('Notification v1 Data - %s' % v1_data)
+                logger.info('Topic Data v1- %s' % topics_v1)
+                android_result_v1 = push_service.notify_topic_subscribers(data_message=v1_data,
+                                                                          condition=topics_v1,
+                                                                          time_to_live=86400, )
+                logger.debug(android_result_v1)
+            except Exception as e:
+                logger.error(e)
+
+            # Send notifications to SLN Android after 3.0.0
+            # Catch any issue with sending notification.
+            try:
+                logger.info('Notification v2 Data - %s' % v1_data)
+                logger.info('Topic Data v2- %s' % topics_v1)
+                android_result_v2 = push_service.notify_topic_subscribers(data_message=v2_data,
+                                                                          condition=topics_v2,
+                                                                          time_to_live=86400, )
+                logger.debug(android_result_v2)
             except Exception as e:
                 logger.error(e)
 
             try:
-                flutter_result = push_service.notify_topic_subscribers(data_message=kwargs['data'],
+                flutter_result = push_service.notify_topic_subscribers(data_message=v1_data,
                                                                        condition=flutter_topics,
                                                                        time_to_live=86400,
                                                                        message_title=launch.name,

@@ -69,6 +69,15 @@ class LandingTypeAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+@admin.register(models.EventType)
+class LandingTypeAdmin(admin.ModelAdmin):
+    icon = '<i class="material-icons">dashboard</i>'
+    list_display = ('name',)
+    list_filter = ('name', )
+    ordering = ('name', )
+    search_fields = ('name',)
+
+
 @admin.register(models.SpaceStationStatus)
 class SpaceStationStatusAdmin(admin.ModelAdmin):
     list_display = ('name',)

@@ -60,9 +60,8 @@ def build_topics(topic_header, topics_set):
     return topics
 
 
-def get_fcm_topics_and_onesignal_segments(launch, debug=False, flutter=False, notification_type=None):
+def get_fcm_topics_v1(launch, debug=False, flutter=False, notification_type=None):
     location_id = 0
-    segments = ['ALL-Filter']
     topics_set = ['all']
     if flutter:
         if not debug:
@@ -81,33 +80,85 @@ def get_fcm_topics_and_onesignal_segments(launch, debug=False, flutter=False, no
 
     if lsp_id == 44:
         topics_set.append('nasa')
-        segments.append('Nasa')
     if lsp_id == 115:
         topics_set.append('arianespace')
-        segments.append('Arianespace')
     if lsp_id == 121:
         topics_set.append('spacex')
-        segments.append('SpaceX')
     if lsp_id == 124:
         topics_set.append('ula')
-        segments.append('ULA')
-    if lsp_id == 111 or lsp_id == 63:
+    if lsp_id == 111 or lsp_id == 63 or lsp_id ==163:
         topics_set.append('roscosmos')
-        segments.append('Roscosmos')
     if lsp_id == 88:
         topics_set.append('casc')
-        segments.append('CASC')
     if location_id == 27:
         topics_set.append('ksc')
-        segments.append('KSC')
     if location_id == 6:
         topics_set.append('ples')
-        segments.append('Ples')
     if location_id == 11:
         topics_set.append('van')
-        segments.append('Van')
     topics = build_topics(topic_header, topics_set)
-    return {'segments': segments, 'topics': topics}
+    return topics
+
+
+def get_fcm_topics_v2(launch, debug=False, flutter=False, notification_type=None):
+    location_id = 0
+    topics_set = ['all']
+    if flutter:
+        if not debug:
+            topic_header = "'flutter_production' in topics && '%s' in topics" % notification_type
+        else:
+            topic_header = "'flutter_debug' in topics && '%s' in topics" % notification_type
+    else:
+        if not debug:
+            topic_header = "'prod_v2' in topics && '%s' in topics" % notification_type
+        else:
+            topic_header = "'debug_v2' in topics && '%s' in topics" % notification_type
+
+    if launch.pad.location is not None:
+        location_id = launch.pad.location.id
+    lsp_id = launch.rocket.configuration.launch_agency.id
+
+    # LSPs
+    if lsp_id == 44:
+        topics_set.append('nasa')
+    if lsp_id == 115:
+        topics_set.append('arianespace')
+    if lsp_id == 121:
+        topics_set.append('spacex')
+    if lsp_id == 124:
+        topics_set.append('ula')
+    if lsp_id == 111 or lsp_id == 63 or lsp_id ==163:
+        topics_set.append('roscosmos')
+    if lsp_id == 141:
+        topics_set.append('blueOrigin')
+    if lsp_id == 147:
+        topics_set.append('rocketLab')
+    if lsp_id == 257:
+        topics_set.append('northrop')
+
+
+    # Locations
+    if location_id == 17 or location_id == 19 or location_id == 8 or location_id == 16:
+        topics_set.append('china')
+    if location_id == 27 or location_id == 12:
+        topics_set.append('ksc')
+    if location_id == 15 or location_id == 5 or location_id == 6 or location_id == 18:
+        topics_set.append('russia')
+    if location_id == 11:
+        topics_set.append('van')
+    if location_id == 14 or lsp_id == 31:
+        topics_set.append('isro')
+    if location_id == 21:
+        topics_set.append('wallops')
+    if location_id == 10:
+        topics_set.append('newZealand')
+    if location_id == 24 or location_id == 26:
+        topics_set.append('japan')
+    if location_id == 13:
+        topics_set.append('frenchGuiana')
+
+    topics = build_topics(topic_header, topics_set)
+    return topics
 
 
 def suffix(d):
