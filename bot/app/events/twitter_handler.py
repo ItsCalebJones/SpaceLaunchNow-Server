@@ -41,11 +41,17 @@ class EventTwitterHandler:
 
             # - finally send your tweet with the list of media ids:
             twitter.statuses.update(status=message, media_ids=id_img1)
+            logger.info('Sent %s to Twitter - with image!', event.name)
+        else:
+            twitter.statuses.update(status=message)
+            logger.info('Sent %s to Twitter!', event.name)
 
     def send_webcast_tweet(self, event):
         if event.video_url:
             message = "%s webcast is now live at %s" % (event.name, event.video_url)
             twitter = Twitter(auth=OAuth(token_key, token_secret, consumer_key, consumer_secret))
 
-            # - finally send your tweet with the list of media ids:
             twitter.statuses.update(status=message)
+            logger.info('Sent %s to Twitter!', event.name)
+        else:
+            logger.error('No video URL! Not sending a Tweet.', event.name)
