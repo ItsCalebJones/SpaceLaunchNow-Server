@@ -44,5 +44,5 @@ class DockingEventViewSet(ModelViewSet):
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filter_class = DockingEventFilter
-    search_fields = ('space_station__name',)
+    search_fields = ('space_station__name', 'flight_vehicle__spacecraft__name')
     ordering_fields = ('docking', 'departure',)
