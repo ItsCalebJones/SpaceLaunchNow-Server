@@ -7,7 +7,7 @@ import logging
 
 import pytz
 
-logger = logging.getLogger('events')
+logger = logging.getLogger('bot.events')
 
 
 class EventTracker:

@@ -8,7 +8,7 @@ from bot.utils.config import keys
 from bot.utils.util import get_fcm_topics_v1, get_fcm_topics_v2
 from spacelaunchnow import config
 
-logger = logging.getLogger('notifications')
+logger = logging.getLogger('bot.notifications')
 
 
 class NotificationHandler:

@@ -16,7 +16,7 @@ consumer_key = keys['CONSUMER_KEY']
 consumer_secret = keys['CONSUMER_SECRET']
 
 # Get an instance of a logger
-logger = logging.getLogger('events')
+logger = logging.getLogger('bot.events')
 
 
 class EventTwitterHandler:

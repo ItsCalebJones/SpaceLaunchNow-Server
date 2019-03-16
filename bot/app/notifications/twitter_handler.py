@@ -15,7 +15,7 @@ consumer_key = keys['CONSUMER_KEY']
 consumer_secret = keys['CONSUMER_SECRET']
 
 # Get an instance of a logger
-logger = logging.getLogger('notifications')
+logger = logging.getLogger('bot.notifications')
 
 
 def get_twitter_message(launch, notification_type):

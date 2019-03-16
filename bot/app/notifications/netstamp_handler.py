@@ -8,7 +8,7 @@ from bot.app.notifications.twitter_handler import TwitterEvents
 from bot.utils.util import seconds_to_time
 from spacelaunchnow import config
 
-logger = logging.getLogger('notifications')
+logger = logging.getLogger('bot.notifications')
 
 
 class NetstampHandler:
