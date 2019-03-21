@@ -61,7 +61,7 @@ class EventNotificationHandler:
         if self.DEBUG:
             topic = "'debug_v2' in topics && 'events' in topics"
         else:
-            topic = "'prod_v2' in topics && 'events'"
+            topic = "'prod_v2' in topics && 'events' in topics"
         return topic
 
     def send_notification(self, topics, data):
