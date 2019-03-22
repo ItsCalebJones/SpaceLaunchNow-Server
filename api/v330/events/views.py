@@ -60,6 +60,10 @@ class EventViewSet(ModelViewSet):
 
     GET:
     Return a list of all Events
+
+    SEARCH EXAMPLE:
+    /3.3.0/event/?search=Dragon
+    Searches through name
     """
     queryset = Events.objects.all()
     serializer_class = EventsSerializer

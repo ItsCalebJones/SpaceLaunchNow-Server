@@ -29,7 +29,7 @@ class AstronautViewSet(ModelViewSet):
     Searches through name, nationality and agency name
 
     ORDERING:
-    Fields - 'name', 'status'
+    Fields - 'name', 'status', ''date_of_birth'
     Example - /3.3.0/astronaut/?order=name
 
     """
