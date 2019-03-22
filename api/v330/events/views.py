@@ -1,3 +1,5 @@
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter
 from rest_framework.viewsets import ModelViewSet
 from api.models import *
 from api.permission import HasGroupPermission
@@ -25,6 +27,8 @@ class UpcomingEventViewSet(ModelViewSet):
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
+    filter_backends = (DjangoFilterBackend, SearchFilter)
+    search_fields = ('name',)
 
 
 class PreviousEventViewSet(ModelViewSet):
@@ -46,6 +50,8 @@ class PreviousEventViewSet(ModelViewSet):
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
+    filter_backends = (DjangoFilterBackend, SearchFilter)
+    search_fields = ('name',)
 
 
 class EventViewSet(ModelViewSet):
@@ -63,3 +69,5 @@ class EventViewSet(ModelViewSet):
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
+    filter_backends = (DjangoFilterBackend, SearchFilter)
+    search_fields = ('name',)
