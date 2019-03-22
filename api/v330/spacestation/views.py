@@ -23,8 +23,8 @@ class SpaceStationViewSet(ModelViewSet):
     Searches through name and spacecraft config name.
 
     ORDERING:
-    Fields - 'id'
-    Example - /api/3.3.0/spacestation/?order=id
+    Fields - 'id', 'status', 'type', 'founded', 'volume'
+    Example - /api/3.3.0/spacestation/?ordering=id
     """
 
     def get_serializer_class(self):
@@ -43,4 +43,4 @@ class SpaceStationViewSet(ModelViewSet):
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filter_fields = ('name', 'status', 'owners', 'orbit', 'type')
     search_fields = ('$name', 'owners__name', 'owners__abbrev')
-    ordering_fields = ('id', 'status', 'type')
+    ordering_fields = ('id', 'status', 'type', 'founded', 'volume')

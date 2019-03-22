@@ -29,7 +29,7 @@ class AstronautViewSet(ModelViewSet):
     Searches through name, nationality and agency name
 
     ORDERING:
-    Fields - 'name', 'status'
+    Fields - 'name', 'status', 'date_of_birth'
     Example - /3.3.0/astronaut/?order=name
 
     """
@@ -61,4 +61,4 @@ class AstronautViewSet(ModelViewSet):
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filter_class = AstronautsFilter
     search_fields = ('$name', 'nationality', 'agency__name', 'agency__abbrev')
-    ordering_fields = ('name', 'status', )
+    ordering_fields = ('name', 'status', 'date_of_birth')
