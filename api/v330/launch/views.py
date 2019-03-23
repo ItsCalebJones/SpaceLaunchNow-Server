@@ -19,14 +19,14 @@ class LaunchViewSet(ModelViewSet):
     Return a list of all Launch objects.
 
     FILTERS:
-    Fields - 'name', 'id(s)', 'lsp_id', 'lsp_name', 'serial_number', 'launcher_config__id',
+    Fields - 'name', 'id(s)', 'lsp_id', 'lsp_name', 'serial_number', 'launcher_config__id', 'rocket__spacecraftflight__spacecraft__name'
 
     MODE:
     'normal', 'list', 'detailed'
     EXAMPLE: ?mode=list
 
     SEARCH:
-    Searches through the launch name, rocket name, launch agency and mission name.
+    Searches through the launch name, rocket name, launch agency, mission name & spacecraft name.
     EXAMPLE - ?search=SpaceX
     """
 
@@ -39,6 +39,7 @@ class LaunchViewSet(ModelViewSet):
         location_filters = self.request.query_params.get('location__ids', None)
         lsp_filters = self.request.query_params.get('lsp__ids', None)
         related = self.request.query_params.get('related', None)
+        is_crewed = self.request.query_params.get('is_crewed', None)
 
         if location_filters and lsp_filters:
             lsp_filters = lsp_filters.split(',')
@@ -82,6 +83,33 @@ class LaunchViewSet(ModelViewSet):
                 'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
                 'rocket__configuration__launch_agency')
+        if is_crewed:
+            if is_crewed == 'true':
+                return Launch.objects.filter(
+                    rocket__spacecraftflight__launch_crew__isnull=False).prefetch_related(
+                    'info_urls').prefetch_related('vid_urls').select_related(
+                    'rocket').select_related(
+                    'mission').select_related('pad').select_related(
+                    'pad__location').prefetch_related(
+                    'rocket__configuration').prefetch_related(
+                    'rocket__configuration__launch_agency').prefetch_related(
+                    'mission__mission_type').prefetch_related(
+                    'rocket__firststage').select_related(
+                    'rocket__configuration__launch_agency').order_by(
+                    'net', 'id')
+            elif is_crewed == 'false':
+                return Launch.objects.filter(
+                    rocket__spacecraftflight__launch_crew__isnull=True).prefetch_related(
+                    'info_urls').prefetch_related('vid_urls').select_related(
+                    'rocket').select_related(
+                    'mission').select_related('pad').select_related(
+                    'pad__location').prefetch_related(
+                    'rocket__configuration').prefetch_related(
+                    'rocket__configuration__launch_agency').prefetch_related(
+                    'mission__mission_type').prefetch_related(
+                    'rocket__firststage').select_related(
+                    'rocket__configuration__launch_agency').order_by(
+                    'net', 'id')
         if lsp_name:
             launches = Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
                                              | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)
@@ -154,7 +182,7 @@ class LaunchViewSet(ModelViewSet):
     filter_class = LaunchFilter
     search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
                      '$rocket__configuration__launch_agency__abbrev', '$mission__name', '$pad__location__name',
-                     '$pad__name')
+                     '$pad__name', '$rocket__spacecraftflight__spacecraft__name')
     ordering_fields = ('id', 'name', 'net',)
 
 
@@ -184,6 +212,8 @@ class UpcomingLaunchViewSet(ModelViewSet):
         serial_number = self.request.query_params.get('serial_number', None)
         launcher_config__id = self.request.query_params.get('launcher_config__id', None)
         related = self.request.query_params.get('related', None)
+        is_crewed = self.request.query_params.get('is_crewed', None)
+
         now = datetime.datetime.now()
         now = now - timedelta(days=1)
 
@@ -234,6 +264,33 @@ class UpcomingLaunchViewSet(ModelViewSet):
                 'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
                 'rocket__configuration__launch_agency').order_by('net', 'id')
+        if is_crewed:
+            if is_crewed == 'true':
+                return Launch.objects.filter(net__gte=now).filter(
+                    rocket__spacecraftflight__launch_crew__isnull=False).prefetch_related(
+                    'info_urls').prefetch_related('vid_urls').select_related(
+                    'rocket').select_related(
+                    'mission').select_related('pad').select_related(
+                    'pad__location').prefetch_related(
+                    'rocket__configuration').prefetch_related(
+                    'rocket__configuration__launch_agency').prefetch_related(
+                    'mission__mission_type').prefetch_related(
+                    'rocket__firststage').select_related(
+                    'rocket__configuration__launch_agency').order_by(
+                    'net', 'id')
+            elif is_crewed == 'false':
+                return Launch.objects.filter(net__gte=now).filter(
+                    rocket__spacecraftflight__launch_crew__isnull=True).prefetch_related(
+                    'info_urls').prefetch_related('vid_urls').select_related(
+                    'rocket').select_related(
+                    'mission').select_related('pad').select_related(
+                    'pad__location').prefetch_related(
+                    'rocket__configuration').prefetch_related(
+                    'rocket__configuration__launch_agency').prefetch_related(
+                    'mission__mission_type').prefetch_related(
+                    'rocket__firststage').select_related(
+                    'rocket__configuration__launch_agency').order_by(
+                    'net', 'id')
         if lsp_name:
             launches = Launch.objects.filter(net__gte=now).filter(
                 Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
@@ -307,10 +364,10 @@ class UpcomingLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status')
+    filter_fields = ('name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status', 'rocket__spacecraftflight__spacecraft__name')
     search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
                      '$rocket__configuration__launch_agency__abbrev', '$mission__name', '$pad__location__name',
-                     '$pad__name')
+                     '$pad__name', '$rocket__spacecraftflight__spacecraft__name')
     ordering_fields = ('id', 'name', 'net',)
 
 
@@ -342,6 +399,7 @@ class PreviousLaunchViewSet(ModelViewSet):
         related = self.request.query_params.get('related', None)
         location_filters = self.request.query_params.get('location__ids', None)
         lsp_filters = self.request.query_params.get('lsp__ids', None)
+        is_crewed = self.request.query_params.get('is_crewed', None)
 
         now = datetime.datetime.now()
 
@@ -378,6 +436,33 @@ class PreviousLaunchViewSet(ModelViewSet):
         if serial_number:
             return Launch.objects.filter(rocket__firststage__launcher__serial_number=serial_number).filter(
                 net__lte=now).order_by('-net', 'id')
+        if is_crewed:
+            if is_crewed == 'true':
+                return Launch.objects.filter(net__lte=now).filter(
+                    rocket__spacecraftflight__launch_crew__isnull=False).prefetch_related(
+                    'info_urls').prefetch_related('vid_urls').select_related(
+                    'rocket').select_related(
+                    'mission').select_related('pad').select_related(
+                    'pad__location').prefetch_related(
+                    'rocket__configuration').prefetch_related(
+                    'rocket__configuration__launch_agency').prefetch_related(
+                    'mission__mission_type').prefetch_related(
+                    'rocket__firststage').select_related(
+                    'rocket__configuration__launch_agency').order_by(
+                    '-net', 'id')
+            elif is_crewed == 'false':
+                return Launch.objects.filter(net__lte=now).filter(
+                    rocket__spacecraftflight__launch_crew__isnull=True).prefetch_related(
+                    'info_urls').prefetch_related('vid_urls').select_related(
+                    'rocket').select_related(
+                    'mission').select_related('pad').select_related(
+                    'pad__location').prefetch_related(
+                    'rocket__configuration').prefetch_related(
+                    'rocket__configuration__launch_agency').prefetch_related(
+                    'mission__mission_type').prefetch_related(
+                    'rocket__firststage').select_related(
+                    'rocket__configuration__launch_agency').order_by(
+                    '-net', 'id')
         if lsp_name:
             launches = Launch.objects.filter(net__lte=now).filter(
                 Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
@@ -450,8 +535,8 @@ class PreviousLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status')
+    filter_fields = ('name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status', 'rocket__spacecraftflight__spacecraft__name')
     search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
                      '$rocket__configuration__launch_agency__abbrev', '$mission__name', '$pad__location__name',
-                     '$pad__name')
+                     '$pad__name', '$rocket__spacecraftflight__spacecraft__name')
     ordering_fields = ('id', 'name', 'net',)
