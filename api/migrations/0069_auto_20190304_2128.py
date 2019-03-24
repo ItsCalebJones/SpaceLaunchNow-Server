@@ -14,31 +14,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='events',
-            name='expedition',
-            field=models.ManyToManyField(to='api.Expedition'),
-        ),
-        migrations.AddField(
-            model_name='events',
-            name='launch',
-            field=models.ManyToManyField(to='api.Launch'),
-        ),
-        migrations.AddField(
-            model_name='events',
-            name='spacestation',
-            field=models.ManyToManyField(to='api.SpaceStation'),
-        ),
-        migrations.AddField(
-            model_name='events',
-            name='video_url',
-            field=models.URLField(blank=True, max_length=250, null=True),
-        ),
-        migrations.AddField(
-            model_name='events',
-            name='webcast_live',
-            field=models.BooleanField(default=False),
-        ),
         migrations.AlterField(
             model_name='launcher',
             name='image_url',
