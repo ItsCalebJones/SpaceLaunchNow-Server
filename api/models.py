@@ -810,7 +810,7 @@ class Launch(models.Model):
     slug = models.SlugField(unique=True, max_length=1048)
     rocket = models.OneToOneField(Rocket, blank=True, null=True, related_name='launch', unique=True)
     pad = models.ForeignKey(Pad, related_name='launch', null=True, on_delete=models.SET_NULL)
-    mission = models.ForeignKey(Mission, related_name='launch', null=True, on_delete=models.SET_NULL)
+    mission = models.ForeignKey(Mission, related_name='launch', null=True, blank=True, on_delete=models.SET_NULL)
     created_date = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 

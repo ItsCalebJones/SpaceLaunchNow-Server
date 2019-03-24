@@ -15,12 +15,12 @@ class SpaceStationViewSet(ModelViewSet):
     Return a list of all the existing space stations.
 
     FILTERS:
-    Parameters - 'name', 'status'
+    Parameters - 'name', 'status', 'owners', 'orbit', 'type', 'owners__name', 'owners__abrev'
     Example - /api/3.3.0/spacestation/?status=Active
 
     SEARCH EXAMPLE:
     Example - /api/3.3.0/spacestation/?search=ISS
-    Searches through name and spacecraft config name.
+    Searches through 'name', 'owners__name', 'owners__abbrev'
 
     ORDERING:
     Fields - 'id', 'status', 'type', 'founded', 'volume'
@@ -41,6 +41,6 @@ class SpaceStationViewSet(ModelViewSet):
         'list': ['_Public'] # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'status', 'owners', 'orbit', 'type')
+    filter_fields = ('name', 'status', 'owners', 'orbit', 'type', 'owners__name', 'owners__abbrev')
     search_fields = ('$name', 'owners__name', 'owners__abbrev')
     ordering_fields = ('id', 'status', 'type', 'founded', 'volume')

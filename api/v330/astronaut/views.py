@@ -35,11 +35,21 @@ class AstronautViewSet(ModelViewSet):
     """
     def get_queryset(self):
         ids = self.request.query_params.get('status_ids', None)
+        has_flown = self.request.query_params.get('has_flown', None)
+
+        astros = Astronaut.objects.all()
+
+        if has_flown:
+            if has_flown == 'true':
+                astros = astros.filter(astronautflight__isnull=False)
+            elif has_flown == 'false':
+                astros = astros.filter(astronautflight__isnull=True)
+
         if ids:
             ids = ids.split(',')
-            return Astronaut.objects.filter(status_id__in=ids)
-        else:
-            return Astronaut.objects.all()
+            astros = astros.filter(status_id__in=ids)
+
+        return astros
     queryset = Astronaut.objects.all()
     permission_classes = [HasGroupPermission]
     permission_groups = {
