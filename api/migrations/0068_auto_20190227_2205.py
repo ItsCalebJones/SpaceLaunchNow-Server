@@ -16,17 +16,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='events',
             name='expedition',
-            field=models.ManyToManyField(to='api.Expedition'),
+            field=models.ManyToManyField(blank=True, to='api.Expedition'),
         ),
         migrations.AddField(
             model_name='events',
             name='launch',
-            field=models.ManyToManyField(to='api.Launch'),
+            field=models.ManyToManyField(blank=True, to='api.Launch'),
         ),
         migrations.AddField(
             model_name='events',
             name='spacestation',
-            field=models.ManyToManyField(to='api.SpaceStation'),
+            field=models.ManyToManyField(blank=True, to='api.SpaceStation'),
         ),
         migrations.AddField(
             model_name='events',
