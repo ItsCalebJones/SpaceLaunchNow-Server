@@ -35,6 +35,7 @@ class AstronautViewSet(ModelViewSet):
     """
     def get_queryset(self):
         ids = self.request.query_params.get('status_ids', None)
+        agency_ids = self.request.query_params.get('agency_ids', None)
         has_flown = self.request.query_params.get('has_flown', None)
 
         astros = Astronaut.objects.all()
@@ -44,6 +45,10 @@ class AstronautViewSet(ModelViewSet):
                 astros = astros.filter(astronautflight__isnull=False)
             elif has_flown == 'false':
                 astros = astros.filter(astronautflight__isnull=True)
+
+        if agency_ids:
+            agency_ids = agency_ids.split(',')
+            astros = astros.filter(agency_id__in=agency_ids)
 
         if ids:
             ids = ids.split(',')
