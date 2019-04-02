@@ -42,24 +42,25 @@ class AstronautViewSet(ModelViewSet):
 
         if has_flown:
             if has_flown == 'true':
-                astros = astros.filter(astronautflight__isnull=False)
+                astros = astros.filter(astronautflight__isnull=False).distinct()
             elif has_flown == 'false':
-                astros = astros.filter(astronautflight__isnull=True)
+                astros = astros.filter(astronautflight__isnull=True).distinct()
 
         if agency_ids:
             agency_ids = agency_ids.split(',')
-            astros = astros.filter(agency_id__in=agency_ids)
+            astros = astros.filter(agency_id__in=agency_ids).distinct()
 
         if ids:
             ids = ids.split(',')
-            astros = astros.filter(status_id__in=ids)
+            astros = astros.filter(status_id__in=ids).distinct()
 
         return astros
+
     queryset = Astronaut.objects.all()
     permission_classes = [HasGroupPermission]
     permission_groups = {
-        'retrieve': ['_Public'], # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
-        'list': ['_Public'] # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
+        'retrieve': ['_Public'],
+        'list': ['_Public']
     }
 
     def get_serializer_class(self):
