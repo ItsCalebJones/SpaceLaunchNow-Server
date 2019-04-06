@@ -68,36 +68,26 @@ class LaunchViewSet(ModelViewSet):
         if lsp_name:
             launches = launches.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name) |
                                        Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name))
-            total_launches = launches
             if related:
                 try:
                     agency = Agency.objects.get(name=lsp_name)
                     related_agency = agency.related_agencies.all()
                     for related in related_agency:
-                        related_launches = Launch.objects.filter(rocket__configuration__launch_agency__id=related.id)
-                        total_launches = launches | related_launches
+                        related_launches = launches.filter(rocket__configuration__launch_agency__id=related.id)
+                        launches = launches | related_launches
                 except Agency.DoesNotExist:
                     print("Cant find agency.")
-
-            return total_launches.order_by('net', 'id')
         if lsp_id:
-            launches = Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id).prefetch_related(
-                'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
-                'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
-                'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency')
-            total_launches = launches
+            launches = launches.filter(rocket__configuration__launch_agency__id=lsp_id)
             if related:
                 try:
                     agency = Agency.objects.get(name=lsp_id)
                     related_agency = agency.related_agencies.all()
                     for related in related_agency:
-                        related_launches = Launch.objects.filter(rocket__configuration__launch_agency__id=related.id)
-                        total_launches = launches | related_launches
+                        related_launches = launches.filter(rocket__configuration__launch_agency__id=related.id)
+                        launches = launches | related_launches
                 except Agency.DoesNotExist:
                     print("Cant find agency.")
-            return total_launches.order_by('net', 'id')
         if launcher_config__id:
             launches = launches.filter(rocket__configuration__id=launcher_config__id)
 
