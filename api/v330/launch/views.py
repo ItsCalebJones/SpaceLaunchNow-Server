@@ -138,85 +138,84 @@ class UpcomingLaunchViewSet(ModelViewSet):
     """
 
     def get_queryset(self):
-        def get_queryset(self):
-            ids = self.request.query_params.get('id', None)
-            lsp_name = self.request.query_params.get('lsp__name', None)
-            lsp_id = self.request.query_params.get('lsp__id', None)
-            serial_number = self.request.query_params.get('serial_number',
-                                                          None)
-            launcher_config__id = self.request.query_params.get(
-                'launcher_config__id', None)
-            location_filters = self.request.query_params.get('location__ids',
-                                                             None)
-            lsp_filters = self.request.query_params.get('lsp__ids', None)
-            related = self.request.query_params.get('related', None)
-            is_crewed = self.request.query_params.get('is_crewed', None)
+        ids = self.request.query_params.get('id', None)
+        lsp_name = self.request.query_params.get('lsp__name', None)
+        lsp_id = self.request.query_params.get('lsp__id', None)
+        serial_number = self.request.query_params.get('serial_number',
+                                                      None)
+        launcher_config__id = self.request.query_params.get(
+            'launcher_config__id', None)
+        location_filters = self.request.query_params.get('location__ids',
+                                                         None)
+        lsp_filters = self.request.query_params.get('lsp__ids', None)
+        related = self.request.query_params.get('related', None)
+        is_crewed = self.request.query_params.get('is_crewed', None)
 
-            launches = Launch.objects.all()
+        launches = Launch.objects.all()
 
-            if location_filters and lsp_filters:
-                lsp_filters = lsp_filters.split(',')
-                location_filters = location_filters.split(',')
-                launches = launches.filter(Q(
-                    rocket__configuration__launch_agency__id__in=lsp_filters) | Q(
-                    pad__location__id__in=location_filters))
-            if lsp_filters:
-                lsp_filters = lsp_filters.split(',')
-                launches = launches.filter(
-                    rocket__configuration__launch_agency__id__in=lsp_filters)
+        if location_filters and lsp_filters:
+            lsp_filters = lsp_filters.split(',')
+            location_filters = location_filters.split(',')
+            launches = launches.filter(Q(
+                rocket__configuration__launch_agency__id__in=lsp_filters) | Q(
+                pad__location__id__in=location_filters))
+        if lsp_filters:
+            lsp_filters = lsp_filters.split(',')
+            launches = launches.filter(
+                rocket__configuration__launch_agency__id__in=lsp_filters)
 
-            if location_filters:
-                location_filters = location_filters.split(',')
+        if location_filters:
+            location_filters = location_filters.split(',')
+            launches = launches.filter(
+                pad__location__id__in=location_filters)
+        if ids:
+            ids = ids.split(',')
+            launches = launches.filter(id__in=ids)
+        if serial_number:
+            launches = launches.filter(
+                rocket__firststage__launcher__serial_number=serial_number)
+        if is_crewed:
+            if is_crewed == 'true':
                 launches = launches.filter(
-                    pad__location__id__in=location_filters)
-            if ids:
-                ids = ids.split(',')
-                launches = launches.filter(id__in=ids)
-            if serial_number:
+                    rocket__spacecraftflight__launch_crew__isnull=False)
+            elif is_crewed == 'false':
                 launches = launches.filter(
-                    rocket__firststage__launcher__serial_number=serial_number)
-            if is_crewed:
-                if is_crewed == 'true':
-                    launches = launches.filter(
-                        rocket__spacecraftflight__launch_crew__isnull=False)
-                elif is_crewed == 'false':
-                    launches = launches.filter(
-                        rocket__spacecraftflight__launch_crew__isnull=True)
-            if lsp_name:
-                launches = launches.filter(Q(
-                    rocket__configuration__launch_agency__name__icontains=lsp_name) |
-                                           Q(
-                                               rocket__configuration__launch_agency__abbrev__icontains=lsp_name))
-                if related:
-                    try:
-                        agency = Agency.objects.get(name=lsp_name)
-                        related_agency = agency.related_agencies.all()
-                        for related in related_agency:
-                            related_launches = launches.filter(
-                                rocket__configuration__launch_agency__id=related.id)
-                            launches = launches | related_launches
-                    except Agency.DoesNotExist:
-                        print("Cant find agency.")
-            if lsp_id:
-                launches = launches.filter(
-                    rocket__configuration__launch_agency__id=lsp_id)
-                if related:
-                    try:
-                        agency = Agency.objects.get(name=lsp_id)
-                        related_agency = agency.related_agencies.all()
-                        for related in related_agency:
-                            related_launches = launches.filter(
-                                rocket__configuration__launch_agency__id=related.id)
-                            launches = launches | related_launches
-                    except Agency.DoesNotExist:
-                        print("Cant find agency.")
-            if launcher_config__id:
-                launches = launches.filter(
-                    rocket__configuration__id=launcher_config__id)
+                    rocket__spacecraftflight__launch_crew__isnull=True)
+        if lsp_name:
+            launches = launches.filter(Q(
+                rocket__configuration__launch_agency__name__icontains=lsp_name) |
+                                       Q(
+                                           rocket__configuration__launch_agency__abbrev__icontains=lsp_name))
+            if related:
+                try:
+                    agency = Agency.objects.get(name=lsp_name)
+                    related_agency = agency.related_agencies.all()
+                    for related in related_agency:
+                        related_launches = launches.filter(
+                            rocket__configuration__launch_agency__id=related.id)
+                        launches = launches | related_launches
+                except Agency.DoesNotExist:
+                    print("Cant find agency.")
+        if lsp_id:
+            launches = launches.filter(
+                rocket__configuration__launch_agency__id=lsp_id)
+            if related:
+                try:
+                    agency = Agency.objects.get(name=lsp_id)
+                    related_agency = agency.related_agencies.all()
+                    for related in related_agency:
+                        related_launches = launches.filter(
+                            rocket__configuration__launch_agency__id=related.id)
+                        launches = launches | related_launches
+                except Agency.DoesNotExist:
+                    print("Cant find agency.")
+        if launcher_config__id:
+            launches = launches.filter(
+                rocket__configuration__id=launcher_config__id)
 
-            launches = launches.order_by('net', 'id').distinct()
+        launches = launches.order_by('net', 'id').distinct()
 
-            return launches
+        return launches
 
     def get_serializer_class(self):
         mode = self.request.query_params.get("mode", "normal")
@@ -234,7 +233,8 @@ class UpcomingLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status', 'rocket__spacecraftflight__spacecraft__name')
+    filter_fields = ('name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status', 'rocket__spacecraftflight__spacecraft__name',
+                     'rocket__spacecraftflight__spacecraft__id',)
     search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
                      '$rocket__configuration__launch_agency__abbrev', '$mission__name', '$pad__location__name',
                      '$pad__name', '$rocket__spacecraftflight__spacecraft__name')
@@ -340,7 +340,8 @@ class PreviousLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status', 'rocket__spacecraftflight__spacecraft__name')
+    filter_fields = ('name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status', 'rocket__spacecraftflight__spacecraft__name',
+                     'rocket__spacecraftflight__spacecraft__id',)
     search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
                      '$rocket__configuration__launch_agency__abbrev', '$mission__name', '$pad__location__name',
                      '$pad__name', '$rocket__spacecraftflight__spacecraft__name')

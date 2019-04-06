@@ -26,5 +26,5 @@ class LaunchFilter(FilterSet):
         model = Launch
         fields = {
             'name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status',
-            'launch_library_id', 'rocket__spacecraftflight__spacecraft__name',
+            'launch_library_id', 'rocket__spacecraftflight__spacecraft__name', 'rocket__spacecraftflight__spacecraft__id',
         }
