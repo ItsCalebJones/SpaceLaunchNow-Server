@@ -91,7 +91,17 @@ class LaunchViewSet(ModelViewSet):
         if launcher_config__id:
             launches = launches.filter(rocket__configuration__id=launcher_config__id)
 
-        launches = launches.order_by('net', 'id').distinct()
+        launches = launches.prefetch_related(
+            'info_urls').prefetch_related('vid_urls').select_related(
+            'rocket').select_related(
+            'mission').select_related('pad').select_related(
+            'pad__location').prefetch_related(
+            'rocket__configuration').prefetch_related(
+            'rocket__configuration__launch_agency').prefetch_related(
+            'mission__mission_type').prefetch_related(
+            'rocket__firststage').select_related(
+            'rocket__configuration__launch_agency').order_by(
+            'net', 'id').distinct()
 
         return launches
 
@@ -151,7 +161,10 @@ class UpcomingLaunchViewSet(ModelViewSet):
         related = self.request.query_params.get('related', None)
         is_crewed = self.request.query_params.get('is_crewed', None)
 
-        launches = Launch.objects.all()
+        now = datetime.datetime.now()
+        dayago = now - timedelta(days=1)
+
+        launches = Launch.objects.all().filter(net__gte=dayago)
 
         if location_filters and lsp_filters:
             lsp_filters = lsp_filters.split(',')
@@ -213,7 +226,17 @@ class UpcomingLaunchViewSet(ModelViewSet):
             launches = launches.filter(
                 rocket__configuration__id=launcher_config__id)
 
-        launches = launches.order_by('net', 'id').distinct()
+        launches = launches.prefetch_related(
+            'info_urls').prefetch_related('vid_urls').select_related(
+            'rocket').select_related(
+            'mission').select_related('pad').select_related(
+            'pad__location').prefetch_related(
+            'rocket__configuration').prefetch_related(
+            'rocket__configuration__launch_agency').prefetch_related(
+            'mission__mission_type').prefetch_related(
+            'rocket__firststage').select_related(
+            'rocket__configuration__launch_agency').order_by(
+            'net', 'id').distinct()
 
         return launches
 
@@ -271,7 +294,9 @@ class PreviousLaunchViewSet(ModelViewSet):
         related = self.request.query_params.get('related', None)
         is_crewed = self.request.query_params.get('is_crewed', None)
 
-        launches = Launch.objects.all()
+        now = datetime.datetime.now()
+
+        launches = Launch.objects.all().filter(net__lte=now)
 
         if location_filters and lsp_filters:
             lsp_filters = lsp_filters.split(',')
@@ -321,7 +346,17 @@ class PreviousLaunchViewSet(ModelViewSet):
         if launcher_config__id:
             launches = launches.filter(rocket__configuration__id=launcher_config__id)
 
-        launches = launches.order_by('-net', 'id').distinct()
+        launches = launches.prefetch_related(
+            'info_urls').prefetch_related('vid_urls').select_related(
+            'rocket').select_related(
+            'mission').select_related('pad').select_related(
+            'pad__location').prefetch_related(
+            'rocket__configuration').prefetch_related(
+            'rocket__configuration__launch_agency').prefetch_related(
+            'mission__mission_type').prefetch_related(
+            'rocket__firststage').select_related(
+            'rocket__configuration__launch_agency').order_by(
+            '-net', 'id').distinct()
 
         return launches
 
