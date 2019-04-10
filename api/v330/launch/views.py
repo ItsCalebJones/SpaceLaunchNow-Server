@@ -91,7 +91,9 @@ class LaunchViewSet(ModelViewSet):
         if launcher_config__id:
             launches = launches.filter(rocket__configuration__id=launcher_config__id)
 
-        launches = launches.prefetch_related(
+        launches = launches.select_related(
+            'rocket__spacecraftflight').select_related(
+            'status').prefetch_related(
             'info_urls').prefetch_related('vid_urls').select_related(
             'rocket').select_related(
             'mission').select_related('pad').select_related(
@@ -226,7 +228,9 @@ class UpcomingLaunchViewSet(ModelViewSet):
             launches = launches.filter(
                 rocket__configuration__id=launcher_config__id)
 
-        launches = launches.prefetch_related(
+        launches = launches.select_related(
+            'rocket__spacecraftflight').select_related(
+            'status').prefetch_related(
             'info_urls').prefetch_related('vid_urls').select_related(
             'rocket').select_related(
             'mission').select_related('pad').select_related(
@@ -346,7 +350,9 @@ class PreviousLaunchViewSet(ModelViewSet):
         if launcher_config__id:
             launches = launches.filter(rocket__configuration__id=launcher_config__id)
 
-        launches = launches.prefetch_related(
+        launches = launches.select_related(
+            'rocket__spacecraftflight').select_related(
+            'status').prefetch_related(
             'info_urls').prefetch_related('vid_urls').select_related(
             'rocket').select_related(
             'mission').select_related('pad').select_related(
