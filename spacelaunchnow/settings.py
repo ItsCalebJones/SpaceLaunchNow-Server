@@ -40,7 +40,7 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.UserRateThrottle'
     ),
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '20/sec',
+        'anon': '100/day',
         'user': '200/sec'
     },
     'DEFAULT_AUTHENTICATION_CLASSES': (
