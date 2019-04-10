@@ -304,6 +304,7 @@ class LocationAdmin(admin.ModelAdmin):
     list_display = ('name', 'country_code')
     list_filter = ('name', 'country_code')
     # readonly_fields = ['launch_library_id']
+    readonly_fields = ('id',)
     ordering = ('name',)
 
 
