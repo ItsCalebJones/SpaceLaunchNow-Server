@@ -238,6 +238,7 @@ class SecondStageAdmin(admin.ModelAdmin):
 @admin.register(models.SpacecraftConfiguration)
 class OrbiterConfigurationAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">public</i>'
+    readonly_fields = ('id',)
     list_display = ('name', 'agency')
     list_filter = ('agency',)
     ordering = ('name',)
