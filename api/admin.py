@@ -6,7 +6,7 @@ from django.forms import BaseInlineFormSet, ModelForm
 from django.urls import reverse
 from django.utils.html import escape
 
-from api.filters.UpcomingFilter import DateListFilter
+from api.filters.UpcomingFilter import DateListFilter, EventDateListFilter
 from api.forms.admin_forms import LaunchForm, LandingForm, LauncherForm, PayloadForm, MissionForm, EventsForm, \
     OrbiterForm, AgencyForm, AstronautForm, SpacecraftFlightForm, SpacecraftForm, LauncherConfigForm, SpaceStationForm
 from api.models import Mission, Rocket
@@ -292,8 +292,10 @@ class LaunchAdmin(admin.ModelAdmin):
 @admin.register(models.Events)
 class EventAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">event</i>'
-    list_display = ('name',)
-    list_filter = ('name',)
+    list_display = ('date', 'name', 'type')
+    list_filter = (EventDateListFilter, 'name',)
+    search_fields = ('name',)
+    ordering = ('date',)
     raw_id_fields = ('expedition', 'spacestation', 'launch')
     form = EventsForm
 
