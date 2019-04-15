@@ -40,6 +40,7 @@ class LaunchViewSet(ModelViewSet):
         lsp_filters = self.request.query_params.get('lsp__ids', None)
         related = self.request.query_params.get('related', None)
         is_crewed = self.request.query_params.get('is_crewed', None)
+        spacecraft_config_ids = self.request.query_params.get("spacecraft_config__ids", None)
 
         launches = Launch.objects.all()
 
@@ -70,6 +71,9 @@ class LaunchViewSet(ModelViewSet):
                 launches = launches.filter(rocket__spacecraftflight__launch_crew__isnull=False)
             elif is_crewed == 'false':
                 launches = launches.filter(rocket__spacecraftflight__launch_crew__isnull=True)
+        if spacecraft_config_ids:
+            spacecraft_config_ids = spacecraft_config_ids.split(',')
+            launches = launches.filter(rocket__spacecraftflight__spacecraft__spacecraft_config__id__in=spacecraft_config_ids)
         if lsp_name:
             launches = launches.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name) |
                                        Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name))
