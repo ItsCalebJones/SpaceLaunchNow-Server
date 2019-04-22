@@ -40,21 +40,27 @@ class LaunchViewSet(ModelViewSet):
         lsp_filters = self.request.query_params.get('lsp__ids', None)
         related = self.request.query_params.get('related', None)
         is_crewed = self.request.query_params.get('is_crewed', None)
+        spacecraft_config_ids = self.request.query_params.get("spacecraft_config__ids", None)
 
         launches = Launch.objects.all()
 
         if location_filters and lsp_filters:
             lsp_filters = lsp_filters.split(',')
             location_filters = location_filters.split(',')
-            launches = launches.filter(Q(rocket__configuration__launch_agency__id__in=lsp_filters) | Q(
+            launches = launches.filter(Q(
+                rocket__configuration__launch_agency__id__in=lsp_filters) | Q(
                 pad__location__id__in=location_filters))
-        if lsp_filters:
-            lsp_filters = lsp_filters.split(',')
-            launches = launches.filter(rocket__configuration__launch_agency__id__in=lsp_filters)
 
-        if location_filters:
+        elif lsp_filters:
+            lsp_filters = lsp_filters.split(',')
+            launches = launches.filter(
+                rocket__configuration__launch_agency__id__in=lsp_filters)
+
+        elif location_filters:
             location_filters = location_filters.split(',')
-            launches = launches.filter(pad__location__id__in=location_filters)
+            launches = launches.filter(
+                pad__location__id__in=location_filters)
+
         if ids:
             ids = ids.split(',')
             launches = launches.filter(id__in=ids)
@@ -65,6 +71,9 @@ class LaunchViewSet(ModelViewSet):
                 launches = launches.filter(rocket__spacecraftflight__launch_crew__isnull=False)
             elif is_crewed == 'false':
                 launches = launches.filter(rocket__spacecraftflight__launch_crew__isnull=True)
+        if spacecraft_config_ids:
+            spacecraft_config_ids = spacecraft_config_ids.split(',')
+            launches = launches.filter(rocket__spacecraftflight__spacecraft__spacecraft_config__id__in=spacecraft_config_ids)
         if lsp_name:
             launches = launches.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name) |
                                        Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name))
@@ -174,21 +183,25 @@ class UpcomingLaunchViewSet(ModelViewSet):
             launches = launches.filter(Q(
                 rocket__configuration__launch_agency__id__in=lsp_filters) | Q(
                 pad__location__id__in=location_filters))
-        if lsp_filters:
+
+        elif lsp_filters:
             lsp_filters = lsp_filters.split(',')
             launches = launches.filter(
                 rocket__configuration__launch_agency__id__in=lsp_filters)
 
-        if location_filters:
+        elif location_filters:
             location_filters = location_filters.split(',')
             launches = launches.filter(
                 pad__location__id__in=location_filters)
+
         if ids:
             ids = ids.split(',')
             launches = launches.filter(id__in=ids)
+
         if serial_number:
             launches = launches.filter(
                 rocket__firststage__launcher__serial_number=serial_number)
+
         if is_crewed:
             if is_crewed == 'true':
                 launches = launches.filter(
@@ -196,6 +209,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
             elif is_crewed == 'false':
                 launches = launches.filter(
                     rocket__spacecraftflight__launch_crew__isnull=True)
+
         if lsp_name:
             launches = launches.filter(Q(
                 rocket__configuration__launch_agency__name__icontains=lsp_name) |
@@ -211,6 +225,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
                         launches = launches | related_launches
                 except Agency.DoesNotExist:
                     print("Cant find agency.")
+
         if lsp_id:
             launches = launches.filter(
                 rocket__configuration__launch_agency__id=lsp_id)
@@ -224,6 +239,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
                         launches = launches | related_launches
                 except Agency.DoesNotExist:
                     print("Cant find agency.")
+
         if launcher_config__id:
             launches = launches.filter(
                 rocket__configuration__id=launcher_config__id)
@@ -260,7 +276,8 @@ class UpcomingLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status', 'rocket__spacecraftflight__spacecraft__name',
+    filter_fields = ('name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status',
+                     'rocket__spacecraftflight__spacecraft__name',
                      'rocket__spacecraftflight__spacecraft__id',)
     search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
                      '$rocket__configuration__launch_agency__abbrev', '$mission__name', '$pad__location__name',
@@ -305,15 +322,20 @@ class PreviousLaunchViewSet(ModelViewSet):
         if location_filters and lsp_filters:
             lsp_filters = lsp_filters.split(',')
             location_filters = location_filters.split(',')
-            launches = launches.filter(Q(rocket__configuration__launch_agency__id__in=lsp_filters) | Q(
+            launches = launches.filter(Q(
+                rocket__configuration__launch_agency__id__in=lsp_filters) | Q(
                 pad__location__id__in=location_filters))
-        if lsp_filters:
-            lsp_filters = lsp_filters.split(',')
-            launches = launches.filter(rocket__configuration__launch_agency__id__in=lsp_filters)
 
-        if location_filters:
+        elif lsp_filters:
+            lsp_filters = lsp_filters.split(',')
+            launches = launches.filter(
+                rocket__configuration__launch_agency__id__in=lsp_filters)
+
+        elif location_filters:
             location_filters = location_filters.split(',')
-            launches = launches.filter(pad__location__id__in=location_filters)
+            launches = launches.filter(
+                pad__location__id__in=location_filters)
+
         if ids:
             ids = ids.split(',')
             launches = launches.filter(id__in=ids)
@@ -381,7 +403,8 @@ class PreviousLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status', 'rocket__spacecraftflight__spacecraft__name',
+    filter_fields = ('name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status',
+                     'rocket__spacecraftflight__spacecraft__name',
                      'rocket__spacecraftflight__spacecraft__id',)
     search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
                      '$rocket__configuration__launch_agency__abbrev', '$mission__name', '$pad__location__name',
