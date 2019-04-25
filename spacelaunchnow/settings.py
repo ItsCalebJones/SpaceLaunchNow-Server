@@ -28,7 +28,7 @@ SECRET_KEY = config.DJANGO_SECRET_KEY
 DEBUG = config.DEBUG
 
 ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8', '.spacelaunchnow.me', '127.0.0.1', 'spacelaunchnow.me',
-                 '10.0.2.2', '159.203.146.211']
+                 '10.0.2.2', '159.203.146.211', '159.203.150.91']
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'spacelaunchnow.pagination.SLNLimitOffsetPagination',
     'DEFAULT_MODEL_SERIALIZER_CLASS': 'drf_toolbox.serializers.ModelSerializer',
@@ -40,7 +40,7 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.UserRateThrottle'
     ),
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '100/day',
+        'anon': '1000/day',
         'user': '200/sec'
     },
     'DEFAULT_AUTHENTICATION_CLASSES': (
