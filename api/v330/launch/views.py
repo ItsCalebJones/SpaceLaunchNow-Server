@@ -118,7 +118,7 @@ class LaunchViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         mode = self.request.query_params.get("mode", "normal")
-        if mode == "detailed":
+        if self.action == 'retrieve' or mode == "detailed":
             return LaunchDetailedSerializer
         elif mode == "list":
             return LaunchListSerializer
@@ -262,7 +262,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         mode = self.request.query_params.get("mode", "normal")
-        if mode == "detailed":
+        if self.action == 'retrieve' or mode == "detailed":
             return LaunchDetailedSerializer
         elif mode == "list":
             return LaunchListSerializer
@@ -390,7 +390,7 @@ class PreviousLaunchViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         mode = self.request.query_params.get("mode", "normal")
-        if mode == "detailed":
+        if self.action == 'retrieve' or mode == "detailed":
             return LaunchDetailedSerializer
         elif mode == "list":
             return LaunchListSerializer
