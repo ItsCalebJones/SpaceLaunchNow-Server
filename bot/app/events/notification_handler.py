@@ -72,5 +72,5 @@ class EventNotificationHandler:
         notification = push_service.notify_topic_subscribers(data_message=data,
                                                              condition=topics,
                                                              time_to_live=86400)
-        logger.debug(notification)
+        logger.info(notification)
         logger.info('----------------------------------------------------------')

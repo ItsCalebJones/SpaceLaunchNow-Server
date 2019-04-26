@@ -105,4 +105,6 @@ class AstronautTypeAdmin(admin.ModelAdmin):
 
 @admin.register(models.DockingLocation)
 class DockingLocationAdmin(admin.ModelAdmin):
-    list_display = ('name', )
+    list_display = ('name', 'spacestation',)
+    list_filter = ('spacestation',)
+    search_fields = ('name',)

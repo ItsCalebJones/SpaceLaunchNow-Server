@@ -5,8 +5,8 @@ from datetime import datetime, timedelta
 
 from api.models import *
 from api.permission import HasGroupPermission
-from api.v330.launch.filters import LaunchFilter
-from api.v330.launch.serializers import LaunchDetailedSerializer, LaunchListSerializer, LaunchSerializer
+from api.v331.launch.filters import LaunchFilter
+from api.v331.launch.serializers import LaunchDetailedSerializer, LaunchListSerializer, LaunchSerializer
 
 
 class LaunchViewSet(ModelViewSet):
