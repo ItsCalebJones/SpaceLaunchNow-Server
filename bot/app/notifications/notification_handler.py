@@ -91,6 +91,13 @@ class NotificationHandler:
             else:
                 contents = '%s is in flight!' % launch.rocket.configuration.name
 
+        elif notification_type == 'webcastLive':
+
+            if launch.mission is not None and launch.mission.name is not None :
+                contents = '%s %s webcast is live!' % (launch.rocket.configuration.name, launch.mission.name)
+            else:
+                contents = '%s webcast is live!' % launch.rocket.configuration.name
+
         else:
             launch_time = launch.net
             contents = 'Launch attempt from %s on %s at %s.' % (launch.pad.location.name,

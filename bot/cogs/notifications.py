@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.template import defaultfilters
 
 from api.models import Launch
-from bot.cogs.launches import launch_to_small_embed
+from bot.cogs.launches import launch_to_small_embed, launch_to_small_embed_webcast
 from bot.models import DiscordChannel, Notification
 
 logger = logging.getLogger('bot.discord')
@@ -107,7 +107,7 @@ class Notifications:
                     logger.info("Sending notification to %s" % channel.name)
                     await self.bot.send_message(channel,
                                                 embed=launch_to_small_embed(launch,
-                                                                            "**Launch was a %s!**\n\n" % launch.status.name))
+                                                                            "**Launch was a %s!**\n\n" % launch.status.name, pre_launch=False))
 
     async def check_in_flight(self, bot_channels):
         in_flight_launches = Launch.objects.filter(status__id=6)
@@ -120,7 +120,7 @@ class Notifications:
                 for channel in bot_channels:
                     logger.info("Sending notification to %s" % channel.name)
                     await self.bot.send_message(channel,
-                                                embed=launch_to_small_embed(launch, "**Launch is in flight!**\n\n"))
+                                                embed=launch_to_small_embed(launch, "**Launch is in flight!**\n\n", pre_launch=False))
 
     async def check_one_minute(self, bot_channels, time_threshold_1_minute):
         one_minute_launches = Launch.objects.filter(net__lte=time_threshold_1_minute,
@@ -179,6 +179,18 @@ class Notifications:
                     await self.bot.send_message(channel,
                                                 embed=launch_to_small_embed(launch, "**Launching in one hour!**\n\n"))
 
+    async def check_webcast_live(self, bot_channels, time_threshold_1_hour):
+        one_hour_launches = Launch.objects.filter(net__lte=time_threshold_1_hour, webcast_live=True)
+        for launch in one_hour_launches:
+            notification, created = Notification.objects.get_or_create(launch=launch)
+            if not notification.wasNotifiedWebcastDiscord:
+                notification.wasNotifiedWebcastDiscord = True
+                notification.save()
+                logger.info("Webcast Live - Launch Notification for %s" % launch.name)
+                for channel in bot_channels:
+                    logger.info("Sending notification to %s" % channel.name)
+                    await self.bot.send_message(channel, embed=launch_to_small_embed_webcast(launch))
+
     async def discord_launch_events(self):
         await self.bot.wait_until_ready()
         channels = DiscordChannel.objects.all()
@@ -201,6 +213,8 @@ class Notifications:
             await self.check_one_minute(bot_channels, time_threshold_1_minute)
 
             await self.check_in_flight(bot_channels)
+
+            await self.check_webcast_live(bot_channels, time_threshold_1_hour)
 
             await self.check_success(bot_channels, time_threshold_past_two_days, time_threshold_24_hour)
 

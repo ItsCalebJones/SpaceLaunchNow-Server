@@ -152,7 +152,29 @@ def launch_to_large_embed(launch):
     return embed
 
 
-def launch_to_small_embed(launch, notification=""):
+def launch_to_small_embed_webcast(launch):
+    title = "%s" % launch.name
+    color = get_color(launch.status.id)
+
+    description_text = "Webcast is live!\n\n" + launch.get_full_absolute_url
+
+    embed = discord.Embed(type="rich", title=title,
+                          description=description_text,
+                          color=color,
+                          url=launch.get_full_absolute_url())
+
+    if launch.rocket.configuration.image_url.name is not '':
+        try:
+            embed.set_thumbnail(url=launch.rocket.configuration.image_url.url)
+        except ValueError:
+            embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
+    else:
+        embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
+    embed.set_footer(text=launch.net.strftime("NET: %A %B %e, %Y %H:%M %Z"))
+    return embed
+
+
+def launch_to_small_embed(launch, notification="", pre_launch=False):
     title = "%s" % launch.name
     color = get_color(launch.status.id)
     status = "**Status:** %s\n" % launch.status.name
@@ -176,22 +198,26 @@ def launch_to_small_embed(launch, notification=""):
     if launch.failreason is not None and launch.failreason is not '':
         fail_reason = "\n**Update:** %s\n" % launch.failreason
 
-    countdown = launch.net - datetime.datetime.now(pytz.utc)
-    seconds = countdown.total_seconds()
-    days, remainder = divmod(seconds, 86400)
-    hours, remainder = divmod(remainder, 3600)
-    minutes, seconds = divmod(remainder, 60)
-
     formatted_countdown = ''
 
-    if days != 0:
-        formatted_countdown += str(int(days)) + ' Days '
-    if hours != 0:
-        formatted_countdown += str(int(hours)) + ' Hours '
-    if minutes != 0:
-        formatted_countdown += str(int(minutes)) + ' Minutes '
+    if pre_launch:
+        countdown = launch.net - datetime.datetime.now(pytz.utc)
+        seconds = countdown.total_seconds()
+        days, remainder = divmod(seconds, 86400)
+        hours, remainder = divmod(remainder, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        if days != 0:
+            formatted_countdown += str(int(days)) + ' Days '
+        if hours != 0:
+            if hours == 23:
+                hours = 24
+            formatted_countdown += str(int(hours)) + ' Hours '
+        if minutes != 0:
+            if minutes == 59:
+                minutes = 00
+            formatted_countdown += str(int(minutes)) + ' Minutes '
 
-    formatted_countdown = '\n**NET In ' + formatted_countdown + '**'
+        formatted_countdown = '\n**NET In ' + formatted_countdown + '**'
 
     description_text = notification + status + location + landing + fail_reason + mission_description + formatted_countdown + follow_along
 

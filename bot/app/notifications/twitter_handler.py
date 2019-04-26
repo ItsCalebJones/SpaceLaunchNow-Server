@@ -137,6 +137,19 @@ def get_twitter_message(launch, notification_type):
 
             return content
 
+    elif notification_type == 'webcastLive':
+        content = '%s webcast is now live!' % launch.name
+
+        if len(launch.vid_urls) > 0:
+            watch = "\nWatch Here: %s" % launch.get_full_absolute_url
+            if len(content + watch) < 280:
+                content = content + watch
+        else:
+            if len(content + launch.get_full_absolute_url) < 280:
+                content = content + "\n %s" % launch.get_full_absolute_url
+
+        return content
+
     else:
         if launch.status.id == 1:
             return '%s launching from %s by %s in %s.' % (launch.name, launch.pad.location.name,

@@ -8,6 +8,7 @@ from api.models import Launch
 class Notification(models.Model):
     launch = models.OneToOneField(Launch, on_delete=models.CASCADE)
 
+    wasNotifiedWebcastLive = models.BooleanField(blank=True, default=False)
     wasNotifiedTwentyFourHour = models.BooleanField(blank=True, default=False)
     wasNotifiedOneHour = models.BooleanField(blank=True, default=False)
     wasNotifiedTenMinutes = models.BooleanField(blank=True, default=False)
@@ -21,6 +22,7 @@ class Notification(models.Model):
     wasNotifiedOneMinuteTwitter = models.BooleanField(blank=True, default=False)
     wasNotifiedInFlightTwitter = models.BooleanField(blank=True, default=False)
     wasNotifiedSuccessTwitter = models.BooleanField(blank=True, default=False)
+    wasNotifiedWebcastLiveTwitter = models.BooleanField(blank=True, default=False)
 
     wasNotifiedDailyDigest = models.BooleanField(blank=True, default=False)
 
@@ -36,6 +38,7 @@ class Notification(models.Model):
     wasNotifiedOneMinutesDiscord = models.BooleanField(blank=True, default=False)
     wasNotifiedInFlightDiscord = models.BooleanField(blank=True, default=False)
     wasNotifiedSuccessDiscord = models.BooleanField(blank=True, default=False)
+    wasNotifiedWebcastDiscord = models.BooleanField(blank=True, default=False)
 
     def __unicode__(self):
         return self.launch.name

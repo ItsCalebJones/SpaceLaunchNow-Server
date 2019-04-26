@@ -794,6 +794,7 @@ class Launch(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     launch_library_id = models.IntegerField(editable=True, null=True, blank=True)
     launch_library = models.NullBooleanField(default=False)
+    webcast_live = models.BooleanField(default=False)
     name = models.CharField(max_length=2048, blank=True)
     img_url = models.CharField(max_length=1048, blank=True, null=True)
     status = models.ForeignKey(LaunchStatus, related_name='launch', blank=True, null=True, on_delete=models.SET_NULL)

@@ -250,6 +250,39 @@ class LaunchEventTracker:
             except Exception as e:
                 logger.error(e)
 
+    def check_webcast_live(self, time_threshold_1_hour):
+        logger.debug('Running check_one_hour...')
+        launches = Launch.objects.filter(net__lte=time_threshold_1_hour).filter(webcast_live=True)
+
+        logger.debug('Found %d launches within an hour - checking state.', len(launches))
+
+        for launch in launches:
+            self.check_next_stamp_changed(launch)
+            notification, created = Notification.objects.get_or_create(launch=launch)
+            logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
+
+            try:
+                if not notification.wasNotifiedWebcastLive:
+                    logger.info('Sending mobile notification for %s!', launch.name)
+                    notification.wasNotifiedWebcastLive = True
+                    notification.save()
+                    self.notification_handler.send_notification(launch=launch,
+                                                                notification_type='webcastLive',
+                                                                notification=notification)
+            except Exception as e:
+                logger.error(e)
+
+            try:
+                if not notification.wasNotifiedWebcastLiveTwitter:
+                    logger.info('Sending Twitter notification for %s!', launch.name)
+                    notification.wasNotifiedWebcastLiveTwitter = True
+                    notification.save()
+                    self.twitter.send_to_twitter(launch=launch,
+                                                 notification_type='webcastLive',
+                                                 notification=notification)
+            except Exception as e:
+                logger.error(e)
+
     def check_this_week(self, time_threshold_1_week, time_threshold_24_hour):
         logger.debug('Running check_this_week...')
         launches = Launch.objects.filter(net__lte=time_threshold_1_week,
@@ -273,6 +306,8 @@ class LaunchEventTracker:
         self.check_twenty_four_hour(time_threshold_1_hour, time_threshold_24_hour)
 
         self.check_one_hour(time_threshold_10_minute, time_threshold_1_hour)
+
+        self.check_webcast_live(time_threshold_1_hour)
 
         self.check_ten_minute(time_threshold_10_minute, time_threshold_1_minute)
 
