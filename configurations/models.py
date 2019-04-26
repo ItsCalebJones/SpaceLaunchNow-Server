@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.apps import apps
 from django.db import models
 
 
@@ -191,6 +192,14 @@ class SpaceStationType(models.Model):
 
 class DockingLocation(models.Model):
     name = models.CharField(max_length=255)
+    spacestation = models.ForeignKey('api.SpaceStation', on_delete=models.PROTECT, related_name='docking_location', default=4)
+
+
+    @property
+    def docked(self):
+        DockingEvent = apps.get_model(app_label='api', model_name='DockingEvent')
+        docked = DockingEvent.objects.filter(docking_location=self.id).filter(docked=True).first()
+        return docked
 
     def __str__(self):
         return self.name
