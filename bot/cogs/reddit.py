@@ -241,6 +241,8 @@ class Reddit:
                         embed = submission_to_embed(submission)
                         await self.bot.send_message(self.bot.get_channel(id=channel.channel_id), embed=embed)
                     except Exception as e:
+                        if 'Missing Permissions' in e:
+                            channel.delete()
                         logger.error(channel.id)
                         logger.error(channel.name)
                         logger.error(e)

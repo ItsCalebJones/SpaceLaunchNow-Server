@@ -292,6 +292,8 @@ class Twitter:
                         await self.bot.send_message(self.bot.get_channel(id=channel.channel_id),
                                                     embed=tweet_to_embed(tweet))
                     except Exception as e:
+                        if 'Missing Permissions' in e:
+                            channel.delete()
                         logger.error(channel.id)
                         logger.error(channel.name)
                         logger.error(e)
