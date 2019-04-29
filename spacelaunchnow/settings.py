@@ -144,7 +144,7 @@ LOGGING = {
         },
         'bot.discord': {
             'handlers': ['django_default', 'discord', 'console'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': True,
         },
     },

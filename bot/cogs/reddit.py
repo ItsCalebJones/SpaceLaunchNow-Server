@@ -56,15 +56,9 @@ def submission_to_embed(submission):
                                 inline=True)
             except Exception as e:
                 logger.error(e)
-        else:
+        elif submission.text is not None:
             try:
-                g = Goose()
-                article = g.extract(url=submission.link)
-                if article.meta_description is not None and article.meta_description is not "":
-                    text = article.meta_description
-                else:
-                    text = (article.text[:300] + '...') if len(article.text) > 300 else article.text
-                embed.add_field(name="Link Summary", value=text, inline=True)
+                embed.add_field(name="Link Summary", value=submission.text, inline=True)
             except Exception as e:
                 logger.error(e)
 
@@ -78,9 +72,10 @@ def submission_to_embed(submission):
 
 
 def get_submissions():
+    logger.info("Getting Reddit submissions.")
     subreddits = Subreddit.objects.filter(initialized=True)
-
     for subreddit in subreddits:
+        logger.debug("Getting submissions for /r/%s" % subreddit.name)
         get_posts_by_subreddit(subreddit)
 
 
@@ -90,6 +85,7 @@ def get_posts_by_subreddit(subreddit, mark_read=False):
         subreddit.save()
         submissionObj, created = RedditSubmission.objects.get_or_create(id=submission.id, subreddit=subreddit)
         if created:
+            logger.info("Found new submission: (%s) %s" % (submissionObj.id, submission.title))
             if mark_read:
                 submissionObj.read = True
             submissionObj.subreddit = subreddit
@@ -105,7 +101,21 @@ def get_posts_by_subreddit(subreddit, mark_read=False):
                 submissionObj.selftext = True
                 submissionObj.text = submission.selftext
             else:
+                logger.info("Submission is a link - trying to get additional info...")
                 submissionObj.link = submission.url
+                try:
+                    g = Goose()
+                    article = g.extract(url=submissionObj.link)
+                    if article.meta_description is not None and article.meta_description is not "":
+                        text = article.meta_description
+                    elif article.cleaned_text is not None:
+                        text = (article.cleaned_text[:300] + '...') if len(article.cleaned_text) > 300 else article.cleaned_text
+                    else:
+                        text = None
+                    logger.info("Description: %s" % text)
+                    submissionObj.text = text
+                except Exception as e:
+                    logger.error(e)
             submissionObj.permalink = submission.permalink
             submissionObj.save()
 
@@ -218,16 +228,21 @@ class Reddit:
             await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id), description)
 
     async def check_submissions(self):
+        logger.debug("Checking for submissions.")
         submissions = RedditSubmission.objects.filter(read=False)
+        logger.debug("Found %s submissions to read." % len(submissions))
         for submission in submissions:
             submission.read = True
             submission.save()
             if submission.subreddit.subscribers is not None:
                 for channel in submission.subreddit.subscribers.all():
+                    logger.debug("Sending %s to %s - %s" % (submission.id, channel.id, channel.name))
                     try:
                         embed = submission_to_embed(submission)
                         await self.bot.send_message(self.bot.get_channel(id=channel.channel_id), embed=embed)
                     except Exception as e:
+                        logger.error(channel.id)
+                        logger.error(channel.name)
                         logger.error(e)
 
     async def add_subreddit(self, subreddit_name, discord_channel):

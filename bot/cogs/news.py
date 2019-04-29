@@ -22,18 +22,8 @@ def news_to_embed(news):
     embed = discord.Embed(type="rich", title=title,
                           description=description,
                           color=color)
-    try:
-        g = Goose()
-        article = g.extract(url=news.link)
-        if article.meta_description is not None and article.meta_description is not "":
-            text = article.meta_description
-            text = text.replace('&#039;', '\'')
-        else:
-            text = (article.text[:300] + '...') if len(article.text) > 300 else article.text
-        embed.add_field(name="Description", value=text, inline=True)
-    except Exception as e:
-        logger.error(news)
-        logger.error(e)
+    if news.description is not None:
+        embed.add_field(name="Description", value=news.description, inline=True)
     embed.set_image(url=news.featured_image)
     embed.set_footer(text=news.created_at.strftime("%A %B %e, %Y %H:%M %Z • Powered by SNAPI"))
     return embed
@@ -51,6 +41,18 @@ def get_news():
                 news.news_site = item['news_site_long']
                 news.created_at = datetime.utcfromtimestamp(item['date_published']).replace(tzinfo=pytz.utc)
                 news.read = False
+                try:
+                    g = Goose()
+                    article = g.extract(url=news.link)
+                    if article.meta_description is not None and article.meta_description is not "":
+                        text = article.meta_description
+                    elif article.cleaned_text is not None:
+                        text = (article.cleaned_text[:300] + '...') if len(article.cleaned_text) > 300 else article.cleaned_text
+                    else:
+                        text = None
+                    news.description = text
+                except Exception as e:
+                    logger.error(e)
                 logger.info("Added News (%s) - %s - %s" % (news.id, news.title, news.news_site))
                 news.save()
     return
@@ -126,8 +128,9 @@ class News:
             await asyncio.sleep(5)
 
     async def check_news(self):
-
+        logger.debug("Check News Articles")
         news = NewsItem.objects.filter(read=False)
+        logger.debug("Found %s articles to read." % len(news))
         for item in news:
             item.read = True
             item.save()

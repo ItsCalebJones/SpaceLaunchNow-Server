@@ -181,6 +181,7 @@ class NewsItem(models.Model):
     id = models.CharField(primary_key=True, max_length=255)
     title = models.CharField(max_length=1048, null=False)
     link = models.CharField(max_length=1048, null=True, blank=True, default="")
+    description = models.CharField(max_length=40000, null=True, blank=True, default="")
     featured_image = models.CharField(max_length=1048, null=True, blank=True, default="")
     news_site = models.CharField(max_length=1048, null=True, blank=True, default="")
     created_at = models.DateTimeField(auto_now_add=True)
