@@ -135,6 +135,7 @@ def event_tracker():
     logger.info('Task - Running Event Tracker')
     tracker = EventTracker()
     tracker.check_events()
+    tracker.check_news_item()
 
 
 @periodic_task(run_every=(crontab(minute='*/5')), options={"expires": 60})

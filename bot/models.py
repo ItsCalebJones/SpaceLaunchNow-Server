@@ -185,3 +185,5 @@ class NewsItem(models.Model):
     news_site = models.CharField(max_length=1048, null=True, blank=True, default="")
     created_at = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
+    should_notify = models.BooleanField(default=False)
+    was_notified = models.BooleanField(default=False)

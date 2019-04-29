@@ -1,6 +1,8 @@
 from api.models import Events
 from bot.app.events.notification_handler import EventNotificationHandler
 from bot.app.events.twitter_handler import EventTwitterHandler
+from bot.app.notifications.news_notification_handler import NewsNotificationHandler
+from bot.models import NewsItem
 from spacelaunchnow import config
 import datetime
 import logging
@@ -18,6 +20,7 @@ class EventTracker:
             self.DEBUG = debug
         self.twitter = EventTwitterHandler()
         self.notification_handler = EventNotificationHandler()
+        self.news_notification_handler = NewsNotificationHandler()
 
     def check_events(self):
         logger.info('Running check_events...')
@@ -61,3 +64,17 @@ class EventTracker:
                     event.save()
                     logger.info('Sending %s notification!', event.name)
                     self.notification_handler.send_webcast_notification(event)
+
+    def check_news_item(self):
+        logger.debug('Running check news...')
+        news_that_need_to_notify = NewsItem.objects.filter(created_at__gte=datetime.datetime.now() - datetime.timedelta(days=2),
+                                                           should_notify=True, was_notified=False)
+
+        logger.debug('Found %d news items.', len(news_that_need_to_notify))
+
+        for news_item in news_that_need_to_notify:
+            if not news_item.was_notified:
+                news_item.was_notified = True
+                news_item.save()
+                logger.info('Sending %s notification!', news_item.title)
+                self.news_notification_handler.send_notification(news_item)
