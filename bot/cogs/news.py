@@ -22,7 +22,7 @@ def news_to_embed(news):
     embed = discord.Embed(type="rich", title=title,
                           description=description,
                           color=color)
-    if news.description is not None:
+    if news.description is not None or news.description is not "":
         embed.add_field(name="Description", value=news.description, inline=True)
     embed.set_image(url=news.featured_image)
     embed.set_footer(text=news.created_at.strftime("%A %B %e, %Y %H:%M %Z • Powered by SNAPI"))
