@@ -32,6 +32,7 @@ def news_to_embed(news):
             text = (article.text[:300] + '...') if len(article.text) > 300 else article.text
         embed.add_field(name="Description", value=text, inline=True)
     except Exception as e:
+        logger.error(news)
         logger.error(e)
     embed.set_image(url=news.featured_image)
     embed.set_footer(text=news.created_at.strftime("%A %B %e, %Y %H:%M %Z • Powered by SNAPI"))
@@ -136,6 +137,8 @@ class News:
                     embed = news_to_embed(item)
                     await self.bot.send_message(self.bot.get_channel(id=channel.channel_id), embed=embed)
                 except Exception as e:
+                    logger.error(channel.id)
+                    logger.error(channel.name)
                     logger.error(e)
 
 
