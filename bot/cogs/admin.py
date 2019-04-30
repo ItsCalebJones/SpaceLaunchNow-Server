@@ -86,6 +86,7 @@ class SLNAdmin:
 
     async def check_daily(self):
         stale = self.check_for_orphaned_launches()
+        await self.bot.send_message(self.bot.get_channel(id="484371128232706049"), "Checking for stale launches...")
         if len(stale) > 0:
             await self.bot.send_message(self.bot.get_channel(id="484371128232706049"), embed=stale_to_embed(stale))
         else:
