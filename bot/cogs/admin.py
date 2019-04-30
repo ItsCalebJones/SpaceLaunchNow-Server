@@ -88,6 +88,8 @@ class SLNAdmin:
         stale = self.check_for_orphaned_launches()
         if len(stale) > 0:
             await self.bot.send_message(self.bot.get_channel(id="484371128232706049"), embed=stale_to_embed(stale))
+        else:
+            await self.bot.send_message(self.bot.get_channel(id="484371128232706049"), "No stale Launches found!")
 
     async def check_hourly(self):
         pass
