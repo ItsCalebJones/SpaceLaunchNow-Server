@@ -234,7 +234,7 @@ class Twitter:
                 await asyncio.wait_for(self.check_tweets(), 30)
             except Exception as e:
                 logger.error(e)
-            await asyncio.sleep(5)
+            await asyncio.sleep(60)
 
     async def add_notification(self, screen_name, discord_channel):
         tweets = None
@@ -274,8 +274,10 @@ class Twitter:
                                     embed=tweet_to_embed(userObj.tweets.order_by('created_at').first()))
 
     async def check_tweets(self):
+        logger.info("Checking unread tweets...")
         created_window = datetime.datetime.now(tz=pytz.utc) - datetime.timedelta(minutes=5)
         tweets = Tweet.objects.filter(read=False).filter(created_at__gte=created_window).order_by('created_at')
+        logger.info("Found %s unread tweets." % len(tweets))
         for tweet in tweets:
             tweet.read = True
             tweet.save()

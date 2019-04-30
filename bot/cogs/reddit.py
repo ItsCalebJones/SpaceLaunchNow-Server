@@ -211,7 +211,7 @@ class Reddit:
                 await asyncio.wait_for(self.check_submissions(), 30)
             except Exception as e:
                 logger.error(e)
-            await asyncio.sleep(5)
+            await asyncio.sleep(60)
 
     async def list_subreddit(self, discord_channel):
         try:

@@ -7,7 +7,9 @@ import uuid
 
 from PIL import Image
 from compat import BytesIO
+from django.contrib.contenttypes.models import ContentType
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.urls import reverse
 
 from api.utils.utilities import resize_for_upload, resize_needed
 
@@ -835,6 +837,9 @@ class Launch(models.Model):
 
     def get_full_absolute_url(self):
         return 'https://spacelaunchnow.me/launch/%s' % (self.get_absolute_url())
+
+    def get_admin_url(self):
+        return "https://spacelaunchnow.me/admin/api/launch/%s/change" % self.id
 
     class Meta:
         verbose_name = 'Launch'

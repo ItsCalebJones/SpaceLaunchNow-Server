@@ -125,7 +125,7 @@ class News:
                 await asyncio.wait_for(self.check_news(), 30)
             except Exception as e:
                 logger.error(e)
-            await asyncio.sleep(5)
+            await asyncio.sleep(60)
 
     async def check_news(self):
         logger.debug("Check News Articles")
