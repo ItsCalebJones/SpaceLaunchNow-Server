@@ -152,6 +152,8 @@ class LaunchRepository:
         elif response.status_code == 404:
             logger.debug("Launch is Stale - %s" % id)
             return True
+        else:
+            return False
 
     def get_launch_by_id(self, id):
         response = self.launchLibrary.get_launch_by_id(id)

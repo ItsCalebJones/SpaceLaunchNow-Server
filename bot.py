@@ -28,7 +28,8 @@ description = """
 Hello! I am a bot written by Koun7erfit with a backbone from R Danny.
 For the nitty gritty, checkout the project GitHub: {0}
 """.format(github_url)
-initial_extensions = ["bot.cogs.reddit", "bot.cogs.notifications", "bot.cogs.launches", "bot.cogs.about", "bot.cogs.twitter", "bot.cogs.news"]
+initial_extensions = ["bot.cogs.reddit", "bot.cogs.notifications", "bot.cogs.launches", "bot.cogs.about",
+                      "bot.cogs.twitter", "bot.cogs.news", "bot.cogs.admin"]
 
 log = logging.getLogger('bot.discord')
 help_attrs = dict(hidden=True)
@@ -53,9 +54,9 @@ async def on_command_error(error, ctx):
     elif isinstance(error, commands.DisabledCommand):
         await bot.send_message(ctx.message.author, 'Sorry. This command is disabled and cannot be used.')
     elif isinstance(error, commands.CommandInvokeError):
-        log.info('In {0.command.qualified_name}:'.format(ctx), file=sys.stderr)
+        print('In {0.command.qualified_name}:'.format(ctx), file=sys.stderr)
         traceback.print_tb(error.original.__traceback__)
-        log.info('{0.__class__.__name__}: {0}'.format(error.original), file=sys.stderr)
+        print('{0.__class__.__name__}: {0}'.format(error.original), file=sys.stderr)
 
 
 @bot.event

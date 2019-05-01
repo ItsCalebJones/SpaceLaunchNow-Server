@@ -1,9 +1,5 @@
 # coding=utf-8
-import os
-import stat
-import time
 
-from api.management.commands.run_spacex_api_importer import import_core
 from api.models import Launch
 from datetime import datetime, timedelta
 
@@ -13,7 +9,6 @@ from celery.task import periodic_task
 from celery.utils.log import get_task_logger
 
 from bot.app.events.event_tracker import EventTracker
-from bot.app.instagram import InstagramBot
 from bot.app.notifications.launch_event_tracker import LaunchEventTracker
 from bot.app.repository.launches_repository import LaunchRepository
 from bot.app.sync import LaunchLibrarySync
@@ -21,7 +16,6 @@ from bot.cogs.news import get_news
 from bot.cogs.reddit import get_submissions
 from bot.cogs.twitter import get_new_tweets
 from bot.models import Notification
-from bot.utils.util import custom_strftime
 from spacelaunchnow import config
 
 logger = get_task_logger('bot.digest')
@@ -44,6 +38,18 @@ def run_daily():
 
 @periodic_task(
     run_every=(crontab(minute=0, hour=12,
+                       day_of_week='mon-sun')),
+    name="run_daily_cleanup",
+    ignore_result=True,
+    options={"expires": 3600}
+)
+def run_daily():
+    logger.info('Task - Running Digest - Daily Cleanup...')
+    check_for_orphaned_launches()
+
+
+@periodic_task(
+    run_every=(crontab(minute=0, hour=12,
                        day_of_week='mon')),
     name="run_weekly",
     ignore_result=True,
@@ -61,15 +67,13 @@ def get_upcoming_launches():
     repository = LaunchRepository()
     repository.get_next_launches(next_count=100, all=True)
 
-    check_for_orphaned_launches()
-
 
 def check_for_orphaned_launches():
     logger.info('Task - Get Upcoming launches!')
 
     # Delete notification records from old launches.
-    seven_days_past = datetime.today() - timedelta(days=7)
-    notifications = Notification.objects.filter(launch__net__lte=seven_days_past)
+    three_days_threshhold = datetime.today() - timedelta(days=3)
+    notifications = Notification.objects.filter(launch__net__lte=three_days_threshhold)
     notifications.delete()
 
     # Check for stale launches.

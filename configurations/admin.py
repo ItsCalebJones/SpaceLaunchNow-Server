@@ -54,7 +54,7 @@ class OrbitAdmin(admin.ModelAdmin):
 @admin.register(models.LandingLocation)
 class LandingLocationAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">place</i>'
-    list_display = ('name', )
+    list_display = ('id', 'name', )
     list_filter = ('name', )
     ordering = ('name', )
     search_fields = ('name',)
@@ -63,7 +63,7 @@ class LandingLocationAdmin(admin.ModelAdmin):
 @admin.register(models.LandingType)
 class LandingTypeAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">dashboard</i>'
-    list_display = ('name',)
+    list_display = ('id', 'name',)
     list_filter = ('name', )
     ordering = ('name', )
     search_fields = ('name',)
@@ -72,7 +72,7 @@ class LandingTypeAdmin(admin.ModelAdmin):
 @admin.register(models.EventType)
 class LandingTypeAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">dashboard</i>'
-    list_display = ('name',)
+    list_display = ('id', 'name',)
     list_filter = ('name', )
     ordering = ('name', )
     search_fields = ('name',)
@@ -80,31 +80,31 @@ class LandingTypeAdmin(admin.ModelAdmin):
 
 @admin.register(models.SpaceStationStatus)
 class SpaceStationStatusAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('id', 'name',)
 
 
 @admin.register(models.AstronautStatus)
 class AstronautStatusAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('id', 'name',)
 
 
 @admin.register(models.SpacecraftStatus)
 class SpacecraftStatusAdmin(admin.ModelAdmin):
-    list_display = ('name', )
+    list_display = ('id', 'name', )
 
 
 @admin.register(models.AstronautRole)
 class AstronautRoleAdmin(admin.ModelAdmin):
-    list_display = ('role', )
+    list_display = ('id', 'role', )
 
 
 @admin.register(models.AstronautType)
 class AstronautTypeAdmin(admin.ModelAdmin):
-    list_display = ('name', )
+    list_display = ('id', 'name', )
 
 
 @admin.register(models.DockingLocation)
 class DockingLocationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'spacestation',)
+    list_display = ('id', 'name', 'spacestation',)
     list_filter = ('spacestation',)
     search_fields = ('name',)
