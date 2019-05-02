@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.template import defaultfilters
 
 from api.models import Launch
-from bot.cogs.launches import launch_to_small_embed, launch_to_small_embed_webcast
+from bot.cogs.launches import launch_to_small_embed
 from bot.models import DiscordChannel, Notification
 
 logger = logging.getLogger('bot.discord')
@@ -203,14 +203,22 @@ class Notifications:
                 logger.info("Webcast Live - Launch Notification for %s" % launch.name)
                 for channel in bot_channels:
                     logger.info("Sending notification to %s" % channel.name)
-                    await self.bot.send_message(channel, embed=launch_to_small_embed_webcast(launch))
+                    try:
+                        await self.bot.send_message(channel, embed=launch_to_small_embed(launch, "**Webcast is live!**\n\n"))
+                    except Exception as e:
+                        logger.error(e)
 
     async def discord_launch_events(self):
         await self.bot.wait_until_ready()
         channels = DiscordChannel.objects.all()
         bot_channels = []
         for channel in channels:
-            bot_channels.append(self.bot.get_channel(id=channel.channel_id))
+            discord_channel = self.bot.get_channel(id=channel.channel_id)
+            if discord_channel is None:
+                channel.delete()
+            else:
+                bot_channels.append(discord_channel)
+
         while not self.bot.is_closed:
             logger.info("Checking Discord launch events...")
             time_threshold_24_hour = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(hours=24)
