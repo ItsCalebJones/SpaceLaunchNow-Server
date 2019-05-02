@@ -191,9 +191,9 @@ class Notifications:
                     await self.bot.send_message(channel,
                                                 embed=launch_to_small_embed(launch, "**Launching in one hour!**\n\n"))
 
-    async def check_webcast_live(self, bot_channels, time_threshold_1_hour):
+    async def check_webcast_live(self, bot_channels, time_threshold_1_hour, time_threshold_1_minute):
         logger.info("Checking webcast live launches...")
-        one_hour_launches = Launch.objects.filter(net__lte=time_threshold_1_hour, webcast_live=True)
+        one_hour_launches = Launch.objects.filter(net__gte=time_threshold_1_minute, net__lte=time_threshold_1_hour, webcast_live=True)
         logger.info("Found %s launches" % len(one_hour_launches))
         for launch in one_hour_launches:
             notification, created = Notification.objects.get_or_create(launch=launch)
@@ -237,7 +237,7 @@ class Notifications:
 
             await self.check_in_flight(bot_channels)
 
-            await self.check_webcast_live(bot_channels, time_threshold_1_hour)
+            await self.check_webcast_live(bot_channels, time_threshold_1_hour, time_threshold_1_minute)
 
             await self.check_success(bot_channels, time_threshold_past_two_days, time_threshold_24_hour)
 
