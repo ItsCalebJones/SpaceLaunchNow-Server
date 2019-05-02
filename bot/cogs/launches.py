@@ -156,7 +156,7 @@ def launch_to_small_embed_webcast(launch):
     title = "%s" % launch.name
     color = get_color(launch.status.id)
 
-    description_text = "Webcast is live!\n\n" + launch.get_full_absolute_url
+    description_text = "Webcast is live!\n\n" + launch.get_full_absolute_url()
 
     embed = discord.Embed(type="rich", title=title,
                           description=description_text,
