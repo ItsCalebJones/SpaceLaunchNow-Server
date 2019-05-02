@@ -94,9 +94,11 @@ class Notifications:
             await self.bot.send_message(context.message.channel, "Only server owners list notification channels.")
 
     async def check_success(self, bot_channels, time_threshold_past_two_days, time_threshold_24_hour):
+        logger.info("Checking successful launches...")
         recent_success_launches = Launch.objects.filter(Q(status__id=3) | Q(status__id=4) | Q(status__id=7),
                                                         net__lte=time_threshold_24_hour,
                                                         net__gte=time_threshold_past_two_days)
+        logger.info("Found %s launches" % len(recent_success_launches))
         for launch in recent_success_launches:
             notification, created = Notification.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedSuccessDiscord:
@@ -110,7 +112,9 @@ class Notifications:
                                                                             "**Launch was a %s!**\n\n" % launch.status.name, pre_launch=False))
 
     async def check_in_flight(self, bot_channels):
+        logger.info("Checking in-flight launches...")
         in_flight_launches = Launch.objects.filter(status__id=6)
+        logger.info("Found %s launches" % len(in_flight_launches))
         for launch in in_flight_launches:
             notification, created = Notification.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedInFlightDiscord:
@@ -123,8 +127,10 @@ class Notifications:
                                                 embed=launch_to_small_embed(launch, "**Launch is in flight!**\n\n", pre_launch=False))
 
     async def check_one_minute(self, bot_channels, time_threshold_1_minute):
+        logger.info("Checking one-minute launches...")
         one_minute_launches = Launch.objects.filter(net__lte=time_threshold_1_minute,
                                                     net__gte=datetime.datetime.now(tz=pytz.utc))
+        logger.info("Found %s launches" % len(one_minute_launches))
         for launch in one_minute_launches:
             notification, created = Notification.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedOneMinutesDiscord:
@@ -137,8 +143,10 @@ class Notifications:
                                                 embed=launch_to_small_embed(launch, "**Launching in one minute!**\n\n"))
 
     async def check_ten_minute(self, bot_channels, time_threshold_10_minute, time_threshold_1_minute):
+        logger.info("Checking ten-minute launches...")
         ten_minute_launches = Launch.objects.filter(net__lte=time_threshold_10_minute,
                                                     net__gte=time_threshold_1_minute)
+        logger.info("Found %s launches" % len(ten_minute_launches))
         for launch in ten_minute_launches:
             notification, created = Notification.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedTenMinutesDiscord:
@@ -152,8 +160,10 @@ class Notifications:
                                                                             "**Launching in ten minutes!**\n\n"))
 
     async def check_twenty_four_hour(self, bot_channels, time_threshold_1_hour, time_threshold_24_hour):
+        logger.info("Checking 24 hour launches...")
         twenty_four_hour_launches = Launch.objects.filter(net__lte=time_threshold_24_hour,
                                                           net__gte=time_threshold_1_hour)
+        logger.info("Found %s launches" % len(twenty_four_hour_launches))
         for launch in twenty_four_hour_launches:
             notification, created = Notification.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedTwentyFourHourDiscord:
@@ -166,8 +176,10 @@ class Notifications:
                                                                                      "**Launching in twenty four hours!**\n\n"))
 
     async def check_one_hour(self, bot_channels, time_threshold_10_minute, time_threshold_1_hour):
+        logger.info("Checking one hour launches...")
         one_hour_launches = Launch.objects.filter(net__lte=time_threshold_1_hour,
                                                   net__gte=time_threshold_10_minute)
+        logger.info("Found %s launches" % len(one_hour_launches))
         for launch in one_hour_launches:
             notification, created = Notification.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedOneHourDiscord:
@@ -180,7 +192,9 @@ class Notifications:
                                                 embed=launch_to_small_embed(launch, "**Launching in one hour!**\n\n"))
 
     async def check_webcast_live(self, bot_channels, time_threshold_1_hour):
+        logger.info("Checking webcast live launches...")
         one_hour_launches = Launch.objects.filter(net__lte=time_threshold_1_hour, webcast_live=True)
+        logger.info("Found %s launches" % len(one_hour_launches))
         for launch in one_hour_launches:
             notification, created = Notification.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedWebcastDiscord:
@@ -198,6 +212,7 @@ class Notifications:
         for channel in channels:
             bot_channels.append(self.bot.get_channel(id=channel.channel_id))
         while not self.bot.is_closed:
+            logger.info("Checking Discord launch events...")
             time_threshold_24_hour = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(hours=24)
             time_threshold_1_hour = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(hours=1)
             time_threshold_10_minute = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(minutes=10)
@@ -220,6 +235,7 @@ class Notifications:
 
             await self.set_bot_description()
 
+            logger.info("Completed.")
             await asyncio.sleep(30)
 
     async def set_bot_description(self):
