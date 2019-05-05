@@ -152,28 +152,6 @@ def launch_to_large_embed(launch):
     return embed
 
 
-def launch_to_small_embed_webcast(launch):
-    title = "%s" % launch.name
-    color = get_color(launch.status.id)
-
-    description_text = "Webcast is live!\n\n" + launch.get_full_absolute_url
-
-    embed = discord.Embed(type="rich", title=title,
-                          description=description_text,
-                          color=color,
-                          url=launch.get_full_absolute_url())
-
-    if launch.rocket.configuration.image_url.name is not '':
-        try:
-            embed.set_thumbnail(url=launch.rocket.configuration.image_url.url)
-        except ValueError:
-            embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
-    else:
-        embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
-    embed.set_footer(text=launch.net.strftime("NET: %A %B %e, %Y %H:%M %Z"))
-    return embed
-
-
 def launch_to_small_embed(launch, notification="", pre_launch=False):
     title = "%s" % launch.name
     color = get_color(launch.status.id)
@@ -187,7 +165,7 @@ def launch_to_small_embed(launch, notification="", pre_launch=False):
                 landing = "**Landing:** %s (%s)\n" % (vehicle.landing.landing_location.name,
                                                       vehicle.landing.landing_type.abbrev)
                 break
-    follow_along = "\n\n Follow along on [Android](https://play.google.com/store/apps/details?id=me.calebjones." \
+    follow_along = "\nFollow along on [Android](https://play.google.com/store/apps/details?id=me.calebjones." \
                    "spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)," \
                    " [iOS](https://itunes.apple.com/us/app/space-launch-now/id1399715731)" \
                    " or [on the web](https://spacelaunchnow.me/next)"
@@ -219,7 +197,13 @@ def launch_to_small_embed(launch, notification="", pre_launch=False):
 
         formatted_countdown = '\n**NET In ' + formatted_countdown + '**'
 
-    description_text = notification + status + location + landing + fail_reason + mission_description + formatted_countdown + follow_along
+    webcasts = ""
+    if launch.vid_urls is not None and len(launch.vid_urls.all()) > 0:
+        webcasts = "\n**Video Links:**\n"
+        for webcast in launch.vid_urls.all():
+            webcasts = webcasts + "[%s](%s)\n" % (webcast, webcast)
+
+    description_text = notification + status + location + landing + fail_reason + mission_description + formatted_countdown + webcasts + follow_along
 
     embed = discord.Embed(type="rich", title=title,
                           description=description_text,

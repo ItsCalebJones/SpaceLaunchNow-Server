@@ -44,12 +44,12 @@ class LaunchEventTracker:
                         self.netstamp.netstamp_changed(launch, notification, diff)
 
     def check_success(self, time_threshold_past_two_days, time_threshold_24_hour):
-        logger.debug('Running check_success...')
+        logger.info('Running check_success...')
         launches = Launch.objects.filter(Q(status__id=3) | Q(status__id=4) | Q(status__id=7),
                                          net__lte=time_threshold_24_hour,
                                          net__gte=time_threshold_past_two_days)
 
-        logger.debug('Found %d launches with recent success - checking state.', len(launches))
+        logger.info('Found %d launches with recent success - checking state.', len(launches))
         for launch in launches:
             if launch.status.id == 3:
                 status = 'success'
@@ -60,7 +60,7 @@ class LaunchEventTracker:
             else:
                 return
             notification, created = Notification.objects.get_or_create(launch=launch)
-            logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
+            logger.info('Notification for %s: %s', launch.name, notification.__dict__)
             try:
                 if not notification.wasNotifiedSuccess:
                     logger.info('Sending mobile notification for %s!', launch.name)
@@ -84,14 +84,14 @@ class LaunchEventTracker:
                 logger.error(e)
 
     def check_in_flight(self):
-        logger.debug('Running check_in_flight...')
+        logger.info('Running check_in_flight...')
         launches = Launch.objects.filter(status__id=6)
 
-        logger.debug('Found %d launches in flight - checking state.', len(launches))
+        logger.info('Found %d launches in flight - checking state.', len(launches))
 
         for launch in launches:
             notification, created = Notification.objects.get_or_create(launch=launch)
-            logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
+            logger.info('Notification for %s: %s', launch.name, notification.__dict__)
             try:
                 if not notification.wasNotifiedInFlight:
                     logger.info('Sending mobile notification for %s!', launch.name)
@@ -115,16 +115,16 @@ class LaunchEventTracker:
                 logger.error(e)
 
     def check_one_minute(self, time_threshold_1_minute):
-        logger.debug('Running check_one_minute...')
+        logger.info('Running check_one_minute...')
         launches = Launch.objects.filter(net__lte=time_threshold_1_minute,
                                          net__gte=dtime.datetime.now(tz=pytz.utc))
 
-        logger.debug('Found %d launches within one minute - checking state.', len(launches))
+        logger.info('Found %d launches within one minute - checking state.', len(launches))
 
         for launch in launches:
             self.check_next_stamp_changed(launch)
             notification, created = Notification.objects.get_or_create(launch=launch)
-            logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
+            logger.info('Notification for %s: %s', launch.name, notification.__dict__)
 
             try:
                 if not notification.wasNotifiedOneMinute:
@@ -149,16 +149,16 @@ class LaunchEventTracker:
                 logger.error(e)
 
     def check_ten_minute(self, time_threshold_10_minute, time_threshold_1_minute):
-        logger.debug('Running check_ten_minute...')
+        logger.info('Running check_ten_minute...')
         launches = Launch.objects.filter(net__lte=time_threshold_10_minute,
                                          net__gte=time_threshold_1_minute)
 
-        logger.debug('Found %d launches within ten minutes - checking state.', len(launches))
+        logger.info('Found %d launches within ten minutes - checking state.', len(launches))
 
         for launch in launches:
             self.check_next_stamp_changed(launch)
             notification, created = Notification.objects.get_or_create(launch=launch)
-            logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
+            logger.info('Notification for %s: %s', launch.name, notification.__dict__)
 
             try:
                 if not notification.wasNotifiedTenMinutes:
@@ -183,16 +183,16 @@ class LaunchEventTracker:
                 logger.error(e)
 
     def check_twenty_four_hour(self, time_threshold_1_hour, time_threshold_24_hour):
-        logger.debug('Running check_twenty_four_hour...')
+        logger.info('Running check_twenty_four_hour...')
         launches = Launch.objects.filter(net__lte=time_threshold_24_hour,
                                          net__gte=time_threshold_1_hour)
 
-        logger.debug('Found %d launches within twenty four hours - checking state.', len(launches))
+        logger.info('Found %d launches within twenty four hours - checking state.', len(launches))
 
         for launch in launches:
             self.check_next_stamp_changed(launch)
             notification, created = Notification.objects.get_or_create(launch=launch)
-            logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
+            logger.info('Notification for %s: %s', launch.name, notification.__dict__)
 
             try:
                 if not notification.wasNotifiedTwentyFourHour:
@@ -217,16 +217,16 @@ class LaunchEventTracker:
                 logger.error(e)
 
     def check_one_hour(self, time_threshold_10_minute, time_threshold_1_hour):
-        logger.debug('Running check_one_hour...')
+        logger.info('Running check_one_hour...')
         launches = Launch.objects.filter(net__lte=time_threshold_1_hour,
                                          net__gte=time_threshold_10_minute)
 
-        logger.debug('Found %d launches within an hour - checking state.', len(launches))
+        logger.info('Found %d launches within an hour - checking state.', len(launches))
 
         for launch in launches:
             self.check_next_stamp_changed(launch)
             notification, created = Notification.objects.get_or_create(launch=launch)
-            logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
+            logger.info('Notification for %s: %s', launch.name, notification.__dict__)
 
             try:
                 if not notification.wasNotifiedOneHour:
@@ -254,13 +254,12 @@ class LaunchEventTracker:
         logger.debug('Running check webcast...')
         launches = Launch.objects.filter(net__gte=time_threshold_10_minute,
                                          net__lte=time_threshold_1_hour).filter(webcast_live=True)
-
-        logger.debug('Found %d launches within an hour - checking state.', len(launches))
+        logger.info('Found %d launches within an hour - checking state.', len(launches))
 
         for launch in launches:
             self.check_next_stamp_changed(launch)
             notification, created = Notification.objects.get_or_create(launch=launch)
-            logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
+            logger.info('Notification for %s: %s', launch.name, notification.__dict__)
 
             try:
                 if not notification.wasNotifiedWebcastLive:
@@ -285,11 +284,11 @@ class LaunchEventTracker:
                 logger.error(e)
 
     def check_this_week(self, time_threshold_1_week, time_threshold_24_hour):
-        logger.debug('Running check_this_week...')
+        logger.info('Running check_this_week...')
         launches = Launch.objects.filter(net__lte=time_threshold_1_week,
                                          net__gte=time_threshold_24_hour)
 
-        logger.debug('Found %d launches within the week - checking state.', len(launches))
+        logger.info('Found %d launches within the week - checking state.', len(launches))
 
         for launch in launches:
             self.check_next_stamp_changed(launch)

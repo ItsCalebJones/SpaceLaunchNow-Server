@@ -158,15 +158,16 @@ class NotificationHandler:
 
             # Send notifications to SLN Android before 3.0.0
             # Catch any issue with sending notification.
-            try:
-                logger.info('Notification v1 Data - %s' % v1_data)
-                logger.info('Topic Data v1- %s' % topics_v1)
-                android_result_v1 = push_service.notify_topic_subscribers(data_message=v1_data,
-                                                                          condition=topics_v1,
-                                                                          time_to_live=86400, )
-                logger.debug(android_result_v1)
-            except Exception as e:
-                logger.error(e)
+            if launch.launch_library_id is not None and launch.launch_library:
+                try:
+                    logger.info('Notification v1 Data - %s' % v1_data)
+                    logger.info('Topic Data v1- %s' % topics_v1)
+                    android_result_v1 = push_service.notify_topic_subscribers(data_message=v1_data,
+                                                                              condition=topics_v1,
+                                                                              time_to_live=86400, )
+                    logger.debug(android_result_v1)
+                except Exception as e:
+                    logger.error(e)
 
             # Send notifications to SLN Android after 3.0.0
             # Catch any issue with sending notification.
