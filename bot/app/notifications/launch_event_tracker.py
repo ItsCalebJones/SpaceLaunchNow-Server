@@ -250,9 +250,10 @@ class LaunchEventTracker:
             except Exception as e:
                 logger.error(e)
 
-    def check_webcast_live(self, time_threshold_1_hour):
-        logger.debug('Running check_one_hour...')
-        launches = Launch.objects.filter(net__lte=time_threshold_1_hour).filter(webcast_live=True)
+    def check_webcast_live(self, time_threshold_1_hour, time_threshold_10_minute):
+        logger.debug('Running check webcast...')
+        launches = Launch.objects.filter(net__gte=time_threshold_10_minute,
+                                         net__lte=time_threshold_1_hour).filter(webcast_live=True)
 
         logger.debug('Found %d launches within an hour - checking state.', len(launches))
 
@@ -307,7 +308,7 @@ class LaunchEventTracker:
 
         self.check_one_hour(time_threshold_10_minute, time_threshold_1_hour)
 
-        self.check_webcast_live(time_threshold_1_hour)
+        self.check_webcast_live(time_threshold_1_hour, time_threshold_10_minute)
 
         self.check_ten_minute(time_threshold_10_minute, time_threshold_1_minute)
 
