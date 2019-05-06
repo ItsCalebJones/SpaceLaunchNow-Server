@@ -129,15 +129,24 @@ def astronaut(request, id):
 def astronaut_by_slug(request, slug):
     try:
         _astronaut = Astronaut.objects.get(slug=slug)
-        listi = list((Launch.objects.filter(Q(rocket__spacecraftflight__launch_crew__id=_astronaut.pk) |
-                                            Q(rocket__spacecraftflight__onboard_crew__id=_astronaut.pk) |
-                                            Q(rocket__spacecraftflight__landing_crew__id=_astronaut.pk))
-                      .values_list('pk', flat=True)
-                      .distinct()))
-        _launches = Launch.objects.filter(pk__in=listi)
-        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
+        previous_list = list((Launch.objects.filter(Q(rocket__spacecraftflight__launch_crew__astronaut__id=_astronaut.pk) |
+                                                    Q(rocket__spacecraftflight__onboard_crew__astronaut__id=_astronaut.pk) |
+                                                    Q(rocket__spacecraftflight__landing_crew__astronaut__id=_astronaut.pk))
+                              .filter(net__lte=datetime.utcnow())
+                              .values_list('pk', flat=True)
+                              .distinct()))
+        upcoming_list = list((Launch.objects.filter(Q(rocket__spacecraftflight__launch_crew__astronaut__id=_astronaut.pk) |
+                                                    Q(rocket__spacecraftflight__onboard_crew__astronaut__id=_astronaut.pk) |
+                                                    Q(rocket__spacecraftflight__landing_crew__astronaut__id=_astronaut.pk))
+                              .filter(net__gte=datetime.utcnow())
+                              .values_list('pk', flat=True)
+                              .distinct()))
+        _launches = Launch.objects.filter(pk__in=previous_list).order_by('net')
+        _upcoming_launches = Launch.objects.filter(pk__in=upcoming_list).order_by('net')
+        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
         return render(request, 'web/astronaut/astronaut_detail.html', {'astronaut': _astronaut,
-                                                                       'launches': _launches,
+                                                                       'previous_astronaut_launches': _launches,
+                                                                       'upcoming_launches': _upcoming_launches,
                                                                        'previous_launches': previous_launches})
     except ObjectDoesNotExist:
         raise Http404
@@ -152,13 +161,16 @@ def astronaut_list(request, ):
 
     lost_astronauts = Astronaut.objects.filter(Q(status=5) | Q(status=4)).order_by('name')
 
-    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
+    deceased_astronauts = Astronaut.objects.filter(Q(status=11)).order_by('name')
+
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
 
     return render(request, 'web/astronaut/astronaut_list.html', {'active_astronauts': active_astronauts,
                                                                  'training_astronauts': training_astronauts,
                                                                  'retired_astronauts': retired_astronauts,
                                                                  'previous_launches': previous_launches,
-                                                                 'lost_astronauts': lost_astronauts})
+                                                                 'lost_astronauts': lost_astronauts,
+                                                                 'deceased_astronauts': deceased_astronauts})
 
 
 def handler404(request):

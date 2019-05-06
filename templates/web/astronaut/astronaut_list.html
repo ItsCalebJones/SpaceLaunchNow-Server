@@ -105,6 +105,12 @@
                             Retired
                         </a>
                     </li>
+                    <li class="nav-item nav-pills.nav-pills-info">
+                        <a class="nav-link nav-link-rose" href="#deceased" data-toggle="tab">
+                            <i class="fa fa-tombstone"></i>
+                            Deceased
+                        </a>
+                    </li>
                 </ul>
                 <div class="col-md-6 mx-auto mt-2 pt-2 justify-content-center">
                     <form method="get" action="/astronaut/search/" style="margin: 0">
@@ -254,7 +260,7 @@
                     <div class="tab-pane" id="lost">
                         <div class="team">
                             <div class="row">
-                                {% if retired_astronauts|length > 0 %}
+                                {% if lost_astronauts|length > 0 %}
                                     {% for astronaut in lost_astronauts %}
                                         <div class="col-xl-4 col-lg-6 col-md-6 col-sm-10 col-xs-10 mx-auto" style="margin-bottom: 20px">
                                             <div class="card">
@@ -369,6 +375,65 @@
                             </div>
                         </div>
                     </div>
+                    <div class="tab-pane" id="deceased">
+                            <div class="team">
+                                <div class="row">
+                                    {% if deceased_astronauts|length > 0 %}
+                                        {% for astronaut in deceased_astronauts %}
+                                            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-10 col-xs-10 mx-auto" style="margin-bottom: 20px">
+                                                <div class="card">
+                                                    <div class="card-body ">
+                                                        <div class="team-player">
+                                                            <div class="col-md-10 col-sm-8 col-xs-8 mx-auto">
+                                                                {% if astronaut.profile_image %}
+                                                                    {% thumbnail astronaut.profile_image "300x300" crop="80% top" as im %}
+                                                                        <img class="img-raised rounded-circle img-fluid text-center"
+                                                                             src="{{ im.url }}"
+                                                                             style="padding:1px;border:1px solid #cccccc;max-height: 200px;max-width: 200px">
+                                                                    {% endthumbnail %}
+                                                                {% else %}
+                                                                    <img class="img-raised rounded-circle img-fluid"
+                                                                         src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
+                                                                {% endif %}
+                                                            </div>
+                                                            <h4 class="card-title" style="white-space: nowrap; overflow: hidden;">{{ astronaut.name }}
+                                                                <br>
+                                                                <small class="card-description text-muted">{{ astronaut.nationality }}
+                                                                </small>
+                                                            </h4>
+                                                            <div style="height: 110px; overflow: hidden;">
+                                                                <p class="card-description">{{ astronaut.bio|truncatechars:150 }}
+                                                                </p>
+                                                            </div>
+                                                            <div class="justify-content-center"
+                                                                 style="min-height: 48px">
+                                                                {% if astronaut.twitter %}
+                                                                    <a href="{{ astronaut.twitter }}"
+                                                                       class="btn btn-link btn-just-icon"><i
+                                                                            class="fab fa-twitter"></i></a>
+                                                                {% endif %}
+                                                                {% if astronaut.instagram %}
+                                                                    <a href="{{ astronaut.instagram }}"
+                                                                       class="btn btn-link btn-just-icon"><i
+                                                                            class="fab fa-instagram"></i></a>
+                                                                {% endif %}
+                                                                {% if astronaut.wiki %}
+                                                                    <a href="{{ astronaut.wiki }}"
+                                                                       class="btn btn-link btn-just-icon"><i
+                                                                            class="fab fa-wikipedia-w"></i></a>
+                                                                {% endif %}
+                                                            </div>
+                                                            <a class="btn btn-primary"
+                                                               href="/astronaut/{{ astronaut.slug }}">Explore</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-9 col-xl-3 mx-auto">
