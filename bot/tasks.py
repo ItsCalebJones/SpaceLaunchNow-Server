@@ -15,7 +15,7 @@ from bot.app.sync import LaunchLibrarySync
 from bot.cogs.news import get_news
 from bot.cogs.reddit import get_submissions
 from bot.cogs.twitter import get_new_tweets
-from bot.models import Notification
+from bot.models import Notification, RedditSubmission, Tweet, NewsItem
 from spacelaunchnow import config
 
 logger = get_task_logger('bot.digest')
@@ -72,9 +72,20 @@ def check_for_orphaned_launches():
     logger.info('Task - Get Upcoming launches!')
 
     # Delete notification records from old launches.
-    three_days_threshhold = datetime.today() - timedelta(days=3)
-    notifications = Notification.objects.filter(launch__net__lte=three_days_threshhold)
+    seven_days_threshhold = datetime.today() - timedelta(days=7)
+    thirty_days_threshhold = datetime.today() - timedelta(days=30)
+
+    notifications = Notification.objects.filter(launch__net__lte=seven_days_threshhold)
     notifications.delete()
+
+    submissions = RedditSubmission.objects.filter(created_at__lte=thirty_days_threshhold)
+    submissions.delete()
+
+    tweet = Tweet.objects.filter(created_at__lte=thirty_days_threshhold)
+    tweet.delete()
+
+    news = NewsItem.objects.filter(created_at__lte=thirty_days_threshhold)
+    news.delete()
 
     # Check for stale launches.
     three_days_past = datetime.today() - timedelta(days=3)
