@@ -106,18 +106,17 @@ def launches(request, ):
 
     if query is not None:
         _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
-        _launches = _launches.filter(rocket__configuration__launch_agency__abbrev__contains=query)[:5]
+        _launches = _launches.filter(Q(rocket__configuration__launch_agency__abbrev__contains=query) |
+                                     Q(pad__location__name__contains=query) |
+                                     Q(rocket__configuration__name__contains=query))[:15]
     else:
-        _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')[:5]
+        _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')[:15]
 
-    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
 
-    if _launches:
-        return render(request, 'web/launches.html', {'launches': _launches,
-                                                     'query': query,
-                                                     'previous_launches': previous_launches})
-    else:
-        raise Http404
+    return render(request, 'web/launches.html', {'launches': _launches,
+                                                 'query': query,
+                                                 'previous_launches': previous_launches})
 
 
 def astronaut(request, id):

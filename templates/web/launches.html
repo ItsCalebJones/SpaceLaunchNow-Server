@@ -4,14 +4,14 @@
 {% block extrahead %}
     <link rel="canonical" href="https://spacelaunchnow.me/launch/">
     <title>Space Launch Now - Launch Schedule</title>
-    <meta name="title" content="Space Launch Now - Launch Schedule">
+    <meta name="title" content="Space Launch Now - Rocket Launch Schedule">
     <meta property="fb:app_id" content="746774215504127"/>
-    <meta property="og:title" content="Space Launch Now - Launch Schedule"/>
+    <meta property="og:title" content="Space Launch Now - Rocket Launch Schedule"/>
     <meta property="og:type" content="website"/>
     <meta name="description"
-          content="A spaceflight launch schedule - tracking the latest developments in spaceflight, check back often for launch schedule changes.">
+          content="A spaceflight launch schedule for Cape Canaveral/Kennedy Space Center, Vandenberg AFB, Wallops Island, SpaceX, Blue Origin, ULA, Rocket Lab and much more - tracking the latest developments in spaceflight, check back often for launch schedule changes.">
     <meta property="og:description"
-          content="A spaceflight launch schedule - tracking the latest developments in spaceflight, check back often for launch schedule changes."/>
+          content="A spaceflight launch schedule for Cape Canaveral/Kennedy Space Center, Vandenberg AFB, Wallops Island, SpaceX, Blue Origin, ULA, Rocket Lab and much more - tracking the latest developments in spaceflight, check back often for launch schedule changes."/>
     <meta property="og:url" content="https://spacelaunchnow.me/launch/"/>
     <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
     <meta property="og:image:width" content="3000"/>
@@ -73,139 +73,203 @@
     {% load embed_video_tags %}
     <!-- Page Content -->
     <div class="container" style="margin-top:100px; margin-bottom: 16px">
-    <h1 class="title">Upcoming Spaceflight Launches</h1>
-    <h2>Filter for the launches you care about.</h2>
-    <hr>
-    <div class="row">
-        <div class="container" style="margin-bottom: 10px">
-            <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
-            <a href="/launch"
-               class="btn btn-round {% if query %} btn-link{% else %} btn-primary {% endif %}">All</a>
-            <a href="?q=SpX"
-               class="btn btn-round {% if query == 'SpX' %} btn-primary{% else %} btn-link {% endif %}">SpaceX</a>
-            <a href="?q=ULA"
-               class="btn btn-round {% if query == 'ULA' %} btn-primary{% else %} btn-link {% endif %}">ULA</a>
-            <a href="?q=NASA"
-               class="btn btn-round {% if query == 'NASA' %} btn-primary{% else %} btn-link {% endif %}">NASA</a>
-            <a href="?q=RFSA"
-               class="btn btn-round {% if query == 'RFSA' %} btn-primary{% else %} btn-link {% endif %}">ROSCOSMOS</a>
-            <a href="?q=ASA"
-               class="btn btn-round {% if query == 'ASA' %} btn-primary{% else %} btn-link {% endif %}">Arianespace</a>
-            <a href="?q=CASC"
-               class="btn btn-round {% if query == 'CASC' %} btn-primary{% else %} btn-link {% endif %}">CASC</a>
-            <a href="?q=ISRO"
-               class="btn btn-round {% if query == 'ISRO' %} btn-primary{% else %} btn-link {% endif %}">ISRO</a>
-        </div>
-    </div>
-    <hr>
-
-    <div class="container">
-        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-        <!-- Space Launch Now -->
-        <ins class="adsbygoogle"
-             style="display:block; margin-top:16px; margin-bottom:16px;"
-             data-ad-client="ca-pub-9824528399164059"
-             data-ad-slot="8772606898"
-             data-ad-format="auto"></ins>
-        <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-    </div>
-
-    <div class="row">
-        <!-- Post Content Column -->
-        <div class="col-lg-9 col-md-12 col-xl-9">
-            {% if launches|length > 0 %}
-                {% for launch in launches %}
-                    <div class="card text-left">
-                        <div class="media">
-                            <a class="relative" href="/launch/{{ launch.slug }}">
-                                <img class="card-img"
-                                     src="https://maps.googleapis.com/maps/api/staticmap?center={{ launch.location.name }}&scale=2&zoom=7&size=720x300&maptype=roadmap&key=AIzaSyBkjvMIaP-KQrHWJ_aFndxsNS7KbDPu9Zw&markers=color:red%|{{ launch.pad.location.name }}"
-                                     alt="">
-
-                            </a>
-                        </div>
-                        <div class="card-header card-header-info p-1">
-                            <div class="row">
-                                <div class="col-md-4 pl-5 mx-auto" style="height: 75px">
-                                    {% if launch.rocket.configuration.image_url %}
-                                        {% thumbnail launch.rocket.configuration.image_url "200" as im %}
-                                            <img class="img-raised rounded-circle img-fluid text-center"
-                                                 src="{{ im.url }}"
-                                                 style="overflow: hidden;margin-top: -85px;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                        {% endthumbnail %}
-                                    {% elif launch.rocket.configuration.launch_agency.image_url %}
-                                        {% thumbnail launch.rocket.configuration.launch_agency.image_url "200" as im %}
-                                            <img class="img-raised rounded-circle img-fluid text-center"
-                                                 src="{{ im.url }}"
-                                                 style="overflow: hidden;margin-top: -100px;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                        {% endthumbnail %}
-                                    {% else %}
-                                        <img class="img-raised rounded-circle img-fluid text-center"
-                                             src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png"
-                                             style="max-width: 35%;overflow: hidden;margin: -100px 0 0 0;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                    {% endif %}
-                                </div>
-                                <div class="col-md-8 mxy-auto pl-5">
-                                    <h4 class="card-title">{{ launch.name }}</h4>
-                                    {{ launch.rocket.configuration.launch_agency.name }}
-                                        | {{ launch.rocket.configuration.launch_agency.country_code }}<br>
-                                    {{ launch.pad.location.name }}<br>
-                                    <i>{{ launch.net }}</i><br>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            {% if launch.mission %}
-                                <h5 class="card-text"><b>Mission: </b>{{ launch.mission.type_name }}</h5>
-                                <p class="card-text">{{ launch.mission.description }}</p>
-                            {% else %}
-                                <h5 class="card-text">Unknown Mission</h5>
-                                <p class="card-text">There are no mission or payload details available for this
-                                    launch.</p>
-                            {% endif %}
-                            <span class="badge badge-pill badge-success">{{ launch.mission.orbit.name }}</span>
-                            {% if launch.hashtag %}
-                                <span class="badge badge-pill badge-primary">{{ launch.hashtag }}</span>
-                            {% endif %}
-                            {% if launch.rocket.firststage.all|length > 0 %}
-                                {% for stage in launch.rocket.firststage.all %}
-                                    {% if stage.landing.landing_location %}
-                                        <span class="badge badge-pill badge-info"> {{ stage.launcher.serial_number }} - {{ stage.reused|yesno:"Flight Proven,Maiden Flight" }} {% if stage.reused %}({{ stage.launcher.previous_flights }}) {% endif %}</span>
-                                        <span class="badge badge-pill badge-primary">{{ stage.landing.landing_location.name }}</span>
-                                    {% endif %}
-                                {% endfor %}
-                            {% endif %}
-                            <hr/>
-                            <row>
-                                <a class="btn btn-primary" href="/launch/{{ launch.slug }}">Explore</a>
-                                <a data-site class="btn btn-danger" href="http://www.facebook.com/sharer.php?u={{ launch.get_full_absolute_url }}" target="_blank">Share</a>
-                            </row>
+        <h1 class="title">Upcoming Spaceflight Launches</h1>
+        <div class="card col-lg-9 col-md-12 col-xl-9">
+            <div class="card-body">
+            <h2>Follow the launches you care about!</h2>
+                <h3>Filter by Agency, Locations or Vehicles</h3>
+                <a href="/launch"
+                   class="btn btn-round {% if query %} btn-link{% else %} btn-primary {% endif %}">Show All Launches</a>
+                <button class="btn btn-round {% if not query %} btn-link{% else %} btn-primary {% endif %}" data-toggle="collapse" data-target="#collapseOne" {% if query %} aria-expanded="true" {% else %} aria-expanded="false" {% endif %} aria-controls="collapseOne">
+                  Show Filters
+                </button>
+                <div id="collapseOne" {% if query %} class="collapse show" {% else %} class="collapse" {% endif %} aria-labelledby="headingOne" data-parent="#accordion">
+                    <div class="row">
+                        <div class="container">
+                            <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
+                            <h4>Agencies</h4>
+                            <hr>
+                            <a href="?q=SpX"
+                               class="btn btn-round {% if query == 'SpX' %} btn-primary{% else %} btn-link {% endif %}">SpaceX</a>
+                            <a href="?q=ULA"
+                               class="btn btn-round {% if query == 'ULA' %} btn-primary{% else %} btn-link {% endif %}">ULA</a>
+                            <a href="?q=BO"
+                               class="btn btn-round {% if query == 'BO' %} btn-primary{% else %} btn-link {% endif %}">Blue
+                                Origin</a>
+                            <a href="?q=RL"
+                               class="btn btn-round {% if query == 'RL' %} btn-primary{% else %} btn-link {% endif %}">Rocket
+                                Lab</a>
+                            <a href="?q=NASA"
+                               class="btn btn-round {% if query == 'NASA' %} btn-primary{% else %} btn-link {% endif %}">NASA</a>
+                            <a href="?q=RFSA"
+                               class="btn btn-round {% if query == 'RFSA' %} btn-primary{% else %} btn-link {% endif %}">ROSCOSMOS</a>
+                            <a href="?q=ASA"
+                               class="btn btn-round {% if query == 'ASA' %} btn-primary{% else %} btn-link {% endif %}">Arianespace</a>
                         </div>
                     </div>
-                {% endfor %}
-            {% endif %}
+                    <div class="row">
+                        <div class="container">
+                            <h4>Locations</h4>
+                            <hr>
+                            <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
+                            <a href="?q=FL"
+                               class="btn btn-round {% if query == 'FL' %} btn-primary{% else %} btn-link {% endif %}">Florida</a>
+                            <a href="?q=Vandenberg"
+                               class="btn btn-round {% if query == 'Vandenberg' %} btn-primary{% else %} btn-link {% endif %}">Vandenberg</a>
+                            <a href="?q=Wallops"
+                               class="btn btn-round {% if query == 'Wallops' %} btn-primary{% else %} btn-link {% endif %}">Wallops</a>
+                            <a href="?q=Russia"
+                               class="btn btn-round {% if query == 'Russia' %} btn-primary{% else %} btn-link {% endif %}">Russia</a>
+                            <a href="?q=Kazakhstan"
+                               class="btn btn-round {% if query == 'Kazakhstan' %} btn-primary{% else %} btn-link {% endif %}">Kazakhstan</a>
+                            <a href="?q=China"
+                               class="btn btn-round {% if query == 'China' %} btn-primary{% else %} btn-link {% endif %}">China</a>
+                            <a href="?q=Kourou"
+                               class="btn btn-round {% if query == 'Kourou' %} btn-primary{% else %} btn-link {% endif %}">French
+                                Guiana</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="container">
+                            <h4>Vehicles</h4>
+                            <hr>
+                            <a href="?q=Falcon 9"
+                               class="btn btn-round {% if query == 'Falcon 9' %} btn-primary{% else %} btn-link {% endif %}">Falcon
+                                9</a>
+                            <a href="?q=Falcon Heavy"
+                               class="btn btn-round {% if query == 'Falcon Heavy' %} btn-primary{% else %} btn-link {% endif %}">Falcon
+                                Heavy</a>
+                            <a href="?q=Delta IV"
+                               class="btn btn-round {% if query == 'Delta IV' %} btn-primary{% else %} btn-link {% endif %}">Delta
+                                IV</a>
+                            <a href="?q=Atlas V"
+                               class="btn btn-round {% if query == 'Atlas V' %} btn-primary{% else %} btn-link {% endif %}">Atlas
+                                V</a>
+                            <a href="?q=Soyuz"
+                               class="btn btn-round {% if query == 'Soyuz' %} btn-primary{% else %} btn-link {% endif %}">Soyuz</a>
+                            <a href="?q=Ariane"
+                               class="btn btn-round {% if query == 'Ariane' %} btn-primary{% else %} btn-link {% endif %}">Ariane</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Sidebar Widgets Column -->
-        <div class="col-lg-3 col-md-12 col-xl-3">
-            <!-- Categories Widget -->
-            {% include "web/sidebar_full.html" %}
+        <div class="container">
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- Space Launch Now -->
+            <ins class="adsbygoogle"
+                 style="display:block; margin-top:16px; margin-bottom:16px;"
+                 data-ad-client="ca-pub-9824528399164059"
+                 data-ad-slot="8772606898"
+                 data-ad-format="auto"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
         </div>
-    </div>
-    <div class="container">
-        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-        <!-- Space Launch Now -->
-        <ins class="adsbygoogle"
-             style="display:block; margin-top:16px; margin-bottom:16px;"
-             data-ad-client="ca-pub-9824528399164059"
-             data-ad-slot="8772606898"
-             data-ad-format="auto"></ins>
-        <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-    </div>
+
+        <div class="row">
+            <!-- Post Content Column -->
+            <div class="col-lg-9 col-md-12 col-xl-9">
+                {% if launches|length > 0 %}
+                    {% for launch in launches %}
+                        <div class="card text-left" style="margin-top: 75px">
+                            <div class="card-header {% if 'GO' in launch.status.name %} card-header-success {% elif 'TBD' in launch.status.name %} card-header-danger {% else %} card-header-info {% endif %} p-2">
+                                <div class="row">
+                                    <div class="col-md-4 text-center" style="height: 150px">
+                                        {% if launch.rocket.configuration.image_url %}
+                                            {% thumbnail launch.rocket.configuration.image_url "200" as im %}
+                                                <img class="img-raised rounded-circle img-fluid text-center"
+                                                     src="{{ im.url }}"
+                                                     style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                                            {% endthumbnail %}
+                                        {% elif launch.rocket.configuration.launch_agency.image_url %}
+                                            {% thumbnail launch.rocket.configuration.launch_agency.image_url "200" as im %}
+                                                <img class="img-raised rounded-circle img-fluid text-center"
+                                                     src="{{ im.url }}"
+                                                     style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                                            {% endthumbnail %}
+                                        {% else %}
+                                            <img class="img-raised rounded-circle img-fluid text-center"
+                                                 src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png"
+                                                 style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-8 text-md-left text-center">
+                                        <h4 class="card-title">{{ launch.name }}</h4>
+                                        {{ launch.rocket.configuration.launch_agency.name }}
+                                        | {{ launch.rocket.configuration.launch_agency.country_code }}<br>
+                                        {{ launch.pad.location.name }}<br>
+                                        <i>{{ launch.net }}</i><br>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                {% if launch.status %}
+                                    <h5 class="card-text"><b>Status: </b>{{ launch.status.name }}</h5>
+                                {% endif %}
+                                {% if launch.mission %}
+                                    <h5 class="card-text"><b>Mission: </b>{{ launch.mission.type_name }}</h5>
+                                    <p class="card-text">{{ launch.mission.description }}</p>
+                                {% else %}
+                                    <h5 class="card-text">Unknown Mission</h5>
+                                    <p class="card-text">There are no mission or payload details available for this
+                                        launch.</p>
+                                {% endif %}
+                                <span class="badge badge-pill badge-success">{{ launch.mission.orbit.name }}</span>
+                                {% if launch.hashtag %}
+                                    <span class="badge badge-pill badge-primary">{{ launch.hashtag }}</span>
+                                {% endif %}
+                                {% if launch.rocket.firststage.all|length > 0 %}
+                                    {% for stage in launch.rocket.firststage.all %}
+                                        {% if stage.landing.landing_location %}
+                                            <span class="badge badge-pill badge-info"> {{ stage.launcher.serial_number }} - {{ stage.reused|yesno:"Flight Proven,Maiden Flight" }}
+                                                {% if stage.reused %}({{ stage.launcher.previous_flights }}
+                                                    ) {% endif %}</span>
+                                            <span class="badge badge-pill badge-primary">{{ stage.landing.landing_location.name }}</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                <hr/>
+                                <row>
+                                    <a class="btn btn-primary" href="/launch/{{ launch.slug }}">Explore</a>
+                                    <a data-site class="btn btn-danger"
+                                       href="http://www.facebook.com/sharer.php?u={{ launch.get_full_absolute_url }}"
+                                       target="_blank">Share</a>
+                                </row>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="card text-left">
+                        <div class="card-body">
+                            <h2>No Launches Found</h2>
+                            <hr>
+                            There doesn't appear to be any upcoming launches for this filter.
+                        </div>
+                    </div>
+                {% endif %}
+
+            </div>
+
+            <!-- Sidebar Widgets Column -->
+            <div class="col-lg-3 col-md-12 col-xl-3">
+                <!-- Categories Widget -->
+                {% include "web/sidebar_full.html" %}
+            </div>
+        </div>
+        <div class="container">
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- Space Launch Now -->
+            <ins class="adsbygoogle"
+                 style="display:block; margin-top:16px; margin-bottom:16px;"
+                 data-ad-client="ca-pub-9824528399164059"
+                 data-ad-slot="8772606898"
+                 data-ad-format="auto"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
     </div>
     {% include "web/install_buttons.html" %}
 {% endblock %}
