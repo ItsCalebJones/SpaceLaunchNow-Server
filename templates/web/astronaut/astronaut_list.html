@@ -26,48 +26,7 @@
 
 
 {% block navigation %}
-    <nav class="navbar bg-primary fixed-top navbar-expand-lg navbar-dark">
-        <div class="container">
-            <div class="navbar-translate">
-                <a class="navbar-brand" href="#page-top"><b>Space Launch Now</b></a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false"
-                        aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                    <span class="navbar-toggler-icon"></span>
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-            </div>
-
-
-            <div class="collapse navbar-collapse">
-
-                <ul class="navbar-nav ml-auto">
-
-                    <li class="nav-item">
-                        <a class="nav-link js-scroll-trigger" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link js-scroll-trigger " href="/next">Next</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link js-scroll-trigger active" href="/launch/">Launches</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/api/3.3.0">API</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           href="https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><i
-                                class="fab fa-android"></i> Android</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://itunes.apple.com/us/app/space-launch-now/id1399715731"><i
-                                class="fab fa-apple"></i> iOS</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    {% include "web/navigation.html" %}
 {% endblock %}
 
 {% block content %}
