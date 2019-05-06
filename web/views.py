@@ -143,7 +143,7 @@ def astronaut_by_slug(request, slug):
                               .distinct()))
         _launches = Launch.objects.filter(pk__in=previous_list).order_by('net')
         _upcoming_launches = Launch.objects.filter(pk__in=upcoming_list).order_by('net')
-        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
         return render(request, 'web/astronaut/astronaut_detail.html', {'astronaut': _astronaut,
                                                                        'previous_astronaut_launches': _launches,
                                                                        'upcoming_launches': _upcoming_launches,
