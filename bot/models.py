@@ -43,6 +43,9 @@ class Notification(models.Model):
     def __unicode__(self):
         return self.launch.name
 
+    def __str__(self):
+        return self.launch.name
+
     def days_to_launch(self):
         if self.last_net_stamp:
             now = datetime.datetime.now(tz=utc)
@@ -115,6 +118,9 @@ class TwitterUser(models.Model):
     custom = models.BooleanField(default=False)
     default = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.screen_name
+
 
 class Tweet(models.Model):
     id = models.BigIntegerField(primary_key=True)
@@ -123,6 +129,9 @@ class Tweet(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
     default = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.id
 
 
 class SubredditNotificationChannel(models.Model):
@@ -145,6 +154,9 @@ class Subreddit(models.Model):
     initialized = models.BooleanField(default=False)
     subscribers = models.ManyToManyField(SubredditNotificationChannel)
 
+    def __str__(self):
+        return self.name
+
 
 class RedditSubmission(models.Model):
     id = models.CharField(primary_key=True, max_length=255)
@@ -160,6 +172,9 @@ class RedditSubmission(models.Model):
     permalink = models.CharField(max_length=1048, null=False)
     read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.id
 
 
 class NewsNotificationChannel(models.Model):
@@ -188,3 +203,6 @@ class NewsItem(models.Model):
     read = models.BooleanField(default=False)
     should_notify = models.BooleanField(default=False)
     was_notified = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title
