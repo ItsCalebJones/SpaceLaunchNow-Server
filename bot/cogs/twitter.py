@@ -288,7 +288,9 @@ class Twitter:
                     await self.bot.send_message(self.bot.get_channel(id=channel.channel_id), embed=tweet_to_embed(tweet))
             if tweet.default:
                 logger.info("Default! Tweet from @%s" % tweet.user.name)
-                for channel in TwitterNotificationChannel.objects.filter(default_subscribed=True):
+                channels = TwitterNotificationChannel.objects.filter(default_subscribed=True)
+                logger.info("Sending to %s channels %s" % (len(channels), channels))
+                for channel in channels:
                     logger.info("Sending to %s" % channel.name)
                     try:
                         await self.bot.send_message(self.bot.get_channel(id=channel.channel_id),
@@ -299,6 +301,8 @@ class Twitter:
                         logger.error(channel.id)
                         logger.error(channel.name)
                         logger.error(e)
+                        return
+                    logger.info("Sent to %s successfully." % channel.name)
 
 
 def tweet_to_embed(tweet):
