@@ -107,9 +107,17 @@ class Notifications:
                 logger.info("Success - Launch Notification for %s" % launch.name)
                 for channel in bot_channels:
                     logger.info("Sending notification to %s" % channel.name)
-                    await self.bot.send_message(channel,
-                                                embed=launch_to_small_embed(launch,
-                                                                            "**Launch was a %s!**\n\n" % launch.status.name, pre_launch=False))
+                    try:
+                        await self.bot.send_message(channel,
+                                                    embed=launch_to_small_embed(launch,
+                                                                                "**Launch was a %s!**\n\n" % launch.status.name, pre_launch=False))
+                    except Exception as e:
+                        logger.debug(channel.id)
+                        logger.debug(channel.name)
+                        logger.error(e)
+                        if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
+                            channel.delete()
+                        return
 
     async def check_in_flight(self, bot_channels):
         logger.info("Checking in-flight launches...")
@@ -123,8 +131,16 @@ class Notifications:
                 logger.info("In-Flight - Launch Notification for %s" % launch.name)
                 for channel in bot_channels:
                     logger.info("Sending notification to %s" % channel.name)
-                    await self.bot.send_message(channel,
-                                                embed=launch_to_small_embed(launch, "**Launch is in flight!**\n\n", pre_launch=False))
+                    try:
+                        await self.bot.send_message(channel,
+                                                    embed=launch_to_small_embed(launch, "**Launch is in flight!**\n\n", pre_launch=False))
+                    except Exception as e:
+                        logger.debug(channel.id)
+                        logger.debug(channel.name)
+                        logger.error(e)
+                        if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
+                            channel.delete()
+                        return
 
     async def check_one_minute(self, bot_channels, time_threshold_1_minute):
         logger.info("Checking one-minute launches...")
@@ -139,8 +155,16 @@ class Notifications:
                 logger.info("One Minute - Launch Notification for %s" % launch.name)
                 for channel in bot_channels:
                     logger.info("Sending notification to %s" % channel.name)
-                    await self.bot.send_message(channel,
-                                                embed=launch_to_small_embed(launch, "**Launching in one minute!**\n\n"))
+                    try:
+                        await self.bot.send_message(channel,
+                                                    embed=launch_to_small_embed(launch, "**Launching in one minute!**\n\n"))
+                    except Exception as e:
+                        logger.debug(channel.id)
+                        logger.debug(channel.name)
+                        logger.error(e)
+                        if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
+                            channel.delete()
+                        return
 
     async def check_ten_minute(self, bot_channels, time_threshold_10_minute, time_threshold_1_minute):
         logger.info("Checking ten-minute launches...")
@@ -155,9 +179,17 @@ class Notifications:
                 logger.info("Ten Minutes - Launch Notification for %s" % launch.name)
                 for channel in bot_channels:
                     logger.info("Sending notification to %s" % channel.name)
-                    await self.bot.send_message(channel,
-                                                embed=launch_to_small_embed(launch,
-                                                                            "**Launching in ten minutes!**\n\n"))
+                    try:
+                        await self.bot.send_message(channel,
+                                                    embed=launch_to_small_embed(launch,
+                                                                                "**Launching in ten minutes!**\n\n"))
+                    except Exception as e:
+                        logger.debug(channel.id)
+                        logger.debug(channel.name)
+                        logger.error(e)
+                        if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
+                            channel.delete()
+                        return
 
     async def check_twenty_four_hour(self, bot_channels, time_threshold_1_hour, time_threshold_24_hour):
         logger.info("Checking 24 hour launches...")
@@ -172,8 +204,16 @@ class Notifications:
                 logger.info("Twenty Four Hour - Launch Notification for %s" % launch.name)
                 for channel in bot_channels:
                     logger.info("Sending notification to %s" % channel.name)
-                    await self.bot.send_message(channel, embed=launch_to_small_embed(launch,
-                                                                                     "**Launching in twenty four hours!**\n\n"))
+                    try:
+                        await self.bot.send_message(channel, embed=launch_to_small_embed(launch,
+                                                                                         "**Launching in twenty four hours!**\n\n"))
+                    except Exception as e:
+                        logger.debug(channel.id)
+                        logger.debug(channel.name)
+                        logger.error(e)
+                        if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
+                            channel.delete()
+                        return
 
     async def check_one_hour(self, bot_channels, time_threshold_10_minute, time_threshold_1_hour):
         logger.info("Checking one hour launches...")
@@ -188,8 +228,16 @@ class Notifications:
                 logger.info("One Hour - Launch Notification for %s" % launch.name)
                 for channel in bot_channels:
                     logger.info("Sending notification to %s" % channel.name)
-                    await self.bot.send_message(channel,
-                                                embed=launch_to_small_embed(launch, "**Launching in one hour!**\n\n"))
+                    try:
+                        await self.bot.send_message(channel,
+                                                    embed=launch_to_small_embed(launch, "**Launching in one hour!**\n\n"))
+                    except Exception as e:
+                        logger.debug(channel.id)
+                        logger.debug(channel.name)
+                        logger.error(e)
+                        if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
+                            channel.delete()
+                        return
 
     async def check_webcast_live(self, bot_channels, time_threshold_1_hour, time_threshold_1_minute):
         logger.info("Checking webcast live launches...")
@@ -206,7 +254,12 @@ class Notifications:
                     try:
                         await self.bot.send_message(channel, embed=launch_to_small_embed(launch, "**Webcast is live!**\n\n"))
                     except Exception as e:
+                        logger.debug(channel.id)
+                        logger.debug(channel.name)
                         logger.error(e)
+                        if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
+                            channel.delete()
+                        return
 
     async def discord_launch_events(self):
         await self.bot.wait_until_ready()

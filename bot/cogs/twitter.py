@@ -274,8 +274,9 @@ class Twitter:
                                     embed=tweet_to_embed(userObj.tweets.order_by('created_at').first()))
 
     async def check_tweets(self):
+        logging.getLogger("asyncio").setLevel(logging.DEBUG)
         logger.info("Checking unread tweets...")
-        created_window = datetime.datetime.now(tz=pytz.utc) - datetime.timedelta(minutes=5)
+        created_window = datetime.datetime.now(tz=pytz.utc) - datetime.timedelta(minutes=30)
         tweets = Tweet.objects.filter(read=False).filter(created_at__gte=created_window).order_by('created_at')
         logger.info("Found %s unread tweets." % len(tweets))
         for tweet in tweets:
@@ -284,25 +285,26 @@ class Twitter:
             if tweet.user.subscribers is not None:
                 logger.info("Reading tweet from @%s" % tweet.user.name)
                 for channel in tweet.user.subscribers.all():
-                    logger.info("Sending to %s" % channel.name)
+                    logger.info("Sending to %s" % channel.id)
                     await self.bot.send_message(self.bot.get_channel(id=channel.channel_id), embed=tweet_to_embed(tweet))
             if tweet.default:
                 logger.info("Default! Tweet from @%s" % tweet.user.name)
                 channels = TwitterNotificationChannel.objects.filter(default_subscribed=True)
-                logger.info("Sending to %s channels %s" % (len(channels), channels))
+                logger.info("Sending to %s channels" % len(channels))
                 for channel in channels:
-                    logger.info("Sending to %s" % channel.name)
+                    logger.info("Sending to channel %s - (%s)" % (channel.id, channel.server_id))
                     try:
-                        await self.bot.send_message(self.bot.get_channel(id=channel.channel_id),
-                                                    embed=tweet_to_embed(tweet))
-                    except Exception as e:
-                        if 'Missing Permissions' in e:
+                        discord_channel = self.bot.get_channel(id=channel.channel_id)
+                        if discord_channel is None:
                             channel.delete()
-                        logger.error(channel.id)
-                        logger.error(channel.name)
+                        await self.bot.send_message(discord_channel, embed=tweet_to_embed(tweet))
+                    except Exception as e:
+                        logger.debug(channel.id)
                         logger.error(e)
+                        if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
+                            channel.delete()
                         return
-                    logger.info("Sent to %s successfully." % channel.name)
+                    logger.info("Sent to %s successfully." % channel.id)
 
 
 def tweet_to_embed(tweet):
