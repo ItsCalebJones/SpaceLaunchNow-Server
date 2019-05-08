@@ -131,7 +131,7 @@ class Tweet(models.Model):
     default = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.id
+        return str(self.id)
 
 
 class SubredditNotificationChannel(models.Model):
