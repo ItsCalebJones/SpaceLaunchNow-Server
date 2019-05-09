@@ -138,14 +138,18 @@ class News:
                 try:
                     logger.info("Reading News Articles - %s" % item.title)
                     embed = news_to_embed(item)
-                    await self.bot.send_message(self.bot.get_channel(id=channel.channel_id), embed=embed)
+                    discord_channel = self.bot.get_channel(id=channel.channel_id)
+                    if discord_channel is None or not discord_channel.server.me.permissions_in(
+                            discord_channel).send_messages:
+                        channel.delete()
+                    else:
+                        await self.bot.send_message(discord_channel, embed=embed)
                 except Exception as e:
                     logger.debug(channel.id)
                     logger.debug(channel.name)
                     logger.error(e)
                     if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
                         channel.delete()
-                    return
 
 
 def setup(bot):

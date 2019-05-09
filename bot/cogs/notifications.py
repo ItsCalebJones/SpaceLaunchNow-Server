@@ -267,7 +267,7 @@ class Notifications:
         bot_channels = []
         for channel in channels:
             discord_channel = self.bot.get_channel(id=channel.channel_id)
-            if discord_channel is None:
+            if discord_channel is None or not discord_channel.server.me.permissions_in(discord_channel).send_messages:
                 channel.delete()
             else:
                 bot_channels.append(discord_channel)

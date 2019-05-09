@@ -239,7 +239,12 @@ class Reddit:
                     logger.debug("Sending %s to %s - %s" % (submission.id, channel.id, channel.name))
                     try:
                         embed = submission_to_embed(submission)
-                        await self.bot.send_message(self.bot.get_channel(id=channel.channel_id), embed=embed)
+                        discord_channel = self.bot.get_channel(id=channel.channel_id)
+                        if discord_channel is None or not discord_channel.server.me.permissions_in(
+                                discord_channel).send_messages:
+                            channel.delete()
+                        else:
+                            await self.bot.send_message(discord_channel, embed=embed)
                     except Exception as e:
                         logger.debug(channel.id)
                         logger.debug(channel.name)
@@ -248,32 +253,46 @@ class Reddit:
                             channel.delete()
                         return
 
-    async def add_subreddit(self, subreddit_name, discord_channel):
+    async def add_subreddit(self, subreddit_name, channel):
         try:
             for submission in reddit.subreddit(subreddit_name).hot(limit=1):
                 subreddit, created = Subreddit.objects.get_or_create(id=submission.subreddit.id)
                 subreddit.name = submission.subreddit.display_name
-                if subreddit.subscribers is not None and len(
-                        subreddit.subscribers.all().filter(channel_id=discord_channel.channel_id)) > 0:
-                    await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id),
+                if subreddit.subscribers is not None and len(subreddit.subscribers.all().filter(channel_id=channel.channel_id)) > 0:
+                    discord_channel = self.bot.get_channel(id=channel.channel_id)
+                    if discord_channel is None or not discord_channel.server.me.permissions_in(
+                            discord_channel).send_messages:
+                        channel.delete()
+                    await self.bot.send_message(discord_channel,
                                                 'Already subscribed to /r/%s in this channel.' % subreddit_name)
                     return
                 else:
-                    subreddit.subscribers.add(discord_channel)
+                    subreddit.subscribers.add(channel)
                     subreddit.save()
                     if not subreddit.initialized:
-                        await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id),
+                        discord_channel = self.bot.get_channel(id=channel.channel_id)
+                        if discord_channel is None or not discord_channel.server.me.permissions_in(
+                                discord_channel).send_messages:
+                            channel.delete()
+                        await self.bot.send_message(discord_channel,
                                                     "Checking...one sec!")
                         get_posts_by_subreddit(subreddit, mark_read=True)
                         subreddit.initialized = True
                     subreddit.save()
-                    await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id),
+                    discord_channel = self.bot.get_channel(id=channel.channel_id)
+                    if discord_channel is None or not discord_channel.server.me.permissions_in(
+                            discord_channel).send_messages:
+                        channel.delete()
+                    await self.bot.send_message(discord_channel,
                                                 "Subscribed to /r/%s in this channel.\n\n"
                                                 "Here's the latest Hot post:\n" % subreddit_name,
                                                 embed=submission_to_embed(
                                                     subreddit.submissions.order_by('created_at').first()))
         except Redirect as e:
-            await self.bot.send_message(self.bot.get_channel(id=discord_channel.channel_id), "Subreddit doesn't exist.")
+            discord_channel = self.bot.get_channel(id=channel.channel_id)
+            if discord_channel is None or not discord_channel.server.me.permissions_in(discord_channel).send_messages:
+                channel.delete()
+            await self.bot.send_message(self.bot.get_channel(id=discord_channel), "Subreddit doesn't exist.")
 
     async def remove_subreddit(self, subreddit_name, discord_channel):
         try:

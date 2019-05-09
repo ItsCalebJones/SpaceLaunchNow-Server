@@ -98,7 +98,7 @@ if __name__ == '__main__':
     if any('debug' in arg.lower() for arg in sys.argv):
         bot.command_prefix = '$'
 
-    if os.name != 'nt':
+    if os.name != 'nt' and os.name != 'posix':
         writePidFile()
 
     bot.client_id = config.SQUID_BOT_CLIENT_ID

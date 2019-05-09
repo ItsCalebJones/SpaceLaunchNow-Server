@@ -286,7 +286,12 @@ class Twitter:
                 logger.info("Reading tweet from @%s" % tweet.user.name)
                 for channel in tweet.user.subscribers.all():
                     logger.info("Sending to %s" % channel.id)
-                    await self.bot.send_message(self.bot.get_channel(id=channel.channel_id), embed=tweet_to_embed(tweet))
+                    discord_channel = self.bot.get_channel(id=channel.channel_id)
+                    if discord_channel is None or not discord_channel.server.me.permissions_in(
+                            discord_channel).send_messages:
+                        channel.delete()
+                    else:
+                        await self.bot.send_message(discord_channel, embed=tweet_to_embed(tweet))
             if tweet.default:
                 logger.info("Default! Tweet from @%s" % tweet.user.name)
                 channels = TwitterNotificationChannel.objects.filter(default_subscribed=True)
@@ -295,9 +300,11 @@ class Twitter:
                     logger.info("Sending to channel %s - (%s)" % (channel.id, channel.server_id))
                     try:
                         discord_channel = self.bot.get_channel(id=channel.channel_id)
-                        if discord_channel is None:
+                        if discord_channel is None or not discord_channel.server.me.permissions_in(
+                                discord_channel).send_messages:
                             channel.delete()
-                        await self.bot.send_message(discord_channel, embed=tweet_to_embed(tweet))
+                        else:
+                            await self.bot.send_message(discord_channel, embed=tweet_to_embed(tweet))
                     except Exception as e:
                         logger.debug(channel.id)
                         logger.error(e)
