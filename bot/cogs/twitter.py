@@ -276,7 +276,7 @@ class Twitter:
     async def check_tweets(self):
         logging.getLogger("asyncio").setLevel(logging.DEBUG)
         logger.info("Checking unread tweets...")
-        created_window = datetime.datetime.now(tz=pytz.utc) - datetime.timedelta(minutes=30)
+        created_window = datetime.datetime.now(tz=pytz.utc) - datetime.timedelta(minutes=5)
         tweets = Tweet.objects.filter(read=False).filter(created_at__gte=created_window).order_by('created_at')
         logger.info("Found %s unread tweets." % len(tweets))
         for tweet in tweets:
