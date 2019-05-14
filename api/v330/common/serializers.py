@@ -218,7 +218,7 @@ class DockingEventSerializerForSpacecraftFlight(serializers.ModelSerializer):
 
     class Meta:
         model = DockingEvent
-        fields = ('spacestation', 'docking', 'departure', 'docking_location')
+        fields = ('id', 'spacestation', 'docking', 'departure', 'docking_location')
 
 
 class LaunchListSerializer(serializers.ModelSerializer):
