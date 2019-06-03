@@ -118,7 +118,11 @@ def get_location(launch, data):
                 pad.map_url = data['location']['pads'][0]['mapURL']
                 pad.wiki_url = data['location']['pads'][0]['wikiURL']
                 pad.latitude = data['location']['pads'][0]['latitude']
+                if pad.latitude == 0:
+                    pad.latitude = 0.0
                 pad.longitude = data['location']['pads'][0]['longitude']
+                if pad.longitude == 0:
+                    pad.longitude = 0.0
                 if data['location']['pads'][0]['agencies'] and len(data['location']['pads'][0]['agencies']) > 0:
                     pad.agency_id = data['location']['pads'][0]['agencies'][0]['id']
                 launch.pad = pad

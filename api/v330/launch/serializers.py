@@ -3,12 +3,13 @@ from api.v330.common.serializers import *
 
 class AstronautDetailedSerializerNoFlights(serializers.HyperlinkedModelSerializer):
     status = AstronautStatusSerializer(read_only=True)
+    type = AstronautTypeSerializer(read_only=True)
     agency = AgencySerializerMini(read_only=True, many=False)
 
     class Meta:
         model = Astronaut
         # fields = ('name',)
-        fields = ('id', 'url', 'name', 'status', 'agency', 'date_of_birth', 'date_of_death', 'nationality',
+        fields = ('id', 'url', 'name', 'status', 'type', 'agency', 'date_of_birth', 'date_of_death', 'nationality',
                   'twitter', 'instagram', 'bio', 'profile_image', 'wiki',)
 
 
@@ -89,7 +90,7 @@ class DockingEventSerializerForSpacecraftFlight(serializers.ModelSerializer):
 
     class Meta:
         model = DockingEvent
-        fields = ('spacestation', 'docking', 'departure', 'docking_location')
+        fields = ('id', 'url', 'spacestation', 'docking', 'departure', 'docking_location')
 
 
 class SpacecraftFlightDetailedSerializerForLaunch(serializers.HyperlinkedModelSerializer):
