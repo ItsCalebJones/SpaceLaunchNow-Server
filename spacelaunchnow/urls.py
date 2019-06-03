@@ -55,6 +55,7 @@ if config.IS_API:
     ]
 if config.IS_WEBSERVER:
     web_settings = [
+        url(r'^ads\.txt', include('ads_txt.urls')),
         url(r'^next/', landing_views.next_launch, name='next'),
         url(r'^launch/(?P<id>\d+)/$', landing_views.launch_by_id, name='launch_by_id'),
         url(r'^launch/(?P<slug>[-\w]+)/$', landing_views.launch_by_slug, name='launch_by_slug'),
