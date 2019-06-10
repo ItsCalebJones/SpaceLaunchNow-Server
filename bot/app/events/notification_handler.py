@@ -22,10 +22,14 @@ class EventNotificationHandler:
     def send_ten_minute_notification(self, event):
         self.send_notification(self.build_topics(event),
                                self.build_data(event, 'event_notification'))
+        self.send_flutter_notification(self.build_flutter_topics(event),
+                                       self.build_data(event, 'event_notification'))
 
     def send_webcast_notification(self, event):
         self.send_notification(self.build_topics(event),
                                self.build_data(event, 'event_webcast'))
+        self.send_flutter_notification(self.build_flutter_topics(event),
+                                       self.build_data(event, 'event_webcast'))
 
     def build_data(self, event, type):
         if event.video_url:
@@ -39,6 +43,7 @@ class EventNotificationHandler:
 
         return {
             "notification_type": type,
+            "click_action": "FLUTTER_NOTIFICATION_CLICK",
             "event": {
                 "id": event.id,
                 "name": event.name,
@@ -74,3 +79,26 @@ class EventNotificationHandler:
                                                              time_to_live=86400)
         logger.info(notification)
         logger.info('----------------------------------------------------------')
+
+    def build_flutter_topics(self, event):
+        if self.DEBUG:
+            topic = "'flutter_debug_v2' in topics && 'events' in topics"
+        else:
+            topic = "'flutter_production_v2' in topics && 'events' in topics"
+        return topic
+
+    def send_flutter_notification(self, topics, data):
+        logger.info('----------------------------------------------------------')
+        logger.info('Flutter Notification')
+        logger.info('Notification Data: %s' % data)
+        logger.info('Topics: %s' % topics)
+        push_service = FCMNotification(api_key=keys['FCM_KEY'])
+        notification = push_service.notify_topic_subscribers(data_message=data,
+                                                             condition=topics,
+                                                             time_to_live=86400,
+                                                             message_title=data['event']['name'],
+                                                             message_body=data['event']['description'])
+        logger.info(notification)
+        logger.info('----------------------------------------------------------')
+
+
