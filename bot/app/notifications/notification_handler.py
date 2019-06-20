@@ -155,6 +155,10 @@ class NotificationHandler:
                                                debug=self.DEBUG,
                                                flutter=True,
                                                notification_type=notification_type)
+            flutter_topics_v2 = get_fcm_topics_v2(launch,
+                                                  notification_type=notification_type,
+                                                  debug=self.DEBUG,
+                                                  flutter=True)
 
             # Send notifications to SLN Android before 3.0.0
             # Catch any issue with sending notification.
@@ -182,8 +186,24 @@ class NotificationHandler:
                 logger.error(e)
 
             try:
+                logger.info('Flutter v1 Notification')
+                logger.info('Notification v1 Data - %s' % v1_data)
+                logger.info('Flutter Topic v1- %s' % flutter_topics)
                 flutter_result = push_service.notify_topic_subscribers(data_message=v1_data,
                                                                        condition=flutter_topics,
+                                                                       time_to_live=86400,
+                                                                       message_title=launch.name,
+                                                                       message_body=contents)
+                logger.debug(flutter_result)
+            except Exception as e:
+                logger.error(e)
+
+            try:
+                logger.info('Flutter v2 Notification')
+                logger.info('Notification v2 Data - %s' % v2_data)
+                logger.info('Flutter Topic v2- %s' % flutter_topics_v2)
+                flutter_result = push_service.notify_topic_subscribers(data_message=v2_data,
+                                                                       condition=flutter_topics_v2,
                                                                        time_to_live=86400,
                                                                        message_title=launch.name,
                                                                        message_body=contents)
