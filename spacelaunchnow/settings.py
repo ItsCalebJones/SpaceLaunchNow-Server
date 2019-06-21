@@ -196,7 +196,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     # 'silk.middleware.SilkyMiddleware',
 ]
 
@@ -272,6 +272,12 @@ ZINNIA_MARKUP_LANGUAGE = 'markdown'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
+
+INTERNAL_IPS = [
+    # ...
+    '127.0.0.1',
+    # ...
+]
 
 LANGUAGE_CODE = 'en-us'
 

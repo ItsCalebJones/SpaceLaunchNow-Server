@@ -9,6 +9,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, redirect
@@ -96,8 +97,10 @@ def create_launch_view(request, launch):
     for url in vids:
         if 'youtube' in url.vid_url:
             youtube_urls.append(url.vid_url)
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
     return render(request, 'web/launch_page.html', {'launch': launch, 'youtube_urls': youtube_urls, 'status': status,
-                                                    'agency': agency, 'launches': launches})
+                                                    'agency': agency, 'launches': launches,
+                                                    'previous_launches': previous_launches})
 
 
 # Create your views here.
@@ -129,18 +132,20 @@ def astronaut(request, id):
 def astronaut_by_slug(request, slug):
     try:
         _astronaut = Astronaut.objects.get(slug=slug)
-        previous_list = list((Launch.objects.filter(Q(rocket__spacecraftflight__launch_crew__astronaut__id=_astronaut.pk) |
-                                                    Q(rocket__spacecraftflight__onboard_crew__astronaut__id=_astronaut.pk) |
-                                                    Q(rocket__spacecraftflight__landing_crew__astronaut__id=_astronaut.pk))
-                              .filter(net__lte=datetime.utcnow())
-                              .values_list('pk', flat=True)
-                              .distinct()))
-        upcoming_list = list((Launch.objects.filter(Q(rocket__spacecraftflight__launch_crew__astronaut__id=_astronaut.pk) |
-                                                    Q(rocket__spacecraftflight__onboard_crew__astronaut__id=_astronaut.pk) |
-                                                    Q(rocket__spacecraftflight__landing_crew__astronaut__id=_astronaut.pk))
-                              .filter(net__gte=datetime.utcnow())
-                              .values_list('pk', flat=True)
-                              .distinct()))
+        previous_list = list(
+            (Launch.objects.filter(Q(rocket__spacecraftflight__launch_crew__astronaut__id=_astronaut.pk) |
+                                   Q(rocket__spacecraftflight__onboard_crew__astronaut__id=_astronaut.pk) |
+                                   Q(rocket__spacecraftflight__landing_crew__astronaut__id=_astronaut.pk))
+             .filter(net__lte=datetime.utcnow())
+             .values_list('pk', flat=True)
+             .distinct()))
+        upcoming_list = list(
+            (Launch.objects.filter(Q(rocket__spacecraftflight__launch_crew__astronaut__id=_astronaut.pk) |
+                                   Q(rocket__spacecraftflight__onboard_crew__astronaut__id=_astronaut.pk) |
+                                   Q(rocket__spacecraftflight__landing_crew__astronaut__id=_astronaut.pk))
+             .filter(net__gte=datetime.utcnow())
+             .values_list('pk', flat=True)
+             .distinct()))
         _launches = Launch.objects.filter(pk__in=previous_list).order_by('net')
         _upcoming_launches = Launch.objects.filter(pk__in=upcoming_list).order_by('net')
         previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
@@ -153,24 +158,65 @@ def astronaut_by_slug(request, slug):
 
 
 def astronaut_list(request, ):
-    active_astronauts = Astronaut.objects.filter(status=1).order_by('name')
+    query = request.GET.get('status')
+    if query is None:
+        query = 1
+    else:
+        query = int(query)
 
-    training_astronauts = Astronaut.objects.filter(status=3).order_by('name')
+    nationality = request.GET.get('nationality')
 
-    retired_astronauts = Astronaut.objects.filter(status=2).order_by('name')
+    if nationality == "American":
+        astronaut_list = Astronaut.objects.only("name", "nationality", "twitter", "instagram", "wiki", "bio",
+                                                "profile_image", "slug").filter(nationality="American").filter(
+            status=query).order_by('name')
+    elif nationality == "Russian":
+        astronaut_list = Astronaut.objects.only("name", "nationality", "twitter", "instagram", "wiki", "bio",
+                                                "profile_image", "slug").filter(
+            Q(nationality="Russian") | Q(nationality="Soviet")).filter(status=query).order_by('name')
+    elif nationality == "European":
+        astronaut_list = Astronaut.objects.only("name", "nationality", "twitter", "instagram", "wiki", "bio",
+                                                "profile_image", "slug").filter(
+            Q(nationality="Austrain") | Q(nationality="Belarusian") | Q(nationality="Belgian")
+            | Q(nationality="British") | Q(nationality="Danish") | Q(nationality="Dutch")
+            | Q(nationality="French") | Q(nationality="German") | Q(nationality="Italian")
+            | Q(nationality="Polish") | Q(nationality="Spanish") | Q(nationality="Swedish")
+            | Q(nationality="Swiss")).filter(status=query).order_by('name')
+    elif nationality == "Other":
+        astronaut_list = Astronaut.objects.only("name", "nationality", "twitter", "instagram", "wiki", "bio",
+                                                "profile_image", "slug").exclude(nationality="Austrain").exclude(
+            nationality="Belarusian").exclude(nationality="Belgian").exclude(nationality="British").exclude(
+            nationality="Danish").exclude(nationality="Dutch") \
+            .exclude(nationality="French").exclude(nationality="German") \
+            .exclude(nationality="Italian").exclude(nationality="Polish") \
+            .exclude(nationality="Spanish").exclude(nationality="Swedish") \
+            .exclude(nationality="Swiss").exclude(nationality="American").exclude(nationality="Russian").exclude(
+            nationality="Soviet").filter(status=query).order_by('name')
+    else:
+        astronaut_list = Astronaut.objects.only("name", "nationality", "twitter", "instagram", "wiki", "bio",
+                                                "profile_image", "slug").filter(status=query).order_by('name')
 
-    lost_astronauts = Astronaut.objects.filter(Q(status=5) | Q(status=4)).order_by('name')
+    previous_launches = Launch.objects.only("slug", "net", "name", "status__name", "mission__name",
+                                            "mission__description", "rocket__configuration__name").prefetch_related(
+        'info_urls').prefetch_related('vid_urls').select_related('rocket').prefetch_related('mission').prefetch_related(
+        'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+        'mission__mission_type').prefetch_related('status').filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
 
-    deceased_astronauts = Astronaut.objects.filter(Q(status=11)).order_by('name')
+    page = request.GET.get('page', 1)
 
-    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+    paginator = Paginator(astronaut_list, 9)
 
-    return render(request, 'web/astronaut/astronaut_list.html', {'active_astronauts': active_astronauts,
-                                                                 'training_astronauts': training_astronauts,
-                                                                 'retired_astronauts': retired_astronauts,
+    try:
+        astronauts = paginator.page(page)
+    except PageNotAnInteger:
+        astronauts = paginator.page(1)
+    except EmptyPage:
+        astronauts = paginator.page(paginator.num_pages)
+
+    return render(request, 'web/astronaut/astronaut_list.html', {'astronauts': astronauts,
                                                                  'previous_launches': previous_launches,
-                                                                 'lost_astronauts': lost_astronauts,
-                                                                 'deceased_astronauts': deceased_astronauts})
+                                                                 'status': query,
+                                                                 'nationality': nationality})
 
 
 def handler404(request):
