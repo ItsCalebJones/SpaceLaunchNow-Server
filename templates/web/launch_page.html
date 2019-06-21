@@ -206,6 +206,8 @@
                     </div>
                 </div>
                 {% if launch.rocket.firststage.all|length > 0 %}
+                    <h2 class="title"> {{ launch.rocket.configuration.name }} Booster Info</h2>
+                    <hr>
                     <div class="row text-center">
                         {% for stage in launch.rocket.firststage.all %}
                             {% if stage.landing != None %}
