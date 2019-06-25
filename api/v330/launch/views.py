@@ -173,7 +173,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
         is_crewed = self.request.query_params.get('is_crewed', None)
 
         now = datetime.datetime.now()
-        dayago = now - timedelta(days=1)
+        dayago = now - timedelta(hours=2)
 
         launches = Launch.objects.all().filter(net__gte=dayago)
 
