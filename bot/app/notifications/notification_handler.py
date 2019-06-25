@@ -169,7 +169,7 @@ class NotificationHandler:
                     android_result_v1 = push_service.notify_topic_subscribers(data_message=v1_data,
                                                                               condition=topics_v1,
                                                                               time_to_live=86400, )
-                    logger.debug(android_result_v1)
+                    logger.info(android_result_v1)
                 except Exception as e:
                     logger.error(e)
 
@@ -181,7 +181,7 @@ class NotificationHandler:
                 android_result_v2 = push_service.notify_topic_subscribers(data_message=v2_data,
                                                                           condition=topics_v2,
                                                                           time_to_live=86400, )
-                logger.debug(android_result_v2)
+                logger.info(android_result_v2)
             except Exception as e:
                 logger.error(e)
 
