@@ -4,18 +4,19 @@
 // --------------------------------------------------
 .modal-dialog {
   & .modal-content{
-      @include shadow-z-5();
-      border-radius: $border-radius-large;
-      border: none;
+    @include shadow-z-5();
+    border-radius: $border-radius-large;
+    border: none;
 
-      .card-signup{
-          margin: 0;
+    .card-signup{
+      margin: 0;
 
-          .modal-header{
-              padding-top: 0;
-          }
+      .modal-header{
+        padding-top: 0;
       }
+    }
   }
+
   // Modal header
   // Top section of the modal w/ title and dismiss
   .modal-header {
@@ -60,23 +61,31 @@
   }
 }
 .modal-backdrop {
-  background: rgba(0,0,0,0.3);
+  background: rgba(0,0,0,0.5);
 }
 
 .modal{
-    .modal-dialog{
-      margin-top: 100px;
-    }
-    .modal-header .close{
-      color: $gray-light;
+  .modal-dialog{
+    margin-top: 130px;
+  }
+  .modal-header .close{
+    color: $gray-light;
 
-      &:hover,
-      &:focus{
-          opacity: 1;
-      }
-
-      i{
-          font-size: 16px;
-      }
+    &:hover,
+    &:focus{
+        opacity: 1;
     }
+
+    i{
+        font-size: 16px;
+    }
+  }
+}
+
+.show:not(.modal) .dropdown-toggle:after {
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  transform: rotate(180deg);
 }

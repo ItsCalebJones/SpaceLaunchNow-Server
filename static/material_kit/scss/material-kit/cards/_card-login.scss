@@ -1,11 +1,9 @@
-.card-signup{
+.card-login{
     .card-header{
-        // @include shadow-big();
         margin-left: 20px;
         margin-right: 20px;
         margin-top: -40px;
         padding: 20px 0;
-        width: 100%;
         margin-bottom: 15px;
     }
     .text-divider{
@@ -29,6 +27,16 @@
 
     }
 
+    .input-group {
+      padding-bottom: 7px;
+      margin: 27px 0 0 0;
+    }
+
+    .form {
+      min-height: 420px;
+    }
+
+
     .social-line{
         margin-top: $bmd-label-top-margin-base;
         text-align: center;
@@ -40,4 +48,20 @@
             margin-right: 5px;
         }
     }
+}
+
+.login-page {
+  .footer {
+    position: absolute;
+    width: 100%;
+    background: transparent;
+    bottom: 0;
+    color: $white-color;
+    z-index: 1;
+
+    .copyright a{
+      color: $white-color;
+    }
+  }
+
 }

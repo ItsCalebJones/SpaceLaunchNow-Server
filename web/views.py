@@ -31,7 +31,7 @@ def index(request):
         return render(request, 'web/index.html', {'launch': in_flight_launch,
                                                   'youtube_url': get_youtube_url(in_flight_launch)})
 
-    recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - dt.timedelta(hours=6),
+    recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - dt.timedelta(hours=2),
                                               net__lte=datetime.utcnow()).order_by('-net').first()
     if recently_launched:
         return render(request, 'web/index.html', {'launch': recently_launched,
@@ -127,6 +127,11 @@ def astronaut(request, id):
         return redirect('astronaut_by_slug', slug=Astronaut.objects.get(pk=id).slug)
     except ObjectDoesNotExist:
         raise Http404
+
+
+def vehicle_root(request):
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+    return render(request, 'web/vehicles/index.html', {'previous_launches': previous_launches})
 
 
 def astronaut_by_slug(request, slug):

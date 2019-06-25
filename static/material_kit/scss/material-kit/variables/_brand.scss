@@ -1,7 +1,11 @@
 // Bootstrap brand color customization
-$brand-primary: $blue !default;
-$brand-success: $green !default;
-$brand-danger: $red !default;
-$brand-warning: $orange !default;
-$brand-info: $cyan !default;
-$brand-rose: $pink !default;
+
+/*     brand Colors              */
+
+$brand-primary:              $blue-500 !default;
+$brand-info:                 $cyan-500 !default;
+$brand-success:              $green-500 !default;
+$brand-warning:              $orange-500 !default;
+$brand-danger:               $red-500 !default;
+$brand-rose:                 $pink-500 !default;
+$brand-inverse:              $black-color !default;
