@@ -95,6 +95,7 @@ LOGGING = {
             'backupCount': 5
         },
         'notifications': {
+            'level': 'DEBUG' if DEBUG else 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'log/notification.log',
             'formatter': 'standard',
@@ -102,6 +103,7 @@ LOGGING = {
             'backupCount': 5
         },
         'events': {
+            'level': 'DEBUG' if DEBUG else 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'log/events.log',
             'formatter': 'standard',
@@ -109,12 +111,13 @@ LOGGING = {
             'backupCount': 5
         },
         'discord': {
+            'level': 'DEBUG' if DEBUG else 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'log/discord.log',
             'formatter': 'standard',
             'maxBytes': 1024 * 1024 * 5,
             'backupCount': 5
-        }
+        },
     },
     'loggers': {
         # Again, default Django configuration to email unhandled exceptions
@@ -144,7 +147,7 @@ LOGGING = {
         },
         'bot.discord': {
             'handlers': ['django_default', 'discord', 'console'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': True,
         },
     },
