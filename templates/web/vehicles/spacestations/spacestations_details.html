@@ -1,0 +1,181 @@
+{% extends "web/base.html" %}
+{% load staticfiles %}
+{% load thumbnail %}
+{% load humanize %}
+{% block extrahead %}
+    <link rel="canonical" href="https://spacelaunchnow.me/vehicle/spacestation/{{ vehicle.id }}">
+    <title>Space Launch Now - {{ vehicle.name }}</title>
+    <meta name="title" content="Space Launch Now - {{ vehicle.name }}">
+    <meta property="fb:app_id" content="746774215504127"/>
+    <meta property="og:title" content="Space Launch Now - {{ vehicle.name }}"/>
+    <meta property="og:type" content="website"/>
+    <meta name="description"
+          content="{{ vehicle.name }} - {{ vehicle.description|truncatechars:100 }}">
+    <meta property="og:description"
+          content="{{ vehicle.name }} - {{ vehicle.description|truncatechars:100 }}">
+    <meta property="og:url" content="https://spacelaunchnow.me/astronaut/{{ astronaut.slug }}"/>
+    <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
+    <meta property="og:image:width" content="3000"/>
+    <meta property="og:image:height" content="2000"/>
+{% endblock %}
+
+
+{% block navigation %}
+    {% include "web/navigation.html" %}
+{% endblock %}
+
+{% block content %}
+    <!-- Page Content -->
+    <div class="container" style="margin-top:100px; margin-bottom: 16px">
+        <div class="row">
+            <!-- Post Content Column -->
+            <div class="col-lg-9 col-md-12 col-xl-9">
+                <div class="card card-blog">
+                    {% if vehicle.image_url %}
+                        <div class="card-header card-header-image">
+                            <img class="img"
+                                 src="{{ vehicle.image_url.url }}">
+                        </div>
+                    {% else %}
+                        <div class="card-header card-header-image">
+                            <img class="img"
+                                 src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h2 class="title text-center">{{ vehicle.name }}</h2>
+                        <hr>
+                        <div class="text-center">
+                            {% if vehicle.orbit %}
+                                <span class="badge badge-pill badge-primary">{{ vehicle.orbit }}</span>
+                            {% endif %}
+                            {% if vehicle.type %}
+                                <span class="badge badge-pill badge-success">{{ vehicle.type }}</span>
+                            {% endif %}
+                            {% if vehicle.founded %}
+                                <span class="badge badge-pill badge-info">Founded: {{ vehicle.founded }}</span>
+                            {% endif %}
+                            {% if vehicle.mass %}
+                                <span class="badge badge-pill badge-danger">Mass: {{ vehicle.mass }}T</span>
+                            {% endif %}
+                            {% if vehicle.volume %}
+                                <span class="badge badge-pill badge-danger">Volume: {{ vehicle.volume }}m^3</span>
+                            {% endif %}
+                        </div>
+                        <h5 class="title text-muted text-center">Status - {{ vehicle.status|title }}</h5>
+                        <h6 class="card-category text-info text-center">Details</h6>
+                        <p class="card-text">{{ vehicle.description }} </p>
+                        <hr>
+                        {% if vehicle.owners.all|length > 0 %}
+                            <h3 class="title text-center">{{ vehicle.name }} Owners</h3>
+                            <div class="row">
+                                {% for owner in vehicle.owners.all %}
+                                    <div class="col-lg-6 col-md-12 text-center" style="margin-bottom: 20px">
+                                        <div class="info">
+                                            <div class="info-body">
+                                                <h4 class="info-title">{{ owner.name }}</h4>
+                                                <h6 class="info-subtitle mb-2 text-muted">{{ owner.type }}</h6>
+                                                <h6 class="info-subtitle mb-2 text-muted">{{ owner.administrator }}</h6>
+                                                {% if owner.abbrev %}
+                                                    <span class="badge badge-pill badge-primary">{{ owner.abbrev }}</span>
+                                                {% endif %}
+                                                {% if owner.founding_year %}
+                                                    <span class="badge badge-pill badge-info">{{ owner.founding_year }}</span>
+                                                {% endif %}
+                                                <p class="info-text">{{ owner.description }}</p>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        {% if vehicle.docked_vehicles.all|length > 0 %}
+                            <h3 class="title text-center">Docked Vehicles</h3><br>
+                            <div class="row">
+                                {% for docked in vehicle.docked_vehicles.all %}
+                                    <div class="col-md-6 text-center" style="margin-bottom: 20px">
+                                        <div class="info">
+                                            {% if docked.spacecraft.spacecraft_config.image_url %}
+                                                <div class="card-header card-header-image">
+                                                    <img class="img"
+                                                         src="{{ docked.spacecraft.spacecraft_config.image_url.url }}">
+                                                </div>
+                                            {% endif %}
+                                            <div class="info-body">
+                                                <h4 class="info-title">{{ docked.spacecraft.name }}</h4>
+                                                <h6 class="info-subtitle mb-2 text-muted">{{ docked.spacecraft.name }}</h6>
+                                                <h6 class="info-subtitle mb-2 text-muted">{{ docked.docking_event.0.docking_location }}</h6>
+                                                {% if docked.spacecraft.serial_number %}
+                                                    <span class="badge badge-pill badge-primary">{{ docked.spacecraft.serial_number }}</span>
+                                                {% endif %}
+                                                {% if docked.spacecraft.status.name %}
+                                                    <span class="badge badge-pill badge-info">{{ docked.spacecraft.status.name }}</span>
+                                                {% endif %}
+                                                <p class="info-text">{{ docked.spacecraft.description }}</p>
+                                                <row>
+                                                    <a class="btn btn-primary"
+                                                       href="/launch/{{ docked.launch.slug }}">View Launch</a>
+                                                </row>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <hr>
+                <div class="col-md-8 ml-auto mx-auto mr-auto text-center">
+                    <div class="profile">
+                        <div class="avatar">
+                            {% if vehicle.launcher_config.agency.logo_url %}
+                                <img src="{{ vehicle.launcher_config.agency.logo_url.url }}"
+                                     alt="Circle Image"
+                                     class="img-fluid mx-auto"
+                                     style="max-width: 75%;max-height: 400px;">
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <row>
+                    <div class="col-md-12 text-center">
+                        {% if vehicle.launcher_config.agency.administrator %}
+                            <span class="badge badge-pill badge-primary">{{ vehicle.launcher_config.agency.administrator }}</span>
+                        {% endif %}
+                        {% if vehicle.launcher_config.agency.founding_year %}
+                            <span class="badge badge-pill badge-warning">Founded: {{ vehicle.launcher_config.agency.founding_year }}</span>
+                        {% endif %}
+                        <br>
+                        {% if vehicle.launcher_config.agency.description %}
+                            <p class="card-body">{{ vehicle.launcher_config.agency.description }}</p>
+                        {% endif %}
+                    </div>
+                </row>
+            </div>
+
+
+            <!-- Sidebar Widgets Column -->
+            <div class="col-lg-3 col-md-12 col-xl-3">
+                <!-- Categories Widget -->
+                {% include "web/sidebar_full.html" %}
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- Space Launch Now -->
+        <ins class="adsbygoogle"
+             style="display:block; margin-top:16px; margin-bottom:16px;"
+             data-ad-client="ca-pub-9824528399164059"
+             data-ad-slot="8772606898"
+             data-ad-format="auto"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    {% include "web/install_buttons.html" %}
+{% endblock %}
+
+

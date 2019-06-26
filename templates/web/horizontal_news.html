@@ -1,0 +1,28 @@
+{% load staticfiles %}
+<div class="row">
+    <div class="col-md-12 text-center">
+        <h3 class="title">Latest Space News</h3>
+        <hr>
+    </div>
+    {% if latest_news|length > 0 %}
+        {% for item in latest_news %}
+            <div class="col-xl-4 col-lg-6 col-md-12">
+                <div class="card card-background"
+                     style="background-image: url('{{ item.featured_image }}')">
+                    <div class="card-body">
+                        <h6 class="card-category text-info">{{ item.news_site }}</h6>
+                        <h3 class="card-title">{{ item.title|truncatechars:100 }}</h3>
+                        <p class="card-description">
+                            {{ item.description|truncatechars:120 }}
+                        </p>
+                        <div class="col align-self-center">
+                            <a href="{{ item.link }}" class="btn btn-white btn-link">
+                                <i class="material-icons">subject</i> Read Article
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>

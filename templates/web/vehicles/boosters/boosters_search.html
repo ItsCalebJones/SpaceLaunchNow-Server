@@ -1,0 +1,126 @@
+{% extends "web/base.html" %}
+{% load staticfiles %}
+{% load thumbnail %}
+{% block extrahead %}
+    {% load mathfilters %}
+    <link rel="canonical" href="https://spacelaunchnow.me/launch/">
+    <title>Space Launch Now - Launch Schedule</title>
+    <meta name="title" content="Space Launch Now - Reusable">
+    <meta property="fb:app_id" content="746774215504127"/>
+    <meta property="og:title" content="Space Launch Now - Reusable"/>
+    <meta property="og:type" content="website"/>
+    <meta name="description"
+          content="A tracker for following the status of reusable boosters.">
+    <meta property="og:description"
+          content="A tracker for following the status of reusable boosters."/>
+    <meta property="og:url" content="https://spacelaunchnow.me/vehicle/"/>
+    <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
+    <meta property="og:image:width" content="3000"/>
+    <meta property="og:image:height" content="2000"/>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css"
+          media="all"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"
+            type="text/javascript"></script>
+{% endblock %}
+
+
+{% block navigation %}
+    {% include "web/navigation.html" %}
+{% endblock %}
+
+{% block content %}
+    {% load embed_video_tags %}
+    <!-- Page Content -->
+    <div class="container" style="margin-top:100px; margin-bottom: 16px">
+        <h1 class="title">Reusable Launch Vehicles</h1>
+        <h2>A new era of spaceflight has been ushered in with the advent of rapidly reusable
+            vehicles.</h2>
+        <hr>
+        <div class="container">
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- Space Launch Now -->
+            <ins class="adsbygoogle"
+                 style="display:block; margin-top:16px; margin-bottom:16px;"
+                 data-ad-client="ca-pub-9824528399164059"
+                 data-ad-slot="8772606898"
+                 data-ad-format="auto"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+        <h3 class="title">Displaying {{ vehicles|length }} results.</h3>
+        <div class="col-md-9 mr-auto">
+            <form method="get" action="/vehicle/launcher/search/" style="margin: 0">
+                <div class="input-group">
+                    <input class="form-control" placeholder="{{ query }}" type="text" id="search-input" name="q">
+                    <span class="input-group-append">
+                        <button class="btn btn-primary btn-raised btn-round btn-fab"
+                                type="submit">
+                        <i class="fa fa-search"></i>
+                        </button>
+                        </span>
+                </div>
+            </form>
+        </div>
+        <div class="row">
+            <!-- Post Content Column -->
+            <div class="col-lg-9 col-md-12 col-xl-9">
+                <div class="team">
+                    <div class="row text-center">
+                        {% if vehicles|length > 0 %}
+                            {% for vehicle in vehicles %}
+                                <div class="col-md-4" style="margin-bottom: 20px">
+                                    <div class="card">
+                                        <div class="card-body ">
+                                            <div class="team-player">
+                                                <div class="col-md-10 mx-auto">
+                                                    {% if vehicle.profile_image %}
+                                                        {% thumbnail vehicle.profile_image "300x300" crop="center" as im %}
+                                                            <img class="img-raised rounded-circle img-fluid text-center"
+                                                                 src="{{ im.url }}"
+                                                                 style="padding:1px;border:1px solid #cccccc;">
+                                                        {% endthumbnail %}
+                                                    {% endif %}
+                                                </div>
+                                                <h4 class="card-title">{{ vehicle.serial_number }}
+                                                    <br>
+                                                    <small class="card-description text-muted">{{ vehicle.status }}
+                                                    </small>
+                                                </h4>
+                                                <div class="card-body">
+                                                    <p class="card-description">{{ vehicle.details|truncatechars:200 }}
+                                                    </p>
+                                                </div>
+                                                <a class="btn btn-primary"
+                                                   href="/vehicle/launcher/{{ vehicle.id }}">Explore</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-12 col-xl-3">
+                {% include "web/sidebar_full.html" %}
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- Space Launch Now -->
+        <ins class="adsbygoogle"
+             style="display:block; margin-top:16px; margin-bottom:16px;"
+             data-ad-client="ca-pub-9824528399164059"
+             data-ad-slot="8772606898"
+             data-ad-format="auto"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    {% include "web/install_buttons.html" %}
+{% endblock %}
+
+

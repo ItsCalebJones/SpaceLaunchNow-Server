@@ -16,7 +16,8 @@ from django.shortcuts import render, redirect
 from django import forms
 
 # Create your views here.
-from api.models import Agency, Launch, Astronaut
+from api.models import Agency, Launch, Astronaut, Launcher, SpaceStation
+from bot.models import NewsItem
 
 
 def get_youtube_url(launch):
@@ -132,6 +133,76 @@ def astronaut(request, id):
 def vehicle_root(request):
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
     return render(request, 'web/vehicles/index.html', {'previous_launches': previous_launches})
+
+
+def booster_reuse(request):
+    status = request.GET.get('status')
+    if status is None:
+        status = 'active'
+
+    _vehicles = Launcher.objects.filter(status__contains=status)
+    page = request.GET.get('page', 1)
+    paginator = Paginator(_vehicles, 20)
+
+    try:
+        vehicles = paginator.page(page)
+    except PageNotAnInteger:
+        vehicles = paginator.page(1)
+    except EmptyPage:
+        vehicles = paginator.page(paginator.num_pages)
+
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+    return render(request, 'web/vehicles/boosters/booster_list.html', {'previous_launches': previous_launches,
+                                                                       'status': status,
+                                                                       'vehicles': vehicles})
+
+
+def booster_reuse_search(request):
+    query = request.GET.get('q')
+
+    if query is not None:
+        _vehicles = Launcher.objects.filter(
+            Q(launcher_config__name__icontains=query) | Q(serial_number__icontains=query))
+        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
+        return render(request, 'web/vehicles/boosters/boosters_search.html', {'vehicles': _vehicles,
+                                                                              'query': query,
+                                                                              'previous_launches': previous_launches})
+    else:
+        return redirect('booster_reuse')
+
+
+def booster_reuse_id(request, id):
+    if id is not None:
+        vehicle = Launcher.objects.get(pk=id)
+        upcoming_vehicle_launches = Launch.objects.filter(rocket__firststage__launcher_id=vehicle.id).filter(
+            net__gte=datetime.utcnow())
+        previous_vehicle_launches = Launch.objects.filter(rocket__firststage__launcher_id=vehicle.id).filter(
+            net__lte=datetime.utcnow())
+        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
+        return render(request, 'web/vehicles/boosters/booster_detail.html', {'vehicle': vehicle,
+                                                                             'previous_launches': previous_launches,
+                                                                             'upcoming_vehicle_launches': upcoming_vehicle_launches,
+                                                                             'previous_vehicle_launches': previous_vehicle_launches})
+    else:
+        return redirect('booster_reuse')
+
+
+def spacestation_list(request):
+    spacestations = SpaceStation.objects.all().order_by('status')
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+    return render(request, 'web/vehicles/spacestations/spacestations_list.html',
+                  {'previous_launches': previous_launches,
+                   'spacestations': spacestations})
+
+
+def spacestation_by_id(request, id):
+    if id is not None:
+        spacestation = SpaceStation.objects.get(pk=id)
+        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
+        return render(request, 'web/vehicles/spacestations/spacestations_details.html', {'vehicle': spacestation,
+                                                                                         'previous_launches': previous_launches})
+    else:
+        return redirect('booster_reuse')
 
 
 def astronaut_by_slug(request, slug):

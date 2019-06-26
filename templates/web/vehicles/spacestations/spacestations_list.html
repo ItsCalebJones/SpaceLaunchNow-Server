@@ -1,0 +1,164 @@
+{% extends "web/base.html" %}
+{% load staticfiles %}
+{% load thumbnail %}
+{% load mathfilters %}
+{% block extrahead %}
+    <link rel="canonical" href="https://spacelaunchnow.me/spacestation/">
+    <title>Space Launch Now - Space Stations</title>
+    <meta name="title" content="Space Launch Now - Space Stations">
+    <meta property="fb:app_id" content="746774215504127"/>
+    <meta property="og:title" content="Space Launch Now - Space Stations"/>
+    <meta property="og:type" content="website"/>
+    <meta name="description"
+          content="A tracker for space stations.">
+    <meta property="og:description"
+          content="A tracker for space stations."/>
+    <meta property="og:url" content="https://spacelaunchnow.me/vehicle/spacestation"/>
+    <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
+    <meta property="og:image:width" content="3000"/>
+    <meta property="og:image:height" content="2000"/>
+
+{% endblock %}
+
+
+{% block navigation %}
+    {% include "web/navigation.html" %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="projects-1" id="projects-1">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 ml-auto mr-auto text-center">
+                        <h1 class="title">Space Stations</h1>
+                        <h2>Here is a tagline</h2>
+                        <hr>
+                    </div>
+                </div>
+                <div class="container">
+                    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"/>
+                    <!-- Space Launch Now -->
+                    <ins class="adsbygoogle"
+                         style="display:block; margin-top:16px; margin-bottom:16px;"
+                         data-ad-client="ca-pub-9824528399164059"
+                         data-ad-slot="8772606898"
+                         data-ad-format="auto"></ins>
+                    <script>
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-xl-9 mx-auto text-center">
+                <div class="row">
+                    <h3 class="title">Displaying {{ vehicles|length }} boosters.</h3>
+                    {% if spacestations|length > 0 %}
+                        {% for vehicle in spacestations %}
+                            <div class="card card-blog">
+                                {% if vehicle.image_url %}
+                                    <div class="card-header card-header-image">
+                                        <img class="img"
+                                             src="{{ vehicle.image_url.url }}">
+                                    </div>
+                                {% else %}
+                                    <div class="card-header card-header-image">
+                                        <img class="img"
+                                             src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
+                                    </div>
+                                {% endif %}
+                                <div class="card-body">
+                                    <h2 class="title text-center">{{ vehicle.name }}</h2>
+                                    <hr>
+                                    {% if vehicle.orbit %}
+                                        <span class="badge badge-pill badge-primary">{{ vehicle.orbit }}</span>
+                                    {% endif %}
+                                    {% if vehicle.type %}
+                                        <span class="badge badge-pill badge-success">{{ vehicle.type }}</span>
+                                    {% endif %}
+                                    {% if vehicle.founded %}
+                                        <span class="badge badge-pill badge-info">Founded: {{ vehicle.founded }}</span>
+                                    {% endif %}
+                                    {% if vehicle.mass %}
+                                        <span class="badge badge-pill badge-danger">Mass: {{ vehicle.mass }}T</span>
+                                    {% endif %}
+                                    {% if vehicle.volume %}
+                                        <span class="badge badge-pill badge-danger">Volume: {{ vehicle.volume }}m^3</span>
+                                    {% endif %}
+                                    <h4 class="card-category text-info">Details</h4>
+                                    <h5>Status - {{ vehicle.status|title }}</h5>
+                                    <p class="card-text">{{ vehicle.description }} </p>
+                                    <div class="text-left">
+                                        <a class="btn btn-primary" href="/vehicle/spacestation/{{ vehicle.id }}">Explore</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    <div class="text-center mx-auto">
+                        <nav aria-label="...">
+                            {% if vehicles.has_other_pages %}
+                                <ul class="pagination">
+                                    {% if vehicles.has_previous %}
+                                        <li class="page-item"><a class="page-link"
+                                                                 href="?status={{ status }}&page={{ vehicles.previous_page_number }}&nationality={{ nationality }}">Previous</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled"><span>Previous</span></li>
+                                    {% endif %}
+                                    {% if vehicles.number > 1 %}
+                                        <li class="page-item">
+                                        <a class="page-link"
+                                           href="?status={{ status }}&page=1&nationality={{ nationality }}">First</a>
+                                    {% endif %}
+                                    {% for i in vehicles.paginator.page_range %}
+                                        {% if forloop.counter|sub:vehicles.number >= -5 and forloop.counter|sub:vehicles.number <= 5 %}
+                                            {% if vehicles.number == i %}
+                                                <li class="page-item active"><span class="page-link">{{ i }} <span
+                                                        class="sr-only">(current)</span></span>
+                                                </li>
+                                            {% else %}
+                                                <li class="page-item"><a class="page-link"
+                                                                         href="?status={{ status }}&page={{ i }}&nationality={{ nationality }}">{{ i }}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if vehicles.has_next %}
+                                        {% if vehicles.paginator.count >= 10 %}
+                                            <li class="page-item"><a class="page-link"
+                                                                     href="?status={{ status }}&page={{ vehicles.paginator.count }}&nationality={{ nationality }}">Last</a>
+                                        {% endif %}
+                                        <li class="page-item"><a class="page-link"
+                                                                 href="?status={{ status }}&page={{ vehicles.next_page_number }}&nationality={{ nationality }}">Next</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled"><span class="page-link">Next</span></li>
+                                    {% endif %}
+                                </ul>
+                            {% endif %}
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-12 col-xl-3 mx-auto">
+                {% include "web/sidebar_launches_only.html" %}
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- Space Launch Now -->
+        <ins class="adsbygoogle"
+             style="display:block; margin-top:16px; margin-bottom:16px;"
+             data-ad-client="ca-pub-9824528399164059"
+             data-ad-slot="8772606898"
+             data-ad-format="auto"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    {% include "web/install_buttons.html" %}
+{% endblock content %}
