@@ -68,7 +68,8 @@ def launch_json_to_model(data):
         launch.status = LaunchStatus.objects.get(id=status)
     except ObjectDoesNotExist:
         launch.status = LaunchStatus.objects.get(id=2)
-        logger.error("Launch did not have a status.")
+
+        logger.error("Launch LLID: %s did not have a status." % launch.launch_library_id)
     launch.inhold = inhold
     launch.probability = probability
     launch.holdreason = holdreason
@@ -80,12 +81,27 @@ def launch_json_to_model(data):
     launch.window_end = datetime.datetime.strptime(window_end, '%B %d, %Y %H:%M:%S %Z').replace(tzinfo=pytz.utc)
     launch.window_start = datetime.datetime.strptime(window_start, '%B %d, %Y %H:%M:%S %Z').replace(tzinfo=pytz.utc)
 
-    launch.vid_urls.all().delete()
+    # Check to see if URL exists before adding.
+    print("Starting")
     for url in vid_urls:
-        VidURLs.objects.create(vid_url=url, launch=launch)
-    launch.info_urls.all().delete()
+        video_found = False
+        if launch.vid_urls.all() is not None:
+            for each in launch.vid_urls.all():
+                if each.vid_url == url:
+                    video_found = True
+        if not video_found:
+            VidURLs.objects.get_or_create(vid_url=url, launch=launch)
+
+    # Check to see if URL exists before adding.
     for url in info_urls:
-        InfoURLs.objects.create(info_url=url, launch=launch)
+        info_found = False
+        if launch.info_urls.all() is not None:
+            for each in launch.info_urls.all():
+                if each.info_url == url:
+                    info_found = True
+        if not info_found:
+            InfoURLs.objects.get_or_create(info_url=url, launch=launch)
+    print("Finished")
     launch.location = get_location(launch, data)
     launch.mission = get_mission(launch, data)
     launch.rocket = get_rocket(launch, data)
