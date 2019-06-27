@@ -16,8 +16,13 @@ from django.shortcuts import render, redirect
 from django import forms
 
 # Create your views here.
-from api.models import Agency, Launch, Astronaut, Launcher, SpaceStation, SpacecraftConfiguration
+from django_filters.views import FilterView
+from django_tables2 import RequestConfig, LazyPaginator, SingleTableMixin
+
+from api.models import Agency, Launch, Astronaut, Launcher, SpaceStation, SpacecraftConfiguration, LauncherConfig
 from bot.models import NewsItem
+from web.filters import LauncherConfigListFilter
+from web.tables import LaunchVehicleTable, LauncherConfigTable
 
 
 def get_youtube_url(launch):
@@ -137,9 +142,14 @@ def vehicle_root(request):
 
 def spacecraft_list(request):
     spacecraft = SpacecraftConfiguration.objects.all()
+    return render(request, 'web/vehicles/spacecraft/spacecraft_list.html', {'vehicles': spacecraft})
+
+
+def spacecraft_by_id(request, id):
+    spacecraft = SpacecraftConfiguration.objects.get(pk=id)
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
-    return render(request, 'web/vehicles/spacecraft/spacecraft_list.html', {'previous_launches': previous_launches,
-                                                                            'vehicles': spacecraft})
+    return render(request, 'web/vehicles/spacecraft/spacecraft_detail.html', {'previous_launches': previous_launches,
+                                                                              'vehicle': spacecraft})
 
 
 def booster_reuse(request):
@@ -194,12 +204,45 @@ def booster_reuse_id(request, id):
         return redirect('booster_reuse')
 
 
+class LauncherConfigListView(SingleTableMixin, FilterView):
+    table_class = LaunchVehicleTable
+    model = LauncherConfig
+    template_name = 'web/vehicles/launch_vehicle/launch_vehicles_list.html'
+
+    filterset_class = LauncherConfigListFilter
+
+
+def launch_vehicle(request):
+    table = LaunchVehicleTable(LauncherConfig.objects.all())
+    RequestConfig(request,
+                  paginate={"paginator_class": LazyPaginator, 'per_page': 25}).configure(table)
+
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+    return render(request, 'web/vehicles/launch_vehicle/launch_vehicles_list.html',
+                  {'previous_launches': previous_launches,
+                   'table': table})
+
+
+def launch_vehicle_id(request, id):
+    if id is not None:
+        vehicle = Launcher.objects.get(pk=id)
+        upcoming_vehicle_launches = Launch.objects.filter(rocket__firststage__launcher_id=vehicle.id).filter(
+            net__gte=datetime.utcnow())
+        previous_vehicle_launches = Launch.objects.filter(rocket__firststage__launcher_id=vehicle.id).filter(
+            net__lte=datetime.utcnow())
+        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
+        return render(request, 'web/vehicles/boosters/booster_detail.html', {'vehicle': vehicle,
+                                                                             'previous_launches': previous_launches,
+                                                                             'upcoming_vehicle_launches': upcoming_vehicle_launches,
+                                                                             'previous_vehicle_launches': previous_vehicle_launches})
+    else:
+        return redirect('booster_reuse')
+
+
 def spacestation_list(request):
     spacestations = SpaceStation.objects.all().order_by('status')
-    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
     return render(request, 'web/vehicles/spacestations/spacestations_list.html',
-                  {'previous_launches': previous_launches,
-                   'spacestations': spacestations})
+                  {'spacestations': spacestations})
 
 
 def spacestation_by_id(request, id):

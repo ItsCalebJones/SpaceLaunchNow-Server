@@ -1,0 +1,86 @@
+{% extends "web/base.html" %}
+{% load staticfiles %}
+{% load render_table from django_tables2 %}
+{% load bootstrap4 %}
+{% block extrahead %}
+    <link rel="canonical" href="https://spacelaunchnow.me/spacestation/">
+    <title>Space Launch Now - Space Stations</title>
+    <meta name="title" content="Space Launch Now - Space Stations">
+    <meta property="fb:app_id" content="746774215504127"/>
+    <meta property="og:title" content="Space Launch Now - Space Stations"/>
+    <meta property="og:type" content="website"/>
+    <meta name="description"
+          content="A tracker for space stations.">
+    <meta property="og:description"
+          content="A tracker for space stations."/>
+    <meta property="og:url" content="https://spacelaunchnow.me/vehicle/spacestation"/>
+    <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
+    <meta property="og:image:width" content="3000"/>
+    <meta property="og:image:height" content="2000"/>
+
+{% endblock %}
+
+
+{% block navigation %}
+    {% include "web/navigation.html" %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="projects-1" id="projects-1">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 ml-auto mr-auto text-center">
+                        <h1 class="title">Launch Vehicles</h1>
+                        <h2>Explore the vehicles we've used to get to Orbit</h2>
+                        <hr>
+                    </div>
+                </div>
+                <div class="container">
+                    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"/>
+                    <!-- Space Launch Now -->
+                    <ins class="adsbygoogle"
+                         style="display:block; margin-top:16px; margin-bottom:16px;"
+                         data-ad-client="ca-pub-9824528399164059"
+                         data-ad-slot="8772606898"
+                         data-ad-format="auto"></ins>
+                    <script>
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 x-auto text-center">
+                <div class="col-md-8 mx-auto">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Launch Vehicle Filters</h4>
+                            {% if filter %}
+                                <form action="" method="get" class="form">
+                                    {% bootstrap_form filter.form %}
+                                    {% bootstrap_button 'filter' %}
+                                    <a class="btn btn-primary" href="/vehicle/launch_vehicle">Clear</a>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% render_table table %}
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- Space Launch Now -->
+        <ins class="adsbygoogle"
+             style="display:block; margin-top:16px; margin-bottom:16px;"
+             data-ad-client="ca-pub-9824528399164059"
+             data-ad-slot="8772606898"
+             data-ad-format="auto"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    {% include "web/install_buttons.html" %}
+{% endblock content %}

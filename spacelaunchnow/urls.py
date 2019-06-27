@@ -30,6 +30,7 @@ from api.v1.router import api_urlpatterns as api_v1
 from spacelaunchnow import config
 from web import views as landing_views
 from app.views import staff_view, translator_view, about_view
+from web.views import LauncherConfigListView
 
 sitemaps = {
     'posts': LaunchSitemap
@@ -64,9 +65,12 @@ if config.IS_WEBSERVER:
         url(r'^vehicle/launcher$', landing_views.booster_reuse, name='booster_reuse'),
         url(r'^vehicle/launcher/(?P<id>\d+)/$', landing_views.booster_reuse_id, name='booster_reuse_id'),
         url(r'^vehicle/launcher/search/?$', landing_views.booster_reuse_search, name='booster_reuse_search'),
+        url(r'^vehicle/launch_vehicle$', LauncherConfigListView.as_view()),
+        url(r'^vehicle/launch_vehicle/(\d+)/', landing_views.launch_vehicle_id, name='launch_vehicle_id'),
         url(r'^vehicle/spacestation$', landing_views.spacestation_list, name='spacestation_list'),
         url(r'^vehicle/spacestation/(?P<id>\d+)/$', landing_views.spacestation_by_id, name='spacestation_by_id'),
         url(r'^vehicle/spacecraft$', landing_views.spacecraft_list, name='spacecraft_list'),
+        url(r'^vehicle/spacecraft/(?P<id>\d+)/$', landing_views.spacecraft_by_id, name='spacecraft_by_id'),
         url(r'^astronaut/$', landing_views.astronaut_list, name='astronauts'),
         url(r'^astronaut/search/?$', landing_views.astronaut_search, name='astronaut_search'),
         url(r'^astronaut/(?P<id>\d+)/$', landing_views.astronaut, name='astronaut_by_id'),

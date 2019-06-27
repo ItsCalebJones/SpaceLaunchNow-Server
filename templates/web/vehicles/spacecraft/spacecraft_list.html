@@ -51,39 +51,52 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-12 col-xl-9 mx-auto text-center">
+            <div class="col-md-12 x-auto text-center">
                 <div class="row">
                     {% if vehicles|length > 0 %}
                         {% for vehicle in vehicles %}
-                            <div class="card card-blog">
-                                {% if vehicle.image_url %}
-                                    <div class="card-header card-header-image">
-                                        <img class="img"
-                                             src="{{ vehicle.image_url.url }}">
-                                    </div>
-                                {% else %}
-                                    <div class="card-header card-header-image">
-                                        <img class="img"
-                                             src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
-                                    </div>
-                                {% endif %}
-                                <div class="card-body">
-                                    <h3 class="title text-center">{{ vehicle.name }}</h3>
-                                    <h4 class="title text-center text-muted">{{ vehicle.capability }}</h4>
-                                    <hr>
-                                    {% if vehicle.in_use %}
-                                        <span class="badge badge-pill badge-primary">Active: {{ vehicle.in_use }}</span>
+                            <div class="col-sm-6">
+                                <div class="card card-blog">
+                                    {% if vehicle.image_url %}
+                                        <div class="card-header card-header-image">
+                                            <img class="img"
+                                                 src="{{ vehicle.image_url.url }}">
+                                        </div>
+                                    {% else %}
+                                        <div class="card-header card-header-image">
+                                            <img class="img"
+                                                 src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
+                                        </div>
                                     {% endif %}
-                                    {% if vehicle.human_rated %}
-                                        <span class="badge badge-pill badge-success">Human Rated: {{ vehicle.human_rated }}</span>
-                                    {% endif %}
-                                    {% if vehicle.crew_capacity %}
-                                        <span class="badge badge-pill badge-info">Crew Capacity: {{ vehicle.crew_capacity }}</span>
-                                    {% endif %}
+                                    <div class="card-body">
+                                        <h3 class="info-title text-center mb-0">{{ vehicle.name }}</h3>
+                                        {% if vehicle.in_use %}
+                                            <span class="badge badge-pill badge-success">Active</span>
+                                        {% else %}
+                                            <span class="badge badge-pill badge-danger">In-active</span>
+                                        {% endif %}
 
-                                    <div class="text-left">
-                                        <a class="btn btn-primary"
-                                           href="/vehicle/spacecraft/{{ vehicle.id }}">Explore</a>
+                                        {% if vehicle.human_rated %}
+                                            <span class="badge badge-pill badge-success">Human Rated</span>
+                                        {% else %}
+                                            <span class="badge badge-pill badge-warning">Cargo</span>
+                                        {% endif %}
+
+                                        {% if vehicle.crew_capacity %}
+                                            <span class="badge badge-pill badge-info">Crew Capacity: {{ vehicle.crew_capacity }}</span>
+                                        {% endif %}
+                                        <h6 class="info-subtitle text-muted">{{ vehicle.launch_agency.name }}
+                                            ({{ vehicle.launch_agency.abbrev }})</h6>
+                                        <h7 class="info-subtitle text-muted">{{ vehicle.capability }}</h7>
+                                        <div class="text-left">
+                                            <h6 class="info-subtitle text-muted">Description</h6>
+                                            <p class="description">{{ vehicle.details|truncatewords:50 }}</p>
+                                        </div>
+                                        <hr>
+                                        <div class="text-left">
+                                            <a class="btn btn-primary"
+                                               href="/vehicle/spacecraft/{{ vehicle.id }}">Read More</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -134,10 +147,6 @@
                         </nav>
                     </div>
                 </div>
-            </div>
-
-            <div class="col-sm-12 col-xl-3 mx-auto">
-                {% include "web/sidebar_launches_only.html" %}
             </div>
         </div>
     </div>

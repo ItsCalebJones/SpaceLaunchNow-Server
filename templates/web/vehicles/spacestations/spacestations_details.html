@@ -131,6 +131,11 @@
                                                 <h4 class="info-title">{{ docked.spacecraft.name }}</h4>
                                                 <h6 class="info-subtitle mb-2 text-muted">{{ docked.spacecraft.name }}</h6>
                                                 <h6 class="info-subtitle mb-2 text-muted">{{ docked.docking_event.0.docking_location }}</h6>
+                                                {% if docked.docking_events.all|length > 0 %}
+                                                    {% if docked.docking_events.all.first.docking_location %}
+                                                        <span class="badge badge-pill badge-success">{{ docked.docking_events.all.first.docking_location }}</span>
+                                                    {% endif %}
+                                                {% endif %}
                                                 {% if docked.spacecraft.serial_number %}
                                                     <span class="badge badge-pill badge-primary">{{ docked.spacecraft.serial_number }}</span>
                                                 {% endif %}
@@ -153,22 +158,24 @@
                             <hr>
                             <div class="row">
                                 {% for owner in vehicle.owners.all %}
-                                    <div class="col-lg-6 col-md-12 text-center" style="margin-bottom: 20px">
-                                        <div class="info">
-                                            <div class="info-body">
-                                                <h4 class="info-title">{{ owner.name }}</h4>
-                                                <h6 class="info-subtitle mb-2 text-muted">{{ owner.type }}</h6>
-                                                <h6 class="info-subtitle mb-2 text-muted">{{ owner.administrator }}</h6>
-                                                {% if owner.abbrev %}
-                                                    <span class="badge badge-pill badge-primary">{{ owner.abbrev }}</span>
-                                                {% endif %}
-                                                {% if owner.founding_year %}
-                                                    <span class="badge badge-pill badge-info">{{ owner.founding_year }}</span>
-                                                {% endif %}
-                                                <p class="info-text">{{ owner.description }}</p>
-
-                                            </div>
-                                        </div>
+                                    <div class="col-lg-8 col-md-12 text-center mx-auto" style="margin-bottom: 20px">
+                                        {% if owner.nation_url %}
+                                            {% thumbnail owner.nation_url "100x100" as im %}
+                                                <img class="img-raised rounded-circle img-fluid text-center"
+                                                     src="{{ im.url }}"
+                                                     style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                                            {% endthumbnail %}
+                                        {% endif %}
+                                        <h4 class="info-title">{{ owner.name }}</h4>
+                                        <h6 class="info-subtitle mb-2 text-muted">{{ owner.type }}</h6>
+                                        <h6 class="info-subtitle mb-2 text-muted">{{ owner.administrator }}</h6>
+                                        {% if owner.abbrev %}
+                                            <span class="badge badge-pill badge-primary">{{ owner.abbrev }}</span>
+                                        {% endif %}
+                                        {% if owner.founding_year %}
+                                            <span class="badge badge-pill badge-info">{{ owner.founding_year }}</span>
+                                        {% endif %}
+                                        <p class="description">{{ owner.description }}</p>
                                     </div>
                                 {% endfor %}
                             </div>
