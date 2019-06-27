@@ -56,7 +56,7 @@
                                 <span class="badge badge-pill badge-info">Founded: {{ vehicle.founded }}</span>
                             {% endif %}
                             {% if vehicle.mass %}
-                                <span class="badge badge-pill badge-danger">Mass: {{ vehicle.mass }}T</span>
+                                <span class="badge badge-pill badge-danger">Mass: {{ vehicle.mass }} T</span>
                             {% endif %}
                             {% if vehicle.volume %}
                                 <span class="badge badge-pill badge-danger">Volume: {{ vehicle.volume }}m^3</span>
@@ -65,33 +65,58 @@
                         <h5 class="title text-muted text-center">Status - {{ vehicle.status|title }}</h5>
                         <h6 class="card-category text-info text-center">Details</h6>
                         <p class="card-text">{{ vehicle.description }} </p>
-                        <hr>
-                        {% if vehicle.owners.all|length > 0 %}
-                            <h3 class="title text-center">{{ vehicle.name }} Owners</h3>
-                            <div class="row">
-                                {% for owner in vehicle.owners.all %}
-                                    <div class="col-lg-6 col-md-12 text-center" style="margin-bottom: 20px">
-                                        <div class="info">
-                                            <div class="info-body">
-                                                <h4 class="info-title">{{ owner.name }}</h4>
-                                                <h6 class="info-subtitle mb-2 text-muted">{{ owner.type }}</h6>
-                                                <h6 class="info-subtitle mb-2 text-muted">{{ owner.administrator }}</h6>
-                                                {% if owner.abbrev %}
-                                                    <span class="badge badge-pill badge-primary">{{ owner.abbrev }}</span>
-                                                {% endif %}
-                                                {% if owner.founding_year %}
-                                                    <span class="badge badge-pill badge-info">{{ owner.founding_year }}</span>
-                                                {% endif %}
-                                                <p class="info-text">{{ owner.description }}</p>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
+                        {% if vehicle.id == 4 %}
+                            <div class="col-md-12 text-center">
+                                <h3 class="title text-center">Live ISS Tracking</h3><br>
+                                <hr>
+                                <iframe src="https://isstracker.spaceflight.esa.int/"
+                                        style="border: 0 none transparent; "
+                                        id="iss-pos" width="625" height="575" frameborder="0" scrolling="no"
+                                        allowfullscreen="" title="ESU ISS tracking map">ESA ISS tracking map
+                                </iframe>
+                            </div>
+                            <div class="col-md-12 text-center">
+                                <iframe width="625" height="325" src="https://ustream.tv/embed/9408562" scrolling="no"
+                                        allowfullscreen webkitallowfullscreen frameborder="0"
+                                        style="border: 0 none transparent;"></iframe>
+                                <p class="caption">A dark screen may mean the ISS is on the dark side of the Earth.</p>
                             </div>
                         {% endif %}
+
+                        {% for expedition in vehicle.active_expeditions.all %}
+                            {% if expedition.crew.all|length > 0 %}
+                                <h3 class="title text-center">{{ expedition.name }}</h3><br>
+                                <hr>
+                                <div class="row">
+                                    {% for crew in expedition.crew.all %}
+                                        <div class="col-md-4">
+                                            <div class="card card-profile card-plain">
+                                                <div class="card-header card-avatar">
+                                                    {% if crew.astronaut.profile_image %}
+                                                        {% thumbnail crew.astronaut.profile_image "300x300" crop="80% top" as im %}
+                                                            <img class="img-raised rounded-circle img-fluid text-center"
+                                                                 src="{{ im.url }}"
+                                                                 style="padding:1px;border:1px solid #cccccc;max-height: 200px;max-width: 200px">
+                                                        {% endthumbnail %}
+                                                    {% else %}
+                                                        <img class="img-raised rounded-circle img-fluid"
+                                                             src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
+                                                    {% endif %}
+                                                </div>
+                                                <div class="card-body ">
+                                                    <h4 class="card-title">{{ crew.astronaut.name }}</h4>
+                                                    <h6 class="card-category text-muted">{{ crew.role }}</h6>
+                                                    <h6 class="card-category text-muted">{{ crew.agency.name }}</h6>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
                         {% if vehicle.docked_vehicles.all|length > 0 %}
                             <h3 class="title text-center">Docked Vehicles</h3><br>
+                            <hr>
                             <div class="row">
                                 {% for docked in vehicle.docked_vehicles.all %}
                                     <div class="col-md-6 text-center" style="margin-bottom: 20px">
@@ -117,6 +142,31 @@
                                                     <a class="btn btn-primary"
                                                        href="/launch/{{ docked.launch.slug }}">View Launch</a>
                                                 </row>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        {% if vehicle.owners.all|length > 0 %}
+                            <h3 class="title text-center">Agencies</h3>
+                            <hr>
+                            <div class="row">
+                                {% for owner in vehicle.owners.all %}
+                                    <div class="col-lg-6 col-md-12 text-center" style="margin-bottom: 20px">
+                                        <div class="info">
+                                            <div class="info-body">
+                                                <h4 class="info-title">{{ owner.name }}</h4>
+                                                <h6 class="info-subtitle mb-2 text-muted">{{ owner.type }}</h6>
+                                                <h6 class="info-subtitle mb-2 text-muted">{{ owner.administrator }}</h6>
+                                                {% if owner.abbrev %}
+                                                    <span class="badge badge-pill badge-primary">{{ owner.abbrev }}</span>
+                                                {% endif %}
+                                                {% if owner.founding_year %}
+                                                    <span class="badge badge-pill badge-info">{{ owner.founding_year }}</span>
+                                                {% endif %}
+                                                <p class="info-text">{{ owner.description }}</p>
+
                                             </div>
                                         </div>
                                     </div>

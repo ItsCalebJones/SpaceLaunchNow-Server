@@ -31,7 +31,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-8 ml-auto mr-auto text-center">
-                        <h1 class="title">Space Stations</h1>
+                        <h1 class="title">Spacecraft</h1>
                         <h2>Here is a tagline</h2>
                         <hr>
                     </div>
@@ -53,8 +53,8 @@
         <div class="row">
             <div class="col-sm-12 col-xl-9 mx-auto text-center">
                 <div class="row">
-                    {% if spacestations|length > 0 %}
-                        {% for vehicle in spacestations %}
+                    {% if vehicles|length > 0 %}
+                        {% for vehicle in vehicles %}
                             <div class="card card-blog">
                                 {% if vehicle.image_url %}
                                     <div class="card-header card-header-image">
@@ -68,28 +68,22 @@
                                     </div>
                                 {% endif %}
                                 <div class="card-body">
-                                    <h2 class="title text-center">{{ vehicle.name }}</h2>
+                                    <h3 class="title text-center">{{ vehicle.name }}</h3>
+                                    <h4 class="title text-center text-muted">{{ vehicle.capability }}</h4>
                                     <hr>
-                                    {% if vehicle.orbit %}
-                                        <span class="badge badge-pill badge-primary">{{ vehicle.orbit }}</span>
+                                    {% if vehicle.in_use %}
+                                        <span class="badge badge-pill badge-primary">Active: {{ vehicle.in_use }}</span>
                                     {% endif %}
-                                    {% if vehicle.type %}
-                                        <span class="badge badge-pill badge-success">{{ vehicle.type }}</span>
+                                    {% if vehicle.human_rated %}
+                                        <span class="badge badge-pill badge-success">Human Rated: {{ vehicle.human_rated }}</span>
                                     {% endif %}
-                                    {% if vehicle.founded %}
-                                        <span class="badge badge-pill badge-info">Founded: {{ vehicle.founded }}</span>
+                                    {% if vehicle.crew_capacity %}
+                                        <span class="badge badge-pill badge-info">Crew Capacity: {{ vehicle.crew_capacity }}</span>
                                     {% endif %}
-                                    {% if vehicle.mass %}
-                                        <span class="badge badge-pill badge-danger">Mass: {{ vehicle.mass }}T</span>
-                                    {% endif %}
-                                    {% if vehicle.volume %}
-                                        <span class="badge badge-pill badge-danger">Volume: {{ vehicle.volume }} m³</span>
-                                    {% endif %}
-                                    <h4 class="card-category text-info">Details</h4>
-                                    <h5>Status - {{ vehicle.status|title }}</h5>
-                                    <p class="card-text">{{ vehicle.description }} </p>
+
                                     <div class="text-left">
-                                        <a class="btn btn-primary" href="/vehicle/spacestation/{{ vehicle.id }}">Explore</a>
+                                        <a class="btn btn-primary"
+                                           href="/vehicle/spacecraft/{{ vehicle.id }}">Explore</a>
                                     </div>
                                 </div>
                             </div>

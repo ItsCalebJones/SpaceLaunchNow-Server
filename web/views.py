@@ -16,7 +16,7 @@ from django.shortcuts import render, redirect
 from django import forms
 
 # Create your views here.
-from api.models import Agency, Launch, Astronaut, Launcher, SpaceStation
+from api.models import Agency, Launch, Astronaut, Launcher, SpaceStation, SpacecraftConfiguration
 from bot.models import NewsItem
 
 
@@ -133,6 +133,13 @@ def astronaut(request, id):
 def vehicle_root(request):
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
     return render(request, 'web/vehicles/index.html', {'previous_launches': previous_launches})
+
+
+def spacecraft_list(request):
+    spacecraft = SpacecraftConfiguration.objects.all()
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+    return render(request, 'web/vehicles/spacecraft/spacecraft_list.html', {'previous_launches': previous_launches,
+                                                                            'vehicles': spacecraft})
 
 
 def booster_reuse(request):

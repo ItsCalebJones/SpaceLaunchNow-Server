@@ -66,6 +66,7 @@ if config.IS_WEBSERVER:
         url(r'^vehicle/launcher/search/?$', landing_views.booster_reuse_search, name='booster_reuse_search'),
         url(r'^vehicle/spacestation$', landing_views.spacestation_list, name='spacestation_list'),
         url(r'^vehicle/spacestation/(?P<id>\d+)/$', landing_views.spacestation_by_id, name='spacestation_by_id'),
+        url(r'^vehicle/spacecraft$', landing_views.spacecraft_list, name='spacecraft_list'),
         url(r'^astronaut/$', landing_views.astronaut_list, name='astronauts'),
         url(r'^astronaut/search/?$', landing_views.astronaut_search, name='astronaut_search'),
         url(r'^astronaut/(?P<id>\d+)/$', landing_views.astronaut, name='astronaut_by_id'),
