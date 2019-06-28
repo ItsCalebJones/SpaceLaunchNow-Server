@@ -14792,9 +14792,9 @@ select.selectpicker {
 
 .presentation-page .header-filter:after,
 .index-page .header-filter:after {
-  background: rgba(132, 13, 121, 0.88);
-  background: linear-gradient(45deg, rgba(132, 13, 121, 0.88) 0%, rgba(208, 44, 180, 0.31) 100%);
-  background: -webkit-linear-gradient(135deg, rgba(132, 13, 121, 0.88) 0%, rgba(208, 44, 180, 0.31) 100%); }
+  background: rgba(9, 102, 175, 0.88);
+  background: linear-gradient(45deg, rgba(9, 102, 175, 0.88) 0%, rgba(19, 90, 170, 0.31) 100%);
+  background: -webkit-linear-gradient(135deg, rgba(9, 102, 175, 0.88) 0%, rgba(19, 90, 170, 0.31) 100%); }
 
 .presentation-page h4.description,
 .index-page h4.description {

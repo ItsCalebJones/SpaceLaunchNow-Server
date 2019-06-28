@@ -212,29 +212,12 @@ class LauncherConfigListView(SingleTableMixin, FilterView):
     filterset_class = LauncherConfigListFilter
 
 
-def launch_vehicle(request):
-    table = LaunchVehicleTable(LauncherConfig.objects.all())
-    RequestConfig(request,
-                  paginate={"paginator_class": LazyPaginator, 'per_page': 25}).configure(table)
-
-    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
-    return render(request, 'web/vehicles/launch_vehicle/launch_vehicles_list.html',
-                  {'previous_launches': previous_launches,
-                   'table': table})
-
-
 def launch_vehicle_id(request, id):
     if id is not None:
-        vehicle = Launcher.objects.get(pk=id)
-        upcoming_vehicle_launches = Launch.objects.filter(rocket__firststage__launcher_id=vehicle.id).filter(
-            net__gte=datetime.utcnow())
-        previous_vehicle_launches = Launch.objects.filter(rocket__firststage__launcher_id=vehicle.id).filter(
-            net__lte=datetime.utcnow())
+        vehicle = LauncherConfig.objects.get(pk=id)
         previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
-        return render(request, 'web/vehicles/boosters/booster_detail.html', {'vehicle': vehicle,
-                                                                             'previous_launches': previous_launches,
-                                                                             'upcoming_vehicle_launches': upcoming_vehicle_launches,
-                                                                             'previous_vehicle_launches': previous_vehicle_launches})
+        return render(request, 'web/vehicles/launch_vehicle/launch_vehicle_detail.html',
+                      {'vehicle': vehicle, 'previous_launches': previous_launches})
     else:
         return redirect('booster_reuse')
 
