@@ -85,6 +85,7 @@ if config.IS_WEBSERVER:
         url(r'^site/tos', TemplateView.as_view(template_name='web/site/tos.html'), name='tos'),
         url(r'^docs/', include('rest_framework_docs.urls')),
         url(r'^ajax/astronaut/$', landing_views.astronaut_search_ajax, name='ajax-astronaut'),
+        url(r'^app$', landing_views.app, name='app'),
         url(r'^$', landing_views.index, name='index'),
     ]
 

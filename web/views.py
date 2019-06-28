@@ -32,20 +32,45 @@ def get_youtube_url(launch):
 
 
 def index(request):
+    news = NewsItem.objects.all().order_by('created_at')[:6]
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+    _launches = Launch.objects.filter(net__gte=datetime.utcnow()).filter(Q(status__id=1) | Q(status__id=2)).order_by('net')[:3]
+
+    in_flight_launch = Launch.objects.filter(status__id=6).order_by('-net').first()
+    recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - dt.timedelta(hours=2),
+                                              net__lte=datetime.utcnow()).order_by('-net').first()
+    _next_launch = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net').first()
+
+    if in_flight_launch:
+        launch = in_flight_launch
+    elif recently_launched:
+        launch = recently_launched
+    else:
+        launch = _next_launch
+        _launches = _launches[1:3]
+
+    return render(request, 'web/index.html', {'launch': launch,
+                                              'upcoming_launches': _launches,
+                                              'youtube_url': get_youtube_url(_next_launch),
+                                              'news': news,
+                                              'previous_launches': previous_launches})
+
+
+def app(request):
     in_flight_launch = Launch.objects.filter(status__id=6).order_by('-net').first()
     if in_flight_launch:
-        return render(request, 'web/index.html', {'launch': in_flight_launch,
-                                                  'youtube_url': get_youtube_url(in_flight_launch)})
+        return render(request, 'web/app.html', {'launch': in_flight_launch,
+                                                'youtube_url': get_youtube_url(in_flight_launch)})
 
     recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - dt.timedelta(hours=2),
                                               net__lte=datetime.utcnow()).order_by('-net').first()
     if recently_launched:
-        return render(request, 'web/index.html', {'launch': recently_launched,
-                                                  'youtube_url': get_youtube_url(recently_launched)})
+        return render(request, 'web/app.html', {'launch': recently_launched,
+                                                'youtube_url': get_youtube_url(recently_launched)})
     else:
         _next_launch = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net').first()
-        return render(request, 'web/index.html', {'launch': _next_launch,
-                                                  'youtube_url': get_youtube_url(_next_launch)})
+        return render(request, 'web/app.html', {'launch': _next_launch,
+                                                'youtube_url': get_youtube_url(_next_launch)})
 
 
 # Create your views here.
@@ -136,8 +161,10 @@ def astronaut(request, id):
 
 
 def vehicle_root(request):
-    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
-    return render(request, 'web/vehicles/index.html', {'previous_launches': previous_launches})
+    news = NewsItem.objects.all().order_by('created_at')[:6]
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:15]
+    return render(request, 'web/vehicles/index.html', {'previous_launches': previous_launches,
+                                                       'news': news})
 
 
 def spacecraft_list(request):

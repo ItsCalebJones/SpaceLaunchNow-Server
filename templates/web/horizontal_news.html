@@ -1,14 +1,13 @@
 {% load staticfiles %}
 <div class="row">
     <div class="col-md-12 text-center">
-        <h3 class="title">Latest Space News</h3>
-        <hr>
+        <h3 class="title">Spaceflight News</h3>
     </div>
-    {% if latest_news|length > 0 %}
-        {% for item in latest_news %}
+    {% if news|length > 0 %}
+        {% for item in news %}
             <div class="col-xl-4 col-lg-6 col-md-12">
                 <div class="card card-background"
-                     style="background-image: url('{{ item.featured_image }}')">
+                     style="background-image: url('{{ item.featured_image }}'); height: 410px">
                     <div class="card-body">
                         <h6 class="card-category text-info">{{ item.news_site }}</h6>
                         <h3 class="card-title">{{ item.title|truncatechars:100 }}</h3>
