@@ -1,0 +1,210 @@
+{% extends "web/base.html" %}
+{% load staticfiles %}
+{% load thumbnail %}
+{% load mathfilters %}
+{% block extrahead %}
+    <link rel="canonical" href="https://spacelaunchnow.me/vehicle/launcher">
+    <title>Space Launch Now - Reusable</title>
+    <meta name="title" content="Space Launch Now - Reusable">
+    <meta property="fb:app_id" content="746774215504127"/>
+    <meta property="og:title" content="Space Launch Now - Reusable"/>
+    <meta property="og:type" content="website"/>
+    <meta name="description"
+          content="A tracker for following the status of reusable boosters.">
+    <meta property="og:description"
+          content="A tracker for following the status of reusable boosters."/>
+    <meta property="og:url" content="https://spacelaunchnow.me/vehicle/launcher"/>
+    <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
+    <meta property="og:image:width" content="3000"/>
+    <meta property="og:image:height" content="2000"/>
+
+{% endblock %}
+
+
+{% block navigation %}
+    {% include "web/navigation.html" %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="projects-1" id="projects-1">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 ml-auto mr-auto text-center">
+                        <h1 class="title">Reusable Launch Vehicles</h1>
+                        <h2>A new era of spaceflight has been ushered in with the advent of rapidly reusable
+                            vehicles.</h2>
+                        <hr>
+                        <ul class="nav nav-pills nav-pills-icons mx-auto justify-content-center">
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-primary {% if status == 'active' %} active {% endif %}"
+                                   href="/vehicle/launcher?status=active">
+                                    <i class="fa fa-space-shuttle"></i>
+                                    Active
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-info {% if status == 'retired' %} active {% endif %}"
+                                   href="/vehicle/launcher?status=retired">
+                                    <i class="fa fa-suitcase"></i>
+                                    Retired
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-danger {% if status == 'destroyed' %} active {% endif %}"
+                                   href="/vehicle/launcher?status=destroyed">
+                                    <i class="fas fa-skull-crossbones"></i>
+                                    Destroyed
+                                </a>
+                            </li>
+                            <li class="nav-item nav-pills.nav-pills-info">
+                                <a class="nav-link nav-link-warning {% if status == 'expended' %} active {% endif %}"
+                                   href="/vehicle/launcher?status=expended">
+                                    <i class="fa fa-tombstone"></i>
+                                    Expended
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6 mx-auto mt-2 pt-2 justify-content-center">
+                    <form method="get" action="/vehicle/launcher/search/" style="margin: 0">
+                        <div class="input-group">
+                            <input class="form-control" placeholder="Ex. B1051, Falcon Heavy, etc" type="text"
+                                   id="search-input"
+                                   name="q">
+                            <span class="input-group-append">
+                                                <button class="btn btn-primary btn-raised btn-round btn-fab"
+                                                        type="submit">
+                                                <i class="fa fa-search"></i>
+                                                </button>
+                                                </span>
+                        </div>
+                    </form>
+                </div>
+                <div class="container">
+                    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"/>
+                    <!-- Space Launch Now -->
+                    <ins class="adsbygoogle"
+                         style="display:block; margin-top:16px; margin-bottom:16px;"
+                         data-ad-client="ca-pub-9824528399164059"
+                         data-ad-slot="8772606898"
+                         data-ad-format="auto"></ins>
+                    <script>
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-xl-9 mx-auto text-center">
+                <div class="row">
+                    <h3 class="title">Displaying {{ vehicles|length }} boosters.</h3>
+                    {% if vehicles|length > 0 %}
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th class="text-center"></th>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Configuration</th>
+                                <th>Flights</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for vehicle in vehicles %}
+                                <tr>
+                                    <td>
+                                        {% if vehicle.image_url %}
+                                            {% thumbnail vehicle.image_url "100x100" as im %}
+                                                <img class="img-raised rounded-circle img-fluid text-center"
+                                                     src="{{ im.url }}"
+                                                     style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                                            {% endthumbnail %}
+                                        {% else %}
+                                            <img class="img-raised rounded-circle img-fluid"
+                                                 style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;"
+                                                 src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ vehicle.serial_number }}</td>
+                                    <td>{{ vehicle.status }}</td>
+                                    <td>{{ vehicle.launcher_config.name }}</td>
+                                    <td>{{ vehicle.previous_flights }}</td>
+                                    <td class="td-actions">
+                                        <a href="/vehicle/launcher/{{ vehicle.id }}">
+                                            <i class="material-icons">explore</i> Explore
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                    <div class="text-center mx-auto">
+                        <nav aria-label="...">
+                            {% if vehicles.has_other_pages %}
+                                <ul class="pagination">
+                                    {% if vehicles.has_previous %}
+                                        <li class="page-item"><a class="page-link"
+                                                                 href="?status={{ status }}&page={{ vehicles.previous_page_number }}&nationality={{ nationality }}">Previous</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled"><span>Previous</span></li>
+                                    {% endif %}
+                                    {% if vehicles.number > 1 %}
+                                        <li class="page-item">
+                                        <a class="page-link"
+                                           href="?status={{ status }}&page=1&nationality={{ nationality }}">First</a>
+                                    {% endif %}
+                                    {% for i in vehicles.paginator.page_range %}
+                                        {% if forloop.counter|sub:vehicles.number >= -5 and forloop.counter|sub:vehicles.number <= 5 %}
+                                            {% if vehicles.number == i %}
+                                                <li class="page-item active"><span class="page-link">{{ i }} <span
+                                                        class="sr-only">(current)</span></span>
+                                                </li>
+                                            {% else %}
+                                                <li class="page-item"><a class="page-link"
+                                                                         href="?status={{ status }}&page={{ i }}&nationality={{ nationality }}">{{ i }}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if vehicles.has_next %}
+                                        {% if vehicles.paginator.count >= 10 %}
+                                            <li class="page-item"><a class="page-link"
+                                                                     href="?status={{ status }}&page={{ vehicles.paginator.count }}&nationality={{ nationality }}">Last</a>
+                                        {% endif %}
+                                        <li class="page-item"><a class="page-link"
+                                                                 href="?status={{ status }}&page={{ vehicles.next_page_number }}&nationality={{ nationality }}">Next</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled"><span class="page-link">Next</span></li>
+                                    {% endif %}
+                                </ul>
+                            {% endif %}
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-12 col-xl-3 mx-auto">
+                {% include "web/sidebar_launches_only.html" %}
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- Space Launch Now -->
+        <ins class="adsbygoogle"
+             style="display:block; margin-top:16px; margin-bottom:16px;"
+             data-ad-client="ca-pub-9824528399164059"
+             data-ad-slot="8772606898"
+             data-ad-format="auto"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    {% include "web/install_buttons.html" %}
+{% endblock content %}

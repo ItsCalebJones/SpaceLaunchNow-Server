@@ -1,0 +1,160 @@
+{% extends "web/base.html" %}
+{% load staticfiles %}
+{% load thumbnail %}
+{% block extrahead %}
+    <link rel="canonical" href="https://spacelaunchnow.me/vehicle/">
+    <title>Space Launch Now - Launch Schedule</title>
+    <meta name="title" content="Space Launch Now - Vehicles">
+    <meta property="fb:app_id" content="746774215504127"/>
+    <meta property="og:title" content="Space Launch Now - Vehicles"/>
+    <meta property="og:type" content="website"/>
+    <meta name="description"
+          content="Get to know the spaceflight vehicles that get us to orbit and keep us there.">
+    <meta property="og:description"
+          content="Get to know the spaceflight vehicles that get us to orbit and keep us there."/>
+    <meta property="og:url" content="https://spacelaunchnow.me/vehicle/"/>
+    <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
+    <meta property="og:image:width" content="3000"/>
+    <meta property="og:image:height" content="2000"/>
+
+{% endblock %}
+
+
+{% block navigation %}
+    {% include "web/navigation.html" %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="projects-1" id="projects-1">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 ml-auto mr-auto text-center">
+                        <h1 class="title">Spaceflight Vehicles</h1>
+                        <h2>Meet the vehicles - current and historic - that take us to orbit and keep us there.</h2>
+                        <hr>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-xl-9 mx-auto text-center">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="card card-raised card-background"
+                                     style="min-height: 400px;background-image: url('{% static "img/vehicle/booster.jpg" %}')">
+                                    <div class="card-body">
+                                        <h6 class="card-category text-info">Booster Reuse</h6>
+                                        <h3 class="card-title">Tracking Reusable Rocket Boosters</h3>
+                                        <p class="card-description">
+                                            We track each and every flight of all reusable boosters, from SpaceX to Blue
+                                            Origin - and anyone else who decides to join the reusable rocket movement.
+                                            Each and every flight of every reusable booster is meticulously tracked to
+                                            ensure the history of reuse is available for all.
+                                        </p>
+                                        <a href="/vehicle/launcher" class="btn btn-primary btn-round">
+                                            View Boosters
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6">
+                                <div class="card card-raised card-background"
+                                     style="min-height: 400px;background-image: url('{% static "img/vehicle/spacestation.jpg" %}')">
+                                    <div class="card-body">
+                                        <h6 class="card-category text-info">Space Stations</h6>
+                                        <a href="/vehicle/spacestation/">
+                                            <h3 class="card-title">History and Future of Space Stations</h3>
+                                        </a>
+                                        <p class="card-description">
+                                            The first space station was Salyut 1, which was launched by the Soviet Union
+                                            on
+                                            April 19, 1971.
+                                            Since then the technology we use and experiments we conduct in orbit has
+                                            improved greatly.
+                                            The Space Stations of the future may span the Solar System enabling us to
+                                            reach
+                                            further then our ancestors could imagine.
+                                        </p>
+                                        <a href="/vehicle/spacestation" class="btn btn-danger btn-round">
+                                            View Space Stations
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6">
+                                <div class="card card-raised card-background"
+                                     style="min-height: 400px;background-image: url('{% static "img/vehicle/spacecraft.jpg" %}')">
+                                    <div class="card-body">
+                                        <h6 class="card-category text-info">Spacecraft</h6>
+                                        <h3 class="card-title">To the Moon and Back</h3>
+                                        <p class="card-description">
+                                            While its true that simply getting to orbit is difficult - it is far more
+                                            difficult to keep crew safe in space.
+                                            Since the Moon race we've designed, built and flown many times of crewed
+                                            Spacecraft
+                                            from small pods to large space planes the reaches of human creativity and
+                                            ingenuity knows no bounds.
+                                        </p>
+                                        <a href="/vehicle/spacecraft" class="btn btn-info btn-round">
+                                            View Spacecraft
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-12">
+                                <div class="card card-raised card-background"
+                                     style="min-height: 400px; background-image: url('{% static "img/vehicle/launch_vehicle.jpg" %}')">
+                                    <div class="card-body">
+                                        <h6 class="card-category text-info">Launch Vehicles</h6>
+                                        <h3 class="card-title">How We Get To Orbit</h3>
+                                        <p class="card-description">
+                                            Learn all about the vehicles that take us to orbit - from our humble
+                                            beginnings
+                                            as a space faring civilization to the modern era of cost effective
+                                            reusability.
+                                        </p>
+                                        <a href="/vehicle/launch_vehicle" class="btn btn-warning btn-round">
+                                            View Vehicles
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <hr>
+                                {% include "web/horizontal_news.html" %}
+                            </div>
+
+                            <div class="container">
+                                <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                                <!-- Space Launch Now -->
+                                <ins class="adsbygoogle"
+                                     style="display:block; margin-top:16px; margin-bottom:16px;"
+                                     data-ad-client="ca-pub-9824528399164059"
+                                     data-ad-slot="8772606898"
+                                     data-ad-format="auto"></ins>
+                                <script>
+                                    (adsbygoogle = window.adsbygoogle || []).push({});
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-xl-3 mx-auto">
+                        {% include "web/sidebar_launches_only.html" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- Space Launch Now -->
+        <ins class="adsbygoogle"
+             style="display:block; margin-top:16px; margin-bottom:16px;"
+             data-ad-client="ca-pub-9824528399164059"
+             data-ad-slot="8772606898"
+             data-ad-format="auto"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    {% include "web/install_buttons.html" %}
+{% endblock content %}

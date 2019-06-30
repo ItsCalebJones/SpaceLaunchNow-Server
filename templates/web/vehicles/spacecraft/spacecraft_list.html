@@ -1,0 +1,166 @@
+{% extends "web/base.html" %}
+{% load staticfiles %}
+{% load thumbnail %}
+{% load mathfilters %}
+{% block extrahead %}
+    <link rel="canonical" href="https://spacelaunchnow.me/vehicle/spacecraft">
+    <title>Space Launch Now - Spacecraft</title>
+    <meta name="title" content="Space Launch Now - Spacecraft">
+    <meta property="fb:app_id" content="746774215504127"/>
+    <meta property="og:title" content="Space Launch Now - Spacecraft"/>
+    <meta property="og:type" content="website"/>
+    <meta name="description"
+          content="Explore the spacecraft we use to stay in orbit.">
+    <meta property="og:description"
+          content="Explore the spacecraft we use to stay in orbit."/>
+    <meta property="og:url" content="https://spacelaunchnow.me/vehicle/spacecraft"/>
+    <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
+    <meta property="og:image:width" content="3000"/>
+    <meta property="og:image:height" content="2000"/>
+
+{% endblock %}
+
+
+{% block navigation %}
+    {% include "web/navigation.html" %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="projects-1" id="projects-1">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 ml-auto mr-auto text-center">
+                        <h1 class="title">Spacecraft</h1>
+                        <h2>Explore the spacecraft we use to stay in orbit.</h2>
+                        <hr>
+                    </div>
+                </div>
+                <div class="container">
+                    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"/>
+                    <!-- Space Launch Now -->
+                    <ins class="adsbygoogle"
+                         style="display:block; margin-top:16px; margin-bottom:16px;"
+                         data-ad-client="ca-pub-9824528399164059"
+                         data-ad-slot="8772606898"
+                         data-ad-format="auto"></ins>
+                    <script>
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 x-auto text-center">
+                <div class="row">
+                    {% if vehicles|length > 0 %}
+                        {% for vehicle in vehicles %}
+                            <div class="col-sm-6">
+                                <div class="card card-blog">
+                                    {% if vehicle.image_url %}
+                                        <div class="card-header card-header-image">
+                                            <img class="img"
+                                                 src="{{ vehicle.image_url.url }}">
+                                        </div>
+                                    {% else %}
+                                        <div class="card-header card-header-image">
+                                            <img class="img"
+                                                 src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
+                                        </div>
+                                    {% endif %}
+                                    <div class="card-body">
+                                        <h3 class="info-title text-center mb-0">{{ vehicle.name }}</h3>
+                                        {% if vehicle.in_use %}
+                                            <span class="badge badge-pill badge-success">Active</span>
+                                        {% else %}
+                                            <span class="badge badge-pill badge-danger">In-active</span>
+                                        {% endif %}
+
+                                        {% if vehicle.human_rated %}
+                                            <span class="badge badge-pill badge-success">Human Rated</span>
+                                        {% else %}
+                                            <span class="badge badge-pill badge-warning">Cargo</span>
+                                        {% endif %}
+
+                                        {% if vehicle.crew_capacity %}
+                                            <span class="badge badge-pill badge-info">Crew Capacity: {{ vehicle.crew_capacity }}</span>
+                                        {% endif %}
+                                        <h6 class="info-subtitle text-muted">{{ vehicle.launch_agency.name }}
+                                            ({{ vehicle.launch_agency.abbrev }})</h6>
+                                        <h7 class="info-subtitle text-muted">{{ vehicle.capability }}</h7>
+                                        <div class="text-left">
+                                            <h6 class="info-subtitle text-muted">Description</h6>
+                                            <p class="description">{{ vehicle.details|truncatewords:50 }}</p>
+                                        </div>
+                                        <hr>
+                                        <div class="text-left">
+                                            <a class="btn btn-primary"
+                                               href="/vehicle/spacecraft/{{ vehicle.id }}">Read More</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    <div class="text-center mx-auto">
+                        <nav aria-label="...">
+                            {% if vehicles.has_other_pages %}
+                                <ul class="pagination">
+                                    {% if vehicles.has_previous %}
+                                        <li class="page-item"><a class="page-link"
+                                                                 href="?status={{ status }}&page={{ vehicles.previous_page_number }}&nationality={{ nationality }}">Previous</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled"><span>Previous</span></li>
+                                    {% endif %}
+                                    {% if vehicles.number > 1 %}
+                                        <li class="page-item">
+                                        <a class="page-link"
+                                           href="?status={{ status }}&page=1&nationality={{ nationality }}">First</a>
+                                    {% endif %}
+                                    {% for i in vehicles.paginator.page_range %}
+                                        {% if forloop.counter|sub:vehicles.number >= -5 and forloop.counter|sub:vehicles.number <= 5 %}
+                                            {% if vehicles.number == i %}
+                                                <li class="page-item active"><span class="page-link">{{ i }} <span
+                                                        class="sr-only">(current)</span></span>
+                                                </li>
+                                            {% else %}
+                                                <li class="page-item"><a class="page-link"
+                                                                         href="?status={{ status }}&page={{ i }}&nationality={{ nationality }}">{{ i }}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if vehicles.has_next %}
+                                        {% if vehicles.paginator.count >= 10 %}
+                                            <li class="page-item"><a class="page-link"
+                                                                     href="?status={{ status }}&page={{ vehicles.paginator.count }}&nationality={{ nationality }}">Last</a>
+                                        {% endif %}
+                                        <li class="page-item"><a class="page-link"
+                                                                 href="?status={{ status }}&page={{ vehicles.next_page_number }}&nationality={{ nationality }}">Next</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled"><span class="page-link">Next</span></li>
+                                    {% endif %}
+                                </ul>
+                            {% endif %}
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- Space Launch Now -->
+        <ins class="adsbygoogle"
+             style="display:block; margin-top:16px; margin-bottom:16px;"
+             data-ad-client="ca-pub-9824528399164059"
+             data-ad-slot="8772606898"
+             data-ad-format="auto"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    {% include "web/install_buttons.html" %}
+{% endblock content %}

@@ -1,0 +1,155 @@
+// multilevel dropdown
+
+.dropdown {
+  .dropdown-menu {
+    .dropdown-item.dropdown-toggle + .dropdown-menu {
+      transform: scale(0);
+      transform-origin: 0 0;
+      display: block;
+    }
+  }
+  .dropdown-menu.show {
+    .dropdown-item.dropdown-toggle + .dropdown-menu.show {
+      left: 101% !important;
+      transform: scale(1);
+    }
+
+    .dropdown-toggle.open:after {
+      transform: rotate(0deg);
+    }
+  }
+}
+
+// Navbar Logo
+
+.navbar {
+  &.navbar-transparent {
+    .logo-big {
+       width: 150px;
+       height: 50px;
+       overflow: hidden;
+       margin-top: -10px;
+       display: block;
+
+       img {
+         height: 100%;
+       }
+    }
+    .logo-small {
+      display: none;
+    }
+  }
+
+  &:not(.navbar-transparent) {
+    .logo-big {
+      display: none;
+    }
+
+    .logo-small {
+      width: 46px;
+      height: 46px;
+      overflow: hidden;
+      margin-top: -6px;
+      display: block;
+    }
+  }
+}
+
+
+// section page - responsive (iPhone 5)
+
+@media all and (max-width: 375px) {
+  .page-header {
+    height: calc(100vh + 270px);
+  }
+
+  .media-area .media-body {
+    width: 190px;
+
+    .media,
+    .media.media-post {
+      margin-left: -50px;
+    }
+  }
+
+  .index-page {
+    overflow-x: hidden;
+  }
+
+  #social-buttons {
+    .social-buttons-demo:last-of-type {
+      margin-left: -25px;
+    }
+  }
+  .pagination {
+    &.pagination-primary {
+      .page-item:nth-of-type(3),
+      .page-item:nth-of-type(7) {
+        display: none;
+      }
+    }
+    &.pagination-info {
+      .page-item:nth-of-type(2) {
+        display: none;
+      }
+    }
+  }
+
+  .main.main-raised {
+    margin-top: -30px;
+  }
+}
+
+
+// documentation
+
+.bd-docs .bd-example {
+  .social-buttons-demo .btn{
+    margin-bottom: 10px;
+  }
+
+  &.bd-example-popover-static .popover,
+  &.bd-example-tooltip-static .tooltip {
+    z-index: 3 !important;
+  }
+
+  .alert-dismissible .close {
+    top: 7px;
+  }
+}
+
+.page-header {
+  .page-header-image {
+    position: absolute;
+    background-size: cover;
+    background-position: center center;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+}
+
+.error-page {
+  >.container {
+    position: absolute !important;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    -ms-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #FFFFFF;
+    padding: 0 15px;
+    width: 100%;
+    max-width: 880px;
+  }
+
+  .title {
+    font-size: 12em;
+    color: $white-color;
+    letter-spacing: $mdb-input-font-size-base;
+    font-weight: $font-weight-extra-bold;
+  }
+
+}

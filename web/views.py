@@ -16,7 +16,14 @@ from django.shortcuts import render, redirect
 from django import forms
 
 # Create your views here.
-from api.models import Agency, Launch, Astronaut
+from django_filters.views import FilterView
+from django_tables2 import RequestConfig, LazyPaginator, SingleTableMixin
+
+from api.models import Agency, Launch, Astronaut, Launcher, SpaceStation, SpacecraftConfiguration, LauncherConfig, \
+    Events
+from bot.models import NewsItem
+from web.filters import LauncherConfigListFilter
+from web.tables import LaunchVehicleTable, LauncherConfigTable
 
 
 def get_youtube_url(launch):
@@ -26,20 +33,50 @@ def get_youtube_url(launch):
 
 
 def index(request):
+    news = NewsItem.objects.all().order_by('created_at')[:6]
+    event = Events.objects.all().filter(date__gte=datetime.utcnow()).order_by('-date').first()
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+    _launches = Launch.objects.filter(net__gte=datetime.utcnow()).filter(Q(status__id=1) | Q(status__id=2)).order_by(
+        'net')[:3]
+
+    in_flight_launch = Launch.objects.filter(status__id=6).order_by('-net').first()
+    recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - dt.timedelta(hours=2),
+                                              net__lte=datetime.utcnow()).order_by('-net').first()
+    _next_launch = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net').first()
+
+    if in_flight_launch:
+        launch = in_flight_launch
+        _launches = _launches[:2]
+    elif recently_launched:
+        launch = recently_launched
+        _launches = _launches[1:3]
+    else:
+        launch = _next_launch
+        _launches = _launches[1:3]
+
+    return render(request, 'web/index.html', {'launch': launch,
+                                              'upcoming_launches': _launches,
+                                              'youtube_url': get_youtube_url(_next_launch),
+                                              'news': news,
+                                              'previous_launches': previous_launches,
+                                              'event': event})
+
+
+def app(request):
     in_flight_launch = Launch.objects.filter(status__id=6).order_by('-net').first()
     if in_flight_launch:
-        return render(request, 'web/index.html', {'launch': in_flight_launch,
-                                                  'youtube_url': get_youtube_url(in_flight_launch)})
+        return render(request, 'web/app.html', {'launch': in_flight_launch,
+                                                'youtube_url': get_youtube_url(in_flight_launch)})
 
-    recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - dt.timedelta(hours=6),
+    recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - dt.timedelta(hours=2),
                                               net__lte=datetime.utcnow()).order_by('-net').first()
     if recently_launched:
-        return render(request, 'web/index.html', {'launch': recently_launched,
-                                                  'youtube_url': get_youtube_url(recently_launched)})
+        return render(request, 'web/app.html', {'launch': recently_launched,
+                                                'youtube_url': get_youtube_url(recently_launched)})
     else:
         _next_launch = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net').first()
-        return render(request, 'web/index.html', {'launch': _next_launch,
-                                                  'youtube_url': get_youtube_url(_next_launch)})
+        return render(request, 'web/app.html', {'launch': _next_launch,
+                                                'youtube_url': get_youtube_url(_next_launch)})
 
 
 # Create your views here.
@@ -127,6 +164,111 @@ def astronaut(request, id):
         return redirect('astronaut_by_slug', slug=Astronaut.objects.get(pk=id).slug)
     except ObjectDoesNotExist:
         raise Http404
+
+
+def vehicle_root(request):
+    news = NewsItem.objects.all().order_by('created_at')[:6]
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:15]
+    return render(request, 'web/vehicles/index.html', {'previous_launches': previous_launches,
+                                                       'news': news})
+
+
+def spacecraft_list(request):
+    spacecraft = SpacecraftConfiguration.objects.all()
+    return render(request, 'web/vehicles/spacecraft/spacecraft_list.html', {'vehicles': spacecraft})
+
+
+def spacecraft_by_id(request, id):
+    spacecraft = SpacecraftConfiguration.objects.get(pk=id)
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+    return render(request, 'web/vehicles/spacecraft/spacecraft_detail.html', {'previous_launches': previous_launches,
+                                                                              'vehicle': spacecraft})
+
+
+def booster_reuse(request):
+    status = request.GET.get('status')
+    if status is None:
+        status = 'active'
+
+    _vehicles = Launcher.objects.filter(status__contains=status)
+    page = request.GET.get('page', 1)
+    paginator = Paginator(_vehicles, 20)
+
+    try:
+        vehicles = paginator.page(page)
+    except PageNotAnInteger:
+        vehicles = paginator.page(1)
+    except EmptyPage:
+        vehicles = paginator.page(paginator.num_pages)
+
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+    return render(request, 'web/vehicles/boosters/booster_list.html', {'previous_launches': previous_launches,
+                                                                       'status': status,
+                                                                       'vehicles': vehicles})
+
+
+def booster_reuse_search(request):
+    query = request.GET.get('q')
+
+    if query is not None:
+        _vehicles = Launcher.objects.filter(
+            Q(launcher_config__name__icontains=query) | Q(serial_number__icontains=query))
+        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
+        return render(request, 'web/vehicles/boosters/boosters_search.html', {'vehicles': _vehicles,
+                                                                              'query': query,
+                                                                              'previous_launches': previous_launches})
+    else:
+        return redirect('booster_reuse')
+
+
+def booster_reuse_id(request, id):
+    if id is not None:
+        vehicle = Launcher.objects.get(pk=id)
+        upcoming_vehicle_launches = Launch.objects.filter(rocket__firststage__launcher_id=vehicle.id).filter(
+            net__gte=datetime.utcnow())
+        previous_vehicle_launches = Launch.objects.filter(rocket__firststage__launcher_id=vehicle.id).filter(
+            net__lte=datetime.utcnow())
+        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
+        return render(request, 'web/vehicles/boosters/booster_detail.html', {'vehicle': vehicle,
+                                                                             'previous_launches': previous_launches,
+                                                                             'upcoming_vehicle_launches': upcoming_vehicle_launches,
+                                                                             'previous_vehicle_launches': previous_vehicle_launches})
+    else:
+        return redirect('booster_reuse')
+
+
+class LauncherConfigListView(SingleTableMixin, FilterView):
+    table_class = LaunchVehicleTable
+    model = LauncherConfig
+    template_name = 'web/vehicles/launch_vehicle/launch_vehicles_list.html'
+
+    filterset_class = LauncherConfigListFilter
+
+
+def launch_vehicle_id(request, id):
+    if id is not None:
+        vehicle = LauncherConfig.objects.get(pk=id)
+        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
+        return render(request, 'web/vehicles/launch_vehicle/launch_vehicle_detail.html',
+                      {'vehicle': vehicle, 'previous_launches': previous_launches})
+    else:
+        return redirect('booster_reuse')
+
+
+def spacestation_list(request):
+    spacestations = SpaceStation.objects.all().order_by('status')
+    return render(request, 'web/vehicles/spacestations/spacestations_list.html',
+                  {'spacestations': spacestations})
+
+
+def spacestation_by_id(request, id):
+    if id is not None:
+        spacestation = SpaceStation.objects.get(pk=id)
+        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
+        return render(request, 'web/vehicles/spacestations/spacestations_details.html', {'vehicle': spacestation,
+                                                                                         'previous_launches': previous_launches})
+    else:
+        return redirect('booster_reuse')
 
 
 def astronaut_by_slug(request, slug):
