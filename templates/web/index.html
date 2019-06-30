@@ -223,7 +223,7 @@
                             <div class="card card-plain card-blog">
                                 <div class="card-header card-header-image">
                                     <a href="#pablo">
-                                        <img class="img img-raised" src="{{ event.feature_image.url }}">
+                                        <img class="img img-raised" style="max-height: 500px" src="{{ event.feature_image.url }}">
                                     </a>
                                     <div class="colored-shadow"
                                          style="background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
@@ -239,12 +239,14 @@
                                     <p class="card-description">
                                         {{ event.description|truncatewords:50 }}
                                         <br>
-                                        <a href="#pablo"> Read More </a>
+{#                                        <a href="#pablo"> Read More </a>#}
                                     </p>
                                 </div>
                             </div>
                             <div class="text-center">
-                                <a tabindex="0" class="btn btn-warning btn-round" data-placement="top" data-toggle="popover" data-trigger="focus" data-content="This feature is coming soon!">
+                                <a tabindex="0" class="btn btn-warning btn-round" data-placement="top"
+                                   data-toggle="popover" data-trigger="focus"
+                                   data-content="This feature is coming soon!">
                                     <i class="material-icons">calendar_today</i> View More Events
                                 </a>
                             </div>
@@ -256,47 +258,62 @@
                 <!-- Sidebar Widgets Column -->
                 <div class="col-lg-3 col-md-12 col-xl-3">
                     <!-- Categories Widget -->
-                    <div class="card mb-5">
-                        <div class="card-body">
-                            <h4 class="card-title">Stay Connected</h4>
-                            <a href="https://twitter.com/spacelaunchnow" style="color:white">
-                                <button class="btn btn-social btn-fill btn-twitter"
-                                        style="width: -webkit-fill-available; text-align: left;">
-
-                                    <i class="fab fa-twitter"></i> Connect with Twitter
-                                    <div class="ripple-container"></div>
-
-                                </button>
-                            </a>
-                            <br>
-                            <a href="https://www.facebook.com/spacelaunchnow" style="color:white">
-                                <button class="btn btn-social btn-fill btn-facebook"
-                                        style="width: -webkit-fill-available; text-align: left;">
-
-                                    <i class="fab fa-facebook-square"></i> Share on Facebook
-                                    <div class="ripple-container"></div>
-
-                                </button>
-                            </a>
-                            <br><a href="https://www.youtube.com/channel/UCNwWysrsoDAcq_dksKH9DTw" style="color:white">
-                            <button class="btn btn-social btn-fill btn-youtube"
+                    <div class="mb-5 mt-4">
+                        <a href="https://twitter.com/spacelaunchnow" style="color:white">
+                            <button class="btn btn-social btn-fill btn-twitter"
                                     style="width: -webkit-fill-available; text-align: left;">
 
-                                <i class="fab fa-youtube"></i> View on Youtube
+                                <i class="fab fa-twitter"></i>  Connect with Twitter
                                 <div class="ripple-container"></div>
 
                             </button>
                         </a>
-                            <br><a href="https://github.com/ItsCalebJones/" style="color:white">
-                            <button class="btn btn-social btn-fill btn-github"
+                        <br>
+                        <a href="https://www.facebook.com/spacelaunchnow" style="color:white">
+                            <button class="btn btn-social btn-fill btn-facebook"
                                     style="width: -webkit-fill-available; text-align: left;">
 
-                                <i class="fab fa-github"></i> Connect with Github
+                                <i class="fab fa-facebook-square"></i>  Share on Facebook
                                 <div class="ripple-container"></div>
 
                             </button>
                         </a>
-                        </div>
+                        <a href="https://www.instagram.com/spacelaunchnow" style="color:white">
+                            <button class="btn btn-social btn-fill btn-instagram"
+                                    style="width: -webkit-fill-available; text-align: left;">
+
+                                <i class="fab fa-instagram"></i>  Follow on Instagram
+                                <div class="ripple-container"></div>
+
+                            </button>
+                        </a>
+                        <a href="https://discord.gg/w8gnVv" style="color:white">
+                            <button class="btn btn-social btn-fill btn-info"
+                                    style="width: -webkit-fill-available; text-align: left;">
+
+                                <i class="fab fa-discord"></i>  Join us on Discord
+                                <div class="ripple-container"></div>
+
+                            </button>
+                        </a>
+                        <br><a href="https://www.youtube.com/channel/UCNwWysrsoDAcq_dksKH9DTw" style="color:white">
+                        <button class="btn btn-social btn-fill btn-youtube"
+                                style="width: -webkit-fill-available; text-align: left;">
+
+                            <i class="fab fa-youtube"></i>  View on Youtube
+                            <div class="ripple-container"></div>
+
+                        </button>
+                    </a>
+                        <br><a href="https://github.com/ItsCalebJones/" style="color:white">
+                        <button class="btn btn-social btn-fill btn-github"
+                                style="width: -webkit-fill-available; text-align: left;">
+
+                            <i class="fab fa-github"></i>  Connect with Github
+                            <div class="ripple-container"></div>
+
+                        </button>
+                    </a>
                     </div>
                     {% include "web/sidebar_launches_only.html" %}
                 </div>
