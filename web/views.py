@@ -19,7 +19,8 @@ from django import forms
 from django_filters.views import FilterView
 from django_tables2 import RequestConfig, LazyPaginator, SingleTableMixin
 
-from api.models import Agency, Launch, Astronaut, Launcher, SpaceStation, SpacecraftConfiguration, LauncherConfig
+from api.models import Agency, Launch, Astronaut, Launcher, SpaceStation, SpacecraftConfiguration, LauncherConfig, \
+    Events
 from bot.models import NewsItem
 from web.filters import LauncherConfigListFilter
 from web.tables import LaunchVehicleTable, LauncherConfigTable
@@ -33,8 +34,10 @@ def get_youtube_url(launch):
 
 def index(request):
     news = NewsItem.objects.all().order_by('created_at')[:6]
+    event = Events.objects.all().filter(date__gte=datetime.utcnow()).order_by('-date').first()
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
-    _launches = Launch.objects.filter(net__gte=datetime.utcnow()).filter(Q(status__id=1) | Q(status__id=2)).order_by('net')[:3]
+    _launches = Launch.objects.filter(net__gte=datetime.utcnow()).filter(Q(status__id=1) | Q(status__id=2)).order_by(
+        'net')[:3]
 
     in_flight_launch = Launch.objects.filter(status__id=6).order_by('-net').first()
     recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - dt.timedelta(hours=2),
@@ -43,8 +46,10 @@ def index(request):
 
     if in_flight_launch:
         launch = in_flight_launch
+        _launches = _launches[:2]
     elif recently_launched:
         launch = recently_launched
+        _launches = _launches[1:3]
     else:
         launch = _next_launch
         _launches = _launches[1:3]
@@ -53,7 +58,8 @@ def index(request):
                                               'upcoming_launches': _launches,
                                               'youtube_url': get_youtube_url(_next_launch),
                                               'news': news,
-                                              'previous_launches': previous_launches})
+                                              'previous_launches': previous_launches,
+                                              'event': event})
 
 
 def app(request):

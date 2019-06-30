@@ -115,9 +115,10 @@
                             <div class="card-body">
                                 <h6 class="card-category text-info">{{ launch.mission.type.name }}</h6>
                                 <h3 class="card-title">{{ launch.name }}</h3>
-                                <h4 class="title text-white" style="margin: 5px;" id="countdown">L - -- : -- : -- :
-                                    --</h4>
+                                <h3 class="title text-white" style="margin: 5px;" id="countdown">L - -- : -- : -- :
+                                    --</h3>
                                 <h4 class="text-white" style="margin: -5px;" id="date">{{ launch.net }}</h4>
+                                <hr>
                                 <p class="card-description">
                                     {{ launch.mission.description }}
                                 </p>
@@ -127,161 +128,121 @@
 
                             </div>
                         </div>
-                        {% if upcoming_launches|length > 0 %}
-                            {% for launch in upcoming_launches %}
-                                <div class="card text-left" style="margin-top: 75px">
-                                    <div class="card-header {% if 'GO' in launch.status.name %} card-header-success {% elif 'TBD' in launch.status.name %} card-header-danger {% else %} card-header-info {% endif %} p-2">
-                                        <div class="row">
-                                            <div class="col-md-4 text-center" style="height: 150px">
-                                                {% if launch.rocket.configuration.image_url %}
-                                                    {% thumbnail launch.rocket.configuration.image_url "200" as im %}
-                                                        <img class="img-raised rounded-circle img-fluid text-center"
-                                                             src="{{ im.url }}"
-                                                             style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                                    {% endthumbnail %}
-                                                {% elif launch.rocket.configuration.launch_agency.image_url %}
-                                                    {% thumbnail launch.rocket.configuration.launch_agency.image_url "200" as im %}
-                                                        <img class="img-raised rounded-circle img-fluid text-center"
-                                                             src="{{ im.url }}"
-                                                             style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                                    {% endthumbnail %}
-                                                {% else %}
-                                                    <img class="img-raised rounded-circle img-fluid text-center"
-                                                         src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png"
-                                                         style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                                {% endif %}
-                                            </div>
-                                            <div class="col-md-8 text-md-left text-center">
-                                                <h4 class="card-title">{{ launch.name }}</h4>
-                                                {{ launch.rocket.configuration.launch_agency.name }}
-                                                | {{ launch.rocket.configuration.launch_agency.country_code }}<br>
-                                                {{ launch.pad.location.name }}<br>
-                                                <i>{{ launch.net }}</i><br>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        {% if launch.status %}
-                                            <h5 class="card-text"><b>Status: </b>{{ launch.status.name }}</h5>
-                                        {% endif %}
-                                        {% if launch.mission %}
-                                            <h5 class="card-text"><b>Mission: </b>{{ launch.mission.type_name }}</h5>
-                                            <p class="card-text">{{ launch.mission.description }}</p>
-                                        {% else %}
-                                            <h5 class="card-text">Unknown Mission</h5>
-                                            <p class="card-text">There are no mission or payload details available for
-                                                this
-                                                launch.</p>
-                                        {% endif %}
-                                        <span class="badge badge-pill badge-success">{{ launch.mission.orbit.name }}</span>
-                                        {% if launch.hashtag %}
-                                            <span class="badge badge-pill badge-primary">{{ launch.hashtag }}</span>
-                                        {% endif %}
-                                        {% if launch.rocket.firststage.all|length > 0 %}
-                                            {% for stage in launch.rocket.firststage.all %}
-                                                {% if stage.landing.landing_location %}
-                                                    <span class="badge badge-pill badge-info"> {{ stage.launcher.serial_number }} - {{ stage.reused|yesno:"Flight Proven,Maiden Flight" }}
-                                                        {% if stage.reused %}({{ stage.launcher.previous_flights }}
-                                                            ) {% endif %}</span>
-                                                    <span class="badge badge-pill badge-primary">{{ stage.landing.landing_location.name }}</span>
-                                                {% endif %}
-                                            {% endfor %}
-                                        {% endif %}
-                                        <hr/>
-                                        <row>
-                                            <a class="btn btn-primary" href="/launch/{{ launch.slug }}">Explore</a>
-                                            <a data-site class="btn btn-danger"
-                                               href="http://www.facebook.com/sharer.php?u={{ launch.get_full_absolute_url }}"
-                                               target="_blank">Share</a>
-                                        </row>
+                    </div>
+                    {% if upcoming_launches|length == 2 %}
+                        <div class="card card-plain card-blog">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="card-header card-header-image">
+                                        <a href="/launch/{{ upcoming_launches.0.slug }}">
+                                            <img class="img"
+                                                 src="{{ upcoming_launches.0.rocket.configuration.image_url.url }}">
+                                            <div class="colored-shadow"
+                                                 style="background-image: url('{{ upcoming_launches.0.rocket.configuration.image_url.url }}'); opacity: 1;"></div>
+                                        </a>
                                     </div>
                                 </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="card text-left">
-                                <div class="card-body">
-                                    <h2>No Launches Found</h2>
-                                    <hr>
-                                    There doesn't appear to be any upcoming launches for this filter.
+                                <div class="col-md-7">
+                                    <h6 class="card-category text-info">
+                                        {{ upcoming_launches.0.net|date:"M d, Y" }}
+                                    </h6>
+                                    <h6 class="card-category text-info">{{ upcoming_launches.0.mission.type.name }}</h6>
+                                    <h3 class="card-title">
+                                        <a href="/launch/{{ upcoming_launches.0.slug }}">{{ upcoming_launches.0.name }}</a>
+                                    </h3>
+                                    <p class="author">
+                                        <b>{{ upcoming_launches.0.rocket.configuration.launch_agency.name }}</b>
+                                    </p>
+                                    <span class="badge badge-pill badge-danger">{{ upcoming_launches.0.mission.orbit.name }}</span>
+                                    {% if upcoming_launches.0.pad.location.name %}
+                                        <span class="badge badge-pill badge-primary">{{ upcoming_launches.0.pad.location.name }}</span>
+                                    {% endif %}
+                                    <p class="card-description mt-1">
+                                        {{ upcoming_launches.0.mission.description|truncatewords:50 }}
+                                        <br>
+                                        <a href="/launch/{{ upcoming_launches.0.slug }}"> View Launch </a>
+                                    </p>
                                 </div>
                             </div>
-                        {% endif %}
-                        <div class="mx-auto">
-                            <a href="/launch/" class="btn btn-info btn-round">
-                                View Upcoming Launches
-                            </a>
                         </div>
+                        <div class="card card-plain card-blog">
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <h6 class="card-category text-info">
+                                        {{ upcoming_launches.1.net|date:"M d, Y" }}
+                                    </h6>
+                                    <h6 class="card-category text-info">{{ upcoming_launches.1.mission.type.name }}</h6>
+                                    <h3 class="card-title">
+                                        <a href="/launch/{{ upcoming_launches.1.slug }}">{{ upcoming_launches.1.name }}</a>
+                                    </h3>
+                                    <p class="author">
+                                        <b>{{ upcoming_launches.1.rocket.configuration.launch_agency.name }}</b>
+                                    </p>
+                                    <span class="badge badge-pill badge-danger">{{ upcoming_launches.1.mission.orbit.name }}</span>
+                                    {% if upcoming_launches.1.pad.location.name %}
+                                        <span class="badge badge-pill badge-primary">{{ upcoming_launches.1.pad.location.name }}</span>
+                                    {% endif %}
+                                    <p class="card-description mt-1">
+                                        {{ upcoming_launches.1.mission.description|truncatewords:50 }}
+                                        <br>
+                                        <a href="/launch/{{ upcoming_launches.1.slug }}"> View Launch </a>
+                                    </p>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="card-header card-header-image">
+                                        <a href="/launch/{{ upcoming_launches.1.slug }}">
+                                            <img class="img"
+                                                 src="{{ upcoming_launches.1.rocket.configuration.image_url.url }}">
+                                            <div class="colored-shadow"
+                                                 style="background-image: url('{{ upcoming_launches.1.rocket.configuration.image_url.url }}'); opacity: 1;"></div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="text-center">
+                        <a href="/launch" class="btn btn-info btn-round">
+                            View More Launches
+                        </a>
                     </div>
-                    <div class="card card-plain card-blog">
-                        <div class="row">
-                            <div class="col-md-5">
+                    <hr>
+                    {% if event %}
+                        <div class="col-md-12 text-center">
+                            <h3 class="title">Upcoming Event</h3>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="card card-plain card-blog">
                                 <div class="card-header card-header-image">
-                                    <a href="#pablito">
-                                        <img class="img" src="{% static 'img/vehicle/booster.jpg' %}">
+                                    <a href="#pablo">
+                                        <img class="img img-raised" src="{{ event.feature_image.url }}">
                                     </a>
                                     <div class="colored-shadow"
-                                         style="background-image: url('{% static 'img/vehicle/booster.jpg' %}'); opacity: 1;"></div>
+                                         style="background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-category text-info">{{ event.type.name }}</h6>
+                                    <h4 class="card-title">
+                                        <a href="#pablo">{{ event.name }}</a>
+                                    </h4>
+                                    {% if event.location %}
+                                        <span class="badge badge-pill badge-primary">{{ event.location }}</span>
+                                    {% endif %}
+                                    <p class="card-description">
+                                        {{ event.description|truncatewords:50 }}
+                                        <br>
+                                        <a href="#pablo"> Read More </a>
+                                    </p>
                                 </div>
                             </div>
-                            <div class="col-md-7">
-                                <h6 class="card-category text-info">Enterprise</h6>
-                                <h3 class="card-title">
-                                    <a href="#pablo">Autodesk looks to future of 3D printing with Project Escher</a>
-                                </h3>
-                                <p class="card-description">
-                                    Like so many organizations these days, Autodesk is a company in transition. It was
-                                    until
-                                    recently a traditional boxed software company selling licenses. Today, it’s moving
-                                    to a
-                                    subscription model. Yet its own business model disruption is only part of the story
-                                    —
-                                    and…
-                                    <a href="#pablo"> Read More </a>
-                                </p>
-                                <p class="author">
-                                    by
-                                    <a href="#pablo">
-                                        <b>Mike Butcher</b>
-                                    </a>, 2 days ago
-                                </p>
+                            <div class="text-center">
+                                <a href="/events" class="btn btn-warning btn-round">
+                                    <i class="material-icons">calendar_today</i> View More Events
+                                </a>
                             </div>
                         </div>
-                    </div>
-                    <div class="card card-plain card-blog">
-                        <div class="row">
-                            <div class="col-md-7">
-                                <h6 class="card-category text-danger">
-                                    <i class="material-icons">trending_up</i> Trending
-                                </h6>
-                                <h3 class="card-title">
-                                    <a href="#pablo">6 insights into the French Fashion landscape</a>
-                                </h3>
-                                <p class="card-description">
-                                    Like so many organizations these days, Autodesk is a company in transition. It was
-                                    until
-                                    recently a traditional boxed software company selling licenses. Today, it’s moving
-                                    to a
-                                    subscription model. Yet its own business model disruption is only part of the story
-                                    —
-                                    and…
-                                    <a href="#pablo"> Read More </a>
-                                </p>
-                                <p class="author">
-                                    by
-                                    <a href="#pablo">
-                                        <b>Mike Butcher</b>
-                                    </a>, 2 days ago
-                                </p>
-                            </div>
-                            <div class="col-md-5">
-                                <div class="card-header card-header-image">
-                                    <img class="img img-raised" src="{% static 'img/vehicle/spacestation.jpg' %}">
-                                    <div class="colored-shadow"
-                                         style="background-image: url('{% static 'img/vehicle/spacestation.jpg' %}'); opacity: 1;"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {% endif %}
+
                     {% include "web/horizontal_news.html" %}
                 </div>
                 <!-- Sidebar Widgets Column -->
