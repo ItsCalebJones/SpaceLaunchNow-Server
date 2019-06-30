@@ -129,7 +129,7 @@
                                         {% endif %}
                                     </td>
                                     <td>{{ vehicle.serial_number }}</td>
-                                    <td>{{ vehicle.status }}</td>
+                                    <td>{{ vehicle.status|title }}</td>
                                     <td>{{ vehicle.launcher_config.name }}</td>
                                     <td>{{ vehicle.previous_flights }}</td>
                                     <td class="td-actions">
