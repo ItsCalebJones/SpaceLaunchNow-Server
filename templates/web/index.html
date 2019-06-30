@@ -81,8 +81,8 @@
 {% endblock %}
 
 {% block content %}
-    <div class="page-header header-small" data-parallax="true"
-         style="background-image: url('{% static 'img/header.jpg' %}'); height: 65vh;">
+    <div class="page-header header-small header-filter" data-parallax="true"
+         style="background-image: url('{% static 'img/header_alt.jpg' %}'); height: 65vh;">
         <div class="container">
             <div class="name text-center">
                 <div class="avatar" style="max-height: 280px;">
@@ -91,8 +91,10 @@
                          class="img-raised rounded-circle img-fluid "
                          style="max-width: 15%">
                 </div>
+                <hr class="col-lg-8" style="background-color: white">
                 <h1 class="title">Space Launch Now</h1>
                 <h2>A Spaceflight Tracker</h2>
+
                 <a style="margin: 5px"
                    href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
                     <img alt='Get it on Google Play' src="{% static 'img/button/google.png' %}" width="135" height="40"
@@ -102,6 +104,7 @@
                     <img alt='Get it on App Store' src="{% static 'img/button/apple.png' %}" width="135" height="40"
                          alt="">
                 </a>
+                <hr class="col-lg-8" style="background-color: white">
             </div>
         </div>
     </div>
@@ -130,6 +133,10 @@
                         </div>
                     </div>
                     {% if upcoming_launches|length == 2 %}
+                        <div class="col-md-12 text-center">
+                            <h3 class="title">Upcoming Launches</h3>
+                            <hr>
+                        </div>
                         <div class="card card-plain card-blog">
                             <div class="row">
                                 <div class="col-md-5">
@@ -206,10 +213,11 @@
                             View More Launches
                         </a>
                     </div>
-                    <hr>
+
                     {% if event %}
                         <div class="col-md-12 text-center">
                             <h3 class="title">Upcoming Event</h3>
+                            <hr>
                         </div>
                         <div class="col-md-12">
                             <div class="card card-plain card-blog">
@@ -251,23 +259,43 @@
                     <div class="card mb-5">
                         <div class="card-body">
                             <h4 class="card-title">Stay Connected</h4>
-                            <button class="btn btn-link btn-twitter">
-                                <i class="fab fa-twitter"></i> Connect with Twitter
-                                <div class="ripple-container"></div>
-                            </button>
+                            <a href="https://twitter.com/spacelaunchnow" style="color:white">
+                                <button class="btn btn-social btn-fill btn-twitter"
+                                        style="width: -webkit-fill-available; text-align: left;">
+
+                                    <i class="fab fa-twitter"></i> Connect with Twitter
+                                    <div class="ripple-container"></div>
+
+                                </button>
+                            </a>
                             <br>
-                            <button class="btn btn-link btn-facebook">
-                                <i class="fab fa-facebook-square"></i> Share
-                                <div class="ripple-container"></div>
-                            </button>
-                            <br>
-                            <button class="btn btn-link btn-youtube">
+                            <a href="https://www.facebook.com/spacelaunchnow" style="color:white">
+                                <button class="btn btn-social btn-fill btn-facebook"
+                                        style="width: -webkit-fill-available; text-align: left;">
+
+                                    <i class="fab fa-facebook-square"></i> Share on Facebook
+                                    <div class="ripple-container"></div>
+
+                                </button>
+                            </a>
+                            <br><a href="https://www.youtube.com/channel/UCNwWysrsoDAcq_dksKH9DTw" style="color:white">
+                            <button class="btn btn-social btn-fill btn-youtube"
+                                    style="width: -webkit-fill-available; text-align: left;">
+
                                 <i class="fab fa-youtube"></i> View on Youtube
+                                <div class="ripple-container"></div>
+
                             </button>
-                            <br>
-                            <button class="btn btn-link btn-github">
+                        </a>
+                            <br><a href="https://github.com/ItsCalebJones/" style="color:white">
+                            <button class="btn btn-social btn-fill btn-github"
+                                    style="width: -webkit-fill-available; text-align: left;">
+
                                 <i class="fab fa-github"></i> Connect with Github
+                                <div class="ripple-container"></div>
+
                             </button>
+                        </a>
                         </div>
                     </div>
                     {% include "web/sidebar_launches_only.html" %}

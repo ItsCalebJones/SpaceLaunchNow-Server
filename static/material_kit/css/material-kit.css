@@ -10512,7 +10512,7 @@ textarea {
     top: 0;
     content: ""; }
   .header-filter::before {
-    background: rgba(0, 0, 0, 0.5); }
+    background: rgba(0, 0, 0, 0.3); }
   .header-filter .container {
     z-index: 2;
     position: relative; }
@@ -14792,9 +14792,10 @@ select.selectpicker {
 
 .presentation-page .header-filter:after,
 .index-page .header-filter:after {
-  background: rgba(9, 102, 175, 0.88);
-  background: linear-gradient(45deg, rgba(9, 102, 175, 0.88) 0%, rgba(19, 90, 170, 0.31) 100%);
-  background: -webkit-linear-gradient(135deg, rgba(9, 102, 175, 0.88) 0%, rgba(19, 90, 170, 0.31) 100%); }
+  background: rgba(71, 85, 97, 0.55);
+  background: linear-gradient(45deg, rgba(71, 85, 97, 0.55) 0%, rgba(60, 99, 170, 0.31) 100%);
+  background: -webkit-linear-gradient(135deg, rgba(71, 85, 97, 0.55) 0, rgba(82, 116, 170, 0.31) 100%);
+}
 
 .presentation-page h4.description,
 .index-page h4.description {
@@ -15319,7 +15320,7 @@ select.selectpicker {
 .ecommerce-page .card-product .card-footer .stats .btn i.material-icons {
   top: -10px !important; }
 
-.header-filter[filter-color="purple"]:after, .header-filter[filter-color="primary"]:after {
+.header-filter[filter-color="blue"]:after, .header-filter[filter-color="primary"]:after {
   background: rgba(225, 190, 231, 0.56);
   /* For browsers that do not support gradients */
   /* For Safari 5.1 to 6.0 */
