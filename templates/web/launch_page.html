@@ -365,8 +365,12 @@
         var startDate = new Date("{{launch.window_start.isoformat}}");
         var endDate = new Date("{{launch.window_end.isoformat}}");
 
-        document.getElementById("date").innerHTML = dateFormat(countDownDate, "mmmm dS, yyyy - h:MM TT Z");
-        document.getElementById("window_date").innerHTML = dateFormat(startDate, "h:MM TT Z") + " - " + dateFormat(endDate, "h:MM TT Z");
+        try {
+            document.getElementById("date").innerHTML = dateFormat(countDownDate, "mmmm dS, yyyy - h:MM TT Z");
+            document.getElementById("window_date").innerHTML = dateFormat(startDate, "h:MM TT Z") + " - " + dateFormat(endDate, "h:MM TT Z");
+        } catch(err) {
+            
+        }
         // Set the date we're counting down to
 
         var now = new Date().getTime();
