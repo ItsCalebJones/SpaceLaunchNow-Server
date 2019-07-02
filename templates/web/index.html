@@ -114,7 +114,7 @@
                 <div class="col-lg-9 col-md-12 col-xl-9">
                     <div class="col-md-12">
                         <div class="card card-raised card-background"
-                             style="background-image: url('{{ launch.rocket.configuration.image_url.url }}')">
+                             style="background-image: url('{% if launch.rocket.configuration.image_url %} {{ launch.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}')">
                             <div class="card-body">
                                 <h6 class="card-category text-info">{{ launch.mission.type.name }}</h6>
                                 <h3 class="card-title">{{ launch.name }}</h3>
@@ -143,9 +143,9 @@
                                     <div class="card-header card-header-image">
                                         <a href="/launch/{{ upcoming_launches.0.slug }}">
                                             <img class="img"
-                                                 src="{{ upcoming_launches.0.rocket.configuration.image_url.url }}">
+                                                 src="{% if upcoming_launches.0.rocket.configuration.image_url %} {{ upcoming_launches.0.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}">
                                             <div class="colored-shadow"
-                                                 style="background-image: url('{{ upcoming_launches.0.rocket.configuration.image_url.url }}'); opacity: 1;"></div>
+                                                 style="background-image: url('{% if upcoming_launches.0.rocket.configuration.image_url %} {{ upcoming_launches.0.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}'); opacity: 1;"></div>
                                         </a>
                                     </div>
                                 </div>
@@ -199,9 +199,9 @@
                                     <div class="card-header card-header-image">
                                         <a href="/launch/{{ upcoming_launches.1.slug }}">
                                             <img class="img"
-                                                 src="{{ upcoming_launches.1.rocket.configuration.image_url.url }}">
+                                                 src="{% if upcoming_launches.1.rocket.configuration.image_url %} {{ upcoming_launches.1.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}">
                                             <div class="colored-shadow"
-                                                 style="background-image: url('{{ upcoming_launches.1.rocket.configuration.image_url.url }}'); opacity: 1;"></div>
+                                                 style="background-image: url('{% if upcoming_launches.1.rocket.configuration.image_url %} {{ upcoming_launches.1.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}'); opacity: 1;"></div>
                                         </a>
                                     </div>
                                 </div>
