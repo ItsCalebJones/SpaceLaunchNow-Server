@@ -82,14 +82,14 @@
 
 {% block content %}
     <div class="page-header header-small header-filter" data-parallax="true"
-         style="background-image: url('{% static 'img/header_alt.jpg' %}'); height: 65vh;">
+         style="background-image: url('{% static 'img/header_alt.jpg' %}'); min-height: 65vh;">
         <div class="container">
-            <div class="name text-center">
-                <div class="avatar" style="max-height: 280px;">
+            <div class="card-testimonial text-center">
+                <div class="card-avatar" style="margin: 25px auto 0;max-width: 200px; max-height: 200px;">
                     <img src="{% static 'img/launcher.png' %}"
                          alt="Circle Image"
-                         class="img-raised rounded-circle img-fluid "
-                         style="max-width: 15%">
+                         class="img-raised rounded-circle img-fluid"
+                    >
                 </div>
                 <hr class="col-lg-8" style="background-color: white">
                 <h1 class="title">Space Launch Now</h1>

@@ -190,7 +190,7 @@ def booster_reuse(request):
     if status is None:
         status = 'active'
 
-    _vehicles = Launcher.objects.filter(status__contains=status)
+    _vehicles = Launcher.objects.filter(status__icontains=status)
     page = request.GET.get('page', 1)
     paginator = Paginator(_vehicles, 20)
 
