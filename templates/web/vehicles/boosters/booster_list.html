@@ -106,10 +106,10 @@
                             <tr>
                                 <th class="text-center"></th>
                                 <th>Name</th>
-                                <th>Status</th>
-                                <th>Configuration</th>
                                 <th>Flights</th>
-                                <th></th>
+                                <th>Status</th>
+                                <th>Agency</th>
+                                <th>Configuration</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -128,15 +128,11 @@
                                                  src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
                                         {% endif %}
                                     </td>
-                                    <td>{{ vehicle.serial_number }}</td>
-                                    <td>{{ vehicle.status|title }}</td>
-                                    <td>{{ vehicle.launcher_config.name }}</td>
+                                    <td><a href="/vehicle/launcher/{{ vehicle.id }}">{{ vehicle.serial_number }}</a></td>
                                     <td>{{ vehicle.previous_flights }}</td>
-                                    <td class="td-actions">
-                                        <a href="/vehicle/launcher/{{ vehicle.id }}">
-                                            <i class="material-icons">explore</i> Explore
-                                        </a>
-                                    </td>
+                                    <td>{{ vehicle.status|title }}</td>
+                                    <td>{{ vehicle.launcher_config.launch_agency.name|title }}</td>
+                                    <td>{{ vehicle.launcher_config.name }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
