@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import json
 from datetime import datetime
 import datetime as dt
+from uuid import UUID
 
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
@@ -96,10 +97,19 @@ def next_launch(request):
 # Create your views here.
 def launch_by_slug(request, slug):
     try:
-        return create_launch_view(request, Launch.objects.get(slug=slug))
-    except ObjectDoesNotExist:
-        raise Http404
-
+        val = UUID(slug, version=4)
+        try:
+            launch = Launch.objects.get(id=slug)
+            return redirect('launch_by_slug', slug=launch.slug)
+        except ObjectDoesNotExist:
+            raise Http404
+    except ValueError:
+        # If it's a value error, then the string
+        # is not a valid hex code for a UUID.
+        try:
+            return create_launch_view(request, Launch.objects.get(slug=slug))
+        except ObjectDoesNotExist:
+            raise Http404
 
 # Create your views here.
 def launch_by_id(request, id):
