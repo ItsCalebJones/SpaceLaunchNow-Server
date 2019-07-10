@@ -168,10 +168,10 @@ def launch_to_small_embed(launch, notification="", pre_launch=False):
     follow_along = "\nFollow along on [Android](https://play.google.com/store/apps/details?id=me.calebjones." \
                    "spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)," \
                    " [iOS](https://itunes.apple.com/us/app/space-launch-now/id1399715731)" \
-                   " or [on the web](https://spacelaunchnow.me/next)"
+                   " or [on the web](https://spacelaunchnow.me)"
     mission_description = ""
     if launch.mission is not None and launch.mission.description is not None:
-        mission_description = "\n%s\n" % launch.mission.description
+        mission_description = "\n%s\n" % (launch.mission.description[:75] + '...') if len(launch.mission.description) > 75 else launch.mission.description
     fail_reason = ""
     if launch.failreason is not None and launch.failreason is not '':
         fail_reason = "\n**Update:** %s\n" % launch.failreason

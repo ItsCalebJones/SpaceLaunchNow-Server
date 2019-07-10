@@ -230,13 +230,13 @@ class Reddit:
     async def check_submissions(self):
         logger.debug("Checking for submissions.")
         submissions = RedditSubmission.objects.filter(read=False)
-        logger.debug("Found %s submissions to read." % len(submissions))
         for submission in submissions:
+            logger.info("Found %s submissions to read." % len(submissions))
             submission.read = True
             submission.save()
             if submission.subreddit.subscribers is not None:
                 for channel in submission.subreddit.subscribers.all():
-                    logger.debug("Sending %s to %s - %s" % (submission.id, channel.id, channel.name))
+                    logger.info("Sending %s to %s - %s" % (submission.id, channel.id, channel.name))
                     try:
                         embed = submission_to_embed(submission)
                         discord_channel = self.bot.get_channel(id=channel.channel_id)
@@ -246,8 +246,8 @@ class Reddit:
                         else:
                             await self.bot.send_message(discord_channel, embed=embed)
                     except Exception as e:
-                        logger.debug(channel.id)
-                        logger.debug(channel.name)
+                        logger.error(channel.id)
+                        logger.error(channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
                             channel.delete()

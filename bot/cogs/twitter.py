@@ -17,7 +17,7 @@ twitter = Twitter(auth=OAuth(consumer_key=config.keys['CONSUMER_KEY'],
                              token=config.keys['TOKEN_KEY'],
                              token_secret=config.keys['TOKEN_SECRET']))
 
-logger = logging.getLogger('bot.discord')
+logger = logging.getLogger('bot.discord.tweets')
 
 def get_new_tweets():
     tweets = twitter.lists.statuses(owner_screen_name="spacelaunchnow",
@@ -275,11 +275,11 @@ class Twitter:
 
     async def check_tweets(self):
         logging.getLogger("asyncio").setLevel(logging.DEBUG)
-        logger.info("Checking unread tweets...")
+        logger.debug("Checking unread tweets...")
         created_window = datetime.datetime.now(tz=pytz.utc) - datetime.timedelta(minutes=5)
         tweets = Tweet.objects.filter(read=False).filter(created_at__gte=created_window).order_by('created_at')
-        logger.info("Found %s unread tweets." % len(tweets))
         for tweet in tweets:
+            logger.info("Found %s unread tweets." % len(tweets))
             tweet.read = True
             tweet.save()
             if tweet.user.subscribers is not None:

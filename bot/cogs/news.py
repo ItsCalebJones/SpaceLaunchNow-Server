@@ -130,13 +130,15 @@ class News:
     async def check_news(self):
         logger.debug("Check News Articles")
         news = NewsItem.objects.filter(read=False)
-        logger.debug("Found %s articles to read." % len(news))
         for item in news:
+            logger.info("Found %s articles to read." % len(news))
             item.read = True
             item.save()
             for channel in NewsNotificationChannel.objects.filter(subscribed=True):
+                logger.debug("Channel %s" % channel.name)
+                logger.debug("Channel ID %s" % channel.id)
                 try:
-                    logger.info("Reading News Articles - %s" % item.title)
+                    logger.debug("Reading News Articles - %s" % item.title)
                     embed = news_to_embed(item)
                     discord_channel = self.bot.get_channel(id=channel.channel_id)
                     if discord_channel is None or not discord_channel.server.me.permissions_in(
@@ -145,8 +147,9 @@ class News:
                     else:
                         await self.bot.send_message(discord_channel, embed=embed)
                 except Exception as e:
-                    logger.debug(channel.id)
-                    logger.debug(channel.name)
+                    logger.error("Exception Reading News Articles - %s" % item.title)
+                    logger.error(channel.id)
+                    logger.error(channel.name)
                     logger.error(e)
                     if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
                         channel.delete()
