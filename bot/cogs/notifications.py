@@ -12,7 +12,7 @@ from api.models import Launch
 from bot.cogs.launches import launch_to_small_embed
 from bot.models import DiscordChannel, Notification
 
-logger = logging.getLogger('bot.discord')
+logger = logging.getLogger('bot.discord.notifications')
 
 
 class Notifications:
@@ -94,12 +94,12 @@ class Notifications:
             await self.bot.send_message(context.message.channel, "Only server owners list notification channels.")
 
     async def check_success(self, bot_channels, time_threshold_past_two_days, time_threshold_24_hour):
-        logger.info("Checking successful launches...")
+        logger.debug("Checking successful launches...")
         recent_success_launches = Launch.objects.filter(Q(status__id=3) | Q(status__id=4) | Q(status__id=7),
                                                         net__lte=time_threshold_24_hour,
                                                         net__gte=time_threshold_past_two_days)
-        logger.info("Found %s launches" % len(recent_success_launches))
         for launch in recent_success_launches:
+            logger.debug("Found %s successful launches" % len(recent_success_launches))
             notification, created = Notification.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedSuccessDiscord:
                 notification.wasNotifiedSuccessDiscord = True
@@ -112,18 +112,18 @@ class Notifications:
                                                     embed=launch_to_small_embed(launch,
                                                                                 "**Launch was a %s!**\n\n" % launch.status.name, pre_launch=False))
                     except Exception as e:
-                        logger.debug(channel.id)
-                        logger.debug(channel.name)
+                        logger.error(channel.id)
+                        logger.error(channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
                             channel.delete()
                         return
 
     async def check_in_flight(self, bot_channels):
-        logger.info("Checking in-flight launches...")
+        logger.debug("Checking in-flight launches...")
         in_flight_launches = Launch.objects.filter(status__id=6)
-        logger.info("Found %s launches" % len(in_flight_launches))
         for launch in in_flight_launches:
+            logger.debug("Found %s in flight launches" % len(in_flight_launches))
             notification, created = Notification.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedInFlightDiscord:
                 notification.wasNotifiedInFlightDiscord = True
@@ -135,19 +135,19 @@ class Notifications:
                         await self.bot.send_message(channel,
                                                     embed=launch_to_small_embed(launch, "**Launch is in flight!**\n\n", pre_launch=False))
                     except Exception as e:
-                        logger.debug(channel.id)
-                        logger.debug(channel.name)
+                        logger.error(channel.id)
+                        logger.error(channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
                             channel.delete()
                         return
 
     async def check_one_minute(self, bot_channels, time_threshold_1_minute):
-        logger.info("Checking one-minute launches...")
+        logger.debug("Checking one-minute launches...")
         one_minute_launches = Launch.objects.filter(net__lte=time_threshold_1_minute,
                                                     net__gte=datetime.datetime.now(tz=pytz.utc))
-        logger.info("Found %s launches" % len(one_minute_launches))
         for launch in one_minute_launches:
+            logger.debug("Found %s launches in the next minute." % len(one_minute_launches))
             notification, created = Notification.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedOneMinutesDiscord:
                 notification.wasNotifiedOneMinutesDiscord = True
@@ -159,19 +159,19 @@ class Notifications:
                         await self.bot.send_message(channel,
                                                     embed=launch_to_small_embed(launch, "**Launching in one minute!**\n\n"))
                     except Exception as e:
-                        logger.debug(channel.id)
-                        logger.debug(channel.name)
+                        logger.error(channel.id)
+                        logger.error(channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
                             channel.delete()
                         return
 
     async def check_ten_minute(self, bot_channels, time_threshold_10_minute, time_threshold_1_minute):
-        logger.info("Checking ten-minute launches...")
+        logger.debug("Checking ten-minute launches...")
         ten_minute_launches = Launch.objects.filter(net__lte=time_threshold_10_minute,
                                                     net__gte=time_threshold_1_minute)
-        logger.info("Found %s launches" % len(ten_minute_launches))
         for launch in ten_minute_launches:
+            logger.debug("Found %s launches in the next ten minutes." % len(ten_minute_launches))
             notification, created = Notification.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedTenMinutesDiscord:
                 notification.wasNotifiedTenMinutesDiscord = True
@@ -184,19 +184,19 @@ class Notifications:
                                                     embed=launch_to_small_embed(launch,
                                                                                 "**Launching in ten minutes!**\n\n"))
                     except Exception as e:
-                        logger.debug(channel.id)
-                        logger.debug(channel.name)
+                        logger.error(channel.id)
+                        logger.error(channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
                             channel.delete()
                         return
 
     async def check_twenty_four_hour(self, bot_channels, time_threshold_1_hour, time_threshold_24_hour):
-        logger.info("Checking 24 hour launches...")
+        logger.debug("Checking 24 hour launches...")
         twenty_four_hour_launches = Launch.objects.filter(net__lte=time_threshold_24_hour,
                                                           net__gte=time_threshold_1_hour)
-        logger.info("Found %s launches" % len(twenty_four_hour_launches))
         for launch in twenty_four_hour_launches:
+            logger.debug("Found %s launches in the next 24 hours" % len(twenty_four_hour_launches))
             notification, created = Notification.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedTwentyFourHourDiscord:
                 notification.wasNotifiedTwentyFourHourDiscord = True
@@ -208,19 +208,19 @@ class Notifications:
                         await self.bot.send_message(channel, embed=launch_to_small_embed(launch,
                                                                                          "**Launching in twenty four hours!**\n\n"))
                     except Exception as e:
-                        logger.debug(channel.id)
-                        logger.debug(channel.name)
+                        logger.error(channel.id)
+                        logger.error(channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
                             channel.delete()
                         return
 
     async def check_one_hour(self, bot_channels, time_threshold_10_minute, time_threshold_1_hour):
-        logger.info("Checking one hour launches...")
+        logger.debug("Checking one hour launches...")
         one_hour_launches = Launch.objects.filter(net__lte=time_threshold_1_hour,
                                                   net__gte=time_threshold_10_minute)
-        logger.info("Found %s launches" % len(one_hour_launches))
         for launch in one_hour_launches:
+            logger.debug("Found %s launches in the next hour." % len(one_hour_launches))
             notification, created = Notification.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedOneHourDiscord:
                 notification.wasNotifiedOneHourDiscord = True
@@ -232,18 +232,18 @@ class Notifications:
                         await self.bot.send_message(channel,
                                                     embed=launch_to_small_embed(launch, "**Launching in one hour!**\n\n"))
                     except Exception as e:
-                        logger.debug(channel.id)
-                        logger.debug(channel.name)
+                        logger.error(channel.id)
+                        logger.error(channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
                             channel.delete()
                         return
 
     async def check_webcast_live(self, bot_channels, time_threshold_1_hour, time_threshold_1_minute):
-        logger.info("Checking webcast live launches...")
+        logger.debug("Checking webcast live launches...")
         one_hour_launches = Launch.objects.filter(net__gte=time_threshold_1_minute, net__lte=time_threshold_1_hour, webcast_live=True)
-        logger.info("Found %s launches" % len(one_hour_launches))
         for launch in one_hour_launches:
+            logger.debug("Found %s launches with a live webcast." % len(one_hour_launches))
             notification, created = Notification.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedWebcastDiscord:
                 notification.wasNotifiedWebcastDiscord = True
@@ -254,8 +254,8 @@ class Notifications:
                     try:
                         await self.bot.send_message(channel, embed=launch_to_small_embed(launch, "**Webcast is live!**\n\n"))
                     except Exception as e:
-                        logger.debug(channel.id)
-                        logger.debug(channel.name)
+                        logger.error(channel.id)
+                        logger.error(channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
                             channel.delete()
@@ -273,7 +273,7 @@ class Notifications:
                 bot_channels.append(discord_channel)
 
         while not self.bot.is_closed:
-            logger.info("Checking Discord launch events...")
+            logger.debug("Checking Discord launch events...")
             time_threshold_24_hour = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(hours=24)
             time_threshold_1_hour = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(hours=1)
             time_threshold_10_minute = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(minutes=10)
@@ -296,7 +296,7 @@ class Notifications:
 
             await self.set_bot_description()
 
-            logger.info("Completed.")
+            logger.debug("Completed.")
             await asyncio.sleep(30)
 
     async def set_bot_description(self):

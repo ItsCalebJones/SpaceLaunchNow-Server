@@ -51,6 +51,7 @@ REST_FRAMEWORK = {
 }
 
 LOGIN_REDIRECT_URL = '/'
+
 if DEBUG:
     import logging
 
@@ -118,6 +119,22 @@ LOGGING = {
             'maxBytes': 1024 * 1024 * 5,
             'backupCount': 5
         },
+        'discord.notifications': {
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'log/discord_notifications.log',
+            'formatter': 'standard',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5
+        },
+        'discord.tweets': {
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'log/discord_tweets.log',
+            'formatter': 'standard',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5
+        },
     },
     'loggers': {
         # Again, default Django configuration to email unhandled exceptions
@@ -147,8 +164,18 @@ LOGGING = {
         },
         'bot.discord': {
             'handlers': ['django_default', 'discord', 'console'],
-            'level': 'INFO',
+            'level': 'DEBUG' if DEBUG else 'INFO',
             'propagate': True,
+        },
+        'bot.discord.notifications': {
+            'handlers': ['django_default', 'discord.notifications', 'console'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        },
+        'bot.discord.tweets': {
+            'handlers': ['django_default', 'discord.tweets', 'console'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
         },
     },
 }
