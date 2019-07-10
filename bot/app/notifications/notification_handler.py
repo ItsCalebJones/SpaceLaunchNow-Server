@@ -44,7 +44,7 @@ class NotificationHandler:
                 return
         elif notification_type == 'oneMinute':
             if launch.status.id == 1:
-                contents = 'Launch attempt from %s in less then one minute.' % launch.pad.location.name
+                contents = 'Launch attempt from %s in less than one minute.' % launch.pad.location.name
             else:
                 logger.error("Invalid state for sending a notification - Launch: %s" % launch)
                 return
