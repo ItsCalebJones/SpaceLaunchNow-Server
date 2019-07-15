@@ -8,8 +8,8 @@ from discord.ext import commands
 from django.db.models import Q
 from django.template import defaultfilters
 
-from api.models import Launch
-from bot.cogs.launches import launch_to_small_embed
+from api.models import Launch, Events
+from bot.cogs.launches import launch_to_small_embed, event_to_embed
 from bot.models import DiscordChannel, Notification
 
 logger = logging.getLogger('bot.discord.notifications')
@@ -110,7 +110,8 @@ class Notifications:
                     try:
                         await self.bot.send_message(channel,
                                                     embed=launch_to_small_embed(launch,
-                                                                                "**Launch was a %s!**\n\n" % launch.status.name, pre_launch=False))
+                                                                                "**Launch was a %s!**\n\n" % launch.status.name,
+                                                                                pre_launch=False))
                     except Exception as e:
                         logger.error(channel.id)
                         logger.error(channel.name)
@@ -133,7 +134,8 @@ class Notifications:
                     logger.info("Sending notification to %s" % channel.name)
                     try:
                         await self.bot.send_message(channel,
-                                                    embed=launch_to_small_embed(launch, "**Launch is in flight!**\n\n", pre_launch=False))
+                                                    embed=launch_to_small_embed(launch, "**Launch is in flight!**\n\n",
+                                                                                pre_launch=False))
                     except Exception as e:
                         logger.error(channel.id)
                         logger.error(channel.name)
@@ -157,7 +159,8 @@ class Notifications:
                     logger.info("Sending notification to %s" % channel.name)
                     try:
                         await self.bot.send_message(channel,
-                                                    embed=launch_to_small_embed(launch, "**Launching in one minute!**\n\n"))
+                                                    embed=launch_to_small_embed(launch,
+                                                                                "**Launching in one minute!**\n\n"))
                     except Exception as e:
                         logger.error(channel.id)
                         logger.error(channel.name)
@@ -230,7 +233,8 @@ class Notifications:
                     logger.info("Sending notification to %s" % channel.name)
                     try:
                         await self.bot.send_message(channel,
-                                                    embed=launch_to_small_embed(launch, "**Launching in one hour!**\n\n"))
+                                                    embed=launch_to_small_embed(launch,
+                                                                                "**Launching in one hour!**\n\n"))
                     except Exception as e:
                         logger.error(channel.id)
                         logger.error(channel.name)
@@ -241,7 +245,8 @@ class Notifications:
 
     async def check_webcast_live(self, bot_channels, time_threshold_1_hour, time_threshold_1_minute):
         logger.debug("Checking webcast live launches...")
-        one_hour_launches = Launch.objects.filter(net__gte=time_threshold_1_minute, net__lte=time_threshold_1_hour, webcast_live=True)
+        one_hour_launches = Launch.objects.filter(net__gte=time_threshold_1_minute, net__lte=time_threshold_1_hour,
+                                                  webcast_live=True)
         for launch in one_hour_launches:
             logger.debug("Found %s launches with a live webcast." % len(one_hour_launches))
             notification, created = Notification.objects.get_or_create(launch=launch)
@@ -252,7 +257,54 @@ class Notifications:
                 for channel in bot_channels:
                     logger.info("Sending notification to %s" % channel.name)
                     try:
-                        await self.bot.send_message(channel, embed=launch_to_small_embed(launch, "**Webcast is live!**\n\n"))
+                        await self.bot.send_message(channel,
+                                                    embed=event_to_embed(launch, "**Webcast is live!**\n\n"))
+                    except Exception as e:
+                        logger.error(channel.id)
+                        logger.error(channel.name)
+                        logger.error(e)
+                        if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
+                            channel.delete()
+                        return
+
+    async def check_webcast_live_event(self, bot_channels, time_threshold_1_hour, time_threshold_1_minute):
+        logger.debug("Checking webcast live launches...")
+        events = Events.objects.filter(date__gte=time_threshold_1_minute, date__lte=time_threshold_1_hour,
+                                       webcast_live=True)
+        for event in events:
+            logger.debug("Found %s events with a live webcast." % len(events))
+            if not event.was_discorded_webcast_live:
+                event.was_discorded_webcast_live = True
+                event.save()
+                logger.info("Webcast Live - Event Notification for %s" % event.name)
+                for channel in bot_channels:
+                    logger.info("Sending notification to %s" % channel.name)
+                    try:
+                        await self.bot.send_message(channel, embed=event_to_embed(event, "**Webcast is live!**\n\n"))
+                    except Exception as e:
+                        logger.error(channel.id)
+                        logger.error(channel.name)
+                        logger.error(e)
+                        if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
+                            channel.delete()
+                        return
+
+    async def check_ten_minute_event(self, bot_channels, time_threshold_10_minute, time_threshold_1_minute):
+        logger.debug("Checking ten-minute events...")
+        events = Events.objects.filter(date__lte=time_threshold_10_minute,
+                                       date__gte=time_threshold_1_minute)
+        for event in events:
+            logger.debug("Found %s events in the next ten minutes." % len(events))
+            if not event.was_discorded_ten_minutes:
+                event.was_discorded_ten_minutes = True
+                event.save()
+                logger.info("Ten Minutes - Event Notification for %s" % event.name)
+                for channel in bot_channels:
+                    logger.info("Sending notification to %s" % channel.name)
+                    try:
+                        await self.bot.send_message(channel,
+                                                    embed=event_to_embed(event,
+                                                                         "**Launching in ten minutes!**\n\n"))
                     except Exception as e:
                         logger.error(channel.id)
                         logger.error(channel.name)
@@ -293,6 +345,10 @@ class Notifications:
             await self.check_webcast_live(bot_channels, time_threshold_1_hour, time_threshold_1_minute)
 
             await self.check_success(bot_channels, time_threshold_past_two_days, time_threshold_24_hour)
+
+            await self.check_ten_minute_event(bot_channels, time_threshold_10_minute, time_threshold_1_minute)
+
+            await self.check_webcast_live_event(bot_channels, time_threshold_1_hour, time_threshold_1_minute)
 
             await self.set_bot_description()
 

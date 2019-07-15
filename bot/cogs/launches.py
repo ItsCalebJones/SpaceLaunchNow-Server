@@ -221,5 +221,62 @@ def launch_to_small_embed(launch, notification="", pre_launch=False):
     return embed
 
 
+def event_to_embed(event, notification="", pre_launch=False):
+    title = "%s" % event.name
+    color = Colour.teal()
+    status = "**Type:** %s\n" % event.type.name
+    location = "**Location:** %s\n" % event.location
+    follow_along = "\nFollow along on [Android](https://play.google.com/store/apps/details?id=me.calebjones." \
+                   "spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)," \
+                   " [iOS](https://itunes.apple.com/us/app/space-launch-now/id1399715731)" \
+                   " or [on the web](https://spacelaunchnow.me)"
+    event_description = ""
+    if event.description is not None:
+        event_description = "\n%s\n" % (event.mission.description[:75] + '...') if len(event.mission.description) > 75 else event.mission.description
+
+    formatted_countdown = ''
+
+    if pre_launch:
+        countdown = event.date - datetime.datetime.now(pytz.utc)
+        seconds = countdown.total_seconds()
+        days, remainder = divmod(seconds, 86400)
+        hours, remainder = divmod(remainder, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        if days != 0:
+            formatted_countdown += str(int(days)) + ' Days '
+        if hours != 0:
+            if hours == 23:
+                hours = 24
+            formatted_countdown += str(int(hours)) + ' Hours '
+        if minutes != 0:
+            if minutes == 59:
+                minutes = 00
+            formatted_countdown += str(int(minutes)) + ' Minutes '
+
+        formatted_countdown = '\n**Event In ' + formatted_countdown + '**'
+
+    webcasts = ""
+    if event.video_url is not None :
+        webcasts = "\n**Watch Here:**\n"
+        webcasts = webcasts + "[%s](%s)\n" % (event.video_url, event.video_url)
+
+    description_text = notification + status + location + event_description + formatted_countdown + webcasts + follow_along
+
+    embed = discord.Embed(type="rich", title=title,
+                          description=description_text,
+                          color=color,
+                          url=event.get_full_absolute_url())
+
+    if event.feature_image.name is not '':
+        try:
+            embed.set_thumbnail(url=event.feature_image.url)
+        except ValueError:
+            embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
+    else:
+        embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
+    embed.set_footer(text=event.net.strftime("Date: %A %B %e, %Y %H:%M %Z"))
+    return embed
+
+
 def setup(bot):
     bot.add_cog(Launches(bot))
