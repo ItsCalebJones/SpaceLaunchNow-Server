@@ -150,8 +150,7 @@
                                             <img class="img"
                                                  src="{% if upcoming_launches.0.rocket.configuration.image_url %}{{ upcoming_launches.0.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}">
                                             <div class="colored-shadow"
-                                                 style="background-image: url('{% if upcoming_launches.0.rocket.configuration.image_url %}
-                                                     {{ upcoming_launches.0.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}'); opacity: 1;"></div>
+                                                 style="background-image: url('{% if upcoming_launches.0.rocket.configuration.image_url %}{{ upcoming_launches.0.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}'); opacity: 1;"></div>
                                         </a>
                                     </div>
                                 </div>
