@@ -118,8 +118,7 @@
                     </div>
                     <div class="col-md-12">
                         <div class="card card-raised card-background"
-                             style="background-image: url('{% if launch.rocket.configuration.image_url %}
-                                 {{ launch.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}')">
+                             style="background-image: url('{% if launch.rocket.configuration.image_url %}{{ launch.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}')">
                             <div class="card-body">
                                 <h6 class="card-category text-info">{{ launch.mission.type.name }}</h6>
                                 <h3 class="card-title">{{ launch.name }}</h3>
