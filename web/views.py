@@ -245,9 +245,9 @@ def booster_reuse_id(request, id):
     if id is not None:
         vehicle = Launcher.objects.get(pk=id)
         upcoming_vehicle_launches = Launch.objects.filter(rocket__firststage__launcher_id=vehicle.id).filter(
-            net__gte=datetime.utcnow())
+            net__gte=datetime.utcnow()).order_by('net')
         previous_vehicle_launches = Launch.objects.filter(rocket__firststage__launcher_id=vehicle.id).filter(
-            net__lte=datetime.utcnow())
+            net__lte=datetime.utcnow()).order_by('-net')
         previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
         return render(request, 'web/vehicles/boosters/booster_detail.html', {'vehicle': vehicle,
                                                                              'previous_launches': previous_launches,
@@ -270,9 +270,9 @@ def launch_vehicle_id(request, id):
         vehicle = LauncherConfig.objects.get(pk=id)
         previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
         upcoming_vehicle_launches = Launch.objects.filter(rocket__configuration=vehicle.id).filter(
-            net__gte=datetime.utcnow())
+            net__gte=datetime.utcnow()).order_by('net')
         previous_vehicle_launches = Launch.objects.filter(rocket__configuration=vehicle.id).filter(
-            net__lte=datetime.utcnow())
+            net__lte=datetime.utcnow()).order_by('-net')
 
         return render(request, 'web/vehicles/launch_vehicle/launch_vehicle_detail.html',
                       {'vehicle': vehicle, 'previous_launches': previous_launches,
