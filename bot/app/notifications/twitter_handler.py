@@ -30,6 +30,8 @@ def get_twitter_message(launch, notification_type):
             if launch.hashtag:
                 content = content + " %s" % launch.hashtag
 
+
+
             return content
         if launch.status.id == 2 or launch.status.id == 5:
             content = 'UPDATE: %s launch date has slipped, new date currently unavailable.' % launch.name
@@ -37,15 +39,19 @@ def get_twitter_message(launch, notification_type):
             if launch.hashtag:
                 content = content + " %s" % launch.hashtag
 
+
             return content
     elif notification_type == 'success':
-        if launch.mission is not None and launch.mission.orbit is not None and launch.mission.orbit.name is not None:
+        if launch.mission is not None and launch.mission.orbit is not None and launch.mission.orbit.name is not None and launch.mission.orbit.name is not 'Sub-Orbital':
             content = '%s was launched successfully from %s to %s by %s.' % (launch.name, launch.pad.location.name,
                                                                              launch.mission.orbit.name,
                                                                              launch.rocket.configuration.
                                                                              launch_agency.name)
             if launch.hashtag:
                 content = content + " %s" % launch.hashtag
+
+            if len(content + launch.get_full_absolute_url) < 280:
+                content = content + "\n%s" % launch.get_full_absolute_url
 
             return content
         else:
@@ -55,9 +61,12 @@ def get_twitter_message(launch, notification_type):
             if launch.hashtag:
                 content = content + " %s" % launch.hashtag
 
+            if len(content + launch.get_full_absolute_url) < 280:
+                content = content + "\n%s" % launch.get_full_absolute_url
+
             return content
     elif notification_type == 'failure':
-        if launch.mission is not None and launch.mission.orbit is not None and launch.mission.orbit.name is not None:
+        if launch.mission is not None and launch.mission.orbit is not None and launch.mission.orbit.name is not None and launch.mission.orbit.name is not 'Sub-Orbital':
             content = '%s failed to launch from %s to %s by %s.' % (
                 launch.name, launch.pad.location.name,
                 launch.mission.orbit.name,
@@ -65,6 +74,9 @@ def get_twitter_message(launch, notification_type):
 
             if launch.hashtag:
                 content = content + " %s" % launch.hashtag
+
+            if len(content + launch.get_full_absolute_url) < 280:
+                content = content + "\n%s" % launch.get_full_absolute_url
 
             return content
         else:
@@ -74,10 +86,13 @@ def get_twitter_message(launch, notification_type):
             if launch.hashtag:
                 content = content + " %s" % launch.hashtag
 
+            if len(content + launch.get_full_absolute_url) < 280:
+                content = content + "\n%s" % launch.get_full_absolute_url
+
             return content
 
     elif notification_type == 'partial_failure':
-        if launch.mission is not None and launch.mission.orbit is not None and launch.mission.orbit.name is not None:
+        if launch.mission is not None and launch.mission.orbit is not None and launch.mission.orbit.name is not None and launch.mission.orbit.name is not 'Sub-Orbital':
             content = '%s was a partial launch failure from %s to %s by %s.' % (
                 launch.name, launch.pad.location.name,
                 launch.mission.orbit.name,
@@ -85,6 +100,9 @@ def get_twitter_message(launch, notification_type):
 
             if launch.hashtag:
                 content = content + " %s" % launch.hashtag
+
+            if len(content + launch.get_full_absolute_url) < 280:
+                content = content + "\n%s" % launch.get_full_absolute_url
 
             return content
         else:
@@ -94,10 +112,13 @@ def get_twitter_message(launch, notification_type):
             if launch.hashtag:
                 content = content + " %s" % launch.hashtag
 
+            if len(content + launch.get_full_absolute_url) < 280:
+                content = content + "\n%s" % launch.get_full_absolute_url
+
             return content
 
     elif notification_type == 'inFlight':
-        if launch.mission is not None and launch.mission.orbit is not None and launch.mission.orbit.name is not None:
+        if launch.mission is not None and launch.mission.orbit is not None and launch.mission.orbit.name is not None and launch.mission.orbit.name is not 'Sub-Orbital':
             content = '%s currently in flight from %s targeting a %s.' % (launch.name, launch.pad.location.name,
                                                                           launch.mission.orbit.name)
             if launch.hashtag:
@@ -127,26 +148,19 @@ def get_twitter_message(launch, notification_type):
             if launch.hashtag:
                 content = content + " %s" % launch.hashtag
 
-            if len(launch.vid_urls) > 0:
-                watch = "\nWatch Live: %s" % launch.get_full_absolute_url
-                if len(content + watch) < 280:
-                    content = content + watch
-            else:
-                if len(content + launch.get_full_absolute_url) < 280:
-                    content = content + "\n %s" % launch.get_full_absolute_url
+            if len(content + launch.get_full_absolute_url) < 280:
+                content = content + "\n%s" % launch.get_full_absolute_url
 
             return content
 
     elif notification_type == 'webcastLive':
         content = '%s webcast is now live!' % launch.name
 
-        if len(launch.vid_urls) > 0:
-            watch = "\nWatch Here: %s" % launch.get_full_absolute_url
-            if len(content + watch) < 280:
-                content = content + watch
-        else:
-            if len(content + launch.get_full_absolute_url) < 280:
-                content = content + "\n %s" % launch.get_full_absolute_url
+        if launch.hashtag:
+            content = content + " %s" % launch.hashtag
+
+        if len(content + launch.get_full_absolute_url) < 280:
+            content = content + "\n%s" % launch.get_full_absolute_url
 
         return content
 
