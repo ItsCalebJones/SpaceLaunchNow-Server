@@ -269,73 +269,7 @@
                             <hr>
                         </div>
                         {% for launch in upcoming_vehicle_launches %}
-                            <div class="card text-left" style="margin-top: 75px">
-                                <div class="card-header {% if 'GO' in launch.status.name %} card-header-success {% elif 'TBD' in launch.status.name %} card-header-danger {% else %} card-header-info {% endif %} p-2">
-                                    <div class="row">
-                                        <div class="col-md-4 text-center" style="height: 150px">
-                                            {% if launch.rocket.configuration.image_url %}
-                                                {% thumbnail launch.rocket.configuration.image_url "200" as im %}
-                                                    <img class="img-raised rounded-circle img-fluid text-center"
-                                                         src="{{ im.url }}"
-                                                         style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                                {% endthumbnail %}
-                                            {% elif launch.rocket.configuration.launch_agency.image_url %}
-                                                {% thumbnail launch.rocket.configuration.launch_agency.image_url "200" as im %}
-                                                    <img class="img-raised rounded-circle img-fluid text-center"
-                                                         src="{{ im.url }}"
-                                                         style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                                {% endthumbnail %}
-                                            {% else %}
-                                                <img class="img-raised rounded-circle img-fluid text-center"
-                                                     src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png"
-                                                     style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                            {% endif %}
-                                        </div>
-                                        <div class="col-md-8 text-md-left text-center">
-                                            <h4 class="card-title">{{ launch.name }}</h4>
-                                            {{ launch.rocket.configuration.launch_agency.name }}
-                                            | {{ launch.rocket.configuration.launch_agency.country_code }}<br>
-                                            {{ launch.pad.location.name }}<br>
-                                            <i>{{ launch.net }}</i><br>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    {% if launch.status %}
-                                        <h5 class="card-text"><b>Status: </b>{{ launch.status.name }}</h5>
-                                    {% endif %}
-                                    {% if launch.mission %}
-                                        <h5 class="card-text"><b>Mission: </b>{{ launch.mission.type_name }}</h5>
-                                        <p class="card-text">{{ launch.mission.description }}</p>
-                                    {% else %}
-                                        <h5 class="card-text">Unknown Mission</h5>
-                                        <p class="card-text">There are no mission or payload details available for
-                                            this
-                                            launch.</p>
-                                    {% endif %}
-                                    <span class="badge badge-pill badge-success">{{ launch.mission.orbit.name }}</span>
-                                    {% if launch.hashtag %}
-                                        <span class="badge badge-pill badge-primary">{{ launch.hashtag }}</span>
-                                    {% endif %}
-                                    {% if launch.rocket.firststage.all|length > 0 %}
-                                        {% for stage in launch.rocket.firststage.all %}
-                                            {% if stage.landing.landing_location %}
-                                                <span class="badge badge-pill badge-info"> {{ stage.launcher.serial_number }} - {{ stage.reused|yesno:"Flight Proven,Maiden Flight" }}
-                                                    {% if stage.reused %}({{ stage.launcher.previous_flights }}
-                                                        ) {% endif %}</span>
-                                                <span class="badge badge-pill badge-primary">{{ stage.landing.landing_location.name }}</span>
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% endif %}
-                                    <hr/>
-                                    <row>
-                                        <a class="btn btn-primary" href="/launch/{{ launch.slug }}">Explore</a>
-                                        <a data-site class="btn btn-danger"
-                                           href="http://www.facebook.com/sharer.php?u={{ launch.get_full_absolute_url }}"
-                                           target="_blank">Share</a>
-                                    </row>
-                                </div>
-                            </div>
+                            {% include "web/views/small_launch_card.html" with launch=launch %}
                         {% endfor %}
                     {% endif %}
                     {% if previous_vehicle_launches|length > 0 %}
@@ -350,73 +284,7 @@
                             <hr>
                         </div>
                         {% for launch in previous_vehicle_launches %}
-                            <div class="card text-left" style="margin-top: 75px">
-                                <div class="card-header {% if 'GO' in launch.status.name %} card-header-success {% elif 'TBD' in launch.status.name %} card-header-danger {% else %} card-header-info {% endif %} p-2">
-                                    <div class="row">
-                                        <div class="col-md-4 text-center" style="height: 150px">
-                                            {% if launch.rocket.configuration.image_url %}
-                                                {% thumbnail launch.rocket.configuration.image_url "200" as im %}
-                                                    <img class="img-raised rounded-circle img-fluid text-center"
-                                                         src="{{ im.url }}"
-                                                         style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                                {% endthumbnail %}
-                                            {% elif launch.rocket.configuration.launch_agency.image_url %}
-                                                {% thumbnail launch.rocket.configuration.launch_agency.image_url "200" as im %}
-                                                    <img class="img-raised rounded-circle img-fluid text-center"
-                                                         src="{{ im.url }}"
-                                                         style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                                {% endthumbnail %}
-                                            {% else %}
-                                                <img class="img-raised rounded-circle img-fluid text-center"
-                                                     src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png"
-                                                     style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                            {% endif %}
-                                        </div>
-                                        <div class="col-md-8 text-md-left text-center">
-                                            <h4 class="card-title">{{ launch.name }}</h4>
-                                            {{ launch.rocket.configuration.launch_agency.name }}
-                                            | {{ launch.rocket.configuration.launch_agency.country_code }}<br>
-                                            {{ launch.pad.location.name }}<br>
-                                            <i>{{ launch.net }}</i><br>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    {% if launch.status %}
-                                        <h5 class="card-text"><b>Status: </b>{{ launch.status.name }}</h5>
-                                    {% endif %}
-                                    {% if launch.mission %}
-                                        <h5 class="card-text"><b>Mission: </b>{{ launch.mission.type_name }}</h5>
-                                        <p class="card-text">{{ launch.mission.description }}</p>
-                                    {% else %}
-                                        <h5 class="card-text">Unknown Mission</h5>
-                                        <p class="card-text">There are no mission or payload details available for
-                                            this
-                                            launch.</p>
-                                    {% endif %}
-                                    <span class="badge badge-pill badge-success">{{ launch.mission.orbit.name }}</span>
-                                    {% if launch.hashtag %}
-                                        <span class="badge badge-pill badge-primary">{{ launch.hashtag }}</span>
-                                    {% endif %}
-                                    {% if launch.rocket.firststage.all|length > 0 %}
-                                        {% for stage in launch.rocket.firststage.all %}
-                                            {% if stage.landing.landing_location %}
-                                                <span class="badge badge-pill badge-info"> {{ stage.launcher.serial_number }} - {{ stage.reused|yesno:"Flight Proven,Maiden Flight" }}
-                                                    {% if stage.reused %}({{ stage.launcher.previous_flights }}
-                                                        ) {% endif %}</span>
-                                                <span class="badge badge-pill badge-primary">{{ stage.landing.landing_location.name }}</span>
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% endif %}
-                                    <hr/>
-                                    <row>
-                                        <a class="btn btn-primary" href="/launch/{{ launch.slug }}">Explore</a>
-                                        <a data-site class="btn btn-danger"
-                                           href="http://www.facebook.com/sharer.php?u={{ launch.get_full_absolute_url }}"
-                                           target="_blank">Share</a>
-                                    </row>
-                                </div>
-                            </div>
+                            {% include "web/views/small_launch_card.html" with launch=launch %}
                         {% endfor %}
                     {% else %}
                         <div class="text-center">
