@@ -163,7 +163,7 @@ def launches(request, ):
         _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
 
     page = request.GET.get('page', 1)
-    paginator = Paginator(_launches, 5)
+    paginator = Paginator(_launches, 10)
 
     try:
         launches = paginator.page(page)
