@@ -269,8 +269,15 @@ def launch_vehicle_id(request, id):
     if id is not None:
         vehicle = LauncherConfig.objects.get(pk=id)
         previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
+        upcoming_vehicle_launches = Launch.objects.filter(rocket__configuration=vehicle.id).filter(
+            net__gte=datetime.utcnow())
+        previous_vehicle_launches = Launch.objects.filter(rocket__configuration=vehicle.id).filter(
+            net__lte=datetime.utcnow())
+
         return render(request, 'web/vehicles/launch_vehicle/launch_vehicle_detail.html',
-                      {'vehicle': vehicle, 'previous_launches': previous_launches})
+                      {'vehicle': vehicle, 'previous_launches': previous_launches,
+                       'upcoming_vehicle_launches': upcoming_vehicle_launches,
+                       'previous_vehicle_launches': previous_vehicle_launches})
     else:
         return redirect('booster_reuse')
 
