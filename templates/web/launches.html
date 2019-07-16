@@ -1,6 +1,7 @@
 {% extends "web/base.html" %}
 {% load staticfiles %}
 {% load thumbnail %}
+{% load mathfilters %}
 {% block extrahead %}
     <link rel="canonical" href="https://spacelaunchnow.me/launch/">
     <title>Space Launch Now - Launch Schedule</title>
@@ -198,6 +199,50 @@
                             </div>
                         </div>
                     {% endfor %}
+                    <div class="text-center mx-auto">
+                        <nav aria-label="...">
+                            {% if launches.has_other_pages %}
+                                <ul class="pagination justify-content-center">
+                                    {% if launches.has_previous %}
+                                        <li class="page-item"><a class="page-link"
+                                                                 href="?page={{ launches.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Previous</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled"><span>Previous</span></li>
+                                    {% endif %}
+                                    {% if launches.number > 3 %}
+                                        <li class="page-item">
+                                        <a class="page-link"
+                                           href="?page=1{% if query %}&q={{ query }}{% endif %}">First</a>
+                                    {% endif %}
+                                    {% for i in launches.paginator.page_range %}
+                                        {% if forloop.counter|sub:launches.number >= -5 and forloop.counter|sub:launches.number <= 5 %}
+                                            {% if launches.number == i %}
+                                                <li class="page-item active"><span class="page-link">{{ i }} <span
+                                                        class="sr-only">(current)</span></span>
+                                                </li>
+                                            {% else %}
+                                                <li class="page-item"><a class="page-link"
+                                                                         href="?page={{ i }}{% if query %}&q={{ query }}{% endif %}">{{ i }}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if launches.has_next %}
+                                        {% if launches.paginator.count >= 10 %}
+                                            <li class="page-item"><a class="page-link"
+                                                                     href="?page={{ launches.paginator.count }}{% if query %}&q={{ query }}{% endif %}">Last</a>
+                                        {% endif %}
+                                        <li class="page-item"><a class="page-link"
+                                                                 href="?page={{ launches.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Next</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled"><span class="page-link">Next</span></li>
+                                    {% endif %}
+                                </ul>
+                            {% endif %}
+                        </nav>
+                    </div>
                 {% else %}
                     <div class="card text-left">
                         <div class="card-body">

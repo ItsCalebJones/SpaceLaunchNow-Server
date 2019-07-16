@@ -154,17 +154,27 @@ def create_launch_view(request, launch):
 def launches(request, ):
     query = request.GET.get('q')
 
-    if query is not None:
+    if query is not None and query != "None":
         _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
         _launches = _launches.filter(Q(rocket__configuration__launch_agency__abbrev__contains=query) |
                                      Q(pad__location__name__contains=query) |
-                                     Q(rocket__configuration__name__contains=query))[:15]
+                                     Q(rocket__configuration__name__contains=query))
     else:
-        _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')[:15]
+        _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(_launches, 5)
+
+    try:
+        launches = paginator.page(page)
+    except PageNotAnInteger:
+        launches = paginator.page(1)
+    except EmptyPage:
+        launches = paginator.page(paginator.num_pages)
 
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
 
-    return render(request, 'web/launches.html', {'launches': _launches,
+    return render(request, 'web/launches.html', {'launches': launches,
                                                  'query': query,
                                                  'previous_launches': previous_launches})
 
