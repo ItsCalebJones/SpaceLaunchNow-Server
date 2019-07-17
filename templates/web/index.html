@@ -220,20 +220,7 @@
                                     <div class="card-header card-header-image">
                                         <a href="/launch/{{ upcoming_launches.1.slug }}">
                                             <img class="img"
-                                                 src="{% if upcoming_launches.1.rocket.configuration.image_url %}
-
-
-
-
-
-
-
-
-
-
-
-
-                                                     {{ upcoming_launches.1.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}">
+                                                 src="{% if upcoming_launches.1.rocket.configuration.image_url %}{{ upcoming_launches.1.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}">
                                             <div class="colored-shadow"
                                                  style="background-image: url('{% if upcoming_launches.1.rocket.configuration.image_url %}
                                                      {{ upcoming_launches.1.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}'); opacity: 1;"></div>
@@ -285,7 +272,7 @@
                                         <div class="col-md-4">
                                             <div class="card card-plain card-blog">
                                                 <div class="card-header card-header-image">
-                                                    <a href="#pablo">
+                                                    <a href="/event/{{ event.slug }}">
                                                         <img class="img img-raised"
                                                              style="max-height: 500px; object-fit: cover;"
                                                              src="{{ event.feature_image.url }}">
@@ -296,7 +283,7 @@
                                                 <div class="card-body">
                                                     <h6 class="card-category text-info">{{ event.type.name }}</h6>
                                                     <h4 class="card-title">
-                                                        <a href="#pablo">{{ event.name }}</a>
+                                                        <a href="/event/{{ event.slug }}">{{ event.name }}</a>
                                                     </h4>
                                                     {% if event.location %}
                                                         <span class="badge badge-pill badge-primary">{{ event.location }}</span>
@@ -311,9 +298,7 @@
                                 </div>
                             {% endif %}
                             <div class="text-center">
-                                <a tabindex="0" class="btn btn-warning btn-round" data-placement="top"
-                                   data-toggle="popover" data-trigger="focus"
-                                   data-content="This feature is coming soon!">
+                                <a class="btn btn-warning btn-round">
                                     <i class="material-icons">calendar_today</i> View More Events
                                 </a>
                             </div>

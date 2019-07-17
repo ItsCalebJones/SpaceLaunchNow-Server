@@ -46,7 +46,7 @@
                             <span class="badge badge-pill badge-info">{{ event.spacestation.first.name }}</span>
                         {% endif %}
                         {% if event.launch %}
-                            <span class="badge badge-pill badge-warning">{{ event.launch.first.name }}</span>
+                            <span class="badge badge-pill badge-danger">{{ event.launch.first.name }}</span>
                         {% endif %}
                         {% if event.expedition %}
                             <span class="badge badge-pill badge-info">{{ event.expedition.first.name }}</span>
@@ -68,18 +68,18 @@
                             {% endvideo %}
                         {% endif %}
 
-                        {% if event.launch or event.spacestation %}
+                        {% if event.launch.first or event.spacestation.first %}
                             <h3>Related Information</h3>
                             <hr>
                         {% endif %}
 
-                        {% if event.launch %}
+                        {% if event.launch.first %}
                             <div class="col-sm-12 ml-auto mr-auto">
                                 {% include 'web/views/small_launch_card.html' with launch=event.launch.first %}
                             </div>
                         {% endif %}
 
-                        {% if event.spacestation %}
+                        {% if event.spacestation.first %}
                             <div class="col-sm-12 ml-auto mr-auto">
                                 {% include 'web/views/small_space_station.html' with vehicle=event.spacestation.first %}
                             </div>
