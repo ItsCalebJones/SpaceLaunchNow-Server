@@ -59,6 +59,7 @@ def get_news():
                 if news.title != item['title']:
                     news.title = item['title']
                     if (news.created_at - datetime.utcfromtimestamp(item['date_published']).replace(tzinfo=pytz.utc)) > timedelta(1):
+                        news.created_at = datetime.utcfromtimestamp(item['date_published']).replace(tzinfo=pytz.utc)
                         news.read = False
                 news.link = item['url']
                 news.featured_image = item['featured_image']
