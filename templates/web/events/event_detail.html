@@ -1,0 +1,109 @@
+{% extends "web/base.html" %}
+{% load embed_video_tags %}
+{% load user_agents %}
+{% block extrahead %}
+    <link rel="canonical" href="https://spacelaunchnow.me/event/{{ event.slug }}">
+    <title>Space Launch Now - Space Stations</title>
+    <meta name="title" content="Space Launch Now - {{ event.name }}">
+    <meta property="fb:app_id" content="746774215504127"/>
+    <meta property="og:title" content="Space Launch Now - {{ event.name }}"/>
+    <meta property="og:type" content="website"/>
+    <meta name="description"
+          content="{{ event.description|truncatechars:150 }}">
+    <meta property="og:description"
+          content="{{ event.description|truncatechars:150 }}"/>
+    <meta property="og:url" content="https://spacelaunchnow.me/event/{{ event.slug }}"/>
+    <meta property="og:image" content="{{ event.feature_image.url }}"/>
+    <meta property="og:image:width" content="3000"/>
+    <meta property="og:image:height" content="2000"/>
+
+{% endblock %}
+
+
+{% block navigation %}
+    {% include "web/navigation.html" %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9 col-md-12 col-xl-9">
+                <div class="card card-plain card-blog">
+                    <div class="card-header card-header-image">
+                        <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
+                             src="{{ event.feature_image.url }}">
+                        <div class="colored-shadow"
+                             style="background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-category text-info">{{ event.type.name }}</h6>
+                        <h4 class="card-title">{{ event.name }}</h4>
+                        </h4>
+                        {% if event.location %}
+                            <span class="badge badge-pill badge-primary">{{ event.location }}</span>
+                        {% endif %}
+                        {% if event.spacestation %}
+                            <span class="badge badge-pill badge-info">{{ event.spacestation.first.name }}</span>
+                        {% endif %}
+                        {% if event.launch %}
+                            <span class="badge badge-pill badge-warning">{{ event.launch.first.name }}</span>
+                        {% endif %}
+                        {% if event.expedition %}
+                            <span class="badge badge-pill badge-info">{{ event.expedition.first.name }}</span>
+                        {% endif %}
+                        <p class="card-description">
+                            {{ event.description }}
+                        </p>
+
+                        {% if event.video_url %}
+                            {% video event.video_url as my_video %}
+                                <div class="videoWrapper">
+                                    {% if request|is_mobile %}
+                                        {% video my_video '85% x 25%' %}
+                                    {% else %}
+                                        {% video my_video '100% x 100%' %}
+                                    {% endif %}
+                                </div>
+                                <br>
+                            {% endvideo %}
+                        {% endif %}
+
+                        {% if event.launch or event.spacestation %}
+                            <h3>Related Information</h3>
+                            <hr>
+                        {% endif %}
+
+                        {% if event.launch %}
+                            <div class="col-sm-12 ml-auto mr-auto">
+                                {% include 'web/views/small_launch_card.html' with launch=event.launch.first %}
+                            </div>
+                        {% endif %}
+
+                        {% if event.spacestation %}
+                            <div class="col-sm-12 ml-auto mr-auto">
+                                {% include 'web/views/small_space_station.html' with vehicle=event.spacestation.first %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-12 col-xl-3">
+                <!-- Categories Widget -->
+                {% include "web/sidebar_launches_only.html" %}
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- Space Launch Now -->
+        <ins class="adsbygoogle"
+             style="display:block; margin-top:16px; margin-bottom:16px;"
+             data-ad-client="ca-pub-9824528399164059"
+             data-ad-slot="8772606898"
+             data-ad-format="auto"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    {% include "web/install_buttons.html" %}
+{% endblock content %}

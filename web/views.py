@@ -37,6 +37,7 @@ def get_youtube_url(launch):
 def index(request):
     news = NewsItem.objects.all().order_by('-created_at')[:6]
     event = Events.objects.all().filter(date__gte=datetime.utcnow()).order_by('date').first()
+    events = Events.objects.all().filter(date__gte=datetime.utcnow()).order_by('date')[1:4]
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
     _launches = Launch.objects.filter(net__gte=datetime.utcnow()).filter(Q(status__id=1) | Q(status__id=2)).order_by(
         'net')[:3]
@@ -61,7 +62,8 @@ def index(request):
                                               'youtube_url': get_youtube_url(_next_launch),
                                               'news': news,
                                               'previous_launches': previous_launches,
-                                              'event': event})
+                                              'event': event,
+                                              'events': events})
 
 
 def app(request):
@@ -205,6 +207,31 @@ def spacecraft_by_id(request, id):
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
     return render(request, 'web/vehicles/spacecraft/spacecraft_detail.html', {'previous_launches': previous_launches,
                                                                               'vehicle': spacecraft})
+
+
+def events_list(request):
+    events = Events.objects.all().filter(date__gte=datetime.utcnow()).order_by('date')
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:6]
+    return render(request, 'web/events/event_list.html', {'previous_launches': previous_launches,
+                                                          'events': events})
+
+
+# Create your views here.
+def event_by_slug(request, slug):
+    try:
+        event = Events.objects.get(slug=slug)
+        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+        return render(request, 'web/events/event_detail.html', {'previous_launches': previous_launches,
+                                                                'event': event})
+    except ObjectDoesNotExist:
+        raise Http404
+
+
+def event_by_id(request, id):
+    try:
+        return redirect('event_by_slug', slug=Events.objects.get(id=id).slug)
+    except ObjectDoesNotExist:
+        raise Http404
 
 
 def booster_reuse(request):
@@ -483,7 +510,8 @@ class LaunchFeed(ICalFeed):
         if item.mission is not None and item.mission.description is not None:
             description = item.mission.description
         urls = "\n\nWatch Live: " + item.get_full_absolute_url()
-        description = description + urls + "\n\n===============\nSpace Launch Now\nID: " + str(item.id) + "\n==============="
+        description = description + urls + "\n\n===============\nSpace Launch Now\nID: " + str(
+            item.id) + "\n==============="
         return description
 
     def item_start_datetime(self, item):
@@ -543,7 +571,7 @@ class EventFeed(ICalFeed):
         return item.date
 
     def item_location(self, item):
-            return item.location
+        return item.location
 
     def item_link(self, item):
         if item.news_url is not None:

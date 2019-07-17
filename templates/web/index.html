@@ -46,6 +46,9 @@
                         <a class="nav-link" href="/launch">Launches</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="/event">Events</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="/astronaut">Astronauts</a>
                     </li>
                     <li class="nav-item">
@@ -118,7 +121,8 @@
                     </div>
                     <div class="col-md-12">
                         <div class="card card-raised card-background"
-                             style="background-image: url('{% if launch.rocket.configuration.image_url %}{{ launch.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}')">
+                             style="background-image: url('
+                                     {% if launch.rocket.configuration.image_url %}{{ launch.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}')">
                             <div class="card-body">
                                 <h6 class="card-category text-info">{{ launch.mission.type.name }}</h6>
                                 <h3 class="card-title">{{ launch.name }}</h3>
@@ -221,6 +225,14 @@
 
 
 
+
+
+
+
+
+
+
+
                                                      {{ upcoming_launches.1.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}">
                                             <div class="colored-shadow"
                                                  style="background-image: url('{% if upcoming_launches.1.rocket.configuration.image_url %}
@@ -245,10 +257,12 @@
                         <div class="col-md-12">
                             <div class="card card-plain card-blog">
                                 <div class="card-header card-header-image">
-                                    <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
-                                         src="{{ event.feature_image.url }}">
-                                    <div class="colored-shadow"
-                                         style="background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
+                                    <a href="#pablo">
+                                        <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
+                                             src="{{ event.feature_image.url }}">
+                                        <div class="colored-shadow"
+                                             style="background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
+                                    </a>
                                 </div>
                                 <div class="card-body">
                                     <h6 class="card-category text-info">{{ event.type.name }}</h6>
@@ -259,12 +273,43 @@
                                         <span class="badge badge-pill badge-primary">{{ event.location }}</span>
                                     {% endif %}
                                     <p class="card-description">
-                                        {{ event.description|truncatewords:50 }}
+                                        {{ event.description|truncatewords:75 }}
                                         <br>
                                         {#                                        <a href="#pablo"> Read More </a>#}
                                     </p>
                                 </div>
                             </div>
+                            {% if events|length > 0 %}
+                                <div class="row">
+                                    {% for event in events %}
+                                        <div class="col-md-4">
+                                            <div class="card card-plain card-blog">
+                                                <div class="card-header card-header-image">
+                                                    <a href="#pablo">
+                                                        <img class="img img-raised"
+                                                             style="max-height: 500px; object-fit: cover;"
+                                                             src="{{ event.feature_image.url }}">
+                                                        <div class="colored-shadow"
+                                                             style="background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
+                                                    </a>
+                                                </div>
+                                                <div class="card-body">
+                                                    <h6 class="card-category text-info">{{ event.type.name }}</h6>
+                                                    <h4 class="card-title">
+                                                        <a href="#pablo">{{ event.name }}</a>
+                                                    </h4>
+                                                    {% if event.location %}
+                                                        <span class="badge badge-pill badge-primary">{{ event.location }}</span>
+                                                    {% endif %}
+                                                    <p class="card-description">
+                                                        {{ event.description|truncatewords:50 }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                             <div class="text-center">
                                 <a tabindex="0" class="btn btn-warning btn-round" data-placement="top"
                                    data-toggle="popover" data-trigger="focus"
@@ -274,8 +319,6 @@
                             </div>
                         </div>
                     {% endif %}
-
-                    {% include "web/horizontal_news.html" %}
                 </div>
                 <!-- Sidebar Widgets Column -->
                 <div class="col-lg-3 col-md-12 col-xl-3">
@@ -351,6 +394,7 @@
 
                     {% include "web/sidebar_launches_only.html" %}
                 </div>
+                {% include "web/horizontal_news.html" %}
             </div>
         </div>
     </div>

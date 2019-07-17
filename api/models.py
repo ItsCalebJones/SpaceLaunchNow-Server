@@ -10,6 +10,7 @@ from compat import BytesIO
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.urls import reverse
+from django_extensions.db.fields import AutoSlugField
 
 from api.utils.utilities import resize_for_upload, resize_needed
 
@@ -313,6 +314,7 @@ class Events(models.Model):
     webcast_live = models.BooleanField(default=False)
     feature_image = models.FileField(storage=EventImageStorage(), default=None, null=True, blank=True,
                                      upload_to=image_path)
+    slug = AutoSlugField(populate_from=['name', 'id'])
     expedition = models.ManyToManyField('Expedition', blank=True)
     spacestation = models.ManyToManyField('Spacestation', blank=True)
     launch = models.ManyToManyField('Launch', blank=True)
@@ -344,6 +346,12 @@ class Events(models.Model):
         if resize_needed(self.feature_image):
             self.feature_image = resize_for_upload(self.feature_image)
         super(Events, self).save()
+
+    def get_absolute_url(self):
+        return self.slug
+
+    def get_full_absolute_url(self):
+        return 'https://spacelaunchnow.me/event/%s' % (self.get_absolute_url())
 
 
 class Location(models.Model):

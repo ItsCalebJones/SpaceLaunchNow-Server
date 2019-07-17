@@ -1,0 +1,119 @@
+{% extends "web/base.html" %}
+{% block extrahead %}
+    <link rel="canonical" href="https://spacelaunchnow.me/event/">
+    <title>Space Launch Now - Space Stations</title>
+    <meta name="title" content="Space Launch Now - Events">
+    <meta property="fb:app_id" content="746774215504127"/>
+    <meta property="og:title" content="Space Launch Now - Events"/>
+    <meta property="og:type" content="website"/>
+    <meta name="description"
+          content="Tracking events around the world and missions in deep space.">
+    <meta property="og:description"
+          content="Tracking events around the world and missions in deep space."/>
+    <meta property="og:url" content="https://spacelaunchnow.me/event/"/>
+    <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
+    <meta property="og:image:width" content="3000"/>
+    <meta property="og:image:height" content="2000"/>
+
+{% endblock %}
+
+
+{% block navigation %}
+    {% include "web/navigation.html" %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="projects-1" id="projects-1">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 ml-auto mr-auto text-center">
+                        <h1 class="title">Upcoming Events</h1>
+                        <hr>
+                    </div>
+                </div>
+                <div class="container">
+                    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"/>
+                    <!-- Space Launch Now -->
+                    <ins class="adsbygoogle"
+                         style="display:block; margin-top:16px; margin-bottom:16px;"
+                         data-ad-client="ca-pub-9824528399164059"
+                         data-ad-slot="6503993784"
+                         data-ad-format="auto"></ins>
+                    <script>
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10 ml-auto mr-auto">
+                <div class="row">
+                    {% if events|length > 0 %}
+                        <div class="row">
+                            {% for event in events %}
+                                <div class="card card-plain card-blog">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="card-header card-header-image">
+                                                <a href="/event/{{ event.slug }}">
+                                                    <img class="img img-raised"
+                                                         style="max-height: 300px; object-fit: cover;"
+                                                         src="{{ event.feature_image.url }}">
+                                                    <div class="colored-shadow"
+                                                         style="background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <h6 class="card-category text-info"
+                                                style="display:inline;">{{ event.type.name }}</h6>
+                                            <h6 class="card-category"
+                                                style="display:inline;">{{ event.date }}</h6>
+                                            <h3 class="card-title">
+                                                <a href="/event/{{ event.slug }}">{{ event.name }}</a>
+                                            </h3>
+                                            {% if event.location %}
+                                                <span class="badge badge-pill badge-primary">{{ event.location }}</span>
+                                            {% endif %}
+                                            {% if event.spacestation %}
+                                                <span class="badge badge-pill badge-info">{{ event.spacestation.first.name }}</span>
+                                            {% endif %}
+                                            {% if event.launch %}
+                                                <span class="badge badge-pill badge-warning">{{ event.launch.first.name }}</span>
+                                            {% endif %}
+                                            {% if event.expedition %}
+                                                <span class="badge badge-pill badge-info">{{ event.expedition.first.name }}</span>
+                                            {% endif %}
+                                            <p class="card-description">
+                                                {{ event.description|truncatewords:150 }}
+                                            </p>
+                                            <a href="/event/{{ event.slug }}" class="btn btn-warning btn-round">
+                                                <i class="material-icons">calendar_today</i> View Event
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- Space Launch Now -->
+        <ins class="adsbygoogle"
+             style="display:block; margin-top:16px; margin-bottom:16px;"
+             data-ad-client="ca-pub-9824528399164059"
+             data-ad-slot="8772606898"
+             data-ad-format="auto"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    {% include "web/install_buttons.html" %}
+{% endblock content %}

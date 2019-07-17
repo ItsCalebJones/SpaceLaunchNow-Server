@@ -23,6 +23,10 @@
                        href="/launch/">Launches</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger {% if request.path  == '/event/' %} active {% endif %}"
+                       href="/event/">Events</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link js-scroll-trigger {% if request.path  == '/astronaut/' %} active {% endif %}"
                        href="/astronaut/">Astronauts</a>
                 </li>
@@ -36,9 +40,12 @@
                         Developers
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="/docs"><i class="fas fa-book" style="margin-right: 8px;"></i> Documentation</a>
-                        <a class="dropdown-item" href="/api/3.3.0"><i class="fas fa-laptop-code" style="margin-right: 8px;"></i> Endpoints</a>
-                        <a class="dropdown-item" href="https://github.com/ItsCalebJones/SpaceLaunchNow-Server"><i class="fab fa-github" style="margin-right: 8px;"></i> GitHub</a>
+                        <a class="dropdown-item" href="/docs"><i class="fas fa-book" style="margin-right: 8px;"></i>
+                            Documentation</a>
+                        <a class="dropdown-item" href="/api/3.3.0"><i class="fas fa-laptop-code"
+                                                                      style="margin-right: 8px;"></i> Endpoints</a>
+                        <a class="dropdown-item" href="https://github.com/ItsCalebJones/SpaceLaunchNow-Server"><i
+                                class="fab fa-github" style="margin-right: 8px;"></i> GitHub</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
@@ -51,7 +58,7 @@
                            href="https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><i
                                 class="fab fa-android" style="margin-right: 8px;"></i>Google Play</a>
                         <a class="dropdown-item" href="https://itunes.apple.com/us/app/space-launch-now/id1399715731"><i
-                            class="fab fa-apple" style="margin-right: 8px;"></i> App Store</a>
+                                class="fab fa-apple" style="margin-right: 8px;"></i> App Store</a>
                     </div>
                 </li>
             </ul>
