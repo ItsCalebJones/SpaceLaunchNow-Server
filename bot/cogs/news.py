@@ -56,12 +56,13 @@ def get_news():
                 logger.info("Added News (%s) - %s - %s" % (news.id, news.title, news.news_site))
                 news.save()
             else:
-if news.title != item['title']:
-    news.title = item['title']
-    news.featured_image = item['featured_image']
-    if (news.created_at - datetime.utcfromtimestamp(item['date_published']).replace(tzinfo=pytz.utc)) > timedelta(1):
-        news.read = False
-    news.save()
+                if news.title != item['title']:
+                    news.title = item['title']
+                    if (news.created_at - datetime.utcfromtimestamp(item['date_published']).replace(tzinfo=pytz.utc)) > timedelta(1):
+                        news.read = False
+                news.link = item['url']
+                news.featured_image = item['featured_image']
+                news.save()
     return
 
 
