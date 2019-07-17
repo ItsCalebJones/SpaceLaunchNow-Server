@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import discord
 import pytz
@@ -55,6 +55,13 @@ def get_news():
                     logger.error(e)
                 logger.info("Added News (%s) - %s - %s" % (news.id, news.title, news.news_site))
                 news.save()
+            else:
+if news.title != item['title']:
+    news.title = item['title']
+    news.featured_image = item['featured_image']
+    if (news.created_at - datetime.utcfromtimestamp(item['date_published']).replace(tzinfo=pytz.utc)) > timedelta(1):
+        news.read = False
+    news.save()
     return
 
 
