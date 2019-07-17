@@ -58,10 +58,11 @@
                                             <div class="card-header card-header-image">
                                                 <a href="/event/{{ event.slug }}">
                                                     <img class="img img-raised"
-                                                         style="max-height: 300px; object-fit: cover;"
+                                                         style="height: 250px; object-fit: cover;"
                                                          src="{{ event.feature_image.url }}">
                                                     <div class="colored-shadow"
-                                                         style="background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
+                                                         style="height: 250px; object-fit: cover;
+                                                                 background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
                                                 </a>
                                             </div>
                                         </div>
@@ -85,11 +86,12 @@
                                             {% if event.expedition %}
                                                 <span class="badge badge-pill badge-info">{{ event.expedition.first.name }}</span>
                                             {% endif %}
-                                            <p class="card-description">
+                                            <br>
+                                            <p class="card-description mt-1">
                                                 {{ event.description|truncatewords:150 }}
                                             </p>
-                                            <a href="/event/{{ event.slug }}" class="btn btn-info btn-round">
-                                                <i class="material-icons">calendar_today</i> View Event
+                                            <a href="/event/{{ event.slug }}" class="btn btn-primary btn-round">
+                                                <i class="material-icons">calendar_today</i> Explore
                                             </a>
                                         </div>
                                     </div>

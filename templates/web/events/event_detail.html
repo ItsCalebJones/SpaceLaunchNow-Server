@@ -36,7 +36,10 @@
                              style="background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
                     </div>
                     <div class="card-body">
-                        <h6 class="card-category text-info">{{ event.type.name }}</h6>
+                        <h6 class="card-category text-info"
+                            style="display:inline;">{{ event.type.name }}</h6>
+                        <h6 class="card-category"
+                            style="display:inline;">{{ event.date }}</h6>
                         <h4 class="card-title">{{ event.name }}</h4>
                         </h4>
                         {% if event.location %}
@@ -51,12 +54,20 @@
                         {% if event.expedition %}
                             <span class="badge badge-pill badge-info">{{ event.expedition.first.name }}</span>
                         {% endif %}
-                        <p class="card-description">
+                        <p class="card-description mt-1">
                             {{ event.description }}
                         </p>
 
+                        {% if event.news_url %}
+                        <div class="text-left">
+                            <a class="btn btn-primary" href="{{event.news_url }}">Read More</a>
+                        </div>
+                        {% endif %}
+
                         {% if event.video_url %}
                             {% video event.video_url as my_video %}
+                                <h4 class="text-center">Watch Here</h4>
+                                <hr>
                                 <div class="videoWrapper">
                                     {% if request|is_mobile %}
                                         {% video my_video '85% x 25%' %}
@@ -64,7 +75,6 @@
                                         {% video my_video '100% x 100%' %}
                                     {% endif %}
                                 </div>
-                                <br>
                             {% endvideo %}
                         {% endif %}
 

@@ -163,9 +163,12 @@
                                     <div class="card-header card-header-image">
                                         <a href="/launch/{{ upcoming_launches.0.slug }}">
                                             <img class="img"
-                                                 src="{% if upcoming_launches.0.rocket.configuration.image_url %}{{ upcoming_launches.0.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}">
+                                                 src="
+
+                                                         {% if upcoming_launches.0.rocket.configuration.image_url %}{{ upcoming_launches.0.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}">
                                             <div class="colored-shadow"
-                                                 style="background-image: url('{% if upcoming_launches.0.rocket.configuration.image_url %}{{ upcoming_launches.0.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}'); opacity: 1;"></div>
+                                                 style="background-image: url('
+                                                         {% if upcoming_launches.0.rocket.configuration.image_url %}{{ upcoming_launches.0.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}'); opacity: 1;"></div>
                                         </a>
                                     </div>
                                 </div>
@@ -219,7 +222,9 @@
                                     <div class="card-header card-header-image">
                                         <a href="/launch/{{ upcoming_launches.1.slug }}">
                                             <img class="img"
-                                                 src="{% if upcoming_launches.1.rocket.configuration.image_url %}{{ upcoming_launches.1.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}">
+                                                 src="
+
+                                                         {% if upcoming_launches.1.rocket.configuration.image_url %}{{ upcoming_launches.1.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}">
                                             <div class="colored-shadow"
                                                  style="background-image: url('{% if upcoming_launches.1.rocket.configuration.image_url %}
                                                      {{ upcoming_launches.1.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}'); opacity: 1;"></div>
@@ -243,7 +248,7 @@
                         <div class="col-md-12">
                             <div class="card card-plain card-blog">
                                 <div class="card-header card-header-image">
-                                    <a href="#pablo">
+                                    <a href="/event/{{ event.slug }}">
                                         <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
                                              src="{{ event.feature_image.url }}">
                                         <div class="colored-shadow"
@@ -251,18 +256,23 @@
                                     </a>
                                 </div>
                                 <div class="card-body">
-                                    <h6 class="card-category text-info">{{ event.type.name }}</h6>
+                                    <h6 class="card-category text-info"
+                                        style="display:inline;">{{ event.type.name }}</h6>
+                                    <h6 class="card-category"
+                                        style="display:inline;">{{ event.date }}</h6>
                                     <h4 class="card-title">
-                                        <a href="#pablo">{{ event.name }}</a>
+                                        <a href="/event/{{ event.slug }}">{{ event.name }}</a>
                                     </h4>
                                     {% if event.location %}
                                         <span class="badge badge-pill badge-primary">{{ event.location }}</span>
                                     {% endif %}
                                     <p class="card-description">
                                         {{ event.description|truncatewords:75 }}
-                                        <br>
-                                        {#                                        <a href="#pablo"> Read More </a>#}
                                     </p>
+                                    <div class="text-left">
+                                        <a class="btn btn-primary"
+                                           href="/event/{{ event.slug }}">Explore</a>
+                                    </div>
                                 </div>
                             </div>
                             {% if events|length > 0 %}
@@ -273,14 +283,18 @@
                                                 <div class="card-header card-header-image">
                                                     <a href="/event/{{ event.slug }}">
                                                         <img class="img img-raised"
-                                                             style="max-height: 500px; object-fit: cover;"
+                                                             style="height: 175px; object-fit: cover;"
                                                              src="{{ event.feature_image.url }}">
                                                         <div class="colored-shadow"
+                                                             style="height: 175px; object-fit: cover;"
                                                              style="background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
                                                     </a>
                                                 </div>
                                                 <div class="card-body">
-                                                    <h6 class="card-category text-info">{{ event.type.name }}</h6>
+                                                    <h6 class="card-category text-info"
+                                                        style="display:inline;">{{ event.type.name }}</h6>
+                                                    <h6 class="card-category"
+                                                        style="display:inline;">{{ event.date }}</h6>
                                                     <h4 class="card-title">
                                                         <a href="/event/{{ event.slug }}">{{ event.name }}</a>
                                                     </h4>
