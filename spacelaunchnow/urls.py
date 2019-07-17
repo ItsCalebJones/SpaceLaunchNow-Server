@@ -30,7 +30,7 @@ from api.v1.router import api_urlpatterns as api_v1
 from spacelaunchnow import config
 from web import views as landing_views
 from app.views import staff_view, translator_view, about_view
-from web.views import LauncherConfigListView
+from web.views import LauncherConfigListView, LaunchFeed, EventFeed
 
 sitemaps = {
     'posts': LaunchSitemap
@@ -87,6 +87,8 @@ if config.IS_WEBSERVER:
         url(r'^ajax/astronaut/$', landing_views.astronaut_search_ajax, name='ajax-astronaut'),
         url(r'^app$', landing_views.app, name='app'),
         url(r'^$', landing_views.index, name='index'),
+        url(r'^launches/latest/feed.ics$', LaunchFeed()),
+        url(r'^events/latest/feed.ics$', EventFeed()),
     ]
 
 if config.IS_ADMIN:

@@ -18,6 +18,7 @@ from django import forms
 
 # Create your views here.
 from django_filters.views import FilterView
+from django_ical.views import ICalFeed
 from django_tables2 import RequestConfig, LazyPaginator, SingleTableMixin
 
 from api.models import Agency, Launch, Astronaut, Launcher, SpaceStation, SpacecraftConfiguration, LauncherConfig, \
@@ -110,6 +111,7 @@ def launch_by_slug(request, slug):
             return create_launch_view(request, Launch.objects.get(slug=slug))
         except ObjectDoesNotExist:
             raise Http404
+
 
 # Create your views here.
 def launch_by_id(request, id):
@@ -457,3 +459,96 @@ def astronaut_search_ajax(request):
         json.dumps(majors),
         content_type='application/json',
     )
+
+
+class LaunchFeed(ICalFeed):
+    """
+    A simple Launch event calender.
+    """
+    product_id = '-//spacelaunchnow.me//launch//calendar//EN'
+    timezone = 'UTC'
+    file_name = "launches.ics"
+
+    def items(self):
+        return Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
+
+    def item_guid(self, item):
+        return "{}{}".format(item.id, "@spacelaunchnow")
+
+    def item_title(self, item):
+        return "{}".format(item.name)
+
+    def item_description(self, item):
+        description = ""
+        if item.mission is not None and item.mission.description is not None:
+            description = item.mission.description
+        urls = "\n\nWatch Live: " + item.get_full_absolute_url()
+        description = description + urls + "\n\n===============\nSpace Launch Now\nID: " + str(item.id) + "\n==============="
+        return description
+
+    def item_start_datetime(self, item):
+        if item.window_start is not None:
+            return item.window_start
+        else:
+            return item.net
+
+    def item_end_datetime(self, item):
+        if item.window_end is not None and item.window_start is not None and item.window_start.date() != item.window_end.date():
+            return item.window_end
+        else:
+            return None
+
+    def item_updateddate(self, item):
+        if item.last_updated is not None:
+            return item.last_updated
+
+    def item_location(self, item):
+        if item.pad is not None and item.pad.location is not None:
+            return item.pad.location.name
+
+    def item_link(self, item):
+        return item.get_full_absolute_url()
+
+
+class EventFeed(ICalFeed):
+    """
+    A simple Launch event calender.
+    """
+    product_id = '-//spacelaunchnow.me//event//calendar//EN'
+    timezone = 'UTC'
+    file_name = "events.ics"
+
+    def items(self):
+        return Events.objects.filter(date__gte=datetime.utcnow()).order_by('date')
+
+    def item_guid(self, item):
+        return "{}{}".format(item.id, "@spacelaunchnow")
+
+    def item_title(self, item):
+        return "{}".format(item.name)
+
+    def item_description(self, item):
+        description = ""
+        if item.description is not None:
+            description = item.description
+        if item.news_url is not None:
+            description = description + "\nRead More:\n" + item.news_url
+        if item.video_url is not None:
+            description = description + "\nWatch Here:\n" + item.video_url
+
+        description = description + "\n\n===============\nSpace Launch Now\nID: " + str(item.id) + "\n==============="
+        return description
+
+    def item_start_datetime(self, item):
+        return item.date
+
+    def item_location(self, item):
+            return item.location
+
+    def item_link(self, item):
+        if item.news_url is not None:
+            return item.news_url
+        elif item.video_url is not None:
+            return item.video_url
+        else:
+            return "https://spacelaunchnow.me"
