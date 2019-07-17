@@ -36,7 +36,7 @@ def get_youtube_url(launch):
 
 def index(request):
     news = NewsItem.objects.all().order_by('-created_at')[:6]
-    event = Events.objects.all().filter(date__gte=datetime.utcnow()).order_by('-date').first()
+    event = Events.objects.all().filter(date__gte=datetime.utcnow()).order_by('date').first()
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
     _launches = Launch.objects.filter(net__gte=datetime.utcnow()).filter(Q(status__id=1) | Q(status__id=2)).order_by(
         'net')[:3]
