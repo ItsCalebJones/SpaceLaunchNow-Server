@@ -28,7 +28,8 @@ from django.db import models
 
 from configurations.models import *
 from custom_storages import LogoStorage, AgencyImageStorage, OrbiterImageStorage, LauncherImageStorage, \
-    AgencyNationStorage, EventImageStorage, AstronautImageStorage, SpaceStationImageStorage, LauncherCoreImageStorage
+    AgencyNationStorage, EventImageStorage, AstronautImageStorage, SpaceStationImageStorage, LauncherCoreImageStorage, \
+    LaunchImageStorage
 
 # The Agency object is meant to define a agency that operates launchers and spacecrafts.
 #
@@ -45,6 +46,22 @@ def image_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
     clean_name = quote(quote(instance.name.encode('utf8')), '')
     clean_name = "%s_image_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
+    name = "%s%s" % (str(clean_name), file_extension)
+    return name
+
+
+def launch_image_path(instance, filename):
+    filename, file_extension = os.path.splitext(filename)
+    clean_name = quote(quote(instance.name.encode('utf8')), '')
+    clean_name = "%s_image_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
+    name = "%s%s" % (str(clean_name), file_extension)
+    return name
+
+
+def infographic_image_path(instance, filename):
+    filename, file_extension = os.path.splitext(filename)
+    clean_name = quote(quote(instance.name.encode('utf8')), '')
+    clean_name = "%s_infographic_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
     name = "%s%s" % (str(clean_name), file_extension)
     return name
 
@@ -806,7 +823,6 @@ class Launch(models.Model):
     launch_library = models.NullBooleanField(default=False)
     webcast_live = models.BooleanField(default=False)
     name = models.CharField(max_length=2048, blank=True)
-    img_url = models.CharField(max_length=1048, blank=True, null=True)
     status = models.ForeignKey(LaunchStatus, related_name='launch', blank=True, null=True, on_delete=models.SET_NULL)
     net = models.DateTimeField(max_length=255, null=True)
     window_end = models.DateTimeField(max_length=255, null=True)
@@ -814,6 +830,8 @@ class Launch(models.Model):
     inhold = models.NullBooleanField(default=False)
     tbdtime = models.NullBooleanField(default=False)
     tbddate = models.NullBooleanField(default=False)
+    image_url = models.ImageField(default=None, storage=LaunchImageStorage(), upload_to=launch_image_path, null=True, blank=True)
+    infographic_url = models.ImageField(default=None, storage=LaunchImageStorage(), upload_to=infographic_image_path, null=True, blank=True)
     probability = models.IntegerField(blank=True, null=True)
     holdreason = models.CharField(max_length=2048, blank=True, null=True)
     failreason = models.CharField(max_length=2048, blank=True, null=True)

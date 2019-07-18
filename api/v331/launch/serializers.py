@@ -157,9 +157,9 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         depth = 3
         model = Launch
-        fields = ('id', 'url', 'launch_library_id', 'slug', 'name', 'img_url', 'status', 'net', 'window_end', 'window_start', 'inhold',
+        fields = ('id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold',
                   'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'rocket',
-                  'mission', 'pad', 'infoURLs', 'vidURLs')
+                  'mission', 'pad', 'infoURLs', 'vidURLs', 'image_url', 'infographic_url')
 
 
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):
@@ -175,6 +175,6 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         depth = 3
         model = Launch
-        fields = ('id', 'url', 'launch_library_id', 'slug', 'name', 'img_url', 'status', 'net', 'window_end', 'window_start', 'inhold',
+        fields = ('id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold',
                   'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'rocket',
-                  'mission', 'pad', 'infoURLs', 'vidURLs')
+                  'mission', 'pad', 'infoURLs', 'vidURLs', 'image_url', 'infographic_url')

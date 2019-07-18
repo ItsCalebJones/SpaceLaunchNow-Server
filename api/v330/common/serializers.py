@@ -247,14 +247,12 @@ class LaunchListSerializer(serializers.ModelSerializer):
             if image is not None:
                 return image
 
-            image_url = obj.rocket.configuration.image_url
-
-            if image_url is None:
-                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
-                return None
-            elif image_url:
-                cache.set(cache_key, image_url.url, CACHE_TIMEOUT_ONE_DAY)
-                return image_url.url
+            if obj.image_url:
+                cache.set(cache_key, obj.image_url, CACHE_TIMEOUT_ONE_DAY)
+                return obj.image_url
+            elif obj.rocket.configuration.image_url:
+                cache.set(cache_key, obj.rocket.configuration.image_url, CACHE_TIMEOUT_ONE_DAY)
+                return obj.rocket.configuration.image_url
             else:
                 cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
                 return None

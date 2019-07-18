@@ -37,6 +37,11 @@ class LauncherImageStorage(S3Boto3Storage):
     file_overwrite = True
 
 
+class LaunchImageStorage(S3Boto3Storage):
+    location = settings.LAUNCH_IMAGE_LOCATION
+    file_overwrite = True
+
+
 class EventImageStorage(S3Boto3Storage):
     location = settings.EVENT_IMAGE_LOCATION
     file_overwrite = True
