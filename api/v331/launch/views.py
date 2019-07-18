@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 from api.models import *
 from api.permission import HasGroupPermission
-from api.v331.launch.filters import LaunchFilter
+from api.v331.launch.filters import LaunchFilter, LaunchDateFilter
 from api.v331.launch.serializers import LaunchDetailedSerializer, LaunchListSerializer, LaunchSerializer
 
 
@@ -40,9 +40,13 @@ class LaunchViewSet(ModelViewSet):
         lsp_filters = self.request.query_params.get('lsp__ids', None)
         related = self.request.query_params.get('related', None)
         is_crewed = self.request.query_params.get('is_crewed', None)
+        include_suborbital = self.request.query_params.get('include_suborbital', True)
         spacecraft_config_ids = self.request.query_params.get("spacecraft_config__ids", None)
 
         launches = Launch.objects.all()
+
+        if not include_suborbital:
+            launches = launches.exclude(mission__orbit__name='Sub-Orbital')
 
         if location_filters and lsp_filters:
             lsp_filters = lsp_filters.split(',')
@@ -132,7 +136,7 @@ class LaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_class = LaunchFilter
+    filter_class = LaunchDateFilter
     search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
                      '$rocket__configuration__launch_agency__abbrev', '$mission__name', '$pad__location__name',
                      '$pad__name', '$rocket__spacecraftflight__spacecraft__name')
@@ -170,12 +174,16 @@ class UpcomingLaunchViewSet(ModelViewSet):
                                                          None)
         lsp_filters = self.request.query_params.get('lsp__ids', None)
         related = self.request.query_params.get('related', None)
+        include_suborbital = self.request.query_params.get('include_suborbital', True)
         is_crewed = self.request.query_params.get('is_crewed', None)
 
         now = datetime.datetime.now()
         dayago = now - timedelta(days=1)
 
         launches = Launch.objects.all().filter(net__gte=dayago)
+
+        if not include_suborbital:
+            launches = launches.exclude(mission__orbit__name='Sub-Orbital')
 
         if location_filters and lsp_filters:
             lsp_filters = lsp_filters.split(',')
@@ -276,9 +284,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status',
-                     'rocket__spacecraftflight__spacecraft__name',
-                     'rocket__spacecraftflight__spacecraft__id',)
+    filter_class = LaunchFilter
     search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
                      '$rocket__configuration__launch_agency__abbrev', '$mission__name', '$pad__location__name',
                      '$pad__name', '$rocket__spacecraftflight__spacecraft__name')
@@ -313,11 +319,15 @@ class PreviousLaunchViewSet(ModelViewSet):
         location_filters = self.request.query_params.get('location__ids', None)
         lsp_filters = self.request.query_params.get('lsp__ids', None)
         related = self.request.query_params.get('related', None)
+        include_suborbital = self.request.query_params.get('include_suborbital', 'true').lower()
         is_crewed = self.request.query_params.get('is_crewed', None)
 
         now = datetime.datetime.now()
 
         launches = Launch.objects.all().filter(net__lte=now)
+
+        if include_suborbital == 'false':
+            launches = launches.exclude(mission__orbit__name='Sub-Orbital')
 
         if location_filters and lsp_filters:
             lsp_filters = lsp_filters.split(',')
@@ -403,9 +413,7 @@ class PreviousLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status',
-                     'rocket__spacecraftflight__spacecraft__name',
-                     'rocket__spacecraftflight__spacecraft__id',)
+    filter_class = LaunchFilter
     search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
                      '$rocket__configuration__launch_agency__abbrev', '$mission__name', '$pad__location__name',
                      '$pad__name', '$rocket__spacecraftflight__spacecraft__name')
