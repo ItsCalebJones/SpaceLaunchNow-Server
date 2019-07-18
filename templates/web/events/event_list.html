@@ -47,60 +47,56 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-10 ml-auto mr-auto">
+            <div class="col-10 col-sm-12 col-md-10 mx-auto">
                 <div class="row">
                     {% if events|length > 0 %}
-                        <div class="row">
-                            {% for event in events %}
-                                <div class="card card-plain card-blog">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="card-header card-header-image">
-                                                <a href="/event/{{ event.slug }}">
-                                                    <img class="img img-raised"
-                                                         style="height: 250px; object-fit: cover;"
-                                                         src="{{ event.feature_image.url }}">
-                                                    <div class="colored-shadow"
-                                                         style="height: 250px; object-fit: cover;
-                                                                 background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <h6 class="card-category text-info"
-                                                style="display:inline;">{{ event.type.name }}</h6>
-                                            <h6 class="card-category"
-                                                style="display:inline;">{{ event.date }}</h6>
-                                            <h3 class="card-title">
-                                                <a href="/event/{{ event.slug }}">{{ event.name }}</a>
-                                            </h3>
-                                            {% if event.location %}
-                                                <span class="badge badge-pill badge-primary">{{ event.location }}</span>
-                                            {% endif %}
-                                            {% if event.spacestation %}
-                                                <span class="badge badge-pill badge-info">{{ event.spacestation.first.name }}</span>
-                                            {% endif %}
-                                            {% if event.launch %}
-                                                <span class="badge badge-pill badge-warning">{{ event.launch.first.name }}</span>
-                                            {% endif %}
-                                            {% if event.expedition %}
-                                                <span class="badge badge-pill badge-info">{{ event.expedition.first.name }}</span>
-                                            {% endif %}
-                                            <br>
-                                            <p class="card-description mt-1">
-                                                {{ event.description|truncatewords:150 }}
-                                            </p>
-                                            <a href="/event/{{ event.slug }}" class="btn btn-primary btn-round">
-                                                <i class="material-icons">calendar_today</i> Explore
+                        {% for event in events %}
+                            <div class="card card-plain card-blog ml-auto mr-auto">
+                                <div class="row">
+                                    <div class="col-10 col-md-4 col-sm-10 ml-auto mr-auto mb-3">
+                                        <div class="card-header card-header-image">
+                                            <a href="/event/{{ event.slug }}">
+                                                <img class="img img-raised"
+                                                     style="height: 250px; object-fit: cover;"
+                                                     src="{{ event.feature_image.url }}">
+                                                <div class="colored-shadow"
+                                                     style="height: 250px; object-fit: cover;
+                                                             background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
                                             </a>
                                         </div>
                                     </div>
+                                    <div class="col-10 col-md-8 col-sm-10 ml-auto mr-auto">
+                                        <h6 class="card-category text-info"
+                                            style="display:inline;">{{ event.type.name }}</h6>
+                                        <h6 class="card-category"
+                                            style="display:inline;">{{ event.date }}</h6>
+                                        <h3 class="card-title">
+                                            <a href="/event/{{ event.slug }}">{{ event.name }}</a>
+                                        </h3>
+                                        {% if event.location %}
+                                            <span class="badge badge-pill badge-primary">{{ event.location }}</span>
+                                        {% endif %}
+                                        {% if event.spacestation %}
+                                            <span class="badge badge-pill badge-info">{{ event.spacestation.first.name }}</span>
+                                        {% endif %}
+                                        {% if event.launch %}
+                                            <span class="badge badge-pill badge-warning">{{ event.launch.first.name }}</span>
+                                        {% endif %}
+                                        {% if event.expedition %}
+                                            <span class="badge badge-pill badge-info">{{ event.expedition.first.name }}</span>
+                                        {% endif %}
+                                        <br>
+                                        <p class="card-description mt-1">
+                                            {{ event.description|truncatewords:150 }}
+                                        </p>
+                                        <a href="/event/{{ event.slug }}" class="btn btn-primary btn-round">
+                                            <i class="material-icons">calendar_today</i> Explore
+                                        </a>
+                                    </div>
                                 </div>
-                            {% endfor %}
-                        </div>
+                            </div>
+                        {% endfor %}
                     {% endif %}
-
-
                 </div>
             </div>
         </div>
