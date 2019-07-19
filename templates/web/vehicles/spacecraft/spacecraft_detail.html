@@ -14,9 +14,13 @@
     <meta property="og:description"
           content="{{ vehicle.name }} - {{ vehicle.description|truncatechars:100 }}">
     <meta property="og:url" content="https://spacelaunchnow.me/astronaut/{{ astronaut.slug }}"/>
-    <meta property="og:image" content="https://spacelaunchnow.me/static/img/header.jpg"/>
-    <meta property="og:image:width" content="3000"/>
-    <meta property="og:image:height" content="2000"/>
+    {% if vehicle.image_url %}
+        <meta property="og:image" content="{{ vehicle.image_url.url }}"/>
+    {% else %}
+        <meta property="og:image" content="https://spacelaunchnow.me/static/img/social.jpg"/>
+        <meta property="og:image:width" content="3000"/>
+        <meta property="og:image:height" content="2000"/>
+    {% endif %}
 {% endblock %}
 
 
