@@ -42,6 +42,7 @@ CACHE_TIMEOUT_ONE_DAY = 24 * 60 * 60
 CACHE_TIMEOUT_TEN_MINUTES = 10 * 60
 
 
+
 def image_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
     clean_name = quote(quote(instance.name.encode('utf8')), '')
@@ -836,7 +837,7 @@ class Launch(models.Model):
     holdreason = models.CharField(max_length=2048, blank=True, null=True)
     failreason = models.CharField(max_length=2048, blank=True, null=True)
     hashtag = models.CharField(max_length=2048, blank=True, null=True)
-    slug = models.SlugField(unique=True, max_length=1048)
+    slug = AutoSlugField(populate_from=['name', 'hashtag', 'id'])
     rocket = models.OneToOneField(Rocket, blank=True, null=True, related_name='launch', unique=True)
     pad = models.ForeignKey(Pad, related_name='launch', null=True, on_delete=models.SET_NULL)
     mission = models.ForeignKey(Mission, related_name='launch', null=True, blank=True, on_delete=models.SET_NULL)
@@ -852,11 +853,6 @@ class Launch(models.Model):
     def save(self, *args, **kwargs):
         if self.launch_library_id is not None:
             self.launch_library = True
-        if self.slug is None:
-            if self.launch_library and self.launch_library_id is not None:
-                self.slug = slugify(self.name + "-" + str(self.launch_library_id))
-            else:
-                self.slug = slugify(self.name + "-" + str(self.id))
         super(Launch, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
@@ -867,6 +863,10 @@ class Launch(models.Model):
 
     def get_admin_url(self):
         return "https://spacelaunchnow.me/admin/api/launch/%s/change" % self.id
+
+    @property
+    def img_url(self):
+        return None
 
     class Meta:
         verbose_name = 'Launch'

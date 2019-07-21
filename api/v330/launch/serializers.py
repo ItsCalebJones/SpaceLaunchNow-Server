@@ -1,3 +1,5 @@
+from rest_framework.fields import CharField
+
 from api.v330.common.serializers import *
 
 
@@ -150,7 +152,7 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     mission = MissionSerializer(many=False, read_only=True)
     status = LaunchStatusSerializer(many=False, read_only=True)
     slug = serializers.SlugField(source='get_full_absolute_url')
-    img_url = None
+    img_url = CharField()
 
     infoURLs = serializers.StringRelatedField(read_only=True, many=True, source='info_urls')
     vidURLs = serializers.StringRelatedField(read_only=True, many=True, source='vid_urls')
@@ -169,8 +171,7 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     mission = MissionSerializer(many=False, read_only=True)
     status = LaunchStatusSerializer(many=False, read_only=True)
     slug = serializers.SlugField(source='get_full_absolute_url')
-    img_url = None
-
+    img_url = CharField()
     infoURLs = serializers.ReadOnlyField()
     vidURLs = serializers.ReadOnlyField()
 
