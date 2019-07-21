@@ -27,9 +27,14 @@
 
     <meta name="twitter:title" content="{{ launch.name }}">
     <meta name="twitter:description" content="{{ launch.mission.description }}">
-    <meta name="twitter:image" content="https://spacelaunchnow.me/static/img/social.png">
+    {% if launch.rocket.configuration.image_url %}
+        <meta property="twitter:image" content="{{ launch.rocket.configuration.image_url.url }}"/>
+    {% else %}
+        <meta property="twitter:image" content="https://spacelaunchnow.me/static/img/social.png"/>
+    {% endif %}
     <meta name="twitter:site" content="@SpaceLaunchNow">
     <meta name="twitter:creator" content="@SpaceLaunchNow">
+
 {% endblock %}
 
 {% block navigation %}
