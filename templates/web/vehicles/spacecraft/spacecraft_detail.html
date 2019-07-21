@@ -30,9 +30,9 @@
     <meta name="twitter:title" content="Space Launch Now - {{ vehicle.name }}">
     <meta name="twitter:description" content="{{ vehicle.name }} - {{ vehicle.description|truncatechars:100 }}">
         {% if vehicle.image_url %}
-        <meta property="twitter:image" content="{{ vehicle.image_url.url }}"/>
+        <meta name="twitter:image" content="{{ vehicle.image_url.url }}"/>
     {% else %}
-        <meta property="twitter:image" content="https://spacelaunchnow.me/static/img/social.png"/>
+        <meta name="twitter:image" content="https://spacelaunchnow.me/static/img/social.png"/>
     {% endif %}
     <meta name="twitter:site" content="@SpaceLaunchNow">
     <meta name="twitter:creator" content="@SpaceLaunchNow">
