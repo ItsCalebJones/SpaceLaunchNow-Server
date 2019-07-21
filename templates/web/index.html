@@ -15,7 +15,7 @@
     <meta property="og:description"
           content="Meet Space Launch Now the best resource for keeping up to date on all of your favorite spaceflight missions from around the world."/>
     <meta property="og:url" content="https://spacelaunchnow.me/"/>
-    <meta property="og:image" content="https://spacelaunchnow.me/static/img/social.jpg"/>
+    <meta property="og:image" content="https://spacelaunchnow.me/static/img/social.png"/>
     <meta property="og:image:width" content="3000"/>
     <meta property="og:image:height" content="2000"/>
 {% endblock %}
@@ -162,12 +162,9 @@
                                     <div class="card-header card-header-image">
                                         <a href="/launch/{{ upcoming_launches.0.slug }}">
                                             <img class="img"
-                                                 src="
-
-                                                         {% if upcoming_launches.0.rocket.configuration.image_url %}{{ upcoming_launches.0.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}">
+                                                 src="{% if upcoming_launches.0.rocket.configuration.image_url %}{{ upcoming_launches.0.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}">
                                             <div class="colored-shadow"
-                                                 style="background-image: url('
-                                                         {% if upcoming_launches.0.rocket.configuration.image_url %}{{ upcoming_launches.0.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}'); opacity: 1;"></div>
+                                                 style="background-image: url('{% if upcoming_launches.0.rocket.configuration.image_url %}{{ upcoming_launches.0.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}'); opacity: 1;"></div>
                                         </a>
                                     </div>
                                 </div>
@@ -221,12 +218,9 @@
                                     <div class="card-header card-header-image">
                                         <a href="/launch/{{ upcoming_launches.1.slug }}">
                                             <img class="img"
-                                                 src="
-
-                                                         {% if upcoming_launches.1.rocket.configuration.image_url %}{{ upcoming_launches.1.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}">
+                                                 src="{% if upcoming_launches.1.rocket.configuration.image_url %}{{ upcoming_launches.1.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}">
                                             <div class="colored-shadow"
-                                                 style="background-image: url('{% if upcoming_launches.1.rocket.configuration.image_url %}
-                                                     {{ upcoming_launches.1.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}'); opacity: 1;"></div>
+                                                 style="background-image: url('{% if upcoming_launches.1.rocket.configuration.image_url %}{{ upcoming_launches.1.rocket.configuration.image_url.url }}{% else %}https://x.kinja-static.com/assets/images/logos/placeholders/default.png{% endif %}'); opacity: 1;"></div>
                                         </a>
                                     </div>
                                 </div>
