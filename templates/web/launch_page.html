@@ -21,6 +21,15 @@
         <meta property="og:image:height" content="2000"/>
     {% endif %}
     <meta name="robots" content="index, follow"/>
+
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Space Launch Now"/>
+
+    <meta name="twitter:title" content="{{ launch.name }}">
+    <meta name="twitter:description" content="{{ launch.mission.description }}">
+    <meta name="twitter:image" content="https://spacelaunchnow.me/static/img/social.png">
+    <meta name="twitter:site" content="@SpaceLaunchNow">
+    <meta name="twitter:creator" content="@SpaceLaunchNow">
 {% endblock %}
 
 {% block navigation %}
