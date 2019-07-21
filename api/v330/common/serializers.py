@@ -247,19 +247,17 @@ class LaunchListSerializer(serializers.ModelSerializer):
             if image is not None:
                 return image
 
-            image_url = obj.rocket.configuration.image_url
-
-            if image_url is None:
-                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
-                return None
-            elif image_url:
-                cache.set(cache_key, image_url.url, CACHE_TIMEOUT_ONE_DAY)
-                return image_url.url
+            if obj.image_url:
+                cache.set(cache_key, obj.image_url, CACHE_TIMEOUT_TEN_MINUTES)
+                return obj.image_url.url
+            elif obj.rocket.configuration.image_url:
+                cache.set(cache_key, obj.rocket.configuration.image_url, CACHE_TIMEOUT_TEN_MINUTES)
+                return obj.rocket.configuration.image_url.url
             else:
-                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
+                cache.set(cache_key, None, CACHE_TIMEOUT_TEN_MINUTES)
                 return None
-
         except Exception as ex:
+            print(ex)
             return None
 
     def get_landing(self, obj):
@@ -275,16 +273,16 @@ class LaunchListSerializer(serializers.ModelSerializer):
                     landings.append(stage.landing)
 
             if len(landings) == 0:
-                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
+                cache.set(cache_key, None, CACHE_TIMEOUT_TEN_MINUTES)
                 return None
             elif len(landings) == 1:
-                cache.set(cache_key, landings[0].landing_location.abbrev, CACHE_TIMEOUT_ONE_DAY)
+                cache.set(cache_key, landings[0].landing_location.abbrev, CACHE_TIMEOUT_TEN_MINUTES)
                 return landings[0].landing_location.abbrev
             elif len(landings) > 1:
-                cache.set(cache_key, "MX Landing", CACHE_TIMEOUT_ONE_DAY)
+                cache.set(cache_key, "MX Landing", CACHE_TIMEOUT_TEN_MINUTES)
                 return "MX Landing"
             else:
-                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
+                cache.set(cache_key, None, CACHE_TIMEOUT_TEN_MINUTES)
                 return None
 
         except Exception as ex:

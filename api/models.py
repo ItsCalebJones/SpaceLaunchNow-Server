@@ -28,7 +28,8 @@ from django.db import models
 
 from configurations.models import *
 from custom_storages import LogoStorage, AgencyImageStorage, OrbiterImageStorage, LauncherImageStorage, \
-    AgencyNationStorage, EventImageStorage, AstronautImageStorage, SpaceStationImageStorage, LauncherCoreImageStorage
+    AgencyNationStorage, EventImageStorage, AstronautImageStorage, SpaceStationImageStorage, LauncherCoreImageStorage, \
+    LaunchImageStorage
 
 # The Agency object is meant to define a agency that operates launchers and spacecrafts.
 #
@@ -41,10 +42,27 @@ CACHE_TIMEOUT_ONE_DAY = 24 * 60 * 60
 CACHE_TIMEOUT_TEN_MINUTES = 10 * 60
 
 
+
 def image_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
     clean_name = quote(quote(instance.name.encode('utf8')), '')
     clean_name = "%s_image_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
+    name = "%s%s" % (str(clean_name), file_extension)
+    return name
+
+
+def launch_image_path(instance, filename):
+    filename, file_extension = os.path.splitext(filename)
+    clean_name = quote(quote(instance.name.encode('utf8')), '')
+    clean_name = "%s_image_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
+    name = "%s%s" % (str(clean_name), file_extension)
+    return name
+
+
+def infographic_image_path(instance, filename):
+    filename, file_extension = os.path.splitext(filename)
+    clean_name = quote(quote(instance.name.encode('utf8')), '')
+    clean_name = "%s_infographic_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
     name = "%s%s" % (str(clean_name), file_extension)
     return name
 
@@ -806,7 +824,6 @@ class Launch(models.Model):
     launch_library = models.NullBooleanField(default=False)
     webcast_live = models.BooleanField(default=False)
     name = models.CharField(max_length=2048, blank=True)
-    img_url = models.CharField(max_length=1048, blank=True, null=True)
     status = models.ForeignKey(LaunchStatus, related_name='launch', blank=True, null=True, on_delete=models.SET_NULL)
     net = models.DateTimeField(max_length=255, null=True)
     window_end = models.DateTimeField(max_length=255, null=True)
@@ -814,11 +831,13 @@ class Launch(models.Model):
     inhold = models.NullBooleanField(default=False)
     tbdtime = models.NullBooleanField(default=False)
     tbddate = models.NullBooleanField(default=False)
+    image_url = models.ImageField(default=None, storage=LaunchImageStorage(), upload_to=launch_image_path, null=True, blank=True)
+    infographic_url = models.ImageField(default=None, storage=LaunchImageStorage(), upload_to=infographic_image_path, null=True, blank=True)
     probability = models.IntegerField(blank=True, null=True)
     holdreason = models.CharField(max_length=2048, blank=True, null=True)
     failreason = models.CharField(max_length=2048, blank=True, null=True)
     hashtag = models.CharField(max_length=2048, blank=True, null=True)
-    slug = models.SlugField(unique=True, max_length=1048)
+    slug = AutoSlugField(populate_from=['name', 'hashtag', 'id'])
     rocket = models.OneToOneField(Rocket, blank=True, null=True, related_name='launch', unique=True)
     pad = models.ForeignKey(Pad, related_name='launch', null=True, on_delete=models.SET_NULL)
     mission = models.ForeignKey(Mission, related_name='launch', null=True, blank=True, on_delete=models.SET_NULL)
@@ -834,11 +853,6 @@ class Launch(models.Model):
     def save(self, *args, **kwargs):
         if self.launch_library_id is not None:
             self.launch_library = True
-        if self.slug is None:
-            if self.launch_library and self.launch_library_id is not None:
-                self.slug = slugify(self.name + "-" + str(self.launch_library_id))
-            else:
-                self.slug = slugify(self.name + "-" + str(self.id))
         super(Launch, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
@@ -849,6 +863,10 @@ class Launch(models.Model):
 
     def get_admin_url(self):
         return "https://spacelaunchnow.me/admin/api/launch/%s/change" % self.id
+
+    @property
+    def img_url(self):
+        return None
 
     class Meta:
         verbose_name = 'Launch'

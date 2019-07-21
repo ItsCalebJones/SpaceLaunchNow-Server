@@ -694,7 +694,7 @@ class LaunchTests(SLNAPITests):
         self.assertNotIn('isostart', data)
         self.assertNotIn('isoend', data)
         self.assertEqual(data['rocket']['configuration']['id'], launch.rocket.configuration.id)
-        self.assertEqual(data['rocket']['configuration']['launch_service_provider'], launch.rocket.configuration.launch_agency.name)
+        self.assertEqual(data['rocket']['configuration']['launch_service_provider']['name'], launch.rocket.configuration.launch_agency.name)
         self.assertEqual(len(data['rocket']['launcher_stage']), launch.rocket.firststage.count())
         for index, stage_data in enumerate(data['rocket']['launcher_stage']):
             stage = launch.rocket.firststage[index]
