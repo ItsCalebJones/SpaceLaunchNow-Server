@@ -17,6 +17,23 @@
     <meta property="og:image:width" content="3000"/>
     <meta property="og:image:height" content="2000"/>
 
+    <meta name="robots" content="index, follow"/>
+
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Space Launch Now"/>
+
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:title" content="Space Launch Now - {{ event.name }}">
+    <meta name="twitter:description" content="{{ event.description|truncatechars:150 }}">
+    <meta name="twitter:image" content="https://spacelaunchnow.me/static/img/social.png">
+        {% if event.feature_image %}
+        <meta name="twitter:image" content="{{ event.feature_image.url }}"/>
+    {% else %}
+        <meta name="twitter:image" content="https://spacelaunchnow.me/static/img/social.png"/>
+    {% endif %}
+    <meta name="twitter:site" content="@SpaceLaunchNow">
+    <meta name="twitter:creator" content="@SpaceLaunchNow">
+
 {% endblock %}
 
 
