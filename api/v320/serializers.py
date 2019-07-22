@@ -318,25 +318,11 @@ class LaunchListSerializer(serializers.ModelSerializer):
         }
 
     def get_image(self, obj):
-        try:
-            cache_key = "%s-%s" % (obj.id, "launch-list-image")
-            image = cache.get(cache_key)
-            if image is not None:
-                return image
-
-            image_url = obj.rocket.configuration.image_url
-
-            if image_url is None:
-                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
-                return None
-            elif image_url:
-                cache.set(cache_key, image_url.url, CACHE_TIMEOUT_ONE_DAY)
-                return image_url.url
-            else:
-                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
-                return None
-
-        except Exception as ex:
+        if obj.image_url:
+            return obj.image_url.url
+        elif obj.rocket.configuration.image_url:
+            return obj.rocket.configuration.image_url.url
+        else:
             return None
 
     def get_landing(self, obj):
