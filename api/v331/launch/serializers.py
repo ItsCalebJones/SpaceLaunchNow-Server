@@ -154,12 +154,29 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     infoURLs = serializers.StringRelatedField(read_only=True, many=True, source='info_urls')
     vidURLs = serializers.StringRelatedField(read_only=True, many=True, source='vid_urls')
 
+    image = serializers.SerializerMethodField()
+    infographic = serializers.SerializerMethodField()
+
     class Meta:
         depth = 3
         model = Launch
         fields = ('id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold',
                   'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'rocket',
-                  'mission', 'pad', 'infoURLs', 'vidURLs', 'image_url', 'infographic_url')
+                  'mission', 'pad', 'infoURLs', 'vidURLs', 'image', 'infographic')
+
+    def get_image(self, obj):
+        if obj.image_url:
+            return obj.image_url.url
+        elif obj.rocket.configuration.image_url:
+            return obj.rocket.configuration.image_url.url
+        else:
+            return None
+
+    def get_infographic(self, obj):
+        if obj.infographic_url:
+            return obj.infographic_url.url
+        else:
+            return None
 
 
 class LaunchSerializer(serializers.HyperlinkedModelSerializer):
@@ -172,9 +189,26 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     infoURLs = serializers.ReadOnlyField()
     vidURLs = serializers.ReadOnlyField()
 
+    image = serializers.SerializerMethodField()
+    infographic = serializers.SerializerMethodField()
+
     class Meta:
         depth = 3
         model = Launch
         fields = ('id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold',
                   'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'rocket',
-                  'mission', 'pad', 'infoURLs', 'vidURLs', 'image_url', 'infographic_url')
+                  'mission', 'pad', 'infoURLs', 'vidURLs', 'image', 'infographic')
+
+    def get_image(self, obj):
+        if obj.image_url:
+            return obj.image_url.url
+        elif obj.rocket.configuration.image_url:
+            return obj.rocket.configuration.image_url.url
+        else:
+            return None
+
+    def get_infographic(self, obj):
+        if obj.infographic_url:
+            return obj.infographic_url.url
+        else:
+            return None

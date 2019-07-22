@@ -231,6 +231,7 @@ class LaunchListSerializer(serializers.ModelSerializer):
     orbit = serializers.SerializerMethodField()
     mission = serializers.StringRelatedField()
     image = serializers.SerializerMethodField()
+    infographic = serializers.SerializerMethodField()
     mission_type = serializers.StringRelatedField(source='mission.mission_type.name')
     slug = serializers.SlugField(source='get_full_absolute_url')
 
@@ -245,6 +246,12 @@ class LaunchListSerializer(serializers.ModelSerializer):
             return obj.image_url.url
         elif obj.rocket.configuration.image_url:
             return obj.rocket.configuration.image_url.url
+        else:
+            return None
+
+    def get_infographic(self, obj):
+        if obj.infographic_url:
+            return obj.infographic_url.url
         else:
             return None
 
