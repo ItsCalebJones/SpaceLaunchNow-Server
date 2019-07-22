@@ -5,13 +5,20 @@ from django.contrib import admin
 from . import models
 
 
-@admin.register(models.Notification)
+@admin.register(models.LaunchNotificationRecord)
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ('launch', 'last_net_stamp', 'last_twitter_post', 'last_notification_sent',
                     'last_notification_recipient_count', 'days_to_launch')
     readonly_fields = ('days_to_launch',)
     ordering = ('launch__net',)
     search_fields = ('launch__name',)
+
+
+@admin.register(models.Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('title', 'message', 'send_ios', 'send_ios_complete',
+                    'send_android', 'send_android_complete')
+    search_fields = ('title', 'message')
 
 
 @admin.register(models.DailyDigestRecord)

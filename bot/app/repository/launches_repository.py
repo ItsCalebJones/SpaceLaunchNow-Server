@@ -5,7 +5,7 @@ from django.utils.datetime_safe import datetime
 from pytz import utc
 
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
-from bot.models import Notification, DailyDigestRecord
+from bot.models import LaunchNotificationRecord, DailyDigestRecord
 from bot.utils.deserializer import launch_json_to_model, launch_status_json_to_model, mission_type_json_to_model, \
     agency_type_json_to_model
 
@@ -203,7 +203,7 @@ class LaunchRepository:
 
 
 def update_notification_record(launch):
-    notification = Notification.objects.get(launch=launch)
+    notification = LaunchNotificationRecord.objects.get(launch=launch)
     notification.last_net_stamp = launch.net
     notification.last_net_stamp_timestamp = datetime.now(tz=utc)
     logger.info('Updating Notification %s to timestamp %s' % (notification.launch.name,

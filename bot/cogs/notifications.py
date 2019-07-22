@@ -10,7 +10,7 @@ from django.template import defaultfilters
 
 from api.models import Launch, Events
 from bot.cogs.launches import launch_to_small_embed, event_to_embed
-from bot.models import DiscordChannel, Notification
+from bot.models import DiscordChannel, LaunchNotificationRecord
 
 logger = logging.getLogger('bot.discord.notifications')
 
@@ -100,7 +100,7 @@ class Notifications:
                                                         net__gte=time_threshold_past_two_days)
         for launch in recent_success_launches:
             logger.debug("Found %s successful launches" % len(recent_success_launches))
-            notification, created = Notification.objects.get_or_create(launch=launch)
+            notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedSuccessDiscord:
                 notification.wasNotifiedSuccessDiscord = True
                 notification.save()
@@ -125,7 +125,7 @@ class Notifications:
         in_flight_launches = Launch.objects.filter(status__id=6)
         for launch in in_flight_launches:
             logger.debug("Found %s in flight launches" % len(in_flight_launches))
-            notification, created = Notification.objects.get_or_create(launch=launch)
+            notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedInFlightDiscord:
                 notification.wasNotifiedInFlightDiscord = True
                 notification.save()
@@ -150,7 +150,7 @@ class Notifications:
                                                     net__gte=datetime.datetime.now(tz=pytz.utc))
         for launch in one_minute_launches:
             logger.debug("Found %s launches in the next minute." % len(one_minute_launches))
-            notification, created = Notification.objects.get_or_create(launch=launch)
+            notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedOneMinutesDiscord:
                 notification.wasNotifiedOneMinutesDiscord = True
                 notification.save()
@@ -175,7 +175,7 @@ class Notifications:
                                                     net__gte=time_threshold_1_minute)
         for launch in ten_minute_launches:
             logger.debug("Found %s launches in the next ten minutes." % len(ten_minute_launches))
-            notification, created = Notification.objects.get_or_create(launch=launch)
+            notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedTenMinutesDiscord:
                 notification.wasNotifiedTenMinutesDiscord = True
                 notification.save()
@@ -200,7 +200,7 @@ class Notifications:
                                                           net__gte=time_threshold_1_hour)
         for launch in twenty_four_hour_launches:
             logger.debug("Found %s launches in the next 24 hours" % len(twenty_four_hour_launches))
-            notification, created = Notification.objects.get_or_create(launch=launch)
+            notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedTwentyFourHourDiscord:
                 notification.wasNotifiedTwentyFourHourDiscord = True
                 notification.save()
@@ -224,7 +224,7 @@ class Notifications:
                                                   net__gte=time_threshold_10_minute)
         for launch in one_hour_launches:
             logger.debug("Found %s launches in the next hour." % len(one_hour_launches))
-            notification, created = Notification.objects.get_or_create(launch=launch)
+            notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedOneHourDiscord:
                 notification.wasNotifiedOneHourDiscord = True
                 notification.save()
@@ -249,7 +249,7 @@ class Notifications:
                                                   webcast_live=True)
         for launch in one_hour_launches:
             logger.debug("Found %s launches with a live webcast." % len(one_hour_launches))
-            notification, created = Notification.objects.get_or_create(launch=launch)
+            notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
             if not notification.wasNotifiedWebcastDiscord:
                 notification.wasNotifiedWebcastDiscord = True
                 notification.save()

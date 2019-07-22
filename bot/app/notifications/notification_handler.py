@@ -93,7 +93,7 @@ class NotificationHandler:
 
         elif notification_type == 'webcastLive':
 
-            if launch.mission is not None and launch.mission.name is not None :
+            if launch.mission is not None and launch.mission.name is not None:
                 contents = '%s %s webcast is live!' % (launch.rocket.configuration.name, launch.mission.name)
             else:
                 contents = '%s webcast is live!' % launch.rocket.configuration.name
@@ -116,7 +116,9 @@ class NotificationHandler:
         else:
             webcast = False
         image = ''
-        if launch.rocket.configuration.launch_agency.image_url:
+        if launch.image_url:
+            image = launch.image_url.url
+        elif launch.rocket.configuration.launch_agency.image_url:
             image = launch.rocket.configuration.launch_agency.image_url.url
         elif launch.rocket.configuration.launch_agency.legacy_image_url:
             image = launch.rocket.configuration.launch_agency.legacy_image_url
@@ -211,3 +213,113 @@ class NotificationHandler:
             except Exception as e:
                 logger.error(e)
             logger.info('----------------------------------------------------------')
+
+    def send_custom_ios(self, pending):
+        data = self.get_json_data(pending)
+
+        if not self.DEBUG:
+            flutter_topics = "'flutter_production_v2' in topics && 'featured_news' in topics"
+        else:
+            flutter_topics = "'flutter_debug_v2' in topics && 'featured_news' in topics"
+
+        push_service = FCMNotification(api_key=keys['FCM_KEY'])
+
+        logger.info('----------------------------------------------------------')
+        logger.info('Sending iOS Custom Flutter notification - %s' % pending.title)
+        try:
+            logger.info('Custom Notification Data - %s' % data)
+            logger.info('Topics - %s' % flutter_topics)
+            flutter_results = push_service.notify_topic_subscribers(data_message=data,
+                                                                    condition=flutter_topics,
+                                                                    time_to_live=86400,
+                                                                    message_title=pending.title,
+                                                                    message_body=pending.message
+                                                                    )
+            logger.info(flutter_results)
+        except Exception as e:
+            logger.error(e)
+
+        logger.info('----------------------------------------------------------')
+
+    def send_custom_android(self, pending):
+        data = self.get_json_data(pending)
+
+        if not self.DEBUG:
+            topics = "'prod_v2' in topics && 'custom' in topics"
+        else:
+            topics = "'debug_v2' in topics && 'custom' in topics"
+
+        push_service = FCMNotification(api_key=keys['FCM_KEY'])
+
+        logger.info('----------------------------------------------------------')
+        logger.info('Sending Android Custom notification - %s' % pending.title)
+        try:
+            logger.info('Custom Notification Data - %s' % data)
+            logger.info('Topics - %s' % topics)
+            android_result = push_service.notify_topic_subscribers(data_message=data,
+                                                                   condition=topics,
+                                                                   time_to_live=86400, )
+            logger.info(android_result)
+        except Exception as e:
+            logger.error(e)
+
+        logger.info('----------------------------------------------------------')
+
+    def get_json_data(self, pending):
+        data = {"notification_type": 'custom',
+                "click_action": "FLUTTER_NOTIFICATION_CLICK",
+                "title": pending.title,
+                "message": pending.message}
+        if pending.launch is not None:
+
+            image = ''
+            if pending.launch.image_url:
+                image = pending.launch.image_url.url
+            elif pending.launch.rocket.configuration.launch_agency.image_url:
+                image = pending.launch.rocket.configuration.launch_agency.image_url.url
+            elif pending.launch.rocket.configuration.launch_agency.legacy_image_url:
+                image = pending.launch.rocket.configuration.launch_agency.legacy_image_url
+
+            data.update({
+                "launch": {
+                    "launch_id": pending.launch.launch_library_id,
+                    "launch_uuid": str(pending.launch.id),
+                    "launch_name": pending.launch.name,
+                    "launch_image": image,
+                    "launch_net": pending.launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
+                    "launch_location": pending.launch.pad.location.name,
+                    "webcast": pending.launch.webcast_live
+                }
+            })
+        if pending.news is not None:
+            data.update({
+                "news": {
+                    "id": pending.news.id,
+                    "news_site_long": pending.news.news_site,
+                    "title": pending.news.title,
+                    "url": pending.news.link,
+                    "featured_image": pending.news.featured_image
+                }
+            })
+        if pending.event is not None:
+            feature_image = None
+            if pending.event.feature_image and hasattr(pending.event.feature_image, 'url'):
+                feature_image = pending.event.feature_image.url
+            data.update({
+                "event": {
+                    "id": pending.event.id,
+                    "name": pending.event.name,
+                    "description": pending.event.description,
+                    "type": {
+                        "id": pending.event.type.id,
+                        "name": pending.event.type.name,
+                    },
+                    "date": pending.event.date.strftime("%B %d, %Y %H:%M:%S %Z"),
+                    "location": pending.event.location,
+                    "news_url": pending.event.news_url,
+                    "video_url": pending.event.video_url,
+                    "webcast_live": pending.event.webcast_live,
+                    "feature_image": feature_image,
+                },
+            })
+        return data
