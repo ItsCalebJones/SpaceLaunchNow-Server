@@ -87,7 +87,7 @@ python-dateutil==2.7.2
 pytz==2017.2
 psycopg2==2.7.5
 praw==6.0.0
-PyYAML==3.12
+PyYAML==5.1
 regex==2018.2.21
 requests==2.20.0
 requests-toolbelt==0.8.0
