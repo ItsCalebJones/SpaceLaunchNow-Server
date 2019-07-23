@@ -209,9 +209,9 @@ class NewsItem(models.Model):
 
 
 class Notification(models.Model):
-    launch = models.ForeignKey(Launch, on_delete=models.CASCADE, blank=True, default=False)
-    news = models.ForeignKey(NewsItem, on_delete=models.CASCADE, blank=True, default=False)
-    event = models.ForeignKey(Events, on_delete=models.CASCADE, blank=True, default=False)
+    launch = models.ForeignKey(Launch, on_delete=models.CASCADE, null=True, blank=True, default=None)
+    news = models.ForeignKey(NewsItem, on_delete=models.CASCADE, null=True, blank=True, default=None)
+    event = models.ForeignKey(Events, on_delete=models.CASCADE, null=True, blank=True, default=None)
     title = models.TextField(max_length=16)
     message = models.TextField(max_length=25)
     send_ios = models.BooleanField(default=False)

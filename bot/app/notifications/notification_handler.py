@@ -218,9 +218,9 @@ class NotificationHandler:
         data = self.get_json_data(pending)
 
         if not self.DEBUG:
-            flutter_topics = "'flutter_production_v2' in topics && 'featured_news' in topics"
+            flutter_topics = "'flutter_production_v2' in topics && 'custom' in topics"
         else:
-            flutter_topics = "'flutter_debug_v2' in topics && 'featured_news' in topics"
+            flutter_topics = "'flutter_debug_v2' in topics && 'custom' in topics"
 
         push_service = FCMNotification(api_key=keys['FCM_KEY'])
 
@@ -266,7 +266,7 @@ class NotificationHandler:
         logger.info('----------------------------------------------------------')
 
     def get_json_data(self, pending):
-        data = {"notification_type": 'custom',
+        data = {"notification_type": "custom",
                 "click_action": "FLUTTER_NOTIFICATION_CLICK",
                 "title": pending.title,
                 "message": pending.message}
