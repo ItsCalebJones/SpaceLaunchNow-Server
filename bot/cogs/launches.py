@@ -232,7 +232,7 @@ def event_to_embed(event, notification="", pre_launch=False):
                    " or [on the web](https://spacelaunchnow.me)"
     event_description = ""
     if event.description is not None:
-        event_description = "\n%s\n" % (event.mission.description[:75] + '...') if len(event.mission.description) > 75 else event.mission.description
+        event_description = "\n%s\n" % event.description
 
     formatted_countdown = ''
 
@@ -274,7 +274,7 @@ def event_to_embed(event, notification="", pre_launch=False):
             embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
     else:
         embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
-    embed.set_footer(text=event.net.strftime("Date: %A %B %e, %Y %H:%M %Z"))
+    embed.set_footer(text=event.date.strftime("Date: %A %B %e, %Y %H:%M %Z"))
     return embed
 
 

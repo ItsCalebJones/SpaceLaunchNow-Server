@@ -267,9 +267,9 @@ class Notifications:
                             channel.delete()
                         return
 
-    async def check_webcast_live_event(self, bot_channels, time_threshold_1_hour, time_threshold_1_minute):
-        logger.debug("Checking webcast live launches...")
-        events = Events.objects.filter(date__gte=time_threshold_1_minute, date__lte=time_threshold_1_hour,
+    async def check_webcast_live_event(self, bot_channels, time_threshold_1_hour, time_threshold_past_hour):
+        logger.debug("Checking webcast live events...")
+        events = Events.objects.filter(date__range=(time_threshold_past_hour, time_threshold_1_hour),
                                        webcast_live=True)
         for event in events:
             logger.debug("Found %s events with a live webcast." % len(events))
@@ -278,7 +278,7 @@ class Notifications:
                 event.save()
                 logger.info("Webcast Live - Event Notification for %s" % event.name)
                 for channel in bot_channels:
-                    logger.info("Sending notification to %s" % channel.name)
+                    logger.info("Sending notification to %s" % channel.id)
                     try:
                         await self.bot.send_message(channel, embed=event_to_embed(event, "**Webcast is live!**\n\n"))
                     except Exception as e:
@@ -331,6 +331,7 @@ class Notifications:
             time_threshold_10_minute = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(minutes=10)
             time_threshold_1_minute = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(minutes=1)
             time_threshold_past_two_days = datetime.datetime.now(tz=pytz.utc) - datetime.timedelta(days=2)
+            time_threshold_past_hour = datetime.datetime.now(tz=pytz.utc) - datetime.timedelta(hours=1)
 
             await self.check_twenty_four_hour(bot_channels, time_threshold_1_hour, time_threshold_24_hour)
 
@@ -348,7 +349,7 @@ class Notifications:
 
             await self.check_ten_minute_event(bot_channels, time_threshold_10_minute, time_threshold_1_minute)
 
-            await self.check_webcast_live_event(bot_channels, time_threshold_1_hour, time_threshold_1_minute)
+            await self.check_webcast_live_event(bot_channels, time_threshold_1_hour, time_threshold_past_hour)
 
             await self.set_bot_description()
 
