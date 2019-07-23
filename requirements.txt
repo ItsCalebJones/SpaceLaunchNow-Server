@@ -19,7 +19,7 @@ Collectfast==0.6.2
 dict.sorted==1.0.0
 distlib==0.2.7
 discord.py==0.16.12
-Django==1.11.17
+Django==1.11.22
 django-ads-txt==0.1.0
 django-appconf==1.0.2
 django-bootstrap4==0.0.8
