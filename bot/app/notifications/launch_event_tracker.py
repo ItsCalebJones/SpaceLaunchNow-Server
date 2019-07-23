@@ -11,7 +11,7 @@ from api.models import Launch
 from bot.app.notifications.netstamp_handler import NetstampHandler
 from bot.app.notifications.notification_handler import NotificationHandler
 from bot.app.notifications.twitter_handler import TwitterEvents
-from bot.models import Notification
+from bot.models import LaunchNotificationRecord, Notification
 from bot.utils.util import seconds_to_time
 from spacelaunchnow import config
 
@@ -30,7 +30,7 @@ class LaunchEventTracker:
 
     def check_next_stamp_changed(self, launch):
         logger.debug('Running check_next_stamp_changed for %s...', launch.name)
-        notification, created = Notification.objects.get_or_create(launch=launch)
+        notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
         if launch.net:
             current_time = datetime.now(tz=pytz.utc)
             launch_time = launch.net
@@ -59,7 +59,7 @@ class LaunchEventTracker:
                 status = 'partial_failure'
             else:
                 return
-            notification, created = Notification.objects.get_or_create(launch=launch)
+            notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
             logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
             try:
                 if not notification.wasNotifiedSuccess:
@@ -89,7 +89,7 @@ class LaunchEventTracker:
 
         logger.debug('Found %d launches in flight - checking state.', len(launches))
         for launch in launches:
-            notification, created = Notification.objects.get_or_create(launch=launch)
+            notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
             logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
             try:
                 if not notification.wasNotifiedInFlight:
@@ -113,6 +113,19 @@ class LaunchEventTracker:
             except Exception as e:
                 logger.error(e)
 
+    def check_custom(self):
+        logger.debug('Running check_in_flight...')
+        pending_ios = Notification.objects.filter(Q(send_ios=True) & Q(send_ios_complete=False))
+        pending_android = Notification.objects.filter(Q(send_android=True) & Q(send_android_complete=False))
+        for pending in pending_ios:
+            pending.send_ios_complete = True
+            pending.save()
+            self.notification_handler.send_custom_ios(pending)
+        for pending in pending_android:
+            pending.send_android_complete = True
+            pending.save()
+            self.notification_handler.send_custom_android(pending)
+
     def check_one_minute(self, time_threshold_1_minute):
         logger.debug('Running check_one_minute...')
         launches = Launch.objects.filter(net__lte=time_threshold_1_minute,
@@ -121,7 +134,7 @@ class LaunchEventTracker:
         logger.debug('Found %d launches within one minute - checking state.', len(launches))
         for launch in launches:
             self.check_next_stamp_changed(launch)
-            notification, created = Notification.objects.get_or_create(launch=launch)
+            notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
             logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
 
             try:
@@ -154,7 +167,7 @@ class LaunchEventTracker:
         logger.debug('Found %d launches within ten minutes - checking state.', len(launches))
         for launch in launches:
             self.check_next_stamp_changed(launch)
-            notification, created = Notification.objects.get_or_create(launch=launch)
+            notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
             logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
 
             try:
@@ -188,7 +201,7 @@ class LaunchEventTracker:
 
         for launch in launches:
             self.check_next_stamp_changed(launch)
-            notification, created = Notification.objects.get_or_create(launch=launch)
+            notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
             logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
 
             try:
@@ -222,7 +235,7 @@ class LaunchEventTracker:
 
         for launch in launches:
             self.check_next_stamp_changed(launch)
-            notification, created = Notification.objects.get_or_create(launch=launch)
+            notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
             logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
 
             try:
@@ -255,7 +268,7 @@ class LaunchEventTracker:
 
         for launch in launches:
             self.check_next_stamp_changed(launch)
-            notification, created = Notification.objects.get_or_create(launch=launch)
+            notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
             logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
 
             try:
@@ -313,3 +326,5 @@ class LaunchEventTracker:
         self.check_in_flight()
 
         self.check_success(time_threshold_past_two_days, time_threshold_24_hour)
+
+        self.check_custom()

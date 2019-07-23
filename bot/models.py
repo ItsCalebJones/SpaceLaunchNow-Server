@@ -2,10 +2,10 @@ from django.db import models
 from django.db.models.functions import datetime
 from pytz import utc
 
-from api.models import Launch
+from api.models import Launch, Events
 
 
-class Notification(models.Model):
+class LaunchNotificationRecord(models.Model):
     launch = models.OneToOneField(Launch, on_delete=models.CASCADE)
 
     wasNotifiedWebcastLive = models.BooleanField(blank=True, default=False)
@@ -62,8 +62,8 @@ class Notification(models.Model):
     is_future.boolean = True
 
     class Meta:
-        verbose_name = 'Notification'
-        verbose_name_plural = 'Notifications'
+        verbose_name = 'Notification Record'
+        verbose_name_plural = 'Notification Records'
 
 
 class DailyDigestRecord(models.Model):
@@ -206,3 +206,15 @@ class NewsItem(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Notification(models.Model):
+    launch = models.ForeignKey(Launch, on_delete=models.CASCADE, null=True, blank=True, default=None)
+    news = models.ForeignKey(NewsItem, on_delete=models.CASCADE, null=True, blank=True, default=None)
+    event = models.ForeignKey(Events, on_delete=models.CASCADE, null=True, blank=True, default=None)
+    title = models.TextField(max_length=16)
+    message = models.TextField(max_length=25)
+    send_ios = models.BooleanField(default=False)
+    send_ios_complete = models.NullBooleanField(default=False)
+    send_android = models.BooleanField(default=False)
+    send_android_complete = models.NullBooleanField(default=False)

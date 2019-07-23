@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 # Create your views here.
 from rest_framework import viewsets
 
-from bot.models import Notification, DailyDigestRecord
+from bot.models import LaunchNotificationRecord, DailyDigestRecord
 from bot.permission import HasGroupPermission
 from bot.serializer import NotificationSerializer, DailyDigestRecordSerializer
 
@@ -13,7 +13,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows Launcher to be viewed or edited.
     """
-    queryset = Notification.objects.all()
+    queryset = LaunchNotificationRecord.objects.all()
     serializer_class = NotificationSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {

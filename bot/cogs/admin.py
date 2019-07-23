@@ -12,7 +12,7 @@ from goose3 import Goose
 
 from api.models import Launch
 from bot.app.repository.launches_repository import LaunchRepository
-from bot.models import NewsNotificationChannel, NewsItem, Notification
+from bot.models import NewsNotificationChannel, NewsItem, LaunchNotificationRecord
 
 logger = logging.getLogger('bot.discord')
 daily_send_time = '12:00'  # time is in 24hr format
@@ -100,7 +100,7 @@ class SLNAdmin:
 
         # Delete notification records from old launches.
         three_days_threshhold = datetime.today() - timedelta(days=3)
-        notifications = Notification.objects.filter(launch__net__lte=three_days_threshhold)
+        notifications = LaunchNotificationRecord.objects.filter(launch__net__lte=three_days_threshhold)
         notifications.delete()
 
         # Check for stale launches.

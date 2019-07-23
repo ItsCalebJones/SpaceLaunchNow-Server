@@ -15,7 +15,7 @@ from bot.app.sync import LaunchLibrarySync
 from bot.cogs.news import get_news
 from bot.cogs.reddit import get_submissions
 from bot.cogs.twitter import get_new_tweets
-from bot.models import Notification, RedditSubmission, Tweet, NewsItem
+from bot.models import LaunchNotificationRecord, RedditSubmission, Tweet, NewsItem
 from spacelaunchnow import config
 
 logger = get_task_logger('bot.digest')
@@ -75,7 +75,7 @@ def check_for_orphaned_launches():
     seven_days_threshhold = datetime.today() - timedelta(days=7)
     thirty_days_threshhold = datetime.today() - timedelta(days=30)
 
-    notifications = Notification.objects.filter(launch__net__lte=seven_days_threshhold)
+    notifications = LaunchNotificationRecord.objects.filter(launch__net__lte=seven_days_threshhold)
     notifications.delete()
 
     submissions = RedditSubmission.objects.filter(created_at__lte=thirty_days_threshhold)

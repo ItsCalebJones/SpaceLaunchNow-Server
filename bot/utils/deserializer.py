@@ -114,10 +114,10 @@ def check_notification(launch):
     current = datetime.datetime.now(tz=utc)
     if launch.net >= current:
         try:
-            if Notification.objects.get(launch=launch) is None:
-                Notification.objects.get_or_create(launch=launch)
-        except Notification.DoesNotExist:
-            Notification.objects.get_or_create(launch=launch)
+            if LaunchNotificationRecord.objects.get(launch=launch) is None:
+                LaunchNotificationRecord.objects.get_or_create(launch=launch)
+        except LaunchNotificationRecord.DoesNotExist:
+            LaunchNotificationRecord.objects.get_or_create(launch=launch)
 
 
 def get_location(launch, data):
