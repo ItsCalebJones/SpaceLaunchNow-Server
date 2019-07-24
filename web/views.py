@@ -36,8 +36,9 @@ def get_youtube_url(launch):
 
 def index(request):
     news = NewsItem.objects.all().order_by('-created_at')[:6]
-    event = Events.objects.all().filter(date__gte=datetime.utcnow()).order_by('date').first()
-    events = Events.objects.all().filter(date__gte=datetime.utcnow()).order_by('date')[1:4]
+    last_six_hours = datetime.now() - dt.timedelta(hours=6)
+    event = Events.objects.all().filter(date__gte=last_six_hours).order_by('date').first()
+    events = Events.objects.all().filter(date__gte=last_six_hours).order_by('date')[1:4]
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
     _launches = Launch.objects.filter(net__gte=datetime.utcnow()).filter(Q(status__id=1) | Q(status__id=2)).order_by(
         'net')[:3]
@@ -254,8 +255,7 @@ def spacecraft_by_id(request, id):
 
 
 def events_list(request):
-    now = datetime.now()
-    last_six_hours = now - dt.timedelta(hours=6)
+    last_six_hours = datetime.now() - dt.timedelta(hours=6)
     events = Events.objects.all().filter(date__gte=last_six_hours).order_by('date')
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:6]
     return render(request, 'web/events/event_list.html', {'previous_launches': previous_launches,
