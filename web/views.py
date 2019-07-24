@@ -57,8 +57,41 @@ def index(request):
         launch = _next_launch
         _launches = _launches[1:3]
 
+    if launch.image_url:
+        launch_image = launch.image_url.url
+    elif launch.rocket.configuration.image_url:
+        launch_image = launch.rocket.configuration.image_url.url
+    elif launch.infographic_url:
+        launch_image = launch.infographic_url.url
+    else:
+        launch_image = None
+
+    first_launch = _launches[0]
+    if first_launch.image_url:
+        first_launch_image = first_launch.image_url.url
+    elif launch.rocket.configuration.image_url:
+        first_launch_image = first_launch.rocket.configuration.image_url.url
+    elif launch.infographic_url:
+        first_launch_image = first_launch.infographic_url.url
+    else:
+        first_launch_image = None
+    second_launch = _launches[1]
+
+    if second_launch.image_url:
+        second_launch_image = second_launch.image_url.url
+    elif launch.rocket.configuration.image_url:
+        second_launch_image = second_launch.rocket.configuration.image_url.url
+    elif launch.infographic_url:
+        second_launch_image = second_launch.infographic_url.url
+    else:
+        second_launch_image = None
+
     return render(request, 'web/index.html', {'launch': launch,
-                                              'upcoming_launches': _launches,
+                                              'launch_image': launch_image,
+                                              'first_launch': first_launch,
+                                              'first_launch_image': first_launch_image,
+                                              'second_launch': second_launch,
+                                              'second_launch_image': second_launch_image,
                                               'youtube_url': get_youtube_url(_next_launch),
                                               'news': news,
                                               'previous_launches': previous_launches,
@@ -149,7 +182,18 @@ def create_launch_view(request, launch):
         if 'youtube' in url.vid_url:
             youtube_urls.append(url.vid_url)
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
-    return render(request, 'web/launch_page.html', {'launch': launch, 'youtube_urls': youtube_urls, 'status': status,
+
+    if launch.image_url:
+        launch_image = launch.image_url.url
+    elif launch.rocket.configuration.image_url:
+        launch_image = launch.rocket.configuration.image_url.url
+    elif launch.infographic_url:
+        launch_image = launch.infographic_url.url
+    else:
+        launch_image = None
+
+    return render(request, 'web/launch_page.html', {'launch': launch, 'launch_image': launch_image,
+                                                    'youtube_urls': youtube_urls, 'status': status,
                                                     'agency': agency, 'launches': launches,
                                                     'previous_launches': previous_launches})
 

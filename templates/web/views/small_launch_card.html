@@ -1,24 +1,21 @@
 {% load thumbnail %}
+{% load static %}
 
 <div class="card text-left" style="margin-top: 75px">
     <div class="card-header {% if 'GO' in launch.status.name %} card-header-success {% elif 'TBD' in launch.status.name %} card-header-danger {% else %} card-header-info {% endif %} p-2">
         <div class="row">
             <div class="col-md-4 text-center" style="height: 150px">
-                {% if launch.rocket.configuration.image_url %}
-                    {% thumbnail launch.rocket.configuration.image_url "200" as im %}
-                        <img class="img-raised rounded-circle img-fluid text-center"
-                             src="{{ im.url }}"
-                             style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                    {% endthumbnail %}
-                {% elif launch.rocket.configuration.launch_agency.image_url %}
-                    {% thumbnail launch.rocket.configuration.launch_agency.image_url "200" as im %}
-                        <img class="img-raised rounded-circle img-fluid text-center"
-                             src="{{ im.url }}"
-                             style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                    {% endthumbnail %}
+                {% if launch.image_url %}
+                    <img class="img-raised rounded-circle img-fluid text-center"
+                         src="{{ launch.image_url.url }}"
+                         style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                {% elif launch.rocket.configuration.image_url %}
+                    <img class="img-raised rounded-circle img-fluid text-center"
+                         src="{{ launch.rocket.configuration.image_url.url }}"
+                         style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                 {% else %}
                     <img class="img-raised rounded-circle img-fluid text-center"
-                         src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png"
+                         src="{% static "img/placeholder.jpg" %}"
                          style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                 {% endif %}
             </div>
