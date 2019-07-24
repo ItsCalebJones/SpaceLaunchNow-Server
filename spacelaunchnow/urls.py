@@ -92,6 +92,7 @@ if config.IS_WEBSERVER:
         url(r'^$', landing_views.index, name='index'),
         url(r'^launches/latest/feed.ics$', LaunchFeed()),
         url(r'^events/latest/feed.ics$', EventFeed()),
+        url(r'^tz_detect/', include('tz_detect.urls')),
     ]
 
 if config.IS_ADMIN:

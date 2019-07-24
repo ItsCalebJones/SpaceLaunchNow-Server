@@ -254,7 +254,9 @@ def spacecraft_by_id(request, id):
 
 
 def events_list(request):
-    events = Events.objects.all().filter(date__gte=datetime.utcnow()).order_by('date')
+    now = datetime.now()
+    last_six_hours = now - dt.timedelta(hours=6)
+    events = Events.objects.all().filter(date__gte=last_six_hours).order_by('date')
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:6]
     return render(request, 'web/events/event_list.html', {'previous_launches': previous_launches,
                                                           'events': events})
