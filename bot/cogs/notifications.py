@@ -302,9 +302,7 @@ class Notifications:
                 for channel in bot_channels:
                     logger.info("Sending notification to %s" % channel.name)
                     try:
-                        await self.bot.send_message(channel,
-                                                    embed=event_to_embed(event,
-                                                                         "**Launching in ten minutes!**\n\n"))
+                        await self.bot.send_message(channel, embed=event_to_embed(event, ""))
                     except Exception as e:
                         logger.error(channel.id)
                         logger.error(channel.name)
