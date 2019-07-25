@@ -6,7 +6,7 @@ from celery.utils.log import get_task_logger
 
 from api.models import Events
 from bot.app.events.notification_handler import EventNotificationHandler
-from bot.app.events.twitter_handler import EventTwitterHandler
+from bot.app.events.social_handler import SocialHandler
 from bot.cogs.news import get_news
 
 logger = get_task_logger('bot.events')

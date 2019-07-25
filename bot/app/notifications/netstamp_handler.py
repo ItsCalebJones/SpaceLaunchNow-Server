@@ -4,7 +4,7 @@ from datetime import datetime
 import pytz
 
 from bot.app.notifications.notification_handler import NotificationHandler
-from bot.app.notifications.twitter_handler import TwitterEvents
+from bot.app.notifications.social_handler import SocialEvents
 from bot.utils.util import seconds_to_time
 from spacelaunchnow import config
 
@@ -17,7 +17,7 @@ class NetstampHandler:
             self.DEBUG = config.DEBUG
         else:
             self.DEBUG = debug
-        self.twitter_handler = TwitterEvents()
+        self.twitter_handler = SocialEvents()
         self.notification_handler = NotificationHandler()
 
     def netstamp_changed(self, launch, notification, diff):
