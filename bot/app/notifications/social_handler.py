@@ -170,8 +170,8 @@ class SocialEvents:
 
     def send_to_twitter(self, launch, notification_type):
         message = get_message(launch, notification_type)
-        if len(message + launch.get_full_absolute_url) < 280:
-            message = message + "\n%s" % launch.get_full_absolute_url
+        if len(message + launch.get_full_absolute_url()) < 280:
+            message = message + "\n%s" % launch.get_full_absolute_url()
         if len(message) > 280:
             end = message[-5:]
 

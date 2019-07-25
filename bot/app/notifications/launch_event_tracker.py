@@ -288,6 +288,9 @@ class LaunchEventTracker:
                     notification.save()
                     self.social.send_to_twitter(launch=launch,
                                                 notification_type='oneHour')
+                    if launch.infographic_url:
+                        self.social.buffer.send_to_all(message="%s launch inforgraphic.\n\nCredit: @geoffdbarrett",
+                                                       image=launch.infographic_url.url, now=True)
             except Exception as e:
                 logger.error(e)
 
