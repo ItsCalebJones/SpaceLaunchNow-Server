@@ -70,9 +70,9 @@ def index(request):
     first_launch = _launches[0]
     if first_launch.image_url:
         first_launch_image = first_launch.image_url.url
-    elif launch.rocket.configuration.image_url:
+    elif first_launch.rocket.configuration.image_url:
         first_launch_image = first_launch.rocket.configuration.image_url.url
-    elif launch.infographic_url:
+    elif first_launch.infographic_url:
         first_launch_image = first_launch.infographic_url.url
     else:
         first_launch_image = None
@@ -80,9 +80,9 @@ def index(request):
 
     if second_launch.image_url:
         second_launch_image = second_launch.image_url.url
-    elif launch.rocket.configuration.image_url:
+    elif second_launch.rocket.configuration.image_url:
         second_launch_image = second_launch.rocket.configuration.image_url.url
-    elif launch.infographic_url:
+    elif second_launch.infographic_url:
         second_launch_image = second_launch.infographic_url.url
     else:
         second_launch_image = None
