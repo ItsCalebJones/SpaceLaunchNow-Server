@@ -10,7 +10,7 @@ import pytz
 from api.models import Launch
 from bot.app.notifications.netstamp_handler import NetstampHandler
 from bot.app.notifications.notification_handler import NotificationHandler
-from bot.app.notifications.twitter_handler import TwitterEvents
+from bot.app.notifications.social_handler import SocialEvents
 from bot.models import LaunchNotificationRecord, Notification
 from bot.utils.util import seconds_to_time
 from spacelaunchnow import config
@@ -24,7 +24,7 @@ class LaunchEventTracker:
             self.DEBUG = config.DEBUG
         else:
             self.DEBUG = debug
-        self.twitter = TwitterEvents()
+        self.social = SocialEvents()
         self.notification_handler = NotificationHandler()
         self.netstamp = NetstampHandler()
 
@@ -76,10 +76,15 @@ class LaunchEventTracker:
                 if not notification.wasNotifiedSuccessTwitter:
                     logger.info('Sending Twitter notification for %s!', launch.name)
                     notification.wasNotifiedSuccessTwitter = True
+                    notification.last_twitter_post = datetime.now(tz=pytz.utc)
+                    notification.last_net_stamp = notification.launch.net
+                    notification.last_net_stamp_timestamp = datetime.now(tz=pytz.utc)
+                    logger.debug('Updating Notification %s to timestamp %s' % (notification.launch.id,
+                                                                               notification.last_twitter_post
+                                                                               .strftime("%A %d. %B %Y")))
                     notification.save()
-                    self.twitter.send_to_twitter(launch=launch,
-                                                 notification_type=status,
-                                                 notification=notification)
+                    self.social.send_to_all(launch=launch,
+                                            notification_type=status)
             except Exception as e:
                 logger.error(e)
 
@@ -106,10 +111,15 @@ class LaunchEventTracker:
                 if not notification.wasNotifiedInFlightTwitter:
                     logger.info('Sending Twitter notification for %s!', launch.name)
                     notification.wasNotifiedInFlightTwitter = True
+                    notification.last_twitter_post = datetime.now(tz=pytz.utc)
+                    notification.last_net_stamp = notification.launch.net
+                    notification.last_net_stamp_timestamp = datetime.now(tz=pytz.utc)
+                    logger.debug('Updating Notification %s to timestamp %s' % (notification.launch.id,
+                                                                               notification.last_twitter_post
+                                                                               .strftime("%A %d. %B %Y")))
                     notification.save()
-                    self.twitter.send_to_twitter(launch=launch,
-                                                 notification_type='inFlight',
-                                                 notification=notification)
+                    self.social.send_to_twitter(launch=launch,
+                                                notification_type='inFlight')
             except Exception as e:
                 logger.error(e)
 
@@ -152,10 +162,15 @@ class LaunchEventTracker:
                 if not notification.wasNotifiedOneMinuteTwitter:
                     logger.info('Sending Twitter notification for %s!', launch.name)
                     notification.wasNotifiedOneMinuteTwitter = True
+                    notification.last_twitter_post = datetime.now(tz=pytz.utc)
+                    notification.last_net_stamp = notification.launch.net
+                    notification.last_net_stamp_timestamp = datetime.now(tz=pytz.utc)
+                    logger.debug('Updating Notification %s to timestamp %s' % (notification.launch.id,
+                                                                               notification.last_twitter_post
+                                                                               .strftime("%A %d. %B %Y")))
                     notification.save()
-                    self.twitter.send_to_twitter(launch=launch,
-                                                 notification_type='oneMinute',
-                                                 notification=notification)
+                    self.social.send_to_twitter(launch=launch,
+                                                notification_type='oneMinute')
             except Exception as e:
                 logger.error(e)
 
@@ -184,11 +199,17 @@ class LaunchEventTracker:
             try:
                 if not notification.wasNotifiedTenMinutesTwitter:
                     logger.info('Sending Twitter notification for %s!', launch.name)
-                    self.twitter.send_to_twitter(launch=launch,
-                                                 notification_type='tenMinutes',
-                                                 notification=notification)
                     notification.wasNotifiedTenMinutesTwitter = True
+                    notification.last_twitter_post = datetime.now(tz=pytz.utc)
+                    notification.last_net_stamp = notification.launch.net
+                    notification.last_net_stamp_timestamp = datetime.now(tz=pytz.utc)
+                    logger.debug('Updating Notification %s to timestamp %s' % (notification.launch.id,
+                                                                               notification.last_twitter_post
+                                                                               .strftime("%A %d. %B %Y")))
+
                     notification.save()
+                    self.social.send_to_all(launch=launch,
+                                            notification_type='tenMinutes')
             except Exception as e:
                 logger.error(e)
 
@@ -219,10 +240,15 @@ class LaunchEventTracker:
                 if not notification.wasNotifiedTwentyFourHourTwitter:
                     logger.info('Sending Twitter notification for %s!', launch.name)
                     notification.wasNotifiedTwentyFourHourTwitter = True
+                    notification.last_twitter_post = datetime.now(tz=pytz.utc)
+                    notification.last_net_stamp = notification.launch.net
+                    notification.last_net_stamp_timestamp = datetime.now(tz=pytz.utc)
+                    logger.debug('Updating Notification %s to timestamp %s' % (notification.launch.id,
+                                                                               notification.last_twitter_post
+                                                                               .strftime("%A %d. %B %Y")))
                     notification.save()
-                    self.twitter.send_to_twitter(launch=launch,
-                                                 notification_type='twentyFourHour',
-                                                 notification=notification)
+                    self.social.send_to_all(launch=launch,
+                                            notification_type='twentyFourHour')
             except Exception as e:
                 logger.error(e)
 
@@ -253,10 +279,15 @@ class LaunchEventTracker:
                 if not notification.wasNotifiedOneHourTwitter:
                     logger.info('Sending Twitter notification for %s!', launch.name)
                     notification.wasNotifiedOneHourTwitter = True
+                    notification.last_twitter_post = datetime.now(tz=pytz.utc)
+                    notification.last_net_stamp = notification.launch.net
+                    notification.last_net_stamp_timestamp = datetime.now(tz=pytz.utc)
+                    logger.debug('Updating Notification %s to timestamp %s' % (notification.launch.id,
+                                                                               notification.last_twitter_post
+                                                                               .strftime("%A %d. %B %Y")))
                     notification.save()
-                    self.twitter.send_to_twitter(launch=launch,
-                                                 notification_type='oneHour',
-                                                 notification=notification)
+                    self.social.send_to_twitter(launch=launch,
+                                                notification_type='oneHour')
             except Exception as e:
                 logger.error(e)
 
@@ -286,10 +317,15 @@ class LaunchEventTracker:
                 if not notification.wasNotifiedWebcastLiveTwitter:
                     logger.info('Sending Twitter notification for %s!', launch.name)
                     notification.wasNotifiedWebcastLiveTwitter = True
+                    notification.last_twitter_post = datetime.now(tz=pytz.utc)
+                    notification.last_net_stamp = notification.launch.net
+                    notification.last_net_stamp_timestamp = datetime.now(tz=pytz.utc)
+                    logger.debug('Updating Notification %s to timestamp %s' % (notification.launch.id,
+                                                                               notification.last_twitter_post
+                                                                               .strftime("%A %d. %B %Y")))
                     notification.save()
-                    self.twitter.send_to_twitter(launch=launch,
-                                                 notification_type='webcastLive',
-                                                 notification=notification)
+                    self.social.send_to_twitter(launch=launch,
+                                                notification_type='webcastLive')
             except Exception as e:
                 logger.error(e)
 
