@@ -164,9 +164,20 @@ class SocialEvents:
         self.buffer = BufferAPI()
 
     def send_to_all(self, launch, notification_type):
-        self.send_to_twitter(launch, notification_type)
-        self.send_to_instagram(launch, notification_type)
-        self.send_to_facebook(launch, notification_type)
+        try:
+            self.send_to_twitter(launch, notification_type)
+        except Exception as e:
+            logger.error(e)
+
+        try:
+            self.send_to_instagram(launch, notification_type)
+        except Exception as e:
+            logger.error(e)
+
+        try:
+            self.send_to_facebook(launch, notification_type)
+        except Exception as e:
+            logger.error(e)
 
     def send_to_twitter(self, launch, notification_type):
         message = get_message(launch, notification_type)
@@ -190,11 +201,11 @@ class SocialEvents:
 
         image = None
         if launch.image_url:
-            image = launch.image_url
+            image = launch.image_url.url
         elif launch.rocket.configuration.image_url:
-            image = launch.rocket.configuration.image_url
+            image = launch.rocket.configuration.image_url.url
         elif launch.infographic_url:
-            image = launch.infographic_url
+            image = launch.infographic_url.url
 
         message = message + hashtags
 
