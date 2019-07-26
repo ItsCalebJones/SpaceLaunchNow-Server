@@ -13,7 +13,7 @@
           content="{{ vehicle.serial_number }} - {{ vehicle.details|truncatechars:100 }}">
     <meta property="og:description"
           content="{{ vehicle.serial_number }} - {{ vehicle.details|truncatechars:100 }}">
-    <meta property="og:url" content="https://spacelaunchnow.me/astronaut/{{ astronaut.slug }}"/>
+    <meta property="og:url" content="https://spacelaunchnow.me/vehicle/launcher/{{ vehicle.id }}"/>
     {% if vehicle.image_url %}
         <meta property="og:image" content="{{ vehicle.image_url.url }}"/>
     {% else %}
