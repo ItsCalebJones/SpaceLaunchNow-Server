@@ -5,6 +5,7 @@ import pytz
 from discord import Colour
 from discord.ext import commands
 from django.db.models import Q
+from django.template.defaultfilters import truncatewords
 
 from api.models import Launch
 
@@ -51,7 +52,7 @@ class Launches:
         Examples: ?next detailed | ?next
 
         """
-        launch = Launch.objects.filter(net__gte=datetime.datetime.now()).order_by('net').first()
+        launch = Launch.objects.filter(net__gte=datetime.datetime.utcnow()).order_by('net').first()
         if detailed == 'detailed':
             embed = launch_to_large_embed(launch)
         else:
@@ -171,7 +172,7 @@ def launch_to_small_embed(launch, notification="", pre_launch=False):
                    " or [on the web](https://spacelaunchnow.me)"
     mission_description = ""
     if launch.mission is not None and launch.mission.description is not None:
-        mission_description = "\n%s\n" % (launch.mission.description[:75] + '...') if len(launch.mission.description) > 75 else launch.mission.description
+        mission_description = "\n%s\n" % (truncatewords(launch.mission.description, 50))
     fail_reason = ""
     if launch.failreason is not None and launch.failreason is not '':
         fail_reason = "\n**Update:** %s\n" % launch.failreason
