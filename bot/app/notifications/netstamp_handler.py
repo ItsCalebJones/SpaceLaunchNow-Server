@@ -17,26 +17,20 @@ class NetstampHandler:
             self.DEBUG = config.DEBUG
         else:
             self.DEBUG = debug
-        self.twitter_handler = SocialEvents()
+        self.social_handler = SocialEvents()
         self.notification_handler = NotificationHandler()
 
     def netstamp_changed(self, launch, notification, diff):
         logger.info('Netstamp change detected for %s - now launching in %d seconds.' % (launch.name, diff))
-        date = launch.net
-        message = 'SCHEDULE UPDATE: %s now launching in %s at %s.' % (launch.name,
-                                                                      seconds_to_time(diff),
-                                                                      date.strftime("%H:%M %Z (%d/%m)"))
-
         old_diff = notification.last_net_stamp - datetime.now(tz=pytz.utc)
+        self.update_notification_record(diff, notification)
+
         if old_diff.total_seconds() < 604800:
             logger.info('Netstamp Changed and within window - sending mobile notification.')
             self.notification_handler.send_notification(launch, 'netstampChanged', notification)
-        self.twitter_handler.send_to_twitter(launch, notification, 'netstampChanged')
+        self.social_handler.send_to_twitter(launch, 'netstampChanged')
 
-        notification.last_net_stamp = notification.launch.net
-        notification.last_net_stamp_timestamp = datetime.now(tz=pytz.utc)
-        launch.save()
-
+    def update_notification_record(self, diff, notification):
         # If launch is within 24 hours...
         if 86400 >= diff > 3600:
             logger.info('Launch is within 24 hours, resetting notifications.')
@@ -86,4 +80,10 @@ class NetstampHandler:
             notification.wasNotifiedTwentyFourHourDiscord = False
             notification.wasNotifiedOneHourDiscord = False
             notification.wasNotifiedTenMinutesDiscord = False
+        notification.last_twitter_post = datetime.now(tz=pytz.utc)
+        notification.last_net_stamp = notification.launch.net
+        notification.last_net_stamp_timestamp = datetime.now(tz=pytz.utc)
+        logger.info('Updating Notification %s to timestamp %s' % (notification.launch.id,
+                                                                  notification.last_twitter_post
+                                                                  .strftime("%A %d. %B %Y")))
         notification.save()
