@@ -422,7 +422,7 @@ class Pad(models.Model):
     latitude = models.CharField(blank=True, null=True, max_length=30)
     longitude = models.CharField(blank=True, null=True, max_length=30)
     location = models.ForeignKey(Location, related_name='pad', blank=True, null=True, on_delete=models.CASCADE)
-    map_image = models.FileField(default=None, storage=LaunchImageStorage(), upload_to=location_path,
+    map_image = models.FileField(default=None, storage=LaunchImageStorage(), upload_to=pad_path,
                                  null=True, blank=True)
 
     def save(self, *args, **kwargs):
