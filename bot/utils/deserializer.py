@@ -56,6 +56,7 @@ def launch_json_to_model(data):
     hashtag = data['hashtag']
     tbdtime = data['tbdtime']
     tbddate = data['tbddate']
+    launch_service_provider = get_lsp(data)
 
     launch, created = Launch.objects.get_or_create(launch_library_id=id)
     launch.name = name
@@ -77,6 +78,7 @@ def launch_json_to_model(data):
     launch.hashtag = hashtag
     launch.tbddate = tbddate
     launch.tbdtime = tbdtime
+    launch.launch_service_provider = launch_service_provider
     launch.net = datetime.datetime.strptime(net, '%B %d, %Y %H:%M:%S %Z').replace(tzinfo=pytz.utc)
     launch.window_end = datetime.datetime.strptime(window_end, '%B %d, %Y %H:%M:%S %Z').replace(tzinfo=pytz.utc)
     launch.window_start = datetime.datetime.strptime(window_start, '%B %d, %Y %H:%M:%S %Z').replace(tzinfo=pytz.utc)
@@ -153,7 +155,7 @@ def get_rocket(launch, data):
             launcher_config.name = data['rocket']['name']
             launcher_config.family_name = data['rocket']['familyname']
             launcher_config.configuration = data['rocket']['configuration']
-            launcher_config.launch_agency = get_lsp(launch, data)
+            launcher_config.launch_agency = get_lsp(data)
         launcher_config.save()
         if 'placeholder' not in data['rocket']['imageURL'] and created:
             download_launcher_image(launcher_config)
@@ -185,7 +187,7 @@ def get_mission(launch, data):
         return mission
 
 
-def get_lsp(launch, data):
+def get_lsp(data):
     if 'lsp' in data and data['lsp'] is not None:
         lsp, created = Agency.objects.get_or_create(id=data['lsp']['id'])
         lsp.name = data['lsp']['name']
