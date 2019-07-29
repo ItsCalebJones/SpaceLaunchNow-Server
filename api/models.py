@@ -12,7 +12,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.urls import reverse
 from django_extensions.db.fields import AutoSlugField
 
-from api.utils.utilities import resize_for_upload, resize_needed
+from api.utils.utilities import resize_for_upload, resize_needed, get_map_url, get_pad_url
 
 try:
     from urllib import quote  # Python 2.X
@@ -42,11 +42,26 @@ CACHE_TIMEOUT_ONE_DAY = 24 * 60 * 60
 CACHE_TIMEOUT_TEN_MINUTES = 10 * 60
 
 
-
 def image_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
     clean_name = quote(quote(instance.name.encode('utf8')), '')
     clean_name = "%s_image_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
+    name = "%s%s" % (str(clean_name), file_extension)
+    return name
+
+
+def location_path(instance, filename):
+    filename, file_extension = os.path.splitext(filename)
+    clean_name = quote(quote(instance.name.encode('utf8')), '')
+    clean_name = "%s_location_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
+    name = "%s%s" % (str(clean_name), file_extension)
+    return name
+
+
+def pad_path(instance, filename):
+    filename, file_extension = os.path.splitext(filename)
+    clean_name = quote(quote(instance.name.encode('utf8')), '')
+    clean_name = "%s_pad_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
     name = "%s%s" % (str(clean_name), file_extension)
     return name
 
@@ -377,6 +392,13 @@ class Location(models.Model):
     launch_library_id = models.IntegerField(blank=True, null=True)
     name = models.CharField(max_length=255, blank=True, default="")
     country_code = models.CharField(max_length=255, blank=True, default="")
+    map_image = models.FileField(default=None, storage=LaunchImageStorage(), upload_to=location_path,
+                                 null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.map_image:
+            get_map_url(self)
+        super(Location, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -400,6 +422,13 @@ class Pad(models.Model):
     latitude = models.CharField(blank=True, null=True, max_length=30)
     longitude = models.CharField(blank=True, null=True, max_length=30)
     location = models.ForeignKey(Location, related_name='pad', blank=True, null=True, on_delete=models.CASCADE)
+    map_image = models.FileField(default=None, storage=LaunchImageStorage(), upload_to=pad_path,
+                                 null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.map_image:
+            get_pad_url(self)
+        super(Pad, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name
