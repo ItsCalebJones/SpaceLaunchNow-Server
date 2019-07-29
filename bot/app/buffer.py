@@ -41,6 +41,8 @@ class BufferAPI:
 
     def send_to_facebook(self, message: str = None, image: str = None, link: str = None, now: bool = False):
         profile = Profiles(api=self.api).filter(service='facebook')[0]
+        if link:
+            message = message + "\n" + link
         return profile.updates.new(text=message, photo=image, now=now)
 
     def send_to_twitter(self, message: str = None, image: str = None, link: str = None, now: bool = False):
