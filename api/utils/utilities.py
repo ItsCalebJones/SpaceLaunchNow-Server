@@ -1,9 +1,13 @@
+import logging
 import sys
 
 from PIL import Image
 from compat import BytesIO
 from django.contrib.admin.options import BaseModelAdmin
+from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import InMemoryUploadedFile
+
+from spacelaunchnow import config
 
 
 def get_launch_status(status):
@@ -121,6 +125,7 @@ def admin_link(attr, short_description, empty_description="-"):
         def credit_card_link(self, credit_card):
             return credit_card.name
     """
+
     def wrap(func):
         def field_func(self, obj):
             related_obj = getattr(obj, attr)
@@ -132,10 +137,69 @@ def admin_link(attr, short_description, empty_description="-"):
                 url,
                 func(self, related_obj)
             )
+
         field_func.short_description = short_description
         field_func.allow_tags = True
         return field_func
+
     return wrap
+
+
+def get_map_url(location):
+    import requests
+    logger = logging.getLogger('django')
+    # Enter your api key here
+    api_key = config.GOOGLE_API_KEY
+
+    # url variable store url
+    url = "https://maps.googleapis.com/maps/api/staticmap?"
+
+    # center defines the center of the map,
+    # equidistant from all edges of the map.
+    center = location.name
+
+    # zoom defines the zoom
+    # level of the map
+    zoom = 8
+
+    # get method of requests module
+    # return response object
+    full_url = (url + "center=" + center + "&zoom=" +
+           str(zoom) + "&maptype=hybrid&size= 600x400&scale=2&key=" +
+           api_key)
+    logger.info(full_url)
+    image_content = ContentFile(requests.get(full_url).content)
+    location.map_image.save("temp.jpg", image_content)
+    logger.info(location.map_image.url)
+
+
+def get_pad_url(pad):
+    import requests
+    logger = logging.getLogger('django')
+    # Enter your api key here
+    api_key = config.GOOGLE_API_KEY
+
+    # url variable store url
+    url = "https://maps.googleapis.com/maps/api/staticmap?"
+
+    # center defines the center of the map,
+    # equidistant from all edges of the map.
+    center = pad.latitude + "," + pad.longitude
+
+    # zoom defines the zoom
+    # level of the map
+    zoom = 12
+
+    # get method of requests module
+    # return response object
+    full_url = (url + "center=" + center + "&zoom=" +
+           str(zoom) + "&maptype=hybrid&size= 600x400&scale=2" +
+           "&markers=color:blue|label:P|" + pad.latitude + "," + pad.longitude + "&key=" +
+           api_key)
+    logger.info(full_url)
+    image_content = ContentFile(requests.get(full_url).content)
+    pad.map_image.save("temp.jpg", image_content)
+    logger.info(pad.map_image.url)
 
 
 class AdminBaseWithSelectRelated(BaseModelAdmin):
