@@ -53,16 +53,16 @@ def image_path(instance, filename):
 def location_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
     clean_name = quote(quote(instance.name.encode('utf8')), '')
-    clean_name = "%s_location_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
-    name = "%s%s" % (str(clean_name), file_extension)
+    clean_name = "location_%s" % (clean_name.lower())
+    name = "%s%s" % (str(clean_name[:15]), file_extension)
     return name
 
 
 def pad_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
     clean_name = quote(quote(instance.name.encode('utf8')), '')
-    clean_name = "%s_pad_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
-    name = "%s%s" % (str(clean_name), file_extension)
+    clean_name = "pad_%s" % (clean_name.lower())
+    name = "%s%s" % (str(clean_name[:15]), file_extension)
     return name
 
 
