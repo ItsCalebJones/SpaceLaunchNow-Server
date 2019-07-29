@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 class LauncherModelSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField('get_legacy_name')
-    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    agency = serializers.ReadOnlyField(read_only=True, source="manufacturer.name")
     id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:
@@ -28,7 +28,7 @@ class OrbiterSerializer(serializers.HyperlinkedModelSerializer):
 
     image_url = serializers.SerializerMethodField('get_legacy_name')
     nation_url = serializers.SerializerMethodField('get_nation_name')
-    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    agency = serializers.ReadOnlyField(read_only=True, source="manufacturer.name")
 
     class Meta:
         model = SpacecraftConfiguration
@@ -51,7 +51,7 @@ class OrbiterSerializer(serializers.HyperlinkedModelSerializer):
 class OrbiterModelSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField('get_legacy_name')
     nation_url = serializers.SerializerMethodField('get_nation_name')
-    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    agency = serializers.ReadOnlyField(read_only=True, source="manufacturer.name")
 
     class Meta:
         model = SpacecraftConfiguration
@@ -101,7 +101,7 @@ class AgencySerializer(serializers.HyperlinkedModelSerializer):
 
 class LauncherDetailSerializer(serializers.HyperlinkedModelSerializer):
     image_url = serializers.SerializerMethodField('get_legacy_name')
-    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    agency = serializers.ReadOnlyField(read_only=True, source="manufacturer.name")
     id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:

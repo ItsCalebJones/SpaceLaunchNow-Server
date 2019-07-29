@@ -4,6 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 
+from api.v300.filters import LauncherFilterSet
 from api.v300.serializers import *
 from datetime import datetime, timedelta
 from api.models import LauncherConfig, SpacecraftConfiguration, Agency
@@ -76,7 +77,7 @@ class LaunchersViewSet(ModelViewSet):
         'list': ['_Public']
     }
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('family', 'name', 'launch_agency__name', 'full_name', 'id')
+    filter_class = LauncherFilterSet
     lookup_field = 'launch_library_id'
 
 
@@ -143,10 +144,10 @@ class LaunchViewSet(ModelViewSet):
             ids = ids.split(',')
             return Launch.objects.filter(launch_library_id__in=ids)
         elif lsp_id:
-            return Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id).filter(launch_library=True)
+            return Launch.objects.filter(rocket__configuration__manufacturer__id=lsp_id).filter(launch_library=True)
         elif lsp_name:
-            return Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
-                                         | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)).filter(launch_library=True)
+            return Launch.objects.filter(Q(rocket__configuration__manufacturer__name__icontains=lsp_name)
+                                         | Q(rocket__configuration__manufacturer__abbrev__icontains=lsp_name)).filter(launch_library=True)
         elif launcher_config__id:
             return Launch.objects.filter(rocket__configuration__launch_library_id=launcher_config__id).filter(launch_library=True)
         else:
@@ -170,7 +171,7 @@ class LaunchViewSet(ModelViewSet):
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filter_fields = ('name',)
-    search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
+    search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__manufacturer__name',
                      '$mission__name')
     ordering_fields = ('launch_library_id', 'name', 'net',)
     lookup_field = 'launch_library_id'
@@ -206,10 +207,10 @@ class UpcomingLaunchViewSet(ModelViewSet):
             ids = ids.split(',')
             return Launch.objects.filter(launch_library_id__in=ids).filter(net__gte=now).filter(launch_library=True).order_by('net')
         elif lsp_id:
-            return Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id).filter(net__gte=now).filter(launch_library=True)
+            return Launch.objects.filter(rocket__configuration__manufacturer__id=lsp_id).filter(net__gte=now).filter(launch_library=True)
         elif lsp_name:
-            return Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
-                                         | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)).filter(
+            return Launch.objects.filter(Q(rocket__configuration__manufacturer__name__icontains=lsp_name)
+                                         | Q(rocket__configuration__manufacturer__abbrev__icontains=lsp_name)).filter(
                 net__gte=now).filter(launch_library=True)
         elif launcher_config__id:
             return Launch.objects.filter(rocket__configuration__launch_library_id=launcher_config__id).filter(net__gte=now).filter(launch_library=True)
@@ -235,7 +236,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filter_fields = ('name',)
-    search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
+    search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__manufacturer__name',
                      '$mission__name')
     ordering_fields = ('id', 'name', 'net',)
 
@@ -270,10 +271,10 @@ class PreviousLaunchViewSet(ModelViewSet):
             ids = ids.split(',')
             return Launch.objects.filter(launch_library_id__in=ids).filter(net__lte=now).filter(launch_library=True)
         elif lsp_id:
-            return Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id).filter(net__lte=now).filter(launch_library=True)
+            return Launch.objects.filter(rocket__configuration__manufacturer__id=lsp_id).filter(net__lte=now).filter(launch_library=True)
         elif lsp_name:
-            return Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
-                                         | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)).filter(
+            return Launch.objects.filter(Q(rocket__configuration__manufacturer__name__icontains=lsp_name)
+                                         | Q(rocket__configuration__manufacturer__abbrev__icontains=lsp_name)).filter(
                 net__lte=now).filter(launch_library=True)
         elif launcher_config__id:
             return Launch.objects.filter(rocket__configuration__launch_library_id=launcher_config__id).filter(net__lte=now).filter(launch_library=True)
@@ -298,6 +299,6 @@ class PreviousLaunchViewSet(ModelViewSet):
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filter_fields = ('name',)
-    search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
+    search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__manufacturer__name',
                      '$mission__name')
     ordering_fields = ('id', 'name', 'net',)

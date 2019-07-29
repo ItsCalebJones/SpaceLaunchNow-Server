@@ -147,10 +147,10 @@ class Agency(models.Model):
         if count is not None:
             return count
 
-        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(status__id=3).count()
+        count = Launch.objects.filter(rocket__configuration__manufacturer__id=self.id).filter(status__id=3).count()
         related_agency = self.related_agencies.all()
         for related in related_agency:
-            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).count()
+            count += Launch.objects.filter(rocket__configuration__manufacturer__id=related.id).count()
 
         cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
 
@@ -163,11 +163,11 @@ class Agency(models.Model):
         if count is not None:
             return count
 
-        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(
+        count = Launch.objects.filter(rocket__configuration__manufacturer__id=self.id).filter(
             Q(status__id=4) | Q(status__id=7)).count()
         related_agency = self.related_agencies.all()
         for related in related_agency:
-            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(
+            count += Launch.objects.filter(rocket__configuration__manufacturer__id=related.id).filter(
                 Q(status__id=4) | Q(status__id=7)).count()
         # set cal_date in cache for later use
 
@@ -183,11 +183,11 @@ class Agency(models.Model):
         if count is not None:
             return count
 
-        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(
+        count = Launch.objects.filter(rocket__configuration__manufacturer__id=self.id).filter(
             Q(status__id=1) | Q(status__id=2) | Q(status__id=5)).count()
         related_agency = self.related_agencies.all()
         for related in related_agency:
-            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(
+            count += Launch.objects.filter(rocket__configuration__manufacturer__id=related.id).filter(
                 Q(status__id=1) | Q(status__id=2) | Q(status__id=5)).count()
 
         # set in cache for later use
@@ -234,7 +234,7 @@ class SpacecraftConfiguration(models.Model):
     name = models.CharField(max_length=200)
     type = models.ForeignKey(SpacecraftConfigurationType, default=get_default_config_type)
     agency = models.CharField(max_length=200, default='Unknown')
-    launch_agency = models.ForeignKey(Agency, related_name='spacecraft_list', blank=True, null=True)
+    manufacturer = models.ForeignKey(Agency, related_name='spacecraft_list', blank=True, null=True)
     history = models.CharField(max_length=1000, default='')
     details = models.CharField(max_length=1000, default='')
     in_use = models.BooleanField(default=True)
@@ -286,7 +286,7 @@ class LauncherConfig(models.Model):
     description = models.CharField(max_length=2048, default='', blank=True)
     family = models.CharField(max_length=200, default='', blank=True)
     full_name = models.CharField(max_length=200, default='', blank=True)
-    launch_agency = models.ForeignKey(Agency, related_name='launcher_list', blank=True, null=True)
+    manufacturer = models.ForeignKey(Agency, related_name='launcher_list', blank=True, null=True)
     variant = models.CharField(max_length=200, default='', blank=True)
     alias = models.CharField(max_length=200, default='', blank=True)
     launch_cost = models.CharField(verbose_name="Launch Cost ($)", max_length=200, null=True, blank=True)

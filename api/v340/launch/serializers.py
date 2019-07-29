@@ -49,7 +49,7 @@ class FirstStageSerializer(serializers.ModelSerializer):
 
 
 class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
-    launch_service_provider = AgencySerializerDetailedForLaunches(many=False, read_only=True, source='launch_agency')
+    launch_service_provider = AgencySerializerDetailedForLaunches(many=False, read_only=True, source='manufacturer')
 
     def get_rep(self, obj):
         rep = obj.rep
@@ -68,7 +68,7 @@ class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializ
 
 
 class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    launch_service_provider = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    launch_service_provider = serializers.ReadOnlyField(read_only=True, source="manufacturer.name")
 
     class Meta:
         model = LauncherConfig

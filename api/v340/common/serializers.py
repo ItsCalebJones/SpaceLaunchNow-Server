@@ -90,7 +90,7 @@ class AstronautSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class SpacecraftConfigurationDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    agency = AgencySerializerMini(read_only=True, source="launch_agency")
+    agency = AgencySerializerMini(read_only=True, source="manufacturer")
     type = SpacecraftConfigTypeSerializer(read_only=True, many=False)
 
     class Meta:
@@ -129,7 +129,7 @@ class PadSerializerMini(serializers.ModelSerializer):
 
 
 class RocketConfigurationSerializerMini(serializers.ModelSerializer):
-    launch_service_provider = AgencySerializerMini(many=False, source='launch_agency')
+    launch_service_provider = AgencySerializerMini(many=False, source='manufacturer')
 
     class Meta:
         model = LauncherConfig
@@ -382,7 +382,7 @@ class LaunchListSerializer(serializers.ModelSerializer):
 
 class SpacecraftConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     type = SpacecraftConfigTypeSerializer(read_only=True, many=False)
-    agency = AgencySerializerMini(read_only=True, source="launch_agency")
+    agency = AgencySerializerMini(read_only=True, source="manufacturer")
 
     class Meta:
         model = SpacecraftConfiguration
@@ -438,7 +438,7 @@ class LauncherConfigListSerializer(QueryFieldsMixin, serializers.HyperlinkedMode
 
 
 class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    launch_service_provider = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    launch_service_provider = serializers.ReadOnlyField(read_only=True, source="manufacturer.name")
 
     class Meta:
         model = LauncherConfig
@@ -447,7 +447,7 @@ class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSer
 
 
 class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
-    launch_service_provider = AgencySerializerDetailedForLaunches(many=False, read_only=True, source='launch_agency')
+    launch_service_provider = AgencySerializerDetailedForLaunches(many=False, read_only=True, source='manufacturer')
 
     def get_rep(self, obj):
         rep = obj.rep

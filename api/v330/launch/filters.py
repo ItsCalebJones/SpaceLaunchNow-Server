@@ -1,7 +1,7 @@
-from django_filters import filters, FilterSet
+from django_filters import filters, FilterSet, ModelChoiceFilter
 from django.utils.translation import ugettext as _
 
-from api.models import Launch
+from api.models import Launch, Agency
 
 
 class LaunchFilter(FilterSet):
@@ -22,9 +22,11 @@ class LaunchFilter(FilterSet):
         label=_('%s is less than or equal to' % _('NET'))
     )
 
+    rocket__configuration__launch_agency__name = ModelChoiceFilter(queryset=Agency.objects.all())
+
     class Meta:
         model = Launch
         fields = {
-            'name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status',
+            'name', 'rocket__configuration__name', 'status',
             'launch_library_id', 'rocket__spacecraftflight__spacecraft__name', 'rocket__spacecraftflight__spacecraft__id',
         }

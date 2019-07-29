@@ -4,6 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from api.models import *
 from api.permission import HasGroupPermission
+from api.v340.filter import LauncherFilterSet
 from api.v340.launcher.serializers import LauncherDetailSerializer, LauncherSerializer
 
 
@@ -15,7 +16,7 @@ class LauncherViewSet(ModelViewSet):
     Return a list of all the existing launcher instances.
 
     FILTERS:
-    Parameters - 'id', 'serial_number', 'flight_proven', 'launcher_config', 'launcher_config__launch_agency'
+    Parameters - 'id', 'serial_number', 'flight_proven', 'launcher_config', 'launcher_config__manufacturer'
     Example - /api/3.3.0/launcher/?serial_number=B1046
 
     SEARCH EXAMPLE:
@@ -42,6 +43,6 @@ class LauncherViewSet(ModelViewSet):
         'list': ['_Public']
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('id', 'serial_number', 'flight_proven', 'launcher_config', 'launcher_config__launch_agency')
+    filter_class = LauncherFilterSet
     search_fields = ('^serial_number', '^status',)
     ordering_fields = ('id', 'flight_proven',)

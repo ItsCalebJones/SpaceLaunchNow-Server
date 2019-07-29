@@ -5,7 +5,7 @@ from rest_framework import serializers
 
 
 class LauncherModelSerializer(QueryFieldsMixin, serializers.ModelSerializer):
-    agency = serializers.ReadOnlyField(allow_null=True, read_only=True, source="launch_agency.name")
+    agency = serializers.ReadOnlyField(allow_null=True, read_only=True, source="manufacturer.name")
     id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:
@@ -18,7 +18,7 @@ class LauncherModelSerializer(QueryFieldsMixin, serializers.ModelSerializer):
 
 
 class OrbiterSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    agency = serializers.ReadOnlyField(read_only=True, source="manufacturer.name")
 
     class Meta:
         model = SpacecraftConfiguration
@@ -27,7 +27,7 @@ class OrbiterSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer
 
 
 class OrbiterModelSerializer(QueryFieldsMixin, serializers.ModelSerializer):
-    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    agency = serializers.ReadOnlyField(read_only=True, source="manufacturer.name")
 
     class Meta:
         model = SpacecraftConfiguration
@@ -63,7 +63,7 @@ class AgencyHyperlinkedSerializer(QueryFieldsMixin, serializers.HyperlinkedModel
 
 
 class LauncherDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    agency = serializers.ReadOnlyField(allow_null=True, read_only=True, source="launch_agency.name")
+    agency = serializers.ReadOnlyField(allow_null=True, read_only=True, source="manufacturer.name")
     id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:

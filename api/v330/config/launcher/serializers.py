@@ -11,7 +11,7 @@ class AgencySerializerDetailedForLaunches(QueryFieldsMixin, serializers.Hyperlin
 
 
 class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
-    launch_service_provider = AgencySerializerDetailedForLaunches(many=False, read_only=True, source='launch_agency')
+    launch_service_provider = AgencySerializerDetailedForLaunches(many=False, read_only=True, source='manufacturer')
 
     def get_rep(self, obj):
         rep = obj.rep

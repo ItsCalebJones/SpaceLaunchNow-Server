@@ -30,7 +30,7 @@ class LauncherConfigDetailSerializerForAgency(QueryFieldsMixin, serializers.Mode
 
 
 class OrbiterDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    agency = serializers.ReadOnlyField(read_only=True, source="manufacturer.name")
 
     class Meta:
         model = SpacecraftConfiguration
@@ -108,7 +108,7 @@ class AgencySerializerDetailedAndRelated(QueryFieldsMixin, serializers.Hyperlink
 
 
 class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    launch_service_provider = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    launch_service_provider = serializers.ReadOnlyField(read_only=True, source="manufacturer.name")
     id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:
@@ -120,7 +120,7 @@ class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSer
 
 
 class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
-    launch_service_provider = AgencySerializerDetailedForLaunches(many=False, read_only=True, source='launch_agency')
+    launch_service_provider = AgencySerializerDetailedForLaunches(many=False, read_only=True, source='manufacturer')
     id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     def get_rep(self, obj):
