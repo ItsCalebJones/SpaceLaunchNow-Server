@@ -200,7 +200,10 @@ class SocialEvents:
         message = get_message(launch, notification_type)
 
         image = None
-        if launch.image_url:
+        if notification_type == 'tenMinutes' and launch.infographic_url:
+            image = launch.infographic_url.url
+            message = message + "\n\nCredit: @geoffdbarrett"
+        elif launch.image_url:
             image = launch.image_url.url
         elif launch.rocket.configuration.image_url:
             image = launch.rocket.configuration.image_url.url

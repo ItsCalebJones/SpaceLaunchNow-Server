@@ -83,8 +83,8 @@ class LaunchEventTracker:
                                                                                notification.last_twitter_post
                                                                                .strftime("%A %d. %B %Y")))
                     notification.save()
-                    self.social.send_to_all(launch=launch,
-                                            notification_type=status)
+                    self.social.send_to_twitter(launch=launch,
+                                                notification_type=status)
             except Exception as e:
                 logger.error(e)
 
