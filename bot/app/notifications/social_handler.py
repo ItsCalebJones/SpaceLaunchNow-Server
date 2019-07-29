@@ -190,11 +190,17 @@ class SocialEvents:
                 message = (message[:271] + '... ' + end)
             else:
                 message = (message[:277] + '...')
+
         logger.info('Twitter Data | %s | %s | DEBUG %s' % (message, str(len(message)), self.DEBUG))
 
         if not self.DEBUG:
             logger.debug('Sending to twitter via Buffer - message: %s' % message)
             logger.info(self.buffer.send_to_twitter(message=message, now=True))
+
+            if notification_type == 'tenMinutes' and launch.infographic_url:
+                image = launch.infographic_url.url
+                message = "\Launch infographic credit: @geoffdbarrett"
+                logger.info(self.buffer.send_to_twitter(message=message, image=image, now=True))
 
     def send_to_instagram(self, launch, notification_type):
         message = get_message(launch, notification_type)
