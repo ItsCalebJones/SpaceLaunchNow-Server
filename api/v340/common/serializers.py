@@ -239,7 +239,7 @@ class LaunchListSerializer(serializers.ModelSerializer):
         model = Launch
         fields = (
             'id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'mission',
-            'mission_type', 'pad', 'location', 'landing', 'landing_success', 'launcher', 'orbit', 'image')
+            'mission_type', 'pad', 'location', 'landing', 'landing_success', 'launcher', 'orbit', 'image', 'infographic')
 
     def get_image(self, obj):
         if obj.image_url:

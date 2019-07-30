@@ -184,7 +184,7 @@ def get_pad_url(pad):
 
     # center defines the center of the map,
     # equidistant from all edges of the map.
-    center = pad.latitude + "," + pad.longitude
+    center = "{0},{1}".format(pad.latitude, pad.longitude)
 
     # zoom defines the zoom
     # level of the map
@@ -194,7 +194,7 @@ def get_pad_url(pad):
     # return response object
     full_url = (url + "center=" + center + "&zoom=" +
            str(zoom) + "&maptype=hybrid&size= 600x400&scale=2" +
-           "&markers=color:blue|label:P|" + pad.latitude + "," + pad.longitude + "&key=" +
+           "&markers=color:blue|label:P|" + center + "&key=" +
            api_key)
     logger.info(full_url)
     image_content = ContentFile(requests.get(full_url).content)

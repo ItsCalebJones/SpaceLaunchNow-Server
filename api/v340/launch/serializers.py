@@ -168,7 +168,7 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     def get_image(self, obj):
         if obj.image_url:
             return obj.image_url.url
-        elif obj.rocket.configuration.image_url:
+        elif obj.rocket and obj.rocket.configuration.image_url:
             return obj.rocket.configuration.image_url.url
         else:
             return None

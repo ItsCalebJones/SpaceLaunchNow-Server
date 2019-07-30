@@ -26,7 +26,7 @@ class WebTests(TestCase):
         cls.repository.get_agency_type()
         cls.repository.get_launch_by_id(864)
         cls.repository.get_launch_by_id(998)
-        cls.launches = cls.repository.get_next_launches(2)
+        cls.launches = cls.repository.get_next_launches(5)
 
     def test_home(self):
         """

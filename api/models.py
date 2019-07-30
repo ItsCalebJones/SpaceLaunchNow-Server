@@ -389,7 +389,7 @@ class Events(models.Model):
 
 class Location(models.Model):
     id = models.AutoField(primary_key=True)
-    launch_library_id = models.IntegerField(blank=True, null=True)
+    launch_library_id = models.IntegerField(blank=True, null=True, unique=True)
     name = models.CharField(max_length=255, blank=True, default="")
     country_code = models.CharField(max_length=255, blank=True, default="")
     map_image = models.FileField(default=None, storage=LaunchImageStorage(), upload_to=location_path,
