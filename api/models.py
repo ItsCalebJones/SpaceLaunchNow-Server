@@ -366,6 +366,71 @@ class LauncherConfig(models.Model):
         verbose_name = 'Launcher Configuration'
         verbose_name_plural = 'Launcher Configurations'
 
+    @property
+    def total_launch_count(self):
+        cache_key = "%s-%s" % (self.id, "launcherconfig-total")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        now = datetime.datetime.now(tz=utc)
+        count = Launch.objects.filter(rocket__configuration__id=self.id).filter(net__lte=now).count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def consecutive_successful_launches(self):
+        cache_key = "%s-%s" % (self.id, "launcherconfig-consecutive-success")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        count = 0
+        now = datetime.datetime.now(tz=utc)
+        launches = Launch.objects.filter(rocket__configuration__id=self.id).filter(Q(status__id=3)|Q(status__id=4)|Q(status__id=7)).filter(net__lte=now).order_by('-net')
+        for launch in launches:
+            if launch.status.id == 3:
+                count += 1
+            else:
+                break
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def successful_launches(self):
+        cache_key = "%s-%s" % (self.id, "launcherconfig-success")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        count = Launch.objects.filter(rocket__configuration__id=self.id).filter(status__id=3).count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def failed_launches(self):
+        cache_key = "%s-%s" % (self.id, "launcherconfig-failed")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        count = Launch.objects.filter(rocket__configuration__id=self.id).filter(
+            Q(status__id=4) | Q(status__id=7)).count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def pending_launches(self):
+        cache_key = "%s-%s" % (self.id, "launcherconfig-pending")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        count = Launch.objects.filter(rocket__configuration__id=self.id).filter(
+            Q(status__id=1) | Q(status__id=2) | Q(status__id=5)).count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
     def save(self, **kwargs):
         if resize_needed(self.image_url):
             self.image_url = resize_for_upload(self.image_url)

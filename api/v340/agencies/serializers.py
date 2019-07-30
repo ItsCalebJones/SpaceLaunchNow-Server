@@ -15,8 +15,8 @@ class LauncherConfigDetailSerializerForAgency(QueryFieldsMixin, serializers.Mode
         fields = ('id', 'launch_library_id', 'url', 'name', 'description', 'family', 'full_name',
                   'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'maiden_flight', 'launch_mass', 'leo_capacity', 'gto_capacity',
-                  'to_thrust', 'apogee', 'vehicle_range', 'image_url', 'info_url',
-                  'wiki_url',)
+                  'to_thrust', 'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url',
+                  'consecutive_successful_launches', 'successful_launches', 'failed_launches', 'pending_launches',)
 
 
 class AgencySerializerDetailed(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
