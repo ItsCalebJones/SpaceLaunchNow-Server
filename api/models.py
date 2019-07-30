@@ -1005,6 +1005,21 @@ class Launch(models.Model):
     def img_url(self):
         return None
 
+    @property
+    def orbital_launch_attempt_count(self):
+        cache_key = "%s-%s" % (self.id, "launches-orbital-launch-attempt-count")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        if not self.mission.orbit or self.mission.orbit.name != "Sub-Orbital":
+            start_of_year = datetime.datetime(year=self.net.year, month=1, day=1)
+            count = Launch.objects.filter(net__gte=start_of_year, net__lte=self.net).filter(~Q(mission__orbit__name="Sub-Orbital")).count()
+        else:
+            count = None
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
     class Meta:
         verbose_name = 'Launch'
         verbose_name_plural = 'Launches'
