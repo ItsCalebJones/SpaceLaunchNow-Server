@@ -45,7 +45,8 @@ class FirstStageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FirstStage
-        fields = ('type', 'reused', 'launcher_flight_number', 'launcher', 'landing',)
+        fields = ('type', 'reused', 'launcher_flight_number', 'launcher', 'landing', 'previous_flight_id',
+                  'previous_flight_name', 'previous_flight_date', 'turn_around_time_days')
 
 
 class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):

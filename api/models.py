@@ -506,6 +506,19 @@ class Launcher(models.Model):
 
         return count
 
+    @property
+    def turn_around_time(self):
+        cache_key = "%s-%s" % (self.id, "launcher-turn-around")
+        time = cache.get(cache_key)
+        if time is not None:
+            return time
+
+            last_launch = Launch.objects.filter(rocket__firststage__launcher__id=self.id).filter()
+
+        cache.set(cache_key, time, CACHE_TIMEOUT_TEN_MINUTES)
+
+        return time
+
     def __str__(self):
         if self.launcher_config is not None:
             return '%s (%s)' % (self.serial_number, self.launcher_config.full_name)
@@ -619,6 +632,65 @@ class FirstStage(models.Model):
     landing = models.OneToOneField(Landing, related_name='firststage', null=True, blank=True, on_delete=models.SET_NULL)
     launcher = models.ForeignKey(Launcher, related_name='firststage', on_delete=models.CASCADE)
     rocket = models.ForeignKey(Rocket, related_name='firststage', on_delete=models.CASCADE)
+
+    @property
+    def previous_flight_id(self):
+        cache_key = "%s-%s" % (self.id, "previous_flight_id")
+        res = cache.get(cache_key)
+        if res:
+            return res
+
+        launch_net = Launch.objects.get(id=self.rocket.launch.id).net
+        last_launch = Launch.objects.filter(rocket__firststage__launcher__id=self.launcher.id).filter(net__lt=launch_net).order_by('-net')
+
+        if last_launch.count() > 0:
+            res = last_launch[0].id
+
+        cache.set(cache_key, res, CACHE_TIMEOUT_ONE_DAY)
+        return res
+
+    @property
+    def previous_flight_name(self):
+        cache_key = "%s-%s" % (self.id, "previous_flight_name")
+        res = cache.get(cache_key)
+        if res:
+            return res
+
+        last_launch_id = self.previous_flight_id
+        if last_launch_id:
+            res = Launch.objects.get(id=last_launch_id).name
+
+        cache.set(cache_key, res, CACHE_TIMEOUT_ONE_DAY)
+        return res
+
+    @property
+    def previous_flight_date(self):
+        cache_key = "%s-%s" % (self.id, "previous_flight_date")
+        res = cache.get(cache_key)
+        if res:
+            return res
+
+        last_launch_id = self.previous_flight_id
+        if last_launch_id:
+            res = Launch.objects.get(id=last_launch_id).net
+
+        cache.set(cache_key, res, CACHE_TIMEOUT_ONE_DAY)
+        return res
+
+    @property
+    def turn_around_time_days(self):
+        cache_key = "%s-%s" % (self.id, "turn_around_time_days")
+        res = cache.get(cache_key)
+        if res:
+            return res
+
+        launch_net = Launch.objects.get(id=self.rocket.launch.id).net
+        if launch_net and self.previous_flight_date:
+            turn_around = launch_net - self.previous_flight_date
+            res = turn_around.days
+
+        cache.set(cache_key, res, CACHE_TIMEOUT_ONE_DAY)
+        return res
 
     @property
     def launcher_flight_number(self):
