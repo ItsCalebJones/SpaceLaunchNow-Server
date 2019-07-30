@@ -268,16 +268,16 @@ class LaunchListSerializer(serializers.ModelSerializer):
                     landings.append(stage.landing)
 
             if len(landings) == 0:
-                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
+                cache.set(cache_key, None, CACHE_TIMEOUT_TEN_MINUTES)
                 return None
             elif len(landings) == 1:
-                cache.set(cache_key, landings[0].landing_location.abbrev, CACHE_TIMEOUT_ONE_DAY)
+                cache.set(cache_key, landings[0].landing_location.abbrev, CACHE_TIMEOUT_TEN_MINUTES)
                 return landings[0].landing_location.abbrev
             elif len(landings) > 1:
-                cache.set(cache_key, "MX Landing", CACHE_TIMEOUT_ONE_DAY)
+                cache.set(cache_key, "MX Landing", CACHE_TIMEOUT_TEN_MINUTES)
                 return "MX Landing"
             else:
-                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
+                cache.set(cache_key, None, CACHE_TIMEOUT_TEN_MINUTES)
                 return None
 
         except Exception as ex:
@@ -296,7 +296,7 @@ class LaunchListSerializer(serializers.ModelSerializer):
                     landings.append(stage.landing)
 
             if len(landings) == 0:
-                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
+                cache.set(cache_key, None, CACHE_TIMEOUT_TEN_MINUTES)
                 return None
             elif len(landings) == 1:
                 landing_status = 0
@@ -306,7 +306,7 @@ class LaunchListSerializer(serializers.ModelSerializer):
                     landing_status = 1
                 elif not landings[0].success:
                     landing_status = 2
-                cache.set(cache_key, landing_status, CACHE_TIMEOUT_ONE_DAY)
+                cache.set(cache_key, landing_status, CACHE_TIMEOUT_TEN_MINUTES)
                 return landing_status
             elif len(landings) > 1:
                 landing_successes = 0
@@ -328,10 +328,10 @@ class LaunchListSerializer(serializers.ModelSerializer):
                     landing_status = 2
                 elif landing_failures == 0 and landing_null == 0 and landing_successes > 0:
                     landing_status = 1
-                cache.set(cache_key, landing_status, CACHE_TIMEOUT_ONE_DAY)
+                cache.set(cache_key, landing_status, CACHE_TIMEOUT_TEN_MINUTES)
                 return landing_status
             else:
-                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
+                cache.set(cache_key, None, CACHE_TIMEOUT_TEN_MINUTES)
                 return None
 
         except Exception as ex:

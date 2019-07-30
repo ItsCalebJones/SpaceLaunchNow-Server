@@ -49,7 +49,7 @@ class FirstStageSerializer(serializers.ModelSerializer):
 
 
 class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
-    manufacturer = AgencySerializerMini(many=False, read_only=True, source='manufacturer')
+    manufacturer = AgencySerializer(many=False, read_only=True)
 
     def get_rep(self, obj):
         rep = obj.rep
@@ -68,7 +68,7 @@ class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializ
 
 
 class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    manufacturer = serializers.ReadOnlyField(read_only=True, source="manufacturer.name")
+    manufacturer = AgencySerializerMini(read_only=True)
 
     class Meta:
         model = LauncherConfig
@@ -186,7 +186,7 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     mission = MissionSerializer(many=False, read_only=True)
     status = LaunchStatusSerializer(many=False, read_only=True)
     slug = serializers.SlugField(source='get_full_absolute_url')
-    launch_service_provider = serializers.ReadOnlyField(read_only=True, source="launch_service_provider.name")
+    launch_service_provider = AgencySerializerMini(read_only=True)
 
     infoURLs = serializers.ReadOnlyField()
     vidURLs = serializers.ReadOnlyField()
@@ -198,8 +198,8 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
         depth = 3
         model = Launch
         fields = ('id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold',
-                  'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'launch_service_provider', 'rocket',
-                  'mission', 'pad', 'infoURLs', 'vidURLs', 'image', 'infographic')
+                  'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'launch_service_provider',
+                  'rocket', 'mission', 'pad', 'infoURLs', 'vidURLs', 'image', 'infographic')
 
     def get_image(self, obj):
         if obj.image_url:
