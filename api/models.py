@@ -11,6 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.urls import reverse
 from django_extensions.db.fields import AutoSlugField
+from pytz import utc
 
 from api.utils.utilities import resize_for_upload, resize_needed, get_map_url, get_pad_url
 
@@ -140,8 +141,50 @@ class Agency(models.Model):
         super(Agency, self).save()
 
     @property
-    def successful_launches(self):
+    def total_launch_count(self):
+        cache_key = "%s-%s" % (self.id, "agency-total_launch_count")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
 
+        now = datetime.datetime.now(tz=utc)
+        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(net__lte=now).order_by('-net').count()
+        related_agency = self.related_agencies.all()
+        for related in related_agency:
+            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def consecutive_successful_launches(self):
+        cache_key = "%s-%s" % (self.id, "agency-consecutive-success")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        count = 0
+        now = datetime.datetime.now(tz=utc)
+        launches = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(Q(status__id=3)|Q(status__id=4)|Q(status__id=7)).filter(net__lte=now).order_by('-net')
+        for launch in launches:
+            if launch.status.id == 3:
+                count += 1
+            else:
+                break
+
+        related_agency = self.related_agencies.all()
+        for related in related_agency:
+            launches = Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(Q(status__id=3)|Q(status__id=4)|Q(status__id=7)).filter(net__lte=now).order_by('-net')
+            for launch in launches:
+                if launch.status.id == 3:
+                    count += 1
+                else:
+                    break
+
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def successful_launches(self):
         cache_key = "%s-%s" % (self.id, "agency-success")
         count = cache.get(cache_key)
         if count is not None:
@@ -150,7 +193,7 @@ class Agency(models.Model):
         count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(status__id=3).count()
         related_agency = self.related_agencies.all()
         for related in related_agency:
-            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).count()
+            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(status__id=3).count()
 
         cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
 
