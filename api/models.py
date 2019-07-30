@@ -902,8 +902,8 @@ class Launch(models.Model):
     def orbital_launch_attempt_count(self):
         cache_key = "%s-%s" % (self.id, "launches-orbital-launch-attempt-count")
         count = cache.get(cache_key)
-        # if count is not None:
-        #     return count
+        if count is not None:
+            return count
 
         if not self.mission.orbit or self.mission.orbit.name != "Sub-Orbital":
             start_of_year = datetime.datetime(year=self.net.year, month=1, day=1)
