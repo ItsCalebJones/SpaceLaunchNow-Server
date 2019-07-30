@@ -25,7 +25,8 @@ class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializ
         fields = ('id', 'launch_library_id', 'url', 'name', 'description', 'family', 'full_name',
                   'launch_service_provider', 'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'maiden_flight', 'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust', 'apogee',
-                  'vehicle_range', 'image_url', 'info_url', 'wiki_url',)
+                  'vehicle_range', 'image_url', 'info_url', 'wiki_url', 'total_launch_count',
+                  'consecutive_successful_launches', 'successful_launches', 'failed_launches', 'pending_launches',)
 
 
 class LauncherConfigSerializer(QueryFieldsMixin, serializers.ModelSerializer):
@@ -33,4 +34,5 @@ class LauncherConfigSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = LauncherConfig
         fields = ('id', 'launch_library_id', 'url', 'name', 'family', 'full_name', 'variant', 'image_url', 'info_url',
-                  'wiki_url',)
+                  'wiki_url', 'total_launch_count', 'consecutive_successful_launches', 'successful_launches',
+                  'failed_launches', 'pending_launches',)
