@@ -164,7 +164,7 @@ class Agency(models.Model):
 
         count = 0
         now = datetime.datetime.now(tz=utc)
-        launches = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(net__lte=now).order_by('-net')
+        launches = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(Q(status__id=3)|Q(status__id=4)|Q(status__id=7)).filter(net__lte=now).order_by('-net')
         for launch in launches:
             if launch.status.id == 3:
                 count += 1
@@ -173,7 +173,7 @@ class Agency(models.Model):
 
         related_agency = self.related_agencies.all()
         for related in related_agency:
-            launches = Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(net__lte=now).order_by('-net')
+            launches = Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(Q(status__id=3)|Q(status__id=4)|Q(status__id=7)).filter(net__lte=now).order_by('-net')
             for launch in launches:
                 if launch.status.id == 3:
                     count += 1
