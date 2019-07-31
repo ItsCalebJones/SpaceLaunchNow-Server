@@ -224,4 +224,4 @@ class SocialEvents:
 
         if not self.DEBUG:
             logger.debug('Sending to twitter via Buffer - message: %s' % message)
-            logger.info(self.buffer.send_to_facebook(message=message, link=launch.slug, now=True))
+            logger.info(self.buffer.send_to_facebook(message=message, link=launch.get_full_absolute_url(), now=True))
