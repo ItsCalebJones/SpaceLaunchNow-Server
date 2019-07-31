@@ -103,7 +103,7 @@ class SpacecraftConfigurationDetailSerializer(QueryFieldsMixin, serializers.Hype
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
-        fields = ('id', 'name', 'country_code',)
+        fields = ('id', 'name', 'country_code', 'map_image')
 
 
 class PadSerializer(serializers.ModelSerializer):
@@ -111,7 +111,8 @@ class PadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Pad
-        fields = ('id', 'agency_id', 'name', 'info_url', 'wiki_url', 'map_url', 'latitude', 'longitude', 'location')
+        fields = ('id', 'agency_id', 'name', 'info_url', 'wiki_url', 'map_url', 'latitude', 'longitude', 'location',
+                  'map_image')
 
 
 class LocationSerializerMini(serializers.ModelSerializer):
