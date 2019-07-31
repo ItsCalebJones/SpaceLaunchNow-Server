@@ -628,10 +628,10 @@ class FirstStage(models.Model):
             return res
 
         launch_net = Launch.objects.get(id=self.rocket.launch.id).net
-        last_launch = Launch.objects.filter(rocket__firststage__launcher__id=self.launcher.id).filter(net__lt=launch_net).order_by('-net')
+        last_launch = Launch.objects.filter(rocket__firststage__launcher__id=self.launcher.id).filter(net__lt=launch_net).order_by('-net').first()
 
-        if last_launch.count() > 0:
-            res = last_launch[0].id
+        if last_launch:
+            res = last_launch.id
 
         cache.set(cache_key, res, CACHE_TIMEOUT_ONE_DAY)
         return res
