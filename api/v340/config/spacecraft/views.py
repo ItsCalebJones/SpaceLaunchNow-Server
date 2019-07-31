@@ -17,7 +17,7 @@ class SpacecraftConfigViewSet(ModelViewSet):
     Return a list of all the existing spacecraft.
 
     FILTERS:
-    Parameters - 'name', 'launch_agency', 'in_use', 'human_rated'
+    Parameters - 'name', 'manufacturer', 'in_use', 'human_rated'
     Example - /api/3.3.0/config/spacecraft/?status=Active
 
     SEARCH EXAMPLE:
@@ -42,6 +42,6 @@ class SpacecraftConfigViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'launch_agency', 'in_use', 'human_rated')
-    search_fields = ('name', 'launch_agency__name',)
+    filter_fields = ('name', 'manufacturer', 'in_use', 'human_rated')
+    search_fields = ('name', 'manufacturer__name',)
     ordering_fields = ('name', 'launch_mass', 'leo_capacity', 'gto_capacity', 'launch_cost')

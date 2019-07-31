@@ -20,7 +20,7 @@ class AgencySerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer)
 
 
 class LauncherSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    agency = serializers.ReadOnlyField(read_only=True, source="manufacturer.name")
     id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     class Meta:
@@ -32,7 +32,7 @@ class LauncherSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerialize
 
 
 class LauncherDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
-    agency = AgencySerializer(many=False, read_only=True, source='launch_agency')
+    agency = AgencySerializer(many=False, read_only=True, source='manufacturer')
     id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
 
     def get_rep(self, obj):
@@ -75,7 +75,7 @@ class LauncherDetailSerializerForAgency(QueryFieldsMixin, serializers.ModelSeria
 
 
 class OrbiterDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    agency = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    agency = serializers.ReadOnlyField(read_only=True, source="manufacturer.name")
 
     class Meta:
         model = SpacecraftConfiguration
@@ -153,7 +153,7 @@ class MissionSerializer(serializers.ModelSerializer):
 class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     launcher = LauncherSerializer(many=False, read_only=True, source='rocket.configuration')
-    lsp = LSPSerializer(many=False, read_only=True, source='rocket.configuration.launch_agency')
+    lsp = LSPSerializer(many=False, read_only=True, source='rocket.configuration.manufacturer')
     id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
     mission = MissionSerializer(many=False, read_only=True)
     status = serializers.IntegerField(
@@ -175,7 +175,7 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     pad = PadSerializer(many=False, read_only=True)
     launcher = LauncherSerializer(many=False, read_only=True, source='rocket.configuration')
-    lsp = LSPSerializer(many=False, read_only=True, source='rocket.configuration.launch_agency')
+    lsp = LSPSerializer(many=False, read_only=True, source='rocket.configuration.manufacturer')
     mission = MissionSerializer(many=False, read_only=True)
     status = serializers.IntegerField(
         read_only=True,
@@ -213,7 +213,7 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     pad = PadSerializer(many=False, read_only=True)
     launcher = LauncherDetailSerializerForAgency(many=False, read_only=True, source='rocket.configuration')
-    lsp = AgencySerializer(many=False, read_only=True, source='rocket.configuration.launch_agency')
+    lsp = AgencySerializer(many=False, read_only=True, source='rocket.configuration.manufacturer')
     mission = MissionSerializer(many=False, read_only=True)
     infoURLs = serializers.StringRelatedField(read_only=True, many=True, source='info_urls')
     vidURLs = serializers.StringRelatedField(read_only=True, many=True, source='vid_urls')

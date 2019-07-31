@@ -4,6 +4,7 @@ from rest_framework import viewsets
 
 from api.models import LauncherConfig, SpacecraftConfiguration, Agency
 from api.permission import HasGroupPermission
+from api.v1.filter import LauncherFilterSet
 from api.v1.serializers import OrbiterSerializer, LauncherDetailSerializer, AgencySerializer
 
 
@@ -41,7 +42,7 @@ class LauncherDetailViewSet(viewsets.ModelViewSet):
         'list': ['_Public']
     }
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
-    filter_fields = ('family', 'name', 'launch_agency__name', 'full_name',)
+    filter_class = LauncherFilterSet
     lookup_field = 'launch_library_id'
 
 

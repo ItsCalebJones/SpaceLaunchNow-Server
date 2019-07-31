@@ -18,10 +18,10 @@ from . import models
 @admin.register(models.LauncherConfig)
 class LauncherConfigAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">extension</i>'
-    list_display = ('name', 'audited', 'variant', 'full_name', 'family', 'active', 'launch_agency',)
-    list_filter = ('name', 'family', 'image_url', 'launch_agency__name', 'audited',)
+    list_display = ('name', 'audited', 'variant', 'full_name', 'family', 'active', 'manufacturer',)
+    list_filter = ('name', 'family', 'image_url', 'manufacturer__name', 'audited',)
     ordering = ('name', 'id')
-    search_fields = ('name', 'launch_agency__name')
+    search_fields = ('name', 'manufacturer__name')
     # readonly_fields = ['launch_library_id']
     form = LauncherConfigForm
 
@@ -192,7 +192,7 @@ class RocketAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return super(RocketAdmin, self).get_queryset(request) \
             .prefetch_related(
-            'configuration__launch_agency', 'firststage',
+            'configuration__manufacturer', 'firststage',
             'secondstage', 'spacecraftflight',
             'spacecraftflight__launch_crew',
             'spacecraftflight__onboard_crew',
@@ -250,10 +250,10 @@ class LaunchAdmin(admin.ModelAdmin):
     icon = '<i class="material-icons">launch</i>'
     list_display = ('name', 'net', 'rocket', 'mission', 'orbit')
     list_filter = (DateListFilter, ('status__name', custom_titled_filter('Launch Status')),
-                   ('rocket__configuration__launch_agency__name', custom_titled_filter('LSP Name')),
+                   ('rocket__configuration__manufacturer__name', custom_titled_filter('LSP Name')),
                    ('rocket__configuration__name', custom_titled_filter('Launch Configuration Name')))
     ordering = ('net',)
-    search_fields = ('name', 'rocket__configuration__launch_agency__name', 'mission__description')
+    search_fields = ('name', 'rocket__configuration__manufacturer__name', 'mission__description')
     # readonly_fields = ['slug', 'launch_library_id', 'launch_library']
     form = LaunchForm
     list_select_related = (
@@ -273,9 +273,9 @@ class LaunchAdmin(admin.ModelAdmin):
         return super(LaunchAdmin, self).get_queryset(request).prefetch_related(
             'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
             'mission').select_related('pad').select_related('pad__location').prefetch_related(
-            'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+            'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
             'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-            'rocket__configuration__launch_agency').prefetch_related('rocket__firststage').prefetch_related(
+            'rocket__configuration__manufacturer').prefetch_related('rocket__firststage').prefetch_related(
             'rocket__secondstage').prefetch_related('rocket__spacecraftflight').prefetch_related(
             'rocket__spacecraftflight__launch_crew').prefetch_related(
             'rocket__spacecraftflight__onboard_crew').prefetch_related(
@@ -386,7 +386,7 @@ class SpaceStationAdmin(admin.ModelAdmin):
 class SpacecraftFlightAdmin(admin.ModelAdmin):
     list_display = ('spacecraft_name',)
     list_filter = ('spacecraft__spacecraft_config', 'spacecraft__status',
-                   'rocket__configuration__launch_agency__name')
+                   'rocket__configuration__manufacturer__name')
     search_fields = ('id', 'spacecraft__name', 'spacecraft__serial_number', 'landing_crew__astronaut__name', 'launch_crew__astronaut__name',
                      'onboard_crew__astronaut__name')
     inlines = [DockingEventInline, ]
