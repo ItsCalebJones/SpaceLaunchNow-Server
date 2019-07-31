@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 from api.models import *
 from api.permission import HasGroupPermission
-from api.v330.launch.filters import LaunchFilter
+from api.v330.launch.filters import LaunchFilter, LaunchAlternateFilter
 from api.v330.launch.serializers import LaunchDetailedSerializer, LaunchListSerializer, LaunchSerializer
 
 
@@ -276,9 +276,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'rocket__configuration__name', 'rocket__configuration__manufacturer__name', 'status',
-                     'rocket__spacecraftflight__spacecraft__name',
-                     'rocket__spacecraftflight__spacecraft__id',)
+    filter_class = LaunchAlternateFilter
     search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__manufacturer__name',
                      '$rocket__configuration__manufacturer__abbrev', '$mission__name', '$pad__location__name',
                      '$pad__name', '$rocket__spacecraftflight__spacecraft__name')
@@ -403,9 +401,7 @@ class PreviousLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'rocket__configuration__name', 'rocket__configuration__manufacturer__name', 'status',
-                     'rocket__spacecraftflight__spacecraft__name',
-                     'rocket__spacecraftflight__spacecraft__id',)
+    filter_class = LaunchAlternateFilter
     search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__manufacturer__name',
                      '$rocket__configuration__manufacturer__abbrev', '$mission__name', '$pad__location__name',
                      '$pad__name', '$rocket__spacecraftflight__spacecraft__name')

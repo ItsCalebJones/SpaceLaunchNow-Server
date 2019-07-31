@@ -4,7 +4,8 @@ from api.models import LauncherConfig, Launcher, Agency, SpacecraftConfiguration
 
 
 class LauncherFilterSet(FilterSet):
-    launcher_config__launch_agency = ModelChoiceFilter(queryset=Agency.objects.all())
+    launcher_config__launch_agency = ModelChoiceFilter(queryset=Agency.objects.all(),
+                                                       field_name='launcher_config__manufacturer')
 
     class Meta:
         model = Launcher
@@ -12,7 +13,7 @@ class LauncherFilterSet(FilterSet):
 
 
 class SpacecraftConfigFilterSet(FilterSet):
-    launch_agency = ModelChoiceFilter(queryset=Agency.objects.all())
+    launch_agency = ModelChoiceFilter(queryset=Agency.objects.all(), field_name='manufacturer')
 
     class Meta:
         model = SpacecraftConfiguration
@@ -20,8 +21,9 @@ class SpacecraftConfigFilterSet(FilterSet):
 
 
 class LauncherConfigFilterSet(FilterSet):
-    launch_agency = ModelChoiceFilter(queryset=Agency.objects.all())
+    launch_agency = ModelChoiceFilter(queryset=Agency.objects.all(), field_name='manufacturer')
 
     class Meta:
         model = LauncherConfig
-        fields = ['family', 'name', 'full_name', 'active', 'reusable']
+        fields = ['family', 'name', 'full_name', 'active', 'reusable', 'launch_agency']
+
