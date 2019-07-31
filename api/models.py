@@ -506,19 +506,6 @@ class Launcher(models.Model):
 
         return count
 
-    @property
-    def turn_around_time(self):
-        cache_key = "%s-%s" % (self.id, "launcher-turn-around")
-        time = cache.get(cache_key)
-        if time is not None:
-            return time
-
-            last_launch = Launch.objects.filter(rocket__firststage__launcher__id=self.id).filter()
-
-        cache.set(cache_key, time, CACHE_TIMEOUT_TEN_MINUTES)
-
-        return time
-
     def __str__(self):
         if self.launcher_config is not None:
             return '%s (%s)' % (self.serial_number, self.launcher_config.full_name)
