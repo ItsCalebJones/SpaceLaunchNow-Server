@@ -38,15 +38,22 @@ class LauncherDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelS
         fields = ('id', 'url', 'details', 'flight_proven', 'serial_number', 'status', 'previous_flights', 'image_url')
 
 
+class LaunchSerializerMini(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Launch
+        fields = ('id', 'name')
+
+
 class FirstStageSerializer(serializers.ModelSerializer):
     type = serializers.StringRelatedField()
     launcher = LauncherDetailedSerializer(read_only=True, many=False)
     landing = LandingSerializer(read_only=True, many=False)
+    previous_flight = LaunchSerializerMini(read_only=True, many=False)
 
     class Meta:
         model = FirstStage
-        fields = ('type', 'reused', 'launcher_flight_number', 'launcher', 'landing', 'previous_flight_id',
-                  'previous_flight_name', 'previous_flight_date', 'turn_around_time_days')
+        fields = ('type', 'reused', 'launcher_flight_number', 'launcher', 'landing', 'previous_flight_date',
+                  'turn_around_time_days', 'previous_flight')
 
 
 class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):

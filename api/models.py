@@ -613,6 +613,22 @@ class SecondStage(models.Model):
             return u"Unsaved %s" % self.launcher.serial_number
 
 
+def previous_flight_id(self_ref):
+    cache_key = "%s-%s" % (self_ref.id, "previous_flight_id")
+    res = cache.get(cache_key)
+    if res:
+        return res
+
+    launch_net = Launch.objects.get(id=self_ref.rocket.launch.id).net
+    last_launch = Launch.objects.filter(rocket__firststage__launcher__id=self_ref.launcher.id).filter(net__lt=launch_net).order_by('-net').first()
+
+    if last_launch:
+        res = last_launch.id
+
+    cache.set(cache_key, res, CACHE_TIMEOUT_ONE_DAY)
+    return res
+
+
 class FirstStage(models.Model):
     type = models.ForeignKey(FirstStageType, related_name='firststage', on_delete=models.PROTECT)
     reused = models.NullBooleanField(null=True, blank=True)
@@ -620,35 +636,15 @@ class FirstStage(models.Model):
     launcher = models.ForeignKey(Launcher, related_name='firststage', on_delete=models.CASCADE)
     rocket = models.ForeignKey(Rocket, related_name='firststage', on_delete=models.CASCADE)
 
-    @property
-    def previous_flight_id(self):
-        cache_key = "%s-%s" % (self.id, "previous_flight_id")
-        res = cache.get(cache_key)
-        if res:
-            return res
-
-        launch_net = Launch.objects.get(id=self.rocket.launch.id).net
-        last_launch = Launch.objects.filter(rocket__firststage__launcher__id=self.launcher.id).filter(net__lt=launch_net).order_by('-net').first()
-
-        if last_launch:
-            res = last_launch.id
-
-        cache.set(cache_key, res, CACHE_TIMEOUT_ONE_DAY)
-        return res
+    # Not a property but keeping around as a helper
 
     @property
-    def previous_flight_name(self):
-        cache_key = "%s-%s" % (self.id, "previous_flight_name")
-        res = cache.get(cache_key)
-        if res:
-            return res
+    def previous_flight(self):
+        flight_id = previous_flight_id(self)
+        if previous_flight_id:
+            return Launch.objects.get(id=flight_id)
 
-        last_launch_id = self.previous_flight_id
-        if last_launch_id:
-            res = Launch.objects.get(id=last_launch_id).name
-
-        cache.set(cache_key, res, CACHE_TIMEOUT_ONE_DAY)
-        return res
+        return None
 
     @property
     def previous_flight_date(self):
@@ -657,7 +653,7 @@ class FirstStage(models.Model):
         if res:
             return res
 
-        last_launch_id = self.previous_flight_id
+        last_launch_id = previous_flight_id(self)
         if last_launch_id:
             res = Launch.objects.get(id=last_launch_id).net
 
