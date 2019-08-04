@@ -6,6 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 
+from api.v310.filter import LauncherFilterSet
 from api.v310.serializers import *
 from datetime import datetime, timedelta
 from api.models import LauncherConfig, SpacecraftConfiguration, Agency
@@ -108,7 +109,7 @@ class LauncherConfigViewSet(ModelViewSet):
         'list': ['_Public']
     }
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('family', 'name', 'launch_agency__name', 'full_name', 'id')
+    filter_class = LauncherFilterSet
     lookup_field = 'launch_library_id'
 
 
@@ -188,31 +189,31 @@ class LaunchViewSet(ModelViewSet):
     def get_queryset(self):
         ids = self.request.query_params.get('id', None)
         lsp_name = self.request.query_params.get('lsp__name', None)
-        lsp_id = self.request.query_params.get('rocket__configuration__launch_agency__id', None)
+        lsp_id = self.request.query_params.get('rocket__configuration__manufacturer__id', None)
         if ids:
             ids = ids.split(',')
             return Launch.objects.filter(launch_library_id__in=ids).filter(launch_library=True).order_by('net', 'id')
         if lsp_name:
-            launches = Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
-                                             | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)).filter(launch_library=True)
+            launches = Launch.objects.filter(Q(rocket__configuration__manufacturer__name__icontains=lsp_name)
+                                             | Q(rocket__configuration__manufacturer__abbrev__icontains=lsp_name)).filter(launch_library=True)
             total_launches = launches
             try:
                 agency = Agency.objects.get(name=lsp_name)
                 related_agency = agency.related_agencies.all()
                 for related in related_agency:
-                    related_launches = Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(launch_library=True)
+                    related_launches = Launch.objects.filter(rocket__configuration__manufacturer__id=related.id).filter(launch_library=True)
                     total_launches = launches | related_launches
             except Agency.DoesNotExist:
                 print("Cant find agency.")
             return total_launches.order_by('net', 'id')
         if lsp_id:
-            launches = Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id).filter(launch_library=True)
+            launches = Launch.objects.filter(rocket__configuration__manufacturer__id=lsp_id).filter(launch_library=True)
             total_launches = launches
             try:
                 agency = Agency.objects.get(name=lsp_id)
                 related_agency = agency.related_agencies.all()
                 for related in related_agency:
-                    related_launches = Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(launch_library=True)
+                    related_launches = Launch.objects.filter(rocket__configuration__manufacturer__id=related.id).filter(launch_library=True)
                     total_launches = launches | related_launches
             except Agency.DoesNotExist:
                 print("Cant find agency.")
@@ -238,7 +239,7 @@ class LaunchViewSet(ModelViewSet):
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filter_fields = ('name',)
-    search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
+    search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__manufacturer__name',
                      '$mission__name')
     ordering_fields = ('launch_library_id', 'name', 'net',)
     lookup_field = 'launch_library_id'
@@ -255,33 +256,33 @@ class UpcomingLaunchViewSet(ModelViewSet):
     def get_queryset(self):
         ids = self.request.query_params.get('id', None)
         lsp_name = self.request.query_params.get('lsp__name', None)
-        lsp_id = self.request.query_params.get('rocket__configuration__launch_agency__id', None)
+        lsp_id = self.request.query_params.get('rocket__configuration__manufacturer__id', None)
         now = datetime.now()
         now = now - timedelta(days=1)
         if ids:
             ids = ids.split(',')
             return Launch.objects.filter(launch_library_id__in=ids).filter(net__gte=now).filter(launch_library=True).order_by('net', 'id')
         if lsp_name:
-            launches = Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
-                                             | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)).filter(net__gte=now).filter(launch_library=True)
+            launches = Launch.objects.filter(Q(rocket__configuration__manufacturer__name__icontains=lsp_name)
+                                             | Q(rocket__configuration__manufacturer__abbrev__icontains=lsp_name)).filter(net__gte=now).filter(launch_library=True)
             total_launches = launches
             try:
                 agency = Agency.objects.get(name=lsp_name)
                 related_agency = agency.related_agencies.all()
                 for related in related_agency:
-                    related_launches = Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(net__gte=now).filter(launch_library=True)
+                    related_launches = Launch.objects.filter(rocket__configuration__manufacturer__id=related.id).filter(net__gte=now).filter(launch_library=True)
                     total_launches = launches | related_launches
             except Agency.DoesNotExist:
                 print ("Cant find agency.")
             return total_launches.order_by('net', 'id')
         if lsp_id:
-            launches = Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id).filter(net__gte=now).filter(launch_library=True)
+            launches = Launch.objects.filter(rocket__configuration__manufacturer__id=lsp_id).filter(net__gte=now).filter(launch_library=True)
             total_launches = launches
             try:
                 agency = Agency.objects.get(name=lsp_id)
                 related_agency = agency.related_agencies.all()
                 for related in related_agency:
-                    related_launches = Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(net__gte=now).filter(launch_library=True)
+                    related_launches = Launch.objects.filter(rocket__configuration__manufacturer__id=related.id).filter(net__gte=now).filter(launch_library=True)
                     total_launches = launches | related_launches
             except Agency.DoesNotExist:
                 print("Cant find agency.")
@@ -308,7 +309,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filter_fields = ('name',)
-    search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
+    search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__manufacturer__name',
                      '$mission__name')
     ordering_fields = ('id', 'name', 'net',)
     lookup_field = 'launch_library_id'
@@ -325,32 +326,32 @@ class PreviousLaunchViewSet(ModelViewSet):
     def get_queryset(self):
         ids = self.request.query_params.get('id', None)
         lsp_name = self.request.query_params.get('lsp__name', None)
-        lsp_id = self.request.query_params.get('rocket__configuration__launch_agency__id', None)
+        lsp_id = self.request.query_params.get('rocket__configuration__manufacturer__id', None)
         now = datetime.now()
         if ids:
             ids = ids.split(',')
             return Launch.objects.filter(launch_library_id__in=ids).filter(net__lte=now).order_by('-net').filter(launch_library=True)
         if lsp_name:
-            launches = Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
-                                             | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)).filter(net__lte=now).filter(launch_library=True)
+            launches = Launch.objects.filter(Q(rocket__configuration__manufacturer__name__icontains=lsp_name)
+                                             | Q(rocket__configuration__manufacturer__abbrev__icontains=lsp_name)).filter(net__lte=now).filter(launch_library=True)
             total_launches = launches
             try:
                 agency = Agency.objects.get(name=lsp_name)
                 related_agency = agency.related_agencies.all()
                 for related in related_agency:
-                    related_launches = Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(net__lte=now).filter(launch_library=True)
+                    related_launches = Launch.objects.filter(rocket__configuration__manufacturer__id=related.id).filter(net__lte=now).filter(launch_library=True)
                     total_launches = launches | related_launches
             except Agency.DoesNotExist:
                 print ("Cant find agency.")
             return total_launches.order_by('-net', 'id')
         if lsp_id:
-            launches = Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id).filter(net__lte=now).filter(launch_library=True)
+            launches = Launch.objects.filter(rocket__configuration__manufacturer__id=lsp_id).filter(net__lte=now).filter(launch_library=True)
             total_launches = launches
             try:
                 agency = Agency.objects.get(id=lsp_id)
                 related_agency = agency.related_agencies.all()
                 for related in related_agency:
-                    related_launches = Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(net__lte=now).filter(launch_library=True)
+                    related_launches = Launch.objects.filter(rocket__configuration__manufacturer__id=related.id).filter(net__lte=now).filter(launch_library=True)
                     total_launches = launches | related_launches
             except Agency.DoesNotExist:
                 print ("Cant find agency.")
@@ -376,7 +377,7 @@ class PreviousLaunchViewSet(ModelViewSet):
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filter_fields = ('name',)
-    search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
+    search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__manufacturer__name',
                      '$mission__name')
     ordering_fields = ('id', 'name', 'net',)
     lookup_field = 'launch_library_id'

@@ -197,11 +197,6 @@ class SocialEvents:
             logger.debug('Sending to twitter via Buffer - message: %s' % message)
             logger.info(self.buffer.send_to_twitter(message=message, now=True))
 
-            if notification_type == 'tenMinutes' and launch.infographic_url:
-                image = launch.infographic_url.url
-                message = "\Launch infographic credit: @geoffdbarrett"
-                logger.info(self.buffer.send_to_twitter(message=message, image=image, now=True))
-
     def send_to_instagram(self, launch, notification_type):
         message = get_message(launch, notification_type)
 
@@ -218,7 +213,6 @@ class SocialEvents:
 
         message = message + hashtags
 
-        ##TODO Create launch alert default image
         if not self.DEBUG and image:
             logger.debug('Sending to twitter via Buffer - message: %s' % message)
             logger.info(self.buffer.send_to_instagram(message=message, image=image, now=True))
@@ -230,4 +224,4 @@ class SocialEvents:
 
         if not self.DEBUG:
             logger.debug('Sending to twitter via Buffer - message: %s' % message)
-            logger.info(self.buffer.send_to_facebook(message=message, link=launch.slug, now=True))
+            logger.info(self.buffer.send_to_facebook(message=message, link=launch.get_full_absolute_url(), now=True))

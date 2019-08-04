@@ -21,13 +21,13 @@ class LauncherConfigViewSet(ModelViewSet):
     /3.3.0/config/launcher/?mode=detailed
 
     FILTERS:
-    Fields - 'family', 'agency', 'name', 'launch_agency__name', 'full_name', 'launch_agency__launch_library_id'
+    Fields - 'family', 'agency', 'name', 'manufacturer__name', 'full_name', 'manufacturer__launch_library_id'
 
     Get all Launchers with the Launch Library ID of 44.
-    Example - /3.3.0/config/launcher/?launch_agency__launch_library_id=44
+    Example - /3.3.0/config/launcher/?manufacturer__launch_library_id=44
 
     Get all Launchers with the Agency with name NASA.
-    Example - /3.3.0/config/launcher/?launch_agency__name=NASA
+    Example - /3.3.0/config/launcher/?manufacturer__name=NASA
     """
     def get_serializer_class(self):
         mode = self.request.query_params.get("mode", "normal")
@@ -44,6 +44,6 @@ class LauncherConfigViewSet(ModelViewSet):
         'list': ['_Public']
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('family', 'name', 'launch_agency', 'full_name', 'active', 'reusable')
-    search_fields = ('^name', '^launch_agency__name', '^full_name', '^description')
+    filter_fields = ('family', 'name', 'manufacturer', 'full_name', 'active', 'reusable')
+    search_fields = ('^name', '^manufacturer__name', '^full_name', '^description')
     ordering_fields = ('name', 'launch_mass', 'leo_capacity', 'gto_capacity', 'launch_cost')
