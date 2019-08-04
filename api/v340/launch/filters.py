@@ -1,8 +1,8 @@
-from django_filters import filters, FilterSet, Filter
+from django_filters import filters, FilterSet, Filter, ModelChoiceFilter
 from django.utils.translation import ugettext as _
 from django_filters.fields import Lookup
 
-from api.models import Launch
+from api.models import Launch, Agency
 
 
 class ListFilter(Filter):
@@ -30,11 +30,14 @@ class LaunchDateFilter(FilterSet):
     )
     orbit = ListFilter(name='mission__orbit')
 
+
     class Meta:
         model = Launch
         fields = {
-            'name', 'rocket__configuration__name', 'rocket__configuration',  'rocket__configuration__launch_agency__name', 'status',
-            'launch_library_id', 'rocket__spacecraftflight__spacecraft__name', 'rocket__spacecraftflight__spacecraft__id',
+            'name', 'rocket__configuration__name', 'rocket__configuration', 'status',
+            'launch_library_id', 'rocket__spacecraftflight__spacecraft__name',
+            'rocket__spacecraftflight__spacecraft__id',
+            'rocket__configuration__manufacturer__name',
             'orbit'
         }
 
@@ -45,7 +48,8 @@ class LaunchFilter(FilterSet):
     class Meta:
         model = Launch
         fields = {
-            'name', 'rocket__configuration__name', 'rocket__configuration',  'rocket__configuration__launch_agency__name', 'status',
-            'launch_library_id', 'rocket__spacecraftflight__spacecraft__name', 'rocket__spacecraftflight__spacecraft__id',
+            'name', 'rocket__configuration__name', 'rocket__configuration', 'status',
+            'launch_library_id', 'rocket__spacecraftflight__spacecraft__name',
+            'rocket__spacecraftflight__spacecraft__id', 'rocket__configuration__manufacturer__name',
             'orbit'
         }

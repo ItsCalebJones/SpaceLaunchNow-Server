@@ -57,7 +57,7 @@ class FirstStageSerializer(serializers.ModelSerializer):
 
 
 class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
-    launch_service_provider = AgencySerializerDetailedForLaunches(many=False, read_only=True, source='launch_agency')
+    manufacturer = AgencySerializer(many=False, read_only=True)
 
     def get_rep(self, obj):
         rep = obj.rep
@@ -68,7 +68,7 @@ class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializ
 
     class Meta:
         model = LauncherConfig
-        fields = ('id', 'launch_library_id', 'url', 'name', 'description', 'family', 'full_name',
+        fields = ('id', 'launch_library_id', 'url', 'name', 'description', 'family', 'full_name', 'manufacturer',
                   'launch_service_provider',  'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'maiden_flight', 'launch_mass', 'leo_capacity', 'gto_capacity',
                   'to_thrust', 'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url', 'total_launch_count',
@@ -76,11 +76,11 @@ class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializ
 
 
 class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    launch_service_provider = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    manufacturer = AgencySerializerMini(read_only=True)
 
     class Meta:
         model = LauncherConfig
-        fields = ('id', 'launch_library_id', 'url', 'name', 'launch_service_provider',)
+        fields = ('id', 'launch_library_id', 'url', 'name', 'manufacturer',)
 
 
 class SpacecraftDetailedNoFlightsSerializer(serializers.HyperlinkedModelSerializer):
@@ -158,6 +158,7 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     mission = MissionSerializer(many=False, read_only=True)
     status = LaunchStatusSerializer(many=False, read_only=True)
     slug = serializers.SlugField(source='get_full_absolute_url')
+    launch_service_provider = AgencySerializerDetailedForLaunches(many=False, read_only=True)
 
     infoURLs = serializers.StringRelatedField(read_only=True, many=True, source='info_urls')
     vidURLs = serializers.StringRelatedField(read_only=True, many=True, source='vid_urls')
@@ -169,13 +170,13 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
         depth = 3
         model = Launch
         fields = ('id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold',
-                  'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'rocket',
-                  'mission', 'pad', 'infoURLs', 'vidURLs', 'image', 'infographic', 'orbital_launch_attempt_count')
+                  'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'launch_service_provider',
+                  'rocket', 'mission', 'pad', 'infoURLs', 'vidURLs', 'image', 'infographic', 'orbital_launch_attempt_count')
 
     def get_image(self, obj):
         if obj.image_url:
             return obj.image_url.url
-        elif obj.rocket.configuration.image_url:
+        elif obj.rocket and obj.rocket.configuration.image_url:
             return obj.rocket.configuration.image_url.url
         else:
             return None
@@ -193,6 +194,7 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     mission = MissionSerializer(many=False, read_only=True)
     status = LaunchStatusSerializer(many=False, read_only=True)
     slug = serializers.SlugField(source='get_full_absolute_url')
+    launch_service_provider = AgencySerializerMini(read_only=True)
 
     infoURLs = serializers.ReadOnlyField()
     vidURLs = serializers.ReadOnlyField()
@@ -204,8 +206,8 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
         depth = 3
         model = Launch
         fields = ('id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold',
-                  'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'rocket',
-                  'mission', 'pad', 'infoURLs', 'vidURLs', 'image', 'infographic')
+                  'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'launch_service_provider',
+                  'rocket', 'mission', 'pad', 'infoURLs', 'vidURLs', 'image', 'infographic')
 
     def get_image(self, obj):
         if obj.image_url:

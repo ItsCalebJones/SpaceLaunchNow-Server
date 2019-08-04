@@ -90,7 +90,7 @@ class AstronautSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class SpacecraftConfigurationDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    agency = AgencySerializerMini(read_only=True, source="launch_agency")
+    agency = AgencySerializerMini(read_only=True, source="manufacturer")
     type = SpacecraftConfigTypeSerializer(read_only=True, many=False)
 
     class Meta:
@@ -103,7 +103,7 @@ class SpacecraftConfigurationDetailSerializer(QueryFieldsMixin, serializers.Hype
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
-        fields = ('id', 'name', 'country_code',)
+        fields = ('id', 'name', 'country_code', 'map_image')
 
 
 class PadSerializer(serializers.ModelSerializer):
@@ -111,7 +111,8 @@ class PadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Pad
-        fields = ('id', 'agency_id', 'name', 'info_url', 'wiki_url', 'map_url', 'latitude', 'longitude', 'location')
+        fields = ('id', 'agency_id', 'name', 'info_url', 'wiki_url', 'map_url', 'latitude', 'longitude', 'location',
+                  'map_image')
 
 
 class LocationSerializerMini(serializers.ModelSerializer):
@@ -129,7 +130,7 @@ class PadSerializerMini(serializers.ModelSerializer):
 
 
 class RocketConfigurationSerializerMini(serializers.ModelSerializer):
-    launch_service_provider = AgencySerializerMini(many=False, source='launch_agency')
+    launch_service_provider = AgencySerializerMini(many=False, source='manufacturer')
 
     class Meta:
         model = LauncherConfig
@@ -239,7 +240,7 @@ class LaunchListSerializer(serializers.ModelSerializer):
         model = Launch
         fields = (
             'id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'mission',
-            'mission_type', 'pad', 'location', 'landing', 'landing_success', 'launcher', 'orbit', 'image')
+            'mission_type', 'pad', 'location', 'landing', 'landing_success', 'launcher', 'orbit', 'image', 'infographic')
 
     def get_image(self, obj):
         if obj.image_url:
@@ -268,16 +269,16 @@ class LaunchListSerializer(serializers.ModelSerializer):
                     landings.append(stage.landing)
 
             if len(landings) == 0:
-                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
+                cache.set(cache_key, None, CACHE_TIMEOUT_TEN_MINUTES)
                 return None
             elif len(landings) == 1:
-                cache.set(cache_key, landings[0].landing_location.abbrev, CACHE_TIMEOUT_ONE_DAY)
+                cache.set(cache_key, landings[0].landing_location.abbrev, CACHE_TIMEOUT_TEN_MINUTES)
                 return landings[0].landing_location.abbrev
             elif len(landings) > 1:
-                cache.set(cache_key, "MX Landing", CACHE_TIMEOUT_ONE_DAY)
+                cache.set(cache_key, "MX Landing", CACHE_TIMEOUT_TEN_MINUTES)
                 return "MX Landing"
             else:
-                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
+                cache.set(cache_key, None, CACHE_TIMEOUT_TEN_MINUTES)
                 return None
 
         except Exception as ex:
@@ -296,7 +297,7 @@ class LaunchListSerializer(serializers.ModelSerializer):
                     landings.append(stage.landing)
 
             if len(landings) == 0:
-                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
+                cache.set(cache_key, None, CACHE_TIMEOUT_TEN_MINUTES)
                 return None
             elif len(landings) == 1:
                 landing_status = 0
@@ -306,7 +307,7 @@ class LaunchListSerializer(serializers.ModelSerializer):
                     landing_status = 1
                 elif not landings[0].success:
                     landing_status = 2
-                cache.set(cache_key, landing_status, CACHE_TIMEOUT_ONE_DAY)
+                cache.set(cache_key, landing_status, CACHE_TIMEOUT_TEN_MINUTES)
                 return landing_status
             elif len(landings) > 1:
                 landing_successes = 0
@@ -328,10 +329,10 @@ class LaunchListSerializer(serializers.ModelSerializer):
                     landing_status = 2
                 elif landing_failures == 0 and landing_null == 0 and landing_successes > 0:
                     landing_status = 1
-                cache.set(cache_key, landing_status, CACHE_TIMEOUT_ONE_DAY)
+                cache.set(cache_key, landing_status, CACHE_TIMEOUT_TEN_MINUTES)
                 return landing_status
             else:
-                cache.set(cache_key, None, CACHE_TIMEOUT_ONE_DAY)
+                cache.set(cache_key, None, CACHE_TIMEOUT_TEN_MINUTES)
                 return None
 
         except Exception as ex:
@@ -382,7 +383,7 @@ class LaunchListSerializer(serializers.ModelSerializer):
 
 class SpacecraftConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
     type = SpacecraftConfigTypeSerializer(read_only=True, many=False)
-    agency = AgencySerializerMini(read_only=True, source="launch_agency")
+    agency = AgencySerializerMini(read_only=True, source="manufacturer")
 
     class Meta:
         model = SpacecraftConfiguration
@@ -438,7 +439,7 @@ class LauncherConfigListSerializer(QueryFieldsMixin, serializers.HyperlinkedMode
 
 
 class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    launch_service_provider = serializers.ReadOnlyField(read_only=True, source="launch_agency.name")
+    launch_service_provider = serializers.ReadOnlyField(read_only=True, source="manufacturer.name")
 
     class Meta:
         model = LauncherConfig
@@ -447,7 +448,7 @@ class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSer
 
 
 class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
-    launch_service_provider = AgencySerializerDetailedForLaunches(many=False, read_only=True, source='launch_agency')
+    launch_service_provider = AgencySerializerDetailedForLaunches(many=False, read_only=True, source='manufacturer')
 
     def get_rep(self, obj):
         rep = obj.rep

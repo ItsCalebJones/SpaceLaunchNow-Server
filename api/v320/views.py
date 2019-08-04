@@ -8,6 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 
+from api.v320.filter import LauncherFilterSet, LaunchFilterSet
 from .serializers import *
 from datetime import datetime, timedelta
 from api.models import LauncherConfig, SpacecraftConfiguration, Agency
@@ -110,7 +111,7 @@ class LauncherConfigViewSet(ModelViewSet):
         'list': ['_Public']
     }
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('family', 'name', 'launch_agency__name', 'full_name', 'id')
+    filter_class = LauncherFilterSet
     lookup_field = 'launch_library_id'
 
 
@@ -210,78 +211,78 @@ class LaunchViewSet(ModelViewSet):
         if location_filters and lsp_filters:
             lsp_filters = lsp_filters.split(',')
             location_filters = location_filters.split(',')
-            return Launch.objects.filter(Q(rocket__configuration__launch_agency__id__in=lsp_filters) | Q(
+            return Launch.objects.filter(Q(rocket__configuration__manufacturer__id__in=lsp_filters) | Q(
                 pad__location__id__in=location_filters)).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True).order_by('net', 'id')
+                'rocket__configuration__manufacturer').filter(launch_library=True).order_by('net', 'id')
         if lsp_filters:
             lsp_filters = lsp_filters.split(',')
-            return Launch.objects.filter(rocket__configuration__launch_agency__id__in=lsp_filters).prefetch_related(
+            return Launch.objects.filter(rocket__configuration__manufacturer__id__in=lsp_filters).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True).order_by('net', 'id')
+                'rocket__configuration__manufacturer').filter(launch_library=True).order_by('net', 'id')
 
         if location_filters:
             location_filters = location_filters.split(',')
             return Launch.objects.filter(pad__location__id__in=location_filters).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True).order_by('net', 'id')
+                'rocket__configuration__manufacturer').filter(launch_library=True).order_by('net', 'id')
         if ids:
             ids = ids.split(',')
             return Launch.objects.filter(launch_library_id__in=ids).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True).order_by('net', 'id')
+                'rocket__configuration__manufacturer').filter(launch_library=True).order_by('net', 'id')
         if serial_number:
             return Launch.objects.filter(rocket__firststage__launcher__serial_number=serial_number).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True).order_by('net', 'id')
+                'rocket__configuration__manufacturer').filter(launch_library=True).order_by('net', 'id')
         if lsp_name:
-            launches = Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
-                                             | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)).prefetch_related(
+            launches = Launch.objects.filter(Q(rocket__configuration__manufacturer__name__icontains=lsp_name)
+                                             | Q(rocket__configuration__manufacturer__abbrev__icontains=lsp_name)).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True).order_by('net', 'id')
+                'rocket__configuration__manufacturer').filter(launch_library=True).order_by('net', 'id')
             total_launches = launches
             if related:
                 try:
                     agency = Agency.objects.get(name=lsp_name)
                     related_agency = agency.related_agencies.all()
                     for related in related_agency:
-                        related_launches = Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(launch_library=True)
+                        related_launches = Launch.objects.filter(rocket__configuration__manufacturer__id=related.id).filter(launch_library=True)
                         total_launches = launches | related_launches
                 except Agency.DoesNotExist:
                     print("Cant find agency.")
             return total_launches.order_by('net', 'id')
         if lsp_id:
-            launches = Launch.objects.filter(rocket__configuration__launch_agency__id=lsp_id).prefetch_related(
+            launches = Launch.objects.filter(rocket__configuration__manufacturer__id=lsp_id).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True).order_by('net', 'id')
+                'rocket__configuration__manufacturer').filter(launch_library=True).order_by('net', 'id')
             total_launches = launches
             if related:
                 try:
                     agency = Agency.objects.get(name=lsp_id)
                     related_agency = agency.related_agencies.all()
                     for related in related_agency:
-                        related_launches = Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(launch_library=True)
+                        related_launches = Launch.objects.filter(rocket__configuration__manufacturer__id=related.id).filter(launch_library=True)
                         total_launches = launches | related_launches
                 except Agency.DoesNotExist:
                     print("Cant find agency.")
@@ -290,16 +291,16 @@ class LaunchViewSet(ModelViewSet):
             return Launch.objects.filter(rocket__configuration__launch_library_id=launcher_config__id).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True).order_by('net', 'id')
+                'rocket__configuration__manufacturer').filter(launch_library=True).order_by('net', 'id')
         else:
             return Launch.objects.order_by('net').prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True).order_by('net', 'id')
+                'rocket__configuration__manufacturer').filter(launch_library=True).order_by('net', 'id')
 
     def get_serializer_class(self):
 
@@ -317,9 +318,9 @@ class LaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status')
-    search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
-                     '$rocket__configuration__launch_agency__abbrev', '$mission__name', '$pad__location__name',
+    filter_class = LaunchFilterSet
+    search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__manufacturer__name',
+                     '$rocket__configuration__manufacturer__abbrev', '$mission__name', '$pad__location__name',
                      '$pad__name')
     ordering_fields = ('id', 'name', 'net',)
     lookup_field = 'launch_library_id'
@@ -360,56 +361,56 @@ class UpcomingLaunchViewSet(ModelViewSet):
         if location_filters and lsp_filters:
             lsp_filters = lsp_filters.split(',')
             location_filters = location_filters.split(',')
-            return Launch.objects.filter(net__gte=now).filter(Q(rocket__configuration__launch_agency__id__in=lsp_filters) | Q(
+            return Launch.objects.filter(net__gte=now).filter(Q(rocket__configuration__manufacturer__id__in=lsp_filters) | Q(
                 pad__location__id__in=location_filters)).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True).order_by('net', 'id')
+                'rocket__configuration__manufacturer').filter(launch_library=True).order_by('net', 'id')
         if lsp_filters:
             lsp_filters = lsp_filters.split(',')
-            return Launch.objects.filter(net__gte=now).filter(rocket__configuration__launch_agency__id__in=lsp_filters).prefetch_related(
+            return Launch.objects.filter(net__gte=now).filter(rocket__configuration__manufacturer__id__in=lsp_filters).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True).order_by('net', 'id')
+                'rocket__configuration__manufacturer').filter(launch_library=True).order_by('net', 'id')
 
         if location_filters:
             location_filters = location_filters.split(',')
             return Launch.objects.filter(net__gte=now).filter(pad__location__id__in=location_filters).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True).order_by('net', 'id')
+                'rocket__configuration__manufacturer').filter(launch_library=True).order_by('net', 'id')
 
         if ids:
             ids = ids.split(',')
             return Launch.objects.filter(net__gte=now).filter(launch_library_id__in=ids).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True).order_by('net', 'id')
+                'rocket__configuration__manufacturer').filter(launch_library=True).order_by('net', 'id')
         if serial_number:
             return Launch.objects.filter(
                 net__gte=now).filter(rocket__firststage__launcher__serial_number=serial_number).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True).order_by('-net', 'id')
+                'rocket__configuration__manufacturer').filter(launch_library=True).order_by('-net', 'id')
         if lsp_name:
             launches = Launch.objects.filter(net__gte=now).filter(
-                Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
-                | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)).prefetch_related(
+                Q(rocket__configuration__manufacturer__name__icontains=lsp_name)
+                | Q(rocket__configuration__manufacturer__abbrev__icontains=lsp_name)).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True).order_by('net', 'id')
+                'rocket__configuration__manufacturer').filter(launch_library=True).order_by('net', 'id')
             total_launches = launches
             if related:
                 try:
@@ -417,18 +418,18 @@ class UpcomingLaunchViewSet(ModelViewSet):
                     related_agency = agency.related_agencies.all()
                     for related in related_agency:
                         related_launches = Launch.objects.filter(net__gte=now).filter(
-                            rocket__configuration__launch_agency__id=related.id).filter(launch_library=True)
+                            rocket__configuration__manufacturer__id=related.id).filter(launch_library=True)
                         total_launches = launches | related_launches
                 except Agency.DoesNotExist:
                     print("Cant find agency.")
             return total_launches.order_by('net', 'id')
         if lsp_id:
-            launches = Launch.objects.filter(net__gte=now).filter(rocket__configuration__launch_agency__id=lsp_id).prefetch_related(
+            launches = Launch.objects.filter(net__gte=now).filter(rocket__configuration__manufacturer__id=lsp_id).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True)
+                'rocket__configuration__manufacturer').filter(launch_library=True)
             total_launches = launches
             if related:
                 try:
@@ -436,7 +437,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
                     related_agency = agency.related_agencies.all()
                     for related in related_agency:
                         related_launches = Launch.objects.filter(net__gte=now).filter(
-                            rocket__configuration__launch_agency__id=related.id).filter(launch_library=True)
+                            rocket__configuration__manufacturer__id=related.id).filter(launch_library=True)
                         total_launches = launches | related_launches
                 except Agency.DoesNotExist:
                     print("Cant find agency.")
@@ -446,17 +447,17 @@ class UpcomingLaunchViewSet(ModelViewSet):
                 rocket__configuration__launch_library_id=launcher_config__id).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True).order_by('net', 'id')
+                'rocket__configuration__manufacturer').filter(launch_library=True).order_by('net', 'id')
 
         else:
             return Launch.objects.filter(net__gte=now).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True).order_by('net', 'id')
+                'rocket__configuration__manufacturer').filter(launch_library=True).order_by('net', 'id')
 
     def get_serializer_class(self):
 
@@ -475,9 +476,9 @@ class UpcomingLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status')
-    search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
-                     '$rocket__configuration__launch_agency__abbrev', '$mission__name', '$pad__location__name',
+    filter_class = LaunchFilterSet
+    search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__manufacturer__name',
+                     '$rocket__configuration__manufacturer__abbrev', '$mission__name', '$pad__location__name',
                      '$pad__name')
     ordering_fields = ('id', 'name', 'net',)
     lookup_field = 'launch_library_id'
@@ -517,30 +518,30 @@ class PreviousLaunchViewSet(ModelViewSet):
         if location_filters and lsp_filters:
             lsp_filters = lsp_filters.split(',')
             location_filters = location_filters.split(',')
-            return Launch.objects.filter(net__lte=now).filter(Q(rocket__configuration__launch_agency__id__in=lsp_filters) | Q(
+            return Launch.objects.filter(net__lte=now).filter(Q(rocket__configuration__manufacturer__id__in=lsp_filters) | Q(
                 pad__location__id__in=location_filters)).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True).order_by('-net', 'id')
+                'rocket__configuration__manufacturer').filter(launch_library=True).order_by('-net', 'id')
         if lsp_filters:
             lsp_filters = lsp_filters.split(',')
-            return Launch.objects.filter(net__lte=now).filter(rocket__configuration__launch_agency__id__in=lsp_filters).prefetch_related(
+            return Launch.objects.filter(net__lte=now).filter(rocket__configuration__manufacturer__id__in=lsp_filters).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True).order_by('-net', 'id')
+                'rocket__configuration__manufacturer').filter(launch_library=True).order_by('-net', 'id')
 
         if location_filters:
             location_filters = location_filters.split(',')
             return Launch.objects.filter(net__lte=now).filter(pad__location__id__in=location_filters).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True).order_by('-net', 'id')
+                'rocket__configuration__manufacturer').filter(launch_library=True).order_by('-net', 'id')
         if ids:
             ids = ids.split(',')
             return Launch.objects.filter(launch_library_id__in=ids).filter(net__lte=now).filter(launch_library=True).order_by('-net', 'id')
@@ -549,13 +550,13 @@ class PreviousLaunchViewSet(ModelViewSet):
                 net__lte=now).filter(launch_library=True).order_by('-net', 'id')
         if lsp_name:
             launches = Launch.objects.filter(net__lte=now).filter(
-                Q(rocket__configuration__launch_agency__name__icontains=lsp_name)
-                | Q(rocket__configuration__launch_agency__abbrev__icontains=lsp_name)).prefetch_related(
+                Q(rocket__configuration__manufacturer__name__icontains=lsp_name)
+                | Q(rocket__configuration__manufacturer__abbrev__icontains=lsp_name)).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True)
+                'rocket__configuration__manufacturer').filter(launch_library=True)
             total_launches = launches
             if related:
                 try:
@@ -563,19 +564,19 @@ class PreviousLaunchViewSet(ModelViewSet):
                     related_agency = agency.related_agencies.all()
                     for related in related_agency:
                         related_launches = Launch.objects.filter(
-                            rocket__configuration__launch_agency__id=related.id).filter(net__lte=now).filter(launch_library=True)
+                            rocket__configuration__manufacturer__id=related.id).filter(net__lte=now).filter(launch_library=True)
                         total_launches = launches | related_launches
                 except Agency.DoesNotExist:
                     print("Cant find agency.")
             return total_launches.order_by('-net', 'id')
         if lsp_id:
             launches = Launch.objects.filter(net__lte=now).filter(
-                rocket__configuration__launch_agency__id=lsp_id).prefetch_related(
+                rocket__configuration__manufacturer__id=lsp_id).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').filter(launch_library=True)
+                'rocket__configuration__manufacturer').filter(launch_library=True)
             total_launches = launches
             if related:
                 try:
@@ -583,7 +584,7 @@ class PreviousLaunchViewSet(ModelViewSet):
                     related_agency = agency.related_agencies.all()
                     for related in related_agency:
                         related_launches = Launch.objects.filter(net__lte=now).filter(
-                            rocket__configuration__launch_agency__id=related.id).filter(launch_library=True)
+                            rocket__configuration__manufacturer__id=related.id).filter(launch_library=True)
                         total_launches = launches | related_launches
                 except Agency.DoesNotExist:
                     print("Cant find agency.")
@@ -593,16 +594,16 @@ class PreviousLaunchViewSet(ModelViewSet):
                 rocket__configuration__launch_library_id=launcher_config__id).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').order_by('-net', 'id')
+                'rocket__configuration__manufacturer').order_by('-net', 'id')
         else:
             return Launch.objects.filter(net__lte=now).filter(launch_library=True).prefetch_related(
                 'info_urls').prefetch_related('vid_urls').select_related('rocket').select_related(
                 'mission').select_related('pad').select_related('pad__location').prefetch_related(
-                'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+                'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
                 'mission__mission_type').prefetch_related('rocket__firststage').select_related(
-                'rocket__configuration__launch_agency').order_by('-net', 'id').all()
+                'rocket__configuration__manufacturer').order_by('-net', 'id').all()
 
     def get_serializer_class(self):
         mode = self.request.query_params.get("mode", "normal")
@@ -619,9 +620,9 @@ class PreviousLaunchViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'rocket__configuration__name', 'rocket__configuration__launch_agency__name', 'status')
-    search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__launch_agency__name',
-                     '$rocket__configuration__launch_agency__abbrev', '$mission__name', '$pad__location__name',
+    filter_class = LaunchFilterSet
+    search_fields = ('$name', '$rocket__configuration__name', '$rocket__configuration__manufacturer__name',
+                     '$rocket__configuration__manufacturer__abbrev', '$mission__name', '$pad__location__name',
                      '$pad__name')
     ordering_fields = ('id', 'name', 'net',)
     lookup_field = 'launch_library_id'

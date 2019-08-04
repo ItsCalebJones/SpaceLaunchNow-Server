@@ -7,6 +7,7 @@ from api.permission import HasGroupPermission
 
 
 from api.v330.config.spacecraft.serializers import SpacecraftConfigurationSerializer, SpacecraftConfigurationDetailSerializer
+from api.v330.filter import SpacecraftConfigFilterSet
 
 
 class SpacecraftConfigViewSet(ModelViewSet):
@@ -42,6 +43,6 @@ class SpacecraftConfigViewSet(ModelViewSet):
         'list': ['_Public']  # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('name', 'launch_agency', 'in_use', 'human_rated')
-    search_fields = ('name', 'launch_agency__name',)
+    filter_class = SpacecraftConfigFilterSet
+    search_fields = ('name', 'manufacturer__name',)
     ordering_fields = ('name', 'launch_mass', 'leo_capacity', 'gto_capacity', 'launch_cost')

@@ -56,13 +56,14 @@ def launch_json_to_model(data):
     hashtag = data['hashtag']
     tbdtime = data['tbdtime']
     tbddate = data['tbddate']
+    launch_service_provider = get_lsp(data)
 
     launch, created = Launch.objects.get_or_create(launch_library_id=id)
     launch.name = name
     launch.launch_library = True
 
     if created:
-        logger.info("Created - %s (%s)" % (launch.name, launch.id))
+        logger.info("Created - %s (%s)" % (launch.name.encode("utf-8"), launch.id))
 
     try:
         launch.status = LaunchStatus.objects.get(id=status)
@@ -77,12 +78,12 @@ def launch_json_to_model(data):
     launch.hashtag = hashtag
     launch.tbddate = tbddate
     launch.tbdtime = tbdtime
+    launch.launch_service_provider = launch_service_provider
     launch.net = datetime.datetime.strptime(net, '%B %d, %Y %H:%M:%S %Z').replace(tzinfo=pytz.utc)
     launch.window_end = datetime.datetime.strptime(window_end, '%B %d, %Y %H:%M:%S %Z').replace(tzinfo=pytz.utc)
     launch.window_start = datetime.datetime.strptime(window_start, '%B %d, %Y %H:%M:%S %Z').replace(tzinfo=pytz.utc)
 
     # Check to see if URL exists before adding.
-    print("Starting")
     for url in vid_urls:
         video_found = False
         if launch.vid_urls.all() is not None:
@@ -101,8 +102,7 @@ def launch_json_to_model(data):
                     info_found = True
         if not info_found:
             InfoURLs.objects.get_or_create(info_url=url, launch=launch)
-    print("Finished")
-    launch.location = get_location(launch, data)
+    launch.pad = get_location(launch, data)
     launch.mission = get_mission(launch, data)
     launch.rocket = get_rocket(launch, data)
     check_notification(launch)
@@ -122,15 +122,17 @@ def check_notification(launch):
 
 def get_location(launch, data):
     if 'location' in data and data['location'] is not None:
-        location, created = Location.objects.get_or_create(launch_library_id=data['location']['id'])
-        if created:
-            location.name = data['location']['name']
-            location.country_code = data['location']['countryCode']
-        location.save()
+        try:
+            location = Location.objects.get(launch_library_id=data['location']['id'])
+        except Location.DoesNotExist:
+            location = Location(launch_library_id=data['location']['id'], name=data['location']['name'], country_code=data['location']['countryCode'])
+            location.save()
         if data['location']['pads'] is not None and len(data['location']['pads']) > 0:
-                pad, created = Pad.objects.get_or_create(launch_library_id=data['location']['pads'][0]['id'], location=location)
-                if created:
-                    pad.name = data['location']['pads'][0]['name'].split(',', 1)[0]
+                try:
+                    pad = Pad.objects.get(launch_library_id=data['location']['pads'][0]['id'], location=location)
+                except Pad.DoesNotExist:
+                    pad = Pad(launch_library_id=data['location']['pads'][0]['id'], location=location)
+                pad.name = data['location']['pads'][0]['name'].split(',', 1)[0]
                 pad.map_url = data['location']['pads'][0]['mapURL']
                 pad.wiki_url = data['location']['pads'][0]['wikiURL']
                 pad.latitude = data['location']['pads'][0]['latitude']
@@ -141,29 +143,38 @@ def get_location(launch, data):
                     pad.longitude = 0.0
                 if data['location']['pads'][0]['agencies'] and len(data['location']['pads'][0]['agencies']) > 0:
                     pad.agency_id = data['location']['pads'][0]['agencies'][0]['id']
-                launch.pad = pad
                 pad.save()
-        return location
+                return pad
 
 
 def get_rocket(launch, data):
     if 'rocket' in data and data['rocket'] is not None:
-        launcher_config, created = LauncherConfig.objects.get_or_create(launch_library_id=data['rocket']['id'])
-        if created:
+        try:
+            launcher_config = LauncherConfig.objects.get(launch_library_id=data['rocket']['id'])
+        except LauncherConfig.DoesNotExist:
+            launcher_config = LauncherConfig(launch_library_id=data['rocket']['id'])
             launcher_config.name = data['rocket']['name']
             launcher_config.family_name = data['rocket']['familyname']
             launcher_config.configuration = data['rocket']['configuration']
-            launcher_config.launch_agency = get_lsp(launch, data)
+        launcher_config.manufacturer = get_lsp(data)
         launcher_config.save()
-        if 'placeholder' not in data['rocket']['imageURL'] and created:
+        if 'placeholder' not in data['rocket']['imageURL'] and launcher_config.image_url is None:
             download_launcher_image(launcher_config)
-        rocket, created = Rocket.objects.get_or_create(launch__id=launch.id, configuration=launcher_config)
+        try:
+            rocket = Rocket.objects.get(launch__id=launch.id, configuration=launcher_config)
+            rocket.configuration = launcher_config
+        except Rocket.DoesNotExist:
+            rocket = Rocket(configuration=launcher_config)
+        rocket.save()
     return rocket
 
 
 def get_mission(launch, data):
     if data['missions'] is not None and len(data['missions']) > 0:
-        mission, created = Mission.objects.get_or_create(launch_library_id=data['missions'][0]['id'])
+        try:
+            mission = Mission.objects.get(launch_library_id=data['missions'][0]['id'])
+        except Mission.DoesNotExist:
+            mission = Mission(launch_library_id=data['missions'][0]['id'])
         mission.name = data['missions'][0]['name']
         mission.type = data['missions'][0]['type']
         mission.type_name = get_mission_type(data['missions'][0]['type'])
@@ -185,7 +196,7 @@ def get_mission(launch, data):
         return mission
 
 
-def get_lsp(launch, data):
+def get_lsp(data):
     if 'lsp' in data and data['lsp'] is not None:
         lsp, created = Agency.objects.get_or_create(id=data['lsp']['id'])
         lsp.name = data['lsp']['name']

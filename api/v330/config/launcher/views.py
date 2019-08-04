@@ -7,6 +7,7 @@ from api.permission import HasGroupPermission
 
 
 from api.v330.config.launcher.serializers import LauncherConfigDetailSerializer, LauncherConfigSerializer
+from api.v330.filter import LauncherConfigFilterSet
 
 
 class LauncherConfigViewSet(ModelViewSet):
@@ -44,6 +45,6 @@ class LauncherConfigViewSet(ModelViewSet):
         'list': ['_Public']
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filter_fields = ('family', 'name', 'launch_agency', 'full_name', 'active', 'reusable')
-    search_fields = ('^name', '^launch_agency__name', '^full_name', '^description')
+    filter_class = LauncherConfigFilterSet
+    search_fields = ('^name', '^manufacturer__name', '^full_name', '^description')
     ordering_fields = ('name', 'launch_mass', 'leo_capacity', 'gto_capacity', 'launch_cost')

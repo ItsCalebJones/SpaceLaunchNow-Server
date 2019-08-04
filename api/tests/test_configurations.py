@@ -20,7 +20,8 @@ class ConfigurationTests(SLNAPITests):
         self.assertEqual(data['results'][0]['id'], configuration.launch_library_id)
         self.assertEqual(data['results'][0]['full_name'], configuration.full_name)
         self.assertEqual(data['results'][0]['launch_mass'], configuration.launch_mass)
-        self.assertEqual(data['results'][0]['agency'], configuration.launch_agency.name)
+        if configuration.manufacturer:
+            self.assertEqual(data['results'][0]['agency'], configuration.manufacturer.name)
 
         self.check_permissions(path)
 
@@ -38,7 +39,8 @@ class ConfigurationTests(SLNAPITests):
         self.assertEqual(data['results'][0]['id'], configuration.launch_library_id)
         self.assertEqual(data['results'][0]['full_name'], configuration.full_name)
         self.assertEqual(data['results'][0]['launch_mass'], configuration.launch_mass)
-        self.assertEqual(data['results'][0]['agency'], configuration.launch_agency.name)
+        if configuration.manufacturer:
+            self.assertEqual(data['results'][0]['agency'], configuration.manufacturer.name)
 
         self.check_permissions(path)
 
@@ -56,7 +58,8 @@ class ConfigurationTests(SLNAPITests):
         self.assertEqual(data['results'][0]['id'], configuration.launch_library_id)
         self.assertEqual(data['results'][0]['full_name'], configuration.full_name)
         self.assertEqual(data['results'][0]['launch_mass'], configuration.launch_mass)
-        self.assertEqual(data['results'][0]['agency']['name'], configuration.launch_agency.name)
+        if configuration.manufacturer:
+            self.assertEqual(data['results'][0]['agency']['name'], configuration.manufacturer.name)
 
         self.check_permissions(path)
 
@@ -74,6 +77,7 @@ class ConfigurationTests(SLNAPITests):
         self.assertEqual(data['results'][0]['id'], configuration.launch_library_id)
         self.assertEqual(data['results'][0]['full_name'], configuration.full_name)
         self.assertEqual(data['results'][0]['launch_mass'], configuration.launch_mass)
-        self.assertEqual(data['results'][0]['launch_service_provider']['name'], configuration.launch_agency.name)
+        if configuration.manufacturer:
+            self.assertEqual(data['results'][0]['launch_service_provider']['name'], configuration.manufacturer.name)
 
         self.check_permissions(path)
