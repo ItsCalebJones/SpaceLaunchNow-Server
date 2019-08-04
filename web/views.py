@@ -173,7 +173,7 @@ def create_launch_view(request, launch):
     youtube_urls = []
     vids = launch.vid_urls.all()
     status = get_launch_status(launch)
-    agency = launch.rocket.configuration.launch_agency
+    agency = launch.rocket.configuration.manufacturer
     launches_good = Launch.objects.filter(rocket__configuration__launch_agency=agency, status=3)
     launches_bad = Launch.objects.filter(Q(rocket__configuration__launch_agency=agency) & Q(Q(status=4) | Q(status=7)))
     launches_pending = Launch.objects.filter(
