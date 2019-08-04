@@ -78,7 +78,7 @@ def launch_image_path(instance, filename):
 def infographic_image_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
     clean_name = quote(quote(instance.name.encode('utf8')), '')
-    clean_name = "%s_infographic_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
+    clean_name = "%s_infographic_%s" % (clean_name.lower()[:15], datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
     name = "%s%s" % (str(clean_name), file_extension)
     return name
 
