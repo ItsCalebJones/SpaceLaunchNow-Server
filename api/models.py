@@ -11,6 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.urls import reverse
 from django_extensions.db.fields import AutoSlugField
+from pytz import utc
 
 from api.utils.utilities import resize_for_upload, resize_needed, get_map_url, get_pad_url
 
@@ -140,8 +141,50 @@ class Agency(models.Model):
         super(Agency, self).save()
 
     @property
-    def successful_launches(self):
+    def total_launch_count(self):
+        cache_key = "%s-%s" % (self.id, "agency-total_launch_count")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
 
+        now = datetime.datetime.now(tz=utc)
+        count = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(net__lte=now).order_by('-net').count()
+        related_agency = self.related_agencies.all()
+        for related in related_agency:
+            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def consecutive_successful_launches(self):
+        cache_key = "%s-%s" % (self.id, "agency-consecutive-success")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        count = 0
+        now = datetime.datetime.now(tz=utc)
+        launches = Launch.objects.filter(rocket__configuration__launch_agency__id=self.id).filter(Q(status__id=3)|Q(status__id=4)|Q(status__id=7)).filter(net__lte=now).order_by('-net')
+        for launch in launches:
+            if launch.status.id == 3:
+                count += 1
+            else:
+                break
+
+        related_agency = self.related_agencies.all()
+        for related in related_agency:
+            launches = Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(Q(status__id=3)|Q(status__id=4)|Q(status__id=7)).filter(net__lte=now).order_by('-net')
+            for launch in launches:
+                if launch.status.id == 3:
+                    count += 1
+                else:
+                    break
+
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def successful_launches(self):
         cache_key = "%s-%s" % (self.id, "agency-success")
         count = cache.get(cache_key)
         if count is not None:
@@ -150,7 +193,7 @@ class Agency(models.Model):
         count = Launch.objects.filter(rocket__configuration__manufacturer__id=self.id).filter(status__id=3).count()
         related_agency = self.related_agencies.all()
         for related in related_agency:
-            count += Launch.objects.filter(rocket__configuration__manufacturer__id=related.id).count()
+            count += Launch.objects.filter(rocket__configuration__launch_agency__id=related.id).filter(status__id=3).count()
 
         cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
 
@@ -322,6 +365,71 @@ class LauncherConfig(models.Model):
         ordering = ['name']
         verbose_name = 'Launcher Configuration'
         verbose_name_plural = 'Launcher Configurations'
+
+    @property
+    def total_launch_count(self):
+        cache_key = "%s-%s" % (self.id, "launcherconfig-total")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        now = datetime.datetime.now(tz=utc)
+        count = Launch.objects.filter(rocket__configuration__id=self.id).filter(net__lte=now).count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def consecutive_successful_launches(self):
+        cache_key = "%s-%s" % (self.id, "launcherconfig-consecutive-success")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        count = 0
+        now = datetime.datetime.now(tz=utc)
+        launches = Launch.objects.filter(rocket__configuration__id=self.id).filter(Q(status__id=3)|Q(status__id=4)|Q(status__id=7)).filter(net__lte=now).order_by('-net')
+        for launch in launches:
+            if launch.status.id == 3:
+                count += 1
+            else:
+                break
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def successful_launches(self):
+        cache_key = "%s-%s" % (self.id, "launcherconfig-success")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        count = Launch.objects.filter(rocket__configuration__id=self.id).filter(status__id=3).count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def failed_launches(self):
+        cache_key = "%s-%s" % (self.id, "launcherconfig-failed")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        count = Launch.objects.filter(rocket__configuration__id=self.id).filter(
+            Q(status__id=4) | Q(status__id=7)).count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def pending_launches(self):
+        cache_key = "%s-%s" % (self.id, "launcherconfig-pending")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        count = Launch.objects.filter(rocket__configuration__id=self.id).filter(
+            Q(status__id=1) | Q(status__id=2) | Q(status__id=5)).count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
 
     def save(self, **kwargs):
         if resize_needed(self.image_url):
@@ -613,12 +721,67 @@ class SecondStage(models.Model):
             return u"Unsaved %s" % self.launcher.serial_number
 
 
+def previous_flight_id(self_ref):
+    cache_key = "%s-%s" % (self_ref.id, "previous_flight_id")
+    res = cache.get(cache_key)
+    if res:
+        return res
+
+    launch_net = Launch.objects.get(id=self_ref.rocket.launch.id).net
+    last_launch = Launch.objects.filter(rocket__firststage__launcher__id=self_ref.launcher.id).filter(net__lt=launch_net).order_by('-net').first()
+
+    if last_launch:
+        res = last_launch.id
+
+    cache.set(cache_key, res, CACHE_TIMEOUT_ONE_DAY)
+    return res
+
+
 class FirstStage(models.Model):
     type = models.ForeignKey(FirstStageType, related_name='firststage', on_delete=models.PROTECT)
     reused = models.NullBooleanField(null=True, blank=True)
     landing = models.OneToOneField(Landing, related_name='firststage', null=True, blank=True, on_delete=models.SET_NULL)
     launcher = models.ForeignKey(Launcher, related_name='firststage', on_delete=models.CASCADE)
     rocket = models.ForeignKey(Rocket, related_name='firststage', on_delete=models.CASCADE)
+
+    # Not a property but keeping around as a helper
+
+    @property
+    def previous_flight(self):
+        flight_id = previous_flight_id(self)
+        if previous_flight_id:
+            return Launch.objects.get(id=flight_id)
+
+        return None
+
+    @property
+    def previous_flight_date(self):
+        cache_key = "%s-%s" % (self.id, "previous_flight_date")
+        res = cache.get(cache_key)
+        if res:
+            return res
+
+        last_launch_id = previous_flight_id(self)
+        if last_launch_id:
+            res = Launch.objects.get(id=last_launch_id).net
+
+        cache.set(cache_key, res, CACHE_TIMEOUT_ONE_DAY)
+        return res
+
+    @property
+    def turn_around_time_days(self):
+        cache_key = "%s-%s" % (self.id, "turn_around_time_days")
+        res = cache.get(cache_key)
+        if res:
+            return res
+
+        launch_net = Launch.objects.get(id=self.rocket.launch.id).net
+        if launch_net and self.previous_flight_date:
+            turn_around = launch_net - self.previous_flight_date
+            res = turn_around.days
+
+        cache.set(cache_key, res, CACHE_TIMEOUT_ONE_DAY)
+        return res
 
     @property
     def launcher_flight_number(self):
@@ -897,6 +1060,21 @@ class Launch(models.Model):
     @property
     def img_url(self):
         return None
+
+    @property
+    def orbital_launch_attempt_count(self):
+        cache_key = "%s-%s" % (self.id, "launches-orbital-launch-attempt-count")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        if not self.mission.orbit or self.mission.orbit.name != "Sub-Orbital":
+            start_of_year = datetime.datetime(year=self.net.year, month=1, day=1)
+            count = Launch.objects.filter(net__gte=start_of_year, net__lte=self.net).filter(~Q(mission__orbit__name="Sub-Orbital")).count()
+        else:
+            count = None
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
 
     class Meta:
         verbose_name = 'Launch'

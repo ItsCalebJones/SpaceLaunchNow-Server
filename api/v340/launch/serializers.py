@@ -38,14 +38,22 @@ class LauncherDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelS
         fields = ('id', 'url', 'details', 'flight_proven', 'serial_number', 'status', 'previous_flights', 'image_url')
 
 
+class LaunchSerializerMini(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Launch
+        fields = ('id', 'name')
+
+
 class FirstStageSerializer(serializers.ModelSerializer):
     type = serializers.StringRelatedField()
     launcher = LauncherDetailedSerializer(read_only=True, many=False)
     landing = LandingSerializer(read_only=True, many=False)
+    previous_flight = LaunchSerializerMini(read_only=True, many=False)
 
     class Meta:
         model = FirstStage
-        fields = ('type', 'reused', 'launcher_flight_number', 'launcher', 'landing',)
+        fields = ('type', 'reused', 'launcher_flight_number', 'launcher', 'landing', 'previous_flight_date',
+                  'turn_around_time_days', 'previous_flight')
 
 
 class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
@@ -61,10 +69,10 @@ class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializ
     class Meta:
         model = LauncherConfig
         fields = ('id', 'launch_library_id', 'url', 'name', 'description', 'family', 'full_name', 'manufacturer',
-                  'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
+                  'launch_service_provider',  'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'maiden_flight', 'launch_mass', 'leo_capacity', 'gto_capacity',
-                  'to_thrust', 'apogee', 'vehicle_range', 'image_url', 'info_url',
-                  'wiki_url',)
+                  'to_thrust', 'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url', 'total_launch_count',
+                  'consecutive_successful_launches', 'successful_launches', 'failed_launches', 'pending_launches',)
 
 
 class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
@@ -163,7 +171,7 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
         model = Launch
         fields = ('id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold',
                   'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'launch_service_provider',
-                  'rocket', 'mission', 'pad', 'infoURLs', 'vidURLs', 'image', 'infographic')
+                  'rocket', 'mission', 'pad', 'infoURLs', 'vidURLs', 'image', 'infographic', 'orbital_launch_attempt_count')
 
     def get_image(self, obj):
         if obj.image_url:
