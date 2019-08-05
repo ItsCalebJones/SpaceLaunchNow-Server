@@ -119,7 +119,7 @@ class NotificationHandler:
         if launch.image_url:
             image = launch.image_url.url
         elif launch.launch_service_provider.image_url:
-            image = launch.launch_service_provider.url
+            image = launch.launch_service_provider.image_url.url
         elif launch.launch_service_provider.legacy_image_url:
             image = launch.launch_service_provider.legacy_image_url
         v1_data = {"silent": True,
