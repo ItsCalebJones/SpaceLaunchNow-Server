@@ -24,8 +24,8 @@ class Launches:
 
         """
         if search:
-            launch = Launch.objects.filter(Q(rocket__configuration__launch_agency__name__icontains=search) |
-                                           Q(rocket__configuration__launch_agency__abbrev__icontains=search) |
+            launch = Launch.objects.filter(Q(launch_service_provider__name__icontains=search) |
+                                           Q(launch_service_provider__abbrev__icontains=search) |
                                            Q(mission__name__icontains=search) |
                                            Q(mission__description__icontains=search) |
                                            Q(rocket__configuration__full_name__icontains=search) |
@@ -85,9 +85,9 @@ def launch_to_large_embed(launch):
                    " [iOS](https://itunes.apple.com/us/app/space-launch-now/id1399715731)" \
                    " or [on the web](https://spacelaunchnow.me/next)"
     lsp_text = "\n\n**Launch Service Provider**\n%s (%s)\n%s\n%s\n%s\n" % (
-        launch.rocket.configuration.launch_agency.name, launch.rocket.configuration.launch_agency.abbrev,
-        launch.rocket.configuration.launch_agency.administrator, launch.rocket.configuration.launch_agency.info_url,
-        launch.rocket.configuration.launch_agency.wiki_url)
+        launch.launch_service_provider.name, launch.launch_service_provider.abbrev,
+        launch.launch_service_provider.administrator, launch.launch_service_provider.info_url,
+        launch.launch_service_provider.wiki_url)
     status = "**Status:** %s\n\n" % launch.status.name
     vehicle_text = "\n\n**Launch Vehicle**\n" + launch.rocket.configuration.full_name
     vehicle_text = vehicle_text + "\nLEO: %s (kg) - GTO: %s (kg)" % (launch.rocket.configuration.leo_capacity,

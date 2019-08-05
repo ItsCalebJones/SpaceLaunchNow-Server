@@ -46,16 +46,14 @@ def get_message(launch, notification_type):
         if launch.mission is not None and launch.mission.orbit is not None and launch.mission.orbit.name is not None and launch.mission.orbit.name is not 'Sub-Orbital':
             content = '%s was launched successfully from %s to %s by %s.' % (launch.name, launch.pad.location.name,
                                                                              launch.mission.orbit.name,
-                                                                             launch.rocket.configuration.
-                                                                             launch_agency.name)
+                                                                             launch.launch_service_provider.name)
             if launch.hashtag:
                 content = content + " %s" % launch.hashtag
 
             return content
         else:
             content = '%s was launched successfully from %s by %s.' % (launch.name, launch.pad.location.name,
-                                                                       launch.rocket.configuration.
-                                                                       launch_agency.name)
+                                                                       launch.launch_service_provider.name)
             if launch.hashtag:
                 content = content + " %s" % launch.hashtag
 
@@ -66,7 +64,7 @@ def get_message(launch, notification_type):
             content = '%s failed to launch from %s to %s by %s.' % (
                 launch.name, launch.pad.location.name,
                 launch.mission.orbit.name,
-                launch.rocket.configuration.launch_agency.name)
+                launch.launch_service_provider.name)
 
             if launch.hashtag:
                 content = content + " %s" % launch.hashtag
@@ -74,8 +72,7 @@ def get_message(launch, notification_type):
             return content
         else:
             content = '%s failed to launch from %s by %s.' % (launch.name, launch.pad.location.name,
-                                                              launch.rocket.configuration.
-                                                              launch_agency.name)
+                                                              launch.launch_service_provider.name)
             if launch.hashtag:
                 content = content + " %s" % launch.hashtag
 
@@ -86,7 +83,7 @@ def get_message(launch, notification_type):
             content = '%s was a partial launch failure from %s to %s by %s.' % (
                 launch.name, launch.pad.location.name,
                 launch.mission.orbit.name,
-                launch.rocket.configuration.launch_agency.name)
+                launch.launch_service_provider.name)
 
             if launch.hashtag:
                 content = content + " %s" % launch.hashtag
@@ -94,8 +91,7 @@ def get_message(launch, notification_type):
             return content
         else:
             content = '%s was a partial launch failure from %s by %s.' % (launch.name, launch.pad.location.name,
-                                                                          launch.rocket.configuration.
-                                                                          launch_agency.name)
+                                                                          launch.launch_service_provider.name)
             if launch.hashtag:
                 content = content + " %s" % launch.hashtag
 
@@ -120,7 +116,7 @@ def get_message(launch, notification_type):
     elif notification_type == 'oneMinute':
         if launch.status.id == 1:
             content = '%s launching from %s by %s in less than one minute.' % (launch.name, launch.pad.location.name,
-                                                                               launch.rocket.configuration.launch_agency.name)
+                                                                               launch.launch_service_provider.name)
 
             if launch.hashtag:
                 content = content + " %s" % launch.hashtag
@@ -130,7 +126,7 @@ def get_message(launch, notification_type):
     elif notification_type == 'tenMinutes':
         if launch.status.id == 1:
             content = '%s launching from %s by %s in less than ten minutes.' % (launch.name, launch.pad.location.name,
-                                                                                launch.rocket.configuration.launch_agency.name)
+                                                                                launch.launch_service_provider.name)
             if launch.hashtag:
                 content = content + " %s" % launch.hashtag
 
@@ -147,11 +143,11 @@ def get_message(launch, notification_type):
     else:
         if launch.status.id == 1:
             return '%s launching from %s by %s in %s.' % (launch.name, launch.pad.location.name,
-                                                          launch.rocket.configuration.launch_agency.name,
+                                                          launch.launch_service_provider.name,
                                                           seconds_to_time(diff))
         if launch.status.id == 2 or launch.status.id == 5:
             return '%s might launch from %s by %s in %s.' % (launch.name, launch.pad.location.name,
-                                                             launch.rocket.configuration.launch_agency.name,
+                                                             launch.launch_service_provider.name,
                                                              seconds_to_time(diff))
 
 
