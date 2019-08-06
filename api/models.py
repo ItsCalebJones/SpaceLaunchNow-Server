@@ -41,6 +41,7 @@ import urllib
 
 CACHE_TIMEOUT_ONE_DAY = 24 * 60 * 60
 CACHE_TIMEOUT_TEN_MINUTES = 10 * 60
+CACHE_TIMEOUT_ONE_HOUR = 60 * 60
 
 
 def image_path(instance, filename):
@@ -191,13 +192,9 @@ class Agency(models.Model):
             return count
 
         now = datetime.datetime.now(tz=utc)
-        launches = Launch.objects.filter(launch_service_provider__id=self.id).filter(net__lte=now).order_by('-net')
-        count = 0
-        for launch in launches:
-            for stage in launch.rocket.firststage.all():
-                if stage.landing and stage.landing.attempt and stage.landing.success:
-                    count += 1
-        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        count = Launch.objects.filter(launch_service_provider__id=self.id).filter(net__lte=now).filter(
+            rocket__firststage__landing__success=True).order_by('-net').count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_HOUR)
         return count
 
     @property
@@ -208,18 +205,27 @@ class Agency(models.Model):
             return count
 
         now = datetime.datetime.now(tz=utc)
-        launches = Launch.objects.filter(launch_service_provider__id=self.id).filter(net__lte=now).order_by('-net')
-        count = 0
-        for launch in launches:
-            for stage in launch.rocket.firststage.all():
-                if stage.landing and stage.landing.attempt and not stage.landing.success:
-                    count += 1
-        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        count = Launch.objects.filter(launch_service_provider__id=self.id).filter(net__lte=now).filter(
+            rocket__firststage__landing__success=False).order_by('-net').count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_HOUR)
         return count
 
     @property
     def attempted_landings(self):
-        cache_key = "%s-%s" % (self.id, "agency-failed-landings")
+        cache_key = "%s-%s" % (self.id, "agency-attempted-landings")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        now = datetime.datetime.now(tz=utc)
+        count = Launch.objects.filter(launch_service_provider__id=self.id).filter(net__lte=now).filter(
+            rocket__firststage__landing__attempt=True).order_by('-net').count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_HOUR)
+        return count
+
+    @property
+    def consecutive_successful_landings(self):
+        cache_key = "%s-%s" % (self.id, "agency-consecutive-landings")
         count = cache.get(cache_key)
         if count is not None:
             return count
@@ -229,9 +235,14 @@ class Agency(models.Model):
         count = 0
         for launch in launches:
             for stage in launch.rocket.firststage.all():
-                if stage.landing and stage.landing.attempt:
+                if stage.landing.attempt and stage.landing.success:
                     count += 1
-        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+                elif stage.landing.attempt and not stage.landing.success:
+                    break
+            else:
+                continue
+            break
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_HOUR)
         return count
 
     @property

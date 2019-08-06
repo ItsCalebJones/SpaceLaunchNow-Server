@@ -430,7 +430,7 @@ class AgencySerializerDetailedForLaunches(QueryFieldsMixin, serializers.Hyperlin
         fields = ('id', 'url', 'name', 'featured', 'type', 'country_code', 'abbrev', 'description', 'administrator',
                   'founding_year', 'launchers', 'spacecraft', 'launch_library_url', 'successful_launches',
                   'failed_launches', 'pending_launches', 'successful_landings', 'failed_landings', 'attempted_landings',
-                  'info_url', 'wiki_url', 'logo_url', 'image_url', 'nation_url',)
+                  'consecutive_successful_landings', 'info_url', 'wiki_url', 'logo_url', 'image_url', 'nation_url',)
 
 
 class LauncherConfigListSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
