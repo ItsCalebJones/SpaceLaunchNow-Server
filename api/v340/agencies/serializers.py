@@ -29,7 +29,8 @@ class AgencySerializerDetailed(QueryFieldsMixin, serializers.HyperlinkedModelSer
         fields = ('id', 'url', 'name', 'featured', 'type', 'country_code', 'abbrev', 'description', 'administrator',
                   'founding_year', 'launchers', 'spacecraft', 'parent', 'launch_library_url', 'total_launch_count',
                   'successful_launches', 'consecutive_successful_launches', 'failed_launches', 'pending_launches',
-                  'info_url', 'wiki_url',  'logo_url', 'image_url', 'nation_url', 'launcher_list', 'spacecraft_list')
+                  'successful_landings', 'failed_landings', 'attempted_landings', 'info_url', 'wiki_url',  'logo_url',
+                  'image_url', 'nation_url', 'launcher_list', 'spacecraft_list',)
 
     def get_fields(self):
         fields = super(AgencySerializerDetailed, self).get_fields()

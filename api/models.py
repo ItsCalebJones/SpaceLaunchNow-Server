@@ -184,6 +184,57 @@ class Agency(models.Model):
         return count
 
     @property
+    def successful_landings(self):
+        cache_key = "%s-%s" % (self.id, "agency-successful-landings")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        now = datetime.datetime.now(tz=utc)
+        launches = Launch.objects.filter(launch_service_provider__id=self.id).filter(net__lte=now).order_by('-net')
+        count = 0
+        for launch in launches:
+            for stage in launch.rocket.firststage.all():
+                if stage.landing and stage.landing.attempt and stage.landing.success:
+                    count += 1
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def failed_landings(self):
+        cache_key = "%s-%s" % (self.id, "agency-failed-landings")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        now = datetime.datetime.now(tz=utc)
+        launches = Launch.objects.filter(launch_service_provider__id=self.id).filter(net__lte=now).order_by('-net')
+        count = 0
+        for launch in launches:
+            for stage in launch.rocket.firststage.all():
+                if stage.landing and stage.landing.attempt and not stage.landing.success:
+                    count += 1
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def attempted_landings(self):
+        cache_key = "%s-%s" % (self.id, "agency-failed-landings")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        now = datetime.datetime.now(tz=utc)
+        launches = Launch.objects.filter(launch_service_provider__id=self.id).filter(net__lte=now).order_by('-net')
+        count = 0
+        for launch in launches:
+            for stage in launch.rocket.firststage.all():
+                if stage.landing and stage.landing.attempt:
+                    count += 1
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
     def successful_launches(self):
         cache_key = "%s-%s" % (self.id, "agency-success")
         count = cache.get(cache_key)
