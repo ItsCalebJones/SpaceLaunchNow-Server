@@ -15,7 +15,7 @@ class AstronautFlightForExpeditionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AstronautFlight
-        fields = ('role', 'astronaut')
+        fields = ('id', 'role', 'astronaut')
 
 
 class ExpeditionSerializerForSpacestation(serializers.HyperlinkedModelSerializer):
