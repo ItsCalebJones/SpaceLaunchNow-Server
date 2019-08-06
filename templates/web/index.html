@@ -187,7 +187,7 @@
                                     <a href="/launch/{{ first_launch.slug }}">{{ first_launch.name }}</a>
                                 </h3>
                                 <p class="author">
-                                    <b>{{ first_launch.rocket.configuration.launch_agency.name }}</b>
+                                    <b>{{ first_launch.rocket.configuration.manufacturer.name }}</b>
                                 </p>
                                 <span class="badge badge-pill badge-danger">{{ first_launch.mission.orbit.name }}</span>
                                 {% if first_launch.pad.location.name %}
@@ -212,7 +212,7 @@
                                     <a href="/launch/{{ second_launch.slug }}">{{ second_launch.name }}</a>
                                 </h3>
                                 <p class="author">
-                                    <b>{{ second_launch.rocket.configuration.launch_agency.name }}</b>
+                                    <b>{{ second_launch.rocket.configuration.manufacturer.name }}</b>
                                 </p>
                                 <span class="badge badge-pill badge-danger">{{ second_launch.mission.orbit.name }}</span>
                                 {% if second_launch.pad.location.name %}

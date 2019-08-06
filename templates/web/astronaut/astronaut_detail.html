@@ -121,8 +121,8 @@
                                                          src="{{ im.url }}"
                                                          style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                                                 {% endthumbnail %}
-                                            {% elif launch.rocket.configuration.launch_agency.image_url %}
-                                                {% thumbnail launch.rocket.configuration.launch_agency.image_url "200" as im %}
+                                            {% elif launch.rocket.configuration.manufacturer.image_url %}
+                                                {% thumbnail launch.rocket.configuration.manufacturer.image_url "200" as im %}
                                                     <img class="img-raised rounded-circle img-fluid text-center"
                                                          src="{{ im.url }}"
                                                          style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
@@ -135,8 +135,8 @@
                                         </div>
                                         <div class="col-md-8 text-md-left text-center">
                                             <h4 class="card-title">{{ launch.name }}</h4>
-                                            {{ launch.rocket.configuration.launch_agency.name }}
-                                            | {{ launch.rocket.configuration.launch_agency.country_code }}<br>
+                                            {{ launch.rocket.configuration.manufacturer.name }}
+                                            | {{ launch.rocket.configuration.manufacturer.country_code }}<br>
                                             {{ launch.pad.location.name }}<br>
                                             <i>{{ launch.net }}</i><br>
                                         </div>
@@ -201,8 +201,8 @@
                                                          src="{{ im.url }}"
                                                          style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                                                 {% endthumbnail %}
-                                            {% elif launch.rocket.configuration.launch_agency.image_url %}
-                                                {% thumbnail launch.rocket.configuration.launch_agency.image_url "200" as im %}
+                                            {% elif launch.rocket.configuration.manufacturer.image_url %}
+                                                {% thumbnail launch.rocket.configuration.manufacturer.image_url "200" as im %}
                                                     <img class="img-raised rounded-circle img-fluid text-center"
                                                          src="{{ im.url }}"
                                                          style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
@@ -215,8 +215,8 @@
                                         </div>
                                         <div class="col-md-8 text-md-left text-center">
                                             <h4 class="card-title">{{ launch.name }}</h4>
-                                            {{ launch.rocket.configuration.launch_agency.name }}
-                                            | {{ launch.rocket.configuration.launch_agency.country_code }}<br>
+                                            {{ launch.rocket.configuration.manufacturer.name }}
+                                            | {{ launch.rocket.configuration.manufacturer.country_code }}<br>
                                             {{ launch.pad.location.name }}<br>
                                             <i>{{ launch.net }}</i><br>
                                         </div>
