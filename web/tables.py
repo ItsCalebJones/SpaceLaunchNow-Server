@@ -11,7 +11,7 @@ class LaunchVehicleTable(tables.Table):
 
     class Meta:
         model = LauncherConfig
-        fields = ('name', 'family', 'launch_agency', 'maiden_flight', 'active', 'reusable', 'length', 'diameter', 'leo_capacity', 'gto_capacity', 'to_thrust')
+        fields = ('name', 'family', 'manufacturer', 'maiden_flight', 'active', 'reusable', 'length', 'diameter', 'leo_capacity', 'gto_capacity', 'to_thrust')
         template_name = 'django_tables2/bootstrap4.html'
 
     def order_leo_capacity(self, QuerySet, is_descending):
@@ -62,5 +62,5 @@ class LauncherConfigTable(tables.Table):
 
     class Meta:
         model = LauncherConfig
-        fields = ('name', 'family', 'launch_agency', 'maiden_flight', 'active', 'reusable', 'length', 'diameter', 'leo_capacity', 'gto_capacity', 'to_thrust')
+        fields = ('name', 'family', 'manufacturer', 'maiden_flight', 'active', 'reusable', 'length', 'diameter', 'leo_capacity', 'gto_capacity', 'to_thrust')
         template_name = 'django_tables2/bootstrap4.html'

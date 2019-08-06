@@ -117,14 +117,14 @@
                 <div class="col-md-12 ml-auto mx-auto mr-auto text-center">
                     <div class="profile">
                         <div class="avatar">
-                            {% if launch.rocket.configuration.launch_agency.logo_url %}
-                                <img src="{{ launch.rocket.configuration.launch_agency.logo_url.url }}"
+                            {% if launch.rocket.configuration.manufacturer.logo_url %}
+                                <img src="{{ launch.rocket.configuration.manufacturer.logo_url.url }}"
                                      alt="Circle Image"
                                      class="img-fluid mx-auto"
                                      style="max-width: 75%;max-height: 400px;">
                             {% else %}
                                 <h2 class="title text-center"
-                                    style="margin-left: 100px; margin-right:100px;">{{ launch.rocket.configuration.launch_agency.name }}</h2>
+                                    style="margin-left: 100px; margin-right:100px;">{{ launch.rocket.configuration.manufacturer.name }}</h2>
                             {% endif %}
                         </div>
                     </div>
@@ -150,7 +150,7 @@
                         <h3 style="margin: -5px;" id="date">{{ launch.net }}</h3>
                         <h3 style="margin: 5px;"><b>Status:</b> {{ launch.status }}</h3>
 
-                        <span class="badge badge-pill badge-primary">{{ launch.rocket.configuration.launch_agency.name }}</span>
+                        <span class="badge badge-pill badge-primary">{{ launch.rocket.configuration.manufacturer.name }}</span>
                         {% if launch.pad %}
                             <span class="badge badge-pill badge-primary">{{ launch.pad.name }}</span>
                         {% endif %}

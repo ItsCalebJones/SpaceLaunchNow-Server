@@ -137,6 +137,8 @@ def launch_by_slug(request, slug):
         val = UUID(slug, version=4)
         try:
             launch = Launch.objects.get(id=slug)
+            if str(launch.id) == launch.slug:
+                return create_launch_view(request, Launch.objects.get(slug=slug))
             return redirect('launch_by_slug', slug=launch.slug)
         except ObjectDoesNotExist:
             raise Http404
@@ -173,11 +175,11 @@ def create_launch_view(request, launch):
     youtube_urls = []
     vids = launch.vid_urls.all()
     status = get_launch_status(launch)
-    agency = launch.rocket.configuration.launch_agency
-    launches_good = Launch.objects.filter(rocket__configuration__launch_agency=agency, status=3)
-    launches_bad = Launch.objects.filter(Q(rocket__configuration__launch_agency=agency) & Q(Q(status=4) | Q(status=7)))
+    agency = launch.rocket.configuration.manufacturer
+    launches_good = Launch.objects.filter(rocket__configuration__manufacturer=agency, status=3)
+    launches_bad = Launch.objects.filter(Q(rocket__configuration__manufacturer=agency) & Q(Q(status=4) | Q(status=7)))
     launches_pending = Launch.objects.filter(
-        Q(rocket__configuration__launch_agency=agency) & Q(Q(status=1) | Q(status=2) | Q(status=5)))
+        Q(rocket__configuration__manufacturer=agency) & Q(Q(status=1) | Q(status=2) | Q(status=5)))
     launches = {'good': launches_good, 'bad': launches_bad, 'pending': launches_pending}
     for url in vids:
         if 'youtube' in url.vid_url:
@@ -205,7 +207,7 @@ def launches(request, ):
 
     if query is not None and query != "None":
         _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
-        _launches = _launches.filter(Q(rocket__configuration__launch_agency__abbrev__contains=query) |
+        _launches = _launches.filter(Q(rocket__configuration__manufacturer__abbrev__contains=query) |
                                      Q(pad__location__name__contains=query) |
                                      Q(rocket__configuration__name__contains=query))
     else:
@@ -443,7 +445,7 @@ def astronaut_list(request, ):
     previous_launches = Launch.objects.only("slug", "net", "name", "status__name", "mission__name",
                                             "mission__description", "rocket__configuration__name").prefetch_related(
         'info_urls').prefetch_related('vid_urls').select_related('rocket').prefetch_related('mission').prefetch_related(
-        'rocket__configuration').prefetch_related('rocket__configuration__launch_agency').prefetch_related(
+        'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
         'mission__mission_type').prefetch_related('status').filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
 
     page = request.GET.get('page', 1)

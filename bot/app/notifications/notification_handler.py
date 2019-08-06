@@ -72,9 +72,9 @@ class NotificationHandler:
                     and launch.mission.orbit is not None \
                     and launch.mission.orbit.name is not None:
                 contents = 'Successful launch to %s by %s' % (launch.mission.orbit.name,
-                                                              launch.rocket.configuration.launch_agency.name)
+                                                              launch.launch_service_provider.name)
             else:
-                contents = 'Successful launch by %s' % launch.rocket.configuration.launch_agency.name
+                contents = 'Successful launch by %s' % launch.launch_service_provider.name
 
         elif notification_type == 'failure':
             contents = 'A launch failure has occurred.'
@@ -118,10 +118,10 @@ class NotificationHandler:
         image = ''
         if launch.image_url:
             image = launch.image_url.url
-        elif launch.rocket.configuration.launch_agency.image_url:
-            image = launch.rocket.configuration.launch_agency.image_url.url
-        elif launch.rocket.configuration.launch_agency.legacy_image_url:
-            image = launch.rocket.configuration.launch_agency.legacy_image_url
+        elif launch.launch_service_provider.image_url:
+            image = launch.launch_service_provider.image_url.url
+        elif launch.launch_service_provider.legacy_image_url:
+            image = launch.launch_service_provider.legacy_image_url
         v1_data = {"silent": True,
                    "background": True,
                    "launch_id": launch.launch_library_id,
@@ -275,10 +275,10 @@ class NotificationHandler:
             image = ''
             if pending.launch.image_url:
                 image = pending.launch.image_url.url
-            elif pending.launch.rocket.configuration.launch_agency.image_url:
-                image = pending.launch.rocket.configuration.launch_agency.image_url.url
-            elif pending.launch.rocket.configuration.launch_agency.legacy_image_url:
-                image = pending.launch.rocket.configuration.launch_agency.legacy_image_url
+            elif pending.launch.launch_service_provider.image_url:
+                image = pending.launch.launch_service_provider.image_url.url
+            elif pending.launch.launch_service_provider.legacy_image_url:
+                image = pending.launch.launch_service_provider.legacy_image_url
 
             data.update({
                 "launch": {

@@ -76,7 +76,7 @@ def get_fcm_topics_v1(launch, debug=False, flutter=False, notification_type=None
 
     if launch.pad.location is not None:
         location_id = launch.pad.location.id
-    lsp_id = launch.rocket.configuration.launch_agency.id
+    lsp_id = launch.launch_service_provider.id
 
     if lsp_id == 44:
         topics_set.append('nasa')
@@ -116,7 +116,7 @@ def get_fcm_topics_v2(launch, debug=False, flutter=False, notification_type=None
 
     if launch.pad.location is not None:
         location_id = launch.pad.location.id
-    lsp_id = launch.rocket.configuration.launch_agency.id
+    lsp_id = launch.launch_service_provider.id
 
     # LSPs
     if lsp_id == 44:
