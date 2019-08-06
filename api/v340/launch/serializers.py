@@ -32,7 +32,6 @@ class LandingSerializer(serializers.ModelSerializer):
 
 
 class LauncherDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-
     class Meta:
         model = Launcher
         fields = ('id', 'url', 'details', 'flight_proven', 'serial_number', 'status', 'previous_flights', 'image_url')
@@ -111,8 +110,9 @@ class SpacecraftFlightDetailedSerializerForLaunch(serializers.HyperlinkedModelSe
 
     class Meta:
         model = SpacecraftFlight
-        fields = ('id', 'url', 'mission_end', 'destination', 'launch_crew', 'onboard_crew', 'landing_crew', 'spacecraft',
-                  'docking_events')
+        fields = (
+        'id', 'url', 'mission_end', 'destination', 'launch_crew', 'onboard_crew', 'landing_crew', 'spacecraft',
+        'docking_events')
 
 
 class SpacecraftFlightSerializerForLaunch(serializers.HyperlinkedModelSerializer):
@@ -124,18 +124,19 @@ class SpacecraftFlightSerializerForLaunch(serializers.HyperlinkedModelSerializer
 
 
 class AgencySerializerDetailedForLaunches(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-
     class Meta:
         model = Agency
         fields = ('id', 'url', 'name', 'featured', 'type', 'country_code', 'abbrev', 'description', 'administrator',
-                  'founding_year', 'launchers', 'spacecraft', 'launch_library_url', 'successful_launches',
+                  'founding_year', 'launchers', 'spacecraft', 'launch_library_url', 'consecutive_successful_landings',
+                  'successful_landings', 'failed_landings', 'attempted_landings', 'successful_launches',
                   'failed_launches', 'pending_launches', 'info_url', 'wiki_url', 'logo_url', 'image_url', 'nation_url',)
 
 
 class RocketDetailedSerializer(serializers.ModelSerializer):
     configuration = LauncherConfigDetailSerializer(read_only=True, many=False)
     launcher_stage = FirstStageSerializer(read_only=True, many=True, source='firststage')
-    spacecraft_stage = SpacecraftFlightDetailedSerializerForLaunch(read_only=True, many=False, source='spacecraftflight')
+    spacecraft_stage = SpacecraftFlightDetailedSerializerForLaunch(read_only=True, many=False,
+                                                                   source='spacecraftflight')
 
     class Meta:
         model = Rocket
@@ -169,9 +170,10 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         depth = 3
         model = Launch
-        fields = ('id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold',
-                  'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'launch_service_provider',
-                  'rocket', 'mission', 'pad', 'infoURLs', 'vidURLs', 'image', 'infographic', 'orbital_launch_attempt_count')
+        fields = (
+        'id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold',
+        'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'launch_service_provider',
+        'rocket', 'mission', 'pad', 'infoURLs', 'vidURLs', 'image', 'infographic', 'orbital_launch_attempt_count')
 
     def get_image(self, obj):
         if obj.image_url:
@@ -205,9 +207,10 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         depth = 3
         model = Launch
-        fields = ('id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold',
-                  'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'launch_service_provider',
-                  'rocket', 'mission', 'pad', 'infoURLs', 'vidURLs', 'image', 'infographic')
+        fields = (
+        'id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold',
+        'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'launch_service_provider',
+        'rocket', 'mission', 'pad', 'infoURLs', 'vidURLs', 'image', 'infographic')
 
     def get_image(self, obj):
         if obj.image_url:
