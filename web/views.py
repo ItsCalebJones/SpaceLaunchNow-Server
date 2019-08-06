@@ -137,6 +137,8 @@ def launch_by_slug(request, slug):
         val = UUID(slug, version=4)
         try:
             launch = Launch.objects.get(id=slug)
+            if str(launch.id) == launch.slug:
+                return create_launch_view(request, Launch.objects.get(slug=slug))
             return redirect('launch_by_slug', slug=launch.slug)
         except ObjectDoesNotExist:
             raise Http404
