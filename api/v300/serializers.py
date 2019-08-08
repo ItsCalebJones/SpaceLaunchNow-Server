@@ -175,7 +175,7 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     pad = PadSerializer(many=False, read_only=True)
     launcher = LauncherSerializer(many=False, read_only=True, source='rocket.configuration')
-    lsp = LSPSerializer(many=False, read_only=True, source='rocket.configuration.manufacturer')
+    lsp = LSPSerializer(many=False, read_only=True, source='launch_service_provider')
     mission = MissionSerializer(many=False, read_only=True)
     status = serializers.IntegerField(
         read_only=True,
@@ -213,7 +213,7 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     pad = PadSerializer(many=False, read_only=True)
     launcher = LauncherDetailSerializerForAgency(many=False, read_only=True, source='rocket.configuration')
-    lsp = AgencySerializer(many=False, read_only=True, source='rocket.configuration.manufacturer')
+    lsp = AgencySerializer(many=False, read_only=True, source='launch_service_provider')
     mission = MissionSerializer(many=False, read_only=True)
     infoURLs = serializers.StringRelatedField(read_only=True, many=True, source='info_urls')
     vidURLs = serializers.StringRelatedField(read_only=True, many=True, source='vid_urls')

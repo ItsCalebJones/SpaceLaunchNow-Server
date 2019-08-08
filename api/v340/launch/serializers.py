@@ -19,7 +19,7 @@ class AstronautFlightSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AstronautFlight
-        fields = ('role', 'astronaut')
+        fields = ('id', 'role', 'astronaut')
 
 
 class LandingSerializer(serializers.ModelSerializer):
@@ -28,7 +28,7 @@ class LandingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Landing
-        fields = ('attempt', 'success', 'description', 'location', 'type')
+        fields = ('id', 'attempt', 'success', 'description', 'location', 'type')
 
 
 class LauncherDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
@@ -51,7 +51,7 @@ class FirstStageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FirstStage
-        fields = ('type', 'reused', 'launcher_flight_number', 'launcher', 'landing', 'previous_flight_date',
+        fields = ('id', 'type', 'reused', 'launcher_flight_number', 'launcher', 'landing', 'previous_flight_date',
                   'turn_around_time_days', 'previous_flight')
 
 
@@ -140,7 +140,7 @@ class RocketDetailedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Rocket
-        fields = ('configuration', 'launcher_stage', 'spacecraft_stage')
+        fields = ('id', 'configuration', 'launcher_stage', 'spacecraft_stage')
 
 
 class RocketSerializer(serializers.ModelSerializer):

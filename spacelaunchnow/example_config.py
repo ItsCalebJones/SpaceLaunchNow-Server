@@ -5,17 +5,6 @@ DJANGO_SECRET_KEY = '',
 DEBUG = True
 WEBSERVER_DEBUG = True
 
-#PRODUCTION
-# Use CloudFront
-# CLOUDFRONT_DOMAIN = ""
-# CLOUDFRONT_ID = ""
-# S3_CUSTOM_DOMAIN = CLOUDFRONT_DOMAIN
-# AWS_SECRET_ACCESS_KEY = ""
-# AWS_ACCESS_KEY_ID = ""
-# STORAGE_BUCKET_NAME = ''
-
-#DEVELOPMENT
-# Don't Use CloudFront
 CLOUDFRONT_DOMAIN = None
 CLOUDFRONT_ID = None
 AWS_SECRET_ACCESS_KEY = ""
@@ -25,12 +14,12 @@ S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % STORAGE_BUCKET_NAME
 
 GOOGLE_ANALYTICS_TRACKING_ID = ''
 
-EMAIL_HOST = 'example.com'
+EMAIL_HOST = ''
 EMAIL_PORT = 26
-EMAIL_HOST_USER = 'webmaster@example.com'
+EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_HOST_TLS = True
-EMAIL_FROM_EMAIL = 'Webmaster <webmaster@example.com>'
+EMAIL_FROM_EMAIL = ''
 
 BROKER_URL = None
 
@@ -38,6 +27,9 @@ INSTAGRAM_USERNAME = ''
 INSTAGRAM_PASSWORD = ''
 INSTAGRAM_EMAIL = ''
 
+BUFFER_CLIENT_ID = ''
+BUFFER_SECRET_ID = ''
+BUFFER_ACCESS_TOKEN = ''
 
 DATABASE = {
     'default': {
@@ -46,6 +38,8 @@ DATABASE = {
     }
 }
 
+
+#Used by Discord bot
 SQUID_BOT_CLIENT_ID = ""
 SQUID_BOT_DEBUG_MODE = "true"
 SQUID_BOT_EMAIL_PASSWORD = ""
@@ -68,6 +62,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.sitemaps',
+    'django.contrib.humanize',
     'rest_framework',
     'api.apps.ApiConfig',
     'rest_framework_docs',
@@ -91,16 +86,27 @@ INSTALLED_APPS = [
     'app',
     'sorl.thumbnail',
     'sorl_thumbnail_serializer',
+    'ads_txt',
+    # 'debug_toolbar',
+    'silk',
+    'mathfilters',
+    'django_tables2',
+    'bootstrap4',
+    'django_extensions',
+    'tz_detect',
 ]
 
-
-# These flags turn on/off different features of the Django app so that additional clusters can be deployed as needed.
 IS_API = True
+
 IS_WEBSERVER = True
+
 IS_BOTSERVER = False
+
 IS_ADMIN = True
 
 API_RENDERER = (
     'rest_framework.renderers.JSONRenderer',
     'rest_framework.renderers.BrowsableAPIRenderer',
 )
+
+GOOGLE_API_KEY = ''

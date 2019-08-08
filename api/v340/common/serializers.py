@@ -148,13 +148,13 @@ class RocketSerializerMini(serializers.ModelSerializer):
 class LandingTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = LandingType
-        fields = ('name', 'abbrev', 'description',)
+        fields = ('id', 'name', 'abbrev', 'description',)
 
 
 class LandingLocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = LandingLocation
-        fields = ('name', 'abbrev', 'description',)
+        fields = ('id', 'name', 'abbrev', 'description',)
 
 
 class MissionSerializer(serializers.ModelSerializer):
@@ -192,7 +192,7 @@ class AstronautFlightSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AstronautFlight
-        fields = ('role', 'astronaut')
+        fields = ('id', 'role', 'astronaut')
 
 
 class SpacecraftDetailedNoFlightsSerializer(serializers.HyperlinkedModelSerializer):
