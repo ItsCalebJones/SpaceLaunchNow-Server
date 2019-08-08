@@ -13,6 +13,7 @@ pipeline{
 					sh 'cp $configFile spacelaunchnow/config.py'
 				}
 				sh """
+				mkdir -p log
 				touch log/daily_digest.log
 				python3 -m venv venv
 				. .venv/bin/activate
