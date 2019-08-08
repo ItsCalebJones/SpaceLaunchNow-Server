@@ -228,7 +228,7 @@ class LandingSerializer(serializers.ModelSerializer):
 
 class LaunchListSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
-    lsp = LSPSerializer(many=False, read_only=True, source='rocket.configuration.manufacturer')
+    lsp = LSPSerializer(many=False, read_only=True, source='launch_service_provider')
     status = LaunchStatusSerializer(many=False, read_only=True)
     slug = serializers.SlugField(source='get_full_absolute_url')
     id = serializers.ReadOnlyField(read_only=True, source="launch_library_id")
@@ -247,7 +247,7 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     pad = PadSerializer(many=False, read_only=True)
     launcher_config = LauncherConfigSerializer(many=False, read_only=True, source='rocket.configuration')
-    lsp = LSPSerializer(many=False, read_only=True, source='rocket.configuration.manufacturer')
+    lsp = LSPSerializer(many=False, read_only=True, source='launch_service_provider')
     mission = MissionSerializer(many=False, read_only=True)
     status = LaunchStatusSerializer(many=False, read_only=True)
     slug = serializers.SlugField(source='get_full_absolute_url')
@@ -271,7 +271,7 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     location = LocationSerializer(many=False, read_only=True, source='pad.location')
     pad = PadSerializer(many=False, read_only=True)
     launcher_config = LauncherConfigDetailSerializerForAgency(many=False, read_only=True, source='rocket.configuration')
-    lsp = AgencySerializerDetailed(many=False, read_only=True, source='rocket.configuration.manufacturer')
+    lsp = AgencySerializerDetailed(many=False, read_only=True, source='launch_service_provider')
     mission = MissionSerializer(many=False, read_only=True)
     status = LaunchStatusSerializer(many=False, read_only=True)
     slug = serializers.SlugField(source='get_full_absolute_url')

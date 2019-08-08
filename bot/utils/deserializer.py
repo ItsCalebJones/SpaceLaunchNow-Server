@@ -156,6 +156,8 @@ def get_rocket(launch, data):
             launcher_config.name = data['rocket']['name']
             launcher_config.family_name = data['rocket']['familyname']
             launcher_config.configuration = data['rocket']['configuration']
+        if launcher_config.manufacturer is None:
+            launcher_config.manufacturer = get_lsp(data)
         launcher_config.save()
         if 'placeholder' not in data['rocket']['imageURL'] and launcher_config.image_url is None:
             download_launcher_image(launcher_config)
