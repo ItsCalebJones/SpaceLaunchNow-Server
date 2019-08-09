@@ -1,8 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import datetime
+
 from django.apps import apps
 from django.db import models
+from django.core.cache import cache
+from pytz import utc
+
+CACHE_TIMEOUT_ONE_DAY = 24 * 60 * 60
+CACHE_TIMEOUT_TEN_MINUTES = 10 * 60
+CACHE_TIMEOUT_ONE_HOUR = 60 * 60
 
 
 class AgencyType(models.Model):
@@ -98,6 +106,23 @@ class LandingLocation(models.Model):
     name = models.CharField(max_length=255, blank=True, default="")
     abbrev = models.CharField(max_length=255, blank=True, default="")
     description = models.CharField(max_length=2048, null=True, blank=True)
+    location = models.ForeignKey("api.Location", related_name='landing_location', null=True, blank=True,
+                                 on_delete=models.SET_NULL)
+
+    @property
+    def successful_landings(self):
+        cache_key = "%s-%s" % (self.id, "landing-location-successful-landings")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        now = datetime.datetime.now(tz=utc)
+        from django.apps import apps
+        Launch = apps.get_model('api', 'Launch')
+        count = Launch.objects.filter(rocket__firststage__landing__landing_location__id=self.id,
+                                      rocket__firststage__landing__success=True).filter(net__lte=now).order_by('-net').count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_HOUR)
+        return count
 
     def __str__(self):
         return "%s (%s)" % (self.name, self.abbrev)
@@ -192,8 +217,8 @@ class SpaceStationType(models.Model):
 
 class DockingLocation(models.Model):
     name = models.CharField(max_length=255)
-    spacestation = models.ForeignKey('api.SpaceStation', on_delete=models.PROTECT, related_name='docking_location', default=4)
-
+    spacestation = models.ForeignKey('api.SpaceStation', on_delete=models.PROTECT, related_name='docking_location',
+                                     default=4)
 
     @property
     def docked(self):

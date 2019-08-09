@@ -2,16 +2,9 @@
 from __future__ import unicode_literals
 
 import os
-import sys
 import uuid
 
-from PIL import Image
-from compat import BytesIO
-from django.contrib.contenttypes.models import ContentType
-from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.urls import reverse
 from django_extensions.db.fields import AutoSlugField
-from pytz import utc
 
 from api.utils.utilities import resize_for_upload, resize_needed, get_map_url, get_pad_url
 
@@ -20,12 +13,9 @@ try:
 except ImportError:
     from urllib.parse import quote  # Python 3+
 
-from django.core.cache import cache
-from django.contrib.sites.models import Site
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q, F
 from django.db.models.functions import datetime
-from django.db import models
 
 from configurations.models import *
 from custom_storages import LogoStorage, AgencyImageStorage, OrbiterImageStorage, LauncherImageStorage, \
@@ -37,7 +27,6 @@ from custom_storages import LogoStorage, AgencyImageStorage, OrbiterImageStorage
 # Example: SpaceX has Falcon 9 Launchers and Dragon spacecrafts
 #
 from django.template.defaultfilters import truncatechars, slugify
-import urllib
 
 CACHE_TIMEOUT_ONE_DAY = 24 * 60 * 60
 CACHE_TIMEOUT_TEN_MINUTES = 10 * 60
@@ -565,6 +554,30 @@ class Location(models.Model):
     map_image = models.FileField(default=None, storage=LaunchImageStorage(), upload_to=location_path,
                                  null=True, blank=True)
 
+    @property
+    def total_launch_count(self):
+        cache_key = "%s-%s" % (self.id, "location-total")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        now = datetime.datetime.now(tz=utc)
+        count = Launch.objects.filter(pad__location__id=self.id).filter(net__lte=now).count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def total_landing_count(self):
+        cache_key = "%s-%s" % (self.id, "location-total")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        now = datetime.datetime.now(tz=utc)
+        count = Launch.objects.filter(rocket__firststage__landing__landing_location__location__id=self.id).filter(net__lte=now).count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
     def save(self, *args, **kwargs):
         if not self.map_image:
             get_map_url(self)
@@ -594,6 +607,31 @@ class Pad(models.Model):
     location = models.ForeignKey(Location, related_name='pad', blank=True, null=True, on_delete=models.CASCADE)
     map_image = models.FileField(default=None, storage=LaunchImageStorage(), upload_to=pad_path,
                                  null=True, blank=True)
+
+    @property
+    def orbital_launch_attempt_count(self):
+        cache_key = "%s-%s" % (self.id, "pad-launch-attempt-count")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        now = datetime.datetime.now(tz=utc)
+        start_of_year = datetime.datetime(year=now.year, month=1, day=1)
+        count = Launch.objects.filter(net__gte=start_of_year, net__lte=now, pad__id=self.id).filter(~Q(mission__orbit__name="Sub-Orbital")).count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def total_launch_count(self):
+        cache_key = "%s-%s" % (self.id, "pad-total")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        now = datetime.datetime.now(tz=utc)
+        count = Launch.objects.filter(pad__id=self.id).filter(net__lte=now).count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
 
     def save(self, *args, **kwargs):
         if not self.map_image:
@@ -1135,6 +1173,43 @@ class Launch(models.Model):
             count = Launch.objects.filter(net__gte=start_of_year, net__lte=self.net).filter(~Q(mission__orbit__name="Sub-Orbital")).count()
         else:
             count = None
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def location_launch_attempt_count(self):
+        cache_key = "%s-%s" % (self.id, "location-launch-attempt-count")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        start_of_year = datetime.datetime(year=self.net.year, month=1, day=1)
+        count = Launch.objects.filter(net__gte=start_of_year, net__lte=self.net, pad__location__id=self.pad.location.id).count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def pad_launch_attempt_count(self):
+        cache_key = "%s-%s" % (self.id, "pad-launch-attempt-count")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        start_of_year = datetime.datetime(year=self.net.year, month=1, day=1)
+        count = Launch.objects.filter(net__gte=start_of_year, net__lte=self.net, pad__id=self.pad.id).count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def agency_launch_attempt_count(self):
+        cache_key = "%s-%s" % (self.id, "agency-launch-attempt-count")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        start_of_year = datetime.datetime(year=self.net.year, month=1, day=1)
+        count = Launch.objects.filter(net__gte=start_of_year, net__lte=self.net,
+                                      launch_service_provider__id=self.launch_service_provider.id).count()
         cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
         return count
 
