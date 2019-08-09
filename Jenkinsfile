@@ -18,23 +18,20 @@ pipeline{
 				}
 			}
 		}
-		stage('Test'){
-			parallel {
-				stage('Run Django Tests'){
-					steps {
-						withPythonEnv('python3') {
-							sh 'python3 manage.py test'
-						}
-					}
-				}
-				stage('Run Formatting Checks'){
-					steps {
-						warnError('Pylint failed!'){
-							sh 'pylint **/*.py'
-						}
-					}
+		stage('Run Django Tests'){
+			steps {
+				withPythonEnv('python3') {
+					sh 'python3 manage.py test'
 				}
 			}
 		}
+		stage('Run Formatting Checks'){
+			steps {
+				catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+					sh 'pylint **/*.py'
+				}
+			}
+		}
+			
 	}
 }
