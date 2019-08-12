@@ -178,8 +178,8 @@ class NotificationHandler:
             # Send notifications to SLN Android after 3.0.0
             # Catch any issue with sending notification.
             try:
-                logger.info('Notification v2 Data - %s' % v1_data)
-                logger.info('Topic Data v2- %s' % topics_v1)
+                logger.info('Notification v2 Data - %s' % v2_data)
+                logger.info('Topic Data v2- %s' % topics_v2)
                 android_result_v2 = push_service.notify_topic_subscribers(data_message=v2_data,
                                                                           condition=topics_v2,
                                                                           time_to_live=86400, )
