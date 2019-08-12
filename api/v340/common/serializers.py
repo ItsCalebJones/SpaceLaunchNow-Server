@@ -103,7 +103,7 @@ class SpacecraftConfigurationDetailSerializer(QueryFieldsMixin, serializers.Hype
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
-        fields = ('id', 'name', 'country_code', 'map_image')
+        fields = ('id', 'name', 'country_code', 'map_image', 'total_launch_count', 'total_landing_count')
 
 
 class PadSerializer(serializers.ModelSerializer):
@@ -112,7 +112,7 @@ class PadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pad
         fields = ('id', 'agency_id', 'name', 'info_url', 'wiki_url', 'map_url', 'latitude', 'longitude', 'location',
-                  'map_image')
+                  'map_image', 'total_launch_count')
 
 
 class LocationSerializerMini(serializers.ModelSerializer):
@@ -152,9 +152,11 @@ class LandingTypeSerializer(serializers.ModelSerializer):
 
 
 class LandingLocationSerializer(serializers.ModelSerializer):
+    location = LocationSerializer(many=False)
+
     class Meta:
         model = LandingLocation
-        fields = ('id', 'name', 'abbrev', 'description',)
+        fields = ('id', 'name', 'abbrev', 'description', 'location', 'successful_landings')
 
 
 class MissionSerializer(serializers.ModelSerializer):
