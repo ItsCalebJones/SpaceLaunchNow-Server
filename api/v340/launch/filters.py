@@ -30,7 +30,6 @@ class LaunchDateFilter(FilterSet):
     )
     orbit = ListFilter(name='mission__orbit')
 
-
     class Meta:
         model = Launch
         fields = {
