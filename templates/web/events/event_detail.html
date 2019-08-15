@@ -72,7 +72,7 @@
                             <span class="badge badge-pill badge-info">{{ event.expedition.first.name }}</span>
                         {% endif %}
                         <p class="card-description mt-1">
-                            {{ event.description }}
+                            {{ event.description|linebreaks  }}
                         </p>
 
                         {% if event.news_url %}
