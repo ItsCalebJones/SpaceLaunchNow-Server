@@ -18,7 +18,7 @@ logger = logging.getLogger('bot.discord.notifications')
 class Notifications:
     def __init__(self, bot):
         self.bot = bot
-        self.description = 120
+        self.description = 0
 
     @commands.command(pass_context=True)
     async def addNotificationChannel(self, context):
@@ -362,7 +362,7 @@ class Notifications:
             now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
             message = u"""
             %s in %s. Use ?help for commands.
-            """ % (launch.name, defaultfilters.timeuntil(launch_date, now))
+            """ % (launch.rocket.configuration.name, defaultfilters.timeuntil(launch_date, now))
             squid_bot_game = discord.Game(name=message, url=launch.get_full_absolute_url(), type=0)
             await self.bot.change_presence(game=squid_bot_game, status=discord.Status.online, afk=False)
             self.description = 0
