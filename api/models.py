@@ -700,9 +700,35 @@ class Launcher(models.Model):
     launcher_config = models.ForeignKey(LauncherConfig, related_name='launcher', null=True, on_delete=models.CASCADE)
 
     @property
-    def previous_flights(self):
+    def successful_landings(self):
+        cache_key = "%s-%s" % (self.id, "stage_successful_landings")
+        res = cache.get(cache_key)
+        if res:
+            return res
 
-        cache_key = "%s-%s" % (self.id, "launcher")
+        now = datetime.datetime.now(tz=utc)
+        landings = Landing.objects.values('id').filter(firststage__launcher__id=self.id,
+                                                       success=True, firststage__rocket__launch__net__lte=now).count()
+        cache.set(cache_key, landings, CACHE_TIMEOUT_ONE_HOUR)
+        return landings
+
+    @property
+    def attempted_landings(self):
+        cache_key = "%s-%s" % (self.id, "stage_attempted_landings")
+        res = cache.get(cache_key)
+        if res:
+            return res
+
+        now = datetime.datetime.now(tz=utc)
+        landings = Landing.objects.values('id').filter(firststage__launcher__id=self.id,
+                                                       attempt=True, firststage__rocket__launch__net__lte=now).count()
+        cache.set(cache_key, landings, CACHE_TIMEOUT_ONE_HOUR)
+        return landings
+
+    @property
+    def flights(self):
+
+        cache_key = "%s-%s" % (self.id, "launcher_flights")
         count = cache.get(cache_key)
         if count is not None:
             return count
@@ -727,7 +753,6 @@ class Launcher(models.Model):
             return u'%s' % self.serial_number
 
     class Meta:
-        ordering = ['serial_number', ]
         ordering = ['serial_number', ]
         verbose_name = 'Launch Vehicle'
         verbose_name_plural = 'Launch Vehicles'
@@ -843,8 +868,6 @@ class FirstStage(models.Model):
     landing = models.OneToOneField(Landing, related_name='firststage', null=True, blank=True, on_delete=models.SET_NULL)
     launcher = models.ForeignKey(Launcher, related_name='firststage', on_delete=models.CASCADE)
     rocket = models.ForeignKey(Rocket, related_name='firststage', on_delete=models.CASCADE)
-
-    # Not a property but keeping around as a helper
 
     @property
     def previous_flight(self):
@@ -1169,8 +1192,7 @@ class Launch(models.Model):
             return count
 
         if not self.mission.orbit or self.mission.orbit.name != "Sub-Orbital":
-            start_of_year = datetime.datetime(year=self.net.year, month=1, day=1)
-            count = Launch.objects.filter(net__gte=start_of_year, net__lte=self.net).filter(~Q(mission__orbit__name="Sub-Orbital")).count()
+            count = Launch.objects.filter(net__lte=self.net).filter(~Q(mission__orbit__name="Sub-Orbital")).count()
         else:
             count = None
         cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
@@ -1183,8 +1205,7 @@ class Launch(models.Model):
         if count is not None:
             return count
 
-        start_of_year = datetime.datetime(year=self.net.year, month=1, day=1)
-        count = Launch.objects.filter(net__gte=start_of_year, net__lte=self.net, pad__location__id=self.pad.location.id).count()
+        count = Launch.objects.filter(net__lte=self.net, pad__location__id=self.pad.location.id).count()
         cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
         return count
 
@@ -1195,14 +1216,64 @@ class Launch(models.Model):
         if count is not None:
             return count
 
-        start_of_year = datetime.datetime(year=self.net.year, month=1, day=1)
-        count = Launch.objects.filter(net__gte=start_of_year, net__lte=self.net, pad__id=self.pad.id).count()
+        count = Launch.objects.filter(net__lte=self.net, pad__id=self.pad.id).count()
         cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
         return count
 
     @property
     def agency_launch_attempt_count(self):
         cache_key = "%s-%s" % (self.id, "agency-launch-attempt-count")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        count = Launch.objects.filter(net__lte=self.net,
+                                      launch_service_provider__id=self.launch_service_provider.id).count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def orbital_launch_attempt_count_year(self):
+        cache_key = "%s-%s" % (self.id, "launches-orbital-launch-attempt-count-year")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        if not self.mission.orbit or self.mission.orbit.name != "Sub-Orbital":
+            start_of_year = datetime.datetime(year=self.net.year, month=1, day=1)
+            count = Launch.objects.filter(net__gte=start_of_year, net__lte=self.net).filter(~Q(mission__orbit__name="Sub-Orbital")).count()
+        else:
+            count = None
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def location_launch_attempt_count_year(self):
+        cache_key = "%s-%s" % (self.id, "location-launch-attempt-count-year")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        start_of_year = datetime.datetime(year=self.net.year, month=1, day=1)
+        count = Launch.objects.filter(net__gte=start_of_year, net__lte=self.net, pad__location__id=self.pad.location.id).count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def pad_launch_attempt_count_year(self):
+        cache_key = "%s-%s" % (self.id, "pad-launch-attempt-count-year")
+        count = cache.get(cache_key)
+        if count is not None:
+            return count
+
+        start_of_year = datetime.datetime(year=self.net.year, month=1, day=1)
+        count = Launch.objects.filter(net__gte=start_of_year, net__lte=self.net, pad__id=self.pad.id).count()
+        cache.set(cache_key, count, CACHE_TIMEOUT_ONE_DAY)
+        return count
+
+    @property
+    def agency_launch_attempt_count_year(self):
+        cache_key = "%s-%s" % (self.id, "agency-launch-attempt-count-year")
         count = cache.get(cache_key)
         if count is not None:
             return count
