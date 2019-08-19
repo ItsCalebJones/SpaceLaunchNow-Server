@@ -96,7 +96,7 @@ LOGGING = {
             'backupCount': 5
         },
         'notifications': {
-            'level': 'DEBUG' if DEBUG else 'INFO',
+            'level': config.BOT_NOTIFICATIONS,
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'log/notification.log',
             'formatter': 'standard',
@@ -104,7 +104,7 @@ LOGGING = {
             'backupCount': 5
         },
         'events': {
-            'level': 'DEBUG' if DEBUG else 'INFO',
+            'level': config.BOT_EVENTS,
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'log/events.log',
             'formatter': 'standard',
@@ -112,7 +112,7 @@ LOGGING = {
             'backupCount': 5
         },
         'discord': {
-            'level': 'DEBUG' if DEBUG else 'INFO',
+            'level': config.DISCORD,
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'log/discord.log',
             'formatter': 'standard',
@@ -120,7 +120,7 @@ LOGGING = {
             'backupCount': 5
         },
         'discord.notifications': {
-            'level': 'DEBUG' if DEBUG else 'INFO',
+            'level': config.DISCORD_NOTIFICATIONS,
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'log/discord_notifications.log',
             'formatter': 'standard',
@@ -128,7 +128,7 @@ LOGGING = {
             'backupCount': 5
         },
         'discord.tweets': {
-            'level': 'DEBUG' if DEBUG else 'INFO',
+            'level': config.DISCORD_TWEETS,
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'log/discord_tweets.log',
             'formatter': 'standard',
@@ -149,32 +149,32 @@ LOGGING = {
         },
         'bot.digest': {
             'handlers': ['django_default', 'digest', 'console'],
-            'level': 'INFO',
+            'level': config.BOT_DIGEST,
             'propagate': True,
         },
         'bot.notifications': {
             'handlers': ['django_default', 'notifications', 'console'],
-            'level': 'INFO',
+            'level': config.BOT_NOTIFICATIONS,
             'propagate': True,
         },
         'bot.events': {
             'handlers': ['django_default', 'events', 'console'],
-            'level': 'INFO',
+            'level': config.BOT_EVENTS,
             'propagate': True,
         },
         'bot.discord': {
             'handlers': ['django_default', 'discord', 'console'],
-            'level': 'DEBUG' if DEBUG else 'INFO',
+            'level': config.DISCORD,
             'propagate': True,
         },
         'bot.discord.notifications': {
             'handlers': ['django_default', 'discord.notifications', 'console'],
-            'level': 'DEBUG' if DEBUG else 'INFO',
+            'level': config.DISCORD_NOTIFICATIONS,
             'propagate': False,
         },
         'bot.discord.tweets': {
             'handlers': ['django_default', 'discord.tweets', 'console'],
-            'level': 'DEBUG' if DEBUG else 'INFO',
+            'level': config.DISCORD_TWEETS,
             'propagate': False,
         },
     },
