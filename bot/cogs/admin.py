@@ -86,11 +86,11 @@ class SLNAdmin:
 
     async def check_daily(self):
         stale = self.check_for_orphaned_launches()
-        await self.bot.send_message(self.bot.get_channel(id="484371128232706049"), "Checking for stale launches...")
+        await self.bot.send_message(self.bot.get_channel(id="608829443661889536"), "Checking for stale launches...")
         if len(stale) > 0:
-            await self.bot.send_message(self.bot.get_channel(id="484371128232706049"), embed=stale_to_embed(stale))
+            await self.bot.send_message(self.bot.get_channel(id="608829443661889536"), embed=stale_to_embed(stale))
         else:
-            await self.bot.send_message(self.bot.get_channel(id="484371128232706049"), "No stale Launches found!")
+            await self.bot.send_message(self.bot.get_channel(id="608829443661889536"), "No stale Launches found!")
 
     async def check_hourly(self):
         pass
