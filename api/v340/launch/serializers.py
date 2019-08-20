@@ -32,9 +32,11 @@ class LandingSerializer(serializers.ModelSerializer):
 
 
 class LauncherDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = Launcher
-        fields = ('id', 'url', 'details', 'flight_proven', 'serial_number', 'status', 'previous_flights', 'image_url')
+        fields = ('id', 'url', 'details', 'flight_proven', 'serial_number', 'status', 'image_url',
+                  'successful_landings', 'attempted_landings', 'flights')
 
 
 class LaunchSerializerMini(serializers.HyperlinkedModelSerializer):
@@ -174,7 +176,9 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
         'id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold',
         'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'launch_service_provider',
         'rocket', 'mission', 'pad', 'infoURLs', 'vidURLs', 'image', 'infographic', 'orbital_launch_attempt_count',
-        'location_launch_attempt_count', 'pad_launch_attempt_count', 'agency_launch_attempt_count')
+        'location_launch_attempt_count', 'pad_launch_attempt_count', 'agency_launch_attempt_count',
+        'orbital_launch_attempt_count_year', 'location_launch_attempt_count_year', 'pad_launch_attempt_count_year',
+        'agency_launch_attempt_count_year')
 
     def get_image(self, obj):
         if obj.image_url:
