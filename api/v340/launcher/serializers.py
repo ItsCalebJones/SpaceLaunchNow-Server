@@ -15,5 +15,5 @@ class LauncherDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Launcher
-        fields = ('id', 'url', 'flight_proven', 'serial_number', 'status', 'previous_flights', 'details',
+        fields = ('id', 'url', 'flight_proven', 'serial_number', 'status', 'details',
                   'launcher_config', 'image_url', 'successful_landings', 'attempted_landings', 'flights')
