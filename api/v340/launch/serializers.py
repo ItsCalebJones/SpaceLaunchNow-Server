@@ -173,7 +173,8 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
         'id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold',
         'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'launch_service_provider',
-        'rocket', 'mission', 'pad', 'infoURLs', 'vidURLs', 'image', 'infographic', 'orbital_launch_attempt_count')
+        'rocket', 'mission', 'pad', 'infoURLs', 'vidURLs', 'image', 'infographic', 'orbital_launch_attempt_count',
+        'location_launch_attempt_count', 'pad_launch_attempt_count', 'agency_launch_attempt_count')
 
     def get_image(self, obj):
         if obj.image_url:
