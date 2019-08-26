@@ -16,24 +16,23 @@ class SocialHandler:
         self.buffer = BufferAPI()
 
     def send_ten_minute_social(self, event):
-        message = "%s\n%s" % (event.name, event.description)
+        message = "%s in ten minutes!" % event.name
         if event.feature_image and hasattr(event.feature_image, 'url'):
-            message += "\n %s" % event.get_full_absolute_url()
-            self.buffer.send_to_all(message=message, image=event.feature_image.url, now=True)
+            self.buffer.send_to_instagram(message=message, image=event.feature_image.url, now=True)
             logger.info('Sent %s to ALL - with image!', event.name)
-        else:
-            self.buffer.send_to_twitter(message=message, link=event.get_full_absolute_url(), now=True)
-            self.buffer.send_to_facebook(message=message, link=event.get_full_absolute_url(), now=True)
-            logger.info('Sent %s to Twitter!', event.name)
+        message = message + "\n\n%s" % event.description
+        self.buffer.send_to_twitter(message=message, link=event.get_full_absolute_url(), now=True)
+        self.buffer.send_to_facebook(message=message, link=event.get_full_absolute_url(), now=True)
+        logger.info('Event %s to Buffer!', event.name)
 
     def send_webcast_social(self, event):
         if event.video_url:
-            message = "%s\n\n Webcast is now live at %s\n%s" % (event.name, event.video_url, event.description)
+            message = "%s webcast is live!" % event.name
             if event.feature_image and hasattr(event.feature_image, 'url'):
-                message += "\n %s" % event.get_full_absolute_url()
-                self.buffer.send_to_all(message=message, image=event.feature_image.url, now=True)
+                message += "\n%s" % event.get_full_absolute_url()
+                self.buffer.send_to_instagram(message=message, image=event.feature_image.url, now=True)
                 logger.info('Sent %s to ALL - with image!', event.name)
-            else:
-                self.buffer.send_to_twitter(message=message, link=event.get_full_absolute_url(), now=True)
-                self.buffer.send_to_facebook(message=message, link=event.get_full_absolute_url(), now=True)
-                logger.info('Sent %s to Twitter!', event.name)
+
+            self.buffer.send_to_twitter(message=message, link=event.get_full_absolute_url(), now=True)
+            self.buffer.send_to_facebook(message=message, link=event.get_full_absolute_url(), now=True)
+            logger.info('Event %s to Buffer!', event.name)
