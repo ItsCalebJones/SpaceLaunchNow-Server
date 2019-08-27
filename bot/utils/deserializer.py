@@ -40,6 +40,20 @@ def mission_type_json_to_model(data):
     return launch_status
 
 
+def rocket_json_to_model(data):
+    try:
+        launcher_config = LauncherConfig.objects.get(launch_library_id=data['id'])
+    except LauncherConfig.DoesNotExist:
+        launcher_config = LauncherConfig(launch_library_id=data['id'])
+        launcher_config.name = data['name']
+        launcher_config.full_name = data['name']
+        launcher_config.family_name = data['family']['name']
+        launcher_config.configuration = data['configuration']
+        if 'placeholder' not in data['imageURL'] and launcher_config.image_url is None:
+            download_launcher_image(launcher_config)
+    launcher_config.save()
+
+
 def launch_json_to_model(data):
     id = data['id']
     name = data['name']
@@ -154,6 +168,7 @@ def get_rocket(launch, data):
         except LauncherConfig.DoesNotExist:
             launcher_config = LauncherConfig(launch_library_id=data['rocket']['id'])
             launcher_config.name = data['rocket']['name']
+            launcher_config.full_name = data['rocket']['name']
             launcher_config.family_name = data['rocket']['familyname']
             launcher_config.configuration = data['rocket']['configuration']
         if launcher_config.manufacturer is None:

@@ -89,6 +89,14 @@ class LaunchLibrarySDK(object):
         url = self.api_url + '/agencytype'
         return send_request(url, method='GET', headers=headers)
 
+    def get_rockets(self):
+        """
+        Sends a request using `requests` module.
+        :return: Returns a HTTP Response object
+        """
+        url = self.api_url + '/rocket?limit=999&mode=verbose'
+        return send_request(url, method='GET', headers=headers)
+
     def get_mission_type(self):
         """
         Sends a request using `requests` module.

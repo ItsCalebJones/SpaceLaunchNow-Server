@@ -7,7 +7,7 @@ from pytz import utc
 from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.models import LaunchNotificationRecord, DailyDigestRecord
 from bot.utils.deserializer import launch_json_to_model, launch_status_json_to_model, mission_type_json_to_model, \
-    agency_type_json_to_model
+    agency_type_json_to_model, rocket_json_to_model
 
 # import the logging library
 
@@ -200,6 +200,14 @@ class LaunchRepository:
                 status.save()
                 statuses.append(status)
             return statuses
+
+    def get_launcher_configs(self):
+        response = self.launchLibrary.get_rockets()
+        if response.status_code == 200:
+            response_json = response.json()
+            rockets_json = response_json['rockets']
+            for rocket in rockets_json:
+                rocket_json_to_model(rocket)
 
 
 def update_notification_record(launch):
