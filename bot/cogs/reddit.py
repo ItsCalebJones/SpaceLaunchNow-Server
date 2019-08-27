@@ -150,7 +150,7 @@ class Reddit:
                                                                                   channel_id=context.message.channel.id,
                                                                                   server_id=context.message.server.id)
             channel.save()
-            await self.add_subreddit(subreddit_name=subreddit, discord_channel=channel)
+            await self.add_subreddit(subreddit_name=subreddit, channel=channel)
         else:
             await self.bot.send_message(context.message.channel,
                                         "Only server owners can add Twitter notification channels.")

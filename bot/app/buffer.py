@@ -24,7 +24,7 @@ class BufferAPI:
                        client_secret=config.BUFFER_SECRET_ID,
                        access_token=config.BUFFER_ACCESS_TOKEN)
 
-    def send_to_all(self, message: str = None, image: str = None, link: str = None, now: bool = False):
+    def send_to_all(self, message: str = None, image: str = None, link: str = None, now: bool = False, shorten: bool = True):
         profiles = Profiles(api=self.api).all()
         for profile in profiles:
             _message = message
@@ -33,7 +33,7 @@ class BufferAPI:
             if profile['service'] == 'twitter':
                 if len(_message) > 280:
                     _message = (_message[:277] + '...')
-            profile.updates.new(text=_message, photo=image, link=link, now=now)
+            profile.updates.new(text=_message, photo=image, link=link, now=now, shorten=shorten)
 
     def send_to_instagram(self, message: str = None, image: str = None, now: bool = False):
         profile = Profiles(api=self.api).filter(service='instagram')[0]

@@ -29,7 +29,8 @@ class EventNotificationHandler:
         self.send_notification(self.build_topics(event),
                                self.build_data(event, 'event_webcast'))
         self.send_flutter_notification(self.build_flutter_topics(event),
-                                       self.build_data(event, 'event_webcast'))
+                                       self.build_data(event, 'event_webcast'),
+                                       webcast=True)
 
     def build_data(self, event, type):
         if event.video_url:
@@ -87,17 +88,21 @@ class EventNotificationHandler:
             topic = "'flutter_production_v2' in topics && 'events' in topics"
         return topic
 
-    def send_flutter_notification(self, topics, data):
+    def send_flutter_notification(self, topics, data, webcast: bool = False):
         logger.info('----------------------------------------------------------')
         logger.info('Flutter Notification')
         logger.info('Notification Data: %s' % data)
         logger.info('Topics: %s' % topics)
         push_service = FCMNotification(api_key=keys['FCM_KEY'])
+        if webcast:
+            message_body = "Live webcast is available!"
+        else:
+            message_body = data['event']['description']
         notification = push_service.notify_topic_subscribers(data_message=data,
                                                              condition=topics,
                                                              time_to_live=86400,
                                                              message_title=data['event']['name'],
-                                                             message_body=data['event']['description'])
+                                                             message_body=message_body)
         logger.info(notification)
         logger.info('----------------------------------------------------------')
 
