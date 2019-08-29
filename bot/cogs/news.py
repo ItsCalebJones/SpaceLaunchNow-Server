@@ -30,9 +30,9 @@ def news_to_embed(news):
 
 
 def get_news():
-    response = requests.get(url='https://api.spaceflightnewsapi.net/articles?limit=5')
+    response = requests.get(url='https://spaceflightnewsapi.net/api/v1/articles?limit=5')
     if response.status_code == 200:
-        for item in response.json():
+        for item in response.json()['docs']:
             news, created = NewsItem.objects.get_or_create(id=item['_id'])
             if created:
                 news.title = item['title']
@@ -40,7 +40,10 @@ def get_news():
                 news.featured_image = item['featured_image']
                 news.news_site = item['news_site_long']
                 news.created_at = datetime.utcfromtimestamp(item['date_published']).replace(tzinfo=pytz.utc)
-                news.read = False
+                if item['featured']:
+                    news.should_notify = True
+                else:
+                    news.should_notify = False
                 try:
                     g = Goose()
                     article = g.extract(url=news.link)
@@ -61,6 +64,10 @@ def get_news():
                     if (news.created_at - datetime.utcfromtimestamp(item['date_published']).replace(tzinfo=pytz.utc)) > timedelta(1):
                         news.created_at = datetime.utcfromtimestamp(item['date_published']).replace(tzinfo=pytz.utc)
                         news.read = False
+                if item['featured']:
+                    news.should_notify = True
+                else:
+                    news.should_notify = False
                 news.link = item['url']
                 news.featured_image = item['featured_image']
                 news.save()
