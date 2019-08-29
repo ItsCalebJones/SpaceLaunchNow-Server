@@ -28,7 +28,7 @@ def get_message(launch, notification_type):
 
     if notification_type == 'netstampChanged':
         if launch.status.id == 1:
-            content = 'LAUNCH SCHEDULE UPDATE\n %s now launching from %s in %s.' % (
+            content = 'LAUNCH SCHEDULE UPDATE\n\n%s now launching from %s in %s.' % (
             launch.name, launch.pad.location.name,
             seconds_to_time(diff))
             if launch.hashtag:

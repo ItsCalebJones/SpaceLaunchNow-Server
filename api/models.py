@@ -1087,7 +1087,7 @@ class SpaceStation(models.Model):
 
     @property
     def docked_vehicles(self):
-        spacecraft = SpacecraftFlight.objects.filter(docking_events__space_station=self.id).filter(docking_events__docked=True).all()
+        spacecraft = SpacecraftFlight.objects.filter(docking_events__space_station=self.id, docking_events__docked=True).distinct()
         return spacecraft
 
     def __str__(self):

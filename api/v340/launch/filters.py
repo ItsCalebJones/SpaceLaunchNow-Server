@@ -28,27 +28,36 @@ class LaunchDateFilter(FilterSet):
         field_name='net', lookup_expr='lte',
         label=_('%s is less than or equal to' % _('NET'))
     )
-    orbit = ListFilter(name='mission__orbit')
 
     class Meta:
         model = Launch
         fields = {
-            'name', 'rocket__configuration__name', 'rocket__configuration', 'status',
-            'launch_library_id', 'rocket__spacecraftflight__spacecraft__name',
-            'rocket__spacecraftflight__spacecraft__id',
-            'rocket__configuration__manufacturer__name',
-            'orbit'
+            'name': ['exact', ],
+            'rocket__configuration__name': ['exact', ],
+            'rocket__configuration': ['exact', ],
+            'status': ['exact', ],
+            'launch_library_id': ['exact', ],
+            'rocket__spacecraftflight__spacecraft__name': ['exact', 'icontains'],
+            'rocket__spacecraftflight__spacecraft__id': ['exact', ],
+            'rocket__configuration__manufacturer__name': ['exact', 'icontains'],
+            'rocket__configuration__full_name': ['exact', 'icontains'],
+            'mission__orbit__name': ['exact', 'icontains']
         }
 
 
 class LaunchFilter(FilterSet):
-    orbit = ListFilter(name='mission__orbit')
 
     class Meta:
         model = Launch
         fields = {
-            'name', 'rocket__configuration__name', 'rocket__configuration', 'status',
-            'launch_library_id', 'rocket__spacecraftflight__spacecraft__name',
-            'rocket__spacecraftflight__spacecraft__id', 'rocket__configuration__manufacturer__name',
-            'orbit'
+            'name': ['exact', ],
+            'rocket__configuration__name': ['exact', ],
+            'rocket__configuration': ['exact', ],
+            'status': ['exact', ],
+            'launch_library_id': ['exact', ],
+            'rocket__spacecraftflight__spacecraft__name': ['exact', 'icontains'],
+            'rocket__spacecraftflight__spacecraft__id': ['exact', ],
+            'rocket__configuration__manufacturer__name': ['exact', 'icontains'],
+            'rocket__configuration__full_name': ['exact', 'icontains'],
+            'mission__orbit__name': ['exact', 'icontains']
         }
