@@ -32,7 +32,6 @@ class LandingSerializer(serializers.ModelSerializer):
 
 
 class LauncherDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-
     class Meta:
         model = Launcher
         fields = ('id', 'url', 'details', 'flight_proven', 'serial_number', 'status', 'image_url',
@@ -113,8 +112,8 @@ class SpacecraftFlightDetailedSerializerForLaunch(serializers.HyperlinkedModelSe
     class Meta:
         model = SpacecraftFlight
         fields = (
-        'id', 'url', 'mission_end', 'destination', 'launch_crew', 'onboard_crew', 'landing_crew', 'spacecraft',
-        'docking_events')
+            'id', 'url', 'mission_end', 'destination', 'launch_crew', 'onboard_crew', 'landing_crew', 'spacecraft',
+            'docking_events')
 
 
 class SpacecraftFlightSerializerForLaunch(serializers.HyperlinkedModelSerializer):
@@ -129,9 +128,11 @@ class AgencySerializerDetailedForLaunches(QueryFieldsMixin, serializers.Hyperlin
     class Meta:
         model = Agency
         fields = ('id', 'url', 'name', 'featured', 'type', 'country_code', 'abbrev', 'description', 'administrator',
-                  'founding_year', 'launchers', 'spacecraft', 'launch_library_url', 'consecutive_successful_landings',
-                  'successful_landings', 'failed_landings', 'attempted_landings', 'successful_launches',
-                  'failed_launches', 'pending_launches', 'info_url', 'wiki_url', 'logo_url', 'image_url', 'nation_url',)
+                  'founding_year', 'launchers', 'spacecraft', 'launch_library_url', 'total_launch_count',
+                  'consecutive_successful_launches', 'successful_launches',
+                  'failed_launches', 'pending_launches', 'consecutive_successful_landings',
+                  'successful_landings', 'failed_landings', 'attempted_landings', 'info_url', 'wiki_url', 'logo_url',
+                  'image_url', 'nation_url',)
 
 
 class RocketDetailedSerializer(serializers.ModelSerializer):
@@ -173,12 +174,12 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
         depth = 3
         model = Launch
         fields = (
-        'id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold',
-        'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'launch_service_provider',
-        'rocket', 'mission', 'pad', 'infoURLs', 'vidURLs', 'image', 'infographic', 'orbital_launch_attempt_count',
-        'location_launch_attempt_count', 'pad_launch_attempt_count', 'agency_launch_attempt_count',
-        'orbital_launch_attempt_count_year', 'location_launch_attempt_count_year', 'pad_launch_attempt_count_year',
-        'agency_launch_attempt_count_year')
+            'id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold',
+            'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'launch_service_provider',
+            'rocket', 'mission', 'pad', 'infoURLs', 'vidURLs', 'image', 'infographic', 'orbital_launch_attempt_count',
+            'location_launch_attempt_count', 'pad_launch_attempt_count', 'agency_launch_attempt_count',
+            'orbital_launch_attempt_count_year', 'location_launch_attempt_count_year', 'pad_launch_attempt_count_year',
+            'agency_launch_attempt_count_year')
 
     def get_image(self, obj):
         if obj.image_url:
@@ -213,9 +214,9 @@ class LaunchSerializer(serializers.HyperlinkedModelSerializer):
         depth = 3
         model = Launch
         fields = (
-        'id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold',
-        'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'launch_service_provider',
-        'rocket', 'mission', 'pad', 'infoURLs', 'vidURLs', 'image', 'infographic')
+            'id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'inhold',
+            'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'launch_service_provider',
+            'rocket', 'mission', 'pad', 'infoURLs', 'vidURLs', 'image', 'infographic')
 
     def get_image(self, obj):
         if obj.image_url:
