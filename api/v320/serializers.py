@@ -150,6 +150,7 @@ class LauncherSerializer(QueryFieldsMixin, serializers.ModelSerializer):
 
 
 class LauncherDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+    previous_flights = serializers.ReadOnlyField(source='flights')
 
     class Meta:
         model = Launcher
