@@ -36,7 +36,7 @@ class NotificationHandler:
         elif notification_type == 'tenMinutes':
             minutes = round(diff / 60)
             if minutes is 0:
-                minutes = "less then one"
+                minutes = "less than one"
             if launch.status.id == 1:
                 contents = 'Launch attempt from %s in %s minute(s).' % (launch.pad.location.name, minutes)
             else:
