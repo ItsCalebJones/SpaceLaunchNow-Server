@@ -41,9 +41,9 @@ def seconds_to_time(seconds):
         return "{0:.0f} hours, {1:.0f} minutes".format(hours, minutes)
     elif minutes > 0:
         if minutes < 10:
-            return "less then ten minutes"
+            return "less than ten minutes"
         if minutes < 60:
-            return "less then one hour"
+            return "less than one hour"
         return "{0:.0f} minutes".format(minutes)
 
 
