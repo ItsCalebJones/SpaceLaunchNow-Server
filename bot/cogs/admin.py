@@ -115,19 +115,19 @@ class SLNAdmin:
 
         if os.name == 'posix':
             if os.system('service gunicorn status') == 0:
-                embed.add_field(name="Gunicorn", value="Running", inline=False)
+                embed.add_field(name="Web Server", value="Running", inline=True)
             else:
-                embed.add_field(name="Gunicorn", value="Running", inline=False)
+                embed.add_field(name="Web Server", value="Not Running", inline=True)
 
             if os.system('service celeryd status') == 0:
-                embed.add_field(name="CeleryD", value="Running", inline=False)
+                embed.add_field(name="CeleryD", value="Running", inline=True)
             else:
-                embed.add_field(name="CeleryD", value="Running", inline=False)
+                embed.add_field(name="CeleryD", value="Not Running", inline=True)
 
             if os.system('service celerybeat status') == 0:
-                embed.add_field(name="Celery Beat", value="Running", inline=False)
+                embed.add_field(name="CeleryBeat", value="Running", inline=True)
             else:
-                embed.add_field(name="Celery Beat", value="Running", inline=False)
+                embed.add_field(name="CeleryBeat", value="Not Running", inline=True)
 
         await self.bot.edit_message(message=message, embed=embed, new_content="**Updated**: %s" % datetime.utcnow())
         logger.info('Done!')
