@@ -113,7 +113,7 @@ class SLNAdmin:
         embed.add_field(name="RAM Usage", value="%s%%" % psutil.virtual_memory().percent, inline=True)
         embed.add_field(name="Disk Usage", value=disk_usage, inline=True)
 
-        if os.name != 'nt' and os.name != 'posix':
+        if os.name == 'posix':
             if os.system('service gunicorn status') == 0:
                 embed.add_field(name="Gunicorn", value="Running", inline=False)
             else:
