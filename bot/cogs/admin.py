@@ -1,9 +1,13 @@
 import asyncio
 import logging
+import multiprocessing
+import os
+import shutil
 
 from datetime import datetime, timedelta
 
 import discord
+import psutil
 import pytz
 import requests
 from discord import Colour
@@ -85,17 +89,50 @@ class SLNAdmin:
             await self.bot.send_message(context.message.channel, "This is a staff only command.")
 
     async def check_daily(self):
-        stale = self.check_for_orphaned_launches()
         await self.bot.send_message(self.bot.get_channel(id="608829443661889536"), "Checking for stale launches...")
-        if len(stale) > 0:
-            await self.bot.send_message(self.bot.get_channel(id="608829443661889536"), embed=stale_to_embed(stale))
-        else:
-            await self.bot.send_message(self.bot.get_channel(id="608829443661889536"), "No stale Launches found!")
+        await self.check_for_orphaned_launches()
 
     async def check_hourly(self):
         pass
 
-    def check_for_orphaned_launches(self):
+    async def check_status(self):
+        logger.debug("Checking status...")
+        channel = self.bot.get_channel(id="575184059471364099")
+        message = await self.bot.get_message(channel, '619190488930582551')
+        total, used, free = shutil.disk_usage("/")
+
+        total = "Total: %d GB\n" % (total // (2 ** 30))
+        used = "Used: %d GB\n" % (used // (2 ** 30))
+        free = "Free: %d GB\n" % (free // (2 ** 30))
+        disk_usage = total + used + free
+        embed = discord.Embed(type="rich", title="nyc3-prod-01.spacelaunchnow.me",
+                              description="Server Stats for Host",
+                              color=Colour.blue(),
+                              url="https://spacelaunchnow.me")
+        embed.add_field(name="CPU Usage", value="%s%%" % psutil.cpu_percent(), inline=True)
+        embed.add_field(name="RAM Usage", value="%s%%" % psutil.virtual_memory().percent, inline=True)
+        embed.add_field(name="Disk Usage", value=disk_usage, inline=True)
+
+        if os.name != 'nt' and os.name != 'posix':
+            if os.system('service gunicorn status') == 0:
+                embed.add_field(name="Gunicorn", value="Running", inline=False)
+            else:
+                embed.add_field(name="Gunicorn", value="Running", inline=False)
+
+            if os.system('service celeryd status') == 0:
+                embed.add_field(name="CeleryD", value="Running", inline=False)
+            else:
+                embed.add_field(name="CeleryD", value="Running", inline=False)
+
+            if os.system('service celerybeat status') == 0:
+                embed.add_field(name="Celery Beat", value="Running", inline=False)
+            else:
+                embed.add_field(name="Celery Beat", value="Running", inline=False)
+
+        await self.bot.edit_message(message=message, embed=embed, new_content="**Updated**: %s" % datetime.utcnow())
+        logger.info('Done!')
+
+    async def check_for_orphaned_launches(self):
         logger.info('Task - Get Upcoming launches!')
 
         # Delete notification records from old launches.
@@ -107,6 +144,13 @@ class SLNAdmin:
         three_days_past = datetime.today() - timedelta(days=3)
         launches = Launch.objects.filter(last_updated__lte=three_days_past, launch_library=True)
         stale = []
+        if 0 < len(launches) < 10:
+            await self.bot.send_message(self.bot.get_channel(id="608829443661889536"), "Found %d potentially stale." % len(launches))
+        elif len(launches) == 0:
+            await self.bot.send_message(self.bot.get_channel(id="608829443661889536"), "No stale Launches found!")
+        elif len(launches) <= 10:
+            await self.bot.send_message(self.bot.get_channel(id="608829443661889536"),
+                                        "WARNING: Found %d potentially stale - sync services may not be functioning." % len(launches))
         if len(launches) > 0:
             logger.info("Found stale launches - checking to see if they are deleted from Launch Library")
             repository = LaunchRepository()
@@ -114,8 +158,8 @@ class SLNAdmin:
                 logger.debug("Stale - %s" % launch.name)
                 if repository.is_launch_deleted(launch.launch_library_id):
                     stale.append(launch)
-                    logger.error("Delete this launch! - %s ID: %d" % (launch.name, launch.launch_library_id))
-        return stale
+                    logger.error(u"Delete this launch! - %s ID: %d" % (launch.name, launch.launch_library_id))
+        await self.bot.send_message(self.bot.get_channel(id="608829443661889536"), embed=stale_to_embed(stale))
 
     async def event_loop(self):
         await self.bot.wait_until_ready()
@@ -126,6 +170,7 @@ class SLNAdmin:
                 await self.check_daily()
             if hourly == hourly_send_time:
                 await self.check_hourly()
+            await self.check_status()
             await asyncio.sleep(60)
 
 

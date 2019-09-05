@@ -60,6 +60,7 @@ pyasn1-modules==0.2.1
 pyfcm==1.4.5
 pytz==2017.2
 psycopg2==2.7.5
+psutil==5.6.3
 python-memcached==1.59
 praw==6.0.0
 regex==2018.2.21
