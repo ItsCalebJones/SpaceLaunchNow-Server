@@ -55,7 +55,7 @@ class NotificationHandler:
             if launch.status.id == 1:
                 contents = 'Launch attempt from %s in %s hours.' % (launch.pad.location.name, hours)
             elif launch.status.id == 2 or launch.status.id == 5:
-                contents = 'Launch might be launching from %s in %s hours.' % (launch.pad.location.name, hours)
+                contents = 'Might be launching from %s in %s hours.' % (launch.pad.location.name, hours)
             else:
                 logger.error("Invalid state for sending a notification - Launch: %s" % launch)
                 return
@@ -63,7 +63,7 @@ class NotificationHandler:
             if launch.status.id == 1:
                 contents = 'Launch attempt from %s in one hour.' % launch.pad.location.name
             elif launch.status.id == 2 or launch.status.id == 5:
-                contents = 'Launch might be launching from %s in one hour.' % launch.pad.location.name
+                contents = 'Might be launching from %s in one hour.' % launch.pad.location.name
             else:
                 logger.error("Invalid state for sending a notification - Launch: %s" % launch)
                 return
