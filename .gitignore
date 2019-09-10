@@ -3,6 +3,7 @@
 env/**
 venv3/**
 env3/**
+env37test/**
 data/reddit/settings.json
 db.sqlite3.bak
 .idea/**
