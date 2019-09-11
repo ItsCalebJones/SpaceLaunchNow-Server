@@ -1152,7 +1152,7 @@ class Launch(models.Model):
     holdreason = models.CharField(max_length=2048, blank=True, null=True)
     failreason = models.CharField(max_length=2048, blank=True, null=True)
     hashtag = models.CharField(max_length=2048, blank=True, null=True)
-    slug = AutoSlugField(populate_from=['name', 'hashtag', 'id'])
+    slug = AutoSlugField(populate_from=['name', 'launch_service_provider__name', 'pad__location__name'], overwrite=True)
     rocket = models.OneToOneField(Rocket, blank=True, null=True, related_name='launch', unique=True)
     pad = models.ForeignKey(Pad, related_name='launch', null=True, on_delete=models.SET_NULL)
     mission = models.ForeignKey(Mission, related_name='launch', null=True, blank=True, on_delete=models.SET_NULL)
