@@ -141,14 +141,14 @@ def launch_by_slug(request, slug):
                 return create_launch_view(request, Launch.objects.get(slug=slug))
             return redirect('launch_by_slug', slug=launch.slug)
         except ObjectDoesNotExist:
-            raise Http404
+            return redirect('launches')
     except ValueError:
         # If it's a value error, then the string
         # is not a valid hex code for a UUID.
         try:
             return create_launch_view(request, Launch.objects.get(slug=slug))
         except ObjectDoesNotExist:
-            raise Http404
+            return redirect('launches')
 
 
 # Create your views here.
@@ -156,7 +156,7 @@ def launch_by_id(request, id):
     try:
         return redirect('launch_by_slug', slug=Launch.objects.get(launch_library_id=id).slug)
     except ObjectDoesNotExist:
-        raise Http404
+        return redirect('launches')
 
 
 def get_launch_status(launch):
