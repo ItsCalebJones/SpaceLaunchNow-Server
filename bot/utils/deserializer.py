@@ -71,6 +71,7 @@ def launch_json_to_model(data):
     tbdtime = data['tbdtime']
     tbddate = data['tbddate']
     launch_service_provider = get_lsp(data)
+    pad = get_location(data)
 
     launch, created = Launch.objects.get_or_create(launch_library_id=id)
     launch.name = name
@@ -85,6 +86,8 @@ def launch_json_to_model(data):
         launch.status = LaunchStatus.objects.get(id=2)
 
         logger.error("Launch LLID: %s did not have a status." % launch.launch_library_id)
+    launch.pad = pad
+    launch.launch_service_provider = launch_service_provider
     launch.inhold = inhold
     launch.probability = probability
     launch.holdreason = holdreason
@@ -92,7 +95,6 @@ def launch_json_to_model(data):
     launch.hashtag = hashtag
     launch.tbddate = tbddate
     launch.tbdtime = tbdtime
-    launch.launch_service_provider = launch_service_provider
     launch.net = datetime.datetime.strptime(net, '%B %d, %Y %H:%M:%S %Z').replace(tzinfo=pytz.utc)
     launch.window_end = datetime.datetime.strptime(window_end, '%B %d, %Y %H:%M:%S %Z').replace(tzinfo=pytz.utc)
     launch.window_start = datetime.datetime.strptime(window_start, '%B %d, %Y %H:%M:%S %Z').replace(tzinfo=pytz.utc)
@@ -116,7 +118,6 @@ def launch_json_to_model(data):
                     info_found = True
         if not info_found:
             InfoURLs.objects.get_or_create(info_url=url, launch=launch)
-    launch.pad = get_location(launch, data)
     launch.mission = get_mission(launch, data)
     launch.rocket = get_rocket(launch, data)
     check_notification(launch)
@@ -134,12 +135,14 @@ def check_notification(launch):
             LaunchNotificationRecord.objects.get_or_create(launch=launch)
 
 
-def get_location(launch, data):
+def get_location(data):
     if 'location' in data and data['location'] is not None:
         try:
             location = Location.objects.get(launch_library_id=data['location']['id'])
         except Location.DoesNotExist:
-            location = Location(launch_library_id=data['location']['id'], name=data['location']['name'], country_code=data['location']['countryCode'])
+            location = Location(launch_library_id=data['location']['id'],
+                                name=data['location']['name'],
+                                country_code=data['location']['countryCode'])
             location.save()
         if data['location']['pads'] is not None and len(data['location']['pads']) > 0:
                 try:

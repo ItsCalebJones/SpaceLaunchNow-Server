@@ -253,7 +253,7 @@ class LaunchAdmin(admin.ModelAdmin):
                    ('rocket__configuration__manufacturer__name', custom_titled_filter('LSP Name')),
                    ('rocket__configuration__name', custom_titled_filter('Launch Configuration Name')))
     ordering = ('net',)
-    search_fields = ('name', 'rocket__configuration__manufacturer__name', 'mission__description')
+    search_fields = ('name', 'rocket__configuration__manufacturer__name', 'mission__description', 'launch_library_id', 'id')
     # readonly_fields = ['slug', 'launch_library_id', 'launch_library']
     form = LaunchForm
     list_select_related = (
