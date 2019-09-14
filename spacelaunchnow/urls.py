@@ -21,7 +21,8 @@ from django.views.generic import TemplateView
 import web
 from api.v330.router import api_urlpatterns as api_v330
 from api.v340.router import api_urlpatterns as api_v340
-from api.sitemaps import LaunchSitemap
+from api.sitemaps import UpcomingLaunchSitemap, EventSitemap, PreviousLaunchSitemap, AstronautSitemap, BoosterSitemap, \
+    SpacestationSitemap
 from api.v320.router import api_urlpatterns as api_v320
 from api.v310.router import api_urlpatterns as api_v310
 from api.v300.router import api_urlpatterns as api_v300
@@ -33,7 +34,13 @@ from app.views import staff_view, translator_view, about_view
 from web.views import LauncherConfigListView, LaunchFeed, EventFeed
 
 sitemaps = {
-    'posts': LaunchSitemap
+    'upcoming': UpcomingLaunchSitemap,
+    'previous': PreviousLaunchSitemap,
+    'events': EventSitemap,
+    'astronauts': AstronautSitemap,
+    'boosters': BoosterSitemap,
+    'spacestations': SpacestationSitemap,
+
 }
 default_settings = [
     url(r'^robots\.txt', include('robots.urls')),
