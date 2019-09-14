@@ -39,7 +39,7 @@ class LaunchRepository:
 
                 for launch in launch_data:
                     launch = launch_json_to_model(launch)
-                    logger.debug("Saving Launch: %s" % launch.name)
+                    logger.debug(u"Saving Launch: %s" % launch.name)
                     launch.save()
                     launches.append(launch)
                 if not all:

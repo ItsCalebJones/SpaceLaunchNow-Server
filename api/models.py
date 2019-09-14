@@ -1135,7 +1135,7 @@ class DockingEvent(models.Model):
 
 class Launch(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
-    launch_library_id = models.IntegerField(editable=True, null=True, blank=True)
+    launch_library_id = models.IntegerField(editable=True, null=True, blank=True, unique=True)
     launch_library = models.NullBooleanField(default=False)
     webcast_live = models.BooleanField(default=False)
     name = models.CharField(max_length=2048, blank=True)
@@ -1152,7 +1152,7 @@ class Launch(models.Model):
     holdreason = models.CharField(max_length=2048, blank=True, null=True)
     failreason = models.CharField(max_length=2048, blank=True, null=True)
     hashtag = models.CharField(max_length=2048, blank=True, null=True)
-    slug = AutoSlugField(populate_from=['name', 'hashtag', 'id'])
+    slug = AutoSlugField(populate_from=['name'], overwrite=True, allow_duplicates=False, allow_unicode=False)
     rocket = models.OneToOneField(Rocket, blank=True, null=True, related_name='launch', unique=True)
     pad = models.ForeignKey(Pad, related_name='launch', null=True, on_delete=models.SET_NULL)
     mission = models.ForeignKey(Mission, related_name='launch', null=True, blank=True, on_delete=models.SET_NULL)
