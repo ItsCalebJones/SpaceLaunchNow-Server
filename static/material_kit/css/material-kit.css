@@ -35,7 +35,7 @@ body {
   line-height: 1.5;
   color: #212529;
   text-align: left;
-  background-color: #fafafa; }
+  background-color: #fdfdfd; }
 
 [tabindex="-1"]:focus {
   outline: 0 !important; }
@@ -7989,7 +7989,7 @@ button:focus {
     margin: 0; }
 
 body {
-  background-color: #eee;
+  background-color: #fafafa;
   color: #3C4858;
   font-weight: 300; }
 
