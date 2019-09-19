@@ -1,8 +1,19 @@
 from api.v340.common.serializers import *
 
 
+class SpacecraftFlightForDockingEvent(serializers.HyperlinkedModelSerializer):
+    spacecraft = SpacecraftDetailedNoFlightsSerializer(read_only=True, many=False)
+    launch = LaunchListSerializer(read_only=True, many=False, source='rocket.launch')
+    id = serializers.IntegerField(source='pk')
+
+    class Meta:
+        model = SpacecraftFlight
+        fields = (
+            'id', 'url', 'spacecraft', 'launch', )
+
+
 class DockingEventDetailedSerializerForSpacestation(serializers.HyperlinkedModelSerializer):
-    flight_vehicle = serializers.StringRelatedField(read_only=True, many=False)
+    flight_vehicle = SpacecraftFlightForDockingEvent(read_only=True, many=False)
 
     class Meta:
         model = DockingEvent
