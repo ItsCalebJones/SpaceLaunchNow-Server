@@ -92,8 +92,15 @@ class SpacecraftDetailedNoFlightsSerializer(serializers.HyperlinkedModelSerializ
         fields = ('id', 'url', 'name', 'serial_number', 'status', 'description', 'spacecraft_config',)
 
 
+class DockingLocationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = DockingLocation
+        fields = ('id', 'name',)
+
+
 class DockingEventSerializerForSpacecraftFlight(serializers.ModelSerializer):
-    docking_location = serializers.StringRelatedField(many=False, read_only=True)
+    docking_location = DockingLocationSerializer(many=False, read_only=True)
     spacestation = SpaceStationSerializerForCommon(many=False, read_only=True, source='space_station')
 
     class Meta:
