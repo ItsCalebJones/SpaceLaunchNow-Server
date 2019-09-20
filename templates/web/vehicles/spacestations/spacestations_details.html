@@ -61,6 +61,16 @@
             </script>
             <!-- Post Content Column -->
             <div class="col-lg-9 col-md-12 col-xl-9">
+                <div class="container">
+                    <nav aria-label="breadcrumb" role="navigation">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/">Home</a></li>
+                            <li class="breadcrumb-item"><a href="/vehicle">Vehicles</a></li>
+                            <li class="breadcrumb-item"><a href="/vehicle/spacestation">Space Stations</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ vehicle.name }}</li>
+                        </ol>
+                    </nav>
+                </div>
                 <div class="card card-blog">
                     {% if vehicle.image_url %}
                         <div class="card-header card-header-image">

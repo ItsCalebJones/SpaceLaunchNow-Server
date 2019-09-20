@@ -42,6 +42,15 @@
 {% block content %}
     <div class="container">
         <div class="container mt-5">
+            <div class="container">
+                <nav aria-label="breadcrumb" role="navigation">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item"><a href="/vehicle">Vehicles</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Launch Vehicles</li>
+                    </ol>
+                </nav>
+            </div>
             <div class="row">
                 <div class="col-md-8 ml-auto mr-auto text-center">
                     <h1 class="title">Launch Vehicles</h1>
@@ -62,26 +71,18 @@
         </div>
         <div class="row">
             <div class="col-md-12 x-auto">
-                <div class="col-md-8 mx-auto">
+                <div class="col-md-12 mx-auto">
                     <div class="card">
                         <div class="card-body">
-                            <h2>Launch Vehicle Filters</h2>
-                            <h3>Filter by Agency, Status or Family</h3>
-                            <button class="btn btn-round btn-primary"
-                                    data-toggle="collapse" data-target="#collapseOne" aria-expanded="false"
-                                    aria-controls="collapseOne">
-                                Show Filters
-                            </button>
-                            <div id="collapseOne" class="collapse mt-2" aria-labelledby="headingOne"
-                                 data-parent="#accordion">
-                                {% if filter %}
-                                    <form action="" method="get" class="form">
-                                        {% bootstrap_form filter.form %}
-                                        {% bootstrap_button 'filter' %}
-                                        <a class="btn btn-primary" href="/vehicle/launch_vehicle">Clear</a>
-                                    </form>
-                                {% endif %}
-                            </div>
+                            <h2 class="title">Launch Vehicle Filters</h2>
+                            <h5>Filter by Agency, Status or Family</h5>
+                            {% if filter %}
+                                <form action="" method="get" class="form">
+                                    {% bootstrap_form filter.form %}
+                                    {% bootstrap_button 'filter' %}
+                                    <a class="btn btn-primary" href="/vehicle/launch_vehicle">Clear</a>
+                                </form>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
