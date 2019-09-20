@@ -23,10 +23,17 @@ class SpaceStationSerializerForDockingEvent(serializers.HyperlinkedModelSerializ
         fields = ('id', 'url', 'name', 'image_url')
 
 
+class DockingLocationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = DockingLocation
+        fields = ('id', 'name',)
+
+
 class DockingEventSerializer(serializers.HyperlinkedModelSerializer):
     launch_id = serializers.CharField(source='flight_vehicle.rocket.launch.id')
     flight_vehicle = SpacecraftFlightSerializerForDockingEvent(read_only=True)
-    docking_location = serializers.StringRelatedField(many=False, read_only=True)
+    docking_location = DockingLocationSerializer(many=False, read_only=True)
 
     class Meta:
         model = DockingEvent
@@ -36,10 +43,9 @@ class DockingEventSerializer(serializers.HyperlinkedModelSerializer):
 class DockingEventDetailedSerializer(serializers.HyperlinkedModelSerializer):
     launch_id = serializers.CharField(source='flight_vehicle.rocket.launch.id')
     flight_vehicle = SpacecraftFlightDetailedSerializerForDockingEvent(read_only=True, many=False)
-    docking_location = serializers.StringRelatedField(many=False, read_only=True)
+    docking_location = DockingLocationSerializer(many=False, read_only=True)
     space_station = SpaceStationSerializerForDockingEvent(many=False, read_only=True)
 
     class Meta:
         model = DockingEvent
         fields = ('id', 'url', 'launch_id', 'docking', 'departure', 'flight_vehicle', 'docking_location', 'space_station')
-
