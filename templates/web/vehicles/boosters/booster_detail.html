@@ -25,14 +25,14 @@
 
     <meta name="robots" content="index, follow"/>
 
-    <meta property="og:type" content="article" />
+    <meta property="og:type" content="article"/>
     <meta property="og:site_name" content="Space Launch Now"/>
 
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:title" content="Space Launch Now - {{ vehicle.serial_number }}">
     <meta name="twitter:description" content="{{ vehicle.serial_number }} - {{ vehicle.details|truncatechars:100 }}">
     <meta name="twitter:image" content="https://spacelaunchnow.me/static/img/social.png">
-        {% if vehicle.image_url %}
+    {% if vehicle.image_url %}
         <meta name="twitter:image" content="{{ vehicle.image_url.url }}"/>
     {% else %}
         <meta name="twitter:image" content="https://spacelaunchnow.me/static/img/social.png"/>
@@ -49,10 +49,20 @@
 
 {% block content %}
     <!-- Page Content -->
-    <div class="container" style="margin-top:100px; margin-bottom: 16px">
+    <div class="container">
         <div class="row">
-            <div class="container">
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- Post Content Column -->
+            <div class="col-lg-9 col-md-12 col-xl-9">
+                <div class="container">
+                    <nav aria-label="breadcrumb" role="navigation">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/">Home</a></li>
+                            <li class="breadcrumb-item"><a href="/vehicle">Vehicles</a></li>
+                            <li class="breadcrumb-item"><a href="/vehicle/launcher">Launchers</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ vehicle.serial_number }}</li>
+                        </ol>
+                    </nav>
+                </div>
                 <!-- Web - Horizontal -->
                 <ins class="adsbygoogle"
                      style="display:block"
@@ -63,9 +73,6 @@
                 <script>
                     (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-            </div>
-            <!-- Post Content Column -->
-            <div class="col-lg-9 col-md-12 col-xl-9">
                 <div class="card card-blog">
                     {% if vehicle.image_url %}
                         <div class="card-header card-header-image">
