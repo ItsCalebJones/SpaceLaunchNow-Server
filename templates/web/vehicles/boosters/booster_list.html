@@ -20,7 +20,7 @@
 
     <meta name="robots" content="index, follow"/>
 
-    <meta property="og:type" content="article" />
+    <meta property="og:type" content="article"/>
     <meta property="og:site_name" content="Space Launch Now"/>
 
     <meta name="twitter:card" content="summary_large_image"/>
@@ -39,63 +39,72 @@
 
 {% block content %}
     <div class="container">
-        <div class="projects-1" id="projects-1">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-8 ml-auto mr-auto text-center">
-                        <h1 class="title">Reusable Launch Vehicles</h1>
-                        <h2>A new era of spaceflight has been ushered in with the advent of rapidly reusable
-                            vehicles.</h2>
-                        <hr>
-                        <ul class="nav nav-pills nav-pills-icons mx-auto justify-content-center">
-                            <li class="nav-item">
-                                <a class="nav-link nav-link-primary {% if status == 'active' %} active {% endif %}"
-                                   href="/vehicle/launcher?status=active">
-                                    <i class="fa fa-space-shuttle"></i>
-                                    Active
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link nav-link-info {% if status == 'retired' %} active {% endif %}"
-                                   href="/vehicle/launcher?status=retired">
-                                    <i class="fa fa-suitcase"></i>
-                                    Retired
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link nav-link-danger {% if status == 'destroyed' %} active {% endif %}"
-                                   href="/vehicle/launcher?status=destroyed">
-                                    <i class="fas fa-skull-crossbones"></i>
-                                    Destroyed
-                                </a>
-                            </li>
-                            <li class="nav-item nav-pills.nav-pills-info">
-                                <a class="nav-link nav-link-warning {% if status == 'expended' %} active {% endif %}"
-                                   href="/vehicle/launcher?status=expended">
-                                    <i class="fa fa-tombstone"></i>
-                                    Expended
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-md-6 mx-auto mt-2 pt-2 justify-content-center">
-                    <form method="get" action="/vehicle/launcher/search/" style="margin: 0">
-                        <div class="input-group">
-                            <input class="form-control" placeholder="Ex. B1051, Falcon Heavy, etc" type="text"
-                                   id="search-input"
-                                   name="q">
-                            <span class="input-group-append">
-                                                <button class="btn btn-primary btn-raised btn-round btn-fab"
-                                                        type="submit">
-                                                <i class="fa fa-search"></i>
-                                                </button>
-                                                </span>
-                        </div>
-                    </form>
-                </div>
+
+        <div class="row">
+            <div class="col-sm-12 col-xl-9 mx-auto text-center">
                 <div class="container">
-                    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                    <div class="container">
+                        <nav aria-label="breadcrumb" role="navigation">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                                <li class="breadcrumb-item"><a href="/vehicle">Vehicles</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Launchers</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 ml-auto mr-auto text-center">
+                            <h1 class="title">Reusable Launch Vehicles</h1>
+                            <h2>A new era of spaceflight has been ushered in with the advent of rapidly reusable
+                                vehicles.</h2>
+                            <hr>
+                            <ul class="nav nav-pills nav-pills-icons mx-auto justify-content-center">
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-primary {% if status == 'active' %} active {% endif %}"
+                                       href="/vehicle/launcher?status=active">
+                                        <i class="fa fa-space-shuttle"></i>
+                                        Active
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-info {% if status == 'retired' %} active {% endif %}"
+                                       href="/vehicle/launcher?status=retired">
+                                        <i class="fa fa-suitcase"></i>
+                                        Retired
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-danger {% if status == 'destroyed' %} active {% endif %}"
+                                       href="/vehicle/launcher?status=destroyed">
+                                        <i class="fas fa-skull-crossbones"></i>
+                                        Destroyed
+                                    </a>
+                                </li>
+                                <li class="nav-item nav-pills.nav-pills-info">
+                                    <a class="nav-link nav-link-warning {% if status == 'expended' %} active {% endif %}"
+                                       href="/vehicle/launcher?status=expended">
+                                        <i class="fa fa-tombstone"></i>
+                                        Expended
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mx-auto mt-2 pt-2 justify-content-center">
+                        <form method="get" action="/vehicle/launcher/search/" style="margin: 0">
+                            <div class="input-group">
+                                <input class="form-control" placeholder="Ex. B1051, Falcon Heavy, etc" type="text"
+                                       id="search-input"
+                                       name="q">
+                                <span class="input-group-append">
+                            <button class="btn btn-primary btn-raised btn-round btn-fab"
+                                    type="submit">
+                            <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                            </div>
+                        </form>
+                    </div>
                     <!-- Web - Horizontal -->
                     <ins class="adsbygoogle"
                          style="display:block"
@@ -107,10 +116,6 @@
                         (adsbygoogle = window.adsbygoogle || []).push({});
                     </script>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12 col-xl-9 mx-auto text-center">
                 <div class="row">
                     <h3 class="title">Displaying {{ vehicles|length }} boosters.</h3>
                     {% if vehicles|length > 0 %}

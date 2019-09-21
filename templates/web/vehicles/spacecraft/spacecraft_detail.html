@@ -24,13 +24,13 @@
 
     <meta name="robots" content="index, follow"/>
 
-    <meta property="og:type" content="article" />
+    <meta property="og:type" content="article"/>
     <meta property="og:site_name" content="Space Launch Now"/>
 
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:title" content="Space Launch Now - {{ vehicle.name }}">
     <meta name="twitter:description" content="{{ vehicle.name }} - {{ vehicle.description|truncatechars:100 }}">
-        {% if vehicle.image_url %}
+    {% if vehicle.image_url %}
         <meta name="twitter:image" content="{{ vehicle.image_url.url }}"/>
     {% else %}
         <meta name="twitter:image" content="https://spacelaunchnow.me/static/img/social.png"/>
@@ -63,6 +63,16 @@
             </div>
             <!-- Post Content Column -->
             <div class="col-lg-9 col-md-12 col-xl-9">
+                <div class="container">
+                    <nav aria-label="breadcrumb" role="navigation">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/">Home</a></li>
+                            <li class="breadcrumb-item"><a href="/vehicle">Vehicles</a></li>
+                            <li class="breadcrumb-item"><a href="/vehicle/spacecraft">Spacecraft</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ vehicle.name }}</li>
+                        </ol>
+                    </nav>
+                </div>
                 <div class="col-sm-12">
                     <div class="card card-blog">
                         {% if vehicle.image_url %}
