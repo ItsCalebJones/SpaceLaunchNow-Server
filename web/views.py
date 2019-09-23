@@ -236,6 +236,31 @@ def launches(request, ):
                                                  'filters': True})
 
 
+def previous(request, ):
+    query = request.GET.get('q')
+
+    if query is not None and query != "None":
+        _launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')
+        _launches = _launches.filter(Q(rocket__configuration__manufacturer__abbrev__contains=query) |
+                                     Q(rocket__configuration__manufacturer__name__contains=query) |
+                                     Q(pad__location__name__contains=query) |
+                                     Q(rocket__configuration__name__contains=query))
+    else:
+        _launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(_launches, 10)
+
+    try:
+        launches = paginator.page(page)
+    except PageNotAnInteger:
+        launches = paginator.page(1)
+    except EmptyPage:
+        launches = paginator.page(paginator.num_pages)
+
+    return render(request, 'web/launches/launches_previous.html', {'launches': launches, 'filters': True})
+
+
 # Create your views here.
 def launches_vandenberg(request, ):
     query = 'Vandenberg'

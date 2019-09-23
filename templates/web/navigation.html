@@ -14,52 +14,53 @@
 
             <ul class="navbar-nav ml-auto">
 
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger {% if request.path  == '/' %} active {% endif %}"
+                <li class="nav-item {% if request.path  == '/' %} active {% endif %}">
+                    <a class="nav-link js-scroll-trigger"
                        href="/">Home</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger {% if request.path  == '/launch/' %} active {% endif %}"
-                       href="/launch/">Launches</a>
+                <li class="nav-item dropdown {% if '/launch/' in request.path %} active {% endif %}">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        Launches
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item {% if request.path == '/launch/previous/' %} active {% endif %}"
+                           href="/launch/previous">Upcoming Launches</a>
+                        <a class="dropdown-item {% if request.path == '/launch/recent/' %} active {% endif %}"
+                           href="/launch/recent">Recent Launches</a>
+
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item {% if '/launch/upcoming/spacex' in request.path %} active {% endif %}"
+                           href="/launch/upcoming/spacex">SpaceX</a>
+                        <a class="dropdown-item {% if '/launch/upcoming/florida' in request.path %} active {% endif %}"
+                           href="/launch/upcoming/florida">Florida</a>
+                        <a class="dropdown-item {% if '/launch/upcoming/vandenberg' in request.path %} active {% endif %}"
+                           href="/launch/upcoming/vandenberg">Vandenberg</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item {% if request.path == '/launch/' %} active {% endif %}" href="/launch">Launch
+                            Database</a>
+                    </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger {% if request.path  == '/event/' %} active {% endif %}"
+                <li class="nav-item {% if request.path  == '/event/' %} active {% endif %}">
+                    <a class="nav-link js-scroll-trigger"
                        href="/event/">Events</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger {% if request.path  == '/astronaut/' %} active {% endif %}"
+                <li class="nav-item {% if request.path  == '/astronaut/' %} active {% endif %}">
+                    <a class="nav-link js-scroll-trigger "
                        href="/astronaut/">Astronauts</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger {% if request.path  == '/vehicle/' %} active {% endif %}"
+                <li class="nav-item {% if '/vehicle/' in request.path %} active {% endif %}">
+                    <a class="nav-link js-scroll-trigger"
                        href="/vehicle/">Vehicles</a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
-                       aria-haspopup="true" aria-expanded="false">
-                        Developers
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="/docs"><i class="fas fa-book" style="margin-right: 8px;"></i>
-                            Documentation</a>
-                        <a class="dropdown-item" href="/api/3.3.0"><i class="fas fa-laptop-code"
-                                                                      style="margin-right: 8px;"></i> Endpoints</a>
-                        <a class="dropdown-item" href="https://github.com/ItsCalebJones/SpaceLaunchNow-Server"><i
-                                class="fab fa-github" style="margin-right: 8px;"></i> GitHub</a>
-                    </div>
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><i
+                            class="fab fa-android"></i> Android</a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
-                       aria-haspopup="true" aria-expanded="false">
-                        Get the App
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item"
-                           href="https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><i
-                                class="fab fa-android" style="margin-right: 8px;"></i>Google Play</a>
-                        <a class="dropdown-item" href="https://itunes.apple.com/us/app/space-launch-now/id1399715731"><i
-                                class="fab fa-apple" style="margin-right: 8px;"></i> App Store</a>
-                    </div>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://itunes.apple.com/us/app/space-launch-now/id1399715731"><i
+                            class="fab fa-apple"></i> iOS</a>
                 </li>
             </ul>
         </div>

@@ -69,6 +69,8 @@ if config.IS_WEBSERVER:
         url(r'^next/', landing_views.next_launch, name='next'),
         url(r'^launch/$', LaunchListView.as_view()),
         url(r'^launch/upcoming/$', landing_views.launches, name='launches'),
+        url(r'^launch/previous/$', landing_views.previous, name='previous'),
+
         url(r'^launch/upcoming/spacex$', landing_views.launches_spacex, name='launches_spacex'),
         url(r'^launch/upcoming/florida$', landing_views.launches_florida, name='launches_florida'),
         url(r'^launch/upcoming/vandenberg$', landing_views.launches_vandenberg, name='launches_vandenberg'),

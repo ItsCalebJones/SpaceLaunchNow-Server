@@ -129,20 +129,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="container" style="margin-top: 50px;">
-                        <nav aria-label="breadcrumb" role="navigation">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="/">Home</a></li>
-                                <li class="breadcrumb-item"><a href="/launch">Launches</a></li>
-                                {% if launch.mission %}
-                                    <li class="breadcrumb-item active" aria-current="page">{{ launch.mission.name }}</li>
-                                {% else %}
-                                    <li class="breadcrumb-item active"
-                                        aria-current="page">{{ launch.rocket.configuration.name }}</li>
-                                {% endif %}
-                            </ol>
-                        </nav>
-                    </div>
                     <div class="row">
                         <div class="col-md-12 ml-auto mx-auto mr-auto text-center">
                             <div class="profile">
@@ -170,9 +156,9 @@
                             {% if agency.founding_year %}
                                 <span class="badge badge-pill badge-warning">Founded: {{ agency.founding_year }}</span>
                             {% endif %}
-                            <span class="badge badge-pill badge-info">Successes: {{ launches.good|length }}</span>
-                            <span class="badge badge-pill badge-danger">Failures: {{ launches.bad|length }}</span>
-                            <span class="badge badge-pill badge-default">Pending: {{ launches.pending|length }}</span>
+                            <span class="badge badge-pill badge-info">Successes: {{ agency.successful_launches }}</span>
+                            <span class="badge badge-pill badge-danger">Failures: {{ agency.failed_launches }}</span>
+                            <span class="badge badge-pill badge-default">Pending: {{ agency.pending_launches }}</span>
                             <br>
                             <br>
                             {% if agency.description %}

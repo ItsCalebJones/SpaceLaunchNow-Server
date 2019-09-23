@@ -117,9 +117,9 @@
                                 {% if agency.founding_year %}
                                     <span class="badge badge-pill badge-warning">Founded: {{ agency.founding_year }}</span>
                                 {% endif %}
-                                <span class="badge badge-pill badge-info">Successes: {{ launches.good|length }}</span>
-                                <span class="badge badge-pill badge-danger">Failures: {{ launches.bad|length }}</span>
-                                <span class="badge badge-pill badge-default">Pending: {{ launches.pending|length }}</span>
+                                <span class="badge badge-pill badge-info">Successes: {{ agency.successful_launches }}</span>
+                                <span class="badge badge-pill badge-danger">Failures: {{ agency.failed_launches }}</span>
+                                <span class="badge badge-pill badge-default">Pending: {{ agency.pending_launches }}</span>
                                 <br>
                                 <br>
                                 {% if agency.description %}
@@ -287,6 +287,7 @@
 
 
 
+
                                                                          {{ launches.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Previous</a>
                                         </li>
                                     {% else %}
@@ -306,6 +307,7 @@
                                             {% else %}
                                                 <li class="page-item"><a class="page-link"
                                                                          href="?page=
+
 
 
 
@@ -343,10 +345,12 @@
 
 
 
+
                                                                              {{ launches.paginator.count }}{% if query %}&q={{ query }}{% endif %}">Last</a>
                                         {% endif %}
                                         <li class="page-item"><a class="page-link"
                                                                  href="?page=
+
 
 
 

@@ -271,7 +271,6 @@ class Agency(models.Model):
 
     @property
     def pending_launches(self):
-
         cache_key = "%s-%s" % (self.id, "agency-pending")
         count = cache.get(cache_key)
         if count is not None:

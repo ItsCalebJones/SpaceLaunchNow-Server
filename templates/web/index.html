@@ -51,11 +51,25 @@
 
                 <ul class="navbar-nav ml-auto">
 
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/">Home</a>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/launch">Launches</a>
+                    <li class="nav-item dropdown {% if '/launch/' in request.path %} active {% endif %}">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                           aria-haspopup="true" aria-expanded="false">
+                            Launches
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item"
+                               href="/launch/upcoming">Upcoming Launches</a>
+
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/launch/upcoming/spacex">SpaceX</a>
+                            <a class="dropdown-item" href="/launch/upcoming/florida">Florida</a>
+                            <a class="dropdown-item" href="/launch/upcoming/vandenberg">Vandenberg</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/launch">Launch Database</a>
+                        </div>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/event">Events</a>
@@ -65,20 +79,6 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/vehicle">Vehicles</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
-                           aria-haspopup="true" aria-expanded="false">
-                            Developers
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="/docs"><i class="fas fa-book" style="margin-right: 8px;"></i>
-                                Documentation</a>
-                            <a class="dropdown-item" href="/api/3.3.0"><i class="fas fa-laptop-code"
-                                                                          style="margin-right: 8px;"></i> Endpoints</a>
-                            <a class="dropdown-item" href="https://github.com/ItsCalebJones/SpaceLaunchNow-Server"><i
-                                    class="fab fa-github" style="margin-right: 8px;"></i> GitHub</a>
-                        </div>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link"
@@ -133,17 +133,17 @@
                     </div>
                     <div class="col-md-12">
                         <div class="card card-raised card-background"
-                             style="background-image: url(' {% if launch_image %}{{ launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}')">
-                            <div class="card-body">
-                                <h6 class="card-category text-info">{{ launch.mission.type.name }}</h6>
-                                <h3 class="card-title">{{ launch.name }}</h3>
-                                <h3 class="title text-white" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h3>
-                                <h4 class="text-white" style="margin: -5px;" id="date">{{ launch.net }}</h4>
-                                <hr>
+                             style="background-image: url('{% if launch_image %}{{ launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); min-height: 500px">
+                            <div class="card-body" style="max-width: 600px">
+                                <h2 class="card-title">{{ launch.name }}</h2>
+                                <h2 class="title text-white" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h2>
+                                <h3 class="text-white" style="margin: -5px;" id="date">{{ launch.net }}</h3>
+                                <hr style="background-color: white">
+                                <h6 class="card-category text-info">{{ launch.mission.mission_type.name }}</h6>
                                 <p class="card-description">
-                                    {{ launch.mission.description }}
+                                    {{ launch.mission.description|truncatewords:100 }}
                                 </p>
-                                <a href="/launch/{{ launch.slug }}" class="btn btn-primary btn-round">
+                                <a href="/launch/{{ launch.slug }}" class="btn btn-primary btn-round mt-5">
                                     <i class="material-icons">subject</i> View Launch
                                 </a>
                             </div>
@@ -163,7 +163,7 @@
                         </script>
                     </div>
                     <div class="col-md-12 text-center">
-                        <h3 class="title">Upcoming Launches</h3>
+                        <h2 class="title">Upcoming Launches</h2>
                         <hr>
                     </div>
                     <div class="card card-plain card-blog">
@@ -237,14 +237,23 @@
                         </div>
                     </div>
                     <div class="text-center">
-                        <a href="/launch" class="btn btn-info btn-round">
-                            View More Launches
-                        </a>
+                        <h3>View More Launches</h3>
+                        <div class="col-md-12">
+                            <a href="/launch/upcoming" class="btn btn-success btn-raised">
+                                Upcoming Launches
+                            </a>
+                            <a href="/launch/previous" class="btn btn-primary btn-lg btn-round">
+                                Launch Database
+                            </a>
+                            <a href="/launch/previous" class="btn btn-danger btn-raised">
+                                Previous Launches
+                            </a>
+                        </div>
                     </div>
 
                     {% if event %}
                         <div class="col-md-12 text-center">
-                            <h3 class="title">Upcoming Event</h3>
+                            <h2 class="title">Upcoming Event</h2>
                             <hr>
                         </div>
                         <div class="col-md-12">
@@ -261,7 +270,7 @@
                                     <h6 class="card-category text-info"
                                         style="display:inline;">{{ event.type.name }}</h6>
                                     <h6 class="card-category"
-                                        style="display:inline;">{{ event.date|date:'F d, Y'}}</h6>
+                                        style="display:inline;">{{ event.date|date:'F d, Y' }}</h6>
                                     <h4 class="card-title">
                                         <a href="/event/{{ event.slug }}">{{ event.name }}</a>
                                     </h4>
@@ -296,7 +305,7 @@
                                                     <h6 class="card-category text-info"
                                                         style="display:inline;">{{ event.type.name }}</h6>
                                                     <h6 class="card-category"
-                                                        style="display:inline;">{{ event.date|date:'F d, Y'}}</h6>
+                                                        style="display:inline;">{{ event.date|date:'F d, Y' }}</h6>
                                                     <h4 class="card-title">
                                                         <a href="/event/{{ event.slug }}">{{ event.name }}</a>
                                                     </h4>
@@ -317,6 +326,7 @@
                                     <i class="material-icons">calendar_today</i> View More Events
                                 </a>
                             </div>
+                            {% include "web/horizontal_news.html" %}
                         </div>
                     {% endif %}
                 </div>
@@ -327,7 +337,6 @@
                         <a href="https://twitter.com/spacelaunchnow" style="color:white">
                             <button class="btn btn-social btn-fill btn-twitter"
                                     style="width: -webkit-fill-available; text-align: left;">
-
                                 <i class="fab fa-twitter"></i> Connect with Twitter
                                 <div class="ripple-container"></div>
 
@@ -337,7 +346,6 @@
                         <a href="https://www.facebook.com/spacelaunchnow" style="color:white">
                             <button class="btn btn-social btn-fill btn-facebook"
                                     style="width: -webkit-fill-available; text-align: left;">
-
                                 <i class="fab fa-facebook-square"></i> Share on Facebook
                                 <div class="ripple-container"></div>
 
@@ -364,7 +372,6 @@
                         <br><a href="https://www.youtube.com/channel/UCNwWysrsoDAcq_dksKH9DTw" style="color:white">
                         <button class="btn btn-social btn-fill btn-youtube"
                                 style="width: -webkit-fill-available; text-align: left;">
-
                             <i class="fab fa-youtube"></i> View on Youtube
                             <div class="ripple-container"></div>
 
@@ -373,7 +380,6 @@
                         <br><a href="https://github.com/ItsCalebJones/" style="color:white">
                         <button class="btn btn-social btn-fill btn-github"
                                 style="width: -webkit-fill-available; text-align: left;">
-
                             <i class="fab fa-github"></i> Connect with Github
                             <div class="ripple-container"></div>
 
@@ -394,7 +400,6 @@
 
                     {% include "web/sidebar_launches_only.html" %}
                 </div>
-                {% include "web/horizontal_news.html" %}
             </div>
         </div>
     </div>

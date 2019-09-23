@@ -1,25 +1,37 @@
 <!-- Categories Widget -->
 <div class="card">
-    <div class="card-header card-header-danger">Recent Launches
-    </div>
+    <div class="card-header card-header-danger"><a class="text-white" href="/launch/previous">Recent Launches</a></div>
     <div class="list-group list-group-flush">
         {% for launch in previous_launches %}
             <a href="/launch/{{ launch.slug }}"
                class="list-group-item list-group-item-action flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
+                <div class="d-flex w-100 justify-content-between mb-0">
 
                     <div class="my-auto">
-                        <h5>{{ launch.rocket.configuration.name }}</h5>
+                        <h5 class="title" style="margin: 0px;">{{ launch.rocket.configuration.name }}</h5>
                     </div>
                     <div class="my-auto">
-                        <small class="text-muted text-center">{{ launch.net|timesince }}</small>
+                        <span
+                                class="badge badge-pill m-2 {% if launch.status.id == 3 %} badge-success
+                                                    {% elif launch.status.id == 4 or launch.status.id == 7 %} badge-danger
+                                                    {% elif launch.status.id == 6 %} badge-warning
+                                                    {% else %} badge-primary
+                                                    {% endif %}">{{ launch.status.name }}</span>
                     </div>
                 </div>
-                <h6 class="mb-1">{{ launch.mission.name }} - {{ launch.status.name }}</h6>
-                <p class="mb-1">{{ launch.mission.description|truncatechars:200 }}</p>
+                <small class="text-muted text-center">{{ launch.net|timesince }} ago</small>
+                {% if launch.mission %}
+                    <h6 class="mb-0">{{ launch.mission.name }}</h6>
+                    <small><b>{{ launch.pad.location.name }}</b></small>
+                    <p class="mb-1">{{ launch.mission.description|truncatechars:200 }}</p>
+                {% else %}
+                    <h6 class="mb-0">{{ launch.rocket.configuration.name }}</h6>
+                    <small><b>{{ launch.pad.location.name }}</b></small>
+                {% endif %}
             </a>
         {% endfor %}
-        <button onclick="location.href='/launch'" class="btn btn-primary btn-link">View Upcoming Launches</button>
+        <button onclick="location.href='/launch/upcoming'" class="btn btn-primary btn-link">View Upcoming Launches</button>
+        <button onclick="location.href='/launch/'" class="btn btn-info btn-link">View Launch Database</button>
     </div>
 </div>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
