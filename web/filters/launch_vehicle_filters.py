@@ -1,6 +1,6 @@
 import django_filters
 
-from api.models import LauncherConfig
+from api.models import LauncherConfig, Launch
 
 
 class LauncherConfigListFilter(django_filters.FilterSet):

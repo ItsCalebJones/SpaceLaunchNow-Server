@@ -129,7 +129,21 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" style="margin: 50px;">
+                    <div class="container" style="margin-top: 50px;">
+                        <nav aria-label="breadcrumb" role="navigation">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                                <li class="breadcrumb-item"><a href="/launch">Launches</a></li>
+                                {% if launch.mission %}
+                                    <li class="breadcrumb-item active" aria-current="page">{{ launch.mission.name }}</li>
+                                {% else %}
+                                    <li class="breadcrumb-item active"
+                                        aria-current="page">{{ launch.rocket.configuration.name }}</li>
+                                {% endif %}
+                            </ol>
+                        </nav>
+                    </div>
+                    <div class="row">
                         <div class="col-md-12 ml-auto mx-auto mr-auto text-center">
                             <div class="profile">
                                 <div class="avatar">
@@ -278,7 +292,8 @@
                                         <div class="colored-shadow colored-shadow-big"
                                              style="background-image: url('{{ launch.infographic_url.url }}'); opacity: 1;"></div>
                                     </div>
-                                    <h4>Geoff Barrett is an independent graphic artist that creates launch infographics for space flight events.</h4>
+                                    <h4>Geoff Barrett is an independent graphic artist that creates launch infographics
+                                        for space flight events.</h4>
                                     <div class="social text-center">
                                         <a href="https://www.facebook.com/Geoffdbarrett/">
                                             <button class="btn btn-just-icon btn-round btn-facebook">

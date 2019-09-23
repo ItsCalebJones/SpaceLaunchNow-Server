@@ -1,0 +1,408 @@
+{% extends "web/base.html" %}
+{% load staticfiles %}
+{% load thumbnail %}
+{% load mathfilters %}
+{% block extrahead %}
+
+    <meta property="fb:app_id" content="746774215504127"/>
+    <meta property="og:type" content="website"/>
+    {% if query == 'FL' %}
+        <link rel="canonical" href="https://spacelaunchnow.me/launch/schedule/florida">
+        <title>Space Launch Now - Florida Launch Schedule</title>
+        <meta name="title" content="Space Launch Now - Florida Launch Schedule">
+        <meta property="og:title" content="Space Launch Now - Florida Launch Schedule"/>
+        <meta name="description"
+              content="A spaceflight launch schedule for Cape Canaveral and Kennedy Space Center in Florida - tracking the latest developments in spaceflight, check back often for the next rocket launch.">
+        <meta property="og:description"
+              content="A spaceflight launch schedule for Cape Canaveral and Kennedy Space Center in Florida - tracking the latest developments in spaceflight, check back often for the next rocket launch."/>
+        <meta property="og:url" content="https://spacelaunchnow.me/launch/schedule/florida"/>
+    {% elif query == 'SpaceX' %}
+        <link rel="canonical" href="https://spacelaunchnow.me/launch/schedule/spacex">
+        <title>Space Launch Now - SpaceX Launch Schedule</title>
+        <meta name="title" content="Space Launch Now - SpaceX Launch Schedule">
+        <meta property="og:title" content="Space Launch Now - SpaceX Launch Schedule"/>
+        <meta name="description"
+              content="A spaceflight launch schedule for SpaceX - tracking the latest developments in spaceflight, check back often for the next SpaceX launch.">
+        <meta property="og:description"
+              content="A spaceflight launch schedule for SpaceX - tracking the latest developments in spaceflight, check back often for the next SpaceX launch."/>
+        <meta property="og:url" content="https://spacelaunchnow.me/launch/schedule/spacex"/>
+    {% else %}
+        <link rel="canonical" href="https://spacelaunchnow.me/launch/upcoming">
+        <title>Space Launch Now - Launch Schedule</title>
+        <meta name="title" content="Space Launch Now - Launch Schedule">
+        <meta property="og:title" content="Space Launch Now - Launch Schedule"/>
+        <meta name="description"
+              content="A spaceflight launch schedule for Cape Canaveral/Kennedy Space Center, Vandenberg AFB, Wallops Island, SpaceX, Blue Origin, ULA, Rocket Lab and much more - tracking the latest developments in spaceflight, check back often for launch schedule changes.">
+        <meta property="og:description"
+              content="A spaceflight launch schedule for Cape Canaveral/Kennedy Space Center, Vandenberg AFB, Wallops Island, SpaceX, Blue Origin, ULA, Rocket Lab and much more - tracking the latest developments in spaceflight, check back often for launch schedule changes."/>
+        <meta property="og:url" content="https://spacelaunchnow.me/launch/upcoming"/>
+    {% endif %}
+
+
+    <meta property="og:image" content="https://spacelaunchnow.me/static/img/social.png"/>
+    <meta property="og:image:width" content="3000"/>
+    <meta property="og:image:height" content="2000"/>
+
+    <meta name="robots" content="index, follow"/>
+
+    <meta property="og:type" content="article"/>
+    <meta property="og:site_name" content="Space Launch Now"/>
+
+    <meta name="twitter:card" content="summary_large_image"/>
+
+    <meta name="twitter:description"
+          content="A spaceflight launch schedule for Cape Canaveral/Kennedy Space Center, Vandenberg AFB, Wallops Island, SpaceX, Blue Origin, ULA, Rocket Lab and much more - tracking the latest developments in spaceflight, check back often for launch schedule changes.">
+    <meta name="twitter:image" content="https://spacelaunchnow.me/static/img/social.png">
+    <meta name="twitter:site" content="@SpaceLaunchNow">
+    <meta name="twitter:creator" content="@SpaceLaunchNow">
+{% endblock %}
+
+
+{% block navigation %}
+    {% include "web/navigation.html" %}
+{% endblock %}
+
+{% block content %}
+    {% load embed_video_tags %}
+    <!-- Page Content -->
+    <div class="container" style="margin-top:100px; margin-bottom: 16px">
+        <div class="row">
+            <!-- Post Content Column -->
+            <div class="col-lg-9 col-md-12 col-xl-9">
+                {% if query == 'FL' %}
+                    <div class="container">
+                        <nav aria-label="breadcrumb" role="navigation">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                                <li class="breadcrumb-item"><a href="/launch">Launches</a></li>
+                                <li class="breadcrumb-item"><a href="/launch/upcoming">Upcoming</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Florida</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <h1 class="title">Florida Launch Schedule</h1>
+                    <h2>Upcoming launches out of Kennedy Space Center and Cape Canaveral AFB</h2>
+                {% elif query == 'SpaceX' %}
+                    <div class="container">
+                        <nav aria-label="breadcrumb" role="navigation">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                                <li class="breadcrumb-item"><a href="/launch">Launches</a></li>
+                                <li class="breadcrumb-item"><a href="/launch/upcoming">Upcoming</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">SpaceX</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <h1 class="title text-center">SpaceX Launch Schedule</h1>
+                    {% if agency %}
+                        <div class="row" style="margin: 50px;">
+                            <div class="col-md-12 ml-auto mx-auto mr-auto text-center">
+                                <div class="profile">
+                                    <div class="avatar">
+                                        {% if agency.logo_url %}
+                                            <img src="{{ agency.logo_url.url }}"
+                                                 alt="Circle Image"
+                                                 class="img-fluid mx-auto"
+                                                 style="max-width: 75%;max-height: 400px;">
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <row>
+                            <div class="col-md-8 ml-auto mx-auto mr-auto text-center">
+                                {% if agency.administrator %}
+                                    <span class="badge badge-pill badge-primary">{{ agency.administrator }}</span>
+                                {% endif %}
+                                {% if agency.founding_year %}
+                                    <span class="badge badge-pill badge-warning">Founded: {{ agency.founding_year }}</span>
+                                {% endif %}
+                                <span class="badge badge-pill badge-info">Successes: {{ launches.good|length }}</span>
+                                <span class="badge badge-pill badge-danger">Failures: {{ launches.bad|length }}</span>
+                                <span class="badge badge-pill badge-default">Pending: {{ launches.pending|length }}</span>
+                                <br>
+                                <br>
+                                {% if agency.description %}
+                                    <p>{{ agency.description }}</p>
+                                {% endif %}
+                            </div>
+                        </row>
+                    {% endif %}
+                {% elif query == 'Vandenberg' %}
+                    <div class="container">
+                        <nav aria-label="breadcrumb" role="navigation">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                                <li class="breadcrumb-item"><a href="/launch">Launches</a></li>
+                                <li class="breadcrumb-item"><a href="/launch/upcoming">Upcoming</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Vandenberg</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <h1 class="title">Vandenberg Launch Schedule</h1>
+                    <h2>Upcoming launches out of Vandenberg AFB, California</h2>
+                {% else %}
+                    <div class="container">
+                        <nav aria-label="breadcrumb" role="navigation">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                                <li class="breadcrumb-item"><a href="/launch">Launches</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Upcoming</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <h1 class="title">Upcoming Spaceflight Launches</h1>
+                {% endif %}
+
+                {% if filters %}
+                    <h2 class="title">Filter by Agency, Locations or Vehicles</h2>
+                    <a href="/launch"
+                       class="btn btn-round {% if query %} btn-link{% else %} btn-primary {% endif %}">Show All
+                        Launches</a>
+                    <button class="btn btn-round {% if not query %} btn-link{% else %} btn-primary {% endif %}"
+                            data-toggle="collapse" data-target="#collapseOne" {% if query %}
+                            aria-expanded="true" {% else %}
+                            aria-expanded="false" {% endif %} aria-controls="collapseOne">
+                        Show Filters
+                    </button>
+                    <div id="collapseOne" {% if query %} class="collapse show" {% else %}
+                         class="collapse" {% endif %}
+                         aria-labelledby="headingOne" data-parent="#accordion">
+                        <div class="row">
+                            <div class="container">
+                                <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
+                                <h4 class="title">Agencies</h4>
+                                <hr>
+                                <a href="?q=SpaceX"
+                                   class="btn btn-round {% if query == 'SpaceX' %} btn-primary{% else %} btn-link {% endif %}">SpaceX</a>
+                                <a href="?q=ULA"
+                                   class="btn btn-round {% if query == 'ULA' %} btn-primary{% else %} btn-link {% endif %}">ULA</a>
+                                <a href="?q=BO"
+                                   class="btn btn-round {% if query == 'BO' %} btn-primary{% else %} btn-link {% endif %}">Blue
+                                    Origin</a>
+                                <a href="?q=RL"
+                                   class="btn btn-round {% if query == 'RL' %} btn-primary{% else %} btn-link {% endif %}">Rocket
+                                    Lab</a>
+                                <a href="?q=NASA"
+                                   class="btn btn-round {% if query == 'NASA' %} btn-primary{% else %} btn-link {% endif %}">NASA</a>
+                                <a href="?q=RFSA"
+                                   class="btn btn-round {% if query == 'RFSA' %} btn-primary{% else %} btn-link {% endif %}">ROSCOSMOS</a>
+                                <a href="?q=ASA"
+                                   class="btn btn-round {% if query == 'ASA' %} btn-primary{% else %} btn-link {% endif %}">Arianespace</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="container">
+                                <h4 class="title">Locations</h4>
+                                <hr>
+                                <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
+                                <a href="?q=FL"
+                                   class="btn btn-round {% if query == 'FL' %} btn-primary{% else %} btn-link {% endif %}">Florida</a>
+                                <a href="?q=Vandenberg"
+                                   class="btn btn-round {% if query == 'Vandenberg' %} btn-primary{% else %} btn-link {% endif %}">Vandenberg</a>
+                                <a href="?q=Wallops"
+                                   class="btn btn-round {% if query == 'Wallops' %} btn-primary{% else %} btn-link {% endif %}">Wallops</a>
+                                <a href="?q=Russia"
+                                   class="btn btn-round {% if query == 'Russia' %} btn-primary{% else %} btn-link {% endif %}">Russia</a>
+                                <a href="?q=Kazakhstan"
+                                   class="btn btn-round {% if query == 'Kazakhstan' %} btn-primary{% else %} btn-link {% endif %}">Kazakhstan</a>
+                                <a href="?q=China"
+                                   class="btn btn-round {% if query == 'China' %} btn-primary{% else %} btn-link {% endif %}">China</a>
+                                <a href="?q=Kourou"
+                                   class="btn btn-round {% if query == 'Kourou' %} btn-primary{% else %} btn-link {% endif %}">French
+                                    Guiana</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="container">
+                                <h4 class="title">Vehicles</h4>
+                                <hr>
+                                <a href="?q=Falcon 9"
+                                   class="btn btn-round {% if query == 'Falcon 9' %} btn-primary{% else %} btn-link {% endif %}">Falcon
+                                    9</a>
+                                <a href="?q=Falcon Heavy"
+                                   class="btn btn-round {% if query == 'Falcon Heavy' %} btn-primary{% else %} btn-link {% endif %}">Falcon
+                                    Heavy</a>
+                                <a href="?q=Delta IV"
+                                   class="btn btn-round {% if query == 'Delta IV' %} btn-primary{% else %} btn-link {% endif %}">Delta
+                                    IV</a>
+                                <a href="?q=Atlas V"
+                                   class="btn btn-round {% if query == 'Atlas V' %} btn-primary{% else %} btn-link {% endif %}">Atlas
+                                    V</a>
+                                <a href="?q=Soyuz"
+                                   class="btn btn-round {% if query == 'Soyuz' %} btn-primary{% else %} btn-link {% endif %}">Soyuz</a>
+                                <a href="?q=Ariane"
+                                   class="btn btn-round {% if query == 'Ariane' %} btn-primary{% else %} btn-link {% endif %}">Ariane</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="info-title">Full Launch History</h3>
+                            <p>View all launches available - including launches from the past and utilize powerful
+                                search
+                                filters.</p>
+                            <button class="btn btn-primary" href="#pablo">Launch Database</button>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="container">
+                    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                    <!-- Web - Horizontal -->
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-9824528399164059"
+                         data-ad-slot="6503993784"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+
+                {% if launches|length > 0 %}
+                    {% for launch in launches %}
+                        {% include "web/views/small_launch_card.html" with launch=launch %}
+                    {% endfor %}
+                    <div class="text-center mx-auto">
+                        <nav aria-label="...">
+                            {% if launches.has_other_pages %}
+                                <ul class="pagination justify-content-center">
+                                    {% if launches.has_previous %}
+                                        <li class="page-item"><a class="page-link"
+                                                                 href="?page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                         {{ launches.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Previous</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled"><span>Previous</span></li>
+                                    {% endif %}
+                                    {% if launches.number > 3 %}
+                                        <li class="page-item">
+                                        <a class="page-link"
+                                           href="?page=1{% if query %}&q={{ query }}{% endif %}">First</a>
+                                    {% endif %}
+                                    {% for i in launches.paginator.page_range %}
+                                        {% if forloop.counter|sub:launches.number >= -5 and forloop.counter|sub:launches.number <= 5 %}
+                                            {% if launches.number == i %}
+                                                <li class="page-item active"><span class="page-link">{{ i }} <span
+                                                        class="sr-only">(current)</span></span>
+                                                </li>
+                                            {% else %}
+                                                <li class="page-item"><a class="page-link"
+                                                                         href="?page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                                 {{ i }}{% if query %}&q={{ query }}{% endif %}">{{ i }}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if launches.has_next %}
+                                        {% if launches.paginator.count >= 10 %}
+                                            <li class="page-item"><a class="page-link"
+                                                                     href="?page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                             {{ launches.paginator.count }}{% if query %}&q={{ query }}{% endif %}">Last</a>
+                                        {% endif %}
+                                        <li class="page-item"><a class="page-link"
+                                                                 href="?page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                         {{ launches.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Next</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled"><span class="page-link">Next</span></li>
+                                    {% endif %}
+                                </ul>
+                            {% endif %}
+                        </nav>
+                    </div>
+                {% else %}
+                    <div class="card text-left">
+                        <div class="card-body">
+                            <h2>No Launches Found</h2>
+                            <hr>
+                            There doesn't appear to be any upcoming launches for this filter.
+                        </div>
+                    </div>
+                {% endif %}
+
+            </div>
+
+
+            <!-- Sidebar Widgets Column -->
+            <div class="col-lg-3 col-md-12 col-xl-3">
+                <!-- Categories Widget -->
+                {% include "web/sidebar_full.html" %}
+            </div>
+        </div>
+        <div class="container">
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- Space Launch Now -->
+            <ins class="adsbygoogle"
+                 style="display:block; margin-top:16px; margin-bottom:16px;"
+                 data-ad-client="ca-pub-9824528399164059"
+                 data-ad-slot="8772606898"
+                 data-ad-format="auto"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
+    {% include "web/install_buttons.html" %}
+{% endblock %}
+
+
