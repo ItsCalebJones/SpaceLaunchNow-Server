@@ -24,10 +24,10 @@
                         Launches
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item {% if request.path == '/launch/upcoming/' %} active {% endif %}"
+                           href="/launch/upcoming">Upcoming Launches</a>
                         <a class="dropdown-item {% if request.path == '/launch/previous/' %} active {% endif %}"
-                           href="/launch/previous">Upcoming Launches</a>
-                        <a class="dropdown-item {% if request.path == '/launch/recent/' %} active {% endif %}"
-                           href="/launch/recent">Recent Launches</a>
+                           href="/launch/previous">Previous Launches</a>
 
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item {% if '/launch/upcoming/spacex' in request.path %} active {% endif %}"

@@ -1,0 +1,48 @@
+<div class="card">
+    <div class="card-header card-header-danger mb-1"><a class="text-white" href="/launch/previous">Recent Launches</a></div>
+        <hr>
+        {% for launch in previous_launches %}
+            <a href="/launch/{{ launch.slug }}"
+               class="list-group-item list-group-item-action flex-column align-items-start"
+               style="padding-top: 0;padding-bottom: 0">
+                <div class="d-flex w-100 justify-content-between mb-2 py-0 my-0">
+
+                    <div class="my-auto">
+                        <h5 class="title" style="margin: 0px;">{{ launch.rocket.configuration.name }}</h5>
+                    </div>
+                    <div class="my-auto">
+                        <span
+                                class="badge badge-pill m-2 {% if launch.status.id == 3 %} badge-success
+                                                    {% elif launch.status.id == 4 or launch.status.id == 7 %} badge-danger
+                                                    {% elif launch.status.id == 6 %} badge-warning
+                                                    {% else %} badge-primary
+                                                    {% endif %}">{{ launch.status.name }}</span>
+                    </div>
+                </div>
+                <small class="text-muted text-center">{{ launch.net|timesince }} ago</small>
+            </a>
+            <div class="list-group-item py-0 my-0">
+                {% if launch.mission %}
+                    <h6 class="mb-0">{{ launch.mission.name }}</h6>
+                    <small class="mb-2"><b>{{ launch.pad.name }} - {{ launch.pad.location.name }}</b></small>
+                    <p class="caption" style="margin-bottom: 0;padding-bottom: 0">{{ launch.mission.description|truncatechars:150 }}</p>
+                {% else %}
+                    <h6 class="mb-0">{{ launch.rocket.configuration.name }}</h6>
+                    <small><b>{{ launch.pad.location.name }}</b></small>
+                {% endif %}
+            </div>
+            {% if launch.vid_urls.all|length > 0 %}
+                <div class="container text-center mt-1">
+                    <button onclick="location.href='{{ launch.vid_urls.first.vid_url }}'" class="btn btn-social btn-sm btn-block btn-youtube">
+                        <i class="fab fa-youtube"></i> Watch
+                    </button>
+                </div>
+            {% endif %}
+            <hr>
+        {% endfor %}
+    <div class="container mb-2">
+        <button onclick="location.href='/launch/upcoming'" class="btn btn-block btn-primary">View Upcoming Launches
+        </button>
+        <button onclick="location.href='/launch/'" class="btn btn-block btn-info">View Launch Database</button>
+    </div>
+</div>

@@ -60,8 +60,10 @@
                             Launches
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item"
+                            <a class="dropdown-item {% if request.path == '/launch/upcoming/' %} active {% endif %}"
                                href="/launch/upcoming">Upcoming Launches</a>
+                            <a class="dropdown-item {% if request.path == '/launch/previous/' %} active {% endif %}"
+                               href="/launch/previous">Previous Launches</a>
 
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="/launch/upcoming/spacex">SpaceX</a>
@@ -136,7 +138,8 @@
                              style="background-image: url('{% if launch_image %}{{ launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); min-height: 500px">
                             <div class="card-body" style="max-width: 600px">
                                 <h2 class="card-title">{{ launch.name }}</h2>
-                                <h2 class="title text-white" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h2>
+                                <h2 class="title text-white" style="margin: 5px;" id="countdown">L - -- : -- : -- :
+                                    --</h2>
                                 <h3 class="text-white" style="margin: -5px;" id="date">{{ launch.net }}</h3>
                                 <hr style="background-color: white">
                                 <h6 class="card-category text-info">{{ launch.mission.mission_type.name }}</h6>
@@ -236,24 +239,102 @@
                             </div>
                         </div>
                     </div>
-                    <div class="text-center">
-                        <h3>View More Launches</h3>
-                        <div class="col-md-12">
-                            <a href="/launch/upcoming" class="btn btn-success btn-raised">
-                                Upcoming Launches
-                            </a>
-                            <a href="/launch/previous" class="btn btn-primary btn-lg btn-round">
-                                Launch Database
-                            </a>
-                            <a href="/launch/previous" class="btn btn-danger btn-raised">
-                                Previous Launches
-                            </a>
-                        </div>
-                    </div>
+                        <div class="row">
+                            <div class="col-md-4 mx-auto">
+                                <div class="info info-horizontal">
+                                    <a href="/launch/upcoming/spacex">
+                                        <div class="icon icon-info">
+                                            <i class="fal fa-rocket"></i>
+                                        </div>
+                                        <div class="description">
+                                            <h4 class="info-title">SpaceX</h4>
+                                            <p class="description">
+                                                An up-to-date schedule tracking all of SpaceX's activity and news updates.
+                                            </p>
 
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mx-auto">
+                                <div class="info info-horizontal">
+                                    <a href="/launch/upcoming/florida">
+                                        <div class="icon icon-success">
+                                            <i class="far fa-tree-palm"></i>
+                                        </div>
+                                        <div class="description">
+                                            <h4 class="info-title">Florida</h4>
+                                            <p class="description">
+                                                View upcoming launches from Cape Canaveral and Kennedy Space Center
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mx-auto">
+                                <div class="info info-horizontal">
+                                    <a href="/launch/upcoming/vandenberg">
+                                        <div class="icon icon-warning">
+                                            <i class="fas fa-coffee"></i>
+                                        </div>
+                                        <div class="description">
+                                            <h4 class="info-title">Vandenberg AFB</h4>
+                                            <p class="description">
+                                                All of Vandenberg AFB's spaceflight launches available here.
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mx-auto">
+                                <div class="info info-horizontal">
+                                    <a href="/launch/upcoming">
+                                        <div class="icon icon-primary">
+                                            <i class="fas fa-clipboard-list-check"></i>
+                                        </div>
+                                        <div class="description">
+                                            <h4 class="info-title">Upcoming</h4>
+                                            <p class="description">
+                                                View a list of upcoming launches with basic filters.
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mx-auto">
+                                <div class="info info-horizontal">
+                                    <a href="/launch/previous">
+                                        <div class="icon icon-rose">
+                                            <i class="fas fa-history"></i>
+                                        </div>
+                                        <div class="description">
+                                            <h4 class="info-title">Previous</h4>
+                                            <p class="description">
+                                                View a list of recent previous launches with basic filters.
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mx-auto">
+                                <div class="info info-horizontal">
+                                    <a href="/launch/">
+                                        <div class="icon icon-success">
+                                            <i class="far fa-database"></i>
+                                        </div>
+                                        <div class="description">
+                                            <h4 class="info-title">Database</h4>
+                                            <p class="description">
+                                                Search through the entire launch database with advanced search filters.
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     {% if event %}
                         <div class="col-md-12 text-center">
-                            <h2 class="title">Upcoming Event</h2>
+                            <h2 class="title">Upcoming Events</h2>
                             <hr>
                         </div>
                         <div class="col-md-12">
@@ -277,7 +358,7 @@
                                     {% if event.location %}
                                         <span class="badge badge-pill badge-primary">{{ event.location }}</span>
                                     {% endif %}
-                                    <p class="card-description">
+                                    <p class="card-description mt-1">
                                         {{ event.description|truncatewords:75 }}
                                     </p>
                                     <div class="text-left">
@@ -312,7 +393,7 @@
                                                     {% if event.location %}
                                                         <span class="badge badge-pill badge-primary">{{ event.location }}</span>
                                                     {% endif %}
-                                                    <p class="card-description">
+                                                    <p class="card-description mt-1">
                                                         {{ event.description|truncatewords:50 }}
                                                     </p>
                                                 </div>
@@ -326,7 +407,6 @@
                                     <i class="material-icons">calendar_today</i> View More Events
                                 </a>
                             </div>
-                            {% include "web/horizontal_news.html" %}
                         </div>
                     {% endif %}
                 </div>
@@ -386,21 +466,22 @@
                         </button>
                     </a>
                         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                        <!-- Web - Vertical -->
+                        <!-- Web - Square -->
                         <ins class="adsbygoogle"
                              style="display:block"
                              data-ad-client="ca-pub-9824528399164059"
-                             data-ad-slot="2051890681"
+                             data-ad-slot="8772606898"
                              data-ad-format="auto"
                              data-full-width-responsive="true"></ins>
                         <script>
-                            (adsbygoogle = window.adsbygoogle || []).push({});
+                             (adsbygoogle = window.adsbygoogle || []).push({});
                         </script>
                     </div>
 
                     {% include "web/sidebar_launches_only.html" %}
                 </div>
             </div>
+            {% include "web/horizontal_news.html" %}
         </div>
     </div>
     <script src="{% static 'material_kit/js/dateFormat.js' %}" type="text/javascript"></script>
