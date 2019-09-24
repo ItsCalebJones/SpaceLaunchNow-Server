@@ -271,7 +271,6 @@ class Agency(models.Model):
 
     @property
     def pending_launches(self):
-
         cache_key = "%s-%s" % (self.id, "agency-pending")
         count = cache.get(cache_key)
         if count is not None:
@@ -1160,7 +1159,8 @@ class Launch(models.Model):
     mission = models.ForeignKey(Mission, related_name='launch', null=True, blank=True, on_delete=models.SET_NULL)
     created_date = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    launch_service_provider = models.ForeignKey(Agency, on_delete=models.SET_NULL, null=True, blank=True)
+    launch_service_provider = models.ForeignKey(Agency, on_delete=models.SET_NULL, null=True, blank=True,
+                                                verbose_name="Launch Service Provider")
 
     def __str__(self):
         return self.name

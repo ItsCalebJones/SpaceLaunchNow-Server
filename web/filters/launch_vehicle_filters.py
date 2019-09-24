@@ -1,7 +1,7 @@
 import django_filters
 from django.db.models import Q
 
-from api.models import LauncherConfig
+from api.models import LauncherConfig, Launch
 
 
 class LauncherConfigListFilter(django_filters.FilterSet):
