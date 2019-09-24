@@ -399,14 +399,14 @@ def event_by_slug(request, slug):
         return render(request, 'web/events/event_detail.html', {'previous_launches': previous_launches,
                                                                 'event': event})
     except ObjectDoesNotExist:
-        raise Http404
+        raise redirect('events_list')
 
 
 def event_by_id(request, id):
     try:
         return redirect('event_by_slug', slug=Events.objects.get(id=id).slug)
     except ObjectDoesNotExist:
-        raise Http404
+        raise redirect('events_list')
 
 
 def booster_reuse(request):

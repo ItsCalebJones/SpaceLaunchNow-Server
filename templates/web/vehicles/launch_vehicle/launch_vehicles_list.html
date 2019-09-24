@@ -21,12 +21,13 @@
 
     <meta name="robots" content="index, follow"/>
 
-    <meta property="og:type" content="article" />
+    <meta property="og:type" content="article"/>
     <meta property="og:site_name" content="Space Launch Now"/>
 
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:title" content="Space Launch Now - Launch Vehicles">
-    <meta name="twitter:description" content="A nearly complete list of launch vehicles - the full history of spaceflight!">
+    <meta name="twitter:description"
+          content="A nearly complete list of launch vehicles - the full history of spaceflight!">
     <meta name="twitter:image" content="https://spacelaunchnow.me/static/img/social.png">
     <meta name="twitter:site" content="@SpaceLaunchNow">
     <meta name="twitter:creator" content="@SpaceLaunchNow">
@@ -41,6 +42,15 @@
 {% block content %}
     <div class="container">
         <div class="container mt-5">
+            <div class="container">
+                <nav aria-label="breadcrumb" role="navigation">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item"><a href="/vehicle">Vehicles</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Launch Vehicles</li>
+                    </ol>
+                </nav>
+            </div>
             <div class="row">
                 <div class="col-md-8 ml-auto mr-auto text-center">
                     <h1 class="title">Launch Vehicles</h1>
@@ -48,42 +58,31 @@
                     <hr>
                 </div>
             </div>
-            <div class="container">
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                <!-- Web - Horizontal -->
-                <ins class="adsbygoogle"
-                     style="display:block"
-                     data-ad-client="ca-pub-9824528399164059"
-                     data-ad-slot="6503993784"
-                     data-ad-format="auto"
-                     data-full-width-responsive="true"></ins>
-                <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-            </div>
+            <!-- Web - Horizontal -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-9824528399164059"
+                 data-ad-slot="6503993784"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
         </div>
         <div class="row">
             <div class="col-md-12 x-auto">
-                <div class="col-md-8 mx-auto">
+                <div class="col-md-12 mx-auto">
                     <div class="card">
                         <div class="card-body">
-                            <h2>Launch Vehicle Filters</h2>
-                            <h3>Filter by Agency, Status or Family</h3>
-                            <button class="btn btn-round btn-primary"
-                                    data-toggle="collapse" data-target="#collapseOne" aria-expanded="false"
-                                    aria-controls="collapseOne">
-                                Show Filters
-                            </button>
-                            <div id="collapseOne" class="collapse mt-2" aria-labelledby="headingOne"
-                                 data-parent="#accordion">
-                                {% if filter %}
-                                    <form action="" method="get" class="form">
-                                        {% bootstrap_form filter.form %}
-                                        {% bootstrap_button 'filter' %}
-                                        <a class="btn btn-primary" href="/vehicle/launch_vehicle">Clear</a>
-                                    </form>
-                                {% endif %}
-                            </div>
+                            <h2 class="title">Launch Vehicle Filters</h2>
+                            <h5>Filter by Agency, Status or Family</h5>
+                            {% if filter %}
+                                <form action="" method="get" class="form">
+                                    {% bootstrap_form filter.form %}
+                                    {% bootstrap_button 'filter' %}
+                                    <a class="btn btn-primary" href="/vehicle/launch_vehicle">Clear</a>
+                                </form>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
