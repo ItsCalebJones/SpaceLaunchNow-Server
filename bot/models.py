@@ -199,6 +199,8 @@ class NewsItem(models.Model):
     description = models.CharField(max_length=40000, null=True, blank=True, default="")
     featured_image = models.CharField(max_length=1048, null=True, blank=True, default="")
     news_site = models.CharField(max_length=1048, null=True, blank=True, default="")
+    events = models.ManyToManyField(Events, related_name='news', blank=True)
+    launches = models.ManyToManyField(Launch, related_name='news', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
     should_notify = models.BooleanField(default=False)

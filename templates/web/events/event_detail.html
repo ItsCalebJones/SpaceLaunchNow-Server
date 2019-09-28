@@ -117,6 +117,38 @@
                                 {% include 'web/views/small_space_station.html' with vehicle=event.spacestation.first %}
                             </div>
                         {% endif %}
+                        {% if event.news.first %}
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <h2 class="title">Related News</h2>
+                                    <hr>
+                                </div>
+                                {% if event.news.all|length > 0 %}
+                                    {% for item in event.news.all %}
+                                        <div class="col-xl-4 col-lg-6 col-md-12">
+                                            <div class="card card-background"
+                                                 style="background-image: url('{{ item.featured_image }}'); height: 390px;">
+                                                <div class="card-body">
+                                                    <h6 class="card-category text-info">{{ item.news_site }}</h6>
+                                                    <h3 class="card-title">{{ item.title|truncatechars:65 }}</h3>
+                                                    <div class="d-flex h-50 justify-content-between"
+                                                         style="display: flex; flex-direction: column;">
+                                                        <p class="card-description">
+                                                            {{ item.description|truncatechars:120 }}
+                                                        </p>
+                                                        <div style="justify-content: center;display: flex;">
+                                                            <a href="{{ item.link }}" class="btn btn-white btn-link">
+                                                                <i class="material-icons">subject</i> Read Article
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
