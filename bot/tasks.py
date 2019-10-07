@@ -132,6 +132,12 @@ def get_news_task():
     get_news()
 
 
+@periodic_task(run_every=(crontab(hour='*/1')), options={"expires": 120})
+def get_news_task_hourly():
+    logger.info('Task - Running get_news...')
+    get_news(limit=50)
+
+
 @periodic_task(run_every=(crontab(minute='*/30')), options={"expires": 120})
 def get_reddit_submissions_task():
     logger.info('Task - Running get_reddit_submissions...')
