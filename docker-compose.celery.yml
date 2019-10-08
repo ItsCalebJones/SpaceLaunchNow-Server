@@ -2,8 +2,8 @@ version: '3'
 
 services:
   rabbitmq:
-    container_name: rabbitmq
-    hostname: rabbitmq
+    container_name: slns-rabbitmq
+    hostname: slns-rabbitmq
     image: rabbitmq:latest
     networks:
       - main
@@ -11,13 +11,12 @@ services:
       - "5672:5672"
     restart: on-failure
 
-  celery_worker:
+  slns-celery_worker:
     command: sh -c "celery -A spacelaunchnow worker -l info"
-    container_name: celery_worker
     depends_on:
     - rabbitmq
     deploy:
-      replicas: 2
+      replicas: 5
       restart_policy:
         condition: on-failure
       resources:
@@ -27,18 +26,18 @@ services:
         reservations:
           cpus: '0.25'
           memory: 20M
-    hostname: celery_worker
+    hostname: slns-celery_worker
     image: space-launch-now-server
     networks:
     - main
     restart: on-failure
 
-  celery_beat:
+  slns-celery_beat:
     command: sh -c "celery -A spacelaunchnow beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
-    container_name: celery_beat
+    container_name: slns-celery_beat
     depends_on:
     - rabbitmq
-    hostname: celery_beat
+    hostname: slns-celery_beat
     image: space-launch-now-server
     networks:
     - main
