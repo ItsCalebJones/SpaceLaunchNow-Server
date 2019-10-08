@@ -30,8 +30,8 @@ def news_to_embed(news):
     return embed
 
 
-def get_news():
-    response = requests.get(url='https://spaceflightnewsapi.net/api/v1/articles?limit=10')
+def get_news(limit=10):
+    response = requests.get(url='https://spaceflightnewsapi.net/api/v1/articles?limit=%s' % limit)
     if response.status_code == 200:
         for item in response.json()['docs']:
             news, created = NewsItem.objects.get_or_create(id=item['_id'])
