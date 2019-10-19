@@ -3,6 +3,8 @@ pipeline{
 	
 	environment {
 		BRANCH = "${BRANCH_NAME}"
+		registry="registry.calebjones.dev:5050/jenkinsbuild"
+		registryCredential = 'calebregistry'
 	}
 	
 	stages{
@@ -33,6 +35,13 @@ pipeline{
 							sh 'pylint **/*.py'
 						}
 					}
+				}
+			}
+		}
+		stage('Build Docker Image'){
+			steps{
+				script{
+					docker.build registry + ":$BUILD_NUMBER" + env.BRANCH_NAME
 				}
 			}
 		}
