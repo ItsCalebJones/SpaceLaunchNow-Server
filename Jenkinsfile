@@ -41,7 +41,11 @@ pipeline{
 		stage('Build Docker Image'){
 			steps{
 				script{
-					docker.build registry + ":$BUILD_NUMBER" + env.BRANCH_NAME
+					if(!fileExists("Dockerfile")){
+						echo "No Dockerfile";
+					}else{
+						docker.build registry + ":$BUILD_NUMBER" + env.BRANCH_NAME
+					}
 				}
 			}
 		}
