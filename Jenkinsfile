@@ -3,6 +3,10 @@ pipeline{
 	
 	environment {
 		BRANCH = "${BRANCH_NAME}"
+		registry="registry.calebjones.dev:5050/sln-server"
+		registryURL = "https://registry.calebjones.dev:5050/sln-server"
+		registryCredential = 'calebregistry'
+		dockerImage = ''
 	}
 	
 	stages{
@@ -34,6 +38,31 @@ pipeline{
 						}
 					}
 				}
+			}
+		}
+		stage('Build Docker Image'){
+			steps{
+				script{
+					if(!fileExists("Dockerfile")){
+						echo "No Dockerfile";
+					}else{
+						dockerImage = docker.build registry + ":b$BUILD_NUMBER_" + env.BRANCH_NAME
+					}
+				}
+			}
+		}
+		stage('Deploy Docker Image'){
+			steps{
+				script{
+					docker.withRegistry(registryURL, registryCredential){
+						dockerImage.push()
+					}
+				}
+			}
+		}
+		stage('Remove Docker Image Locally'){
+			steps{
+				sh "docker rmi $registry:b$BUILD_NUMBER_" + env.BRANCH_NAME
 			}
 		}
 	}
