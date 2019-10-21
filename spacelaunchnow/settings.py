@@ -183,7 +183,51 @@ LOGGING = {
 }
 
 # Application definition
-INSTALLED_APPS = config.INSTALLED_APPS
+INSTALLED_APPS = [
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'django.contrib.sitemaps',
+    'django.contrib.humanize',
+    'rest_framework',
+    'api.apps.ApiConfig',
+    'rest_framework_docs',
+    'bot',
+    'configurations',
+    'embed_video',
+    'jet.dashboard',
+    'jet',
+    'django.contrib.admin',
+    'django_user_agents',
+    'django_filters',
+    'rest_framework.authtoken',
+    'storages',
+    'django_comments',
+    'mptt',
+    'tagging',
+    'zinnia',
+    'collectfast',
+    'robots',
+    'app',
+    'sorl.thumbnail',
+    'sorl_thumbnail_serializer',
+    'ads_txt',
+    'silk',
+    'mathfilters',
+    'django_tables2',
+    'bootstrap4',
+    'django_extensions',
+    'tz_detect',
+    'django_celery_beat',
+    'django_celery_results',
+]
+
+if DEBUG:
+    # INSTALLED_APPS.append('debug_toolbar')
+    pass
 
 JET_THEMES = [
     {
