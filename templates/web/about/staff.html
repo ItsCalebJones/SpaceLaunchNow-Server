@@ -29,43 +29,44 @@
     <div class="container" style="margin-top:100px; margin-bottom: 16px">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
                 <li class="breadcrumb-item"><a href="/about/">About</a></li>
                 <li class="breadcrumb-item active" aria-current="/about/staff">Staff</li>
             </ol>
         </nav>
         <h1 class="title">Meet the Staff</h1>
-        <h2>Developers, Librarians, and Translators</h2>
-        <h3>Interested in helping maintain our data? <a href="https://goo.gl/forms/qcH1cbZC2psOst3P2">Become a
-            librarian</a>!</h3>
+        <h3 class="title">Developers, Librarians, and Staff</h3>
+        <hr>
         <br>
         <div class="row">
             <!-- Post Content Column -->
-            <div class="col-lg-9 col-md-12 col-xl-8">
-
-                {% if staff|length > 0 %}
-                    {% for person in staff %}
-                        <hr>
-                        <div class="row">
-                            <div class="col-xs-3 col-md-5 col-lg-3 center">
-                                {% thumbnail person.profile "200" as im %}
-                                    <img class="img-raised rounded-circle img-fluid text-center"
-                                         src="{{ im.url }}"
-                                         style="width: 125px;height: 125px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                {% endthumbnail %}
+            <div class="col-lg-9 col-md-12 col-xl-9">
+                <div class="row">
+                    {% if staff|length > 0 %}
+                        {% for person in staff %}
+                            <div class="col-md-4">
+                                <div class="card card-profile card-plain">
+                                    <div class="card-header card-avatar">
+                                        <a href="{{ person.link }}">
+                                            {% thumbnail person.profile "200" as im %}
+                                                <img class="img"
+                                                     src="{{ im.url }}"
+                                                     style="width: 150px;height: 150px;object-fit: cover;">
+                                            {% endthumbnail %}
+                                        </a>
+                                    </div>
+                                    <div class="card-body">
+                                        <h4 class="card-title">{{ person.name }}</h4>
+                                        <h6 class="card-category text-muted">{{ person.title }}</h6>
+                                        <p class="card-description">
+                                            {{ person.bio |truncatewords:25 }}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-xs-9 col-md-7 col-lg-9 center">
-                                <h3> {{ person.name }} - {{ person.title }}</h3>
-                                {{ person.bio }}<br>
-                                {% if person.link %}
-                                    <a href="{{ person.link }}">{{ person.link }}</a>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <br>
-                    {% endfor %}
-                    <hr>
-                {% endif %}
-                <a class="btn btn-primary btn-raised" href="/about/staff/translators">Meet the Translators</a>
+                        {% endfor %}
+                    {% endif %}
+                </div>
             </div>
             <br>
 
