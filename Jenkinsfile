@@ -46,7 +46,7 @@ pipeline{
 					if(!fileExists("Dockerfile")){
 						echo "No Dockerfile";
 					}else{
-						dockerImage = docker.build registry + ":b$BUILD_NUMBER_" + env.BRANCH_NAME
+						dockerImage = docker.build registry + ":b$BUILD_NUMBER" + "_" + env.BRANCH_NAME
 					}
 				}
 			}
@@ -62,7 +62,7 @@ pipeline{
 		}
 		stage('Remove Docker Image Locally'){
 			steps{
-				sh "docker rmi $registry:b$BUILD_NUMBER_" + env.BRANCH_NAME
+				sh "docker rmi $registry:b$BUILD_NUMBER" + "_" + env.BRANCH_NAME
 			}
 		}
 	}
