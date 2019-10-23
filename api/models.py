@@ -271,7 +271,6 @@ class Agency(models.Model):
 
     @property
     def pending_launches(self):
-
         cache_key = "%s-%s" % (self.id, "agency-pending")
         count = cache.get(cache_key)
         if count is not None:
@@ -506,7 +505,7 @@ class Events(models.Model):
     webcast_live = models.BooleanField(default=False)
     feature_image = models.FileField(storage=EventImageStorage(), default=None, null=True, blank=True,
                                      upload_to=image_path)
-    slug = AutoSlugField(populate_from=['name', 'id'])
+    slug = AutoSlugField(populate_from=['name'], overwrite=True)
     expedition = models.ManyToManyField('Expedition', blank=True)
     spacestation = models.ManyToManyField('Spacestation', blank=True)
     launch = models.ManyToManyField('Launch', blank=True)
@@ -522,6 +521,8 @@ class Events(models.Model):
 
     was_discorded_ten_minutes = models.BooleanField(blank=True, default=False)
     was_discorded_webcast_live = models.BooleanField(blank=True, default=False)
+
+    last_update = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
@@ -1158,7 +1159,8 @@ class Launch(models.Model):
     mission = models.ForeignKey(Mission, related_name='launch', null=True, blank=True, on_delete=models.SET_NULL)
     created_date = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    launch_service_provider = models.ForeignKey(Agency, on_delete=models.SET_NULL, null=True, blank=True)
+    launch_service_provider = models.ForeignKey(Agency, on_delete=models.SET_NULL, null=True, blank=True,
+                                                verbose_name="Launch Service Provider")
 
     def __str__(self):
         return self.name

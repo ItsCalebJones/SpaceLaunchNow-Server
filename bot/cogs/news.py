@@ -10,6 +10,7 @@ from discord import Colour
 from discord.ext import commands
 from goose3 import Goose
 
+from api.models import Events, Launch
 from bot.models import NewsNotificationChannel, NewsItem
 
 logger = logging.getLogger('bot.discord')
@@ -29,8 +30,8 @@ def news_to_embed(news):
     return embed
 
 
-def get_news():
-    response = requests.get(url='https://spaceflightnewsapi.net/api/v1/articles?limit=5')
+def get_news(limit=10):
+    response = requests.get(url='https://spaceflightnewsapi.net/api/v1/articles?limit=%s' % limit)
     if response.status_code == 200:
         for item in response.json()['docs']:
             news, created = NewsItem.objects.get_or_create(id=item['_id'])
@@ -40,6 +41,19 @@ def get_news():
                 news.featured_image = item['featured_image']
                 news.news_site = item['news_site_long']
                 news.created_at = datetime.utcfromtimestamp(item['date_published']).replace(tzinfo=pytz.utc)
+                for event_id in item['events']:
+                    try:
+                        event = Events.objects.get(id=event_id)
+                        news.events.add(event)
+                    except Events.DoesNotExist:
+                        logger.error("No event found with ID %s" % event_id)
+                for launch_id in item['launches']:
+                    try:
+                        launch = Launch.objects.get(id=launch_id)
+                        news.launches.add(launch)
+                    except Launch.DoesNotExist:
+                        logger.error("No launch found with ID %s" % launch_id)
+
                 if item['featured']:
                     news.should_notify = True
                 else:
@@ -68,6 +82,33 @@ def get_news():
                     news.should_notify = True
                 else:
                     news.should_notify = False
+
+                found = False
+                for event_id in item['events']:
+                    for event in news.events.all():
+                        if event.id == event_id:
+                            found = True
+
+                    if not found:
+                        try:
+                            event = Events.objects.get(id=event_id)
+                            news.events.add(event)
+                        except Events.DoesNotExist:
+                            logger.error("No event found with ID %s" % event_id)
+
+                found = False
+                for launch_id in item['launches']:
+                    for launch in news.launches.all():
+                        if launch.id == launch_id:
+                            found = True
+
+                    if not found:
+                        try:
+                            launch = Launch.objects.get(id=launch_id)
+                            news.launches.add(launch)
+                        except Launch.DoesNotExist:
+                            logger.error("No launch found with ID %s" % launch_id)
+
                 news.link = item['url']
                 news.featured_image = item['featured_image']
                 news.save()

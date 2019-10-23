@@ -8,10 +8,11 @@ from api.models import LauncherConfig
 
 class LaunchVehicleTable(tables.Table):
     name = tables.LinkColumn('launch_vehicle_id', args=[A('pk')])
+    total_launch_count = tables.Column(verbose_name='Launch Count')
 
     class Meta:
         model = LauncherConfig
-        fields = ('name', 'family', 'manufacturer', 'maiden_flight', 'active', 'reusable', 'length', 'diameter', 'leo_capacity', 'gto_capacity', 'to_thrust')
+        fields = ('name', 'family', 'manufacturer', 'maiden_flight', 'active', 'reusable', 'total_launch_count', 'length', 'diameter', 'leo_capacity', 'gto_capacity', 'to_thrust')
         template_name = 'django_tables2/bootstrap4.html'
 
     def order_leo_capacity(self, QuerySet, is_descending):

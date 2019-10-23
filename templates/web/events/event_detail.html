@@ -19,14 +19,14 @@
 
     <meta name="robots" content="index, follow"/>
 
-    <meta property="og:type" content="article" />
+    <meta property="og:type" content="article"/>
     <meta property="og:site_name" content="Space Launch Now"/>
 
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:title" content="Space Launch Now - {{ event.name }}">
     <meta name="twitter:description" content="{{ event.description|truncatechars:150 }}">
     <meta name="twitter:image" content="https://spacelaunchnow.me/static/img/social.png">
-        {% if event.feature_image %}
+    {% if event.feature_image %}
         <meta name="twitter:image" content="{{ event.feature_image.url }}"/>
     {% else %}
         <meta name="twitter:image" content="https://spacelaunchnow.me/static/img/social.png"/>
@@ -45,6 +45,13 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-9 col-md-12 col-xl-9">
+                <nav aria-label="breadcrumb" role="navigation">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item"><a href="/event">Events</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ event.name }}</li>
+                    </ol>
+                </nav>
                 <div class="card card-plain card-blog">
                     <div class="card-header card-header-image">
                         <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
@@ -57,8 +64,7 @@
                             style="display:inline;">{{ event.type.name }}</h6>
                         <h6 class="card-category"
                             style="display:inline;">{{ event.date }}</h6>
-                        <h4 class="card-title">{{ event.name }}</h4>
-                        </h4>
+                        <h2 class="card-title">{{ event.name }}</h2>
                         {% if event.location %}
                             <span class="badge badge-pill badge-primary">{{ event.location }}</span>
                         {% endif %}
@@ -71,19 +77,19 @@
                         {% if event.expedition %}
                             <span class="badge badge-pill badge-info">{{ event.expedition.first.name }}</span>
                         {% endif %}
-                        <p class="card-description mt-1">
-                            {{ event.description|linebreaks  }}
+                        <p class="card-description mt-2">
+                            {{ event.description|linebreaks }}
                         </p>
 
                         {% if event.news_url %}
-                        <div class="text-left">
-                            <a class="btn btn-primary" href="{{event.news_url }}">Read More</a>
-                        </div>
+                            <div class="text-left">
+                                <a class="btn btn-primary" href="{{ event.news_url }}">Read More</a>
+                            </div>
                         {% endif %}
 
                         {% if event.video_url %}
                             {% video event.video_url as my_video %}
-                                <h4 class="text-center">Watch Here</h4>
+                                <h2 class="title text-center">Watch Here</h2>
                                 <hr>
                                 <div class="videoWrapper">
                                     {% if request|is_mobile %}
@@ -96,7 +102,7 @@
                         {% endif %}
 
                         {% if event.launch.first or event.spacestation.first %}
-                            <h3>Related Information</h3>
+                            <h3 class="title">Related Information</h3>
                             <hr>
                         {% endif %}
 
@@ -109,6 +115,38 @@
                         {% if event.spacestation.first %}
                             <div class="col-sm-12 ml-auto mr-auto">
                                 {% include 'web/views/small_space_station.html' with vehicle=event.spacestation.first %}
+                            </div>
+                        {% endif %}
+                        {% if event.news.first %}
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <h2 class="title">Related News</h2>
+                                    <hr>
+                                </div>
+                                {% if event.news.all|length > 0 %}
+                                    {% for item in event.news.all %}
+                                        <div class="col-xl-4 col-lg-6 col-md-12">
+                                            <div class="card card-background"
+                                                 style="background-image: url('{{ item.featured_image }}'); height: 390px;">
+                                                <div class="card-body">
+                                                    <h6 class="card-category text-info">{{ item.news_site }}</h6>
+                                                    <h3 class="card-title">{{ item.title|truncatechars:65 }}</h3>
+                                                    <div class="d-flex h-50 justify-content-between"
+                                                         style="display: flex; flex-direction: column;">
+                                                        <p class="card-description">
+                                                            {{ item.description|truncatechars:120 }}
+                                                        </p>
+                                                        <div style="justify-content: center;display: flex;">
+                                                            <a href="{{ item.link }}" class="btn btn-white btn-link">
+                                                                <i class="material-icons">subject</i> Read Article
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
                         {% endif %}
                     </div>

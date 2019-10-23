@@ -129,7 +129,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" style="margin: 50px;">
+                    <div class="row">
                         <div class="col-md-12 ml-auto mx-auto mr-auto text-center">
                             <div class="profile">
                                 <div class="avatar">
@@ -156,9 +156,9 @@
                             {% if agency.founding_year %}
                                 <span class="badge badge-pill badge-warning">Founded: {{ agency.founding_year }}</span>
                             {% endif %}
-                            <span class="badge badge-pill badge-info">Successes: {{ launches.good|length }}</span>
-                            <span class="badge badge-pill badge-danger">Failures: {{ launches.bad|length }}</span>
-                            <span class="badge badge-pill badge-default">Pending: {{ launches.pending|length }}</span>
+                            <span class="badge badge-pill badge-info">Successes: {{ agency.successful_launches }}</span>
+                            <span class="badge badge-pill badge-danger">Failures: {{ agency.failed_launches }}</span>
+                            <span class="badge badge-pill badge-default">Pending: {{ agency.pending_launches }}</span>
                             <br>
                             <br>
                             {% if agency.description %}
@@ -278,7 +278,8 @@
                                         <div class="colored-shadow colored-shadow-big"
                                              style="background-image: url('{{ launch.infographic_url.url }}'); opacity: 1;"></div>
                                     </div>
-                                    <h4>Geoff Barrett is an independent graphic artist that creates launch infographics for space flight events.</h4>
+                                    <h4>Geoff Barrett is an independent graphic artist that creates launch infographics
+                                        for space flight events.</h4>
                                     <div class="social text-center">
                                         <a href="https://www.facebook.com/Geoffdbarrett/">
                                             <button class="btn btn-just-icon btn-round btn-facebook">

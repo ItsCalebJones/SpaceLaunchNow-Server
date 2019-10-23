@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from celery.schedules import crontab
+
 from spacelaunchnow import config
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -181,7 +183,51 @@ LOGGING = {
 }
 
 # Application definition
-INSTALLED_APPS = config.INSTALLED_APPS
+INSTALLED_APPS = [
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'django.contrib.sitemaps',
+    'django.contrib.humanize',
+    'rest_framework',
+    'api.apps.ApiConfig',
+    'rest_framework_docs',
+    'bot',
+    'configurations',
+    'embed_video',
+    'jet.dashboard',
+    'jet',
+    'django.contrib.admin',
+    'django_user_agents',
+    'django_filters',
+    'rest_framework.authtoken',
+    'storages',
+    'django_comments',
+    'mptt',
+    'tagging',
+    'zinnia',
+    'collectfast',
+    'robots',
+    'app',
+    'sorl.thumbnail',
+    'sorl_thumbnail_serializer',
+    'ads_txt',
+    'silk',
+    'mathfilters',
+    'django_tables2',
+    'bootstrap4',
+    'django_extensions',
+    'tz_detect',
+    'django_celery_beat',
+    'django_celery_results',
+]
+
+if DEBUG:
+    # INSTALLED_APPS.append('debug_toolbar')
+    pass
 
 JET_THEMES = [
     {
@@ -220,6 +266,7 @@ SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -231,6 +278,8 @@ MIDDLEWARE = [
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     # 'silk.middleware.SilkyMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 SILKY_PYTHON_PROFILER = True
 
@@ -327,8 +376,9 @@ GA_TRACKING_ID = config.GOOGLE_ANALYTICS_TRACKING_ID
 # CELERY STUFF
 BROKER_URL = config.BROKER_URL
 CELERY_ACCEPT_CONTENT = ['json']
-CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
-CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'django-cache'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'

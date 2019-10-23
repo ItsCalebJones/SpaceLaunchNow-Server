@@ -24,8 +24,10 @@ from django_tables2 import RequestConfig, LazyPaginator, SingleTableMixin
 from api.models import Agency, Launch, Astronaut, Launcher, SpaceStation, SpacecraftConfiguration, LauncherConfig, \
     Events
 from bot.models import NewsItem
-from web.filters import LauncherConfigListFilter
-from web.tables import LaunchVehicleTable, LauncherConfigTable
+from web.filters.launch_filters import LaunchListFilter
+from web.filters.launch_vehicle_filters import LauncherConfigListFilter
+from web.tables.launch_table import LaunchTable
+from web.tables.launch_vehicle_table import LaunchVehicleTable
 
 
 def get_youtube_url(launch):
@@ -133,6 +135,8 @@ def next_launch(request):
 
 # Create your views here.
 def launch_by_slug(request, slug):
+    if slug == 'schedule':
+        redirect('launch_schedule')
     try:
         val = UUID(slug, version=4)
         try:
@@ -195,7 +199,7 @@ def create_launch_view(request, launch):
     else:
         launch_image = None
 
-    return render(request, 'web/launch_page.html', {'launch': launch, 'launch_image': launch_image,
+    return render(request, 'web/launches/launch_detail_page.html', {'launch': launch, 'launch_image': launch_image,
                                                     'youtube_urls': youtube_urls, 'status': status,
                                                     'agency': agency, 'launches': launches,
                                                     'previous_launches': previous_launches})
@@ -208,6 +212,7 @@ def launches(request, ):
     if query is not None and query != "None":
         _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
         _launches = _launches.filter(Q(rocket__configuration__manufacturer__abbrev__contains=query) |
+                                     Q(rocket__configuration__manufacturer__name__contains=query) |
                                      Q(pad__location__name__contains=query) |
                                      Q(rocket__configuration__name__contains=query))
     else:
@@ -225,9 +230,131 @@ def launches(request, ):
 
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
 
-    return render(request, 'web/launches.html', {'launches': launches,
+    return render(request, 'web/launches/launches_upcoming.html', {'launches': launches,
                                                  'query': query,
-                                                 'previous_launches': previous_launches})
+                                                 'previous_launches': previous_launches,
+                                                 'filters': True})
+
+
+def previous(request, ):
+    query = request.GET.get('q')
+
+    if query is not None and query != "None":
+        _launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')
+        _launches = _launches.filter(Q(rocket__configuration__manufacturer__abbrev__contains=query) |
+                                     Q(rocket__configuration__manufacturer__name__contains=query) |
+                                     Q(pad__location__name__contains=query) |
+                                     Q(rocket__configuration__name__contains=query))
+    else:
+        _launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(_launches, 10)
+
+    try:
+        launches = paginator.page(page)
+    except PageNotAnInteger:
+        launches = paginator.page(1)
+    except EmptyPage:
+        launches = paginator.page(paginator.num_pages)
+
+    return render(request, 'web/launches/launches_previous.html', {'launches': launches, 'filters': True})
+
+
+# Create your views here.
+def launches_vandenberg(request, ):
+    query = 'Vandenberg'
+
+    if query is not None and query != "None":
+        _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
+        _launches = _launches.filter(Q(rocket__configuration__manufacturer__abbrev__contains=query) |
+                                     Q(rocket__configuration__manufacturer__name__contains=query) |
+                                     Q(pad__location__name__contains=query) |
+                                     Q(rocket__configuration__name__contains=query))
+    else:
+        _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(_launches, 10)
+
+    try:
+        launches = paginator.page(page)
+    except PageNotAnInteger:
+        launches = paginator.page(1)
+    except EmptyPage:
+        launches = paginator.page(paginator.num_pages)
+
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+
+    return render(request, 'web/launches/launches_upcoming.html', {'launches': launches,
+                                                 'query': query,
+                                                 'previous_launches': previous_launches,
+                                                 'filters': False})
+
+
+# Create your views here.
+def launches_spacex(request, ):
+    query = 'SpaceX'
+
+    if query is not None and query != "None":
+        _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
+        _launches = _launches.filter(Q(rocket__configuration__manufacturer__abbrev__contains=query) |
+                                     Q(rocket__configuration__manufacturer__name__contains=query) |
+                                     Q(pad__location__name__contains=query) |
+                                     Q(rocket__configuration__name__contains=query))
+    else:
+        _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(_launches, 10)
+
+    try:
+        launches = paginator.page(page)
+    except PageNotAnInteger:
+        launches = paginator.page(1)
+    except EmptyPage:
+        launches = paginator.page(paginator.num_pages)
+
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+
+    spacex = Agency.objects.get(name="SpaceX")
+
+    return render(request, 'web/launches/launches_upcoming.html', {'launches': launches,
+                                                 'query': query,
+                                                 'previous_launches': previous_launches,
+                                                 'filters': False,
+                                                 'agency': spacex})
+
+
+# Create your views here.
+def launches_florida(request, ):
+    query = 'FL'
+
+    if query is not None and query != "None":
+        _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
+        _launches = _launches.filter(Q(rocket__configuration__manufacturer__abbrev__contains=query) |
+                                     Q(rocket__configuration__manufacturer__name__contains=query) |
+                                     Q(pad__location__name__contains=query) |
+                                     Q(rocket__configuration__name__contains=query))
+    else:
+        _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(_launches, 10)
+
+    try:
+        launches = paginator.page(page)
+    except PageNotAnInteger:
+        launches = paginator.page(1)
+    except EmptyPage:
+        launches = paginator.page(paginator.num_pages)
+
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+
+    return render(request, 'web/launches/launches_upcoming.html', {'launches': launches,
+                                                 'query': query,
+                                                 'previous_launches': previous_launches,
+                                                 'filters': False})
 
 
 def astronaut(request, id):
@@ -272,14 +399,14 @@ def event_by_slug(request, slug):
         return render(request, 'web/events/event_detail.html', {'previous_launches': previous_launches,
                                                                 'event': event})
     except ObjectDoesNotExist:
-        raise Http404
+        raise redirect('events_list')
 
 
 def event_by_id(request, id):
     try:
         return redirect('event_by_slug', slug=Events.objects.get(id=id).slug)
     except ObjectDoesNotExist:
-        raise Http404
+        raise redirect('events_list')
 
 
 def booster_reuse(request):
@@ -340,6 +467,14 @@ class LauncherConfigListView(SingleTableMixin, FilterView):
     template_name = 'web/vehicles/launch_vehicle/launch_vehicles_list.html'
 
     filterset_class = LauncherConfigListFilter
+
+
+class LaunchListView(SingleTableMixin, FilterView):
+    table_class = LaunchTable
+    model = Launch
+    template_name = 'web/launches/launches_table.html'
+    ordering = ['net']
+    filterset_class = LaunchListFilter
 
 
 def launch_vehicle_id(request, id):
