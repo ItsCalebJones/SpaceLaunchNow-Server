@@ -7,12 +7,17 @@ pipeline{
 		registryURL = "https://registry.calebjones.dev:5050/sln-server"
 		registryCredential = 'calebregistry'
 		dockerImage = ''
+		if (env.BRANCH_NAME != 'master') {
+		    configFile = 'SLNProductionConfig'
+		} else {
+		    configFile = 'SLNConfig'
+		}
 	}
 	
 	stages{
 		stage('Setup'){
 			steps {
-				withCredentials([file(credentialsId: 'SLNConfig', variable: 'configFile')]) {
+				withCredentials([file(credentialsId: configFile, variable: 'configFile')]) {
 					sh 'cp $configFile spacelaunchnow/config.py'
 				}
 				sh 'mkdir -p log'
@@ -46,7 +51,7 @@ pipeline{
 					if(!fileExists("Dockerfile")){
 						echo "No Dockerfile";
 					}else{
-						dockerImage = docker.build registry + ":b$BUILD_NUMBER" + "_" + env.BRANCH_NAME
+						dockerImage = docker.build registry + ":" + env.BRANCH_NAME + "_" + "b$BUILD_NUMBER"
 					}
 				}
 			}
@@ -62,7 +67,7 @@ pipeline{
 		}
 		stage('Remove Docker Image Locally'){
 			steps{
-				sh "docker rmi $registry:b$BUILD_NUMBER" + "_" + env.BRANCH_NAME
+				sh "docker rmi $registry:" + env.BRANCH_NAME + "_" + "b$BUILD_NUMBER"
 			}
 		}
 	}
