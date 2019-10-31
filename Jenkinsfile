@@ -7,16 +7,16 @@ pipeline{
 		registryURL = "https://registry.calebjones.dev:5050/sln-server"
 		registryCredential = 'calebregistry'
 		dockerImage = ''
-		if (env.BRANCH_NAME != 'master') {
-		    configFile = 'SLNProductionConfig'
-		} else {
-		    configFile = 'SLNConfig'
-		}
 	}
 	
 	stages{
 		stage('Setup'){
 			steps {
+                if (env.BRANCH_NAME == 'master') {
+                    configFile = 'SLNProductionConfig'
+                } else {
+                    configFile = 'SLNConfig'
+                }
 				withCredentials([file(credentialsId: configFile, variable: 'configFile')]) {
 					sh 'cp $configFile spacelaunchnow/config.py'
 				}
