@@ -12,10 +12,12 @@ pipeline{
 	stages{
 		stage('Setup'){
 			steps {
-                if (env.BRANCH_NAME == 'master') {
-                    configFile = 'SLNProductionConfig'
-                } else {
-                    configFile = 'SLNConfig'
+                script {
+                    if (env.BRANCH_NAME == 'master') {
+                        configFile = 'SLNProductionConfig'
+                    } else {
+                        configFile = 'SLNConfig'
+                    }
                 }
 				withCredentials([file(credentialsId: configFile, variable: 'configFile')]) {
 					sh 'cp $configFile spacelaunchnow/config.py'
