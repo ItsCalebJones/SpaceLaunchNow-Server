@@ -6,6 +6,7 @@ pipeline{
 		registry="registry.calebjones.dev:5050/sln-server"
 		registryURL = "https://registry.calebjones.dev:5050/sln-server"
 		registryCredential = 'calebregistry'
+		imageName = env.BRANCH_NAME + "_" + "b$BUILD_NUMBER"
 		dockerImage = ''
 	}
 	
@@ -53,7 +54,10 @@ pipeline{
 					if(!fileExists("Dockerfile")){
 						echo "No Dockerfile";
 					}else{
-						dockerImage = docker.build registry + ":" + env.BRANCH_NAME + "_" + "b$BUILD_NUMBER"
+						dockerImage = docker.build registry + ":" + imageName
+                        dockerImage.inside {
+                            sh 'python /code/manage.py test'
+                        }
 					}
 				}
 			}
@@ -63,13 +67,17 @@ pipeline{
 				script{
 					docker.withRegistry(registryURL, registryCredential){
 						dockerImage.push()
+						dockerImage.push('latest')
+						sh "docker stop $(docker ps -a -f name=sln-staging-* -q)"
+						sh "docker rm $(docker ps -a -f name=sln-staging-* -q)"
+						sh "docker run -d --name sln-staging-" + imageName + " -p :8000 --network=web -l traefik.backend=sln-staging-" + imageName +" -l traefik.frontend.rule=Host:staging.calebjones.dev -l traefik.docker.network=web -l traefik.port=8000 " + registry + ":" + imageName + " 'bash' '-c' 'python /code/manage.py runserver 0.0.0.0:8000'"
 					}
 				}
 			}
 		}
 		stage('Remove Docker Image Locally'){
 			steps{
-				sh "docker rmi $registry:" + env.BRANCH_NAME + "_" + "b$BUILD_NUMBER"
+				sh "docker rmi $registry:" + imageName
 			}
 		}
 	}
