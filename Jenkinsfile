@@ -71,10 +71,5 @@ pipeline{
 				}
 			}
 		}
-		stage('Remove Docker Image Locally'){
-			steps{
-				sh "docker rmi $registry:" + imageName
-			}
-		}
 	}
 }
