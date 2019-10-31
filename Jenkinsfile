@@ -6,7 +6,7 @@ pipeline{
 		registry="registry.calebjones.dev:5050/sln-server"
 		registryURL = "https://registry.calebjones.dev:5050/sln-server"
 		registryCredential = 'calebregistry'
-		imageName = "${BRANCH_NAME}_b${BUILD_NUMBER}"
+		imageName = "${BRANCH_NAME}-b${BUILD_NUMBER}"
 		dockerImage = ''
 	}
 	
