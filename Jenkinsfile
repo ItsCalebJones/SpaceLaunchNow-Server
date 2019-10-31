@@ -55,9 +55,6 @@ pipeline{
 						echo "No Dockerfile";
 					}else{
 						dockerImage = docker.build registry + ":" + imageName
-                        dockerImage.inside {
-                            sh 'python /code/manage.py test'
-                        }
 					}
 				}
 			}
