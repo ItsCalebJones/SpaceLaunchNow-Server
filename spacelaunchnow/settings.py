@@ -221,6 +221,7 @@ INSTALLED_APPS = [
     'bootstrap4',
     'django_extensions',
     'tz_detect',
+    'corsheaders',
     'django_celery_beat',
     'django_celery_results',
 ]
