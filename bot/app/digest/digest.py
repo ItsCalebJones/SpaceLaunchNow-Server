@@ -2,7 +2,7 @@ import logging
 
 import bot.app.digest.daily as daily_check
 import bot.app.digest.weekly as weekly_check
-from bot.utils.config import keys
+from spacelaunchnow.config import keys
 
 # import the logging library
 

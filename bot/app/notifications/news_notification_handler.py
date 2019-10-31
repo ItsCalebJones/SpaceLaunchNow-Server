@@ -2,7 +2,7 @@ import logging
 
 from pyfcm import FCMNotification
 
-from bot.utils.config import keys
+from spacelaunchnow.config import keys
 from spacelaunchnow import config
 
 logger = logging.getLogger('bot.notifications')

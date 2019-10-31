@@ -1,5 +1,5 @@
 from bot.app.repository.launches_repository import LaunchRepository
-from bot.utils.config import keys
+from spacelaunchnow.config import keys
 import logging
 
 from spacelaunchnow import config

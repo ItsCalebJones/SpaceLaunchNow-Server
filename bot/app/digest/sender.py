@@ -3,7 +3,7 @@ import re
 
 from twitter import Twitter, OAuth, TwitterHTTPError
 
-from bot.utils.config import keys
+from spacelaunchnow.config import keys
 
 # import the logging library
 
