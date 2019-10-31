@@ -68,8 +68,8 @@ pipeline{
 					docker.withRegistry(registryURL, registryCredential){
 						dockerImage.push()
 						dockerImage.push('latest')
-						sh "docker stop $(docker ps -a -f name=sln-staging-* -q)"
-						sh "docker rm $(docker ps -a -f name=sln-staging-* -q)"
+						sh "docker stop \$(docker ps -a -f name=sln-staging-* -q)"
+						sh "docker rm \$(docker ps -a -f name=sln-staging-* -q)"
 						sh "docker run -d --name sln-staging-" + imageName + " -p :8000 --network=web -l traefik.backend=sln-staging-" + imageName +" -l traefik.frontend.rule=Host:staging.calebjones.dev -l traefik.docker.network=web -l traefik.port=8000 " + registry + ":" + imageName + " 'bash' '-c' 'python /code/manage.py runserver 0.0.0.0:8000'"
 					}
 				}
