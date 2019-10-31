@@ -13,8 +13,7 @@ pipeline{
 	stages{
 		stage('Setup'){
 			steps {
-                configFile = 'SLNConfig'
-				withCredentials([file(credentialsId: configFile, variable: 'configFile')]) {
+				withCredentials([file(credentialsId: 'SLNConfig', variable: 'configFile')]) {
 					sh 'cp $configFile spacelaunchnow/config.py'
 				}
 				sh 'mkdir -p log'
@@ -46,8 +45,7 @@ pipeline{
 			steps{
 				script{
                     if (env.BRANCH_NAME == 'master') {
-                        configFile = 'SLNProductionConfig'
-                        withCredentials([file(credentialsId: configFile, variable: 'configFile')]) {
+                        withCredentials([file(credentialsId: 'SLNProductionConfig', variable: 'configFile')]) {
                             sh 'cp $configFile spacelaunchnow/config.py'
                         }
                     }
