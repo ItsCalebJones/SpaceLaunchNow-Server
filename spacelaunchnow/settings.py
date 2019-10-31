@@ -33,6 +33,7 @@ DEBUG = config.DEBUG
 
 ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8', '.spacelaunchnow.me', '127.0.0.1', 'spacelaunchnow.me',
                  '10.0.2.2', '159.203.146.211', '159.203.150.91', '0.0.0.0', '.calebjones.dev']
+
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'spacelaunchnow.pagination.SLNLimitOffsetPagination',
     'DEFAULT_MODEL_SERIALIZER_CLASS': 'drf_toolbox.serializers.ModelSerializer',
@@ -223,6 +224,7 @@ INSTALLED_APPS = [
     'bootstrap4',
     'django_extensions',
     'tz_detect',
+    'corsheaders',
     'django_celery_beat',
     'django_celery_results',
 ]
@@ -376,7 +378,6 @@ USE_TZ = True
 GA_TRACKING_ID = config.GOOGLE_ANALYTICS_TRACKING_ID
 
 # CELERY STUFF
-# Celery config
 CELERY_BROKER_URL = 'amqp://slns-rabbitmq:5672'
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'
