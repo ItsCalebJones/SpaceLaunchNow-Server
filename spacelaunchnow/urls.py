@@ -97,7 +97,7 @@ if config.IS_WEBSERVER:
         url(r'^astronaut/(?P<slug>[-\w]+)/$', landing_views.astronaut_by_slug, name='astronaut_by_slug'),
         url(r'^about/$', about_view, name='staff'),
         url(r'^about/staff/$', staff_view, name='staff'),
-        url(r'^about/staff/translators/$', translator_view, name='translators'),
+        url(r'^about/translators/$', translator_view, name='translators'),
         url(r'^comments/', include('django_comments.urls')),
         url(r'^app/privacy', TemplateView.as_view(template_name='web/app/privacy.html'), name='privacy'),
         url(r'^app/tos', TemplateView.as_view(template_name='web/app/tos.html'), name='tos'),
