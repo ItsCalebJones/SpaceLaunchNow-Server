@@ -13,13 +13,7 @@ pipeline{
 	stages{
 		stage('Setup'){
 			steps {
-                script {
-                    if (env.BRANCH_NAME == 'master') {
-                        configFile = 'SLNProductionConfig'
-                    } else {
-                        configFile = 'SLNConfig'
-                    }
-                }
+                configFile = 'SLNConfig'
 				withCredentials([file(credentialsId: configFile, variable: 'configFile')]) {
 					sh 'cp $configFile spacelaunchnow/config.py'
 				}
@@ -51,6 +45,12 @@ pipeline{
 		stage('Build Docker Image'){
 			steps{
 				script{
+                    if (env.BRANCH_NAME == 'master') {
+                        configFile = 'SLNProductionConfig'
+                        withCredentials([file(credentialsId: configFile, variable: 'configFile')]) {
+                            sh 'cp $configFile spacelaunchnow/config.py'
+                        }
+                    }
 					if(!fileExists("Dockerfile")){
 						echo "No Dockerfile";
 					}else{
