@@ -12,11 +12,11 @@ from discord.ext import commands
 from prawcore import Redirect
 from twitter import Twitter, OAuth
 
+from spacelaunchnow import config
 from bot.models import SubredditNotificationChannel, Subreddit, RedditSubmission
 
 import praw
 
-from bot.utils import config
 
 user_agent = 'Space Launch News Bot'
 reddit = praw.Reddit(client_id=config.REDDIT_CLIENT_ID,

@@ -1,3 +1,4 @@
+selenium
 django-debug-toolbar
 discord
 amqp==2.3.2
@@ -16,11 +17,11 @@ django-bootstrap4==0.0.8
 django-cachalot==2.0.1
 django-blog-zinnia==0.19
 django-bootstrap-form==3.4
-django-celery-beat==1.1.1
-django-celery-results==1.0.1
 django-compat==1.0.14
 django-contrib-comments==1.8.0
 django-cors-headers==3.1.1
+django-celery-beat==1.1.1
+django-celery-results==1.0.1
 django-embed-video==1.1.2
 django-filter==1.1.0
 django-imagekit==4.0.2

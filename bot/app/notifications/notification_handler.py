@@ -4,7 +4,7 @@ from datetime import datetime
 import pytz
 from pyfcm import FCMNotification
 
-from bot.utils.config import keys
+
 from bot.utils.util import get_fcm_topics_v1, get_fcm_topics_v2
 from spacelaunchnow import config
 
@@ -152,7 +152,7 @@ class NotificationHandler:
             logger.info('Sending notification - %s' % contents)
             notification.last_notification_sent = datetime.now(tz=pytz.utc)
             notification.save()
-            push_service = FCMNotification(api_key=keys['FCM_KEY'])
+            push_service = FCMNotification(api_key=config.keys['FCM_KEY'])
             flutter_topics = get_fcm_topics_v1(launch,
                                                debug=self.DEBUG,
                                                flutter=True,
@@ -222,7 +222,7 @@ class NotificationHandler:
         else:
             flutter_topics = "'flutter_debug_v2' in topics && 'custom' in topics"
 
-        push_service = FCMNotification(api_key=keys['FCM_KEY'])
+        push_service = FCMNotification(api_key=config.keys['FCM_KEY'])
 
         logger.info('----------------------------------------------------------')
         logger.info('Sending iOS Custom Flutter notification - %s' % pending.title)
@@ -249,7 +249,7 @@ class NotificationHandler:
         else:
             topics = "'debug_v2' in topics && 'custom' in topics"
 
-        push_service = FCMNotification(api_key=keys['FCM_KEY'])
+        push_service = FCMNotification(api_key=config.keys['FCM_KEY'])
 
         logger.info('----------------------------------------------------------')
         logger.info('Sending Android Custom notification - %s' % pending.title)

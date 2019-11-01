@@ -8,7 +8,7 @@ from buffpy.managers.profiles import Profiles
 from twitter import Twitter, OAuth, TwitterHTTPError
 
 from bot.app.buffer import BufferAPI, hashtags
-from bot.utils.config import keys
+from spacelaunchnow.config import keys
 from bot.utils.util import seconds_to_time
 from spacelaunchnow import config
 

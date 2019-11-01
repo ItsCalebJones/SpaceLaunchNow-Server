@@ -10,7 +10,7 @@ from discord.ext import commands
 from twitter import Twitter, OAuth, TwitterError
 
 from bot.models import Tweet, TwitterUser, TwitterNotificationChannel
-from bot.utils import config
+from spacelaunchnow import config
 
 twitter = Twitter(auth=OAuth(consumer_key=config.keys['CONSUMER_KEY'],
                              consumer_secret=config.keys['CONSUMER_SECRET'],

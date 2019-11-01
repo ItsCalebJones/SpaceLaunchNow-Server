@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from datetime import timedelta
+
 from celery.schedules import crontab
 
 from spacelaunchnow import config
@@ -30,7 +32,8 @@ SECRET_KEY = config.DJANGO_SECRET_KEY
 DEBUG = config.DEBUG
 
 ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8', '.spacelaunchnow.me', '127.0.0.1', 'spacelaunchnow.me',
-                 '10.0.2.2', '159.203.146.211', '159.203.150.91', '.calebjones.dev']
+                 '10.0.2.2', '159.203.146.211', '159.203.150.91', '0.0.0.0', '.calebjones.dev']
+
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'spacelaunchnow.pagination.SLNLimitOffsetPagination',
     'DEFAULT_MODEL_SERIALIZER_CLASS': 'drf_toolbox.serializers.ModelSerializer',
@@ -375,11 +378,11 @@ USE_TZ = True
 GA_TRACKING_ID = config.GOOGLE_ANALYTICS_TRACKING_ID
 
 # CELERY STUFF
-BROKER_URL = 'pyamqp://rabbitmq:5672'
-CELERY_ACCEPT_CONTENT = ['json']
+CELERY_BROKER_URL = 'amqp://slns-rabbitmq:5672'
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
+CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'

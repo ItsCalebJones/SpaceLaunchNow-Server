@@ -16,7 +16,7 @@ services:
     depends_on:
     - rabbitmq
     deploy:
-      replicas: 5
+      replicas: 2
       restart_policy:
         condition: on-failure
       resources:
@@ -27,7 +27,7 @@ services:
           cpus: '0.25'
           memory: 20M
     hostname: slns-celery_worker
-    image: space-launch-now-server
+    image: spacelaunchnow-server:latest
     networks:
     - main
     restart: on-failure
@@ -38,7 +38,7 @@ services:
     depends_on:
     - rabbitmq
     hostname: slns-celery_beat
-    image: space-launch-now-server
+    image: spacelaunchnow-server:latest
     networks:
     - main
     restart: on-failure
