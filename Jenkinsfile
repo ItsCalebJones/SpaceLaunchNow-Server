@@ -1,4 +1,5 @@
 #!/usr/bin/env groovy
+def shout = { cmd -> sh (script: cmd, returnStdout: true).trim () }
 
 pipeline{
 	agent any
