@@ -2,16 +2,26 @@ version: '2'
 volumes:
   gunicorn_socket:
 services:
-  # Python/Django + Gunicorn
   web:
-    image: registry.calebjones.dev:5050/sln-server:master-b27
+    image: registry.calebjones.dev:5050/sln-server:master-b28
     volumes:
       - gunicorn_socket:/gunicorn_socket
       - /etc/letsencrypt/:/ssl/
     command: gunicorn -b unix:/gunicorn_socket/socket spacelaunchnow.wsgi --workers 3
+  memcached:
+    image: memcached:latest
+    entrypoint:
+      - memcached
+      - -m 64
+    ports:
+      - "11211:11211"
+    expose:
+      - "11211"
+    depends_on:
+      - web
   nginx:
     build:
-      context: . # We set this context to load the app requirements when building the image
+      context: .
       dockerfile: ./docker/nginx/Dockerfile
     ports:
       - "80:80"

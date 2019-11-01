@@ -30,9 +30,10 @@ SECRET_KEY = config.DJANGO_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.DEBUG
-
-ALLOWED_HOSTS = ['localhost', '.calebjones.me', '159.203.85.8', '.spacelaunchnow.me', '127.0.0.1', 'spacelaunchnow.me',
-                 '10.0.2.2', '159.203.146.211', '159.203.150.91', '0.0.0.0', '.calebjones.dev']
+if DEBUG:
+    ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOSTS = ['.calebjones.me', '.spacelaunchnow.me', 'spacelaunchnow.me', '.calebjones.dev']
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'spacelaunchnow.pagination.SLNLimitOffsetPagination',
@@ -227,6 +228,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_celery_beat',
     'django_celery_results',
+    'cachalot',
 ]
 
 if DEBUG:
@@ -479,6 +481,7 @@ DEFAULT_FILE_STORAGE = DEFAULT_STORAGE
 AWS_IS_GZIPPED = True
 
 CACHES = config.CACHE
+CACHALOT_TIMEOUT = 60
 
 # DEBUG_TOOLBAR_PANELS = [
 #     'debug_toolbar.panels.timer.TimerPanel',
