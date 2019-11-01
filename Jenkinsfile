@@ -1,5 +1,10 @@
 #!/usr/bin/env groovy
-def shout = { cmd -> sh (script: cmd, returnStdout: true).trim () }
+
+def defineImageName() {
+    def branchName = "${env.BRANCH_NAME}"
+    branchName = branchName.replace ('/', '-')
+    return "${branchName}-b${BUILD_NUMBER}"
+}
 
 pipeline{
 	agent any
@@ -9,9 +14,7 @@ pipeline{
 		registry="registry.calebjones.dev:5050/sln-server"
 		registryURL = "https://registry.calebjones.dev:5050/sln-server"
 		registryCredential = 'calebregistry'
-        commitId = shout 'git rev-parse --short HEAD'
-        branchName = shout ('git rev-parse --abbrev-ref HEAD').replace ('/', '_')
-		imageName = "${branchName}-b${BUILD_NUMBER}"
+		imageName = defineImageName()
 		dockerImage = ''
 	}
 	
