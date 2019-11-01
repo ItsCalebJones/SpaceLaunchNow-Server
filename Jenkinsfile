@@ -1,3 +1,5 @@
+#!/usr/bin/env groovy
+
 pipeline{
 	agent any
 	
@@ -6,7 +8,9 @@ pipeline{
 		registry="registry.calebjones.dev:5050/sln-server"
 		registryURL = "https://registry.calebjones.dev:5050/sln-server"
 		registryCredential = 'calebregistry'
-		imageName = "${BRANCH_NAME}-b${BUILD_NUMBER}"
+        commitId = shout 'git rev-parse --short HEAD'
+        branchName = shout ('git rev-parse --abbrev-ref HEAD').replace ('/', '_')
+		imageName = "${branchName}-b${BUILD_NUMBER}"
 		dockerImage = ''
 	}
 	
