@@ -17,6 +17,7 @@ django-bootstrap4==0.0.8
 django-cachalot==2.0.1
 django-blog-zinnia==0.19
 django-bootstrap-form==3.4
+django-cachalot==2.1.0
 django-compat==1.0.14
 django-contrib-comments==1.8.0
 django-cors-headers==3.1.1

@@ -227,6 +227,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_celery_beat',
     'django_celery_results',
+    'cachalot',
 ]
 
 if DEBUG:
