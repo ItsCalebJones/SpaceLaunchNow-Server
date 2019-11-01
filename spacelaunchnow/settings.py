@@ -481,6 +481,7 @@ DEFAULT_FILE_STORAGE = DEFAULT_STORAGE
 AWS_IS_GZIPPED = True
 
 CACHES = config.CACHE
+CACHALOT_TIMEOUT = 60
 
 # DEBUG_TOOLBAR_PANELS = [
 #     'debug_toolbar.panels.timer.TimerPanel',
