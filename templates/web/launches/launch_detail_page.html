@@ -298,6 +298,32 @@
                                         </a>
                                     </div>
                                 {% endif %}
+                                {% if launch.news.all|length > 0 %}
+                                    <h2 class="title text-center">Related News</h2>
+                                    <div class="row">
+                                    {% for item in launch.news.all %}
+                                       <div class="col-xl-12 col-lg-12 col-md-12 mx-auto">
+                                            <div class="card card-background"
+                                                 style="background-image: url('{{ item.featured_image }}'); height: 390px;">
+                                                <div class="card-body">
+                                                    <h6 class="card-category text-info">{{ item.news_site }}</h6>
+                                                    <h3 class="card-title">{{ item.title|truncatechars:65 }}</h3>
+                                                    <div class="d-flex h-50 justify-content-between" style="display: flex; flex-direction: column;">
+                                                        <p class="card-description">
+                                                            {{ item.description|truncatechars:120 }}
+                                                        </p>
+                                                        <div style="justify-content: center;display: flex;">
+                                                            <a href="{{ item.link }}" class="btn btn-white btn-link">
+                                                                <i class="material-icons">subject</i> Read Article
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                    </div>
+                                {% endif %}
                                 <script async
                                         src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
                                 <ins class="adsbygoogle"
@@ -309,8 +335,7 @@
                                 <script>
                                     (adsbygoogle = window.adsbygoogle || []).push({});
                                 </script>
-                                <h3 class="text-center card-title"><b>Watch the Launch</b></h3>
-                                <hr>
+                                <h2 class="title text-center">Watch the Launch</h2>
                                 <!-- Title -->
                                 {% if youtube_urls|length > 0 %}
                                     {% for url in youtube_urls %}
@@ -346,36 +371,6 @@
         &q={{ launch.pad.location.name }}&zoom=10" allowfullscreen>
 
                                 </iframe>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row text-center">
-                        <div class="container">
-                            <div class="col-lg-12">
-                                <h3 class="mt-4 card-title">Links</h3>
-                                <hr>
-                                <h4>Videos</h4>
-                                {% if launch.vid_urls.all|length > 0 %}
-                                    {% for url in launch.vid_urls.all %}
-                                        <a href="{{ url.vid_url }}">{{ url.vid_url }}</a><br>
-
-                                    {% endfor %}
-                                {% else %}
-                                    <p>No videos available for this launch!</p>
-                                {% endif %}
-                                <h4>Information</h4>
-                                {% if launch.vid_urls.all|length > 0 %}
-                                    {% for i_url in launch.info_urls.all %}
-                                        <a href="{{ i_url.info_url }}">{{ i_url.info_url }}</a><br>
-                                    {% endfor %}
-                                {% else %}
-                                    <p>No information links available for this launch!</p>
-                                {% endif %}
-                                <hr>
-                                <h5>Help <a href="https://launchlibrary.net/about.html">Launch Library</a> keep this
-                                    launch up
-                                    to date!</h5>
-                                <br>
                             </div>
                         </div>
                     </div>
