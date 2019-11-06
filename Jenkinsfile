@@ -5,6 +5,15 @@ def defineImageName() {
     branchName = branchName.replace ('/', '-')
     return "${branchName}-b${BUILD_NUMBER}"
 }
+def commitMessage() {
+    def message = sh(returnStdout: true, script: "git log --format='medium' -1 ${GIT_COMMIT}").trim()
+    return "${message}"
+}
+
+def projectName() {
+  def jobNameParts = env.JOB_NAME.tokenize('/') as String[]
+  return jobNameParts.length < 2 ? env.JOB_NAME : jobNameParts[jobNameParts.length - 2]
+}
 
 pipeline{
 	agent any
@@ -16,6 +25,9 @@ pipeline{
 		registryCredential = 'calebregistry'
 		imageName = defineImageName()
 		dockerImage = ''
+        DISCORD_URL = credentials('DiscordURL')
+        COMMIT_MESSAGE = commitMessage()
+        PROJECT_NAME = projectName()
 	}
 	
 	stages{
@@ -80,4 +92,21 @@ pipeline{
 			}
 		}
 	}
+    post {
+        always {
+            discordSend description: "**Status:** ${currentBuild.currentResult}\n**Branch: **${env.BRANCH_NAME}\n**Build: **${env.BUILD_NUMBER}\n\n${COMMIT_MESSAGE}\n\nLink: https://" + imageName + ".staging.calebjones.dev"
+                        footer: "",
+                        link: env.BUILD_URL,
+                        result: currentBuild.currentResult,
+                        title: PROJECT_NAME,
+                        webhookURL: DISCORD_URL,
+                        thumbnail: "https://i.imgur.com/FASV6fJ.png",
+                        notes: "Hey <@&641718676046872588>, new build completed for ${PROJECT_NAME}!"
+
+            // This needs to be removed in favor or removing credential files instead.
+            sh '''
+               rm spacelaunchnow/config.py
+               '''
+        }
+    }
 }
