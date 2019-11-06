@@ -94,7 +94,7 @@ pipeline{
 	}
     post {
         always {
-            discordSend description: "**Status:** ${currentBuild.currentResult}\n**Branch: **${env.BRANCH_NAME}\n**Build: **${env.BUILD_NUMBER}\n\n${COMMIT_MESSAGE}\n\nLink: https://" + imageName + ".staging.calebjones.dev"
+            discordSend description: "**Status:** ${currentBuild.currentResult}\n**Branch: **${env.BRANCH_NAME}\n**Build: **${env.BUILD_NUMBER}\n\n${COMMIT_MESSAGE}\n\nLink: https://" + imageName + ".staging.calebjones.dev",
                         footer: "",
                         link: env.BUILD_URL,
                         result: currentBuild.currentResult,
