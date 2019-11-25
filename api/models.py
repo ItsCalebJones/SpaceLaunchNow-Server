@@ -741,6 +741,16 @@ class Launcher(models.Model):
 
         return count
 
+    @property
+    def last_launch_date(self):
+        now = datetime.datetime.now(tz=utc)
+        launch_date = Launch.objects.values('net').filter(rocket__firststage__launcher__id=self.id,
+                                                          rocket__firststage__rocket__launch__net__lte=now).order_by('-net').first()
+        if launch_date is not None:
+            return launch_date['net']
+        else:
+            return None
+
     def __str__(self):
         if self.launcher_config is not None:
             return '%s (%s)' % (self.serial_number, self.launcher_config.full_name)
@@ -970,10 +980,11 @@ class Astronaut(models.Model):
 
     @property
     def flights(self):
+        now = datetime.datetime.now(tz=utc)
         listi = list((Launch.objects.filter(rocket__spacecraftflight__launch_crew__astronaut__id=self.id)
                       .values_list('id', flat=True)
                       .distinct()))
-        launches = Launch.objects.filter(id__in=listi).order_by('net')
+        launches = Launch.objects.filter(id__in=listi, net__gte=now).order_by('net')
         return launches
 
     @property
@@ -989,6 +1000,18 @@ class Astronaut(models.Model):
     def age(self):
         import datetime
         return int((datetime.date.today() - self.date_of_birth).days / 365.25)
+
+    @property
+    def last_flight(self):
+        now = datetime.datetime.now(tz=utc)
+        launch_list = list((Launch.objects.filter(rocket__spacecraftflight__launch_crew__astronaut__id=self.id)
+                            .values_list('id', flat=True)
+                            .distinct()))
+        launches = Launch.objects.values('net').filter(id__in=launch_list, net__lte=now).order_by('-net').first()
+        if launches is not None:
+            return launches['net']
+        else:
+            return None
 
     def __str__(self):
         return self.name
