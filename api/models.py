@@ -743,13 +743,22 @@ class Launcher(models.Model):
 
     @property
     def last_launch_date(self):
+        cache_key = "%s-%s" % (self.id, "stage_last_launch_date")
+        res = cache.get(cache_key)
+        if res:
+            return res
+
         now = datetime.datetime.now(tz=utc)
         launch_date = Launch.objects.values('net').filter(rocket__firststage__launcher__id=self.id,
                                                           rocket__firststage__rocket__launch__net__lte=now).order_by('-net').first()
+
         if launch_date is not None:
-            return launch_date['net']
+            last_launch_date = launch_date['net']
         else:
-            return None
+            last_launch_date = None
+
+        cache.set(cache_key, last_launch_date, CACHE_TIMEOUT_ONE_HOUR)
+        return last_launch_date
 
     def __str__(self):
         if self.launcher_config is not None:
@@ -1003,15 +1012,24 @@ class Astronaut(models.Model):
 
     @property
     def last_flight(self):
+        cache_key = "%s-%s" % (self.id, "astronaut_last_flight_date")
+        res = cache.get(cache_key)
+        if res:
+            return res
+
         now = datetime.datetime.now(tz=utc)
         launch_list = list((Launch.objects.filter(rocket__spacecraftflight__launch_crew__astronaut__id=self.id)
                             .values_list('id', flat=True)
                             .distinct()))
         launches = Launch.objects.values('net').filter(id__in=launch_list, net__lte=now).order_by('-net').first()
+
         if launches is not None:
-            return launches['net']
+            last_flight_date = launches['net']
         else:
-            return None
+            last_flight_date = None
+
+        cache.set(cache_key, last_flight_date, CACHE_TIMEOUT_ONE_HOUR)
+        return last_flight_date
 
     def __str__(self):
         return self.name
