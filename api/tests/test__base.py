@@ -139,11 +139,11 @@ class SLNAPITests(APITestCase):
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        path = '/3.3.0/'
+        path = '/api/3.3.0/'
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
-        path = '/3.4.0/'
+        path = '/api/3.4.0/'
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
