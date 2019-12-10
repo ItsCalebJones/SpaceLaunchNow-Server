@@ -1,5 +1,4 @@
 from drf_queryfields import QueryFieldsMixin
-from zinnia.models import Entry
 
 from api.models import *
 from rest_framework import serializers
@@ -491,11 +490,3 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'lookup_field': 'launch_library_id'},
         }
-
-
-class EntrySerializer(serializers.ModelSerializer):
-
-    class Meta:
-        depth = 3
-        model = Entry
-        fields = ('id', 'title', 'slug', 'publication_date', 'content', 'lead', 'excerpt', 'image', 'featured',)

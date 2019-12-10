@@ -209,17 +209,12 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework.authtoken',
     'storages',
-    'django_comments',
-    'mptt',
-    'tagging',
-    'zinnia',
     'collectfast',
     'robots',
     'app',
     'sorl.thumbnail',
     'sorl_thumbnail_serializer',
     'ads_txt',
-    'silk',
     'mathfilters',
     'django_tables2',
     'bootstrap4',
@@ -309,7 +304,6 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'spacelaunchnow.context_processor.ga_tracking_id',
                 'spacelaunchnow.context_processor.use_google_analytics',
-                'zinnia.context_processors.version',  # Optional
             ],
             'loaders': [
                 ('django.template.loaders.cached.Loader', [

@@ -11,6 +11,5 @@ router.register(r'launch/upcoming', views.UpcomingLaunchViewSet,  base_name='lau
 router.register(r'launch', views.LaunchViewSet, base_name='launch')
 router.register(r'launcher', views.LauncherViewSet, base_name='launcher')
 router.register(r'launcher_config', views.LauncherConfigViewSet)
-router.register(r'news', views.EntryViewSet)
 
 api_urlpatterns = router.urls

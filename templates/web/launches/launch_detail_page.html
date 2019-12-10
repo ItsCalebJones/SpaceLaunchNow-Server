@@ -16,7 +16,7 @@
     {% if launch_image %}
         <meta property="og:image" content="{{ launch_image }}"/>
     {% else %}
-        <meta property="og:image" content="https://spacelaunchnow.me/static/img/social.png"/>
+        <meta property="og:image" content="{% static  'img/social.png' %}"/>
         <meta property="og:image:width" content="3000"/>
         <meta property="og:image:height" content="2000"/>
     {% endif %}
@@ -31,7 +31,7 @@
     {% if launch_image %}
         <meta name="twitter:image" content="{{ launch_image }}"/>
     {% else %}
-        <meta name="twitter:image" content="https://spacelaunchnow.me/static/img/social.png"/>
+        <meta name="twitter:image" content="{% static  'img/social.png' %}"/>
     {% endif %}
     <meta name="twitter:site" content="@SpaceLaunchNow">
     <meta name="twitter:creator" content="@SpaceLaunchNow">

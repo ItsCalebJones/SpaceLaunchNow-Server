@@ -1,9 +1,5 @@
-from itertools import chain
-
 import pytz
-from django.db.models import Q, Count
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
+from django.db.models import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -14,29 +10,6 @@ from datetime import datetime, timedelta
 from api.models import LauncherConfig, SpacecraftConfiguration, Agency
 from api.permission import HasGroupPermission
 from bot.models import Launch
-
-
-class EntryViewSet(ModelViewSet):
-    """
-    API endpoint that allows News posts to be viewed.
-
-    """
-    queryset = Entry.objects.order_by('-publication_date').filter(status=2).all()
-
-    # serializer_class = AgencySerializer
-
-    def get_serializer_class(self):
-        return EntrySerializer
-
-    permission_classes = [HasGroupPermission]
-    permission_groups = {
-        'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
-        'list': ['_Public']
-    }
-    # filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    # filter_fields = ('featured',)
-    # search_fields = ('^name',)
-    # ordering_fields = ('id', 'name', 'featured')
 
 
 class AgencyViewSet(ModelViewSet):
