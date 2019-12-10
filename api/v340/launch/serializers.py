@@ -10,7 +10,7 @@ class AstronautDetailedSerializerNoFlights(serializers.HyperlinkedModelSerialize
         model = Astronaut
         # fields = ('name',)
         fields = ('id', 'url', 'name', 'status', 'type', 'agency', 'date_of_birth', 'date_of_death', 'nationality',
-                  'twitter', 'instagram', 'bio', 'profile_image', 'wiki',)
+                  'twitter', 'instagram', 'bio', 'profile_image', 'wiki', 'last_flight',  'first_flight',)
 
 
 class AstronautFlightSerializer(serializers.ModelSerializer):
@@ -35,7 +35,7 @@ class LauncherDetailedSerializer(QueryFieldsMixin, serializers.HyperlinkedModelS
     class Meta:
         model = Launcher
         fields = ('id', 'url', 'details', 'flight_proven', 'serial_number', 'status', 'image_url',
-                  'successful_landings', 'attempted_landings', 'flights')
+                  'successful_landings', 'attempted_landings', 'flights', 'last_launch_date', 'first_launch_date')
 
 
 class LaunchSerializerMini(serializers.HyperlinkedModelSerializer):

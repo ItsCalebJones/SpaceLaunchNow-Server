@@ -185,7 +185,7 @@ class AstronautDetailedSerializerNoFlights(serializers.HyperlinkedModelSerialize
         model = Astronaut
         # fields = ('name',)
         fields = ('id', 'url', 'name', 'status', 'agency', 'date_of_birth', 'date_of_death', 'nationality',
-                  'twitter', 'instagram', 'bio', 'profile_image', 'wiki',)
+                  'twitter', 'instagram', 'bio', 'profile_image', 'wiki', 'last_flight', 'first_flight',)
 
 
 class AstronautFlightSerializer(serializers.ModelSerializer):

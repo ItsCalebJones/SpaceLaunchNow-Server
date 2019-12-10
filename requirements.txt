@@ -52,7 +52,7 @@ psutil==5.6.3
 python-memcached==1.59
 praw==6.0.0
 redis==2.10.6
-regex==2018.2.21
+regex==2019.11.1
 requests==2.20.0
 s3transfer==0.1.13
 sorl-thumbnail==12.5.0
