@@ -6,7 +6,8 @@ from api.models import *
 from api.permission import HasGroupPermission
 
 
-from api.v350.config.spacecraft.serializers import SpacecraftConfigurationSerializer, SpacecraftConfigurationDetailSerializer
+from api.v350.config.spacecraft.serializers import SpacecraftConfigurationSerializer, \
+    SpacecraftConfigurationDetailSerializer
 
 
 class SpacecraftConfigViewSet(ModelViewSet):

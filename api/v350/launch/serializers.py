@@ -13,15 +13,6 @@ class AstronautDetailedSerializerNoFlights(serializers.HyperlinkedModelSerialize
                   'twitter', 'instagram', 'bio', 'profile_image', 'wiki', 'last_flight',  'first_flight',)
 
 
-class AstronautFlightSerializer(serializers.ModelSerializer):
-    role = serializers.StringRelatedField(read_only=True, source='role.role')
-    astronaut = AstronautDetailedSerializerNoFlights(read_only=True, many=False)
-
-    class Meta:
-        model = AstronautFlight
-        fields = ('id', 'role', 'astronaut')
-
-
 class LandingSerializer(serializers.ModelSerializer):
     type = LandingTypeSerializer(many=False, read_only=True, source='landing_type')
     location = LandingLocationSerializer(many=False, read_only=True, source='landing_location')
@@ -56,58 +47,6 @@ class FirstStageSerializer(serializers.ModelSerializer):
                   'turn_around_time_days', 'previous_flight')
 
 
-class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
-    manufacturer = AgencySerializer(many=False, read_only=True)
-
-    def get_rep(self, obj):
-        rep = obj.rep
-        serializer_context = {'request': self.context.get('request'),
-                              'id': obj.id}
-        serializer = AgencySerializer(rep, context=serializer_context)
-        return serializer.data
-
-    class Meta:
-        model = LauncherConfig
-        fields = ('id', 'launch_library_id', 'url', 'name', 'description', 'family', 'full_name', 'manufacturer',
-                  'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
-                  'maiden_flight', 'launch_mass', 'leo_capacity', 'gto_capacity',
-                  'to_thrust', 'apogee', 'vehicle_range', 'image_url', 'info_url', 'wiki_url', 'total_launch_count',
-                  'consecutive_successful_launches', 'successful_launches', 'failed_launches', 'pending_launches',)
-
-
-class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    manufacturer = AgencySerializerMini(read_only=True)
-
-    class Meta:
-        model = LauncherConfig
-        fields = ('id', 'launch_library_id', 'url', 'name', 'manufacturer',)
-
-
-class SpacecraftDetailedNoFlightsSerializer(serializers.HyperlinkedModelSerializer):
-    status = SpacecraftStatusSerializer(read_only=True, many=False)
-    spacecraft_config = SpacecraftConfigurationDetailSerializer(read_only=True, many=False)
-
-    class Meta:
-        model = Spacecraft
-        fields = ('id', 'url', 'name', 'serial_number', 'status', 'description', 'spacecraft_config',)
-
-
-class DockingLocationSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = DockingLocation
-        fields = ('id', 'name',)
-
-
-class DockingEventSerializerForSpacecraftFlight(serializers.ModelSerializer):
-    docking_location = DockingLocationSerializer(many=False, read_only=True)
-    spacestation = SpaceStationSerializerForCommon(many=False, read_only=True, source='space_station')
-
-    class Meta:
-        model = DockingEvent
-        fields = ('id', 'url', 'spacestation', 'docking', 'departure', 'docking_location')
-
-
 class SpacecraftFlightDetailedSerializerForLaunch(serializers.HyperlinkedModelSerializer):
     launch_crew = AstronautFlightSerializer(read_only=True, many=True)
     onboard_crew = AstronautFlightSerializer(read_only=True, many=True)
@@ -129,17 +68,6 @@ class SpacecraftFlightSerializerForLaunch(serializers.HyperlinkedModelSerializer
     class Meta:
         model = SpacecraftFlight
         fields = ('id', 'url', 'destination', 'mission_end', 'spacecraft',)
-
-
-class AgencySerializerDetailedForLaunches(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Agency
-        fields = ('id', 'url', 'name', 'featured', 'type', 'country_code', 'abbrev', 'description', 'administrator',
-                  'founding_year', 'launchers', 'spacecraft', 'launch_library_url', 'total_launch_count',
-                  'consecutive_successful_launches', 'successful_launches',
-                  'failed_launches', 'pending_launches', 'consecutive_successful_landings',
-                  'successful_landings', 'failed_landings', 'attempted_landings', 'info_url', 'wiki_url', 'logo_url',
-                  'image_url', 'nation_url',)
 
 
 class RocketDetailedSerializer(serializers.ModelSerializer):

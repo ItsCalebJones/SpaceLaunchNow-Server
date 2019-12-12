@@ -6,7 +6,7 @@ from api.models import *
 from api.permission import HasGroupPermission
 
 
-from api.v350.config.launcher.serializers import LauncherConfigDetailSerializer, LauncherConfigSerializer
+from api.v350.config.launcher.serializers import LauncherConfigDetailSerializer, LauncherConfigSerializerForLauncher
 
 
 class LauncherConfigViewSet(ModelViewSet):
@@ -34,7 +34,7 @@ class LauncherConfigViewSet(ModelViewSet):
         if self.action == 'retrieve' or mode == "detailed":
             return LauncherConfigDetailSerializer
         else:
-            return LauncherConfigSerializer
+            return LauncherConfigSerializerForLauncher
 
     queryset = LauncherConfig.objects.all()
     permission_classes = [HasGroupPermission]

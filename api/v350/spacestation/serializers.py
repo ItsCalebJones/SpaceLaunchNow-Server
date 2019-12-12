@@ -20,15 +20,6 @@ class DockingEventDetailedSerializerForSpacestation(serializers.HyperlinkedModel
         fields = ('id', 'url', 'docking', 'departure', 'flight_vehicle',)
 
 
-class AstronautFlightForExpeditionSerializer(serializers.ModelSerializer):
-    role = serializers.StringRelatedField(read_only=True, source='role.role')
-    astronaut = AstronautSerializer(read_only=True, many=False)
-
-    class Meta:
-        model = AstronautFlight
-        fields = ('id', 'role', 'astronaut')
-
-
 class ExpeditionSerializerForSpacestation(serializers.HyperlinkedModelSerializer):
 
     class Meta:
@@ -44,7 +35,7 @@ class ExpeditionDetailedSerializerForSpacestation(serializers.HyperlinkedModelSe
         fields = ('id', 'url', 'name', 'start', 'end', 'crew')
 
 
-class DockingLocationSerializer(serializers.ModelSerializer):
+class DockingLocationSerializerForSpacestation(serializers.ModelSerializer):
     docked = DockingEventDetailedSerializerForSpacestation(read_only=True, many=False)
 
     class Meta:
@@ -58,7 +49,7 @@ class SpaceStationDetailedSerializer(serializers.HyperlinkedModelSerializer):
     type = SpaceStationTypeSerializer(read_only=True, many=False)
     orbit = serializers.StringRelatedField(many=False, read_only=True)
     active_expeditions = ExpeditionDetailedSerializerForSpacestation(read_only=True, many=True)
-    docking_location = DockingLocationSerializer(read_only=True, many=True)
+    docking_location = DockingLocationSerializerForSpacestation(read_only=True, many=True)
 
     class Meta:
         model = SpaceStation

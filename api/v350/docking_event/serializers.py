@@ -23,12 +23,6 @@ class SpaceStationSerializerForDockingEvent(serializers.HyperlinkedModelSerializ
         fields = ('id', 'url', 'name', 'image_url')
 
 
-class DockingLocationSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = DockingLocation
-        fields = ('id', 'name',)
-
 
 class DockingEventSerializer(serializers.HyperlinkedModelSerializer):
     launch_id = serializers.CharField(source='flight_vehicle.rocket.launch.id')

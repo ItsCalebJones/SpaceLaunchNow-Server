@@ -206,6 +206,13 @@ class SpacecraftDetailedNoFlightsSerializer(serializers.HyperlinkedModelSerializ
         fields = ('id', 'url', 'name', 'serial_number', 'status', 'description', 'spacecraft_config',)
 
 
+class DockingLocationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = DockingLocation
+        fields = ('id', 'name',)
+
+
 class SpaceStationSerializerForCommon(serializers.HyperlinkedModelSerializer):
     status = SpaceStationStatusSerializer(read_only=True, many=False)
     orbit = serializers.StringRelatedField(many=False, read_only=True)
@@ -220,6 +227,15 @@ class DockingLocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = DockingLocation
         fields = ('id', 'name',)
+
+
+class AstronautFlightForExpeditionSerializer(serializers.ModelSerializer):
+    role = serializers.StringRelatedField(read_only=True, source='role.role')
+    astronaut = AstronautSerializer(read_only=True, many=False)
+
+    class Meta:
+        model = AstronautFlight
+        fields = ('id', 'role', 'astronaut')
 
 
 class DockingEventSerializerForSpacecraftFlight(serializers.ModelSerializer):
@@ -437,9 +453,11 @@ class AgencySerializerDetailedForLaunches(QueryFieldsMixin, serializers.Hyperlin
     class Meta:
         model = Agency
         fields = ('id', 'url', 'name', 'featured', 'type', 'country_code', 'abbrev', 'description', 'administrator',
-                  'founding_year', 'launchers', 'spacecraft', 'launch_library_url', 'successful_launches',
-                  'failed_launches', 'pending_launches', 'successful_landings', 'failed_landings', 'attempted_landings',
-                  'consecutive_successful_landings', 'info_url', 'wiki_url', 'logo_url', 'image_url', 'nation_url',)
+                  'founding_year', 'launchers', 'spacecraft', 'launch_library_url', 'total_launch_count',
+                  'consecutive_successful_launches', 'successful_launches',
+                  'failed_launches', 'pending_launches', 'consecutive_successful_landings',
+                  'successful_landings', 'failed_landings', 'attempted_landings', 'info_url', 'wiki_url', 'logo_url',
+                  'image_url', 'nation_url',)
 
 
 class LauncherConfigListSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
@@ -449,12 +467,11 @@ class LauncherConfigListSerializer(QueryFieldsMixin, serializers.HyperlinkedMode
 
 
 class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    launch_service_provider = serializers.ReadOnlyField(read_only=True, source="manufacturer.name")
+    manufacturer = serializers.ReadOnlyField(read_only=True, source="manufacturer.name")
 
     class Meta:
         model = LauncherConfig
-        fields = ('id', 'launch_library_id', 'url', 'name', 'family', 'full_name', 'variant', 'reusable',
-                  'launch_service_provider',)
+        fields = ('id', 'launch_library_id', 'url', 'name', 'manufacturer', 'family', 'full_name', 'variant', 'reusable',)
 
 
 class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
