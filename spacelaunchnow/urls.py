@@ -79,7 +79,7 @@ def get_v350():
             contact=openapi.Contact(email="contact@snippets.local"),
             license=openapi.License(name="BSD License"),
         ),
-        patterns=v330_api,
+        patterns=v350_api,
         public=True, permission_classes = (permissions.AllowAny,),
     )
 
@@ -104,7 +104,7 @@ if config.IS_API:
         url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
     ]
-    api_settings = api_settings + get_v330()
+    api_settings = api_settings + get_v350()
 
 if config.IS_WEBSERVER:
     web_settings = [
