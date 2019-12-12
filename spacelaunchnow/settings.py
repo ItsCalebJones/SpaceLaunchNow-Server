@@ -47,7 +47,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_THROTTLE_RATES': {
         'anon': '1000/day',
-        'user': '200/sec'
+        'user': '200/minute'
     },
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
@@ -55,6 +55,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     )
 }
+
 
 LOGIN_REDIRECT_URL = '/'
 
@@ -198,7 +199,6 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'rest_framework',
     'api.apps.ApiConfig',
-    'rest_framework_docs',
     'bot',
     'configurations',
     'embed_video',
@@ -224,6 +224,7 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'django_celery_results',
     'cachalot',
+    'drf_yasg',
 ]
 
 if DEBUG:
