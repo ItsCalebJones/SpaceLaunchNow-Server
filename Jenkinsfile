@@ -3,6 +3,7 @@
 def defineImageName() {
     def branchName = "${env.BRANCH_NAME}"
     branchName = branchName.replace ('/', '-')
+    branchName = branchName.replace ('.', '')
     return "${branchName}-b${BUILD_NUMBER}"
 }
 def commitMessage() {
