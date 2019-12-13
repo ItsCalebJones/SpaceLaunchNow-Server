@@ -1,6 +1,7 @@
 {% extends "web/base.html" %}
 {% load embed_video_tags %}
 {% load user_agents %}
+{% load static %}
 {% block extrahead %}
     <link rel="canonical" href="https://spacelaunchnow.me/event/{{ event.slug }}">
     <title>Space Launch Now - Space Stations</title>
@@ -25,11 +26,11 @@
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:title" content="Space Launch Now - {{ event.name }}">
     <meta name="twitter:description" content="{{ event.description|truncatechars:150 }}">
-    <meta name="twitter:image" content="https://spacelaunchnow.me/static/img/social.png">
+    <meta name="twitter:image" content="{% static  'img/social.png' %}">
     {% if event.feature_image %}
         <meta name="twitter:image" content="{{ event.feature_image.url }}"/>
     {% else %}
-        <meta name="twitter:image" content="https://spacelaunchnow.me/static/img/social.png"/>
+        <meta name="twitter:image" content="{% static  'img/social.png' %}"/>
     {% endif %}
     <meta name="twitter:site" content="@SpaceLaunchNow">
     <meta name="twitter:creator" content="@SpaceLaunchNow">

@@ -139,6 +139,14 @@ class SLNAPITests(APITestCase):
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+        path = '/api/3.3.0/'
+        response = self.client.get(path)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        path = '/api/3.4.0/'
+        response = self.client.get(path)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
     def check_permissions(self, path):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.post(path, **self.header)

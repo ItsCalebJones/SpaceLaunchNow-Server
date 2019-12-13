@@ -27,7 +27,7 @@ services:
           cpus: '0.25'
           memory: 20M
     hostname: slns-celery_worker
-    image: spacelaunchnow-server:latest
+    build: .
     networks:
     - main
     restart: on-failure
@@ -38,7 +38,7 @@ services:
     depends_on:
     - rabbitmq
     hostname: slns-celery_beat
-    image: spacelaunchnow-server:latest
+    build: .
     networks:
     - main
     restart: on-failure

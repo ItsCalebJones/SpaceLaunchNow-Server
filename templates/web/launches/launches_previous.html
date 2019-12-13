@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% load thumbnail %}
 {% load mathfilters %}
+{% load static %}
 {% block extrahead %}
 
     <meta property="fb:app_id" content="746774215504127"/>
@@ -15,7 +16,7 @@
     <meta property="og:description"
           content="A spaceflight launch tracker for Cape Canaveral/Kennedy Space Center, Vandenberg AFB, Wallops Island, SpaceX, Blue Origin, ULA, Rocket Lab and much more - tracking the latest developments in spaceflight, check back often for launch schedule changes."/>
     <meta property="og:url" content="https://spacelaunchnow.me/launch/previous"/>
-    <meta property="og:image" content="https://spacelaunchnow.me/static/img/social.png"/>
+    <meta property="og:image" content="{% static  'img/social.png' %}"/>
     <meta property="og:image:width" content="3000"/>
     <meta property="og:image:height" content="2000"/>
 
@@ -28,7 +29,7 @@
 
     <meta name="twitter:description"
           content="A spaceflight launch tracker for Cape Canaveral/Kennedy Space Center, Vandenberg AFB, Wallops Island, SpaceX, Blue Origin, ULA, Rocket Lab and much more - tracking the latest developments in spaceflight, check back often for launch schedule changes.">
-    <meta name="twitter:image" content="https://spacelaunchnow.me/static/img/social.png">
+    <meta name="twitter:image" content="{% static  'img/social.png' %}">
     <meta name="twitter:site" content="@SpaceLaunchNow">
     <meta name="twitter:creator" content="@SpaceLaunchNow">
 {% endblock %}

@@ -77,7 +77,6 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework.authtoken',
     'storages',
-    'django_comments',
     'mptt',
     'tagging',
     'zinnia',

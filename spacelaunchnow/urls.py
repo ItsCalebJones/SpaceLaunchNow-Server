@@ -47,7 +47,6 @@ sitemaps = {
 default_settings = [
     url(r'^robots\.txt', include('robots.urls')),
     url(r'^sitemap\.xml/$', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
-    url(r'^news/', include('zinnia.urls')),
 ]
 api_settings = []
 web_settings = []
@@ -98,7 +97,6 @@ if config.IS_WEBSERVER:
         url(r'^about/$', about_view, name='staff'),
         url(r'^about/staff/$', staff_view, name='staff'),
         url(r'^about/translators/$', translator_view, name='translators'),
-        url(r'^comments/', include('django_comments.urls')),
         url(r'^app/privacy', TemplateView.as_view(template_name='web/app/privacy.html'), name='privacy'),
         url(r'^app/tos', TemplateView.as_view(template_name='web/app/tos.html'), name='tos'),
         url(r'^site/privacy', TemplateView.as_view(template_name='web/site/privacy.html'), name='privacy'),

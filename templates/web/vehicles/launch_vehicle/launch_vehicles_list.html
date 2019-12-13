@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% load render_table from django_tables2 %}
 {% load bootstrap4 %}
+{% load static %}
 {% bootstrap_css %}
 {% block extrahead %}
     <link rel="canonical" href="https://spacelaunchnow.me/vehicle/launch_vehicle/">
@@ -15,7 +16,7 @@
     <meta property="og:description"
           content="A nearly complete list of launch vehicles - the full history of spaceflight!"/>
     <meta property="og:url" content="https://spacelaunchnow.me/vehicle/launch_vehicle"/>
-    <meta property="og:image" content="https://spacelaunchnow.me/static/img/social.png"/>
+    <meta property="og:image" content="{% static  'img/social.png' %}"/>
     <meta property="og:image:width" content="3000"/>
     <meta property="og:image:height" content="2000"/>
 
@@ -28,7 +29,7 @@
     <meta name="twitter:title" content="Space Launch Now - Launch Vehicles">
     <meta name="twitter:description"
           content="A nearly complete list of launch vehicles - the full history of spaceflight!">
-    <meta name="twitter:image" content="https://spacelaunchnow.me/static/img/social.png">
+    <meta name="twitter:image" content="{% static  'img/social.png' %}">
     <meta name="twitter:site" content="@SpaceLaunchNow">
     <meta name="twitter:creator" content="@SpaceLaunchNow">
 
