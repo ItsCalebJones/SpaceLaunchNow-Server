@@ -73,11 +73,11 @@ def get_v350():
     v350_api_schema_view = get_schema_view(
         openapi.Info(
             title="Space launch Now",
-            default_version='v1',
-            description="Test description",
-            terms_of_service="https://www.google.com/policies/terms/",
-            contact=openapi.Contact(email="contact@snippets.local"),
-            license=openapi.License(name="BSD License"),
+            default_version='v3.5.0',
+            description="The Space Launch Now API is a up-to-date database of Spaceflight events.",
+            terms_of_service="https://spacelaunchnow.me/site/tos",
+            contact=openapi.Contact(email="support@spacelaunchnow.me"),
+            license=openapi.License(name="Apache License 2.0"),
         ),
         patterns=v350_api,
         public=True, permission_classes = (permissions.AllowAny,),

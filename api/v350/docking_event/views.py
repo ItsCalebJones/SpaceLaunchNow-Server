@@ -26,7 +26,7 @@ class DockingEventViewSet(ModelViewSet):
     ORDERING:
     Fields - 'id', 'docking', 'departure'
     Order reverse via Docking date.
-    Example - /3.3.0/docking_event/?ordering=-docking
+    Example - /3.5.0/docking_event/?ordering=-docking
     """
 
     def get_serializer_class(self):
@@ -46,3 +46,4 @@ class DockingEventViewSet(ModelViewSet):
     filter_class = DockingEventFilter
     search_fields = ('space_station__name', 'flight_vehicle__spacecraft__name')
     ordering_fields = ('docking', 'departure',)
+    http_method_names = ['get']

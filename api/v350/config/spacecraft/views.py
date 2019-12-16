@@ -19,14 +19,14 @@ class SpacecraftConfigViewSet(ModelViewSet):
 
     FILTERS:
     Parameters - 'name', 'manufacturer', 'in_use', 'human_rated'
-    Example - /api/3.3.0/config/spacecraft/?status=Active
+    Example - /api/3.5.0/config/spacecraft/?status=Active
 
     SEARCH EXAMPLE:
-    Example - /api/3.3.0/config/spacecraft/?search=Dragon
+    Example - /api/3.5.0/config/spacecraft/?search=Dragon
 
     ORDERING:
     Fields - 'name', 'launch_mass', 'leo_capacity', 'gto_capacity', 'launch_cost'
-    Example - /api/3.3.0/config/spacecraft/?order=launch_mass
+    Example - /api/3.5.0/config/spacecraft/?order=launch_mass
 
     """
     def get_serializer_class(self):
@@ -46,3 +46,4 @@ class SpacecraftConfigViewSet(ModelViewSet):
     filter_fields = ('name', 'manufacturer', 'in_use', 'human_rated')
     search_fields = ('name', 'manufacturer__name',)
     ordering_fields = ('name', 'launch_mass', 'leo_capacity', 'gto_capacity', 'launch_cost')
+    http_method_names = ['get']

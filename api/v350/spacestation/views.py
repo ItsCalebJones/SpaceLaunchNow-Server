@@ -16,15 +16,15 @@ class SpaceStationViewSet(ModelViewSet):
 
     FILTERS:
     Parameters - 'name', 'status', 'owners', 'orbit', 'type', 'owners__name', 'owners__abrev'
-    Example - /api/3.3.0/spacestation/?status=Active
+    Example - /api/3.5.0/spacestation/?status=Active
 
     SEARCH EXAMPLE:
-    Example - /api/3.3.0/spacestation/?search=ISS
+    Example - /api/3.5.0/spacestation/?search=ISS
     Searches through 'name', 'owners__name', 'owners__abbrev'
 
     ORDERING:
     Fields - 'id', 'status', 'type', 'founded', 'volume'
-    Example - /api/3.3.0/spacestation/?ordering=id
+    Example - /api/3.5.0/spacestation/?ordering=id
     """
 
     def get_serializer_class(self):
@@ -37,10 +37,11 @@ class SpaceStationViewSet(ModelViewSet):
     queryset = SpaceStation.objects.all()
     permission_classes = [HasGroupPermission]
     permission_groups = {
-        'retrieve': ['_Public'], # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
-        'list': ['_Public'] # list returns None and is therefore NOT accessible by anyone (GET 'site.com/api/foo')
+        'retrieve': ['_Public'],
+        'list': ['_Public']
     }
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filter_fields = ('name', 'status', 'owners', 'orbit', 'type', 'owners__name', 'owners__abbrev')
     search_fields = ('$name', 'owners__name', 'owners__abbrev')
     ordering_fields = ('id', 'status', 'type', 'founded', 'volume')
+    http_method_names = ['get']

@@ -16,7 +16,7 @@ class SpaceflightFlightViewSet(ModelViewSet):
 
     FILTERS:
     Parameters - 'spacecraft'
-    Example - /api/3.3.0/launcher/?spacecraft=37
+    Example - /api/3.5.0/launcher/?spacecraft=37
     """
     def get_serializer_class(self):
         mode = self.request.query_params.get("mode", "normal")
@@ -33,3 +33,4 @@ class SpaceflightFlightViewSet(ModelViewSet):
     }
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('spacecraft',)
+    http_method_names = ['get']

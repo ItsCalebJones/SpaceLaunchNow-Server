@@ -17,15 +17,15 @@ class LauncherViewSet(ModelViewSet):
 
     FILTERS:
     Parameters - 'id', 'serial_number', 'flight_proven', 'launcher_config', 'launcher_config__manufacturer'
-    Example - /api/3.3.0/launcher/?serial_number=B1046
+    Example - /api/3.5.0/launcher/?serial_number=B1046
 
     SEARCH EXAMPLE:
-    /api/3.3.0/launcher/?search=expended
+    /api/3.5.0/launcher/?search=expended
     Searches through serial number or status
 
     ORDERING:
     Fields - 'id', 'flight_proven',
-    Example - /api/3.3.0/launcher/?order=flight_proven
+    Example - /api/3.5.0/launcher/?order=flight_proven
     """
 
     def get_serializer_class(self):
@@ -46,3 +46,4 @@ class LauncherViewSet(ModelViewSet):
     filter_class = LauncherFilterSet
     search_fields = ('^serial_number', '^status',)
     ordering_fields = ('id', 'flight_proven',)
+    http_method_names = ['get']

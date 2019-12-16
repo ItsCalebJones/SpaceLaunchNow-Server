@@ -29,6 +29,7 @@ class UpcomingEventViewSet(ModelViewSet):
     }
     filter_backends = (DjangoFilterBackend, SearchFilter)
     search_fields = ('name',)
+    http_method_names = ['get']
 
 
 class PreviousEventViewSet(ModelViewSet):
@@ -52,6 +53,7 @@ class PreviousEventViewSet(ModelViewSet):
     }
     filter_backends = (DjangoFilterBackend, SearchFilter)
     search_fields = ('name',)
+    http_method_names = ['get']
 
 
 class EventViewSet(ModelViewSet):
@@ -62,7 +64,7 @@ class EventViewSet(ModelViewSet):
     Return a list of all Events
 
     SEARCH EXAMPLE:
-    /3.3.0/event/?search=Dragon
+    /3.5.0/event/?search=Dragon
     Searches through name
     """
     queryset = Events.objects.all()
@@ -75,3 +77,4 @@ class EventViewSet(ModelViewSet):
     }
     filter_backends = (DjangoFilterBackend, SearchFilter)
     search_fields = ('name',)
+    http_method_names = ['get']

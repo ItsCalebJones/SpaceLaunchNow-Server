@@ -18,19 +18,19 @@ class AstronautViewSet(ModelViewSet):
 
     MODE:
     Normal, List and Detailed
-    /3.3.0/astronaut/?mode=detailed
+    /3.5.0/astronaut/?mode=detailed
 
     FILTERS:
     Parameters - 'name', 'status', 'nationality', 'agency__name', 'agency__abbrev', 'date_of_birth', 'date_of_death', 'status_ids'
-    Example - /3.3.0/astronaut/?nationality=American
+    Example - /3.5.0/astronaut/?nationality=American
 
     SEARCH EXAMPLE:
-    /3.3.0/astronaut/?search=armstrong
+    /3.5.0/astronaut/?search=armstrong
     Searches through name, nationality and agency name
 
     ORDERING:
     Fields - 'name', 'status', 'date_of_birth'
-    Example - /3.3.0/astronaut/?order=name
+    Example - /3.5.0/astronaut/?order=name
 
     """
     def get_queryset(self):
@@ -78,3 +78,4 @@ class AstronautViewSet(ModelViewSet):
     filter_class = AstronautsFilter
     search_fields = ('$name', 'nationality', 'agency__name', 'agency__abbrev')
     ordering_fields = ('name', 'status', 'date_of_birth')
+    http_method_names = ['get']

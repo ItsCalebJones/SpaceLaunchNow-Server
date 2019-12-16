@@ -17,18 +17,18 @@ class AgencyViewSet(ModelViewSet):
 
     MODE:
     Normal and Detailed
-    /3.3.0/agencies/?mode=detailed
+    /3.5./agencies/?mode=detailed
 
     FILTERS:
     Parameters - 'featured', 'agency_type', 'country_code'
-    Example - /3.3.0/agencies/?featured=true
+    Example - /3.5.0/agencies/?featured=true
 
     SEARCH EXAMPLE:
-    /3.3.0/agencies/?search=nasa
+    /3.5.0/agencies/?search=nasa
 
     ORDERING:
     Fields - 'id', 'name', 'featured'
-    Example - /3.3.0/agencies/?ordering=featured
+    Example - /3.5.0/agencies/?ordering=featured
 
     """
 
@@ -56,3 +56,4 @@ class AgencyViewSet(ModelViewSet):
     filter_fields = ('featured', 'agency_type', 'country_code')
     search_fields = ('^name',)
     ordering_fields = ('id', 'name', 'featured')
+    http_method_names = ['get']

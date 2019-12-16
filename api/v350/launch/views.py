@@ -142,6 +142,7 @@ class LaunchViewSet(ModelViewSet):
                      '$rocket__configuration__manufacturer__abbrev', '$mission__name', '$pad__location__name',
                      '$pad__name', '$rocket__spacecraftflight__spacecraft__name')
     ordering_fields = ('id', 'name', 'net',)
+    http_method_names = ['get']
 
 
 class UpcomingLaunchViewSet(ModelViewSet):
@@ -288,6 +289,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
                      '$rocket__configuration__manufacturer__abbrev', '$mission__name', '$pad__location__name',
                      '$pad__name', '$rocket__spacecraftflight__spacecraft__name')
     ordering_fields = ('id', 'name', 'net',)
+    http_method_names = ['get']
 
 
 class PreviousLaunchViewSet(ModelViewSet):
@@ -417,3 +419,4 @@ class PreviousLaunchViewSet(ModelViewSet):
                      '$rocket__configuration__manufacturer__abbrev', '$mission__name', '$pad__location__name',
                      '$pad__name', '$rocket__spacecraftflight__spacecraft__name')
     ordering_fields = ('id', 'name', 'net',)
+    http_method_names = ['get']

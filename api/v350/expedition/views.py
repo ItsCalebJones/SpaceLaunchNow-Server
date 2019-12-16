@@ -18,21 +18,21 @@ class ExpeditionViewSet(ModelViewSet):
 
     MODE:
     Normal and Detailed
-    /api/3.3.0/expedition/?mode=detailed
+    /api/3.5.0/expedition/?mode=detailed
 
     FILTERS:
     Fields - 'name', 'crew__astronaut', 'crew__astronaut__agency', 'space_station'
 
     Get all Expeditions with the Space Station ID of 1.
-    Example - /api/3.3.0/expedition/?space_station=1&mode=detailed
+    Example - /api/3.5.0/expedition/?space_station=1&mode=detailed
 
     Search for all Expeditions with the Astronaut named John
-    Example - /api/3.3.0/expedition/?search=John
+    Example - /api/3.5.0/expedition/?search=John
 
     ORDERING:
     Fields - 'id', 'start', 'end'
     Order reverse via Start date.
-    Example - /3.3.0/astronaut/?order=-start
+    Example - /3.5.0/astronaut/?order=-start
     """
     def get_serializer_class(self):
         mode = self.request.query_params.get("mode", "normal")
@@ -52,3 +52,4 @@ class ExpeditionViewSet(ModelViewSet):
     search_fields = ('^name', '^crew__astronaut__name', '^crew__astronaut__agency__name',
                      '^crew__astronaut__agency__abbrev', '^crew__astronaut__nationality')
     ordering_fields = ('id', 'start', 'end',)
+    http_method_names = ['get']
