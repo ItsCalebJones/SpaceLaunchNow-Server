@@ -654,7 +654,7 @@ class Mission(models.Model):
     id = models.AutoField(primary_key=True)
     launch_library_id = models.IntegerField(editable=True, blank=True, null=True, unique=True)
     name = models.CharField(max_length=255, blank=True, default="")
-    description = models.CharField(max_length=2048, blank=True, default="")
+    description = models.TextField(blank=True, default="")
     type = models.IntegerField(blank=True, null=True)
     type_name = models.CharField(max_length=255, blank=True, default="")
     mission_type = models.ForeignKey(MissionType, related_name='mission', blank=True, null=True,
