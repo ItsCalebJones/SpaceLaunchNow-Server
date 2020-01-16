@@ -119,12 +119,12 @@
                         <!-- Post Content Column -->
                         <div class="col-lg-12 text-center">
                             <div class="card-header card-header-danger text-center">
-                                {% if launch.mission %}
-                                    <h2 class="title text-white">{{ launch.rocket.configuration.manufacturer.name }}</h2>
-                                    <h3 class="subheading text-white">{{ launch.rocket.configuration.name }}</h3>
+                                {% if launch.rocket %}
+                                    <h1 class="title text-white">{{ launch.rocket.configuration.manufacturer.name }}</h1>
+                                    <h2 class="title text-white">{{ launch.rocket.configuration.name }}</h2>
                                 {% else %}
-                                    <h2 class="title text-white">{{ launch.name }}</h2>
-                                    <h3 class="subheading text-white">{{ launch.rocket.configuration.name }}</h3>
+                                    <h1 class="title text-white">{{ launch.name }}</h1>
+                                    <h2 class="title text-white">{{ launch.rocket.configuration.name }}</h2>
                                 {% endif %}
 
                             </div>
@@ -149,7 +149,7 @@
                             </div>
                         </div>
                     </div>
-                    <row>
+                    <div class="row mb-2">
                         <div class="col-md-8 ml-auto mx-auto mr-auto text-center">
                             {% if agency.administrator %}
                                 <span class="badge badge-pill badge-primary">{{ agency.administrator }}</span>
@@ -174,102 +174,44 @@
                                    href="{{ launch.rocket.configuration.manufacturer.wiki_url }}">WIKI</a>
                             {% endif %}
                         </div>
-                    </row>
-                    <div class="row">
-                        <!-- Post Content Column -->
-                        <div class="col-md-6 mx-auto">
-                            <div class="info">
-                                <!-- Date/Time -->
-                                <h3 class="card-title">Launch Vehicle</h3>
-                                <hr>
-                                {% with launcher_config=launch.rocket.configuration %}
-                                    <h4 class="mbt-2">{{ launcher_config.name }}</h4>
-                                    <h6 class="mbt-2">
-                                        Configuration: {{ launcher_config.variant }}<br>
-                                        Family: {{ launcher_config.family }}</h6>
-                                    <p> {{ launcher_config.description }}</p>
-
-                                    {% if launcher_config.info_url %}
-                                        <a class="btn btn-primary btn-lg"
-                                           href="/vehicle/launch_vehicle/{{ launcher_config.id }}">Explore</a>
-                                    {% endif %}
-                                {% endwith %}
-                            </div>
-                        </div>
-                        {% if launch.mission %}
-                            <div class="col-md-6 mx-auto">
-                                <div class="info">
-                                    <!-- Date/Time -->
-                                    <h3 class="card-title">{{ launch.mission.mission_type.name }}</h3>
-                                    <hr>
-                                    <p>{{ launch.mission.description }}</p>
-                                </div>
-                            </div>
-                        {% endif %}
                     </div>
-                    {% if launch.rocket.firststage.all|length > 0 %}
-                        <h2 class="title"> {{ launch.rocket.configuration.name }} Booster Info</h2>
-                        <hr>
-                        <div class="row text-center">
-                            {% for stage in launch.rocket.firststage.all %}
-                                {% if stage.landing != None %}
-                                    <div class="col-md-6 mx-auto">
-                                        <div class="info">
-                                            <!-- Date/Time -->
-                                            <h3 class="text-center card-title">{{ stage.launcher.serial_number }}</h3>
-                                            <hr>
-                                            <b>Type: {{ stage.type }}</b><br>
-                                            <b>Flight Proven: {{ stage.reused|yesno:"Yes,No" }}</b>
-                                            {% if stage.landing.attempt %}
-                                                {% if stage.landing.success != None %}
-                                                    <h5>
-                                                        <b>{{ stage.landing.success|yesno:"Successful Landing,Unsuccessful Landing" }}</b>
-                                                    </h5>
-                                                {% else %}
-                                                    <h5>
-                                                        <b>Landing Attempt Confirmed</b>
-                                                    </h5>
-                                                {% endif %}
-                                            {% elif stage.landing.attempt != True %}
-                                                <h5>
-                                                    <b>{{ stage.type }} will be expended.</b>
-                                                </h5>
-                                            {% else %}
-                                                <h5>
-                                                    <b>Landing Attempt Unconfirmed</b>
-                                                </h5>
-                                            {% endif %}
-                                            <p>{{ stage.landing.description }}</p>
-                                            <button
-                                                    data-trigger="focus"
-                                                    data-toggle="popover"
-                                                    data-placement="top"
-                                                    data-container="body"
-                                                    data-original-title="{{ stage.landing.landing_location.name }}"
-                                                    data-content="{{ stage.landing.landing_location.description }}"
-                                                    class="btn btn-raised btn-round btn-sm
-                                        {% if stage.landing.success %} btn-success
-                                        {% elif not stage.landing.success %}btn-danger
-                                        {% else %} btn-primary {% endif %}">
-                                                {{ stage.landing.landing_location.abbrev }}</button>
-                                            <button class="btn btn-raised btn-round btn-sm btn-info"
-                                                    data-trigger="focus"
-                                                    data-toggle="popover"
-                                                    data-placement="top"
-                                                    data-container="body"
-                                                    data-original-title="{{ stage.landing.landing_type.name }}"
-                                                    data-content="{{ stage.landing.landing_type.description }}">
-                                                {{ stage.landing.landing_type.abbrev }}</button>
-                                            <br>
-                                        </div>
+                </div>
+                {% if youtube_urls|length > 0 %}
+                <div class="card">
+                    <h2 class="title text-center">Watch the Launch</h2>
+                    <!-- Title -->
+                    {% video youtube_urls|first as my_video %}
+                        <div class="videoWrapper">
+                            {% if request|is_mobile %}
+                                {% video my_video '85% x 25%' %}
+                            {% else %}
+                                {% video my_video '100% x 100%' %}
+                            {% endif %}
+                        </div>
+                    {% endvideo %}
+                </div>
+                {% endif %}
+                <div class="card text-center">
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-12 cold-md-12 mx-auto">
+                            {% if launch.mission %}
+                                <h1 class="title">{{ launch.mission.name }}</h1>
+                                <h3 class="title">{{ launch.mission.mission_type.name }}</h3>
+                            {% else %}
+                                <h1 class="title">{{ launch.name }}</h1>
+                                <h3 class="title">{{ launch.mission.mission_type.name }}</h3>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="container">
+                            <div class="col-lg-10 mx-auto">
+                                {% if launch.mission %}
+                                    <div class="col-md-12 mx-auto">
+                                        <!-- Date/Time -->
+                                        <p>{{ launch.mission.description }}</p>
                                     </div>
                                 {% endif %}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                    <div class="row text-center">
-                        <div class="container">
-                            <div class="col-lg-12">
                                 {% if launch.infographic_url %}
                                     <h2 class="title">Launch Infographic</h2>
                                     <div class="card-header card-header-image mt-3">
@@ -279,9 +221,8 @@
                                         <div class="colored-shadow colored-shadow-big"
                                              style="background-image: url('{{ launch.infographic_url.url }}'); opacity: 1;"></div>
                                     </div>
-                                    <h4>Geoff Barrett is an independent graphic artist that creates launch infographics
-                                        for space flight events.</h4>
-                                    <div class="social text-center">
+                                    <h4 class="caption">Geoff Barrett is an independent graphic artist that creates launch infographics for space flight events.</h4>
+                                    <div class="social text-center mb-2">
                                         <a href="https://www.facebook.com/Geoffdbarrett/">
                                             <button class="btn btn-just-icon btn-round btn-facebook">
                                                 <i class="fab fa-facebook"> </i>
@@ -299,66 +240,122 @@
                                         </a>
                                     </div>
                                 {% endif %}
-                                {% if launch.news.all|length > 0 %}
-                                    <h2 id="related-news" class="title text-center">Related News</h2>
-                                    <div class="row">
-                                    {% for item in launch.news.all %}
-                                       <div class="col-xl-12 col-lg-12 col-md-12 mx-auto">
-                                            <div class="card card-background"
-                                                 style="background-image: url('{{ item.featured_image }}'); height: 390px;">
-                                                <div class="card-body">
-                                                    <h6 class="card-category text-info">{{ item.news_site }}</h6>
-                                                    <h3 class="card-title">{{ item.title|truncatechars:65 }}</h3>
-                                                    <div class="d-flex h-50 justify-content-between" style="display: flex; flex-direction: column;">
-                                                        <p class="card-description">
-                                                            {{ item.description|truncatechars:120 }}
-                                                        </p>
-                                                        <div style="justify-content: center;display: flex;">
-                                                            <a href="{{ item.link }}" class="btn btn-white btn-link">
-                                                                <i class="material-icons">subject</i> Read Article
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                    </div>
-                                {% endif %}
-                                <script async
-                                        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                                <ins class="adsbygoogle"
-                                     style="display:block; text-align:center;"
-                                     data-ad-layout="in-article"
-                                     data-ad-format="fluid"
-                                     data-ad-client="ca-pub-9824528399164059"
-                                     data-ad-slot="8617299032"></ins>
-                                <script>
-                                    (adsbygoogle = window.adsbygoogle || []).push({});
-                                </script>
-                                <h2 class="title text-center">Watch the Launch</h2>
-                                <!-- Title -->
-                                {% if youtube_urls|length > 0 %}
-                                    {% for url in youtube_urls %}
-                                        {% video url as my_video %}
-                                            <div class="videoWrapper">
-                                                {% if request|is_mobile %}
-                                                    {% video my_video '85% x 25%' %}
-                                                {% else %}
-                                                    {% video my_video '100% x 100%' %}
-                                                {% endif %}
-                                            </div>
-                                            <br>
-                                        {% endvideo %}
-                                    {% endfor %}
-                                {% else %}
-                                    <p>Check back later for live embedded streams.</p>
-                                {% endif %}
-                                <br>
                             </div>
                         </div>
                     </div>
-                    <div class="row text-center">
+                </div>
+                <div class="card text-center">
+                    <div class="col-lg-12 ">
+                        <!-- Date/Time -->
+                        <h1 class="title">{{ launch.rocket.configuration.name }}</h1>
+                        <div class="col-lg-10 mx-auto">
+                        <hr>
+                        {% with launcher_config=launch.rocket.configuration %}
+                            <h5 class="mbt-2">
+                            <b>Family:</b> {{ launcher_config.family }}</h5>
+                            <b>Configuration:</b> {{ launcher_config.variant }}<br>
+                            <p> {{ launcher_config.description }}</p>
+
+                            {% if launcher_config.info_url %}
+                                <a class="btn btn-primary btn-lg"
+                                   href="/vehicle/launch_vehicle/{{ launcher_config.id }}">Explore</a>
+                            {% endif %}
+                        {% endwith %}
+                        </div>
+                    </div>
+                    {% if launch.rocket.firststage.all|length > 0 %}
+                        <div class="col-lg-10 mx-auto">
+                        <h2 class="title">Booster Info</h2>
+                        <hr>
+                        <div class="row text-center">
+                            {% for stage in launch.rocket.firststage.all %}
+                                {% if stage.landing != None %}
+                                    <div class="col-lg-12 mx-auto mb-3">
+                                        <div class="row">
+                                            <!-- Date/Time -->
+                                            <div class="col-lg-3 mx-auto">
+                                                <img class="img-raised rounded img-fluid" alt="Raised Image" src="{{ stage.launcher.image_url.url }}">
+                                            </div>
+                                            <div class="col-lg-9 mx-auto text-left">
+                                            <h2 class="title">{{ stage.launcher.serial_number }}</h2>
+                                            <b>Type:</b> {{ stage.type }}<br>
+                                            <b>Flight Proven:</b> {{ stage.reused|yesno:"Yes,No" }}
+                                            <br>
+                                            {% if stage.landing.attempt %}
+                                                {% if stage.landing.success != None %}
+                                                    <b>{{ stage.landing.success|yesno:"Successful Landing,Unsuccessful Landing" }}</b>
+                                                {% else %}
+                                                    <b>Landing Attempt Confirmed</b>
+                                                {% endif %}
+                                            {% elif stage.landing.attempt != True %}
+                                                    <b>{{ stage.type }} will be expended.</b>
+                                            {% else %}
+                                                    <b>Landing Attempt Unconfirmed</b>
+                                            {% endif %}
+                                            <br>
+                                            <button
+                                                    data-trigger="focus"
+                                                    data-toggle="popover"
+                                                    data-placement="top"
+                                                    data-container="body"
+                                                    data-original-title="{{ stage.landing.landing_location.name }}"
+                                                    data-content="{{ stage.landing.landing_location.description }}"
+                                                    class="btn btn-raised btn-round btn-sm
+                                            {% if stage.landing.success %} btn-success
+                                            {% elif not stage.landing.success %}btn-danger
+                                            {% else %} btn-primary {% endif %}">
+                                                {{ stage.landing.landing_location.abbrev }}</button>
+                                            <button class="btn btn-raised btn-round btn-sm btn-info"
+                                                    data-trigger="focus"
+                                                    data-toggle="popover"
+                                                    data-placement="top"
+                                                    data-container="body"
+                                                    data-original-title="{{ stage.landing.landing_type.name }}"
+                                                    data-content="{{ stage.landing.landing_type.description }}">
+                                                {{ stage.landing.landing_type.abbrev }}</button>
+                                            <p>{{ stage.landing.description }}</p>
+                                            <br>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+
+                {% if launch.news.all|length > 0 %}
+                <div class="card">
+                <h2 id="related-news" class="title text-center">Related News</h2>
+                    <div class="row">
+                    {% for item in launch.news.all|slice:":5" %}
+                       <div class="col-lg-11 col-md-5 mx-auto">
+                            <div class="card card-background"
+                                 style="background-image: url('{{ item.featured_image }}'); height: 390px;">
+                                <div class="card-body">
+                                    <h6 class="card-category text-info">{{ item.news_site }}</h6>
+                                    <h3 class="card-title">{{ item.title|truncatechars:65 }}</h3>
+                                    <div class="d-flex h-50 justify-content-between" style="display: flex; flex-direction: column;">
+                                        <p class="card-description">
+                                            {{ item.description|truncatechars:120 }}
+                                        </p>
+                                        <div style="justify-content: center;display: flex;">
+                                            <a href="{{ item.link }}" class="btn btn-white btn-link">
+                                                <i class="material-icons">subject</i> Read Article
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                <div class="card">
+                    <div class="row">
                         <div class="container">
                             <h3 class="text-center card-title"><b>{{ launch.pad.location.name }}</b></h3>
                             <h4 class="text-center">{{ launch.pad.name }}</h4>
@@ -368,9 +365,7 @@
                                         width="100%"
                                         height="400"
                                         frameborder="0" style="border:0"
-                                        src="https://www.google.com/maps/embed/v1/place?key=AIzaSyACbuVGTVzHToUb7vCwwQlJthvyEQL8RW4
-        &q={{ launch.pad.location.name }}&zoom=10" allowfullscreen>
-
+                                        src="https://www.google.com/maps/embed/v1/place?key=AIzaSyACbuVGTVzHToUb7vCwwQlJthvyEQL8RW4&q={{ launch.pad.location.name }}&zoom=10" allowfullscreen>
                                 </iframe>
                             </div>
                         </div>
