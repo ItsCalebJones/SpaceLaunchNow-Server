@@ -456,8 +456,8 @@
                                                         {% if stage.landing.attempt %}
                                                             {% if stage.landing.success != None %}
                                                                 {% if stage.landing.success %}
-                                                                    <b>Successful {{ stage.landing_type.name }} landing
-                                                                        at {{ stage.landing_location.name }}.</b>
+                                                                    <b>Successful {{ stage.landing.landing_type.name }} landing
+                                                                        at {{ stage.landing.landing_location.name }}.</b>
                                                                 {% else %}
                                                                     <b>{{ stage.launcher.serial_number }} did not land
                                                                         successfully.</b>
@@ -611,9 +611,10 @@
                                         </div>
                                     </div>
                                 {% endif %}
+                            </div>
                             {% endwith %}
                         {% endif %}
-                            </div>
+
                         </div>
                     </div>
                 </div>
