@@ -97,9 +97,6 @@
                         <div class="card-header card-header-info text-center">
                             {% if launch.mission %}
                                 <h1 class="title">{{ launch.mission.name }}</h1>
-                                <h4>
-                                    <b>Destination:</b> {{ launch.mission.orbit }}<br><b>Mission:</b> {{ launch.mission.mission_type.name }}
-                                </h4>
                             {% else %}
                                 <h1 class="title">{{ launch.name }}</h1>
                             {% endif %}
@@ -110,6 +107,9 @@
                                     <div class="row">
                                         <div class="col-md-12 mx-auto">
                                             <h2 class="title">Overview</h2>
+                                            <h4>
+                                                <b>Destination:</b> {{ launch.mission.orbit }}<br><b>Mission:</b> {{ launch.mission.mission_type.name }}
+                                            </h4>
                                             <div class="row">
                                                 <div class="col-md-12 mx-auto">
                                                     <span class="badge badge-pill badge-success">{{ launch.mission.orbit.name }}</span>
@@ -231,10 +231,14 @@
                                 <h2 class="title">Additional Media</h2>
                                 {% if launch.vid_urls.all|length > 1 or launch.info_urls.all|length > 0 %}
                                     {% for vid in launch.vid_urls.all %}
-                                        {{ vid }}
+                                        <div class="col-12 text-center">
+                                            <a href="{{ vid }}">{{ vid }}</a><br>
+                                        </div>
                                     {% endfor %}
                                     {% for info in launch.info_urls.all %}
-                                        {{ info }}
+                                        <div class="col-12 text-center">
+                                            <a href="{{ info }}">{{ info }}</a><br>
+                                        </div>
                                     {% endfor %}
                                 {% endif %}
                             </div>
@@ -248,12 +252,12 @@
                             <!-- Date/Time -->
                             <div class="card-header card-header-info text-center">
                                 <h1 class="title">{{ launch.rocket.configuration.name }}</h1>
-                                <h4>
-                                    <b>Family:</b> {{ vehicle.family }}<br><b>Configuration:</b> {{ vehicle.variant }}<br>
-                                </h4>
                             </div>
                             <div class="card-body">
                                 <div class="col-lg-10 mx-auto">
+                                    <h4>
+                                        <b>Family:</b> {{ vehicle.family }}<br><b>Configuration:</b> {{ vehicle.variant }}<br>
+                                    </h4>
                                     <p> {{ vehicle.description }}</p>
                                     <div class="row">
                                         <div class="col-md-4 ml-auto text-center">
@@ -444,7 +448,7 @@
                                                         {% endif %}
                                                     </div>
                                                     <div class="col-lg-7 ml-auto text-left">
-                                                        <h2 class="title">{{ stage.launcher.serial_number }}</h2>
+                                                        <h3 class="title">{{ stage.launcher.serial_number }}</h3>
                                                         <b>Type:</b> {{ stage.type }}<br>
                                                         <b>Flight Proven:</b> {{ stage.reused|yesno:"Yes,No" }}
                                                         <br>
@@ -489,7 +493,7 @@
                                                             {{ stage.landing.landing_type.abbrev }}</button>
                                                         <br>
                                                         {% if stage.previous_flight %}
-                                                            <a class="btn btn-info btn-lg"
+                                                            <a class="btn btn-primary btn-lg"
                                                                href="/vehicle/launcher/{{ stage.launcher.id }}">Flights</a>
                                                         {% endif %}
                                                     </div>
@@ -500,6 +504,116 @@
                                 </div>
                             </div>
                         {% endif %}
+                        {% if launch.rocket.spacecraftflight %}
+                        {% with spacecraft_flight=launch.rocket.spacecraftflight %}
+                            <div class="col-lg-10 mx-auto">
+                                <h2 class="title">{{ spacecraft_flight.spacecraft.name }}</h2>
+                                <hr>
+
+                                {% if spacecraft_flight.spacecraft.spacecraft_config.in_use %}
+                                    <span class="badge badge-pill badge-success">Active</span>
+                                {% else %}
+                                    <span class="badge badge-pill badge-danger">In-active</span>
+                                {% endif %}
+
+                                {% if spacecraft_flight.spacecraft.spacecraft_config.human_rated %}
+                                    <span class="badge badge-pill badge-success">Human Rated</span>
+                                {% else %}
+                                    <span class="badge badge-pill badge-warning">Cargo</span>
+                                {% endif %}
+
+                                {% if spacecraft_flight.launch_crew.all|length > 0 %}
+                                    <span class="badge badge-pill badge-info">Crew On-board: {{ spacecraft_flight.launch_crew.all|length }}</span>
+                                {% else %}
+                                    <span class="badge badge-pill badge-danger">Unmanned</span>
+                                {% endif %}
+
+                                {% if spacecraft_flight.spacecraft.spacecraft_config.type.name %}
+                                    <span class="badge badge-pill badge-primary">{{ vehicle.type.name }}</span>
+                                {% endif %}
+
+                                {% if spacecraft_flight.spacecraft.spacecraft_config.crew_capacity %}
+                                    <span class="badge badge-pill badge-info">Crew Capacity: {{ spacecraft_flight.spacecraft.spacecraft_config.crew_capacity }}</span>
+                                {% endif %}
+
+                                {% if spacecraft_flight.spacecraft.spacecraft_config.payload_capacity %}
+                                    <span class="badge badge-pill badge-info">Payload Capacity: {{ spacecraft_flight.spacecraft.spacecraft_config.payload_capacity }} kg</span>
+                                {% endif %}
+
+                                <div class="row text-center mt-3 mb-3">
+                                    <div class="col-lg-12 mx-auto">
+                                        <div class="row">
+                                            <!-- Date/Time -->
+                                            <div class="col-lg-5 mx-auto my-auto mr-auto">
+                                                {% if spacecraft_flight.spacecraft.spacecraft_config.image_url %}
+                                                    {% thumbnail spacecraft_flight.spacecraft.spacecraft_config.image_url "300x300" crop="80%" as im %}
+                                                        <img class="img-raised rounded-circle img-fluid text-center"
+                                                             src="{{ im.url }}"
+                                                             style="padding:1px;border:1px solid #cccccc;max-height: 200px;max-width: 200px">
+                                                    {% endthumbnail %}
+                                                {% else %}
+                                                    <img class="img-raised rounded-circle img-fluid"
+                                                         src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-lg-7 ml-auto text-left">
+                                                <h6><b>Destination:</b> {{ spacecraft_flight.destination }}</h6>
+                                                <h6><b>Serial Number:</b> {{ spacecraft_flight.spacecraft.serial_number }}</h6>
+                                                <p>{{ spacecraft_flight.spacecraft.description }}</p>
+                                                <a class="btn btn-primary btn-lg"
+                                                   href="/vehicle/spacecraft/{{ spacecraft_flight.spacecraft.spacecraft_config.id }}">
+                                                    {{ spacecraft_flight.spacecraft.spacecraft_config.name }} Details</a>
+                                                <br>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% if spacecraft_flight.launch_crew.all|length > 0 %}
+                                    <div class="row text-center">
+                                        <div class="col-lg-12 mx-auto mb-3">
+                                        <h2 class="title">Crew</h2>
+                                        <hr>
+                                        {% for astronaut_flight in spacecraft_flight.launch_crew.all %}
+                                            <div class="row">
+                                                <!-- Date/Time -->
+                                                <div class="col-lg-5 mx-auto my-auto mr-auto">
+                                                    {% if astronaut_flight.astronaut.profile_image %}
+                                                    {% thumbnail astronaut_flight.astronaut.profile_image "300x300" crop="80%" as im %}
+                                                        <a href="/astronaut/{{ astronaut_flight.astronaut.slug}}">
+                                                            <img class="img-raised rounded-circle img-fluid text-center"
+                                                                 src="{{ im.url }}"
+                                                                 style="padding:1px;border:1px solid #cccccc;max-height: 200px;max-width: 200px">
+                                                        </a>
+                                                    {% endthumbnail %}
+                                                {% else %}
+                                                    <img class="img-raised rounded-circle img-fluid"
+                                                         src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
+                                                {% endif %}
+                                                </div>
+                                                <div class="col-lg-7 mx-auto my-auto text-left">
+                                                    <a href="/astronaut/{{ astronaut_flight.astronaut.slug}}">
+                                                        <h2 class="title">{{ astronaut_flight.astronaut.name }} </h2>
+                                                    </a>
+                                                    <h4 class="title" style="margin-bottom: 0;margin-top: 0;min-height: 0;">{{ astronaut_flight.role.role }} - {{ astronaut_flight.astronaut.nationality }} {% if astronaut_flight.astronaut.agency %} - ({{ astronaut_flight.astronaut.agency.abbrev }}) {% endif %}</h4>
+                                                    <b>Status:</b> {{ astronaut_flight.astronaut.status.name }}<br>
+                                                    <p>
+                                                        <b>Date of Birth:</b>  {{ astronaut_flight.astronaut.date_of_birth }}<br>
+                                                        {% if astronaut_flight.astronaut.date_of_death %}
+                                                            <b>Date of Death:</b>  {{ astronaut_flight.astronaut.date_of_death }}
+                                                        {% else %}
+                                                            <b>Age:</b>  {{ astronaut_flight.astronaut.age }}
+                                                        {% endif %}
+                                                    </p>
+
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                        {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -538,7 +652,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-10 ml-auto mx-auto mr-auto text-center">
+                                <div class="col-md-10 ml-auto mx-auto mr-auto text-center mt-2">
                                     {% if agency.administrator %}
                                         <span class="badge badge-pill badge-primary">{{ agency.administrator }}</span>
                                     {% endif %}
@@ -550,11 +664,8 @@
                                     <span class="badge badge-pill badge-default">Pending: {{ agency.pending_launches }}</span>
                                     <br>
                                     <br>
-                                    <div class="row">
-                                        <h3><b>Mission
-                                            Type:</b> {{ launch.rocket.configuration.manufacturer.agency_type.name }}
-                                        </h3>
-                                    </div>
+                                    <h4><b>Agency Type:</b> {{ launch.rocket.configuration.manufacturer.agency_type.name }}
+                                    </h4>
                                     {% if agency.description %}
                                         <p>{{ agency.description }}</p>
                                     {% endif %}
@@ -576,7 +687,7 @@
                     <div class="card">
                         <div class="card-header card-header-info text-center">
                             <h3 class="card-title"><b>{{ launch.pad.location.name }}</b></h3>
-                            <h4>{{ launch.pad.name }}</h4>
+                            <h4>Pad: {{ launch.pad.name }}</h4>
                         </div>
                         <div class="card-body">
                             <div class="col-lg-12">
