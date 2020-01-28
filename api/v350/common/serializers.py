@@ -5,6 +5,22 @@ from api.models import *
 from rest_framework import serializers
 
 
+class VidURLSerializer(serializers.ModelSerializer):
+    url = serializers.URLField(source='vid_url')
+
+    class Meta:
+        model = VidURLs
+        fields = ('priority', 'title', 'description', 'feature_image', 'url')
+
+
+class InfoURLSerializer(serializers.ModelSerializer):
+    url = serializers.URLField(source='info_url')
+
+    class Meta:
+        model = InfoURLs
+        fields = ('priority', 'title', 'description', 'feature_image', 'url')
+
+
 class SpacecraftConfigTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = SpacecraftConfigurationType

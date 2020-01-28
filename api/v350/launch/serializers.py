@@ -99,8 +99,8 @@ class LaunchDetailedSerializer(serializers.HyperlinkedModelSerializer):
     slug = serializers.SlugField(source='get_full_absolute_url')
     launch_service_provider = AgencySerializerDetailedForLaunches(many=False, read_only=True)
 
-    infoURLs = serializers.StringRelatedField(read_only=True, many=True, source='info_urls')
-    vidURLs = serializers.StringRelatedField(read_only=True, many=True, source='vid_urls')
+    infoURLs = InfoURLSerializer(read_only=True, many=True, source='info_urls')
+    vidURLs = VidURLSerializer(read_only=True, many=True, source='vid_urls')
 
     image = serializers.SerializerMethodField()
     infographic = serializers.SerializerMethodField()
