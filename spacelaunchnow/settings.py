@@ -333,14 +333,12 @@ WSGI_APPLICATION = 'spacelaunchnow.wsgi.application'
 
 DATABASES = {
      'default': {
-         'ENGINE': 'django.db.backends.{}'.format(
-             os.getenv('DATABASE_ENGINE', config.DATABASE['default']['ENGINE'])
-         ),
+         'ENGINE': os.getenv('DATABASE_ENGINE', config.DATABASE['default']['ENGINE']),
          'NAME': os.getenv('DATABASE_NAME', config.DATABASE['default']['NAME']),
-         'USER': os.getenv('DATABASE_USERNAME', config.DATABASE['default']['USER']),
-         'PASSWORD': os.getenv('DATABASE_PASSWORD', config.DATABASE['default']['PASSWORD']),
-         'HOST': os.getenv('DATABASE_HOST', config.DATABASE['default']['HOST']),
-         'PORT': os.getenv('DATABASE_PORT', config.DATABASE['default']['PORT']),
+         'USER': os.getenv('DATABASE_USERNAME', config.DATABASE['default'].get('USER', None)),
+         'PASSWORD': os.getenv('DATABASE_PASSWORD', config.DATABASE['default'].get('PASSWORD', None)),
+         'HOST': os.getenv('DATABASE_HOST', config.DATABASE['default'].get('HOST', None)),
+         'PORT': os.getenv('DATABASE_PORT', config.DATABASE['default'].get('PORT', None)),
      }
  }
 
@@ -368,9 +366,7 @@ ZINNIA_MARKUP_LANGUAGE = 'markdown'
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
 INTERNAL_IPS = [
-    # ...
     '127.0.0.1',
-    # ...
 ]
 
 LANGUAGE_CODE = 'en-us'
