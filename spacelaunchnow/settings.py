@@ -331,7 +331,18 @@ WSGI_APPLICATION = 'spacelaunchnow.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-DATABASES = config.DATABASE
+DATABASES = {
+     'default': {
+         'ENGINE': 'django.db.backends.{}'.format(
+             os.getenv('DATABASE_ENGINE', config.DATABASE['default']['ENGINE'])
+         ),
+         'NAME': os.getenv('DATABASE_NAME', config.DATABASE['default']['NAME']),
+         'USER': os.getenv('DATABASE_USERNAME', config.DATABASE['default']['USER']),
+         'PASSWORD': os.getenv('DATABASE_PASSWORD', config.DATABASE['default']['PASSWORD']),
+         'HOST': os.getenv('DATABASE_HOST', config.DATABASE['default']['HOST']),
+         'PORT': os.getenv('DATABASE_PORT', config.DATABASE['default']['PORT']),
+     }
+ }
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -465,9 +476,6 @@ ASTRONAUT_IMAGE_STORAGE = 'custom_storages.AstronautImageStorage'
 SPACESTATION_IMAGE_LOCATION = MEDIA_LOCATION + '/spacestation_images'  # type: str
 SPACESTATION_IMAGE_STORAGE = 'custom_storages.SpaceStationImageStorage'
 
-SPACESTATION_IMAGE_LOCATION = MEDIA_LOCATION + '/spacestation_images'  # type: str
-SPACESTATION_IMAGE_STORAGE = 'custom_storages.SpaceStationImageStorage'
-
 LAUNCHER_CORE_IMAGE_LOCATION = MEDIA_LOCATION + '/launcher_core_images'  # type: str
 LAUNCHER_CORE_IMAGE_STORAGE = 'custom_storages.LauncherCoreImageStorage'
 
@@ -478,22 +486,10 @@ AWS_IS_GZIPPED = True
 CACHES = config.CACHE
 CACHALOT_TIMEOUT = 60
 
-# DEBUG_TOOLBAR_PANELS = [
-#     'debug_toolbar.panels.timer.TimerPanel',
-#     'debug_toolbar.panels.request.RequestPanel',
-#     'debug_toolbar.panels.sql.SQLPanel',
-#     'debug_toolbar.panels.cache.CachePanel',
-# ]
-#
-# DEBUG_TOOLBAR_CONFIG = {
-#     'INTERCEPT_REDIRECTS': True,
-# }
-#
-#
-# def show_toolbar(request):
-#     return True
-#
-#
-# DEBUG_TOOLBAR_CONFIG = {
-#     "SHOW_TOOLBAR_CALLBACK": show_toolbar,
-# }
+
+IS_API = os.getenv('IS_API', config.IS_API)
+IS_WEBSERVER = os.getenv('IS_WEBSERVER', config.IS_WEBSERVER)
+IS_BOTSERVER = os.getenv('IS_BOTSERVER', config.IS_BOTSERVER)
+IS_ADMIN = os.getenv('IS_ADMIN', config.IS_ADMIN)
+IS_SLN = os.getenv('IS_SLN', True)
+IS_LL = os.getenv('IS_LL', False)
