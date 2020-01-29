@@ -147,7 +147,7 @@
                                             <div class="col-lg-12 mx-auto">
                                                 <div class="card card-plain card-blog">
                                                     <div class="row">
-                                                        <div class="col-5 my-auto">
+                                                        <div class="col-md-12 col-lg-5 my-auto">
                                                             <div class="card-header card-header-image">
                                                                 <a href="{{ item.link }}">
                                                                     <img class="img" src="{{ item.featured_image }}">
@@ -155,7 +155,7 @@
                                                             <div class="colored-shadow" style="background-image: url({{ item.featured_image }}); opacity: 1;"></div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-7">
+                                                        <div class="col-md-12 col-lg-7">
                                                             <div class="card-body text-left">
                                                                 <h6 class="card-category text-danger"><b>{{ item.news_site }}</b></h6>
                                                                 <h4 class="card-title">{{ item.title }}</h4>
@@ -259,6 +259,11 @@
                                         <b>Family:</b> {{ vehicle.family }}<br><b>Configuration:</b> {{ vehicle.variant }}<br>
                                     </h4>
                                     <p> {{ vehicle.description }}</p>
+                                    {% if vehicle.info_url %}
+                                        <a class="btn btn-primary btn-lg"
+                                           href="/vehicle/launch_vehicle/{{ vehicle.id }}">See {{ vehicle.family }}
+                                            Details</a>
+                                    {% endif %}
                                     <div class="row">
                                         <div class="col-md-4 ml-auto text-center">
                                             <div class="info">
@@ -416,12 +421,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    {% if vehicle.info_url %}
-                                        <a class="btn btn-primary btn-lg"
-                                           href="/vehicle/launch_vehicle/{{ vehicle.id }}">See {{ vehicle.family }}
-                                            Details</a>
-                                    {% endif %}
-
                                 </div>
                             </div>
                         {% endwith %}
@@ -431,7 +430,7 @@
                                 <hr>
                                 <div class="row text-center">
                                     {% for stage in launch.rocket.firststage.all %}
-                                        {% if stage.landing != None %}
+
                                             <div class="col-lg-12 mx-auto mb-3">
                                                 <div class="row">
                                                     <!-- Date/Time -->
@@ -448,58 +447,89 @@
                                                         {% endif %}
                                                     </div>
                                                     <div class="col-lg-7 ml-auto text-left">
-                                                        <h3 class="title">{{ stage.launcher.serial_number }}</h3>
-                                                        <b>Type:</b> {{ stage.type }}<br>
-                                                        <b>Flight Proven:</b> {{ stage.reused|yesno:"Yes,No" }}
-                                                        <br>
-                                                        <p>{{ stage.landing.description }}</p>
-                                                        {% if stage.landing.attempt %}
-                                                            {% if stage.landing.success != None %}
-                                                                {% if stage.landing.success %}
-                                                                    <b>Successful {{ stage.landing.landing_type.name }} landing
-                                                                        at {{ stage.landing.landing_location.name }}.</b>
-                                                                {% else %}
-                                                                    <b>{{ stage.launcher.serial_number }} did not land
-                                                                        successfully.</b>
-                                                                {% endif %}
-                                                            {% else %}
-                                                                <b>Landing Attempt Confirmed</b>
-                                                            {% endif %}
-                                                        {% elif stage.landing.attempt != True %}
-                                                            <b>{{ stage.type }} will be expended.</b>
-                                                        {% else %}
-                                                            <b>Landing Attempt Unconfirmed</b>
+                                                        <h3 class="title mb-0">{{ stage.launcher.serial_number }}</h3>
+                                                        {%  if stage.launcher.successful_landings  %}
+                                                            <h4 class="title mt-0 mb-0"><b>Status:</b> {{ stage.launcher.status|title}}<br></h4>
                                                         {% endif %}
-                                                        <br>
-                                                        <button
-                                                                data-trigger="focus"
-                                                                data-toggle="popover"
-                                                                data-placement="top"
-                                                                data-container="body"
-                                                                data-original-title="{{ stage.landing.landing_location.name }}"
-                                                                data-content="{{ stage.landing.landing_location.description }}"
-                                                                class="btn btn-raised btn-round btn-sm
-                                                {% if stage.landing.success %} btn-success
-                                                {% elif not stage.landing.success %}btn-danger
-                                                {% else %} btn-primary {% endif %}">
-                                                            {{ stage.landing.landing_location.abbrev }}</button>
-                                                        <button class="btn btn-raised btn-round btn-sm btn-info"
-                                                                data-trigger="focus"
-                                                                data-toggle="popover"
-                                                                data-placement="top"
-                                                                data-container="body"
-                                                                data-original-title="{{ stage.landing.landing_type.name }}"
-                                                                data-content="{{ stage.landing.landing_type.description }}">
-                                                            {{ stage.landing.landing_type.abbrev }}</button>
-                                                        <br>
+                                                        <hr class="mt-0">
+                                                        <div class="row">
+
+                                                            <div class="col-6">
+                                                                <b>Type:</b> {{ stage.type }}<br>
+                                                                <b>Flight Proven:</b> {{ stage.reused|yesno:"Yes,No" }}<br>
+                                                                {%  if stage.launcher.first_launch_date  %}
+                                                                    <b>First Flight:</b> {{ stage.launcher.first_launch_date|date:"F j, Y"  }}<br>
+                                                                {% endif %}
+                                                                {%  if stage.launcher.last_launch_date  %}
+                                                                    <b>Last Flight:</b> {{ stage.launcher.last_launch_date|date:"F j, Y"  }}<br>
+                                                                {% endif %}
+                                                            </div>
+                                                            <div class="col-6">
+                                                                {%  if stage.launcher.flights  %}
+                                                                    <b>Flights:</b> {{ stage.launcher.flights  }}<br>
+                                                                {% endif %}
+                                                                {%  if stage.launcher.attempted_landings  %}
+                                                                    <b>Landings Attempted:</b> {{ stage.launcher.attempted_landings  }}<br>
+                                                                {% endif %}
+                                                                {%  if stage.launcher.successful_landings  %}
+                                                                    <b>Landings Successful:</b> {{ stage.launcher.successful_landings  }}<br>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
                                                         {% if stage.previous_flight %}
-                                                            <a class="btn btn-primary btn-lg"
-                                                               href="/vehicle/launcher/{{ stage.launcher.id }}">Flights</a>
+                                                                <a class="btn btn-primary btn-lg"
+                                                                   href="/vehicle/launcher/{{ stage.launcher.id }}">Previous {{ stage.launcher.serial_number }} Flights</a>
+                                                        {% endif %}
+
+
+                                                        {% if stage.landing != None %}
+
+                                                            <h3 class="title mb-0 mt-1">Landing Information</h3>
+                                                            <button
+                                                                    data-trigger="focus"
+                                                                    data-toggle="popover"
+                                                                    data-placement="top"
+                                                                    data-container="body"
+                                                                    data-original-title="{{ stage.landing.landing_location.name }}"
+                                                                    data-content="{{ stage.landing.landing_location.description }}"
+                                                                    class="btn btn-raised btn-round btn-sm
+                                                    {% if stage.landing.success %} btn-success
+                                                    {% elif not stage.landing.success %}btn-danger
+                                                    {% else %} btn-primary {% endif %}">
+                                                                {{ stage.landing.landing_location.abbrev }}</button>
+                                                            <button class="btn btn-raised btn-round btn-sm btn-info"
+                                                                    data-trigger="focus"
+                                                                    data-toggle="popover"
+                                                                    data-placement="top"
+                                                                    data-container="body"
+                                                                    data-original-title="{{ stage.landing.landing_type.name }}"
+                                                                    data-content="{{ stage.landing.landing_type.description }}">
+                                                                {{ stage.landing.landing_type.abbrev }}</button>
+                                                            <p>{{ stage.landing.description }}</p>
+                                                            {% if stage.landing.attempt %}
+                                                                {% if stage.landing.success != None %}
+                                                                    {% if stage.landing.success %}
+                                                                        <b>Result: </b>
+                                                                        Successful {{ stage.landing.landing_type.name }} landing
+                                                                            at {{ stage.landing.landing_location.name }}.
+                                                                    {% else %}
+                                                                        <b>Result: </b>
+                                                                        {{ stage.launcher.serial_number }} did not land
+                                                                            successfully.
+                                                                    {% endif %}
+                                                                {% else %}
+                                                                    <b>Landing Attempt Confirmed</b>
+                                                                {% endif %}
+                                                            {% elif stage.landing.attempt != True %}
+                                                                <b>{{ stage.type }} will be expended.</b>
+                                                            {% else %}
+                                                                <b>Landing Attempt Unconfirmed</b>
+                                                            {% endif %}
+                                                            <br>
                                                         {% endif %}
                                                     </div>
                                                 </div>
                                             </div>
-                                        {% endif %}
                                     {% endfor %}
                                 </div>
                             </div>
