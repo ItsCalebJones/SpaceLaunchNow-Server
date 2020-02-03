@@ -3,7 +3,7 @@ from api.v350.common.serializers import *
 
 class SpacecraftFlightForDockingEvent(serializers.HyperlinkedModelSerializer):
     spacecraft = SpacecraftDetailedNoFlightsSerializer(read_only=True, many=False)
-    launch = LaunchListSerializer(read_only=True, many=False, source='rocket.launch')
+    launch = LaunchSerializerCommon(read_only=True, many=False, source='rocket.launch')
     id = serializers.IntegerField(source='pk')
 
     class Meta:

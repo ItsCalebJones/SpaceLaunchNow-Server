@@ -90,6 +90,17 @@ class AgencySerializerMini(QueryFieldsMixin, serializers.HyperlinkedModelSeriali
         fields = ('id', 'url', 'name', 'type')
 
 
+class AgencySerializerDetailedCommon(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Agency
+        fields = ('id', 'url', 'name', 'featured', 'type', 'country_code', 'abbrev', 'description', 'administrator',
+                  'founding_year', 'launchers', 'spacecraft', 'launch_library_url', 'total_launch_count',
+                  'consecutive_successful_launches', 'successful_launches',
+                  'failed_launches', 'pending_launches', 'consecutive_successful_landings',
+                  'successful_landings', 'failed_landings', 'attempted_landings', 'info_url', 'wiki_url', 'logo_url',
+                  'image_url', 'nation_url',)
+
+
 class AstronautSerializer(serializers.HyperlinkedModelSerializer):
     status = AstronautStatusSerializer(read_only=True)
     agency = AgencySerializerMini(read_only=True)
@@ -106,7 +117,7 @@ class AstronautSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class SpacecraftConfigurationDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    agency = AgencySerializerMini(read_only=True, source="manufacturer")
+    agency = AgencySerializerDetailedCommon(read_only=True, source="manufacturer")
     type = SpacecraftConfigTypeSerializer(read_only=True, many=False)
 
     class Meta:
@@ -263,25 +274,28 @@ class DockingEventSerializerForSpacecraftFlight(serializers.ModelSerializer):
         fields = ('spacestation', 'docking', 'departure', 'docking_location')
 
 
-class LaunchListSerializer(serializers.ModelSerializer):
-    pad = serializers.StringRelatedField()
-    location = serializers.StringRelatedField(source='pad.location')
+class LauncherConfigListSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = LauncherConfig
+        fields = ('id', 'launch_library_id', 'url', 'name', 'family', 'full_name', 'variant',)
+
+
+class LaunchSerializerCommon(serializers.ModelSerializer):
+    pad = PadSerializerMini()
     status = LaunchStatusSerializer(many=False, read_only=True)
     landing = serializers.SerializerMethodField()
     landing_success = serializers.SerializerMethodField()
-    launcher = serializers.SerializerMethodField()
+    launcher = LauncherConfigListSerializer()
     orbit = serializers.SerializerMethodField()
-    mission = serializers.StringRelatedField()
+    mission = MissionSerializerMini()
     image = serializers.SerializerMethodField()
     infographic = serializers.SerializerMethodField()
-    mission_type = serializers.StringRelatedField(source='mission.mission_type.name')
     slug = serializers.SlugField(source='get_full_absolute_url')
 
     class Meta:
         model = Launch
         fields = (
-            'id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'mission',
-            'mission_type', 'pad', 'location', 'landing', 'landing_success', 'launcher', 'orbit', 'image', 'infographic')
+            'id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'mission', 'pad', 'landing', 'landing_success', 'launcher', 'orbit', 'image', 'infographic')
 
     def get_image(self, obj):
         if obj.image_url:
@@ -442,7 +456,7 @@ class SpacecraftSerializer(serializers.HyperlinkedModelSerializer):
 
 class SpacecraftFlightSerializer(serializers.HyperlinkedModelSerializer):
     spacecraft = SpacecraftSerializer(read_only=True, many=False)
-    launch = LaunchListSerializer(read_only=True, many=False, source='rocket.launch')
+    launch = LaunchSerializerCommon(read_only=True, many=False, source='rocket.launch')
 
     class Meta:
         model = SpacecraftFlight
@@ -455,7 +469,7 @@ class SpacecraftFlightDetailedSerializer(serializers.HyperlinkedModelSerializer)
     landing_crew = AstronautFlightSerializer(read_only=True, many=True)
     spacecraft = SpacecraftDetailedNoFlightsSerializer(read_only=True, many=False)
     docking_events = DockingEventSerializerForSpacecraftFlight(read_only=True, many=True)
-    launch = LaunchListSerializer(read_only=True, many=False, source='rocket.launch')
+    launch = LaunchSerializerCommon(read_only=True, many=False, source='rocket.launch')
     id = serializers.IntegerField(source='pk')
 
     class Meta:
@@ -465,33 +479,20 @@ class SpacecraftFlightDetailedSerializer(serializers.HyperlinkedModelSerializer)
             'launch', 'docking_events')
 
 
-class AgencySerializerDetailedForLaunches(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Agency
-        fields = ('id', 'url', 'name', 'featured', 'type', 'country_code', 'abbrev', 'description', 'administrator',
-                  'founding_year', 'launchers', 'spacecraft', 'launch_library_url', 'total_launch_count',
-                  'consecutive_successful_launches', 'successful_launches',
-                  'failed_launches', 'pending_launches', 'consecutive_successful_landings',
-                  'successful_landings', 'failed_landings', 'attempted_landings', 'info_url', 'wiki_url', 'logo_url',
-                  'image_url', 'nation_url',)
 
-
-class LauncherConfigListSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = LauncherConfig
-        fields = ('id', 'launch_library_id', 'url', 'name', 'family', 'full_name', 'variant',)
 
 
 class LauncherConfigSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    manufacturer = serializers.ReadOnlyField(read_only=True, source="manufacturer.name")
+    manufacturer = AgencySerializer(many=False, read_only=True)
 
     class Meta:
         model = LauncherConfig
-        fields = ('id', 'launch_library_id', 'url', 'name', 'manufacturer', 'family', 'full_name', 'variant', 'reusable',)
+        fields = ('id', 'launch_library_id', 'url', 'name', 'manufacturer', 'family', 'full_name', 'variant',
+                  'reusable', 'image_url', 'info_url', 'wiki_url')
 
 
 class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializer):
-    launch_service_provider = AgencySerializerDetailedForLaunches(many=False, read_only=True, source='manufacturer')
+    manufacturer = AgencySerializerDetailedCommon(many=False, read_only=True)
 
     def get_rep(self, obj):
         rep = obj.rep
@@ -503,7 +504,7 @@ class LauncherConfigDetailSerializer(QueryFieldsMixin, serializers.ModelSerializ
     class Meta:
         model = LauncherConfig
         fields = ('id', 'launch_library_id', 'url', 'name', 'description', 'family', 'full_name',
-                  'launch_service_provider', 'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
+                  'manufacturer', 'variant', 'alias', 'min_stage', 'max_stage', 'length', 'diameter',
                   'maiden_flight', 'launch_mass', 'leo_capacity', 'gto_capacity', 'to_thrust', 'apogee',
                   'vehicle_range', 'image_url', 'info_url', 'wiki_url',)
 

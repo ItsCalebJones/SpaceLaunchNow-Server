@@ -6,7 +6,7 @@ from api.models import *
 from api.permission import HasGroupPermission
 
 
-from api.v350.config.launcher.serializers import LauncherConfigDetailSerializer, LauncherConfigSerializerForLauncher
+from api.v350.common.serializers import LauncherConfigDetailSerializer, LauncherConfigListSerializer, LauncherConfigSerializer
 
 
 class LauncherConfigViewSet(ModelViewSet):
@@ -33,13 +33,14 @@ class LauncherConfigViewSet(ModelViewSet):
         mode = self.request.query_params.get("mode", "normal")
         if self.action == 'retrieve' or mode == "detailed":
             return LauncherConfigDetailSerializer
+        elif mode == "list":
+            return LauncherConfigListSerializer
         else:
-            return LauncherConfigSerializerForLauncher
+            return LauncherConfigSerializer
 
     queryset = LauncherConfig.objects.all()
     permission_classes = [HasGroupPermission]
     permission_groups = {
-
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
         'list': ['_Public']
     }

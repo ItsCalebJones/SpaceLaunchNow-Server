@@ -2,7 +2,7 @@ from api.v350.common.serializers import *
 
 
 class SpacecraftConfigurationSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    agency = AgencySerializerMini(read_only=True, many=False, source='manufacturer')
+    agency = AgencySerializer(read_only=True, many=False, source='manufacturer')
 
     class Meta:
         model = SpacecraftConfiguration
