@@ -320,8 +320,8 @@ def tweet_to_embed(tweet):
     embed = discord.Embed(type="rich", title=title,
                           description=tweet.text,
                           color=color,
-                          url="https://twitter.com/statuses/%s" % tweet.id)
-    embed.add_field(name="Twitter Link", value="https://twitter.com/statuses/%s" % tweet.id, inline=True)
+                          url="https://twitter.com/%s/status/%s" % (tweet.user.screen_name, tweet.id))
+    embed.add_field(name="Twitter Link", value="https://twitter.com/%s/status/%s" % (tweet.user.screen_name, tweet.id), inline=True)
     embed.set_thumbnail(url=tweet.user.profile_image)
     embed.set_footer(text=tweet.created_at.strftime("%A %B %e, %Y %H:%M %Z"))
     return embed
