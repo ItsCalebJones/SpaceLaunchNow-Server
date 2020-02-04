@@ -8,6 +8,7 @@ from django_extensions.db.fields import AutoSlugField
 from goose3 import Goose
 
 from api.utils.utilities import resize_for_upload, resize_needed, get_map_url, get_pad_url
+from spacelaunchnow import settings
 
 try:
     from urllib import quote  # Python 2.X
@@ -36,8 +37,8 @@ CACHE_TIMEOUT_ONE_HOUR = 60 * 60
 
 def image_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
-    clean_name = quote(quote(instance.name.encode('utf8')), '')
-    clean_name = "%s_image_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
+    clean_name = quote(quote(instance.name.replace(' ', '_').encode('utf8')), '')
+    clean_name = "%s_image_%s" % (clean_name[:15].lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
     name = "%s%s" % (str(clean_name), file_extension)
     return name
 
@@ -504,7 +505,9 @@ class Events(models.Model):
     news_url = models.URLField(max_length=250, blank=True, null=True)
     video_url = models.URLField(max_length=250, blank=True, null=True)
     webcast_live = models.BooleanField(default=False)
-    feature_image = models.FileField(storage=EventImageStorage(), default=None, null=True, blank=True,
+    feature_image = models.FileField(storage=EventImageStorage(),
+                                     default='default.png'.format(settings.STATIC_URL),
+                                     null=False, blank=False,
                                      upload_to=image_path)
     slug = AutoSlugField(populate_from=['name'], overwrite=True)
     expedition = models.ManyToManyField('Expedition', blank=True)
