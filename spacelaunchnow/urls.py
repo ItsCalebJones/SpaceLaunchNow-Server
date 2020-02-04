@@ -36,7 +36,7 @@ from api.v330.router import api_urlpatterns as api_v330
 from api.v340.router import api_urlpatterns as api_v340
 from api.v350.router import api_urlpatterns as api_v350
 
-from spacelaunchnow import config
+from spacelaunchnow import settings
 from web import views as landing_views
 from app.views import staff_view, translator_view, about_view
 from web.sitemaps import StaticViewSitemap
@@ -92,7 +92,7 @@ def get_v350():
     return v350_api + v350_api_docs
 
 
-if config.IS_API:
+if settings.IS_API:
 
     api_settings = [
 
@@ -106,7 +106,7 @@ if config.IS_API:
     ]
     api_settings = api_settings + get_v350()
 
-if config.IS_WEBSERVER:
+if settings.IS_WEBSERVER:
     web_settings = [
         url(r'^ads\.txt', include('ads_txt.urls')),
         url(r'^next/', landing_views.next_launch, name='next'),
@@ -153,7 +153,7 @@ if config.IS_WEBSERVER:
         url(r'^tz_detect/', include('tz_detect.urls')),
     ]
 
-if config.IS_ADMIN:
+if settings.IS_ADMIN:
     admin_settings = [
         url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
         url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
@@ -165,7 +165,7 @@ if config.IS_ADMIN:
 
 urlpatterns = default_settings + api_settings + web_settings + admin_settings
 
-if config.DEBUG:
+if settings.DEBUG:
     import debug_toolbar
 
     urlpatterns = [

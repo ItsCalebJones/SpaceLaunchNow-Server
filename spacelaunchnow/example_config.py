@@ -95,14 +95,6 @@ INSTALLED_APPS = [
     'tz_detect',
 ]
 
-IS_API = True
-
-IS_WEBSERVER = True
-
-IS_BOTSERVER = False
-
-IS_ADMIN = True
-
 API_RENDERER = (
     'rest_framework.renderers.JSONRenderer',
     'rest_framework.renderers.BrowsableAPIRenderer',

@@ -3,7 +3,7 @@ from api.v350.common.serializers import *
 
 class EventsSerializer(serializers.HyperlinkedModelSerializer):
     type = EventTypeSerializer(many=False, read_only=True)
-    launches = LaunchListSerializer(many=True, source='launch')
+    launches = LaunchSerializerCommon(many=True, source='launch')
     expeditions = ExpeditionSerializer(many=True, source='expedition')
     spacestations = SpaceStationSerializerForCommon(many=True, source='spacestation')
 

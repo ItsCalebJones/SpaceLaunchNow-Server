@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from api.models import *
 from api.permission import HasGroupPermission
 from api.v350.launch.filters import LaunchFilter, LaunchDateFilter
-from api.v350.launch.serializers import LaunchDetailedSerializer, LaunchListSerializer, LaunchSerializer
+from api.v350.launch.serializers import LaunchDetailedSerializer, LaunchSerializerCommon, LaunchSerializer
 
 
 class LaunchViewSet(ModelViewSet):
@@ -125,7 +125,7 @@ class LaunchViewSet(ModelViewSet):
         if self.action == 'retrieve' or mode == "detailed":
             return LaunchDetailedSerializer
         elif mode == "list":
-            return LaunchListSerializer
+            return LaunchSerializerCommon
         else:
             return LaunchSerializer
 
@@ -272,7 +272,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
         if self.action == 'retrieve' or mode == "detailed":
             return LaunchDetailedSerializer
         elif mode == "list":
-            return LaunchListSerializer
+            return LaunchSerializerCommon
         else:
             return LaunchSerializer
 
@@ -403,7 +403,7 @@ class PreviousLaunchViewSet(ModelViewSet):
         if self.action == 'retrieve' or mode == "detailed":
             return LaunchDetailedSerializer
         elif mode == "list":
-            return LaunchListSerializer
+            return LaunchSerializerCommon
         else:
             return LaunchSerializer
 

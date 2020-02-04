@@ -34,8 +34,8 @@ class LaunchListSerializerForAstronaut(serializers.ModelSerializer):
 class AstronautDetailedWithLaunchListSerializer(serializers.HyperlinkedModelSerializer):
     status = AstronautStatusSerializer(read_only=True)
     type = AstronautTypeSerializer(read_only=True)
-    agency = AgencySerializerDetailedForLaunches(read_only=True, many=False)
-    flights = LaunchListSerializer(read_only=True, many=True)
+    agency = AgencySerializerDetailedCommon(read_only=True, many=False)
+    flights = LaunchSerializerCommon(read_only=True, many=True)
     landings = SpacecraftFlightSerializer(read_only=True, many=True)
     # A thumbnail image, sorl options and read-only
     profile_image_thumbnail = HyperlinkedSorlImageField(

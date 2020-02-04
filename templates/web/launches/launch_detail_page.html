@@ -4,6 +4,7 @@
 {% load embed_video_tags %}
 {% load tz %}
 {% load static %}
+{% load thumbnail %}
 {% block extrahead %}
     <title>{{ launch.name }}</title>
     <link rel="canonical" href="{{ launch.get_full_absolute_url }}">
@@ -56,7 +57,7 @@
         <!-- Post Content Column -->
         <div class="col-lg-10 ml-auto mr-auto text-center">
             <h1 class="title text-white">{{ launch.name }}</h1>
-            <h2 class="text-white" style="margin: 5px;">{{ status }}</h2>
+            <h2 class="title text-white" style="margin: 5px;">{{ status }}</h2>
             {% if launch.failreason %}
                 <body class="text-white">{{ launch.failreason }}</body>
             {% endif %}
@@ -64,15 +65,16 @@
                 <span class="badge badge-pill badge-warning">{{ launch.holdreason }}</span>
             {% endif %}
             <hr class="col-lg-8" style="background-color: white">
-            <h2 class="title text-white" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h2>
-            <h3 class="text-white" style="margin: -5px;" id="date">{{ launch.net }}</h3>
+            <h1 class="title text-white" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h1>
+            <h3 class="title text-white" style="margin: -5px;" id="date">{{ launch.net }}</h3>
             {% if launch.window_start == launch.window_end %}
                 <p class="caption">Instantaneous launch window.</p>
             {% else %}
-                <b>Launch Window</b>
+                <br>
+                <h3 class="title text-white">Launch Window</h3>
                 <p id="window_date">{{ launch.window_start }} - {{ launch.window_end }}</p>
             {% endif %}
-            <br>
+            <hr class="col-lg-8" style="background-color: white">
             <a style="margin: 5px"
                href="https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1">
                 <img alt='Get it on Google Play' src="{% static 'img/button/google.png' %}" width="135" height="40"
@@ -82,135 +84,99 @@
                href='https://itunes.apple.com/us/app/space-launch-now/id1399715731'>
                 <img alt='Get it on App Store' src="{% static 'img/button/apple.png' %}" width="135" height="40" alt="">
             </a>
-            <hr class="col-lg-8" style="background-color: white">
-            <span class="badge badge-pill badge-success">{{ launch.mission.orbit.name }}</span>
-            {% if launch.pad %}
-                <span class="badge badge-pill badge-primary">{{ launch.pad.name }}</span>
-            {% endif %}
-            {% if launch.pad.location.name %}
-                <span class="badge badge-pill badge-primary">{{ launch.pad.location.name }}</span>
-            {% endif %}
-            {% if launch.probability > 0 %}
-                <span class="badge badge-pill badge-primary">Probability: {{ launch.probability }}%</span>
-            {% endif %}
-            {% if launch.hashtag %}
-                <span class="badge badge-pill badge-info">{{ launch.hashtag }}</span>
-            {% endif %}
-            <br>
-            {% if launch.rocket.firststage.all|length > 0 %}
-                {% for stage in launch.rocket.firststage.all %}
-                    {% if stage.landing.landing_location %}
-                        <span class="badge badge-pill {% if stage.landing.success %} badge-success{% elif not stage.landing.success %}badge-danger {% else %} badge-primary {% endif %}"> {{ stage.launcher.serial_number }} - {{ stage.landing.landing_location.name }}</span>
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
         </div>
-
     </div>
-</div>
 </div>
 </div>
     <!-- Page Content -->
     <div class="container">
         <div class="row">
             <div class="col-lg-9 col-md-12 col-xl-9">
-                <div class="main card text-center">
-                    <div class="row ">
-                        <!-- Post Content Column -->
-                        <div class="col-lg-12 text-center">
-                            <div class="card-header card-header-danger text-center">
-                                {% if launch.rocket %}
-                                    <h1 class="title text-white">{{ launch.rocket.configuration.manufacturer.name }}</h1>
-                                    <h2 class="title text-white">{{ launch.rocket.configuration.name }}</h2>
-                                {% else %}
-                                    <h1 class="title text-white">{{ launch.name }}</h1>
-                                    <h2 class="title text-white">{{ launch.rocket.configuration.name }}</h2>
-                                {% endif %}
-
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 ml-auto mx-auto mr-auto text-center">
-                            <div class="profile">
-                                <div class="avatar">
-                                    {% if agency.logo_url %}
-                                        <img src="{{ agency.logo_url.url }}"
-                                             alt="Circle Image"
-                                             class="img-fluid mx-auto"
-                                             style="max-width: 75%;max-height: 400px;">
-                                    {% else %}
-                                        <h2 class="title text-center"
-                                            style="margin-left: 100px; margin-right:100px;">{{ launch.rocket.configuration.manufacturer.name }}</h2>
-                                        <h3 class="subheading text-center">
-                                            ({{ launch.rocket.configuration.manufacturer.abbrev }})</h3>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-md-8 ml-auto mx-auto mr-auto text-center">
-                            {% if agency.administrator %}
-                                <span class="badge badge-pill badge-primary">{{ agency.administrator }}</span>
-                            {% endif %}
-                            {% if agency.founding_year %}
-                                <span class="badge badge-pill badge-warning">Founded: {{ agency.founding_year }}</span>
-                            {% endif %}
-                            <span class="badge badge-pill badge-info">Successes: {{ agency.successful_launches }}</span>
-                            <span class="badge badge-pill badge-danger">Failures: {{ agency.failed_launches }}</span>
-                            <span class="badge badge-pill badge-default">Pending: {{ agency.pending_launches }}</span>
-                            <br>
-                            <br>
-                            {% if agency.description %}
-                                <p>{{ agency.description }}</p>
-                            {% endif %}
-                            {% if launch.rocket.configuration.manufacturer.info_url %}
-                                <a class="btn btn-primary btn-lg"
-                                   href="{{ launch.rocket.configuration.manufacturer.info_url }}">INFO</a>
-                            {% endif %}
-                            {% if launch.rocket.configuration.manufacturer.wiki_url %}
-                                <a class="btn btn-danger btn-lg"
-                                   href="{{ launch.rocket.configuration.manufacturer.wiki_url }}">WIKI</a>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                {% if youtube_urls|length > 0 %}
-                <div class="card">
-                    <h2 class="title text-center">Watch the Launch</h2>
-                    <!-- Title -->
-                    {% video youtube_urls|first as my_video %}
-                        <div class="videoWrapper">
-                            {% if request|is_mobile %}
-                                {% video my_video '85% x 25%' %}
-                            {% else %}
-                                {% video my_video '100% x 100%' %}
-                            {% endif %}
-                        </div>
-                    {% endvideo %}
-                </div>
-                {% endif %}
-                <div class="card text-center">
-                    <div class="row">
-                        <div class="col-xs-6 col-sm-12 cold-md-12 mx-auto">
+                <div class="row">
+                    <div class="card text-center">
+                        <div class="card-header card-header-info text-center">
                             {% if launch.mission %}
                                 <h1 class="title">{{ launch.mission.name }}</h1>
-                                <h3 class="title">{{ launch.mission.mission_type.name }}</h3>
                             {% else %}
                                 <h1 class="title">{{ launch.name }}</h1>
-                                <h3 class="title">{{ launch.mission.mission_type.name }}</h3>
                             {% endif %}
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="container">
-                            <div class="col-lg-10 mx-auto">
+                        <div class="card-body text-center">
+                            <div class="col-lg-12 mx-auto">
                                 {% if launch.mission %}
-                                    <div class="col-md-12 mx-auto">
-                                        <!-- Date/Time -->
-                                        <p>{{ launch.mission.description }}</p>
+                                    <div class="row">
+                                        <div class="col-md-12 mx-auto">
+                                            <h2 class="title">Overview</h2>
+                                            <h4>
+                                                <b>Destination:</b> {{ launch.mission.orbit }}<br><b>Mission:</b> {{ launch.mission.mission_type.name }}
+                                            </h4>
+                                            <div class="row">
+                                                <div class="col-md-12 mx-auto">
+                                                    <span class="badge badge-pill badge-success">{{ launch.mission.orbit.name }}</span>
+                                                    {% if launch.pad %}
+                                                        <span class="badge badge-pill badge-primary">{{ launch.pad.name }}</span>
+                                                    {% endif %}
+                                                    {% if launch.pad.location.name %}
+                                                        <span class="badge badge-pill badge-primary">{{ launch.pad.location.name }}</span>
+                                                    {% endif %}
+                                                    {% if launch.probability > 0 %}
+                                                        <span class="badge badge-pill badge-primary">Probability: {{ launch.probability }}%</span>
+                                                    {% endif %}
+                                                    {% if launch.hashtag %}
+                                                        <span class="badge badge-pill badge-info">{{ launch.hashtag }}</span>
+                                                    {% endif %}
+                                                    <br>
+                                                    {% if launch.rocket.firststage.all|length > 0 %}
+                                                        {% for stage in launch.rocket.firststage.all %}
+                                                            {% if stage.landing.landing_location %}
+                                                                <span class="badge badge-pill {% if stage.landing.success %} badge-success{% elif not stage.landing.success %}badge-danger {% else %} badge-primary {% endif %}"> {{ stage.launcher.serial_number }} - {{ stage.landing.landing_location.name }}</span>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <p>{{ launch.mission.description }}</p>
+                                        </div>
                                     </div>
+                                {% endif %}
+                                {% if launch.news.all|length > 0 %}
+                                    <h2 id="related-news" class="title text-center">Related News</h2>
+                                    <hr>
+                                    {% for item in launch.news.all|slice:":5" %}
+                                        <div class="row">
+                                            <div class="col-lg-12 mx-auto">
+                                                <div class="card card-plain card-blog">
+                                                    <div class="row">
+                                                        <div class="col-md-12 col-lg-5 my-auto">
+                                                            <div class="card-header card-header-image">
+                                                                <a href="{{ item.link }}">
+                                                                    <img class="img" src="{{ item.featured_image }}">
+                                                                </a>
+                                                            <div class="colored-shadow" style="background-image: url({{ item.featured_image }}); opacity: 1;"></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12 col-lg-7">
+                                                            <div class="card-body text-left">
+                                                                <h6 class="card-category text-danger"><b>{{ item.news_site }}</b></h6>
+                                                                <h4 class="card-title">{{ item.title }}</h4>
+                                                                <div class="d-flex h-50 justify-content-between"
+                                                                     style="display: flex; flex-direction: column;">
+                                                                    <p class="card-description">
+                                                                        {{ item.description|truncatechars:240 }}
+                                                                    </p>
+                                                                    <div style="justify-content: left;display: flex;">
+                                                                        <a href="{{ item.link }}" class="btn btn-primary">
+                                                                            <i class="material-icons">subject</i> Read Article
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
                                 {% endif %}
                                 {% if launch.infographic_url %}
                                     <h2 class="title">Launch Infographic</h2>
@@ -221,7 +187,8 @@
                                         <div class="colored-shadow colored-shadow-big"
                                              style="background-image: url('{{ launch.infographic_url.url }}'); opacity: 1;"></div>
                                     </div>
-                                    <h4 class="caption">Geoff Barrett is an independent graphic artist that creates launch infographics for space flight events.</h4>
+                                    <h4 class="caption">Geoff Barrett is an independent graphic artist that creates
+                                        launch infographics for space flight events.</h4>
                                     <div class="social text-center mb-2">
                                         <a href="https://www.facebook.com/Geoffdbarrett/">
                                             <button class="btn btn-just-icon btn-round btn-facebook">
@@ -244,128 +211,523 @@
                         </div>
                     </div>
                 </div>
-                <div class="card text-center">
-                    <div class="col-lg-12 ">
-                        <!-- Date/Time -->
-                        <h1 class="title">{{ launch.rocket.configuration.name }}</h1>
-                        <div class="col-lg-10 mx-auto">
-                        <hr>
-                        {% with launcher_config=launch.rocket.configuration %}
-                            <h5 class="mbt-2">
-                            <b>Family:</b> {{ launcher_config.family }}</h5>
-                            <b>Configuration:</b> {{ launcher_config.variant }}<br>
-                            <p> {{ launcher_config.description }}</p>
-
-                            {% if launcher_config.info_url %}
-                                <a class="btn btn-primary btn-lg"
-                                   href="/vehicle/launch_vehicle/{{ launcher_config.id }}">Explore</a>
-                            {% endif %}
-                        {% endwith %}
+                {% if youtube_urls|length > 0 %}
+                    <div class="row">
+                        <div class="card text-center">
+                            <div class="card-header card-header-info text-center">
+                                <h2 class="title ">Watch the Launch</h2>
+                            </div>
+                            <div class="card-body">
+                                <!-- Title -->
+                                {% video youtube_urls|first as my_video %}
+                                    <div class="videoWrapper">
+                                        {% if request|is_mobile %}
+                                            {% video my_video '85% x 25%' %}
+                                        {% else %}
+                                            {% video my_video '100% x 100%' %}
+                                        {% endif %}
+                                    </div>
+                                {% endvideo %}
+                                <h2 class="title">Additional Media</h2>
+                                {% if launch.vid_urls.all|length > 1 or launch.info_urls.all|length > 0 %}
+                                    {% for vid in launch.vid_urls.all %}
+                                        <div class="col-12 text-center">
+                                            <a href="{{ vid }}">{{ vid }}</a><br>
+                                        </div>
+                                    {% endfor %}
+                                    {% for info in launch.info_urls.all %}
+                                        <div class="col-12 text-center">
+                                            <a href="{{ info }}">{{ info }}</a><br>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
-                    {% if launch.rocket.firststage.all|length > 0 %}
-                        <div class="col-lg-10 mx-auto">
-                        <h2 class="title">Booster Info</h2>
-                        <hr>
-                        <div class="row text-center">
-                            {% for stage in launch.rocket.firststage.all %}
-                                {% if stage.landing != None %}
-                                    <div class="col-lg-12 mx-auto mb-3">
-                                        <div class="row">
-                                            <!-- Date/Time -->
-                                            <div class="col-lg-3 mx-auto">
-                                                <img class="img-raised rounded img-fluid" alt="Raised Image" src="{{ stage.launcher.image_url.url }}">
-                                            </div>
-                                            <div class="col-lg-9 mx-auto text-left">
-                                            <h2 class="title">{{ stage.launcher.serial_number }}</h2>
-                                            <b>Type:</b> {{ stage.type }}<br>
-                                            <b>Flight Proven:</b> {{ stage.reused|yesno:"Yes,No" }}
-                                            <br>
-                                            {% if stage.landing.attempt %}
-                                                {% if stage.landing.success != None %}
-                                                    <b>{{ stage.landing.success|yesno:"Successful Landing,Unsuccessful Landing" }}</b>
-                                                {% else %}
-                                                    <b>Landing Attempt Confirmed</b>
-                                                {% endif %}
-                                            {% elif stage.landing.attempt != True %}
-                                                    <b>{{ stage.type }} will be expended.</b>
-                                            {% else %}
-                                                    <b>Landing Attempt Unconfirmed</b>
-                                            {% endif %}
-                                            <br>
-                                            <button
-                                                    data-trigger="focus"
-                                                    data-toggle="popover"
-                                                    data-placement="top"
-                                                    data-container="body"
-                                                    data-original-title="{{ stage.landing.landing_location.name }}"
-                                                    data-content="{{ stage.landing.landing_location.description }}"
-                                                    class="btn btn-raised btn-round btn-sm
-                                            {% if stage.landing.success %} btn-success
-                                            {% elif not stage.landing.success %}btn-danger
-                                            {% else %} btn-primary {% endif %}">
-                                                {{ stage.landing.landing_location.abbrev }}</button>
-                                            <button class="btn btn-raised btn-round btn-sm btn-info"
-                                                    data-trigger="focus"
-                                                    data-toggle="popover"
-                                                    data-placement="top"
-                                                    data-container="body"
-                                                    data-original-title="{{ stage.landing.landing_type.name }}"
-                                                    data-content="{{ stage.landing.landing_type.description }}">
-                                                {{ stage.landing.landing_type.abbrev }}</button>
-                                            <p>{{ stage.landing.description }}</p>
-                                            <br>
+                {% endif %}
+                <div class="row">
+                    <div class="card text-center">
+                        {% with vehicle=launch.rocket.configuration %}
+                            <div class="col-lg-12">
+                            <!-- Date/Time -->
+                            <div class="card-header card-header-info text-center">
+                                <h1 class="title">{{ launch.rocket.configuration.name }}</h1>
+                            </div>
+                            <div class="card-body">
+                                <div class="col-lg-10 mx-auto">
+                                    <h4>
+                                        <b>Family:</b> {{ vehicle.family }}<br><b>Configuration:</b> {{ vehicle.variant }}<br>
+                                    </h4>
+                                    <p> {{ vehicle.description }}</p>
+                                    {% if vehicle.info_url %}
+                                        <a class="btn btn-primary btn-lg"
+                                           href="/vehicle/launch_vehicle/{{ vehicle.id }}">See {{ vehicle.family }}
+                                            Details</a>
+                                    {% endif %}
+                                    <div class="row">
+                                        <div class="col-md-4 ml-auto text-center">
+                                            <div class="info">
+                                                <div class="icon icon-primary">
+                                                    <i class="fas fa-clipboard-list"></i>
+                                                </div>
+                                                <h5 class="info-title">Specifications</h5>
+                                                <div class="card-pricing">
+                                                    <div class="card-body ">
+                                                        <ul>
+                                                            {% if vehicle.min_stage == vehicle.max_stage %}
+                                                                {% if vehicle.min_stage %}
+                                                                    <li>
+                                                                        Stages <br><b>{{ vehicle.max_stage }}</b>
+                                                                    </li>
+                                                                {% endif %}
+                                                            {% else %}
+                                                                {% if vehicle.min_stage %}
+                                                                    <li>
+                                                                        Minimum Stage <br><b>{{ vehicle.min_stage }}</b>
+                                                                    </li>
+                                                                {% endif %}
+                                                                {% if vehicle.max_stage %}
+                                                                    <li>
+                                                                        Max Stage <br><b>{{ vehicle.max_stage }}</b>
+                                                                    </li>
+                                                                {% endif %}
+                                                            {% endif %}
+                                                            <li>
+                                                                Length <br><b>{% if vehicle.length %}
+                                                                {{ vehicle.length }} m{% else %} ― {% endif %}
+                                                            </b>
+                                                            </li>
+                                                            <li>
+                                                                Diameter <br><b>{% if vehicle.diameter %}
+                                                                {{ vehicle.diameter }} m{% else %} ― {% endif %}
+                                                            </b>
+                                                            </li>
+                                                            <li>
+                                                                Fairing Diameter <br><b>
+                                                                {% if vehicle.fairing_diameter %}
+                                                                    {{ vehicle.fairing_diameter }} m{% else %}
+                                                                    ― {% endif %}
+                                                            </b>
+                                                            </li>
+                                                            <li>
+                                                                Launch Mass <br><b>{% if vehicle.launch_mass %}
+                                                                {{ vehicle.launch_mass }} T{% else %} ― {% endif %}
+                                                            </b>
+                                                            </li>
+                                                            <li>
+                                                                Thrust <br><b>{% if vehicle.to_thrust %}
+                                                                {{ vehicle.to_thrust }} kN{% else %} ― {% endif %}
+                                                            </b>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                        </div>
-                    {% endif %}
-                </div>
+                                        <div class="col-md-4 mr-auto text-center">
+                                            <div class="info">
+                                                <div class="icon icon-warning">
+                                                    <i class="fas fa-space-shuttle"></i>
+                                                </div>
+                                                <h5 class="info-title">Family</h5>
+                                                <div class="card-pricing">
+                                                    <div class="card-body ">
 
+                                                        <ul>
+                                                            <li>
+                                                                Name <br><b>{% if vehicle.name %}
+                                                                {{ vehicle.name }} {% else %} ― {% endif %}
+                                                            </b>
 
-                {% if launch.news.all|length > 0 %}
-                <div class="card">
-                <h2 id="related-news" class="title text-center">Related News</h2>
-                    <div class="row">
-                    {% for item in launch.news.all|slice:":5" %}
-                       <div class="col-lg-11 col-md-5 mx-auto">
-                            <div class="card card-background"
-                                 style="background-image: url('{{ item.featured_image }}'); height: 390px;">
-                                <div class="card-body">
-                                    <h6 class="card-category text-info">{{ item.news_site }}</h6>
-                                    <h3 class="card-title">{{ item.title|truncatechars:65 }}</h3>
-                                    <div class="d-flex h-50 justify-content-between" style="display: flex; flex-direction: column;">
-                                        <p class="card-description">
-                                            {{ item.description|truncatechars:120 }}
-                                        </p>
-                                        <div style="justify-content: center;display: flex;">
-                                            <a href="{{ item.link }}" class="btn btn-white btn-link">
-                                                <i class="material-icons">subject</i> Read Article
-                                            </a>
+                                                            </li>
+                                                            <li>
+                                                                Family <br><b>{% if vehicle.family %}
+                                                                {{ vehicle.family }} {% else %} ― {% endif %}
+                                                            </b>
+
+                                                            </li>
+                                                            <li>
+                                                                Variant <br><b>{% if vehicle.variant %}
+                                                                {{ vehicle.variant }} {% else %} ― {% endif %}
+                                                            </b>
+
+                                                            </li>
+                                                            <li>
+                                                                Alias <br><b>
+                                                                {% if vehicle.alias %}
+                                                                    {{ vehicle.alias }} {% else %} ― {% endif %}
+                                                            </b>
+
+                                                            </li>
+                                                            <li>
+                                                                Full Name <br><b>
+                                                                {% if vehicle.full_name %}
+                                                                    {{ vehicle.full_name }} {% else %} ― {% endif %}
+                                                            </b>
+
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mr-auto text-center">
+                                            <div class="info">
+                                                <div class="icon icon-danger">
+                                                    <i class="far fa-satellite"></i>
+                                                </div>
+                                                <h5 class="info-title">Payload Capacity</h5>
+                                                <div class="card-pricing">
+                                                    <div class="card-body ">
+
+                                                        <ul>
+                                                            <li>
+                                                                Launch Cost <br><b>{% if vehicle.launch_cost %}
+                                                                ${{ vehicle.launch_cost }} {% else %} ― {% endif %}
+                                                            </b>
+
+                                                            </li>
+                                                            <li>
+                                                                Low Earth Orbit <br><b>{% if vehicle.leo_capacity %}
+                                                                {{ vehicle.leo_capacity }} kg{% else %} ― {% endif %}
+                                                            </b>
+
+                                                            </li>
+                                                            <li>
+                                                                Geostationary Transfer
+                                                                Orbit <br><b>{% if vehicle.gto_capacity %}
+                                                                {{ vehicle.gto_capacity }} kg{% else %} ― {% endif %}
+                                                            </b>
+
+                                                            </li>
+                                                            <li>
+                                                                Direct Geostationary <br><b>
+                                                                {% if vehicle.geo_capacity %}
+                                                                    {{ vehicle.geo_capacity }} kg{% else %}
+                                                                    ― {% endif %}
+                                                            </b>
+
+                                                            </li>
+                                                            <li>
+                                                                Sun-Synchronous Capacity <br><b>
+                                                                {% if vehicle.sso_capacity %}
+                                                                    {{ vehicle.sso_capacity }} kg{% else %}
+                                                                    ― {% endif %}
+                                                            </b>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        {% endwith %}
+                        {% if launch.rocket.firststage.all|length > 0 %}
+                            <div class="col-lg-10 mx-auto">
+                                <h2 class="title">Booster Info</h2>
+                                <hr>
+                                <div class="row text-center">
+                                    {% for stage in launch.rocket.firststage.all %}
+
+                                            <div class="col-lg-12 mx-auto mb-3">
+                                                <div class="row">
+                                                    <!-- Date/Time -->
+                                                    <div class="col-lg-5 mx-auto my-auto mr-auto">
+                                                        {% if stage.launcher.image_url %}
+                                                            {% thumbnail stage.launcher.image_url "300x300" crop="80%" as im %}
+                                                                <img class="img-raised rounded-circle img-fluid text-center"
+                                                                     src="{{ im.url }}"
+                                                                     style="padding:1px;border:1px solid #cccccc;max-height: 200px;max-width: 200px">
+                                                            {% endthumbnail %}
+                                                        {% else %}
+                                                            <img class="img-raised rounded-circle img-fluid"
+                                                                 src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="col-lg-7 ml-auto text-left">
+                                                        <h3 class="title mb-0">{{ stage.launcher.serial_number }}</h3>
+                                                        {%  if stage.launcher.successful_landings  %}
+                                                            <h4 class="title mt-0 mb-0"><b>Status:</b> {{ stage.launcher.status|title}}<br></h4>
+                                                        {% endif %}
+                                                        <hr class="mt-0">
+                                                        <div class="row">
+
+                                                            <div class="col-6">
+                                                                <b>Type:</b> {{ stage.type }}<br>
+                                                                <b>Flight Proven:</b> {{ stage.reused|yesno:"Yes,No" }}<br>
+                                                                {%  if stage.launcher.first_launch_date  %}
+                                                                    <b>First Flight:</b> {{ stage.launcher.first_launch_date|date:"F j, Y"  }}<br>
+                                                                {% endif %}
+                                                                {%  if stage.launcher.last_launch_date  %}
+                                                                    <b>Last Flight:</b> {{ stage.launcher.last_launch_date|date:"F j, Y"  }}<br>
+                                                                {% endif %}
+                                                            </div>
+                                                            <div class="col-6">
+                                                                {%  if stage.launcher.flights  %}
+                                                                    <b>Flights:</b> {{ stage.launcher.flights  }}<br>
+                                                                {% endif %}
+                                                                {%  if stage.launcher.attempted_landings  %}
+                                                                    <b>Landings Attempted:</b> {{ stage.launcher.attempted_landings  }}<br>
+                                                                {% endif %}
+                                                                {%  if stage.launcher.successful_landings  %}
+                                                                    <b>Landings Successful:</b> {{ stage.launcher.successful_landings  }}<br>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                        {% if stage.previous_flight %}
+                                                                <a class="btn btn-primary btn-lg"
+                                                                   href="/vehicle/launcher/{{ stage.launcher.id }}">Previous {{ stage.launcher.serial_number }} Flights</a>
+                                                        {% endif %}
+
+
+                                                        {% if stage.landing != None %}
+
+                                                            <h3 class="title mb-0 mt-1">Landing Information</h3>
+                                                            <button
+                                                                    data-trigger="focus"
+                                                                    data-toggle="popover"
+                                                                    data-placement="top"
+                                                                    data-container="body"
+                                                                    data-original-title="{{ stage.landing.landing_location.name }}"
+                                                                    data-content="{{ stage.landing.landing_location.description }}"
+                                                                    class="btn btn-raised btn-round btn-sm
+                                                    {% if stage.landing.success %} btn-success
+                                                    {% elif not stage.landing.success %}btn-danger
+                                                    {% else %} btn-primary {% endif %}">
+                                                                {{ stage.landing.landing_location.abbrev }}</button>
+                                                            <button class="btn btn-raised btn-round btn-sm btn-info"
+                                                                    data-trigger="focus"
+                                                                    data-toggle="popover"
+                                                                    data-placement="top"
+                                                                    data-container="body"
+                                                                    data-original-title="{{ stage.landing.landing_type.name }}"
+                                                                    data-content="{{ stage.landing.landing_type.description }}">
+                                                                {{ stage.landing.landing_type.abbrev }}</button>
+                                                            <p>{{ stage.landing.description }}</p>
+                                                            {% if stage.landing.attempt %}
+                                                                {% if stage.landing.success != None %}
+                                                                    {% if stage.landing.success %}
+                                                                        <b>Result: </b>
+                                                                        Successful {{ stage.landing.landing_type.name }} landing
+                                                                            at {{ stage.landing.landing_location.name }}.
+                                                                    {% else %}
+                                                                        <b>Result: </b>
+                                                                        {{ stage.launcher.serial_number }} did not land
+                                                                            successfully.
+                                                                    {% endif %}
+                                                                {% else %}
+                                                                    <b>Landing Attempt Confirmed</b>
+                                                                {% endif %}
+                                                            {% elif stage.landing.attempt != True %}
+                                                                <b>{{ stage.type }} will be expended.</b>
+                                                            {% else %}
+                                                                <b>Landing Attempt Unconfirmed</b>
+                                                            {% endif %}
+                                                            <br>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if launch.rocket.spacecraftflight %}
+                        {% with spacecraft_flight=launch.rocket.spacecraftflight %}
+                            <div class="col-lg-10 mx-auto">
+                                <h2 class="title">{{ spacecraft_flight.spacecraft.name }}</h2>
+                                <hr>
+
+                                {% if spacecraft_flight.spacecraft.spacecraft_config.in_use %}
+                                    <span class="badge badge-pill badge-success">Active</span>
+                                {% else %}
+                                    <span class="badge badge-pill badge-danger">In-active</span>
+                                {% endif %}
+
+                                {% if spacecraft_flight.spacecraft.spacecraft_config.human_rated %}
+                                    <span class="badge badge-pill badge-success">Human Rated</span>
+                                {% else %}
+                                    <span class="badge badge-pill badge-warning">Cargo</span>
+                                {% endif %}
+
+                                {% if spacecraft_flight.launch_crew.all|length > 0 %}
+                                    <span class="badge badge-pill badge-info">Crew On-board: {{ spacecraft_flight.launch_crew.all|length }}</span>
+                                {% else %}
+                                    <span class="badge badge-pill badge-danger">Unmanned</span>
+                                {% endif %}
+
+                                {% if spacecraft_flight.spacecraft.spacecraft_config.type.name %}
+                                    <span class="badge badge-pill badge-primary">{{ vehicle.type.name }}</span>
+                                {% endif %}
+
+                                {% if spacecraft_flight.spacecraft.spacecraft_config.crew_capacity %}
+                                    <span class="badge badge-pill badge-info">Crew Capacity: {{ spacecraft_flight.spacecraft.spacecraft_config.crew_capacity }}</span>
+                                {% endif %}
+
+                                {% if spacecraft_flight.spacecraft.spacecraft_config.payload_capacity %}
+                                    <span class="badge badge-pill badge-info">Payload Capacity: {{ spacecraft_flight.spacecraft.spacecraft_config.payload_capacity }} kg</span>
+                                {% endif %}
+
+                                <div class="row text-center mt-3 mb-3">
+                                    <div class="col-lg-12 mx-auto">
+                                        <div class="row">
+                                            <!-- Date/Time -->
+                                            <div class="col-lg-5 mx-auto my-auto mr-auto">
+                                                {% if spacecraft_flight.spacecraft.spacecraft_config.image_url %}
+                                                    {% thumbnail spacecraft_flight.spacecraft.spacecraft_config.image_url "300x300" crop="80%" as im %}
+                                                        <img class="img-raised rounded-circle img-fluid text-center"
+                                                             src="{{ im.url }}"
+                                                             style="padding:1px;border:1px solid #cccccc;max-height: 200px;max-width: 200px">
+                                                    {% endthumbnail %}
+                                                {% else %}
+                                                    <img class="img-raised rounded-circle img-fluid"
+                                                         src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-lg-7 ml-auto text-left">
+                                                <h6><b>Destination:</b> {{ spacecraft_flight.destination }}</h6>
+                                                <h6><b>Serial Number:</b> {{ spacecraft_flight.spacecraft.serial_number }}</h6>
+                                                <p>{{ spacecraft_flight.spacecraft.description }}</p>
+                                                <a class="btn btn-primary btn-lg"
+                                                   href="/vehicle/spacecraft/{{ spacecraft_flight.spacecraft.spacecraft_config.id }}">
+                                                    {{ spacecraft_flight.spacecraft.spacecraft_config.name }} Details</a>
+                                                <br>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% if spacecraft_flight.launch_crew.all|length > 0 %}
+                                    <div class="row text-center">
+                                        <div class="col-lg-12 mx-auto mb-3">
+                                        <h2 class="title">Crew</h2>
+                                        <hr>
+                                        {% for astronaut_flight in spacecraft_flight.launch_crew.all %}
+                                            <div class="row">
+                                                <!-- Date/Time -->
+                                                <div class="col-lg-5 mx-auto my-auto mr-auto">
+                                                    {% if astronaut_flight.astronaut.profile_image %}
+                                                    {% thumbnail astronaut_flight.astronaut.profile_image "300x300" crop="80%" as im %}
+                                                        <a href="/astronaut/{{ astronaut_flight.astronaut.slug}}">
+                                                            <img class="img-raised rounded-circle img-fluid text-center"
+                                                                 src="{{ im.url }}"
+                                                                 style="padding:1px;border:1px solid #cccccc;max-height: 200px;max-width: 200px">
+                                                        </a>
+                                                    {% endthumbnail %}
+                                                {% else %}
+                                                    <img class="img-raised rounded-circle img-fluid"
+                                                         src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
+                                                {% endif %}
+                                                </div>
+                                                <div class="col-lg-7 mx-auto my-auto text-left">
+                                                    <a href="/astronaut/{{ astronaut_flight.astronaut.slug}}">
+                                                        <h2 class="title">{{ astronaut_flight.astronaut.name }} </h2>
+                                                    </a>
+                                                    <h4 class="title" style="margin-bottom: 0;margin-top: 0;min-height: 0;">{{ astronaut_flight.role.role }} - {{ astronaut_flight.astronaut.nationality }} {% if astronaut_flight.astronaut.agency %} - ({{ astronaut_flight.astronaut.agency.abbrev }}) {% endif %}</h4>
+                                                    <b>Status:</b> {{ astronaut_flight.astronaut.status.name }}<br>
+                                                    <p>
+                                                        <b>Date of Birth:</b>  {{ astronaut_flight.astronaut.date_of_birth }}<br>
+                                                        {% if astronaut_flight.astronaut.date_of_death %}
+                                                            <b>Date of Death:</b>  {{ astronaut_flight.astronaut.date_of_death }}
+                                                        {% else %}
+                                                            <b>Age:</b>  {{ astronaut_flight.astronaut.age }}
+                                                        {% endif %}
+                                                    </p>
+
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            {% endwith %}
+                        {% endif %}
+
                         </div>
-                    {% endfor %}
                     </div>
                 </div>
-                {% endif %}
-                <div class="card">
-                    <div class="row">
-                        <div class="container">
-                            <h3 class="text-center card-title"><b>{{ launch.pad.location.name }}</b></h3>
-                            <h4 class="text-center">{{ launch.pad.name }}</h4>
-                            <hr>
+                <div class="row">
+                    <div class="card text-center">
+                        <div class="row ">
+                            <!-- Post Content Column -->
+                            <div class="col-lg-12 text-center">
+                                <div class="card-header card-header-info text-center">
+                                    {% if launch.rocket %}
+                                        <h1 class="title text-white">{{ launch.rocket.configuration.manufacturer.name }}</h1>
+                                    {% else %}
+                                        <h1 class="title text-white">{{ launch.name }}</h1>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 ml-auto mx-auto mr-auto text-center">
+                                    <div class="profile">
+                                        <div class="avatar">
+                                            {% if agency.logo_url %}
+                                                <img src="{{ agency.logo_url.url }}"
+                                                     alt="Circle Image"
+                                                     class="img-fluid mx-auto"
+                                                     style="max-width: 75%;max-height: 400px;">
+                                            {% else %}
+                                                <h2 class="title text-center"
+                                                    style="margin-left: 100px; margin-right:100px;">{{ launch.rocket.configuration.manufacturer.name }}</h2>
+                                                <h3 class="subheading text-center">
+                                                    ({{ launch.rocket.configuration.manufacturer.abbrev }})</h3>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-10 ml-auto mx-auto mr-auto text-center mt-2">
+                                    {% if agency.administrator %}
+                                        <span class="badge badge-pill badge-primary">{{ agency.administrator }}</span>
+                                    {% endif %}
+                                    {% if agency.founding_year %}
+                                        <span class="badge badge-pill badge-warning">Founded: {{ agency.founding_year }}</span>
+                                    {% endif %}
+                                    <span class="badge badge-pill badge-info">Successes: {{ agency.successful_launches }}</span>
+                                    <span class="badge badge-pill badge-danger">Failures: {{ agency.failed_launches }}</span>
+                                    <span class="badge badge-pill badge-default">Pending: {{ agency.pending_launches }}</span>
+                                    <br>
+                                    <br>
+                                    <h4><b>Agency Type:</b> {{ launch.rocket.configuration.manufacturer.agency_type.name }}
+                                    </h4>
+                                    {% if agency.description %}
+                                        <p>{{ agency.description }}</p>
+                                    {% endif %}
+                                    {% if launch.rocket.configuration.manufacturer.info_url %}
+                                        <a class="btn btn-primary btn-lg"
+                                           href="{{ launch.rocket.configuration.manufacturer.info_url }}">INFO</a>
+                                    {% endif %}
+                                    {% if launch.rocket.configuration.manufacturer.wiki_url %}
+                                        <a class="btn btn-danger btn-lg"
+                                           href="{{ launch.rocket.configuration.manufacturer.wiki_url }}">WIKI</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="card">
+                        <div class="card-header card-header-info text-center">
+                            <h3 class="card-title"><b>{{ launch.pad.location.name }}</b></h3>
+                            <h4>Pad: {{ launch.pad.name }}</h4>
+                        </div>
+                        <div class="card-body">
                             <div class="col-lg-12">
                                 <iframe
                                         width="100%"
                                         height="400"
                                         frameborder="0" style="border:0"
-                                        src="https://www.google.com/maps/embed/v1/place?key=AIzaSyACbuVGTVzHToUb7vCwwQlJthvyEQL8RW4&q={{ launch.pad.location.name }}&zoom=10" allowfullscreen>
+                                        src="https://www.google.com/maps/embed/v1/place?key=AIzaSyACbuVGTVzHToUb7vCwwQlJthvyEQL8RW4&q={{ launch.pad.location.name }}&zoom=10"
+                                        allowfullscreen>
                                 </iframe>
                             </div>
                         </div>

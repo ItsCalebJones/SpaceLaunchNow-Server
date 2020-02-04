@@ -121,7 +121,7 @@ def check_next_launch(debug=config.DEBUG):
     notification.check_next_launch()
 
 
-@periodic_task(run_every=(crontab(minute='*/1')), options={"expires": 60})
+@periodic_task(run_every=(crontab(minute='*/2')), options={"expires": 60})
 def get_tweets_task():
     logger.info('Task - Running get_new_tweets...')
     get_new_tweets()
