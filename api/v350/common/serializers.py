@@ -285,7 +285,7 @@ class LaunchSerializerCommon(serializers.ModelSerializer):
     status = LaunchStatusSerializer(many=False, read_only=True)
     landing = serializers.SerializerMethodField()
     landing_success = serializers.SerializerMethodField()
-    launcher = LauncherConfigListSerializer()
+    launcher = LauncherConfigListSerializer(source="rocket.configuration")
     orbit = serializers.SerializerMethodField()
     mission = MissionSerializerMini()
     image = serializers.SerializerMethodField()
