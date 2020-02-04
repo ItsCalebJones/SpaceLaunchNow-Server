@@ -1219,6 +1219,7 @@ class DockingEvent(models.Model):
 
 class Launch(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    notifications_enabled = models.BooleanField(default=True)
     launch_library_id = models.IntegerField(editable=True, null=True, blank=True, unique=True)
     launch_library = models.NullBooleanField(default=False)
     webcast_live = models.BooleanField(default=False)

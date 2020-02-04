@@ -47,7 +47,8 @@ class LaunchEventTracker:
         logger.debug('Running check_success...')
         launches = Launch.objects.filter(Q(status__id=3) | Q(status__id=4) | Q(status__id=7),
                                          net__lte=time_threshold_24_hour,
-                                         net__gte=time_threshold_past_two_days)
+                                         net__gte=time_threshold_past_two_days,
+                                         notifications_enabled=True)
 
         logger.debug('Found %d launches with recent success - checking state.', len(launches))
         for launch in launches:
@@ -90,7 +91,7 @@ class LaunchEventTracker:
 
     def check_in_flight(self):
         logger.debug('Running check_in_flight...')
-        launches = Launch.objects.filter(status__id=6)
+        launches = Launch.objects.filter(status__id=6, notifications_enabled=True)
 
         logger.debug('Found %d launches in flight - checking state.', len(launches))
         for launch in launches:
@@ -139,7 +140,8 @@ class LaunchEventTracker:
     def check_one_minute(self, time_threshold_1_minute):
         logger.debug('Running check_one_minute...')
         launches = Launch.objects.filter(net__lte=time_threshold_1_minute,
-                                         net__gte=dtime.datetime.now(tz=pytz.utc))
+                                         net__gte=dtime.datetime.now(tz=pytz.utc),
+                                         notifications_enabled=True)
 
         logger.debug('Found %d launches within one minute - checking state.', len(launches))
         for launch in launches:
@@ -177,7 +179,8 @@ class LaunchEventTracker:
     def check_ten_minute(self, time_threshold_10_minute, time_threshold_1_minute):
         logger.debug('Running check_ten_minute...')
         launches = Launch.objects.filter(net__lte=time_threshold_10_minute,
-                                         net__gte=time_threshold_1_minute)
+                                         net__gte=time_threshold_1_minute,
+                                         notifications_enabled=True)
 
         logger.debug('Found %d launches within ten minutes - checking state.', len(launches))
         for launch in launches:
@@ -216,7 +219,8 @@ class LaunchEventTracker:
     def check_twenty_four_hour(self, time_threshold_1_hour, time_threshold_24_hour):
         logger.debug('Running check_twenty_four_hour...')
         launches = Launch.objects.filter(net__lte=time_threshold_24_hour,
-                                         net__gte=time_threshold_1_hour)
+                                         net__gte=time_threshold_1_hour,
+                                         notifications_enabled=True)
 
         logger.debug('Found %d launches within twenty four hours - checking state.', len(launches))
 
@@ -255,7 +259,8 @@ class LaunchEventTracker:
     def check_one_hour(self, time_threshold_10_minute, time_threshold_1_hour):
         logger.debug('Running check_one_hour...')
         launches = Launch.objects.filter(net__lte=time_threshold_1_hour,
-                                         net__gte=time_threshold_10_minute)
+                                         net__gte=time_threshold_10_minute,
+                                         notifications_enabled=True)
 
         logger.debug('Found %d launches within an hour - checking state.', len(launches))
 
@@ -298,7 +303,9 @@ class LaunchEventTracker:
     def check_webcast_live(self, time_threshold_1_hour, time_threshold_10_minute):
         logger.debug('Running check webcast...')
         launches = Launch.objects.filter(net__gte=time_threshold_10_minute,
-                                         net__lte=time_threshold_1_hour).filter(webcast_live=True)
+                                         net__lte=time_threshold_1_hour,
+                                         webcast_live=True,
+                                         notifications_enabled=True)
         logger.debug('Found %d launches within an hour - checking state.', len(launches))
 
         for launch in launches:
@@ -336,7 +343,8 @@ class LaunchEventTracker:
     def check_this_week(self, time_threshold_1_week, time_threshold_24_hour):
         logger.debug('Running check_this_week...')
         launches = Launch.objects.filter(net__lte=time_threshold_1_week,
-                                         net__gte=time_threshold_24_hour)
+                                         net__gte=time_threshold_24_hour,
+                                         notifications_enabled=True)
 
         logger.debug('Found %d launches within the week - checking state.', len(launches))
 
