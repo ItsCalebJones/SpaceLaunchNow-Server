@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from api.models import *
 from api.permission import HasGroupPermission
 from api.v350.launch.filters import LaunchFilter, LaunchDateFilter
-from api.v350.launch.serializers import LaunchDetailedSerializer, LaunchSerializerCommon, LaunchSerializer
+from api.v350.launch.serializers import LaunchDetailedSerializer, LaunchSerializerCommon, LaunchListSerializer
 
 
 class LaunchViewSet(ModelViewSet):
@@ -125,9 +125,9 @@ class LaunchViewSet(ModelViewSet):
         if self.action == 'retrieve' or mode == "detailed":
             return LaunchDetailedSerializer
         elif mode == "list":
-            return LaunchSerializerCommon
+            return LaunchListSerializer
         else:
-            return LaunchSerializer
+            return LaunchSerializerCommon
 
     permission_classes = [HasGroupPermission]
     permission_groups = {
@@ -272,9 +272,9 @@ class UpcomingLaunchViewSet(ModelViewSet):
         if self.action == 'retrieve' or mode == "detailed":
             return LaunchDetailedSerializer
         elif mode == "list":
-            return LaunchSerializerCommon
+            return LaunchListSerializer
         else:
-            return LaunchSerializer
+            return LaunchSerializerCommon
 
     now = datetime.datetime.now()
     permission_classes = [HasGroupPermission]
@@ -403,9 +403,9 @@ class PreviousLaunchViewSet(ModelViewSet):
         if self.action == 'retrieve' or mode == "detailed":
             return LaunchDetailedSerializer
         elif mode == "list":
-            return LaunchSerializerCommon
+            return LaunchListSerializer
         else:
-            return LaunchSerializer
+            return LaunchSerializerCommon
 
     permission_classes = [HasGroupPermission]
     permission_groups = {
