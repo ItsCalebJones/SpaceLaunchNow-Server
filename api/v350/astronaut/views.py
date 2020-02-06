@@ -6,7 +6,7 @@ from api.models import *
 from api.permission import HasGroupPermission
 from api.v350.astronaut.filters import AstronautsFilter
 from api.v350.astronaut.serializers import AstronautDetailedSerializer, AstronautListSerializer, \
-    AstronautNormalSerializer, AstronautDetailedWithLaunchListSerializer
+    AstronautNormalSerializer
 
 
 class AstronautViewSet(ModelViewSet):
@@ -21,7 +21,8 @@ class AstronautViewSet(ModelViewSet):
     /3.5.0/astronaut/?mode=detailed
 
     FILTERS:
-    Parameters - 'name', 'status', 'nationality', 'agency__name', 'agency__abbrev', 'date_of_birth', 'date_of_death', 'status_ids'
+    Parameters - 'name', 'status', 'nationality', 'agency__name', 'agency__abbrev', 'date_of_birth',
+     'date_of_death', 'status_ids'
     Example - /3.5.0/astronaut/?nationality=American
 
     SEARCH EXAMPLE:
@@ -65,9 +66,7 @@ class AstronautViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         mode = self.request.query_params.get("mode", "normal")
-        if mode == "launch_list" and self.action == 'retrieve':
-            return AstronautDetailedWithLaunchListSerializer
-        elif mode == "detailed" or self.action == 'retrieve':
+        if mode == "detailed" or self.action == 'retrieve':
             return AstronautDetailedSerializer
         elif mode == "list":
             return AstronautListSerializer

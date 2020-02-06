@@ -285,7 +285,7 @@ class LaunchSerializerCommon(serializers.ModelSerializer):
     status = LaunchStatusSerializer(many=False, read_only=True)
     landing = serializers.SerializerMethodField()
     landing_success = serializers.SerializerMethodField()
-    launcher = LauncherConfigListSerializer(source="rocket.configuration")
+    rocket_config = LauncherConfigListSerializer(source="rocket.configuration")
     orbit = serializers.SerializerMethodField()
     mission = MissionSerializerMini()
     image = serializers.SerializerMethodField()
@@ -295,7 +295,7 @@ class LaunchSerializerCommon(serializers.ModelSerializer):
     class Meta:
         model = Launch
         fields = (
-            'id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'mission', 'pad', 'landing', 'landing_success', 'launcher', 'orbit', 'image', 'infographic')
+            'id', 'url', 'launch_library_id', 'slug', 'name', 'status', 'net', 'window_end', 'window_start', 'mission', 'orbit', 'pad', 'landing', 'landing_success', 'rocket_config',  'image', 'infographic')
 
     def get_image(self, obj):
         if obj.image_url:
