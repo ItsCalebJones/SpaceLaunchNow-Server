@@ -1,7 +1,7 @@
-from django_filters import FilterSet, filters
+from django_filters import FilterSet, filters, ModelChoiceFilter
 from django.utils.translation import ugettext as _
 
-from api.models import DockingEvent
+from api.models import DockingEvent, SpacecraftFlight
 
 
 class DockingEventFilter(FilterSet):
@@ -25,5 +25,5 @@ class DockingEventFilter(FilterSet):
     class Meta:
         model = DockingEvent
         fields = (
-            'space_station', 'flight_vehicle', 'docking_location',
+            'space_station__id', 'docking_location__id', 'flight_vehicle__id'
         )

@@ -225,6 +225,7 @@ INSTALLED_APPS = [
     'django_celery_results',
     'cachalot',
     'drf_yasg',
+    'debug_toolbar',
 ]
 
 if DEBUG:
@@ -276,6 +277,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'tz_detect.middleware.TimezoneMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     # 'silk.middleware.SilkyMiddleware',

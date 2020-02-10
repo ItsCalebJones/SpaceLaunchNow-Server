@@ -46,7 +46,6 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-
 sitemaps = {
     'static': StaticViewSitemap,
     'upcoming': UpcomingLaunchSitemap,
@@ -64,6 +63,7 @@ default_settings = [
 api_settings = []
 web_settings = []
 admin_settings = []
+debug_settings = []
 
 
 def get_v350():
@@ -80,7 +80,7 @@ def get_v350():
             license=openapi.License(name="Apache License 2.0"),
         ),
         patterns=v350_api,
-        public=True, permission_classes = (permissions.AllowAny,),
+        public=True, permission_classes=(permissions.AllowAny,),
     )
 
     v350_api_docs = [
@@ -93,7 +93,6 @@ def get_v350():
 
 
 if settings.IS_API:
-
     api_settings = [
 
         url(r'^3.0.0/', include(api_v300, namespace='v300')),
@@ -162,19 +161,19 @@ if settings.IS_ADMIN:
         url(r'^signup/$', landing_views.signup, name='signup'),
     ]
 
-
-urlpatterns = default_settings + api_settings + web_settings + admin_settings
-
 if settings.DEBUG:
     import debug_toolbar
 
-    urlpatterns = [
-                      url(r'^__debug__/', include(debug_toolbar.urls)),
+    debug_settings = [
+        url(r'^__debug__/', include(debug_toolbar.urls)),
 
-                      # For django versions before 2.0:
-                      # url(r'^__debug__/', include(debug_toolbar.urls)),
+        # For django versions before 2.0:
+        # url(r'^__debug__/', include(debug_toolbar.urls)),
 
-                  ] + urlpatterns
+    ]
+
+urlpatterns = default_settings + api_settings + web_settings + admin_settings + debug_settings
+
 
 handler404 = web.views.handler404
 handler500 = web.views.handler500

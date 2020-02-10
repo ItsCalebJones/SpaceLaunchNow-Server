@@ -36,7 +36,15 @@ class DockingEventViewSet(ModelViewSet):
         else:
             return DockingEventSerializer
 
-    queryset = DockingEvent.objects.all()
+    queryset = DockingEvent.objects.all().prefetch_related('space_station',
+                                                           'docking_location',
+                                                           'flight_vehicle',
+                                                           'flight_vehicle__spacecraft__spacecraft_config',
+                                                           'flight_vehicle__spacecraft__status',
+                                                           'flight_vehicle__rocket',
+                                                           'flight_vehicle__rocket__configuration',
+                                                           'flight_vehicle__rocket__launch'
+                                                           )
     permission_classes = [HasGroupPermission]
     permission_groups = {
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
