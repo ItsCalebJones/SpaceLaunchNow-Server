@@ -41,7 +41,10 @@ class ExpeditionViewSet(ModelViewSet):
         else:
             return ExpeditionSerializer
 
-    queryset = Expedition.objects.all()
+    queryset = Expedition.objects.all().prefetch_related(
+        'space_station').prefetch_related(
+        'space_station__status').prefetch_related(
+        'space_station__orbit')
     permission_classes = [HasGroupPermission]
     permission_groups = {
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
