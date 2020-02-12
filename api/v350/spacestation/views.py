@@ -34,7 +34,11 @@ class SpaceStationViewSet(ModelViewSet):
         else:
             return SpaceStationSerializer
 
-    queryset = SpaceStation.objects.all()
+    queryset = SpaceStation.objects.all().prefetch_related(
+        'orbit').prefetch_related(
+        'status').prefetch_related(
+        'type').prefetch_related(
+        'owners')
     permission_classes = [HasGroupPermission]
     permission_groups = {
         'retrieve': ['_Public'],

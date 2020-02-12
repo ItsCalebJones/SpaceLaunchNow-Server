@@ -39,7 +39,17 @@ class AstronautViewSet(ModelViewSet):
         agency_ids = self.request.query_params.get('agency_ids', None)
         has_flown = self.request.query_params.get('has_flown', None)
 
-        astros = Astronaut.objects.all()
+        astros = Astronaut.objects.all().prefetch_related(
+            'status').prefetch_related(
+            'type').prefetch_related(
+            'astronautflight_set').prefetch_related(
+            'astronautflight_set__launch_crew').prefetch_related(
+            'astronautflight_set__landing_crew').prefetch_related(
+            'astronautflight_set__onboard_crew').select_related(
+            'agency').prefetch_related(
+            'astronautflight_set__launch_crew__rocket').prefetch_related(
+            'astronautflight_set__landing_crew__rocket').prefetch_related(
+            'astronautflight_set__onboard_crew__rocket')
 
         if has_flown:
             if has_flown == 'true':
