@@ -34,7 +34,7 @@ class LaunchDateFilter(FilterSet):
         fields = {
             'name': ['exact', ],
             'rocket__configuration__name': ['exact', ],
-            'rocket__configuration': ['exact', ],
+            'rocket__configuration__id': ['exact', ],
             'status': ['exact', ],
             'launch_library_id': ['exact', ],
             'rocket__spacecraftflight__spacecraft__name': ['exact', 'icontains'],
@@ -52,7 +52,7 @@ class LaunchFilter(FilterSet):
         fields = {
             'name': ['exact', ],
             'rocket__configuration__name': ['exact', ],
-            'rocket__configuration': ['exact', ],
+            'rocket__configuration__id': ['exact', ],
             'status': ['exact', ],
             'launch_library_id': ['exact', ],
             'rocket__spacecraftflight__spacecraft__name': ['exact', 'icontains'],

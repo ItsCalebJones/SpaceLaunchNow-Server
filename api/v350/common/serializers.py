@@ -117,7 +117,7 @@ class AstronautSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class SpacecraftConfigurationDetailSerializer(QueryFieldsMixin, serializers.HyperlinkedModelSerializer):
-    agency = AgencySerializerDetailedCommon(read_only=True, source="manufacturer")
+    agency = AgencySerializer(read_only=True, source="manufacturer")
     type = SpacecraftConfigTypeSerializer(read_only=True, many=False)
 
     class Meta:
@@ -225,7 +225,7 @@ class AstronautFlightSerializer(serializers.ModelSerializer):
 
 
 class SpacecraftDetailedNoFlightsSerializer(serializers.HyperlinkedModelSerializer):
-    status = status = SpacecraftStatusSerializer(read_only=True, many=False)
+    status = SpacecraftStatusSerializer(read_only=True, many=False)
     spacecraft_config = SpacecraftConfigurationDetailSerializer(read_only=True, many=False)
 
     class Meta:

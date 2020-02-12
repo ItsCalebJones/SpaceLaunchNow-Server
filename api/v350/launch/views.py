@@ -9,6 +9,22 @@ from api.v350.launch.filters import LaunchFilter, LaunchDateFilter
 from api.v350.launch.serializers import LaunchDetailedSerializer, LaunchSerializerCommon, LaunchListSerializer
 
 
+def get_prefeteched_queryset(queryset):
+    return queryset.select_related(
+            'rocket__spacecraftflight').prefetch_related(
+            'status').prefetch_related(
+            'info_urls').prefetch_related('vid_urls').prefetch_related(
+            'rocket').prefetch_related(
+            'mission').prefetch_related('pad').prefetch_related(
+            'pad__location').prefetch_related(
+            'rocket__configuration').prefetch_related(
+            'rocket__configuration__manufacturer').prefetch_related(
+            'mission__mission_type').prefetch_related(
+            'rocket__firststage').prefetch_related(
+            'rocket__configuration__manufacturer').prefetch_related(
+            'pad__location__landing_location')
+
+
 class LaunchViewSet(ModelViewSet):
     """
     API endpoint that returns all Launch objects or a single launch.
@@ -251,19 +267,7 @@ class UpcomingLaunchViewSet(ModelViewSet):
             launches = launches.filter(
                 rocket__configuration__id=launcher_config__id)
 
-        launches = launches.select_related(
-            'rocket__spacecraftflight').select_related(
-            'status').prefetch_related(
-            'info_urls').prefetch_related('vid_urls').select_related(
-            'rocket').select_related(
-            'mission').select_related('pad').select_related(
-            'pad__location').prefetch_related(
-            'rocket__configuration').prefetch_related(
-            'rocket__configuration__manufacturer').prefetch_related(
-            'mission__mission_type').prefetch_related(
-            'rocket__firststage').select_related(
-            'rocket__configuration__manufacturer').order_by(
-            'net', 'id').distinct()
+        launches = get_prefeteched_queryset(launches).order_by('net', 'id').distinct()
 
         return launches
 

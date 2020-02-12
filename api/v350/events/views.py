@@ -67,7 +67,13 @@ class EventViewSet(ModelViewSet):
     /3.5.0/event/?search=Dragon
     Searches through name
     """
-    queryset = Events.objects.all()
+    queryset = Events.objects.all().prefetch_related(
+        'launch__mission').prefetch_related(
+        'launch__rocket').prefetch_related(
+        'launch').prefetch_related(
+        'news__events__type').prefetch_related(
+        'launch__status').select_related(
+        'type').prefetch_related('launch__launch_service_provider')
     serializer_class = EventsSerializer
     permission_classes = [HasGroupPermission]
     permission_groups = {

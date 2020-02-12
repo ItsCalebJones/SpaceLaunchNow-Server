@@ -43,7 +43,9 @@ class DockingEventViewSet(ModelViewSet):
                                                            'flight_vehicle__spacecraft__status',
                                                            'flight_vehicle__rocket',
                                                            'flight_vehicle__rocket__configuration',
-                                                           'flight_vehicle__rocket__launch'
+                                                           'flight_vehicle__rocket__launch',
+                                                           'flight_vehicle__rocket__firststage',
+                                                           'flight_vehicle__rocket__launch__status',
                                                            )
     permission_classes = [HasGroupPermission]
     permission_groups = {
