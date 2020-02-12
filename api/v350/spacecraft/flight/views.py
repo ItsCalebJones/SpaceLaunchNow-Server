@@ -25,7 +25,17 @@ class SpaceflightFlightViewSet(ModelViewSet):
         else:
             return SpacecraftFlightSerializer
 
-    queryset = SpacecraftFlight.objects.all()
+    queryset = SpacecraftFlight.objects.all().prefetch_related(
+        'spacecraft__spacecraft_config__type').prefetch_related(
+        'spacecraft__status').prefetch_related(
+        'spacecraft__spacecraft_config__manufacturer').prefetch_related(
+        'rocket__configuration__manufacturer').prefetch_related(
+        'rocket__launch__mission').prefetch_related(
+        'rocket__launch').prefetch_related(
+        'rocket').prefetch_related(
+        'rocket__launch__status').prefetch_related(
+        'rocket__configuration__manufacturer').prefetch_related(
+        'spacecraft__spacecraft_config__manufacturer').select_related('rocket__launch')
     permission_classes = [HasGroupPermission]
     permission_groups = {
         'retrieve': ['_Public'], # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
