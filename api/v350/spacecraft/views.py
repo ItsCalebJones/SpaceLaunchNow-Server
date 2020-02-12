@@ -34,7 +34,11 @@ class SpacecraftViewSet(ModelViewSet):
         else:
             return SpacecraftSerializer
 
-    queryset = Spacecraft.objects.all()
+    queryset = Spacecraft.objects.all().prefetch_related(
+        'spacecraft_config').prefetch_related(
+        'spacecraft_config__type').prefetch_related(
+        'status').prefetch_related(
+        'spacecraft_config')
     permission_classes = [HasGroupPermission]
     permission_groups = {
         'retrieve': ['_Public'], # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
