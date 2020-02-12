@@ -38,7 +38,7 @@ class LauncherConfigViewSet(ModelViewSet):
         else:
             return LauncherConfigSerializer
 
-    queryset = LauncherConfig.objects.all()
+    queryset = LauncherConfig.objects.all().prefetch_related('manufacturer')
     permission_classes = [HasGroupPermission]
     permission_groups = {
         'retrieve': ['_Public'],  # retrieve can be accessed without credentials (GET 'site.com/api/foo/1')
