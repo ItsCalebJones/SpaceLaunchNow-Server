@@ -35,7 +35,12 @@ class LauncherViewSet(ModelViewSet):
         else:
             return LauncherSerializer
 
-    queryset = Launcher.objects.all()
+    queryset = Launcher.objects.all().prefetch_related(
+        'launcher_config').prefetch_related(
+        'firststage__rocket__launch').prefetch_related(
+        'firststage__rocket').prefetch_related(
+        'launcher_config__rocket__launch').prefetch_related(
+        'launcher_config__rocket')
     permission_classes = [HasGroupPermission]
     permission_groups = {
 
