@@ -19,20 +19,32 @@ from django.contrib.sitemaps.views import sitemap
 from django.views.generic import TemplateView
 
 import web
+
+from api.sitemaps import (
+    UpcomingLaunchSitemap,
+    EventSitemap,
+    PreviousLaunchSitemap,
+    AstronautSitemap,
+    BoosterSitemap,
+    SpacestationSitemap
+)
+
+from api.v300.router import api_urlpatterns as api_v300
+from api.v310.router import api_urlpatterns as api_v310
+from api.v320.router import api_urlpatterns as api_v320
 from api.v330.router import api_urlpatterns as api_v330
 from api.v340.router import api_urlpatterns as api_v340
-from api.sitemaps import UpcomingLaunchSitemap, EventSitemap, PreviousLaunchSitemap, AstronautSitemap, BoosterSitemap, \
-    SpacestationSitemap
-from api.v320.router import api_urlpatterns as api_v320
-from api.v310.router import api_urlpatterns as api_v310
-from api.v300.router import api_urlpatterns as api_v300
-from api.v200.router import api_urlpatterns as api_v2
-from api.v1.router import api_urlpatterns as api_v1
-from spacelaunchnow import config
+from api.v350.router import api_urlpatterns as api_v350
+
+from spacelaunchnow import settings
 from web import views as landing_views
 from app.views import staff_view, translator_view, about_view
 from web.sitemaps import StaticViewSitemap
 from web.views import LauncherConfigListView, LaunchFeed, EventFeed, LaunchListView
+
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
 sitemaps = {
     'static': StaticViewSitemap,
@@ -51,18 +63,49 @@ default_settings = [
 api_settings = []
 web_settings = []
 admin_settings = []
-if config.IS_API:
+debug_settings = []
+
+
+def get_v350():
+    v350_api = [
+        url(r'^api/3.5.0/', include(api_v350, namespace='v350')),
+    ]
+    v350_api_schema_view = get_schema_view(
+        openapi.Info(
+            title="Space launch Now",
+            default_version='v3.5.0',
+            description="The Space Launch Now API is a up-to-date database of Spaceflight events.",
+            terms_of_service="https://spacelaunchnow.me/site/tos",
+            contact=openapi.Contact(email="support@spacelaunchnow.me"),
+            license=openapi.License(name="Apache License 2.0"),
+        ),
+        patterns=v350_api,
+        public=True, permission_classes=(permissions.AllowAny,),
+    )
+
+    v350_api_docs = [
+        url(r'^api/3.5.0/swagger(?P<format>\.json|\.yaml)$', v350_api_schema_view.without_ui(cache_timeout=0),
+            name='schema-json'),
+        url(r'^api/3.5.0/swagger$', v350_api_schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+        url(r'^api/3.5.0/redoc/$', v350_api_schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    ]
+    return v350_api + v350_api_docs
+
+
+if settings.IS_API:
     api_settings = [
-        url(r'^v1/', include(api_v1, namespace='v1')),
-        url(r'^2.0.0/', include(api_v2, namespace='v200')),
+
         url(r'^3.0.0/', include(api_v300, namespace='v300')),
         url(r'^3.1.0/', include(api_v310, namespace='v310')),
         url(r'^3.2.0/', include(api_v320, namespace='v320')),
         url(r'^api/3.3.0/', include(api_v330, namespace='v330')),
         url(r'^api/3.4.0/', include(api_v340, namespace='v340')),
         url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
     ]
-if config.IS_WEBSERVER:
+    api_settings = api_settings + get_v350()
+
+if settings.IS_WEBSERVER:
     web_settings = [
         url(r'^ads\.txt', include('ads_txt.urls')),
         url(r'^next/', landing_views.next_launch, name='next'),
@@ -101,7 +144,6 @@ if config.IS_WEBSERVER:
         url(r'^app/tos', TemplateView.as_view(template_name='web/app/tos.html'), name='tos'),
         url(r'^site/privacy', TemplateView.as_view(template_name='web/site/privacy.html'), name='privacy'),
         url(r'^site/tos', TemplateView.as_view(template_name='web/site/tos.html'), name='tos'),
-        url(r'^docs/', include('rest_framework_docs.urls')),
         url(r'^ajax/astronaut/$', landing_views.astronaut_search_ajax, name='ajax-astronaut'),
         url(r'^app$', landing_views.app, name='app'),
         url(r'^$', landing_views.index, name='index'),
@@ -110,7 +152,7 @@ if config.IS_WEBSERVER:
         url(r'^tz_detect/', include('tz_detect.urls')),
     ]
 
-if config.IS_ADMIN:
+if settings.IS_ADMIN:
     admin_settings = [
         url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
         url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
@@ -119,19 +161,19 @@ if config.IS_ADMIN:
         url(r'^signup/$', landing_views.signup, name='signup'),
     ]
 
-
-urlpatterns = default_settings + api_settings + web_settings + admin_settings
-
-if config.DEBUG:
+if settings.DEBUG:
     import debug_toolbar
 
-    urlpatterns = [
-                      url(r'^__debug__/', include(debug_toolbar.urls)),
+    debug_settings = [
+        url(r'^__debug__/', include(debug_toolbar.urls)),
 
-                      # For django versions before 2.0:
-                      # url(r'^__debug__/', include(debug_toolbar.urls)),
+        # For django versions before 2.0:
+        # url(r'^__debug__/', include(debug_toolbar.urls)),
 
-                  ] + urlpatterns
+    ]
+
+urlpatterns = default_settings + api_settings + web_settings + admin_settings + debug_settings
+
 
 handler404 = web.views.handler404
 handler500 = web.views.handler500

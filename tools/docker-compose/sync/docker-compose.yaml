@@ -1,0 +1,101 @@
+version: '3'
+
+services:
+  rabbitmq:
+    container_name: slns-rabbitmq
+    hostname: rabbitmq
+    image: rabbitmq:latest
+    networks:
+      - main
+    ports:
+      - "5672:5672"
+    restart: on-failure
+    labels:
+      - "io.portainer.accesscontrol.teams=Space Launch Now"
+
+  slns-celery_worker1:
+    command: sh -c "celery -A spacelaunchnow worker -l info"
+    depends_on:
+    - rabbitmq
+    deploy:
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 50M
+        reservations:
+          cpus: '0.25'
+          memory: 20M
+    image: registry.calebjones.dev:5050/sln-server:production
+    volumes:
+      - ./log/celeryworker1:/code/log
+    networks:
+    - main
+    restart: on-failure
+    labels:
+      - "io.portainer.accesscontrol.teams=Space Launch Now"
+
+  slns-celery_worker2:
+    command: sh -c "celery -A spacelaunchnow worker -l info"
+    depends_on:
+    - rabbitmq
+    deploy:
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 50M
+        reservations:
+          cpus: '0.25'
+          memory: 20M
+    image: registry.calebjones.dev:5050/sln-server:production
+    volumes:
+      - ./log/celeryworker2:/code/log
+    networks:
+    - main
+    restart: on-failure
+    labels:
+      - "io.portainer.accesscontrol.teams=Space Launch Now"
+
+  slns-celery_worker3:
+    command: sh -c "celery -A spacelaunchnow worker -l info"
+    depends_on:
+    - rabbitmq
+    deploy:
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 50M
+        reservations:
+          cpus: '0.25'
+          memory: 20M
+    image: registry.calebjones.dev:5050/sln-server:production
+    volumes:
+      - ./log/celeryworker3:/code/log
+    networks:
+    - main
+    restart: on-failure
+    labels:
+      - "io.portainer.accesscontrol.teams=Space Launch Now"
+
+  slns-celery_beat:
+    command: sh -c "celery -A spacelaunchnow beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
+    container_name: slns-celery_beat
+    depends_on:
+    - rabbitmq
+    hostname: slns-celery_beat
+    image: registry.calebjones.dev:5050/sln-server:production
+    networks:
+    - main
+    restart: on-failure
+    volumes:
+      - ./log:/code/log
+    labels:
+      - "io.portainer.accesscontrol.teams=Space Launch Now"
+
+networks:
+  main:

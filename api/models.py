@@ -5,8 +5,10 @@ import os
 import uuid
 
 from django_extensions.db.fields import AutoSlugField
+from goose3 import Goose
 
 from api.utils.utilities import resize_for_upload, resize_needed, get_map_url, get_pad_url
+from spacelaunchnow import settings
 
 try:
     from urllib import quote  # Python 2.X
@@ -35,8 +37,8 @@ CACHE_TIMEOUT_ONE_HOUR = 60 * 60
 
 def image_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
-    clean_name = quote(quote(instance.name.encode('utf8')), '')
-    clean_name = "%s_image_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
+    clean_name = quote(quote(instance.name.replace(' ', '_').encode('utf8')), '')
+    clean_name = "%s_image_%s" % (clean_name[:15].lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
     name = "%s%s" % (str(clean_name), file_extension)
     return name
 
@@ -503,7 +505,9 @@ class Events(models.Model):
     news_url = models.URLField(max_length=250, blank=True, null=True)
     video_url = models.URLField(max_length=250, blank=True, null=True)
     webcast_live = models.BooleanField(default=False)
-    feature_image = models.FileField(storage=EventImageStorage(), default=None, null=True, blank=True,
+    feature_image = models.FileField(storage=EventImageStorage(),
+                                     default='default.png'.format(settings.STATIC_URL),
+                                     null=False, blank=False,
                                      upload_to=image_path)
     slug = AutoSlugField(populate_from=['name'], overwrite=True)
     expedition = models.ManyToManyField('Expedition', blank=True)
@@ -1218,6 +1222,7 @@ class DockingEvent(models.Model):
 
 class Launch(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    notifications_enabled = models.BooleanField(default=True)
     launch_library_id = models.IntegerField(editable=True, null=True, blank=True, unique=True)
     launch_library = models.NullBooleanField(default=False)
     webcast_live = models.BooleanField(default=False)
@@ -1375,7 +1380,36 @@ class Launch(models.Model):
 
 class VidURLs(models.Model):
     vid_url = models.URLField(max_length=200)
+    priority = models.IntegerField(default=0)
+    customized = models.BooleanField(default=False)
+    title = models.CharField(max_length=200, default=None, null=True, blank=True)
+    description = models.CharField(max_length=350, default=None, null=True, blank=True)
+    feature_image = models.URLField(max_length=200, default=None, null=True, blank=True)
     launch = models.ForeignKey(Launch, related_name='vid_urls', on_delete=models.CASCADE)
+
+    def save(self, **kwargs):
+        if not self.customized:
+            g = Goose()
+            try:
+                article = g.extract(url=self.vid_url)
+                if article.meta_description is not None and article.meta_description is not "":
+                    text = (article.meta_description[:300] + '...') if len(
+                        article.meta_description) > 300 else article.meta_description
+                elif article.cleaned_text is not None:
+                    text = (article.cleaned_text[:300] + '...') if len(article.cleaned_text) > 300 else article.cleaned_text
+                else:
+                    text = None
+                title = ""
+                if article.title is not None:
+                    title = article.title
+
+                self.title = title
+                self.description = text
+                self.feature_image = article.opengraph.get('image')
+            except Exception:
+                pass
+
+            super(VidURLs, self).save()
 
     def __str__(self):
         return self.vid_url
@@ -1386,11 +1420,40 @@ class VidURLs(models.Model):
     class Meta:
         verbose_name = 'Video URL'
         verbose_name_plural = 'Video URLs'
+        ordering = ['priority']
 
 
 class InfoURLs(models.Model):
     info_url = models.URLField(max_length=200)
+    priority = models.IntegerField(default=0)
+    customized = models.BooleanField(default=False)
+    title = models.CharField(max_length=200, default=None, null=True, blank=True)
+    description = models.CharField(max_length=350, default=None, null=True, blank=True)
+    feature_image = models.URLField(max_length=200, default=None, null=True, blank=True)
     launch = models.ForeignKey(Launch, related_name='info_urls', on_delete=models.CASCADE)
+
+    def save(self, **kwargs):
+        if not self.customized:
+            g = Goose()
+            try:
+                article = g.extract(url=self.info_url)
+                if article.meta_description is not None and article.meta_description is not "":
+                    text = (article.meta_description[:300] + '...') if len(
+                        article.meta_description) > 300 else article.meta_description
+                elif article.cleaned_text is not None:
+                    text = (article.cleaned_text[:300] + '...') if len(article.cleaned_text) > 300 else article.cleaned_text
+                else:
+                    text = None
+                title = ""
+                if article.title is not None:
+                    title = article.title
+
+                self.title = title
+                self.description = text
+                self.feature_image = article.top_image
+            except Exception:
+                pass
+        super(InfoURLs, self).save()
 
     def __str__(self):
         return self.info_url
@@ -1401,3 +1464,4 @@ class InfoURLs(models.Model):
     class Meta:
         verbose_name = 'Info URL'
         verbose_name_plural = 'Info URLs'
+        ordering = ['priority']

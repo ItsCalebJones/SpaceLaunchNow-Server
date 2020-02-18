@@ -1,0 +1,55 @@
+# The name of the shipper that publishes the network data. It can be used to group
+# all the transactions sent by a single shipper in the web interface.
+# If this options is not defined, the hostname is used.
+name: "NYC3-DO-Prod-01"
+
+# The tags of the shipper are included in their own field with each
+# transaction published. Tags make it easy to group servers by different
+# logical properties.
+tags: ["production", "web-server"]
+
+# Optional fields that you can specify to add additional information to the
+# output. Fields can be scalar values, arrays, dictionaries, or any nested
+# combination of these.
+fields:
+  env: production
+
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /log/nginx/*.log
+    - /log/web*/*.log
+
+filebeat.modules:
+- module: nginx
+  access:
+    enabled: true
+    var.paths: ["/log/nginx/access.log"]
+  error:
+    enabled: true
+    var.paths: ["/log/nginx/error.log"]
+
+output.elasticsearch:
+  hosts: ["mir.weijers.xyz:9200"]
+  username: "cjones"
+  password: "cjones05022020"
+  indices:
+    - index: "slns-%{[agent.version]}-%{+yyyy.MM.dd}"
+
+setup.kibana:
+  host: "mir.weijers.xyz:5601"
+  space.id: "space-launch-now"
+
+logging.level: info
+logging.to_files: false
+logging.to_syslog: false
+loggins.metrice.enabled: false
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat
+  keepfiles: 7
+  permissions: 0644
+ssl.verification_mode: none

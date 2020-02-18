@@ -119,13 +119,6 @@ class SLNAPITests(APITestCase):
         cls.header = {'Authorization': 'Token %s' % cls.token.key}
 
     def test_api_online(self):
-        path = '/v1/'
-        response = self.client.get(path)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        path = '/2.0.0/'
-        response = self.client.get(path)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         path = '/3.0.0/'
         response = self.client.get(path)

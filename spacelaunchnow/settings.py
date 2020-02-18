@@ -47,7 +47,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_THROTTLE_RATES': {
         'anon': '1000/day',
-        'user': '200/sec'
+        'user': '200/minute'
     },
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
@@ -55,6 +55,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     )
 }
+
 
 LOGIN_REDIRECT_URL = '/'
 
@@ -198,7 +199,6 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'rest_framework',
     'api.apps.ApiConfig',
-    'rest_framework_docs',
     'bot',
     'configurations',
     'embed_video',
@@ -224,6 +224,8 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'django_celery_results',
     'cachalot',
+    'drf_yasg',
+    'debug_toolbar',
 ]
 
 if DEBUG:
@@ -275,6 +277,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'tz_detect.middleware.TimezoneMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     # 'silk.middleware.SilkyMiddleware',
@@ -330,7 +333,16 @@ WSGI_APPLICATION = 'spacelaunchnow.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-DATABASES = config.DATABASE
+DATABASES = {
+     'default': {
+         'ENGINE': os.getenv('DATABASE_ENGINE', config.DATABASE['default']['ENGINE']),
+         'NAME': os.getenv('DATABASE_NAME', config.DATABASE['default']['NAME']),
+         'USER': os.getenv('DATABASE_USERNAME', config.DATABASE['default'].get('USER', None)),
+         'PASSWORD': os.getenv('DATABASE_PASSWORD', config.DATABASE['default'].get('PASSWORD', None)),
+         'HOST': os.getenv('DATABASE_HOST', config.DATABASE['default'].get('HOST', None)),
+         'PORT': os.getenv('DATABASE_PORT', config.DATABASE['default'].get('PORT', None)),
+     }
+ }
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -356,9 +368,7 @@ ZINNIA_MARKUP_LANGUAGE = 'markdown'
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
 INTERNAL_IPS = [
-    # ...
     '127.0.0.1',
-    # ...
 ]
 
 LANGUAGE_CODE = 'en-us'
@@ -464,9 +474,6 @@ ASTRONAUT_IMAGE_STORAGE = 'custom_storages.AstronautImageStorage'
 SPACESTATION_IMAGE_LOCATION = MEDIA_LOCATION + '/spacestation_images'  # type: str
 SPACESTATION_IMAGE_STORAGE = 'custom_storages.SpaceStationImageStorage'
 
-SPACESTATION_IMAGE_LOCATION = MEDIA_LOCATION + '/spacestation_images'  # type: str
-SPACESTATION_IMAGE_STORAGE = 'custom_storages.SpaceStationImageStorage'
-
 LAUNCHER_CORE_IMAGE_LOCATION = MEDIA_LOCATION + '/launcher_core_images'  # type: str
 LAUNCHER_CORE_IMAGE_STORAGE = 'custom_storages.LauncherCoreImageStorage'
 
@@ -477,22 +484,10 @@ AWS_IS_GZIPPED = True
 CACHES = config.CACHE
 CACHALOT_TIMEOUT = 60
 
-# DEBUG_TOOLBAR_PANELS = [
-#     'debug_toolbar.panels.timer.TimerPanel',
-#     'debug_toolbar.panels.request.RequestPanel',
-#     'debug_toolbar.panels.sql.SQLPanel',
-#     'debug_toolbar.panels.cache.CachePanel',
-# ]
-#
-# DEBUG_TOOLBAR_CONFIG = {
-#     'INTERCEPT_REDIRECTS': True,
-# }
-#
-#
-# def show_toolbar(request):
-#     return True
-#
-#
-# DEBUG_TOOLBAR_CONFIG = {
-#     "SHOW_TOOLBAR_CALLBACK": show_toolbar,
-# }
+
+IS_API = os.getenv('IS_API', config.IS_API)
+IS_WEBSERVER = os.getenv('IS_WEBSERVER', config.IS_WEBSERVER)
+IS_BOTSERVER = os.getenv('IS_BOTSERVER', config.IS_BOTSERVER)
+IS_ADMIN = os.getenv('IS_ADMIN', config.IS_ADMIN)
+IS_SLN = os.getenv('IS_SLN', True)
+IS_LL = os.getenv('IS_LL', False)

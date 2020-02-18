@@ -8,46 +8,46 @@ from api.tests.test__base import SLNAPITests
 
 class OrbiterTests(SLNAPITests):
 
-    def test_v1_orbiters(self):
-        """
-        Ensure launch endpoints work as expected.
-        """
-        # Test Normal endpoint
-
-        path = '/v1/orbiters/'
-        response = self.client.get(path)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(data['count'], 1)
-        dragon = SpacecraftConfiguration.objects.get(pk=data['results'][0]['id'])
-        self.assertEqual(data['results'][0]['id'], dragon.id)
-        self.assertEqual(data['results'][0]['name'], dragon.name)
-        self.assertEqual(data['results'][0]['agency'], dragon.manufacturer.name)
-        self.assertEqual(data['results'][0]['details'], dragon.details)
-        self.assertEqual(data['results'][0]['history'], dragon.history)
-
-        self.check_permissions(path)
-
-    def test_v200_orbiters(self):
-        """
-        Ensure launch endpoints work as expected.
-        """
-        # Test Normal endpoint
-        path = '/2.0.0/orbiters/'
-        response = self.client.get(path)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(data['count'], 1)
-        dragon = SpacecraftConfiguration.objects.get(pk=data['results'][0]['id'])
-        self.assertEqual(data['results'][0]['id'], dragon.id)
-        self.assertEqual(data['results'][0]['name'], dragon.name)
-        self.assertEqual(data['results'][0]['agency'], dragon.manufacturer.name)
-        self.assertEqual(data['results'][0]['details'], dragon.details)
-        self.assertEqual(data['results'][0]['history'], dragon.history)
-        self.assertEqual(data['results'][0]['in_use'], dragon.in_use)
-        self.assertEqual(data['results'][0]['capability'], dragon.capability)
-
-        self.check_permissions(path)
+    # def test_v1_orbiters(self):
+    #     """
+    #     Ensure launch endpoints work as expected.
+    #     """
+    #     # Test Normal endpoint
+    #
+    #     path = '/v1/orbiters/'
+    #     response = self.client.get(path)
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     data = json.loads(response.content.decode('utf-8'))
+    #     self.assertEqual(data['count'], 1)
+    #     dragon = SpacecraftConfiguration.objects.get(pk=data['results'][0]['id'])
+    #     self.assertEqual(data['results'][0]['id'], dragon.id)
+    #     self.assertEqual(data['results'][0]['name'], dragon.name)
+    #     self.assertEqual(data['results'][0]['agency'], dragon.manufacturer.name)
+    #     self.assertEqual(data['results'][0]['details'], dragon.details)
+    #     self.assertEqual(data['results'][0]['history'], dragon.history)
+    #
+    #     self.check_permissions(path)
+    #
+    # def test_v200_orbiters(self):
+    #     """
+    #     Ensure launch endpoints work as expected.
+    #     """
+    #     # Test Normal endpoint
+    #     path = '/2.0.0/orbiters/'
+    #     response = self.client.get(path)
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     data = json.loads(response.content.decode('utf-8'))
+    #     self.assertEqual(data['count'], 1)
+    #     dragon = SpacecraftConfiguration.objects.get(pk=data['results'][0]['id'])
+    #     self.assertEqual(data['results'][0]['id'], dragon.id)
+    #     self.assertEqual(data['results'][0]['name'], dragon.name)
+    #     self.assertEqual(data['results'][0]['agency'], dragon.manufacturer.name)
+    #     self.assertEqual(data['results'][0]['details'], dragon.details)
+    #     self.assertEqual(data['results'][0]['history'], dragon.history)
+    #     self.assertEqual(data['results'][0]['in_use'], dragon.in_use)
+    #     self.assertEqual(data['results'][0]['capability'], dragon.capability)
+    #
+    #     self.check_permissions(path)
 
     def test_v300_orbiters(self):
         """
