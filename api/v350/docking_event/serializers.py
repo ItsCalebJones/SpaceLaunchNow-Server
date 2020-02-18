@@ -18,14 +18,6 @@ class SpacecraftFlightSerializerForDockingEvent(serializers.HyperlinkedModelSeri
         fields = ('id', 'url', 'destination', 'mission_end', 'spacecraft')
 
 
-class SpacecraftFlightDetailedSerializerForDockingEvent(serializers.HyperlinkedModelSerializer):
-    spacecraft = SpacecraftDetailedNoFlightsSerializer(read_only=True, many=False)
-
-    class Meta:
-        model = SpacecraftFlight
-        fields = ('id', 'url', 'destination', 'mission_end', 'spacecraft')
-
-
 class SpaceStationSerializerForDockingEvent(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = SpaceStation
@@ -44,7 +36,7 @@ class DockingEventSerializer(serializers.HyperlinkedModelSerializer):
 
 class DockingEventDetailedSerializer(serializers.HyperlinkedModelSerializer):
     launch_id = serializers.CharField(source='flight_vehicle.rocket.launch.id')
-    flight_vehicle = SpacecraftFlightDetailedSerializerForDockingEvent(read_only=True)
+    flight_vehicle = SpacecraftFlightSerializerForDockingEvent(read_only=True)
     docking_location = DockingLocationSerializer(many=False, read_only=True)
     space_station = SpaceStationSerializerForDockingEvent(many=False, read_only=True)
 

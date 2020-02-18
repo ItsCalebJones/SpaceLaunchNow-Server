@@ -36,8 +36,10 @@ output.elasticsearch:
   hosts: ["mir.weijers.xyz:9200"]
   username: "cjones"
   password: "cjones05022020"
-setup.kibana:
+  indices:
+    - index: "slns-%{[agent.version]}-%{+yyyy.MM.dd}"
 
+setup.kibana:
   host: "mir.weijers.xyz:5601"
   space.id: "space-launch-now"
 
