@@ -1,7 +1,7 @@
 import json
 
 from rest_framework import status
-from api.tests.test__base import SLNAPITests, LauncherConfig
+from bot.tests.test__base import SLNAPITests, LauncherConfig
 
 
 class ConfigurationTests(SLNAPITests):

@@ -4,7 +4,7 @@ import json
 from rest_framework import status
 
 from api.models import Astronaut
-from api.tests.test__base import SLNAPITests
+from bot.tests.test__base import SLNAPITests
 
 
 class AstronautTest(SLNAPITests):

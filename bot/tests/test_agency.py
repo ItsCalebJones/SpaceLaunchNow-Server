@@ -3,7 +3,7 @@ import json
 from rest_framework import status
 
 from api.models import *
-from api.tests.test__base import SLNAPITests
+from bot.tests.test__base import SLNAPITests
 
 
 class AgencyTests(SLNAPITests):
