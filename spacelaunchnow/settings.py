@@ -16,8 +16,7 @@ import os
 from datetime import timedelta
 
 from celery.schedules import crontab
-
-from spacelaunchnow import config
+from . import config
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -198,7 +197,7 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'django.contrib.humanize',
     'rest_framework',
-    'api.apps.ApiConfig',
+    'api',
     'bot',
     'configurations',
     'embed_video',

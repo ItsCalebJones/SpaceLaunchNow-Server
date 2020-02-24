@@ -4,7 +4,6 @@ from pytz import utc
 
 from api.models import Launch, Events
 
-
 class LaunchNotificationRecord(models.Model):
     launch = models.OneToOneField(Launch, on_delete=models.CASCADE)
 

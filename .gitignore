@@ -25,3 +25,4 @@ bot/.DS_Store
 *.DS_Store
 *.sqlite3
 *.bak
+config.py
