@@ -79,8 +79,9 @@ pipeline{
 					if(!fileExists("Dockerfile")){
 						echo "No Dockerfile";
 					}else{
-					sshagent (credentials: ['SLN_Builds']) {
-						dockerImage = docker.build registry + ":" + imageName
+
+					withCredentials([sshUserPrivateKey(credentialsId: "SLN_Builds", keyFileVariable: 'keyfile')]) {
+						dockerImage = docker.build("registry + ":" + imageName", "--build-arg SSH_PRIVATE_KEY=${keyfile}")
 						}
 					}
 				}
