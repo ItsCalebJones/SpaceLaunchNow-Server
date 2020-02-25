@@ -490,3 +490,5 @@ IS_BOTSERVER = os.getenv('IS_BOTSERVER', config.IS_BOTSERVER)
 IS_ADMIN = os.getenv('IS_ADMIN', config.IS_ADMIN)
 IS_SLN = os.getenv('IS_SLN', True)
 IS_LL = os.getenv('IS_LL', False)
+
+GOOGLE_API_KEY = config.GOOGLE_API_KEY
