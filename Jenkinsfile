@@ -39,9 +39,11 @@ pipeline{
 				}
 				sh 'mkdir -p log'
 				sh 'touch log/daily_digest.log'
-				withPythonEnv('python3') {
-					sh 'python3 -m pip install --upgrade -r requirements.txt'
-				}
+				sshagent (credentials: ['SLN_Builds']) {
+                        withPythonEnv('python3') {
+                        sh 'python3 -m pip install -r requirements.txt'
+                    }
+                }
 			}
 		}
 		stage('Tests'){
