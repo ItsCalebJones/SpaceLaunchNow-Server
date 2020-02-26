@@ -11,12 +11,11 @@ RUN apt-get update \
 
 # remember to use a temporary variable for this
 # This private key shouldn't be saved in env files
-RUN mkdir /.ssh
-RUN echo "${SSH_PRIVATE_KEY}" >> /.ssh/id_rsa && chmod 600 /.ssh/id_rsa
+RUN echo "${SSH_PRIVATE_KEY}" >> /root/.ssh/id_rsa && chmod 600 /root/.ssh/id_rsa
 # make sure your domain is accepted
-RUN touch /.ssh/known_hosts
-RUN ssh-keyscan github.com >> /.ssh/known_hosts
-
+RUN touch /root/.ssh/known_hosts
+RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
+RUN eval `ssh-agent -s` && ssh-add /root/.ssh/id_rsa
 
 
 COPY . /code/
