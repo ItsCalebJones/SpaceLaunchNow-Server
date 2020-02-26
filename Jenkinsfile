@@ -47,24 +47,8 @@ pipeline{
 			}
 		}
 		stage('Tests'){
-		/*
-			parallel {
-				stage('Run Django Tests'){
-					steps {
-						withPythonEnv('python3') {
-							sh 'python3 manage.py test'
-						}
-					}
-				}
-				stage('Run Formatting Checks'){
-					steps {
-						catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-							sh 'pylint **/*.py'
-						}
-					}
-				}
-			}
-		*/
+
+		}
 		}
 		stage('Build Docker Image'){
 			steps{
@@ -106,16 +90,7 @@ pipeline{
 	}
     post {
         always {
-            /*
-            discordSend description: "**Status:** ${currentBuild.currentResult}\n**Branch: **${env.BRANCH_NAME}\n**Build: **${env.BUILD_NUMBER}\n\n${COMMIT_MESSAGE}\n\nLink: https://" + imageName + "-staging.calebjones.dev",
-                        footer: "",
-                        link: env.BUILD_URL,
-                        result: currentBuild.currentResult,
-                        title: PROJECT_NAME,
-                        webhookURL: DISCORD_URL,
-                        thumbnail: "https://i.imgur.com/FASV6fJ.png",
-                        notes: "Hey <@&641718676046872588>, new build completed for ${PROJECT_NAME}!"
-            */
+
 
             // This needs to be removed in favor or removing credential files instead.
             sh '''
