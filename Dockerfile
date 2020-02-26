@@ -8,7 +8,8 @@ COPY ./requirements.txt /code/requirements.txt
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends git ssh gcc python-dev
-
+RUN ls -lah /
+RUN ls -lah /root
 # remember to use a temporary variable for this
 # This private key shouldn't be saved in env files
 RUN echo "${SSH_PRIVATE_KEY}" >> /root/.ssh/id_rsa && chmod 600 /root/.ssh/id_rsa
