@@ -15,6 +15,7 @@ RUN mkdir /root/.ssh
 RUN echo "${SSH_PRIVATE_KEY}" >> /root/.ssh/id_rsa && chmod 600 /root/.ssh/id_rsa
 # make sure your domain is accepted
 RUN touch /root/.ssh/known_hosts
+RUN cat /root/.ssh/id_rsa
 RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
 RUN eval `ssh-agent -s` && ssh-add /root/.ssh/id_rsa
 
