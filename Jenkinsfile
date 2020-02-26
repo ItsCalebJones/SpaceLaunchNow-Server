@@ -63,10 +63,10 @@ pipeline{
 						echo "No Dockerfile";
 					}else{
 
-					withCredentials([sshUserPrivateKey(credentialsId: "SLN_Builds", keyFileVariable: 'keyfile')]) {
+					withCredentials([string(credentialsId: 'SSH_KEY_SLN', variable: 'TOKEN')]) {
 					    def dockerReg = registry + ":" + imageName
-					    println(keyfile)
-						dockerImage = docker.build(dockerReg, "--build-arg SSH_PRIVATE_KEY=${keyfile} .")
+					    println(TOKEN)
+						dockerImage = docker.build(dockerReg, '--build-arg SSH_PRIVATE_KEY="$TOKEN" .')
 						}
 					}
 				}
