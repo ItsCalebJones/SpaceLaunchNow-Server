@@ -7,16 +7,14 @@ COPY ./requirements.txt /code/requirements.txt
 
 # remember to use a temporary variable for this
 # This private key shouldn't be saved in env files
+RUN mkdir /.ssh
 RUN echo "${SSH_PRIVATE_KEY}" >> /.ssh/id_rsa && chmod 600 /.ssh/id_rsa
 # make sure your domain is accepted
 RUN touch /.ssh/known_hosts
 RUN ssh-keyscan github.com >> /.ssh/known_hosts
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends git ssh gcc python-dev  \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip install -r /code/requirements.txt \
-    && apt-get purge -y --auto-remove git gcc python-dev
+    && apt-get install -y --no-install-recommends git ssh gcc python-dev
 
 COPY . /code/
 WORKDIR /code/
