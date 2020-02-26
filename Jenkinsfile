@@ -82,7 +82,7 @@ pipeline{
 
 					withCredentials([sshUserPrivateKey(credentialsId: "SLN_Builds", keyFileVariable: 'keyfile')]) {
 					    def dockerImage = registry + ":" + imageName
-						dockerImage = docker.build(dockerImage, "--build-arg SSH_PRIVATE_KEY=${keyfile}")
+						dockerImage = docker.build(dockerImage, "--build-arg SSH_PRIVATE_KEY=${keyfile} .")
 						}
 					}
 				}
