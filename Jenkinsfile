@@ -46,9 +46,6 @@ pipeline{
                 }
 			}
 		}
-		stage('Tests'){
-
-		}
 
 		stage('Build Docker Image'){
 			steps{
