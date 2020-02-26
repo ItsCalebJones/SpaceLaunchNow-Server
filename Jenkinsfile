@@ -49,7 +49,7 @@ pipeline{
 		stage('Tests'){
 
 		}
-		}
+
 		stage('Build Docker Image'){
 			steps{
 				script{
@@ -87,11 +87,9 @@ pipeline{
 				}
 			}
 		}
-	}
+    }
     post {
         always {
-
-
             // This needs to be removed in favor or removing credential files instead.
             sh '''
                rm spacelaunchnow/config.py
