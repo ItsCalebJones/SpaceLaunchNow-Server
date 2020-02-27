@@ -14,8 +14,6 @@ RUN mkdir /root/.ssh
 # This private key shouldn't be saved in env files
 RUN echo "${SSH_PRIVATE_KEY}" >> /root/.ssh/id_rsa && chmod 600 /root/.ssh/id_rsa
 RUN cat /root/.ssh/id_rsa
-RUN tr ' ' '\n' < /root/.ssh/id_rsa
-RUN cat /root/.ssh/id_rsa
 # make sure your domain is accepted
 RUN touch /root/.ssh/known_hosts
 RUN cat /root/.ssh/id_rsa

@@ -62,10 +62,10 @@ pipeline{
 					if(!fileExists("Dockerfile")){
 						echo "No Dockerfile";
 					}else{
-                    def key = sh(returnStdout: true, script: 'cat /var/jenkins_home/.ssh/id_rsa').trim()
-                    println(key)
+                    def keyfile = sh(returnStdout: true, script: 'cat /var/jenkins_home/.ssh/id_rsa').trim()
+                    println(keyfile)
                     def dockerReg = registry + ":" + imageName
-                    dockerImage = docker.build(dockerReg, '--build-arg SSH_PRIVATE_KEY="$key" .')
+                    dockerImage = docker.build(dockerReg, '--build-arg SSH_PRIVATE_KEY="${keyfile}" .')
 					}
 				}
 			}
