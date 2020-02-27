@@ -64,8 +64,9 @@ pipeline{
 					}else{
                     def keyfile = sh(returnStdout: true, script: 'cat /var/jenkins_home/.ssh/id_rsa').trim()
                     println(keyfile)
+                    echo "** version2: ${keyfile} **"
                     def dockerReg = registry + ":" + imageName
-                    dockerImage = docker.build(dockerReg, '--build-arg SSH_PRIVATE_KEY="${keyfile}" .')
+                    dockerImage = docker.build(dockerReg, '--build-arg SSH_PRIVATE_KEY=\\"$keyfile\\" .')
 					}
 				}
 			}
