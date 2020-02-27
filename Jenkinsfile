@@ -32,22 +32,12 @@ pipeline{
 	}
 	
 	stages{
-		stage('Setup'){
-			steps {
-				withCredentials([file(credentialsId: 'SLNTestConfig', variable: 'configFile')]) {
-					sh 'cp $configFile spacelaunchnow/config.py'
-				}
-				sh 'mkdir -p log'
-				sh 'touch log/daily_digest.log'
-				sshagent (credentials: ['SLN_Builds']) {
-                        withPythonEnv('python3') {
-                        sh 'python3 -m pip install -r requirements.txt'
-                    }
-                }
-			}
-		}
 
 		stage('Build Docker Image'){
+
+            environment {
+                SSH_CREDS = sh(returnStdout: true, script: 'cat /var/jenkins_home/.ssh/id_rsa').trim()
+            }
 			steps{
 				script{
                     if (env.BRANCH_NAME == 'master') {
@@ -61,12 +51,10 @@ pipeline{
                     }
 					if(!fileExists("Dockerfile")){
 						echo "No Dockerfile";
-					}else{
-                    def keyfile = sh(returnStdout: true, script: 'cat /var/jenkins_home/.ssh/id_rsa').trim()
-                    println(keyfile)
-                    echo "** version2: ${keyfile} **"
-                    def dockerReg = registry + ":" + imageName
-                    dockerImage = docker.build(dockerReg, '--build-arg SSH_PRIVATE_KEY=\\"$keyfile\\" .')
+					} else {
+                        def buildArg = '--build-arg SSH_PRIVATE_KEY="$SSH_CREDS" .'
+                        def dockerReg = registry + ":" + imageName
+                        dockerImage = docker.build(dockerReg, buildArg)
 					}
 				}
 			}
