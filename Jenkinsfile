@@ -63,6 +63,7 @@ pipeline{
 						echo "No Dockerfile";
 					}else{
                     def key = sh(returnStdout: true, script: 'cat /var/jenkins_home/.ssh/id_rsa').trim()
+                    println(key)
                     def dockerReg = registry + ":" + imageName
                     dockerImage = docker.build(dockerReg, '--build-arg SSH_PRIVATE_KEY="$key" .')
 					}
