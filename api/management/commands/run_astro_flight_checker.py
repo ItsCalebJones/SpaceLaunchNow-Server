@@ -34,8 +34,10 @@ class Command(BaseCommand):
                 newItem.role = currentAstroFlight.role
                 newItem.save()
                 itemsCreated.append(newItem)
-
-            print(currentAstroFlight.astronaut.name)
+            try:
+                print(currentAstroFlight.astronaut.name)
+            except Exception:
+                print("Error printing name.")
 
             while numberToRemove > 0:
                 spacecraft_flight_launch_crew = SpacecraftFlight.objects.filter(launch_crew__id=id)
