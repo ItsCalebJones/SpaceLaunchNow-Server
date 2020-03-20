@@ -32,7 +32,7 @@ pipeline{
 	}
 	
 	stages{
-		stage('Setup'){
+        stage('Setup'){
 			steps {
 				withCredentials([file(credentialsId: 'SLNTestConfig', variable: 'configFile')]) {
 					sh 'cp $configFile spacelaunchnow/config.py'
@@ -63,6 +63,10 @@ pipeline{
 			}
 		}
 		stage('Build Docker Image'){
+
+            environment {
+                SSH_CREDS = sh(returnStdout: true, script: 'cat /var/jenkins_home/.ssh/id_rsa').trim()
+            }
 			steps{
 				script{
                     if (env.BRANCH_NAME == 'master') {
@@ -76,8 +80,10 @@ pipeline{
                     }
 					if(!fileExists("Dockerfile")){
 						echo "No Dockerfile";
-					}else{
-						dockerImage = docker.build registry + ":" + imageName
+					} else {
+                        def buildArg = '--build-arg SSH_PRIVATE_KEY="$SSH_CREDS" .'
+                        def dockerReg = registry + ":" + imageName
+                        dockerImage = docker.build(dockerReg, buildArg)
 					}
 				}
 			}
@@ -96,18 +102,18 @@ pipeline{
 				}
 			}
 		}
-	}
+    }
     post {
         always {
-            discordSend description: "**Status:** ${currentBuild.currentResult}\n**Branch: **${env.BRANCH_NAME}\n**Build: **${env.BUILD_NUMBER}\n\n${COMMIT_MESSAGE}\n\nLink: https://" + imageName + "-staging.calebjones.dev",
-                        footer: "",
-                        link: env.BUILD_URL,
-                        result: currentBuild.currentResult,
-                        title: PROJECT_NAME,
-                        webhookURL: DISCORD_URL,
-                        thumbnail: "https://i.imgur.com/FASV6fJ.png",
-                        notes: "Hey <@&641718676046872588>, new build completed for ${PROJECT_NAME}!"
 
+            discordSend description: "**Status:** ${currentBuild.currentResult}\n**Branch: **${env.BRANCH_NAME}\n**Build: **${env.BUILD_NUMBER}\n\n${COMMIT_MESSAGE}\n\nLink: https://" + imageName + "-staging.calebjones.dev",
+                footer: "",
+                link: env.BUILD_URL,
+                result: currentBuild.currentResult,
+                title: PROJECT_NAME,
+                webhookURL: DISCORD_URL,
+                thumbnail: "https://i.imgur.com/FASV6fJ.png",
+                notes: "Hey <@&641718676046872588>, new build completed for ${PROJECT_NAME}!"
             // This needs to be removed in favor or removing credential files instead.
             sh '''
                rm spacelaunchnow/config.py

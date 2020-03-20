@@ -16,8 +16,7 @@ import os
 from datetime import timedelta
 
 from celery.schedules import crontab
-
-from spacelaunchnow import config
+from . import config
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -198,7 +197,7 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'django.contrib.humanize',
     'rest_framework',
-    'api.apps.ApiConfig',
+    'api',
     'bot',
     'configurations',
     'embed_video',
@@ -491,3 +490,5 @@ IS_BOTSERVER = os.getenv('IS_BOTSERVER', config.IS_BOTSERVER)
 IS_ADMIN = os.getenv('IS_ADMIN', config.IS_ADMIN)
 IS_SLN = os.getenv('IS_SLN', True)
 IS_LL = os.getenv('IS_LL', False)
+
+GOOGLE_API_KEY = config.GOOGLE_API_KEY
