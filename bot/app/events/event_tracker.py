@@ -67,7 +67,7 @@ class EventTracker:
 
     def check_news_item(self):
         logger.debug('Running check news...')
-        news_that_need_to_notify = NewsItem.objects.filter(created_at__gte=datetime.datetime.now() - datetime.timedelta(days=2),
+        news_that_need_to_notify = NewsItem.objects.filter(created_at__gte=datetime.datetime.now() - datetime.timedelta(days=7),
                                                            should_notify=True, was_notified=False)
 
         logger.debug('Found %d news items.', len(news_that_need_to_notify))
