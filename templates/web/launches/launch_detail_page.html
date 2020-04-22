@@ -235,17 +235,57 @@
                                         {% endif %}
                                     </div>
                                 {% endvideo %}
-                                <h2 class="title">Additional Media</h2>
                                 {% if launch.vid_urls.all|length > 1 or launch.info_urls.all|length > 0 %}
-                                    {% for vid in launch.vid_urls.all %}
-                                        <div class="col-12 text-center">
-                                            <a href="{{ vid }}">{{ vid }}</a><br>
+                                <h2 class="title">Additional Media</h2>
+                                    {% for item in launch.vid_urls.all|slice:"1:" %}
+                                        <div class="card card-plain card-blog">
+                                            <div class="row">
+                                                <div class="col-md-5 mx-auto">
+                                                    <div class="card-header card-header-image">
+                                                        <a href="{{ item.vid_url }}">
+                                                            <img class="img"
+                                                                 src="{% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
+                                                            <div class="colored-shadow"
+                                                                 style="background-image: url('{% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-5 text-left">
+                                                    <h3 class="card-title">{{ item.title }}</h3>
+                                                    <p class="card-description mt-1">
+                                                        {{ item.description|truncatewords:50 }}
+                                                        <br>
+                                                    </p>
+                                                    <a href="{{ item.vid_url }}"><button class="btn btn-danger btn-round"><i class="material-icons mx-1">tv</i>{% if 'youtube' in item.vid_url %} Watch on YouTube{% else %} Watch {% endif %}</button></a>
+                                                </div>
+                                            </div>
                                         </div>
                                     {% endfor %}
                                     {% for info in launch.info_urls.all %}
-                                        <div class="col-12 text-center">
-                                            <a href="{{ info }}">{{ info }}</a><br>
-                                        </div>
+                                        {% if info.title and info.description %}
+                                            <div class="card card-plain card-blog">
+                                                <div class="row">
+                                                    <div class="col-md-5 mx-auto">
+                                                        <div class="card-header card-header-image">
+                                                            <a href="{{ info.info_url }}">
+                                                                <img class="img"
+                                                                     src="{% if info.feature_image %}{{ info.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
+                                                                <div class="colored-shadow"
+                                                                     style="background-image: url('{% if info.feature_image %}{{ info.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-5 text-left">
+                                                        <h3 class="card-title">{{ info.title }}</h3>
+                                                        <p class="card-description mt-1">
+                                                            {{ info.description|truncatewords:50 }}
+                                                            <br>
+                                                        </p>
+                                                        <a href="{{ info.info_url }}"><button class="btn btn-danger btn-round">Read</button></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
                                     {% endfor %}
                                 {% endif %}
                             </div>
