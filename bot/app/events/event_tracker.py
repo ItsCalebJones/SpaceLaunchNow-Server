@@ -78,3 +78,4 @@ class EventTracker:
                 news_item.save()
                 logger.info('Sending %s notification!', news_item.title)
                 self.news_notification_handler.send_notification(news_item)
+                self.news_notification_handler.send_to_social(news_item)

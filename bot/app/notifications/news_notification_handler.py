@@ -2,6 +2,7 @@ import logging
 
 from pyfcm import FCMNotification
 
+from bot.app.buffer import BufferAPI
 from spacelaunchnow.config import keys
 from spacelaunchnow import config
 
@@ -15,6 +16,7 @@ class NewsNotificationHandler:
             self.DEBUG = config.DEBUG
         else:
             self.DEBUG = debug
+        self.buffer = BufferAPI()
 
     def send_notification(self, news):
         data = {"notification_type": 'featured_news',
@@ -67,3 +69,9 @@ class NewsNotificationHandler:
             logger.error(e)
 
         logger.info('----------------------------------------------------------')
+
+    def send_to_social(self, news_item):
+        if news_item.link:
+            self.buffer.send_to_twitter(link=news_item.link, now=True)
+            self.buffer.send_to_facebook(link=news_item.link, now=True)
+            logger.info('News ID:%s to Buffer!', news_item.id)
