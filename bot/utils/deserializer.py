@@ -108,19 +108,21 @@ def launch_json_to_model(data):
                 if each.vid_url == url:
                     video_found = True
         if not video_found:
-            g = Goose()
-            article = g.extract(url=url)
-            if article.meta_description is not None and article.meta_description is not "":
-                text = article.meta_description
-            elif article.cleaned_text is not None:
-                text = (article.cleaned_text[:300] + '...') if len(article.cleaned_text) > 300 else article.cleaned_text
-            else:
-                text = None
-            title = ""
-            if article.title is not None:
-                title = article.title
-            VidURLs.objects.get_or_create(vid_url=url, launch=launch, description=text, title=title, feature_image=article.top_image, priority=0)
-
+            try:
+                g = Goose()
+                article = g.extract(url=url)
+                if article.meta_description is not None and article.meta_description is not "":
+                    text = article.meta_description
+                elif article.cleaned_text is not None:
+                    text = (article.cleaned_text[:300] + '...') if len(article.cleaned_text) > 300 else article.cleaned_text
+                else:
+                    text = None
+                title = ""
+                if article.title is not None:
+                    title = article.title
+                VidURLs.objects.get_or_create(vid_url=url, launch=launch, description=text, title=title, feature_image=article.top_image, priority=0)
+            except Exception as e:
+                logger.error(e)
     # Check to see if URL exists before adding.
     for url in info_urls:
         info_found = False
@@ -129,18 +131,21 @@ def launch_json_to_model(data):
                 if each.info_url == url:
                     info_found = True
         if not info_found:
-            g = Goose()
-            article = g.extract(url=url)
-            if article.meta_description is not None and article.meta_description is not "":
-                text = article.meta_description
-            elif article.cleaned_text is not None:
-                text = (article.cleaned_text[:300] + '...') if len(article.cleaned_text) > 300 else article.cleaned_text
-            else:
-                text = None
-            title = ""
-            if article.title is not None:
-                title = article.title
-            InfoURLs.objects.get_or_create(info_url=url, launch=launch, description=text, title=title, feature_image=article.top_image, priority=0)
+            try:
+                g = Goose()
+                article = g.extract(url=url)
+                if article.meta_description is not None and article.meta_description is not "":
+                    text = article.meta_description
+                elif article.cleaned_text is not None:
+                    text = (article.cleaned_text[:300] + '...') if len(article.cleaned_text) > 300 else article.cleaned_text
+                else:
+                    text = None
+                title = ""
+                if article.title is not None:
+                    title = article.title
+                InfoURLs.objects.get_or_create(info_url=url, launch=launch, description=text, title=title, feature_image=article.top_image, priority=0)
+            except Exception as e:
+                logger.error(e)
     launch.mission = get_mission(launch, data)
     launch.rocket = get_rocket(launch, data)
     check_notification(launch)
