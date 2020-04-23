@@ -71,7 +71,8 @@ class NewsNotificationHandler:
         logger.info('----------------------------------------------------------')
 
     def send_to_social(self, news_item):
+        logger.info('Sending News ID:%s to Buffer!', news_item.id)
         if news_item.link:
-            self.buffer.send_to_twitter(link=news_item.link, now=True)
-            self.buffer.send_to_facebook(link=news_item.link, now=True)
-            logger.info('News ID:%s to Buffer!', news_item.id)
+            logger.info(self.buffer.send_to_twitter(link=news_item.link, now=True))
+            logger.info(self.buffer.send_to_facebook(link=news_item.link, now=True))
+            logger.info('Sent to Buffer!')
