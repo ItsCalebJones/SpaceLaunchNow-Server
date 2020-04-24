@@ -3,6 +3,16 @@ from buffpy.managers.profiles import Profiles
 
 from spacelaunchnow import config
 
+hashtags = '''\n
+.
+.
+.⠀⠀
+.⠀⠀
+.⠀⠀
+#SpaceLaunchNow #space #spacex #nasa #rocket #mars #aerospace #earth #solarsystem #iss #elonmusk
+#moonlanding #spaceshuttle #spacewalk #esa #science #picoftheday #blueorigin #Florida #Falcon9
+ #falconheavy #starship #ULA'''
+
 class BufferAPI:
     def __init__(self, debug=None):
         if debug is None:
