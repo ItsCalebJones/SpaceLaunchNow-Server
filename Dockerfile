@@ -6,8 +6,7 @@ ENV DJANGO_ENV dev
 ENV DOCKER_CONTAINER 1
 COPY ./requirements.txt /code/requirements.txt
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends git ssh gcc python-dev
+RUN apt-get update && apt-get install -y --no-install-recommends git ssh gcc python-dev
 
 RUN mkdir /root/.ssh
 # remember to use a temporary variable for this
