@@ -81,7 +81,7 @@ pipeline{
 					if(!fileExists("Dockerfile")){
 						echo "No Dockerfile";
 					} else {
-                        def buildArg = '--build-arg SSH_PRIVATE_KEY="$SSH_CREDS" .'
+                        def buildArg = '--no-cache --build-arg SSH_PRIVATE_KEY="$SSH_CREDS" .'
                         def dockerReg = registry + ":" + imageName
                         dockerImage = docker.build(dockerReg, buildArg)
 					}
