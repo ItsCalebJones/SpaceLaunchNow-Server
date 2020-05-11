@@ -1,0 +1,125 @@
+import asyncio
+import logging
+
+import discord
+from discord import Colour
+from discord.ext import commands
+
+from bot.models import NewsNotificationChannel, NewsItem
+
+logger = logging.getLogger('bot.discord')
+
+
+def news_to_embed(news):
+    title = "New Article by %s" % news.news_site
+    color = Colour.orange()
+    description = "[%s](%s)" % (news.title, news.link)
+    embed = discord.Embed(type="rich", title=title,
+                          description=description,
+                          color=color)
+    if news.description is not None or news.description is not "":
+        embed.add_field(name="Description", value=news.description, inline=True)
+    embed.set_image(url=news.featured_image)
+    embed.set_footer(text=news.created_at.strftime("%A %B %e, %Y %H:%M %Z • Powered by SNAPI"))
+    return embed
+
+
+class News(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command(name='subscribeNews', pass_context=True)
+    async def subscribe_news(self, context):
+        """Subscribe to Space Launch New's powered by SNAPI.
+
+        Usage: .sln subscribeNews
+
+        """
+        channel = context.message.channel
+        try:
+            owner_id = context.message.server.owner_id
+            author_id = context.message.author.id
+        except:
+            await channel.send("Only able to run from a text channel.")
+            return
+        if owner_id == author_id:
+            channel, created = NewsNotificationChannel.objects.get_or_create(name=context.message.channel.name,
+                                                                             channel_id=context.message.channel.id,
+                                                                             server_id=context.message.server.id)
+            if channel.subscribed:
+                await channel.send("Already subscribed to Space Launch News!")
+                return
+            channel.subscribed = True
+            channel.save()
+            await channel.send("Subscribed to Space Launch News!")
+        else:
+            await channel.send("Only server owners can add Space Launch News notifications.")
+
+    @commands.command(name='removeNews', pass_context=True)
+    async def remove_news(self, context):
+        """Unsubscribe from Space Launch New's powered by SNAPI.
+
+        Usage: .sln subscribeNews
+
+        """
+        channel = context.message.channel
+        try:
+            owner_id = context.message.server.owner_id
+            author_id = context.message.author.id
+        except:
+            await channel.send("Only able to run from a server channel.")
+            return
+        if owner_id == author_id:
+            channel, created = NewsNotificationChannel.objects.get_or_create(name=context.message.channel.name,
+                                                                             channel_id=context.message.channel.id,
+                                                                             server_id=context.message.server.id)
+            if not channel.subscribed:
+                await channel.send("Not subscribed to Space Launch News!")
+                return
+            channel.subscribed = False
+            channel.save()
+            await channel.send("Un-subscribed from Space Launch News!")
+        else:
+            await channel.send("Only server owners can edit Space Launch News notifications.")
+
+    async def news_events(self):
+        await self.bot.wait_until_ready()
+        while not self.bot.is_closed:
+            try:
+                await asyncio.wait_for(self.check_news(), 30)
+            except Exception as e:
+                logger.error(e)
+            await asyncio.sleep(60)
+
+    async def check_news(self):
+        logger.debug("Check News Articles")
+        news = NewsItem.objects.filter(read=False)
+        for item in news:
+            logger.info("Found %s articles to read." % len(news))
+            item.read = True
+            item.save()
+            for channel in NewsNotificationChannel.objects.filter(subscribed=True):
+                logger.debug("Channel %s" % channel.name)
+                logger.debug("Channel ID %s" % channel.id)
+                try:
+                    logger.debug("Reading News Articles - %s" % item.title)
+                    embed = news_to_embed(item)
+                    discord_channel = self.bot.get_channel(id=channel.channel_id)
+                    if discord_channel is None or not discord_channel.server.me.permissions_in(
+                            discord_channel).send_messages:
+                        channel.delete()
+                    else:
+                        await self.bot.send_message(discord_channel, embed=embed)
+                except Exception as e:
+                    logger.error("Exception Reading News Articles - %s" % item.title)
+                    logger.error(channel.id)
+                    logger.error(channel.name)
+                    logger.error(e)
+                    if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
+                        channel.delete()
+
+
+def setup(bot):
+    news_bot = News(bot)
+    bot.add_cog(news_bot)
+    bot.loop.create_task(news_bot.news_events())

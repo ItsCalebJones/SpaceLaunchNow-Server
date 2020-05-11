@@ -1,97 +1,110 @@
-import datetime
 import asyncio
 import logging
 
-import discord
-import pytz
-from discord.ext import commands
+from discord.ext import tasks, commands
 from django.db.models import Q
 from django.template import defaultfilters
 
 from api.models import Launch, Events
-from bot.cogs.launches import launch_to_small_embed, event_to_embed
+from bot.discord.utils import *
 from bot.models import DiscordChannel, LaunchNotificationRecord
 
-logger = logging.getLogger('bot.discord.notifications')
+logger = logging.getLogger('bot.discord.notifier')
 
 
-class Notifications:
+# TODO implement this
+def check_is_removed(channel, args):
+    logger.error(channel)
+    logger.error(args)
+    pass
+
+
+class Notifications(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.description = 0
+        self.discord_launch_events.start()
+        self.set_bot_description.start()
 
-    @commands.command(pass_context=True)
+    def cog_unload(self):
+        self.discord_launch_events.cancel()
+        self.set_bot_description.cancel()
+
+    @commands.command(name='addNotificationChannel', pass_context=True)
     async def addNotificationChannel(self, context):
         """Subscribe current channel to launch notifications.
 
         Note: Only server owners can perform this action.
 
-        Usage: ?addNotificationChannel
+        Usage: .sln addNotificationChannel
         """
+        channel = context.message.channel
         try:
-            ownerid = context.message.server.owner_id
+            ownerid = context.message.guild.owner_id
             authorid = context.message.author.id
         except:
-            await self.bot.send_message(context.message.channel, "Only able to run from a server channel.")
+            await channel.send("Only able to run from a server channel.")
             return
         if ownerid == authorid:
-            channel = DiscordChannel(name=context.message.channel.name,
-                                     channel_id=context.message.channel.id,
-                                     server_id=context.message.server.id)
-            channel.save()
-            await self.bot.send_message(context.message.channel,
-                                        "Added this channel to notification list.")
+            discord_channel = DiscordChannel(name=context.message.channel.name,
+                                             channel_id=str(context.message.channel.id),
+                                             server_id=str(context.message.guild.id))
+            discord_channel.save()
+            await channel.send("Added %s to notification list." % channel.name)
         else:
-            await self.bot.send_message(context.message.channel,
-                                        "Only server owners can add notification channels.")
+            await channel.send("Only server owners can add notification channels.")
 
-    @commands.command(pass_context=True)
+    @commands.command(name='removeNotificationChannel',pass_context=True)
     async def removeNotificationChannel(self, context):
         """Remove current channel from launch notifications.
 
         Note: Only server owners can perform this action.
 
-        Usage: ?removeNotificationChannel
+        Usage: .sln removeNotificationChannel
         """
+        channel = context.message.channel
         try:
             ownerid = context.message.server.owner_id
             authorid = context.message.author.id
         except:
-            await self.bot.send_message(context.message.channel, "Only able to run from a server channel.")
+            await channel.send("Only able to run from a server channel.")
             return
         if ownerid == authorid:
-            channel = DiscordChannel.objects.filter(server_id=context.message.server.id,
-                                                    channel_id=context.message.channel.id).first()
-            channel.delete()
-            await self.bot.send_message(context.message.channel,
-                                        "Removed this channel from the notification list.")
+            discord_channel = DiscordChannel.objects.filter(server_id=str(context.message.guild.id),
+                                                            channel_id=context.message.channel.id).first()
+            discord_channel.delete()
+            await channel.send("Removed %s from notification list." % channel.name)
         else:
-            await self.bot.send_message(context.message.channel,
-                                        "Only server owners can remove notification channels.")
+            await channel.send("Only server owners can remove notification channels.")
 
-    @commands.command(pass_context=True)
+    @commands.command(name='listNotificationChannels', pass_context=True)
     async def listNotificationChannels(self, context):
         """List all channels that are subscribed to launch notifications.
 
         Note: Only server owners can perform this action.
 
-        Usage: ?listNotificationChannels
+        Usage: .sln listNotificationChannels
         """
+        channel = context.message.channel
         try:
-            ownerid = context.message.server.owner_id
+            ownerid = context.message.guild.owner_id
             authorid = context.message.author.id
         except:
-            await self.bot.send_message(context.message.channel, "Only able to run from a server channel.")
+            await channel.send("Only able to run from a server channel.")
             return
         if ownerid == authorid:
-            channels = DiscordChannel.objects.filter(server_id=context.message.server.id)
+            logger.info(context.message.guild.id)
+            discord_channels = DiscordChannel.objects.filter(server_id=str(context.message.guild.id))
+            logger.info(discord_channels)
             channel_text = "**Here ya go %s!**" % context.message.author.name
-            for channel in channels:
-                channel_text = channel_text + "\n* %s" % channel.name
-            channel_text = channel_text + "\n\nUse ?help for help managing notifications."
-            await self.bot.send_message(context.message.channel, channel_text)
+            if len(discord_channels) > 0:
+                for discord_channel in discord_channels:
+                    channel_text = channel_text + "\n* %s" % discord_channel.name
+            else:
+                channel_text = channel_text + "\n\nNo channels on this guild subscribed to any notifications."
+            channel_text = channel_text + "\n\nUse '.sln notifications' for help managing notifications."
+            await channel.send(channel_text)
         else:
-            await self.bot.send_message(context.message.channel, "Only server owners list notification channels.")
+            await channel.send("Only server owners list notification channels.")
 
     async def check_success(self, bot_channels, time_threshold_past_two_days, time_threshold_24_hour):
         logger.debug("Checking successful launches...")
@@ -105,19 +118,19 @@ class Notifications:
                 notification.wasNotifiedSuccessDiscord = True
                 notification.save()
                 logger.info("Success - Launch Notification for %s" % launch.name)
-                for channel in bot_channels:
-                    logger.info("Sending notification to %s" % channel.name)
+                for bot_channel in bot_channels:
+                    logger.info("Sending notification to %s" % bot_channel.name)
                     try:
-                        await self.bot.send_message(channel,
-                                                    embed=launch_to_small_embed(launch,
-                                                                                "**Launch was a %s!**\n\n" % launch.status.name,
-                                                                                pre_launch=False))
+                        channel = self.bot.get_channel(int(bot_channel.id))
+                        embed = launch_to_small_embed(launch,
+                                                      "**Launch was a %s!**\n\n" % launch.status.name, pre_launch=False)
+                        await channel.send(embed=embed)
                     except Exception as e:
-                        logger.error(channel.id)
-                        logger.error(channel.name)
+                        logger.error(bot_channel.id)
+                        logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            channel.delete()
+                            check_is_removed(bot_channel)
                         return
 
     async def check_in_flight(self, bot_channels):
@@ -130,18 +143,18 @@ class Notifications:
                 notification.wasNotifiedInFlightDiscord = True
                 notification.save()
                 logger.info("In-Flight - Launch Notification for %s" % launch.name)
-                for channel in bot_channels:
-                    logger.info("Sending notification to %s" % channel.name)
+                for bot_channel in bot_channels:
+                    logger.info("Sending notification to %s" % bot_channel.name)
                     try:
-                        await self.bot.send_message(channel,
-                                                    embed=launch_to_small_embed(launch, "**Launch is in flight!**\n\n",
-                                                                                pre_launch=False))
+                        channel = self.bot.get_channel(int(bot_channel.id))
+                        embed = launch_to_small_embed(launch, "**Launch is in flight!**\n\n", pre_launch=False)
+                        await channel.send(embed=embed)
                     except Exception as e:
-                        logger.error(channel.id)
-                        logger.error(channel.name)
+                        logger.error(bot_channel.id)
+                        logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            channel.delete()
+                            check_is_removed(bot_channel)
                         return
 
     async def check_one_minute(self, bot_channels, time_threshold_1_minute):
@@ -155,18 +168,18 @@ class Notifications:
                 notification.wasNotifiedOneMinutesDiscord = True
                 notification.save()
                 logger.info("One Minute - Launch Notification for %s" % launch.name)
-                for channel in bot_channels:
-                    logger.info("Sending notification to %s" % channel.name)
+                for bot_channel in bot_channels:
+                    logger.info("Sending notification to %s" % bot_channel.name)
                     try:
-                        await self.bot.send_message(channel,
-                                                    embed=launch_to_small_embed(launch,
-                                                                                "**Launching in one minute!**\n\n"))
+                        channel = self.bot.get_channel(int(bot_channel.id))
+                        embed = launch_to_small_embed(launch, "**Launching in one minute!**\n\n")
+                        await channel.send(embed=embed)
                     except Exception as e:
-                        logger.error(channel.id)
-                        logger.error(channel.name)
+                        logger.error(bot_channel.id)
+                        logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            channel.delete()
+                            check_is_removed(bot_channel, e.args)
                         return
 
     async def check_ten_minute(self, bot_channels, time_threshold_10_minute, time_threshold_1_minute):
@@ -180,18 +193,18 @@ class Notifications:
                 notification.wasNotifiedTenMinutesDiscord = True
                 notification.save()
                 logger.info("Ten Minutes - Launch Notification for %s" % launch.name)
-                for channel in bot_channels:
-                    logger.info("Sending notification to %s" % channel.name)
+                for bot_channel in bot_channels:
+                    logger.info("Sending notification to %s" % bot_channel.name)
                     try:
-                        await self.bot.send_message(channel,
-                                                    embed=launch_to_small_embed(launch,
-                                                                                "**Launching in ten minutes!**\n\n"))
+                        channel = self.bot.get_channel(int(bot_channel.id))
+                        embed = launch_to_small_embed(launch, "**Launching in ten minutes!**\n\n")
+                        await channel.send(embed=embed)
                     except Exception as e:
-                        logger.error(channel.id)
-                        logger.error(channel.name)
+                        logger.error(bot_channel.id)
+                        logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            channel.delete()
+                            bot_channel.delete()
                         return
 
     async def check_twenty_four_hour(self, bot_channels, time_threshold_1_hour, time_threshold_24_hour):
@@ -205,17 +218,18 @@ class Notifications:
                 notification.wasNotifiedTwentyFourHourDiscord = True
                 notification.save()
                 logger.info("Twenty Four Hour - Launch Notification for %s" % launch.name)
-                for channel in bot_channels:
-                    logger.info("Sending notification to %s" % channel.name)
+                for bot_channel in bot_channels:
+                    logger.info("Sending notification to %s" % bot_channel.name)
                     try:
-                        await self.bot.send_message(channel, embed=launch_to_small_embed(launch,
-                                                                                         "**Launching in twenty four hours!**\n\n"))
+                        channel = self.bot.get_channel(int(bot_channel.id))
+                        embed = launch_to_small_embed(launch, "**Launching in twenty four hours!**\n\n")
+                        await channel.send(embed=embed)
                     except Exception as e:
-                        logger.error(channel.id)
-                        logger.error(channel.name)
+                        logger.error(bot_channel.id)
+                        logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            channel.delete()
+                            bot_channel.delete()
                         return
 
     async def check_one_hour(self, bot_channels, time_threshold_10_minute, time_threshold_1_hour):
@@ -229,18 +243,18 @@ class Notifications:
                 notification.wasNotifiedOneHourDiscord = True
                 notification.save()
                 logger.info("One Hour - Launch Notification for %s" % launch.name)
-                for channel in bot_channels:
-                    logger.info("Sending notification to %s" % channel.name)
+                for bot_channel in bot_channels:
+                    logger.info("Sending notification to %s" % bot_channel.name)
                     try:
-                        await self.bot.send_message(channel,
-                                                    embed=launch_to_small_embed(launch,
-                                                                                "**Launching in one hour!**\n\n"))
+                        channel = self.bot.get_channel(int(bot_channel.id))
+                        embed = launch_to_small_embed(launch, "**Launching in one hour!**\n\n")
+                        await channel.send(embed=embed)
                     except Exception as e:
-                        logger.error(channel.id)
-                        logger.error(channel.name)
+                        logger.error(bot_channel.id)
+                        logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            channel.delete()
+                            bot_channel.delete()
                         return
 
     async def check_webcast_live(self, bot_channels, time_threshold_1_hour, time_threshold_1_minute):
@@ -254,17 +268,18 @@ class Notifications:
                 notification.wasNotifiedWebcastDiscord = True
                 notification.save()
                 logger.info("Webcast Live - Launch Notification for %s" % launch.name)
-                for channel in bot_channels:
-                    logger.info("Sending notification to %s" % channel.name)
+                for bot_channel in bot_channels:
+                    logger.info("Sending notification to %s" % bot_channel.name)
                     try:
-                        await self.bot.send_message(channel,
-                                                    embed=event_to_embed(launch, "**Webcast is live!**\n\n"))
+                        channel = self.bot.get_channel(int(bot_channel.id))
+                        embed = event_to_embed(launch, "**Webcast is live!**\n\n")
+                        channel.send(embed=embed)
                     except Exception as e:
-                        logger.error(channel.id)
-                        logger.error(channel.name)
+                        logger.error(bot_channel.id)
+                        logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            channel.delete()
+                            bot_channel.delete()
                         return
 
     async def check_webcast_live_event(self, bot_channels, time_threshold_1_hour, time_threshold_past_hour):
@@ -277,16 +292,18 @@ class Notifications:
                 event.was_discorded_webcast_live = True
                 event.save()
                 logger.info("Webcast Live - Event Notification for %s" % event.name)
-                for channel in bot_channels:
-                    logger.info("Sending notification to %s" % channel.id)
+                for bot_channel in bot_channels:
+                    logger.info("Sending notification to %s" % bot_channel.id)
                     try:
-                        await self.bot.send_message(channel, embed=event_to_embed(event, "**Webcast is live!**\n\n"))
+                        channel = self.bot.get_channel(int(bot_channel.id))
+                        embed = event_to_embed(event, "**Webcast is live!**\n\n")
+                        channel.send(embed=embed)
                     except Exception as e:
-                        logger.error(channel.id)
-                        logger.error(channel.name)
+                        logger.error(bot_channel.id)
+                        logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            channel.delete()
+                            bot_channel.delete()
                         return
 
     async def check_ten_minute_event(self, bot_channels, time_threshold_10_minute, time_threshold_1_minute):
@@ -299,78 +316,84 @@ class Notifications:
                 event.was_discorded_ten_minutes = True
                 event.save()
                 logger.info("Ten Minutes - Event Notification for %s" % event.name)
-                for channel in bot_channels:
-                    logger.info("Sending notification to %s" % channel.name)
+                for bot_channel in bot_channels:
+                    logger.info("Sending notification to %s" % bot_channel.name)
                     try:
-                        await self.bot.send_message(channel, embed=event_to_embed(event, ""))
+                        channel = self.bot.get_channel(int(bot_channel.id))
+                        embed = event_to_embed(event, "")
+                        channel.send(embed=embed)
                     except Exception as e:
-                        logger.error(channel.id)
-                        logger.error(channel.name)
+                        logger.error(bot_channel.id)
+                        logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            channel.delete()
+                            bot_channel.delete()
                         return
 
+    @tasks.loop(minutes=1)
     async def discord_launch_events(self):
-        await self.bot.wait_until_ready()
         channels = DiscordChannel.objects.all()
         bot_channels = []
+        logger.info("Checking Discord launch events...")
         for channel in channels:
             discord_channel = self.bot.get_channel(id=channel.channel_id)
-            if discord_channel is None or not discord_channel.server.me.permissions_in(discord_channel).send_messages:
-                channel.delete()
-            else:
-                bot_channels.append(discord_channel)
+            bot_channels.append(discord_channel)
 
-        while not self.bot.is_closed:
-            logger.debug("Checking Discord launch events...")
-            time_threshold_24_hour = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(hours=24)
-            time_threshold_1_hour = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(hours=1)
-            time_threshold_10_minute = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(minutes=10)
-            time_threshold_1_minute = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(minutes=1)
-            time_threshold_past_two_days = datetime.datetime.now(tz=pytz.utc) - datetime.timedelta(days=2)
-            time_threshold_past_hour = datetime.datetime.now(tz=pytz.utc) - datetime.timedelta(hours=1)
+        time_threshold_24_hour = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(hours=24)
+        time_threshold_1_hour = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(hours=1)
+        time_threshold_10_minute = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(minutes=10)
+        time_threshold_1_minute = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(minutes=1)
+        time_threshold_past_two_days = datetime.datetime.now(tz=pytz.utc) - datetime.timedelta(days=2)
+        time_threshold_past_hour = datetime.datetime.now(tz=pytz.utc) - datetime.timedelta(hours=1)
 
-            await self.check_twenty_four_hour(bot_channels, time_threshold_1_hour, time_threshold_24_hour)
+        await self.check_twenty_four_hour(bot_channels, time_threshold_1_hour, time_threshold_24_hour)
 
-            await self.check_one_hour(bot_channels, time_threshold_10_minute, time_threshold_1_hour)
+        await self.check_one_hour(bot_channels, time_threshold_10_minute, time_threshold_1_hour)
 
-            await self.check_ten_minute(bot_channels, time_threshold_10_minute, time_threshold_1_minute)
+        await self.check_ten_minute(bot_channels, time_threshold_10_minute, time_threshold_1_minute)
 
-            await self.check_one_minute(bot_channels, time_threshold_1_minute)
+        await self.check_one_minute(bot_channels, time_threshold_1_minute)
 
-            await self.check_in_flight(bot_channels)
+        await self.check_in_flight(bot_channels)
 
-            await self.check_webcast_live(bot_channels, time_threshold_1_hour, time_threshold_1_minute)
+        await self.check_webcast_live(bot_channels, time_threshold_1_hour, time_threshold_1_minute)
 
-            await self.check_success(bot_channels, time_threshold_past_two_days, time_threshold_24_hour)
+        await self.check_success(bot_channels, time_threshold_past_two_days, time_threshold_24_hour)
 
-            await self.check_ten_minute_event(bot_channels, time_threshold_10_minute, time_threshold_1_minute)
+        await self.check_ten_minute_event(bot_channels, time_threshold_10_minute, time_threshold_1_minute)
 
-            await self.check_webcast_live_event(bot_channels, time_threshold_1_hour, time_threshold_past_hour)
+        await self.check_webcast_live_event(bot_channels, time_threshold_1_hour, time_threshold_past_hour)
 
-            await self.set_bot_description()
+        logger.info("Completed.")
 
-            logger.debug("Completed.")
-            await asyncio.sleep(30)
-
+    @tasks.loop(minutes=30.0)
     async def set_bot_description(self):
-        if self.description == 60:
-            logger.info("Updating Space Launch Bot's description.")
-            launch = Launch.objects.filter(net__gte=datetime.datetime.utcnow()).order_by('net').first()
-            launch_date = launch.net
-            now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
-            message = u"""
-            %s in %s. Use ?help for commands.
-            """ % (launch.rocket.configuration.name, defaultfilters.timeuntil(launch_date, now))
-            squid_bot_game = discord.Game(name=message, url=launch.get_full_absolute_url(), type=0)
-            await self.bot.change_presence(game=squid_bot_game, status=discord.Status.online, afk=False)
-            self.description = 0
-        else:
-            self.description += 1
+        logger.info("Updating Space Launch Bot's description.")
+        launch = Launch.objects.filter(net__gte=datetime.datetime.utcnow()).order_by('net').first()
+        launch_date = launch.net
+        now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+        message = u"""
+        b%s in %s.
+        """ % (launch.rocket.configuration.name, defaultfilters.timeuntil(launch_date, now))
+        try:
+            await self.bot.change_presence(activity=discord.Activity(name=message,
+                                                                     details='Use .sln help for commands.',
+                                                                     large_image_url=launch.infographic_url,
+                                                                     type=discord.ActivityType.watching),
+                                           status=discord.Status.online,
+                                           afk=False)
+
+            logger.info("Done Space Launch Bot's description.")
+        except Exception as e:
+            logger.error(e)
+
+    @discord_launch_events.before_loop
+    @set_bot_description.before_loop
+    async def before_loops(self):
+        logger.info("Waiting for startup... (notifiers)")
+        await self.bot.wait_until_ready()
 
 
 def setup(bot):
     notification = Notifications(bot)
     bot.add_cog(notification)
-    bot.loop.create_task(notification.discord_launch_events())

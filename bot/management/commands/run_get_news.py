@@ -1,13 +1,9 @@
-import datetime
-
-import pytz
 from django.core.management import BaseCommand
 from celery.utils.log import get_task_logger
 
-from api.models import Events
-from bot.app.events.notification_handler import EventNotificationHandler
-from bot.app.events.social_handler import SocialHandler
-from bot.cogs.news import get_news
+from bot.app.sync.news_sync import get_news
+from bot.app.sync.twitter_sync import get_new_tweets
+from bot.app.sync.reddit_sync import get_submissions
 
 logger = get_task_logger('bot.events')
 
@@ -20,3 +16,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         logger.info('Check Events')
         get_news()
+        get_new_tweets()
+        get_submissions()
