@@ -64,6 +64,7 @@ pipeline{
 			}
 		}
 		stage('Build Docker Image'){
+
 			steps{
 				script{
                     if (env.BRANCH_NAME == 'master') {
@@ -77,8 +78,12 @@ pipeline{
                     }
 					if(!fileExists("Dockerfile")){
 						echo "No Dockerfile";
-					}else{
-						dockerImage = docker.build registry + ":" + imageName
+					} else {
+					    withCredentials([string(credentialsId: '$EXTRA_INDEX_URL', variable: '$EXTRA_INDEX_URL')]) {
+                            def buildArg = '--build-arg EXTRA_INDEX_URL="$EXTRA_INDEX_URL" .'
+                            def dockerReg = registry + ":" + imageName
+                            dockerImage = docker.build(dockerReg, buildArg)
+                        }
 					}
 				}
 			}

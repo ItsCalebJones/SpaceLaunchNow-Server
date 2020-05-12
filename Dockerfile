@@ -8,6 +8,9 @@ COPY ./requirements.txt /code/requirements.txt
 
 RUN apt-get update && apt-get install -y --no-install-recommends git ssh gcc python-dev
 
+ARG EXTRA_INDEX_URL
+RUN pip config set global.extra-index-url "${EXTRA_INDEX_URL}"
+
 RUN rm -rf /var/lib/apt/lists/* \
     && pip install -r /code/requirements.txt \
     && apt-get purge -y --auto-remove git gcc python-dev
