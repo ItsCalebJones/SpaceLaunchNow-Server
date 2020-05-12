@@ -20,6 +20,7 @@ django-celery-results==1.0.1
 django-embed-video==1.1.2
 django-filter==1.1.0
 django-js-asset==1.1.0
+django-launch-library==2.0.2
 django-mathfilters==0.4.0
 django-ical==1.4
 django-robots==3.1.0
@@ -64,4 +65,3 @@ tzlocal==1.4
 urllib3==1.24.2
 -e git://github.com/ItsCalebJones/django-jet.git@dev-unicode-fix#egg=django-jet
 -e git://github.com/ItsCalebJones/buffpy.git@master#egg=buffpy
-git+ssh://git@github.com/ItsCalebJones/LaunchLibrary-API.git
