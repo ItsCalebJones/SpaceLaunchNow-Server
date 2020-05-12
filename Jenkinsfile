@@ -65,9 +65,6 @@ pipeline{
 		}
 		stage('Build Docker Image'){
 
-            environment {
-                SSH_CREDS = sh(returnStdout: true, script: 'cat /var/jenkins_home/.ssh/id_rsa').trim()
-            }
 			steps{
 				script{
                     if (env.BRANCH_NAME == 'master') {
@@ -82,9 +79,11 @@ pipeline{
 					if(!fileExists("Dockerfile")){
 						echo "No Dockerfile";
 					} else {
-                        def buildArg = '--no-cache --build-arg SSH_PRIVATE_KEY="$SSH_CREDS" .'
-                        def dockerReg = registry + ":" + imageName
-                        dockerImage = docker.build(dockerReg, buildArg)
+					    withCredentials([string(credentialsId: 'EXTRA_INDEX_URL', variable: 'INDEX_URL')]) {
+                            def buildArg = '--build-arg EXTRA_INDEX_URL="$INDEX_URL" .'
+                            def dockerReg = registry + ":" + imageName
+                            dockerImage = docker.build(dockerReg, buildArg)
+                        }
 					}
 				}
 			}
