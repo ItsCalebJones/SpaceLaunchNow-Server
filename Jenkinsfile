@@ -64,7 +64,6 @@ pipeline{
 			}
 		}
 		stage('Build Docker Image'){
-
 			steps{
 				script{
                     if (env.BRANCH_NAME == 'master') {
@@ -76,7 +75,11 @@ pipeline{
                             sh 'cp $configFile spacelaunchnow/config.py'
                         }
                     }
-                    dockerImage = docker.build(dockerReg)
+					if(!fileExists("Dockerfile")){
+						echo "No Dockerfile";
+					}else{
+						dockerImage = docker.build registry + ":" + imageName
+					}
 				}
 			}
 		}
