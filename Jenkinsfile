@@ -79,8 +79,8 @@ pipeline{
 					if(!fileExists("Dockerfile")){
 						echo "No Dockerfile";
 					} else {
-					    withCredentials([string(credentialsId: 'EXTRA_INDEX_URL', variable: '$EXTRA_INDEX_URL')]) {
-                            def buildArg = '--build-arg EXTRA_INDEX_URL="$EXTRA_INDEX_URL" .'
+					    withCredentials([string(credentialsId: 'EXTRA_INDEX_URL', variable: 'INDEX_URL')]) {
+                            def buildArg = '--build-arg EXTRA_INDEX_URL="$INDEX_URL" .'
                             def dockerReg = registry + ":" + imageName
                             dockerImage = docker.build(dockerReg, buildArg)
                         }
