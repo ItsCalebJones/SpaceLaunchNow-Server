@@ -12,12 +12,10 @@ from bot.models import DiscordChannel, LaunchNotificationRecord
 logger = logging.getLogger('bot.discord.notifier')
 
 
-# TODO implement this
 def check_is_removed(channel, args):
     logger.error("Unable to post to this channel: ")
     logger.error(channel)
     logger.error(args)
-    pass
 
 
 class Notifications(commands.Cog):
@@ -205,7 +203,7 @@ class Notifications(commands.Cog):
                         logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            bot_channel.delete()
+                            check_is_removed(bot_channel, e.args)
                         continue
 
     async def check_twenty_four_hour(self, bot_channels, time_threshold_1_hour, time_threshold_24_hour):
@@ -230,7 +228,7 @@ class Notifications(commands.Cog):
                         logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            bot_channel.delete()
+                            check_is_removed(bot_channel, e.args)
                         continue
 
     async def check_one_hour(self, bot_channels, time_threshold_10_minute, time_threshold_1_hour):
@@ -255,7 +253,7 @@ class Notifications(commands.Cog):
                         logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            bot_channel.delete()
+                            check_is_removed(bot_channel, e.args)
                         continue
 
     async def check_webcast_live(self, bot_channels, time_threshold_1_hour, time_threshold_1_minute):
@@ -280,7 +278,7 @@ class Notifications(commands.Cog):
                         logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            bot_channel.delete()
+                            check_is_removed(bot_channel, e.args)
                         continue
 
     async def check_webcast_live_event(self, bot_channels, time_threshold_1_hour, time_threshold_past_hour):
@@ -304,7 +302,7 @@ class Notifications(commands.Cog):
                         logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            bot_channel.delete()
+                            check_is_removed(bot_channel, e.args)
                         continue
 
     async def check_ten_minute_event(self, bot_channels, time_threshold_10_minute, time_threshold_1_minute):
@@ -328,7 +326,7 @@ class Notifications(commands.Cog):
                         logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            bot_channel.delete()
+                            check_is_removed(bot_channel, e.args)
                         continue
 
     @tasks.loop(minutes=1)

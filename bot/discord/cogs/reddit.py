@@ -27,6 +27,12 @@ twitter = Twitter(auth=OAuth(consumer_key=config.keys['CONSUMER_KEY'],
 logger = logging.getLogger('bot.discord')
 
 
+def check_is_removed(channel, args):
+    logger.error("Unable to post to this channel: ")
+    logger.error(channel)
+    logger.error(args)
+
+
 def submission_to_embed(submission):
     title = "New Hot Submission in /r/%s by /u/%s" % (submission.subreddit.name, submission.user)
     color = Colour.red()
@@ -240,7 +246,7 @@ class Reddit(commands.Cog):
                         discord_channel = self.bot.get_channel(id=int(channel.channel_id))
                         if discord_channel is None or not discord_channel.guild.me.permissions_in(
                                 discord_channel).send_messages:
-                            pass
+                            continue
                         else:
                             await self.bot.send_message(discord_channel, embed=embed)
                     except Exception as e:
@@ -248,8 +254,8 @@ class Reddit(commands.Cog):
                         logger.error(channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            pass
-                        return
+                            check_is_removed(channel, e.args)
+                        continue
 
     @check_submissions.before_loop
     async def before_loops(self):

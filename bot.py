@@ -114,12 +114,12 @@ if __name__ == '__main__':
     if os.name != 'nt' and os.name != 'posix':
         writePidFile()
 
-    bot.client_id = config.SQUID_BOT_CLIENT_ID
+    bot.client_id = os.getenv('BOT_CLIENT_ID', config.SQUID_BOT_CLIENT_ID)
     bot.commands_used = Counter()
     for extension in initial_extensions:
         try:
             bot.load_extension(extension)
         except Exception as e:
             log.info('Failed to load extension {}\n{}: {}'.format(extension, type(e).__name__, e))
-    bot.run(config.SQUID_BOT_TOKEN)
+    bot.run(os.getenv('BOT_TOKEN', config.SQUID_BOT_TOKEN))
 

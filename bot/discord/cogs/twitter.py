@@ -20,6 +20,12 @@ twitter = Twitter(auth=OAuth(consumer_key=config.keys['CONSUMER_KEY'],
 logger = logging.getLogger('bot.discord.tweets')
 
 
+def check_is_removed(channel, args):
+    logger.error("Unable to post to this channel: ")
+    logger.error(channel)
+    logger.error(args)
+
+
 def tweet_to_embed(tweet):
     title = "New Tweet by %s" % tweet.user.name
     color = Colour.green()
@@ -275,8 +281,8 @@ class Twitter(commands.Cog):
                         logger.debug(channel.id)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            pass
-                        return
+                            check_is_removed(channel, e.args)
+                        continue
                     logger.info("Sent to %s successfully." % channel.id)
 
     @check_tweets.before_loop

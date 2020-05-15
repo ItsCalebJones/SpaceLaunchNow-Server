@@ -3,11 +3,17 @@ import logging
 
 import discord
 from discord import Colour
-from discord.ext import commands
+from discord.ext import tasks, commands
 
 from bot.models import NewsNotificationChannel, NewsItem
 
 logger = logging.getLogger('bot.discord')
+
+
+def check_is_removed(channel, args):
+    logger.error("Unable to post to this channel: ")
+    logger.error(channel)
+    logger.error(args)
 
 
 def news_to_embed(news):
@@ -27,6 +33,11 @@ def news_to_embed(news):
 class News(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.check_news.start()
+        self.set_bot_description.start()
+
+    def cog_unload(self):
+        self.check_news.cancel()
 
     @commands.command(name='subscribeNews', pass_context=True)
     async def subscribe_news(self, context):
@@ -82,15 +93,7 @@ class News(commands.Cog):
         else:
             await channel.send("Only server owners can edit Space Launch News notifications.")
 
-    async def news_events(self):
-        await self.bot.wait_until_ready()
-        while not self.bot.is_closed:
-            try:
-                await asyncio.wait_for(self.check_news(), 30)
-            except Exception as e:
-                logger.error(e)
-            await asyncio.sleep(60)
-
+    @tasks.loop(minutes=1)
     async def check_news(self):
         logger.debug("Check News Articles")
         news = NewsItem.objects.filter(read=False)
@@ -116,10 +119,15 @@ class News(commands.Cog):
                     logger.error(channel.name)
                     logger.error(e)
                     if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                        channel.delete()
+                        check_is_removed(channel, e.args)
+                    continue
+
+    @check_news.before_loop
+    async def before_loops(self):
+        logger.info("Waiting for startup... (news)")
+        await self.bot.wait_until_ready()
 
 
 def setup(bot):
     news_bot = News(bot)
     bot.add_cog(news_bot)
-    bot.loop.create_task(news_bot.news_events())

@@ -17,3 +17,4 @@ bot/.DS_Store
 *.sqlite3
 *.bak
 config.py
+.pypirc
