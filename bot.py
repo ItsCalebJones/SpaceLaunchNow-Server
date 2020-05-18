@@ -25,8 +25,6 @@ Please use the prefix .sln - to get started try the .sln help command!
 
 Check out this project at https://spacelaunchnow.me!
 """
-# initial_extensions = ["bot.cogs.reddit", "bot.cogs.notifications", "bot.cogs.launches", "bot.cogs.about",
-#                       "bot.cogs.twitter", "bot.cogs.sync", "bot.cogs.admin"]
 
 
 log = logging.getLogger('bot.discord')
@@ -35,7 +33,8 @@ prefix = ['.sln ']
 bot = commands.Bot(command_prefix=prefix, description=description, pm_help=None, help_attrs=help_attrs)
 bot_start_time = datetime.datetime.utcnow()
 initial_extensions = ['bot.discord.cogs.admin', 'bot.discord.cogs.about', 'bot.discord.cogs.launches',
-                      'bot.discord.cogs.notifier', 'bot.discord.cogs.reddit', 'bot.discord.cogs.twitter']
+                      'bot.discord.cogs.notifier', 'bot.discord.cogs.reddit', 'bot.discord.cogs.twitter',
+                      'bot.discord.cogs.news']
 
 
 def writePidFile():

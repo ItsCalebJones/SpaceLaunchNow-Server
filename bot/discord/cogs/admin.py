@@ -1,7 +1,9 @@
 import logging
 
 from discord import Embed
-from discord.ext import commands
+from discord.ext import tasks, commands
+
+from bot.models import *
 from bot.tasks import run_daily
 
 logger = logging.getLogger('bot.discord')
@@ -10,6 +12,10 @@ logger = logging.getLogger('bot.discord')
 class SLNAdmin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.channels.start()
+
+    def cog_unload(self):
+        self.channels.cancel()
 
     @commands.command(name='checkUsage', pass_context=True, hidden=False)
     async def check_usage(self, context):
@@ -56,6 +62,38 @@ class SLNAdmin(commands.Cog):
                 await staff_channel.send(content=data['content'], embed=embeds[0])
             else:
                 await channel.send("This is a staff only command.")
+
+    @tasks.loop(hours=1)
+    async def channels(self):
+        twitter_channels = TwitterNotificationChannel.objects.all()
+        reddit_channels = SubredditNotificationChannel.objects.all()
+        news_channels = NewsNotificationChannel.objects.all()
+        discord_channels = DiscordChannel.objects.all()
+        channel_types = [twitter_channels, reddit_channels, news_channels, discord_channels]
+        banned_channel = []
+        for channel_type in channel_types:
+            for channel in channel_type:
+                logger.info("=====================================")
+                logger.info("Checking channel %s-%s - (%s)" % (channel.id, channel.name, channel.server_id))
+                try:
+                    discord_channel = self.bot.get_channel(id=int(channel.channel_id))
+                    permission = discord_channel.guild.me.permissions_in(discord_channel)
+                    if not permission.send_messages:
+                        logger.info("Bad perms for channel %s-%s - (%s)" % (channel.id, channel.name, channel.server_id))
+                    else:
+                        logger.info("Good perms for channel %s-%s - (%s)" % (channel.id, channel.name, channel.server_id))
+                except Exception as e:
+                    banned_channel.append(channel)
+                    logger.error("%s %s-%s - (%s)" % (e, channel.id, channel.name, channel.server_id))
+                logger.info("=====================================")
+        try:
+            for channel in banned_channel:
+                if not any(channel.server_id == guild.id for guild in self.bot.guilds):
+                    logger.info("Can't find channel %s-%s - (%s)" % (channel.id, channel.name, channel.server_id))
+                    channel.delete()
+
+        except Exception as e:
+            logger.error(e)
 
 
 def setup(bot):

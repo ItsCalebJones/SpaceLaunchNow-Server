@@ -5,6 +5,7 @@ import discord
 from discord import Colour
 from discord.ext import tasks, commands
 
+from bot.discord.utils import send_to_channel
 from bot.models import NewsNotificationChannel, NewsItem
 
 logger = logging.getLogger('bot.discord')
@@ -34,7 +35,6 @@ class News(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.check_news.start()
-        self.set_bot_description.start()
 
     def cog_unload(self):
         self.check_news.cancel()
@@ -48,7 +48,7 @@ class News(commands.Cog):
         """
         channel = context.message.channel
         try:
-            owner_id = context.message.server.owner_id
+            owner_id = context.message.guild.owner_id
             author_id = context.message.author.id
         except:
             await channel.send("Only able to run from a text channel.")
@@ -75,7 +75,7 @@ class News(commands.Cog):
         """
         channel = context.message.channel
         try:
-            owner_id = context.message.server.owner_id
+            owner_id = context.message.guild.owner_id
             author_id = context.message.author.id
         except:
             await channel.send("Only able to run from a server channel.")
@@ -97,27 +97,23 @@ class News(commands.Cog):
     async def check_news(self):
         logger.debug("Check News Articles")
         news = NewsItem.objects.filter(read=False)
+        logger.info("Found %s articles to read." % len(news))
         for item in news:
-            logger.info("Found %s articles to read." % len(news))
             item.read = True
             item.save()
             for channel in NewsNotificationChannel.objects.filter(subscribed=True):
-                logger.debug("Channel %s" % channel.name)
-                logger.debug("Channel ID %s" % channel.id)
+                logger.info("Channel %s" % channel.name)
+                logger.info("Channel ID %s" % channel.id)
                 try:
-                    logger.debug("Reading News Articles - %s" % item.title)
+                    logger.info("Reading News Articles - %s" % item.title)
                     embed = news_to_embed(item)
-                    discord_channel = self.bot.get_channel(id=channel.channel_id)
-                    if discord_channel is None or not discord_channel.server.me.permissions_in(
-                            discord_channel).send_messages:
-                        channel.delete()
-                    else:
-                        await self.bot.send_message(discord_channel, embed=embed)
+                    discord_channel = self.bot.get_channel(id=int(channel.channel_id))
+                    await send_to_channel(discord_channel, channel, embed, logger)
                 except Exception as e:
-                    logger.error("Exception Reading News Articles - %s" % item.title)
-                    logger.error(channel.id)
-                    logger.error(channel.name)
-                    logger.error(e)
+                    logger.error("Unable to channel %s-%s - (%s)" % (
+                        channel.id,
+                        channel.name,
+                        channel.server_id))
                     if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
                         check_is_removed(channel, e.args)
                     continue

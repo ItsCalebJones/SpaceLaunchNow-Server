@@ -217,3 +217,14 @@ def exception_handler(func):
         print('kwargs - ', kwargs)
         return func(*args, **kwargs)
     return wrapper
+
+
+async def send_to_channel(discord_channel, channel, embed, logger):
+    if discord_channel is None or not discord_channel.guild.me.permissions_in(discord_channel).send_messages:
+        logger.error("Unable to channel %s-%s - (%s)" % (
+            channel.id,
+            channel.name,
+            channel.server_id))
+    else:
+        await discord_channel.send(embed=embed)
+        logger.info("Sent to channel %s-%s - (%s)" % (channel.id, channel.name, channel.server_id))

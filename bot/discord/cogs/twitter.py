@@ -9,6 +9,7 @@ from discord import Colour
 from discord.ext import tasks, commands
 from twitter import Twitter, OAuth, TwitterError
 
+from bot.discord.utils import send_to_channel
 from bot.models import Tweet, TwitterUser, TwitterNotificationChannel
 from spacelaunchnow import config
 
@@ -257,33 +258,27 @@ class Twitter(commands.Cog):
             if tweet.user.subscribers is not None:
                 logger.info("Reading tweet from @%s" % tweet.user.name)
                 for channel in tweet.user.subscribers.all():
-                    logger.info("Sending to %s" % channel.id)
-                    discord_channel = self.bot.get_channel(id=channel.channel_id)
-                    if discord_channel is None or not discord_channel.guild.me.permissions_in(
-                            discord_channel).send_messages:
-                        pass
-                    else:
-                        await self.bot.send_message(discord_channel, embed=tweet_to_embed(tweet))
+                    await self.send_tweet(channel, tweet)
             if tweet.default:
                 logger.info("Default! Tweet from @%s" % tweet.user.name)
                 channels = TwitterNotificationChannel.objects.filter(default_subscribed=True)
                 logger.info("Sending to %s channels" % len(channels))
                 for channel in channels:
-                    logger.info("Sending to channel %s - (%s)" % (channel.id, channel.server_id))
-                    try:
-                        discord_channel = self.bot.get_channel(id=channel.channel_id)
-                        if discord_channel is None or not discord_channel.guild.me.permissions_in(
-                                discord_channel).send_messages:
-                            pass
-                        else:
-                            await self.bot.send_message(discord_channel, embed=tweet_to_embed(tweet))
-                    except Exception as e:
-                        logger.debug(channel.id)
-                        logger.error(e)
-                        if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            check_is_removed(channel, e.args)
-                        continue
-                    logger.info("Sent to %s successfully." % channel.id)
+                    await self.send_tweet(channel, tweet)
+
+    async def send_tweet(self, channel: TwitterNotificationChannel, tweet: Tweet) -> object:
+        logger.info("Sending to channel %s-%s - (%s)" % (channel.id, channel.name, channel.server_id))
+        try:
+            discord_channel = self.bot.get_channel(id=int(channel.channel_id))
+            embed = tweet_to_embed(tweet)
+            await send_to_channel(discord_channel, channel, embed, logger)
+        except Exception as e:
+            logger.debug(channel.id)
+            logger.error(e)
+            if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
+                check_is_removed(channel, e.args)
+            return
+        logger.info("Sent to %s successfully." % channel.id)
 
     @check_tweets.before_loop
     async def before_loops(self):

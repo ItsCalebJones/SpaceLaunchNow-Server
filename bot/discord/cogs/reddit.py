@@ -7,6 +7,7 @@ from prawcore import Redirect
 from twitter import Twitter, OAuth
 
 from bot.app.sync.reddit_sync import get_posts_by_subreddit
+from bot.discord.utils import send_to_channel
 from spacelaunchnow import config
 from bot.models import SubredditNotificationChannel, Subreddit, RedditSubmission
 
@@ -244,11 +245,7 @@ class Reddit(commands.Cog):
                     try:
                         embed = submission_to_embed(submission)
                         discord_channel = self.bot.get_channel(id=int(channel.channel_id))
-                        if discord_channel is None or not discord_channel.guild.me.permissions_in(
-                                discord_channel).send_messages:
-                            continue
-                        else:
-                            await self.bot.send_message(discord_channel, embed=embed)
+                        await send_to_channel(discord_channel, channel, embed, logger)
                     except Exception as e:
                         logger.error(channel.id)
                         logger.error(channel.name)
@@ -261,8 +258,6 @@ class Reddit(commands.Cog):
     async def before_loops(self):
         logger.info("Waiting for startup... (reddit)")
         await self.bot.wait_until_ready()
-
-
 
 
 def setup(bot):

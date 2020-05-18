@@ -15,7 +15,9 @@ logger = logging.getLogger('bot.digest')
 def get_news(limit=10):
     response = requests.get(url='https://spaceflightnewsapi.net/api/v1/articles?limit=%s' % limit)
     if response.status_code == 200:
-        for item in response.json()['docs']:
+        articles = response.json()['docs']
+        logger.error("Found %s articles." % len(articles))
+        for item in articles:
             news, created = NewsItem.objects.get_or_create(id=item['_id'])
             if created:
                 news.title = item['title']

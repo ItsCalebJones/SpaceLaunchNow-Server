@@ -62,7 +62,7 @@ class Notifications(commands.Cog):
         """
         channel = context.message.channel
         try:
-            ownerid = context.message.server.owner_id
+            ownerid = context.message.guild.owner_id
             authorid = context.message.author.id
         except:
             await channel.send("Only able to run from a server channel.")
@@ -335,7 +335,7 @@ class Notifications(commands.Cog):
         bot_channels = []
         logger.info("Checking Discord launch events...")
         for channel in channels:
-            discord_channel = self.bot.get_channel(id=channel.channel_id)
+            discord_channel = self.bot.get_channel(id=int(channel.channel_id))
             bot_channels.append(discord_channel)
 
         time_threshold_24_hour = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(hours=24)
@@ -365,18 +365,17 @@ class Notifications(commands.Cog):
 
         logger.info("Completed.")
 
-    @tasks.loop(minutes=30.0)
+    @tasks.loop(minutes=1.0)
     async def set_bot_description(self):
         logger.info("Updating Space Launch Bot's description.")
         launch = Launch.objects.filter(net__gte=datetime.datetime.utcnow()).order_by('net').first()
         launch_date = launch.net
         now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
         message = u"""
-        b%s in %s.
+        %s in %s. Use '.sln help' for commands.
         """ % (launch.rocket.configuration.name, defaultfilters.timeuntil(launch_date, now))
         try:
             await self.bot.change_presence(activity=discord.Activity(name=message,
-                                                                     details='Use .sln help for commands.',
                                                                      large_image_url=launch.infographic_url,
                                                                      type=discord.ActivityType.watching),
                                            status=discord.Status.online,
