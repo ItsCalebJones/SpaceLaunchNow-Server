@@ -1,12 +1,18 @@
 #!/usr/bin/env groovy
 
-def defineImageName() {
+def defineBranchName() {
     def branchName = "${env.BRANCH_NAME}"
     branchName = branchName.replace ('/', '-')
     branchName = branchName.replace ('_', '-')
     branchName = branchName.replace ('.', '')
+    return branchName
+}
+
+def defineImageName() {
+    def branchName = defineBranchName()
     return "${branchName}-b${BUILD_NUMBER}"
 }
+
 def commitMessage() {
     def message = sh(returnStdout: true, script: "git log --format='medium' -1 ${GIT_COMMIT}").trim()
     return "${message}"
@@ -25,7 +31,8 @@ pipeline{
 		registry="registry.calebjones.dev:5050/sln-server"
 		registryURL = "https://registry.calebjones.dev:5050/sln-server"
 		registryCredential = 'calebregistry'
-		imageName = defineImageName()
+        imageName = defineImageName()
+		branchName = defineBranchName()
 		dockerImage = ''
         DISCORD_URL = credentials('DiscordURL')
         COMMIT_MESSAGE = commitMessage()
