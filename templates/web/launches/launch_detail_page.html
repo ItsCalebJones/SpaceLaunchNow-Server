@@ -6,6 +6,10 @@
 {% load static %}
 {% load thumbnail %}
 {% block extrahead %}
+        <!-- Event snippet for Website traffic conversion page -->
+    <script>
+      gtag('event', 'conversion', {'send_to': 'AW-960961949/pw8uCP-klNEBEJ27nMoD'});
+    </script>
     <title>{{ launch.name }}</title>
     <link rel="canonical" href="{{ launch.get_full_absolute_url }}">
     <meta name="title" content="{{ launch.name }}">
@@ -37,7 +41,6 @@
     {% endif %}
     <meta name="twitter:site" content="@SpaceLaunchNow">
     <meta name="twitter:creator" content="@SpaceLaunchNow">
-
 {% endblock %}
 
 {% block navigation %}
