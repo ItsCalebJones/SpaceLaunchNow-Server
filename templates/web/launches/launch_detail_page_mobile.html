@@ -96,9 +96,9 @@
                     <div class="card text-center">
                         <div class="card-header card-header-info text-center">
                             {% if launch.mission %}
-                                <h1 class="title">{{ launch.mission.name }}</h1>
+                                <h2 class="title">{{ launch.mission.name }}</h2>
                             {% else %}
-                                <h1 class="title">{{ launch.name }}</h1>
+                                <h2 class="title">{{ launch.name }}</h2>
                             {% endif %}
                         </div>
                         <div class="card-body text-center">
@@ -298,7 +298,7 @@
                             <div class="col-lg-12">
                             <!-- Date/Time -->
                             <div class="card-header card-header-info text-center">
-                                <h1 class="title">{{ launch.rocket.configuration.name }}</h1>
+                                <h2 class="title">{{ launch.rocket.configuration.name }}</h2>
                             </div>
                             <div class="card-body">
                                 <div class="col-lg-10 mx-auto">
@@ -702,9 +702,9 @@
                             <div class="col-lg-12 text-center">
                                 <div class="card-header card-header-info text-center">
                                     {% if launch.rocket %}
-                                        <h1 class="title text-white">{{ launch.rocket.configuration.manufacturer.name }}</h1>
+                                        <h2 class="title text-white">{{ launch.rocket.configuration.manufacturer.name }}</h2>
                                     {% else %}
-                                        <h1 class="title text-white">{{ launch.name }}</h1>
+                                        <h2 class="title text-white">{{ launch.name }}</h2>
                                     {% endif %}
                                 </div>
                             </div>
