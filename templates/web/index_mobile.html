@@ -1,0 +1,551 @@
+{% extends "web/base.html" %}
+{% load static %}
+{% load staticfiles %}
+{% load embed_video_tags %}
+{% load user_agents %}
+{% load thumbnail %}
+{% block extrahead %}
+    <title>Space Launch Now</title>
+    <meta name="title" content="Space Launch Now">
+    <link rel="canonical" href="https://spacelaunchnow.me/">
+    <meta property="fb:app_id" content="746774215504127"/>
+    <meta property="og:title" content="Space Launch Now"/>
+    <meta property="og:type" content="website"/>
+    <meta name="description"
+          content="A Spaceflight tracker for keeping up to date on all of your favorite spaceflight missions from around the world.">
+    <meta property="og:description"
+          content="A Spaceflight tracker for keeping up to date on all of your favorite spaceflight missions from around the world."/>
+    <meta property="og:url" content="https://spacelaunchnow.me/"/>
+    <meta property="og:image" content="{% static  'img/social.png' %}"/>
+    <meta property="og:image:width" content="3000"/>
+    <meta property="og:image:height" content="2000"/>
+
+    <meta name="robots" content="index, follow">
+    <meta property="og:site_name" content="Space Launch Now"/>
+
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:title" content="Space Launch Now">
+    <meta name="twitter:description"
+          content="A Spaceflight tracker for keeping up to date on all of your favorite spaceflight missions from around the world.">
+    <meta name="twitter:image" content="{% static  'img/social.png' %}">
+    <meta name="twitter:site" content="@SpaceLaunchNow">
+    <meta name="twitter:creator" content="@SpaceLaunchNow">
+{% endblock %}
+
+
+{% block navigation %}
+    <!-- Navigation -->
+    <nav class="navbar navbar-transparent navbar-color-on-scroll bg-primary fixed-top navbar-expand-lg">
+        <div class="container">
+            <div class="navbar-translate">
+                <a class="navbar-brand" href="#page-top"><b>Space Launch Now</b></a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                    <span class="navbar-toggler-icon"></span>
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+
+            <div class="collapse navbar-collapse">
+
+                <ul class="navbar-nav ml-auto">
+
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item dropdown {% if '/launch/' in request.path %} active {% endif %}">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                           aria-haspopup="true" aria-expanded="false">
+                            Launches
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item {% if request.path == '/launch/upcoming/' %} active {% endif %}"
+                               href="/launch/upcoming">Upcoming Launches</a>
+                            <a class="dropdown-item {% if request.path == '/launch/previous/' %} active {% endif %}"
+                               href="/launch/previous">Previous Launches</a>
+
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/launch/upcoming/spacex">SpaceX</a>
+                            <a class="dropdown-item" href="/launch/upcoming/florida">Florida</a>
+                            <a class="dropdown-item" href="/launch/upcoming/vandenberg">Vandenberg</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/launch">Launch Database</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/event">Events</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/astronaut">Astronauts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/vehicle">Vehicles</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           href="https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><i
+                                class="fab fa-android"></i> Android</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://itunes.apple.com/us/app/space-launch-now/id1399715731"><i
+                                class="fab fa-apple"></i> iOS</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header header-small header-filter" data-parallax="true"
+         style="background-image: url('{% static 'img/header_alt.jpg' %}'); min-height: 65vh;">
+        <div class="container">
+            <div class="card-testimonial text-center">
+                <div class="card-avatar" style="margin: 25px auto 0;max-width: 200px; max-height: 200px;">
+                    <img src="{% static 'img/launcher.png' %}"
+                         alt="Circle Image"
+                         class="img-raised rounded-circle img-fluid"
+                    >
+                </div>
+                <hr class="col-lg-8" style="background-color: white">
+                <h2 class="title mb-0">Space Launch Now</h2>
+                <h4 class="mt-0">Spaceflight News and Events</h4>
+                <div class="container mb-2">
+                    <a style="margin: 5px"
+                       href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+                        <img alt='Get it on Google Play' src="{% static 'img/button/google.png' %}" width="135" height="40"
+                             alt="">
+                    </a>
+                    <a style="margin: 5px" href='https://itunes.apple.com/us/app/space-launch-now/id1399715731'>
+                        <img alt='Get it on App Store' src="{% static 'img/button/apple.png' %}" width="135" height="40"
+                             alt="">
+                    </a>
+                </div>
+                <a href="https://www.patreon.com/bePatron?u=20029265" data-patreon-widget-type="become-patron-button">Become a Patron!</a><script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>
+                <hr class="col-lg-8" style="background-color: white">
+            </div>
+        </div>
+    </div>
+    <div class="main main-raised">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-9 col-md-12 col-xl-9">
+                    <div class="col-md-12 text-center">
+                        <h3 class="title">Next Upcoming Launch</h3>
+                        <hr>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="card card-raised card-background"
+                             style="background-image: url('{% if launch_image %}{{ launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); min-height: 500px">
+                            <div class="card-body" style="max-width: 600px">
+                                <h3 class="card-title">{{ launch.name }}</h3>
+                                <h3 class="title text-white" style="margin: 5px;" id="countdown">L - -- : -- : -- :
+                                    --</h3>
+                                <h3 class="text-white" style="margin: -5px;" id="date">{{ launch.net }}</h3>
+                                <hr style="background-color: white">
+                                <h6 class="card-category text-info">{{ launch.mission.mission_type.name }}</h6>
+                                <p class="card-description">
+                                    {{ launch.mission.description|truncatewords:100 }}
+                                </p>
+                                <a href="/launch/{{ launch.slug }}" class="btn btn-primary btn-round mt-5">
+                                    <i class="material-icons">subject</i> View Launch
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                        <!-- Web - Horizontal -->
+                        <ins class="adsbygoogle"
+                             style="display:block"
+                             data-ad-client="ca-pub-9824528399164059"
+                             data-ad-slot="6503993784"
+                             data-ad-format="auto"
+                             data-full-width-responsive="true"></ins>
+                        <script>
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                        </script>
+                    </div>
+                    <div class="col-md-12 text-center">
+                        <h3 class="title">Upcoming Launches</h3>
+                        <hr>
+                    </div>
+                    <div class="card card-plain card-blog">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="card-header card-header-image">
+                                    <a href="/launch/{{ first_launch.slug }}">
+                                        <img class="img"
+                                             src="{% if first_launch_image %}{{ first_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
+                                        <div class="colored-shadow"
+                                             style="background-image: url('{% if first_launch_image %}{{ first_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <h6 class="card-category text-info">
+                                    {{ first_launch.net|date:"M d, Y" }}
+                                </h6>
+                                <h6 class="card-category text-info">{{ first_launch.mission.type.name }}</h6>
+                                <h3 class="card-title">
+                                    <a href="/launch/{{ first_launch.slug }}">{{ first_launch.name }}</a>
+                                </h3>
+                                <p class="author">
+                                    <b>{{ first_launch.rocket.configuration.manufacturer.name }}</b>
+                                </p>
+                                <span class="badge badge-pill badge-danger">{{ first_launch.mission.orbit.name }}</span>
+                                {% if first_launch.pad.location.name %}
+                                    <span class="badge badge-pill badge-primary">{{ first_launch.pad.location.name }}</span>
+                                {% endif %}
+                                <p class="card-description mt-1">
+                                    {{ first_launch.mission.description|truncatewords:50 }}
+                                    <br>
+                                    <a href="/launch/{{ first_launch.slug }}"> View Launch </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card card-plain card-blog">
+                        <div class="row">
+                            <div class="col-md-7">
+                                <h6 class="card-category text-info">
+                                    {{ second_launch.net|date:"M d, Y" }}
+                                </h6>
+                                <h6 class="card-category text-info">{{ second_launch.mission.type.name }}</h6>
+                                <h3 class="card-title">
+                                    <a href="/launch/{{ second_launch.slug }}">{{ second_launch.name }}</a>
+                                </h3>
+                                <p class="author">
+                                    <b>{{ second_launch.rocket.configuration.manufacturer.name }}</b>
+                                </p>
+                                <span class="badge badge-pill badge-danger">{{ second_launch.mission.orbit.name }}</span>
+                                {% if second_launch.pad.location.name %}
+                                    <span class="badge badge-pill badge-primary">{{ second_launch.pad.location.name }}</span>
+                                {% endif %}
+                                <p class="card-description mt-1">
+                                    {{ second_launch.mission.description|truncatewords:50 }}
+                                    <br>
+                                    <a href="/launch/{{ second_launch.slug }}"> View Launch </a>
+                                </p>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="card-header card-header-image">
+                                    <a href="/launch/{{ second_launch.slug }}">
+                                        <img class="img"
+                                             src="{% if second_launch_image %}{{ second_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
+                                        <div class="colored-shadow"
+                                             style="background-image: url('{% if second_launch_image %}{{ second_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        <div class="row">
+                            <div class="col-md-4 mx-auto">
+                                <div class="info info-horizontal">
+                                    <a href="/launch/upcoming/spacex">
+                                        <div class="icon icon-info">
+                                            <i class="fal fa-rocket"></i>
+                                        </div>
+                                        <div class="description">
+                                            <h4 class="info-title">SpaceX</h4>
+                                            <p class="description">
+                                                An up-to-date schedule tracking all of SpaceX's activity and news updates.
+                                            </p>
+
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mx-auto">
+                                <div class="info info-horizontal">
+                                    <a href="/launch/upcoming/florida">
+                                        <div class="icon icon-success">
+                                            <i class="far fa-tree-palm"></i>
+                                        </div>
+                                        <div class="description">
+                                            <h4 class="info-title">Florida</h4>
+                                            <p class="description">
+                                                View upcoming launches from Cape Canaveral and Kennedy Space Center
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mx-auto">
+                                <div class="info info-horizontal">
+                                    <a href="/launch/upcoming/vandenberg">
+                                        <div class="icon icon-warning">
+                                            <i class="fas fa-coffee"></i>
+                                        </div>
+                                        <div class="description">
+                                            <h4 class="info-title">Vandenberg AFB</h4>
+                                            <p class="description">
+                                                All of Vandenberg AFB's spaceflight launches available here.
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mx-auto">
+                                <div class="info info-horizontal">
+                                    <a href="/launch/upcoming">
+                                        <div class="icon icon-primary">
+                                            <i class="fas fa-clipboard-list-check"></i>
+                                        </div>
+                                        <div class="description">
+                                            <h4 class="info-title">Upcoming</h4>
+                                            <p class="description">
+                                                View a list of upcoming launches with basic filters.
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mx-auto">
+                                <div class="info info-horizontal">
+                                    <a href="/launch/previous">
+                                        <div class="icon icon-rose">
+                                            <i class="fas fa-history"></i>
+                                        </div>
+                                        <div class="description">
+                                            <h4 class="info-title">Previous</h4>
+                                            <p class="description">
+                                                View a list of recent previous launches with basic filters.
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mx-auto">
+                                <div class="info info-horizontal">
+                                    <a href="/launch/">
+                                        <div class="icon icon-success">
+                                            <i class="far fa-database"></i>
+                                        </div>
+                                        <div class="description">
+                                            <h4 class="info-title">Database</h4>
+                                            <p class="description">
+                                                Search through the entire launch database with advanced search filters.
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% if event %}
+                        <div class="col-md-12 text-center">
+                            <h3 class="title">Upcoming Events</h3>
+                            <hr>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="card card-plain card-blog">
+                                <div class="card-header card-header-image">
+                                    <a href="/event/{{ event.slug }}">
+                                        <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
+                                             src="{{ event.feature_image.url }}">
+                                        <div class="colored-shadow"
+                                             style="background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
+                                    </a>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-category text-info"
+                                        style="display:inline;">{{ event.type.name }}</h6>
+                                    <h6 class="card-category"
+                                        style="display:inline;">{{ event.date|date:'F d, Y' }}</h6>
+                                    <h4 class="card-title">
+                                        <a href="/event/{{ event.slug }}">{{ event.name }}</a>
+                                    </h4>
+                                    {% if event.location %}
+                                        <span class="badge badge-pill badge-primary">{{ event.location }}</span>
+                                    {% endif %}
+                                    <p class="card-description mt-1">
+                                        {{ event.description|truncatewords:75 }}
+                                    </p>
+                                    <div class="text-left">
+                                        <a class="btn btn-primary"
+                                           href="/event/{{ event.slug }}">Explore</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if events|length > 0 %}
+                                <div class="row">
+                                    {% for event in events %}
+                                        <div class="col-md-4">
+                                            <div class="card card-plain card-blog">
+                                                <div class="card-header card-header-image">
+                                                    <a href="/event/{{ event.slug }}">
+                                                        <img class="img img-raised"
+                                                             style="height: 175px; object-fit: cover;"
+                                                             src="{{ event.feature_image.url }}">
+                                                        <div class="colored-shadow"
+                                                             style="height: 175px; object-fit: cover;"
+                                                             style="background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
+                                                    </a>
+                                                </div>
+                                                <div class="card-body">
+                                                    <h6 class="card-category text-info"
+                                                        style="display:inline;">{{ event.type.name }}</h6>
+                                                    <h6 class="card-category"
+                                                        style="display:inline;">{{ event.date|date:'F d, Y' }}</h6>
+                                                    <h4 class="card-title">
+                                                        <a href="/event/{{ event.slug }}">{{ event.name }}</a>
+                                                    </h4>
+                                                    {% if event.location %}
+                                                        <span class="badge badge-pill badge-primary">{{ event.location }}</span>
+                                                    {% endif %}
+                                                    <p class="card-description mt-1">
+                                                        {{ event.description|truncatewords:50 }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="text-center">
+                                <a class="btn btn-primary btn-round" href="/event/">
+                                    <i class="material-icons">calendar_today</i> View More Events
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                <!-- Sidebar Widgets Column -->
+                <div class="col-lg-3 col-md-12 col-xl-3">
+                    <!-- Categories Widget -->
+                    <div class="mb-5 mt-4">
+                        <a href="https://twitter.com/spacelaunchnow" style="color:white">
+                            <button class="btn btn-social btn-fill btn-twitter"
+                                    style="width: -webkit-fill-available; text-align: left;">
+                                <i class="fab fa-twitter"></i> Connect with Twitter
+                                <div class="ripple-container"></div>
+
+                            </button>
+                        </a>
+                        <br>
+                        <a href="https://www.facebook.com/spacelaunchnow" style="color:white">
+                            <button class="btn btn-social btn-fill btn-facebook"
+                                    style="width: -webkit-fill-available; text-align: left;">
+                                <i class="fab fa-facebook-square"></i> Share on Facebook
+                                <div class="ripple-container"></div>
+
+                            </button>
+                        </a>
+                        <a href="https://www.instagram.com/spacelaunchnow" style="color:white">
+                            <button class="btn btn-social btn-fill btn-instagram"
+                                    style="width: -webkit-fill-available; text-align: left;">
+
+                                <i class="fab fa-instagram"></i> Follow on Instagram
+                                <div class="ripple-container"></div>
+
+                            </button>
+                        </a>
+                        <a href="https://discord.gg/w8gnVv" style="color:white">
+                            <button class="btn btn-social btn-fill btn-info"
+                                    style="width: -webkit-fill-available; text-align: left;">
+
+                                <i class="fab fa-discord"></i> Join us on Discord
+                                <div class="ripple-container"></div>
+
+                            </button>
+                        </a>
+                        <br><a href="https://www.youtube.com/channel/UCNwWysrsoDAcq_dksKH9DTw" style="color:white">
+                        <button class="btn btn-social btn-fill btn-youtube"
+                                style="width: -webkit-fill-available; text-align: left;">
+                            <i class="fab fa-youtube"></i> View on Youtube
+                            <div class="ripple-container"></div>
+
+                        </button>
+                    </a>
+                        <br><a href="https://github.com/ItsCalebJones/" style="color:white">
+                        <button class="btn btn-social btn-fill btn-github"
+                                style="width: -webkit-fill-available; text-align: left;">
+                            <i class="fab fa-github"></i> Connect with Github
+                            <div class="ripple-container"></div>
+
+                        </button>
+                    </a>
+                    <br>
+                    <a href="https://www.patreon.com/bePatron?u=20029265&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2F&utm_medium=widget" style="color:white">
+                        <button class="btn btn-social btn-fill btn-youtube"
+                                style="background-color:rgb(232, 91, 70); width: -webkit-fill-available; text-align: left;">
+                            <i class="fab fa-patreon"></i> Become a Patron
+                            <div class="ripple-container"></div>
+
+                        </button>
+                    </a>
+                        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                        <!-- Web - Square -->
+                        <ins class="adsbygoogle"
+                             style="display:block"
+                             data-ad-client="ca-pub-9824528399164059"
+                             data-ad-slot="8772606898"
+                             data-ad-format="auto"
+                             data-full-width-responsive="true"></ins>
+                        <script>
+                             (adsbygoogle = window.adsbygoogle || []).push({});
+                        </script>
+                    </div>
+
+                    {% include "web/sidebar_launches_only.html" %}
+                </div>
+            </div>
+            {% include "web/horizontal_news.html" %}
+        </div>
+    </div>
+    <script src="{% static 'material_kit/js/dateFormat.js' %}" type="text/javascript"></script>
+    <script>
+        var countDownDate = new Date("{{launch.net.isoformat}}");
+
+        document.getElementById("date").innerHTML = dateFormat(countDownDate, "mmmm dS, yyyy - h:MM TT Z");
+        // Set the date we're counting down to
+
+        var now = new Date().getTime();
+        var distance = countDownDate.getTime() - now;
+        if (distance > 0) {
+            // Update the count down every 1 second
+            var x = setInterval(function () {
+
+                // Get todays date and time
+                var now = new Date().getTime();
+
+                // Find the distance between now an the count down date
+                var distance = countDownDate.getTime() - now;
+
+                // Time calculations for days, hours, minutes and seconds
+                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                if (days <= 9) {
+                    days = "0" + days
+                }
+                if (hours <= 9) {
+                    hours = "0" + hours
+                }
+                if (minutes <= 9) {
+                    minutes = "0" + minutes
+                }
+                if (seconds <= 9) {
+                    seconds = "0" + seconds
+                }
+                // Display the result in the element with id="demo"
+                document.getElementById("countdown").innerHTML = "L - " + days + " : " + hours + " : "
+                    + minutes + " : " + seconds;
+
+                // If the count down is finished, write some text
+                if (distance < 0) {
+                    clearInterval(x);
+                    document.getElementById("countdown").innerHTML = "L - 00 : 00 : 00 : 00";
+                }
+            }, 1000);
+        } else {
+            document.getElementById("countdown").innerHTML = "L - 00 : 00 : 00 : 00";
+        }
+
+    </script>
+    {% include "web/install_buttons.html" %}
+{% endblock %}

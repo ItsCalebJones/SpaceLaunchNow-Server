@@ -23,6 +23,8 @@ from django_tables2 import RequestConfig, LazyPaginator, SingleTableMixin
 
 from api.models import Agency, Launch, Astronaut, Launcher, SpaceStation, SpacecraftConfiguration, LauncherConfig, \
     Events
+from django_user_agents.utils import get_user_agent
+
 from bot.models import NewsItem
 from web.filters.launch_filters import LaunchListFilter
 from web.filters.launch_vehicle_filters import LauncherConfigListFilter
@@ -89,7 +91,13 @@ def index(request):
     else:
         second_launch_image = None
 
-    return render(request, 'web/index.html', {'launch': launch,
+    user_agent = get_user_agent(request)
+    if user_agent.is_mobile:
+        template = 'web/index_mobile.html'
+    else:
+        template = 'web/index.html'
+
+    return render(request, template, {'launch': launch,
                                               'launch_image': launch_image,
                                               'first_launch': first_launch,
                                               'first_launch_image': first_launch_image,
@@ -199,10 +207,15 @@ def create_launch_view(request, launch):
     else:
         launch_image = None
 
-    return render(request, 'web/launches/launch_detail_page.html', {'launch': launch, 'launch_image': launch_image,
-                                                    'youtube_urls': youtube_urls, 'status': status,
-                                                    'agency': agency, 'launches': launches,
-                                                    'previous_launches': previous_launches})
+    user_agent = get_user_agent(request)
+    if user_agent.is_mobile:
+        template = 'web/launches/launch_detail_page_mobile.html'
+    else:
+        template = 'web/launches/launch_detail_page.html'
+    return render(request, template, {'launch': launch, 'launch_image': launch_image,
+                                                        'youtube_urls': youtube_urls, 'status': status,
+                                                        'agency': agency, 'launches': launches,
+                                                        'previous_launches': previous_launches})
 
 
 # Create your views here.
