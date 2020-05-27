@@ -20,7 +20,7 @@ django-celery-results==1.0.1
 django-embed-video==1.1.2
 django-filter==1.1.0
 django-js-asset==1.1.0
-django-launch-library==2.0.3
+django-launch-library==2.0.5
 django-mathfilters==0.4.0
 django-ical==1.4
 django-robots==3.1.0
