@@ -32,7 +32,7 @@ DEBUG = config.DEBUG
 if DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = ['.calebjones.me', '.spacelaunchnow.me', 'spacelaunchnow.me', '.calebjones.dev']
+    ALLOWED_HOSTS = ['.calebjones.me', '.spacelaunchnow.me', 'spacelaunchnow.me', '.calebjones.dev', '0.0.0.0']
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'spacelaunchnow.pagination.SLNLimitOffsetPagination',
