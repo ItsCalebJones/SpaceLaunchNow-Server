@@ -481,7 +481,16 @@ DEFAULT_FILE_STORAGE = DEFAULT_STORAGE
 
 AWS_IS_GZIPPED = True
 
-CACHES = config.CACHE
+if os.getenv('CACHE_ENGINE') and os.getenv('CACHE_LOCATION'):
+    CACHES = {
+        'default': {
+            'BACKEND': os.getenv('CACHE_ENGINE'),
+            'LOCATION': os.getenv('CACHE_LOCATION'),
+        }
+    }
+else:
+    CACHES = config.CACHE
+
 CACHALOT_TIMEOUT = 60
 
 
