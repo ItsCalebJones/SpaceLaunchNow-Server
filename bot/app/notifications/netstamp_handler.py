@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytz
 
@@ -22,10 +22,12 @@ class NetstampHandler:
 
     def netstamp_changed(self, launch, notification, diff):
         logger.info('Netstamp change detected for %s - now launching in %d seconds.' % (launch.name, diff))
-        old_diff = notification.last_net_stamp - datetime.now(tz=pytz.utc)
+        now = datetime.now(tz=pytz.utc)
+        old = notification.last_net_stamp
+        new = launch.net
         self.update_notification_record(diff, notification)
 
-        if old_diff.total_seconds() < 604800:
+        if new <= now + timedelta(hours=72) and old <= now + timedelta(hours=24):
             logger.info('Netstamp Changed and within window - sending mobile notification.')
             self.notification_handler.send_notification(launch, 'netstampChanged', notification)
         self.social_handler.send_to_twitter(launch, 'netstampChanged')

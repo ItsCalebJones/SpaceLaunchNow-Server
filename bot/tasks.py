@@ -62,7 +62,7 @@ def run_weekly():
     daily_digest.run(weekly=True)
 
 
-@periodic_task(run_every=(crontab(hour='*/12')), options={"expires": 60})
+@periodic_task(run_every=(crontab(hour='*/2')), options={"expires": 15})
 def get_upcoming_launches():
     logger.info('Task - Get Upcoming launches!')
     repository = LaunchRepository()
@@ -102,7 +102,7 @@ def check_for_orphaned_launches():
 
 @periodic_task(
     run_every=(crontab(minute=0, hour=3,
-                       day_of_week='mon,wed,fri,sun')),
+                       day_of_week='mon-sun')),
     name="get_previous",
     ignore_result=True,
     options={"expires": 3600}

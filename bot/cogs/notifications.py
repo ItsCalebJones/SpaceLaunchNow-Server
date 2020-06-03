@@ -116,9 +116,7 @@ class Notifications:
                         logger.error(channel.id)
                         logger.error(channel.name)
                         logger.error(e)
-                        if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            channel.delete()
-                        return
+                        continue
 
     async def check_in_flight(self, bot_channels):
         logger.debug("Checking in-flight launches...")
@@ -140,9 +138,7 @@ class Notifications:
                         logger.error(channel.id)
                         logger.error(channel.name)
                         logger.error(e)
-                        if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            channel.delete()
-                        return
+                        continue
 
     async def check_one_minute(self, bot_channels, time_threshold_1_minute):
         logger.debug("Checking one-minute launches...")
@@ -165,9 +161,7 @@ class Notifications:
                         logger.error(channel.id)
                         logger.error(channel.name)
                         logger.error(e)
-                        if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            channel.delete()
-                        return
+                        continue
 
     async def check_ten_minute(self, bot_channels, time_threshold_10_minute, time_threshold_1_minute):
         logger.debug("Checking ten-minute launches...")
@@ -190,9 +184,7 @@ class Notifications:
                         logger.error(channel.id)
                         logger.error(channel.name)
                         logger.error(e)
-                        if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            channel.delete()
-                        return
+                        continue
 
     async def check_twenty_four_hour(self, bot_channels, time_threshold_1_hour, time_threshold_24_hour):
         logger.debug("Checking 24 hour launches...")
@@ -214,9 +206,7 @@ class Notifications:
                         logger.error(channel.id)
                         logger.error(channel.name)
                         logger.error(e)
-                        if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            channel.delete()
-                        return
+                        continue
 
     async def check_one_hour(self, bot_channels, time_threshold_10_minute, time_threshold_1_hour):
         logger.debug("Checking one hour launches...")
@@ -239,9 +229,7 @@ class Notifications:
                         logger.error(channel.id)
                         logger.error(channel.name)
                         logger.error(e)
-                        if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            channel.delete()
-                        return
+                        continue
 
     async def check_webcast_live(self, bot_channels, time_threshold_1_hour, time_threshold_1_minute):
         logger.debug("Checking webcast live launches...")
@@ -263,9 +251,7 @@ class Notifications:
                         logger.error(channel.id)
                         logger.error(channel.name)
                         logger.error(e)
-                        if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            channel.delete()
-                        return
+                        continue
 
     async def check_webcast_live_event(self, bot_channels, time_threshold_1_hour, time_threshold_past_hour):
         logger.debug("Checking webcast live events...")
@@ -285,9 +271,7 @@ class Notifications:
                         logger.error(channel.id)
                         logger.error(channel.name)
                         logger.error(e)
-                        if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            channel.delete()
-                        return
+                        continue
 
     async def check_ten_minute_event(self, bot_channels, time_threshold_10_minute, time_threshold_1_minute):
         logger.debug("Checking ten-minute events...")
@@ -307,9 +291,7 @@ class Notifications:
                         logger.error(channel.id)
                         logger.error(channel.name)
                         logger.error(e)
-                        if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
-                            channel.delete()
-                        return
+                        continue
 
     async def discord_launch_events(self):
         await self.bot.wait_until_ready()
@@ -318,7 +300,8 @@ class Notifications:
         for channel in channels:
             discord_channel = self.bot.get_channel(id=channel.channel_id)
             if discord_channel is None or not discord_channel.server.me.permissions_in(discord_channel).send_messages:
-                channel.delete()
+                logger.error(channel.id)
+                logger.error(channel.name)
             else:
                 bot_channels.append(discord_channel)
 

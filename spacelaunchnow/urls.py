@@ -116,6 +116,9 @@ if settings.IS_WEBSERVER:
         url(r'^launch/upcoming/spacex$', landing_views.launches_spacex, name='launches_spacex'),
         url(r'^launch/upcoming/florida$', landing_views.launches_florida, name='launches_florida'),
         url(r'^launch/upcoming/vandenberg$', landing_views.launches_vandenberg, name='launches_vandenberg'),
+        url(r'^spacex/$', landing_views.launches_spacex, name='direct_launches_spacex'),
+        url(r'^florida/$', landing_views.launches_florida, name='direct_launches_florida'),
+
 
         url(r'^launch/(?P<id>\d+)/$', landing_views.launch_by_id, name='launch_by_id'),
         url(r'^launch/(?P<slug>[-\w]+)/$', landing_views.launch_by_slug, name='launch_by_slug'),
