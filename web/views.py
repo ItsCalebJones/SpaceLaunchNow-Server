@@ -6,6 +6,7 @@ from datetime import datetime
 import datetime as dt
 from uuid import UUID
 
+from django.views.decorators.cache import cache_page
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -38,6 +39,7 @@ def get_youtube_url(launch):
             return url.vid_url
 
 
+@cache_page(120)
 def index(request):
     news = NewsItem.objects.all().order_by('-created_at')[:6]
     last_six_hours = datetime.now() - dt.timedelta(hours=6)
@@ -126,7 +128,7 @@ def app(request):
         return render(request, 'web/app.html', {'launch': _next_launch,
                                                 'youtube_url': get_youtube_url(_next_launch)})
 
-
+@cache_page(120)
 # Create your views here.
 def next_launch(request):
     in_flight_launch = Launch.objects.filter(status__id=6).order_by('-net').first()
@@ -140,7 +142,7 @@ def next_launch(request):
         _next_launch = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net').first()
         return redirect('launch_by_slug', slug=_next_launch.slug)
 
-
+@cache_page(120)
 # Create your views here.
 def launch_by_slug(request, slug):
     if slug == 'schedule':
@@ -183,6 +185,7 @@ def get_launch_status(launch):
     }[launch.status.id]
 
 
+@cache_page(120)
 def create_launch_view(request, launch):
     youtube_urls = []
     vids = launch.vid_urls.all()
@@ -218,6 +221,7 @@ def create_launch_view(request, launch):
                                                         'previous_launches': previous_launches})
 
 
+@cache_page(600)
 # Create your views here.
 def launches(request, ):
     query = request.GET.get('q')
@@ -249,6 +253,7 @@ def launches(request, ):
                                                  'filters': True})
 
 
+@cache_page(600)
 def previous(request, ):
     query = request.GET.get('q')
 
@@ -274,6 +279,7 @@ def previous(request, ):
     return render(request, 'web/launches/launches_previous.html', {'launches': launches, 'filters': True})
 
 
+@cache_page(600)
 # Create your views here.
 def launches_vandenberg(request, ):
     query = 'Vandenberg'
@@ -305,6 +311,7 @@ def launches_vandenberg(request, ):
                                                  'filters': False})
 
 
+@cache_page(600)
 # Create your views here.
 def launches_spacex(request, ):
     query = 'SpaceX'
@@ -339,6 +346,7 @@ def launches_spacex(request, ):
                                                  'agency': spacex})
 
 
+@cache_page(600)
 # Create your views here.
 def launches_florida(request, ):
     query = 'FL'
@@ -370,6 +378,7 @@ def launches_florida(request, ):
                                                  'filters': False})
 
 
+@cache_page(600)
 def astronaut(request, id):
     try:
         return redirect('astronaut_by_slug', slug=Astronaut.objects.get(pk=id).slug)
@@ -377,6 +386,7 @@ def astronaut(request, id):
         raise Http404
 
 
+@cache_page(600)
 def vehicle_root(request):
     news = NewsItem.objects.all().order_by('created_at')[:6]
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:15]
@@ -384,11 +394,13 @@ def vehicle_root(request):
                                                        'news': news})
 
 
+@cache_page(600)
 def spacecraft_list(request):
     spacecraft = SpacecraftConfiguration.objects.all()
     return render(request, 'web/vehicles/spacecraft/spacecraft_list.html', {'vehicles': spacecraft})
 
 
+@cache_page(600)
 def spacecraft_by_id(request, id):
     spacecraft = SpacecraftConfiguration.objects.get(pk=id)
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
@@ -396,6 +408,7 @@ def spacecraft_by_id(request, id):
                                                                               'vehicle': spacecraft})
 
 
+@cache_page(600)
 def events_list(request):
     last_six_hours = datetime.now() - dt.timedelta(hours=6)
     events = Events.objects.all().filter(date__gte=last_six_hours).order_by('date')
@@ -404,6 +417,7 @@ def events_list(request):
                                                           'events': events})
 
 
+@cache_page(600)
 # Create your views here.
 def event_by_slug(request, slug):
     try:
@@ -422,6 +436,7 @@ def event_by_id(request, id):
         raise redirect('events_list')
 
 
+@cache_page(600)
 def booster_reuse(request):
     status = request.GET.get('status')
     if status is None:
@@ -444,6 +459,7 @@ def booster_reuse(request):
                                                                        'vehicles': vehicles})
 
 
+@cache_page(600)
 def booster_reuse_search(request):
     query = request.GET.get('q')
 
@@ -458,6 +474,7 @@ def booster_reuse_search(request):
         return redirect('booster_reuse')
 
 
+@cache_page(120)
 def booster_reuse_id(request, id):
     if id is not None:
         vehicle = Launcher.objects.get(pk=id)
@@ -490,6 +507,7 @@ class LaunchListView(SingleTableMixin, FilterView):
     filterset_class = LaunchListFilter
 
 
+@cache_page(600)
 def launch_vehicle_id(request, id):
     if id is not None:
         vehicle = LauncherConfig.objects.get(pk=id)
@@ -507,12 +525,14 @@ def launch_vehicle_id(request, id):
         return redirect('booster_reuse')
 
 
+@cache_page(600)
 def spacestation_list(request):
     spacestations = SpaceStation.objects.all().order_by('status')
     return render(request, 'web/vehicles/spacestations/spacestations_list.html',
                   {'spacestations': spacestations})
 
 
+@cache_page(600)
 def spacestation_by_id(request, id):
     if id is not None:
         spacestation = SpaceStation.objects.get(pk=id)
@@ -523,6 +543,7 @@ def spacestation_by_id(request, id):
         return redirect('booster_reuse')
 
 
+@cache_page(600)
 def astronaut_by_slug(request, slug):
     try:
         _astronaut = Astronaut.objects.get(slug=slug)
@@ -551,6 +572,7 @@ def astronaut_by_slug(request, slug):
         raise Http404
 
 
+@cache_page(600)
 def astronaut_list(request, ):
     query = request.GET.get('status')
     if query is None:
