@@ -29,12 +29,12 @@ from api.sitemaps import (
     SpacestationSitemap
 )
 
-from api.v300.router import api_urlpatterns as api_v300
-from api.v310.router import api_urlpatterns as api_v310
-from api.v320.router import api_urlpatterns as api_v320
-from api.v330.router import api_urlpatterns as api_v330
-from api.v340.router import api_urlpatterns as api_v340
-from api.v350.router import api_urlpatterns as api_v350
+from api.endpoints.sln.v300.router import api_urlpatterns as api_v300
+from api.endpoints.sln.v310.router import api_urlpatterns as api_v310
+from api.endpoints.sln.v320.router import api_urlpatterns as api_v320
+from api.endpoints.sln.v330.router import api_urlpatterns as api_v330
+from api.endpoints.sln.v340.router import api_urlpatterns as api_v340
+from api.endpoints.sln.v350.router import api_urlpatterns as api_v350
 
 from spacelaunchnow import settings
 from web import views as landing_views
