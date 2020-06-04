@@ -186,6 +186,8 @@ LOGGING = {
     },
 }
 
+CELERY_IMPORTS = ('bot.tasks',)
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.auth',
