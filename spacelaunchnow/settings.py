@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from datetime import timedelta
@@ -504,3 +505,8 @@ IS_SLN = os.getenv('IS_SLN', True)
 IS_LL = os.getenv('IS_LL', False)
 
 GOOGLE_API_KEY = config.GOOGLE_API_KEY
+
+if 'test' in sys.argv:
+    TESTING = True
+else:
+    TESTING = False
