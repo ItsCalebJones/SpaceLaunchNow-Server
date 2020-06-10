@@ -145,14 +145,14 @@ def get_reddit_submissions_task():
     get_submissions()
 
 
-@periodic_task(run_every=timedelta(seconds=5), options={"expires": 60})
+@periodic_task(run_every=timedelta(seconds=15), options={"expires": 5})
 def launch_tracker():
     logger.info('Task - Running Launch Event Tracker')
     tracker = LaunchEventTracker()
     tracker.check_events()
 
 
-@periodic_task(run_every=timedelta(seconds=60), options={"expires": 30})
+@periodic_task(run_every=timedelta(seconds=60), options={"expires": 5})
 def event_tracker():
     logger.info('Task - Running Event Tracker')
     tracker = EventTracker()

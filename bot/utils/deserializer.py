@@ -120,7 +120,7 @@ def launch_json_to_model(data):
                 title = ""
                 if article.title is not None:
                     title = article.title
-                VidURLs.objects.get_or_create(vid_url=url, launch=launch, description=text, title=title, feature_image=article.top_image, priority=0)
+                VidURLs.objects.get_or_create(vid_url=url, launch=launch, description=text, title=title, feature_image=article.top_image, priority=10)
             except Exception as e:
                 logger.error(e)
     # Check to see if URL exists before adding.
@@ -143,7 +143,7 @@ def launch_json_to_model(data):
                 title = ""
                 if article.title is not None:
                     title = article.title
-                InfoURLs.objects.get_or_create(info_url=url, launch=launch, description=text, title=title, feature_image=article.top_image, priority=0)
+                InfoURLs.objects.get_or_create(info_url=url, launch=launch, description=text, title=title, feature_image=article.top_image, priority=10)
             except Exception as e:
                 logger.error(e)
     launch.mission = get_mission(launch, data)
