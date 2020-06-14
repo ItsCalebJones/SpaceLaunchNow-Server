@@ -79,8 +79,9 @@ def check_for_orphaned_launches():
     notifications = LaunchNotificationRecord.objects.filter(launch__net__lte=seven_days_threshhold)
     notifications.delete()
 
-    submissions = RedditSubmission.objects.filter(created_at__lte=thirty_days_threshhold)
-    submissions.delete()
+    # TODO only delete if the submission is not stickied.
+    # submissions = RedditSubmission.objects.filter(created_at__lte=thirty_days_threshhold)
+    # submissions.delete()
 
     tweet = Tweet.objects.filter(created_at__lte=thirty_days_threshhold)
     tweet.delete()
