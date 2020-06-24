@@ -107,6 +107,7 @@ if settings.IS_API:
 
 if settings.IS_WEBSERVER:
     web_settings = [
+        url(r'^\.well-known/assetlinks\.json', landing_views.asset_file),
         url(r'^ads\.txt', include('ads_txt.urls')),
         url(r'^next/', landing_views.next_launch, name='next'),
         url(r'^launch/$', LaunchListView.as_view()),

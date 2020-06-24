@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import json
+import os
 from datetime import datetime
 import datetime as dt
 from uuid import UUID
@@ -27,6 +28,7 @@ from api.models import Agency, Launch, Astronaut, Launcher, SpaceStation, Spacec
 from django_user_agents.utils import get_user_agent
 
 from bot.models import NewsItem
+from spacelaunchnow.config import BASE_DIR
 from web.filters.launch_filters import LaunchListFilter
 from web.filters.launch_vehicle_filters import LauncherConfigListFilter
 from web.tables.launch_table import LaunchTable
@@ -37,6 +39,25 @@ def get_youtube_url(launch):
     for url in launch.vid_urls.all():
         if 'youtube' in url.vid_url:
             return url.vid_url
+
+
+def asset_file(request):
+    json_data = [
+        {
+          "relation": ["delegate_permission/common.handle_all_urls"],
+          "target": {
+            "namespace": "android_app",
+            "package_name": "me.calebjones.spacelaunchnow",
+            "sha256_cert_fingerprints":
+            [
+                "9A:53:D2:DE:19:7E:DC:89:84:49:67:00:88:C7:71:39:73:43:8E:53:71:17:F4:4A:03:4F:45:ED:3E:E0:EE:FE"
+            ]
+          }
+        }
+    ]
+    json_file = json.dumps(json_data)
+    response = HttpResponse(json_file, content_type='application/json')
+    return response
 
 
 @cache_page(120)
