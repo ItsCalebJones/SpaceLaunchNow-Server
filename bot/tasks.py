@@ -66,7 +66,7 @@ def run_weekly():
     daily_digest.run(weekly=True)
 
 
-@periodic_task(run_every=(crontab(hour='*/12')), options={"expires": 60})
+@periodic_task(run_every=(crontab(hour='*/2')), options={"expires": 15})
 def get_upcoming_launches():
     logger.info('Task - Get Upcoming launches!')
     repository = LaunchRepository()
@@ -83,8 +83,9 @@ def check_for_orphaned_launches(send_webhook=True):
     notifications = LaunchNotificationRecord.objects.filter(launch__net__lte=seven_days_threshhold)
     notifications.delete()
 
-    submissions = RedditSubmission.objects.filter(created_at__lte=thirty_days_threshhold)
-    submissions.delete()
+    # TODO only delete if the submission is not stickied.
+    # submissions = RedditSubmission.objects.filter(created_at__lte=thirty_days_threshhold)
+    # submissions.delete()
 
     tweet = Tweet.objects.filter(created_at__lte=thirty_days_threshhold)
     tweet.delete()
@@ -142,7 +143,7 @@ def check_for_orphaned_launches(send_webhook=True):
 
 @periodic_task(
     run_every=(crontab(minute=0, hour=3,
-                       day_of_week='mon,wed,fri,sun')),
+                       day_of_week='mon-sun')),
     name="get_previous",
     ignore_result=True,
     options={"expires": 3600}
@@ -185,14 +186,14 @@ def get_reddit_submissions_task():
     get_submissions()
 
 
-@periodic_task(run_every=timedelta(seconds=5), options={"expires": 60})
+@periodic_task(run_every=timedelta(seconds=15), options={"expires": 5})
 def launch_tracker():
     logger.info('Task - Running Launch Event Tracker')
     tracker = LaunchEventTracker()
     tracker.check_events()
 
 
-@periodic_task(run_every=timedelta(seconds=60), options={"expires": 30})
+@periodic_task(run_every=timedelta(seconds=60), options={"expires": 5})
 def event_tracker():
     logger.info('Task - Running Event Tracker')
     tracker = EventTracker()

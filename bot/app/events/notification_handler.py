@@ -4,7 +4,7 @@ from datetime import datetime
 import pytz
 from pyfcm import FCMNotification
 
-from api.v330.events.serializers import EventsSerializer
+from api.endpoints.sln.v330.events.serializers import EventsSerializer
 from spacelaunchnow.config import keys
 from bot.utils.util import get_fcm_topics_v1, get_fcm_topics_v2
 from spacelaunchnow import config

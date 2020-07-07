@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from datetime import timedelta
@@ -32,7 +33,7 @@ DEBUG = config.DEBUG
 if DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = ['.calebjones.me', '.spacelaunchnow.me', 'spacelaunchnow.me', '.calebjones.dev']
+    ALLOWED_HOSTS = ['.calebjones.me', '.spacelaunchnow.me', 'spacelaunchnow.me', '.calebjones.dev', '0.0.0.0']
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'spacelaunchnow.pagination.SLNLimitOffsetPagination',
@@ -46,7 +47,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_THROTTLE_RATES': {
         'anon': '1000/day',
-        'user': '200/minute'
+        'user': '500/minute'
     },
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
@@ -195,6 +196,8 @@ LOGGING = {
     },
 }
 
+CELERY_IMPORTS = ('bot.tasks',)
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -286,6 +289,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'tz_detect.middleware.TimezoneMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'django_user_agents.middleware.UserAgentMiddleware',
 
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     # 'silk.middleware.SilkyMiddleware',
@@ -489,7 +493,16 @@ DEFAULT_FILE_STORAGE = DEFAULT_STORAGE
 
 AWS_IS_GZIPPED = True
 
-CACHES = config.CACHE
+if os.getenv('CACHE_ENGINE') and os.getenv('CACHE_LOCATION'):
+    CACHES = {
+        'default': {
+            'BACKEND': os.getenv('CACHE_ENGINE'),
+            'LOCATION': os.getenv('CACHE_LOCATION'),
+        }
+    }
+else:
+    CACHES = config.CACHE
+
 CACHALOT_TIMEOUT = 60
 
 
@@ -501,3 +514,8 @@ IS_SLN = os.getenv('IS_SLN', True)
 IS_LL = os.getenv('IS_LL', False)
 
 GOOGLE_API_KEY = config.GOOGLE_API_KEY
+
+if 'test' in sys.argv:
+    TESTING = True
+else:
+    TESTING = False

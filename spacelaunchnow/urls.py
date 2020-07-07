@@ -29,12 +29,12 @@ from api.sitemaps import (
     SpacestationSitemap
 )
 
-from api.v300.router import api_urlpatterns as api_v300
-from api.v310.router import api_urlpatterns as api_v310
-from api.v320.router import api_urlpatterns as api_v320
-from api.v330.router import api_urlpatterns as api_v330
-from api.v340.router import api_urlpatterns as api_v340
-from api.v350.router import api_urlpatterns as api_v350
+from api.endpoints.sln.v300.router import api_urlpatterns as api_v300
+from api.endpoints.sln.v310.router import api_urlpatterns as api_v310
+from api.endpoints.sln.v320.router import api_urlpatterns as api_v320
+from api.endpoints.sln.v330.router import api_urlpatterns as api_v330
+from api.endpoints.sln.v340.router import api_urlpatterns as api_v340
+from api.endpoints.sln.v350.router import api_urlpatterns as api_v350
 
 from spacelaunchnow import settings
 from web import views as landing_views
@@ -107,6 +107,7 @@ if settings.IS_API:
 
 if settings.IS_WEBSERVER:
     web_settings = [
+        url(r'^\.well-known/assetlinks\.json', landing_views.asset_file),
         url(r'^ads\.txt', include('ads_txt.urls')),
         url(r'^next/', landing_views.next_launch, name='next'),
         url(r'^launch/$', LaunchListView.as_view()),
@@ -116,6 +117,9 @@ if settings.IS_WEBSERVER:
         url(r'^launch/upcoming/spacex$', landing_views.launches_spacex, name='launches_spacex'),
         url(r'^launch/upcoming/florida$', landing_views.launches_florida, name='launches_florida'),
         url(r'^launch/upcoming/vandenberg$', landing_views.launches_vandenberg, name='launches_vandenberg'),
+        url(r'^spacex/$', landing_views.launches_spacex, name='direct_launches_spacex'),
+        url(r'^florida/$', landing_views.launches_florida, name='direct_launches_florida'),
+
 
         url(r'^launch/(?P<id>\d+)/$', landing_views.launch_by_id, name='launch_by_id'),
         url(r'^launch/(?P<slug>[-\w]+)/$', landing_views.launch_by_slug, name='launch_by_slug'),

@@ -39,8 +39,8 @@ class LaunchEventTracker:
                 diff = int((launch_time - current_time).total_seconds())
                 logger.debug('Time to launch %s', seconds_to_time(diff))
                 if notification.last_net_stamp is not None:
-                    if abs((notification.last_net_stamp - launch.net)).total_seconds() > 3600:
-                        logger.info('Netstamp changed!')
+                    if abs((notification.last_net_stamp - launch.net)).total_seconds() > 7200:
+                        logger.info('Netstamp changed from %s to %s' % (notification.last_net_stamp, launch.net))
                         self.netstamp.netstamp_changed(launch, notification, diff)
 
     def check_success(self, time_threshold_past_two_days, time_threshold_24_hour):
@@ -301,17 +301,17 @@ class LaunchEventTracker:
                 logger.error(e)
 
     def check_webcast_live(self, time_threshold_1_hour, time_threshold_10_minute):
-        logger.debug('Running check webcast...')
+        logger.info('Running check webcast...')
         launches = Launch.objects.filter(net__gte=time_threshold_10_minute,
                                          net__lte=time_threshold_1_hour,
                                          webcast_live=True,
                                          notifications_enabled=True)
-        logger.debug('Found %d launches within an hour - checking state.', len(launches))
+        logger.info('Found %d launches within an hour - checking state.', len(launches))
 
         for launch in launches:
             self.check_next_stamp_changed(launch)
             notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
-            logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
+            logger.info('Notification for %s: %s', launch.name, notification.__dict__)
 
             try:
                 if not notification.wasNotifiedWebcastLive:
@@ -331,7 +331,7 @@ class LaunchEventTracker:
                     notification.last_twitter_post = datetime.now(tz=pytz.utc)
                     notification.last_net_stamp = notification.launch.net
                     notification.last_net_stamp_timestamp = datetime.now(tz=pytz.utc)
-                    logger.debug('Updating Notification %s to timestamp %s' % (notification.launch.id,
+                    logger.info('Updating Notification %s to timestamp %s' % (notification.launch.id,
                                                                                notification.last_twitter_post
                                                                                .strftime("%A %d. %B %Y")))
                     notification.save()

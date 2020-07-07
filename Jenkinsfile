@@ -1,12 +1,18 @@
 #!/usr/bin/env groovy
 
-def defineImageName() {
+def defineBranchName() {
     def branchName = "${env.BRANCH_NAME}"
     branchName = branchName.replace ('/', '-')
     branchName = branchName.replace ('_', '-')
     branchName = branchName.replace ('.', '')
+    return branchName
+}
+
+def defineImageName() {
+    def branchName = defineBranchName()
     return "${branchName}-b${BUILD_NUMBER}"
 }
+
 def commitMessage() {
     def message = sh(returnStdout: true, script: "git log --format='medium' -1 ${GIT_COMMIT}").trim()
     return "${message}"
@@ -25,7 +31,8 @@ pipeline{
 		registry="registry.calebjones.dev:5050/sln-server"
 		registryURL = "https://registry.calebjones.dev:5050/sln-server"
 		registryCredential = 'calebregistry'
-		imageName = defineImageName()
+        imageName = defineImageName()
+		branchName = defineBranchName()
 		dockerImage = ''
         DISCORD_URL = credentials('DiscordURL')
         COMMIT_MESSAGE = commitMessage()
@@ -96,7 +103,7 @@ pipeline{
 						if (env.BRANCH_NAME == 'master') {
 						    dockerImage.push("production")
 						}
-						sh 'docker ps -f name=sln-staging -q | xargs --no-run-if-empty docker container stop'
+						sh "docker ps -f name=" + branchName +" -q | xargs --no-run-if-empty docker container stop"
 						sh "docker run --rm -d --name sln-staging-" + imageName + " -p :8000 --network=web -l traefik.backend=sln-staging-" + imageName +" -l traefik.frontend.rule=Host:" + imageName + "-staging.calebjones.dev -l traefik.docker.network=web -l traefik.port=8000 " + registry + ":" + imageName + " 'bash' '-c' 'python /code/manage.py runserver 0.0.0.0:8000'"
 					}
 				}

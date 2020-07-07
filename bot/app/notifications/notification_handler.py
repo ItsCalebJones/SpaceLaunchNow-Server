@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime
-
+from django.core.cache import cache
 import pytz
 from pyfcm import FCMNotification
 
@@ -22,8 +22,15 @@ class NotificationHandler:
         current_time = datetime.now(tz=pytz.utc)
         launch_time = launch.net
         diff = int((launch_time - current_time).total_seconds())
+        cache_key = str(launch.id) + notification_type
+        launch_cooldown = cache.get(cache_key)
+        global_cooldown = cache.get(notification_type)
+        if launch_cooldown or global_cooldown:
+            logger.error("Notification cooldown window for %s - Launch: %s Global: %s" % (launch.id, launch_cooldown, global_cooldown))
+            return
         logger.info('Creating %s notification for %s' % (notification_type, launch.name))
-
+        cache.set(cache_key, "ID: %s Net: %s Type: %s" % (launch.id, launch.net, notification_type), 60)
+        cache.set(notification_type, "ID: %s Net: %s Type: %s" % (launch.id, launch.net, notification_type), 60)
         if notification_type == 'netstampChanged':
             if launch.status.id == 1:
                 contents = 'UPDATE: New launch attempt scheduled on %s at %s.' % (launch.net.strftime("%A, %B %d"),
