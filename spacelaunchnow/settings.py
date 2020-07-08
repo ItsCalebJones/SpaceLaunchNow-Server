@@ -234,6 +234,15 @@ if DEBUG:
     # INSTALLED_APPS.append('debug_toolbar')
     pass
 
+def show_toolbar(request):
+    return True
+
+
+DEBUG_TOOLBAR_CONFIG = {
+        'SHOW_TOOLBAR_CALLBACK': 'spacelaunchnow.settings.show_toolbar',
+    }
+
+
 JET_THEMES = [
     {
         'theme': 'default',  # theme folder name
@@ -372,6 +381,8 @@ ZINNIA_MARKUP_LANGUAGE = 'markdown'
 
 INTERNAL_IPS = [
     '127.0.0.1',
+    '75.139.138.136',
+    '46.208.3.49',
 ]
 
 LANGUAGE_CODE = 'en-us'
