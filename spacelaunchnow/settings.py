@@ -484,10 +484,10 @@ DEFAULT_FILE_STORAGE = DEFAULT_STORAGE
 
 AWS_IS_GZIPPED = True
 
-if os.getenv('CACHE_ENGINE') and os.getenv('CACHE_LOCATION'):
+if os.getenv('CACHE_BACKEND') and os.getenv('CACHE_LOCATION'):
     CACHES = {
         'default': {
-            'BACKEND': os.getenv('CACHE_ENGINE'),
+            'BACKEND': os.getenv('CACHE_BACKEND'),
             'LOCATION': os.getenv('CACHE_LOCATION'),
         }
     }
