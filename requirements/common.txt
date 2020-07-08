@@ -8,7 +8,7 @@ celery==4.2.1
 collectfast==0.6.2
 discord.py==0.16.12
 Django==1.11.23
-django-ads-txt==0.1.0
+django-ads-txt==0.1.2
 django-bootstrap4==0.0.8
 django-bootstrap-form==3.4
 django-cachalot==2.1.0
