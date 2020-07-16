@@ -10,6 +10,7 @@ from bot.discord.utils import *
 from bot.models import DiscordChannel, LaunchNotificationRecord
 
 logger = logging.getLogger('bot.discord.notifier')
+message_number = 0
 
 
 def check_is_removed(channel, args):
@@ -23,6 +24,8 @@ class Notifications(commands.Cog):
         self.bot = bot
         self.discord_launch_events.start()
         self.set_bot_description.start()
+        global message_number
+        message_number = 0
 
     def cog_unload(self):
         self.discord_launch_events.cancel()
@@ -365,23 +368,42 @@ class Notifications(commands.Cog):
 
         logger.info("Completed.")
 
-    @tasks.loop(minutes=1.0)
+    @tasks.loop(seconds=10)
     async def set_bot_description(self):
         logger.info("Updating Space Launch Bot's description.")
-        launch = Launch.objects.filter(net__gte=datetime.datetime.utcnow()).order_by('net').first()
-        launch_date = launch.net
-        now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
-        message = u"""
-        %s in %s. Use '.sln help' for commands.
-        """ % (launch.rocket.configuration.name, defaultfilters.timeuntil(launch_date, now))
+        message = ""
+        global message_number
+        message_number += 1
         try:
-            await self.bot.change_presence(activity=discord.Activity(name=message,
-                                                                     large_image_url=launch.infographic_url,
-                                                                     type=discord.ActivityType.watching),
-                                           status=discord.Status.online,
-                                           afk=False)
-
-            logger.info("Done Space Launch Bot's description.")
+            if message_number == 1:
+                message = ".sln help"
+                await self.bot.change_presence(activity=discord.Activity(name=message,
+                                                                         type=discord.ActivityType.listening))
+            elif message_number == 2:
+                member_count = 0
+                for server in self.bot.guilds:
+                    if server.id != 264445053596991498:
+                        member_count += server.member_count
+                message = "%s users in %s servers." % (member_count, len(self.bot.guilds))
+                await self.bot.change_presence(activity=discord.Activity(name=message,
+                                                                         type=discord.ActivityType.listening))
+            elif message_number == 3:
+                message = "with the Space Launch Now app on iOS and Android!"
+                await self.bot.change_presence(activity=discord.Game(name=message))
+            else:
+                launch = Launch.objects.filter(net__gte=datetime.datetime.utcnow()).order_by('net').first()
+                launch_date = launch.net
+                now = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+                message = u"""
+                %s in %s. 
+                """ % (launch.rocket.configuration.name, defaultfilters.timeuntil(launch_date, now))
+                message_number = 0
+                await self.bot.change_presence(activity=discord.Activity(name=message,
+                                                                         large_image_url=launch.infographic_url,
+                                                                         type=discord.ActivityType.watching),
+                                               status=discord.Status.online,
+                                               afk=False)
+            logger.info("Done setting Space Launch Bot's description.")
         except Exception as e:
             logger.error(e)
 

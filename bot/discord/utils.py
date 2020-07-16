@@ -5,14 +5,17 @@ import pytz
 from discord import Colour
 from django.template.defaultfilters import truncatewords
 
+follow_along = "Follow along on [Android](https://play.google.com/store/apps/details?id=me.calebjones." \
+               "spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)," \
+               " [iOS](https://itunes.apple.com/us/app/space-launch-now/id1399715731)" \
+               " or on the [web](https://spacelaunchnow.me/next)."
+
+launcher_url = "https://spacelaunchnow-prod-east.nyc3.cdn.digitaloceanspaces.com/static/home/img/launcher.png"
+
 
 def launch_to_large_embed(launch):
     title = "%s" % launch.name
     color = get_color(launch.status.id)
-    follow_along = "\n\n Follow along on [Android](https://play.google.com/store/apps/details?id=me.calebjones." \
-                   "spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)," \
-                   " [iOS](https://itunes.apple.com/us/app/space-launch-now/id1399715731)" \
-                   " or [on the web](https://spacelaunchnow.me/next)"
     lsp_text = "\n\n**Launch Service Provider**\n%s (%s)\n%s\n%s\n%s\n" % (
         launch.launch_service_provider.name, launch.launch_service_provider.abbrev,
         launch.launch_service_provider.administrator, launch.launch_service_provider.info_url,
@@ -54,7 +57,7 @@ def launch_to_large_embed(launch):
                                                                  launch.mission.mission_type)
     location = "\n\n**Launch and Landing Location**\n%s\n%s" % (launch.pad.name.split(',', 1)[0],
                                                                 launch.pad.location.name)
-    description_text = status + launch.mission.description + vehicle_text + mission_text + location + lsp_text + formatted_countdown + follow_along
+    description_text = status + launch.mission.description + vehicle_text + mission_text + location + lsp_text + formatted_countdown + "\n\n" + follow_along
     embed = discord.Embed(type="rich", title=title,
                           description=description_text,
                           color=color,
@@ -63,7 +66,7 @@ def launch_to_large_embed(launch):
     if launch.rocket.configuration.image_url is not None:
         embed.set_thumbnail(url=launch.rocket.configuration.image_url.url)
     else:
-        embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
+        embed.set_thumbnail(url=launcher_url)
     embed.set_footer(text=launch.net.strftime("NET: %A %B %e, %Y %H:%M %Z"))
     return embed
 
@@ -93,14 +96,10 @@ def launch_to_small_embed(launch, notification="", pre_launch=False):
     if len(launch.rocket.firststage.all()) > 0:
         launchers = launch.rocket.firststage.all()
         for vehicle in launchers:
-            if vehicle.landing.attempt and vehicle.landing.landing_location:
+            if vehicle.landing and vehicle.landing.attempt and vehicle.landing.landing_location:
                 landing = "**Landing:** %s (%s)\n" % (vehicle.landing.landing_location.name,
                                                       vehicle.landing.landing_type.abbrev)
                 break
-    follow_along = "\nFollow along on [Android](https://play.google.com/store/apps/details?id=me.calebjones." \
-                   "spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)," \
-                   " [iOS](https://itunes.apple.com/us/app/space-launch-now/id1399715731)" \
-                   " or [on the web](https://spacelaunchnow.me)"
     mission_description = ""
     if launch.mission is not None and launch.mission.description is not None:
         mission_description = "\n%s\n" % (truncatewords(launch.mission.description, 50))
@@ -119,7 +118,7 @@ def launch_to_small_embed(launch, notification="", pre_launch=False):
         for webcast in launch.vid_urls.all():
             webcasts = webcasts + "[%s](%s)\n" % (webcast, webcast)
 
-    description_text = notification + status + location + landing + fail_reason + mission_description + formatted_countdown + webcasts + follow_along
+    description_text = notification + status + location + landing + fail_reason + mission_description + formatted_countdown + webcasts + "\n\n" + follow_along
 
     embed = discord.Embed(type="rich", title=title,
                           description=description_text,
@@ -130,9 +129,9 @@ def launch_to_small_embed(launch, notification="", pre_launch=False):
         try:
             embed.set_thumbnail(url=launch.rocket.configuration.image_url.url)
         except ValueError:
-            embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
+            embed.set_thumbnail(url=launcher_url)
     else:
-        embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
+        embed.set_thumbnail(url=launcher_url)
     embed.set_footer(text=launch.net.strftime("NET: %A %B %e, %Y %H:%M %Z"))
     return embed
 
@@ -142,10 +141,6 @@ def event_to_embed(event, notification="", pre_launch=False):
     color = Colour.teal()
     status = "**Type:** %s\n" % event.type.name
     location = "**Location:** %s\n" % event.location
-    follow_along = "\nFollow along on [Android](https://play.google.com/store/apps/details?id=me.calebjones." \
-                   "spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)," \
-                   " [iOS](https://itunes.apple.com/us/app/space-launch-now/id1399715731)" \
-                   " or [on the web](https://spacelaunchnow.me)"
     event_description = ""
     if event.description is not None:
         event_description = "\n%s\n" % event.description
@@ -176,7 +171,7 @@ def event_to_embed(event, notification="", pre_launch=False):
         webcasts = "\n**Watch Here:**\n"
         webcasts = webcasts + "[%s](%s)\n" % (event.video_url, event.video_url)
 
-    description_text = notification + status + location + event_description + formatted_countdown + webcasts + follow_along
+    description_text = notification + status + location + event_description + formatted_countdown + webcasts + "\n\n" + follow_along
 
     embed = discord.Embed(type="rich", title=title,
                           description=description_text,
@@ -187,10 +182,29 @@ def event_to_embed(event, notification="", pre_launch=False):
         try:
             embed.set_thumbnail(url=event.feature_image.url)
         except ValueError:
-            embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
+            embed.set_thumbnail(url=launcher_url)
     else:
-        embed.set_thumbnail(url="https://daszojo4xmsc6.cloudfront.net/static/home/img/launcher.png")
+        embed.set_thumbnail(url=launcher_url)
     embed.set_footer(text=event.date.strftime("Date: %A %B %e, %Y %H:%M %Z"))
+    return embed
+
+
+def launch_list_to_embed(launches):
+    title = "Space Launch Now - Upcoming"
+    color = Colour.dark_teal()
+    description_text = "Here are the next five upcoming launches both confirmed and TBD.\n\n"
+    for index, launch in enumerate(launches):
+        name = "**%s - [%s](%s)**\n" % (index + 1, launch.name, launch.get_full_absolute_url())
+        status = "**Status:** %s\n" % launch.status.name
+        date = "**Date:** %s\n" % launch.net.strftime("%A %B %e, %Y %H:%M %Z")
+        location = "**Location:** %s\n" % launch.pad.location.name
+        description_text += "%s %s %s %s\n" % (name, status, date, location)
+    description_text += follow_along
+    embed = discord.Embed(type="rich", title=title,
+                          description=description_text,
+                          color=color,
+                          url="https://spacelaunchnow.me")
+    embed.set_thumbnail(url=launcher_url)
     return embed
 
 
