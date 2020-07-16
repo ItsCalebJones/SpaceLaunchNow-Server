@@ -128,7 +128,7 @@ def check_for_orphaned_launches(send_webhook=True):
     data["embeds"].append(embed)
     logger.info(data)
 
-    if send_webhook:
+    if send_webhook or len(stale) > 5:
         result = requests.post(url, data=json.dumps(data), headers={"Content-Type": "application/json"})
         try:
             result.raise_for_status()
@@ -206,5 +206,3 @@ def get_recent_previous_launches():
     logger.info('Task - Get Recent Previous launches!')
     repository = LaunchRepository()
     repository.get_recent_previous_launches()
-
-    check_for_orphaned_launches()

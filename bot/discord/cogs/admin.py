@@ -64,8 +64,6 @@ class SLNAdmin(commands.Cog):
             else:
                 await channel.send("This is a staff only command.")
 
-
-
     @tasks.loop(hours=24)
     async def channels(self):
         twitter_channels = TwitterNotificationChannel.objects.all()
