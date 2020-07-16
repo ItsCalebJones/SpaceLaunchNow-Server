@@ -1,5 +1,7 @@
 # coding=utf-8
-from celery import shared_task
+import json
+
+import requests
 
 from api.models import Launch
 from datetime import datetime, timedelta
@@ -10,12 +12,13 @@ from celery.task import periodic_task
 from celery.utils.log import get_task_logger
 
 from bot.app.events.event_tracker import EventTracker
+
 from bot.app.notifications.launch_event_tracker import LaunchEventTracker
 from bot.app.repository.launches_repository import LaunchRepository
-from bot.app.sync import LaunchLibrarySync
-from bot.cogs.news import get_news
-from bot.cogs.reddit import get_submissions
-from bot.cogs.twitter import get_new_tweets
+from bot.app.sync.launch_library_sync import LaunchLibrarySync
+from bot.app.sync.reddit_sync import get_submissions
+from bot.app.sync.twitter_sync import get_new_tweets
+from bot.app.sync.news_sync import get_news
 from bot.models import LaunchNotificationRecord, RedditSubmission, Tweet, NewsItem
 from spacelaunchnow import config
 
@@ -44,9 +47,10 @@ def run_daily():
     ignore_result=True,
     options={"expires": 3600}
 )
-def run_daily():
+def run_daily(send_webhook=True):
     logger.info('Task - Running Digest - Daily Cleanup...')
-    check_for_orphaned_launches()
+    data = check_for_orphaned_launches(send_webhook=send_webhook)
+    return data
 
 
 @periodic_task(
@@ -69,7 +73,7 @@ def get_upcoming_launches():
     repository.get_next_launches(next_count=100, all=True)
 
 
-def check_for_orphaned_launches():
+def check_for_orphaned_launches(send_webhook=True):
     logger.info('Task - Get Upcoming launches!')
 
     # Delete notification records from old launches.
@@ -92,13 +96,49 @@ def check_for_orphaned_launches():
     # Check for stale launches.
     three_days_past = datetime.today() - timedelta(days=3)
     launches = Launch.objects.filter(last_updated__lte=three_days_past, launch_library=True)
+    count = 0
+    stale = []
     if len(launches) > 0:
         logger.info("Found stale launches - checking to see if they are deleted from Launch Library")
         repository = LaunchRepository()
         for launch in launches:
             logger.debug("Stale - %s" % launch.name)
             if repository.is_launch_deleted(launch.launch_library_id):
+                stale.append(launch)
                 logger.error("Delete this launch! - %s ID: %d" % (launch.name, launch.launch_library_id))
+
+    url = "https://discordapp.com/api/webhooks/681358922774478868/XtzAAHnbE8X930eeXFEwL1bGll-ucFD0xKMDwXUWdHuHvZW8qcqQOYO1eq9Mpyryl2zL"
+    data = {}
+    data["content"] = "**Daily Stale Checker**"
+    data["username"] = "Space Launch Bot"
+
+    # leave this out if you dont want an embed
+    data["embeds"] = []
+    embed = {}
+    description = ""
+    title = "Found %s stale launches..." % len(stale)
+    for launch in stale:
+        description = description + "%s\n [Launch Library](https://launchlibrary.net/1.4/launch/%s) | [Admin](%s)\n\n" % (
+            launch.name,
+            launch.launch_library_id,
+            launch.get_admin_url())
+    # for all params, see https://discordapp.com/developers/docs/resources/channel#embed-object
+    embed["description"] = (description[:2000] + '\n ... too many stale to show.') if len(description) > 2000 else description
+    embed["title"] = title
+    data["embeds"].append(embed)
+    logger.info(data)
+
+    if send_webhook:
+        result = requests.post(url, data=json.dumps(data), headers={"Content-Type": "application/json"})
+        try:
+            result.raise_for_status()
+        except requests.exceptions.HTTPError as err:
+            logger.error(err)
+        else:
+            logger.info("Payload delivered successfully, code {}.".format(result.status_code))
+    else:
+        logger.info(data)
+        return data
 
 
 @periodic_task(

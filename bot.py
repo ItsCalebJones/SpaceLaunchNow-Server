@@ -1,4 +1,4 @@
-import asyncio
+# coding: utf-8
 import datetime
 import logging
 import os
@@ -6,15 +6,12 @@ import sys
 import traceback
 from collections import Counter
 
-import discord
 import django
 from discord.ext import commands
-from django.template import defaultfilters
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "spacelaunchnow.settings")
 django.setup()
 
-from api.models import Launch
 from spacelaunchnow import config
 
 debug_mode = config.SQUID_BOT_DEBUG_MODE
@@ -22,20 +19,22 @@ if not isinstance(debug_mode, bool):
     # SQUID_BOT_DEBUG_MODE can be set to either 'false' or 'no'. Case insensitive
     debug_mode = not (debug_mode.lower() in ['false', 'no'])
 
-github_url = 'https://github.com/ItsCalebJones/SpaceLaunchNow-Server/'
-
 description = """
-Hello! I am a bot written by Koun7erfit with a backbone from R Danny.
-For the nitty gritty, checkout the project GitHub: {0}
-""".format(github_url)
-initial_extensions = ["bot.cogs.reddit", "bot.cogs.notifications", "bot.cogs.launches", "bot.cogs.about",
-                      "bot.cogs.twitter", "bot.cogs.news", "bot.cogs.admin"]
+Hey there spacefarer - thanks for choosing the Space Launch Bot for your notifications needs. 
+Please use the prefix .sln - to get started try the .sln help command!
+
+Check out this project at https://spacelaunchnow.me!
+"""
+
 
 log = logging.getLogger('bot.discord')
-help_attrs = dict(hidden=True)
-prefix = ['?']
+help_attrs = dict(hidden=False)
+prefix = ['.sln ']
 bot = commands.Bot(command_prefix=prefix, description=description, pm_help=None, help_attrs=help_attrs)
 bot_start_time = datetime.datetime.utcnow()
+initial_extensions = ['bot.discord.cogs.admin', 'bot.discord.cogs.about', 'bot.discord.cogs.launches',
+                      'bot.discord.cogs.notifier', 'bot.discord.cogs.reddit', 'bot.discord.cogs.twitter',
+                      'bot.discord.cogs.news']
 
 
 def writePidFile():
@@ -63,8 +62,22 @@ async def on_command_error(error, ctx):
 async def on_ready():
     log.info('Logged in as:')
     log.info('Username: ' + bot.user.name)
-    log.info('ID: ' + bot.user.id)
+    log.info('ID: ' + str(bot.user.id))
     log.info('Debug: ' + str(debug_mode))
+    log.info('Total Servers: %s' % len(bot.guilds))
+    member_count = 0
+    for server in bot.guilds:
+        # log.info("Server: %s" % server.name)
+        # log.info("Server: %s" % server.id)
+        # log.info("Owner: %s#%s" % (server.owner.name,server.owner.discriminator))
+        # log.info("Owner ID: %s" % server.owner.id)
+        # log.info("Members: %s" % server.member_count)
+        # log.info(server.icon_url)
+        # log.info(server.splash_url)
+        # log.info('++++++')
+        if server.id != 264445053596991498:
+            member_count += server.member_count
+    log.info("Currently serving %s members in %s servers." % (member_count, len(bot.guilds)))
     log.info('------')
     log.info('Logged in as:\nUsername: {0.user.name}\nID: {0.user.id}\nDebug: {1}\n------'.format(bot, str(debug_mode)))
     if not hasattr(bot, 'uptime'):
@@ -76,15 +89,14 @@ async def on_resumed():
 
 
 @bot.event
-async def on_command(command, ctx):
-    bot.commands_used[command.name] += 1
+async def on_command(ctx):
     message = ctx.message
-    destination = None
-    if message.channel.is_private:
+    destination = "Unknown"
+    if message.channel.type.name is 'private':
         destination = 'Private Message'
     else:
-        destination = '#{0.channel.name} ({0.server.name})'.format(message)
-    log.info('{0.timestamp}: {0.author.name} in {1}: {0.content}'.format(message, destination))
+        destination = '{0.guild.name}:#{0.channel.name}'.format(message)
+    log.info('{0.author.name} in {1}: {0.content}'.format(message, destination))
 
 
 @bot.event
@@ -101,11 +113,12 @@ if __name__ == '__main__':
     if os.name != 'nt' and os.name != 'posix':
         writePidFile()
 
-    bot.client_id = config.SQUID_BOT_CLIENT_ID
+    bot.client_id = os.getenv('BOT_CLIENT_ID', config.SQUID_BOT_CLIENT_ID)
     bot.commands_used = Counter()
     for extension in initial_extensions:
         try:
             bot.load_extension(extension)
         except Exception as e:
             log.info('Failed to load extension {}\n{}: {}'.format(extension, type(e).__name__, e))
-    bot.run(config.SQUID_BOT_TOKEN)
+    bot.run(os.getenv('BOT_TOKEN', config.SQUID_BOT_TOKEN))
+

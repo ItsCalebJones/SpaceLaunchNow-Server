@@ -81,14 +81,16 @@ LOGGING = {
             'filename': 'log/django.log',
             'formatter': 'standard',
             'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5
+            'backupCount': 5,
+            'encoding': 'utf8'
         },
         'django_error': {
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'log/error.log',
             'formatter': 'standard',
             'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5
+            'backupCount': 5,
+            'encoding': 'utf8'
         },
         'console': {
             'level': 'DEBUG',
@@ -100,7 +102,8 @@ LOGGING = {
             'filename': 'log/daily_digest.log',
             'formatter': 'standard',
             'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5
+            'backupCount': 5,
+            'encoding': 'utf8'
         },
         'notifications': {
             'level': config.BOT_NOTIFICATIONS,
@@ -108,7 +111,8 @@ LOGGING = {
             'filename': 'log/notification.log',
             'formatter': 'standard',
             'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5
+            'backupCount': 5,
+            'encoding': 'utf8'
         },
         'events': {
             'level': config.BOT_EVENTS,
@@ -116,7 +120,8 @@ LOGGING = {
             'filename': 'log/events.log',
             'formatter': 'standard',
             'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5
+            'backupCount': 5,
+            'encoding': 'utf8'
         },
         'discord': {
             'level': config.DISCORD,
@@ -124,7 +129,8 @@ LOGGING = {
             'filename': 'log/discord.log',
             'formatter': 'standard',
             'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5
+            'backupCount': 5,
+            'encoding': 'utf8'
         },
         'discord.notifications': {
             'level': config.DISCORD_NOTIFICATIONS,
@@ -132,7 +138,8 @@ LOGGING = {
             'filename': 'log/discord_notifications.log',
             'formatter': 'standard',
             'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5
+            'backupCount': 5,
+            'encoding': 'utf8'
         },
         'discord.tweets': {
             'level': config.DISCORD_TWEETS,
@@ -140,7 +147,8 @@ LOGGING = {
             'filename': 'log/discord_tweets.log',
             'formatter': 'standard',
             'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5
+            'backupCount': 5,
+            'encoding': 'utf8'
         },
     },
     'loggers': {
@@ -173,6 +181,7 @@ LOGGING = {
             'handlers': ['django_default', 'discord', 'console'],
             'level': config.DISCORD,
             'propagate': True,
+            'encoding': 'utf-8',
         },
         'bot.discord.notifications': {
             'handlers': ['django_default', 'discord.notifications', 'console'],
