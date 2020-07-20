@@ -31,7 +31,7 @@ pipeline{
 		registry="registry.calebjones.dev:5050/sln-server"
 		registryURL = "https://registry.calebjones.dev:5050/sln-server"
 		registryCredential = 'calebregistry'
-		doRegistryURL = "registry.digitalocean.com/spacelaunchnow-registry"
+		doRegistryURL = "https://registry.digitalocean.com/spacelaunchnow-registry"
 		doRegistryCredential= 'digitalocean_registry'
         imageName = defineImageName()
 		branchName = defineBranchName()
