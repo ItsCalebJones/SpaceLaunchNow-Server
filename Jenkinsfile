@@ -112,7 +112,7 @@ pipeline{
 					docker.withRegistry(registryURL, registryCredential){
 						dockerImage.push()
 						if (env.BRANCH_NAME == 'master') {
-						    dockerImage.push("${imageName}")
+						    dockerImage.push("${dockerTag}")
 						    dockerImage.push("production")
 						}
 						sh "docker ps -f name=" + branchName +" -q | xargs --no-run-if-empty docker container stop"
@@ -120,7 +120,7 @@ pipeline{
 					}
 					docker.withRegistry(doRegistryURL, doRegistryCredential){
 						if (env.BRANCH_NAME == 'master') {
-						    dockerImage.push("${imageName}")
+						    dockerImage.push("${dockerTag}")
 						    dockerImage.push("production")
 						}
 					}
