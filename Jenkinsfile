@@ -120,8 +120,8 @@ pipeline{
 					}
 					docker.withRegistry(doRegistryURL, doRegistryCredential){
 						if (env.BRANCH_NAME == 'master') {
-						    dockerImage.push("${dockerTag}")
-						    dockerImage.push("production")
+						    sh "docker tag ${registryURL}/sln-server:production ${doRegistryURL}/sln-server:production"
+						    sh "docker push ${doRegistryURL}/sln-server:production"
 						}
 					}
 				}
