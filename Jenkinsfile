@@ -112,10 +112,17 @@ pipeline{
 					docker.withRegistry(registryURL, registryCredential){
 						dockerImage.push()
 						if (env.BRANCH_NAME == 'master') {
+						    dockerImage.push("${imageName}")
 						    dockerImage.push("production")
 						}
 						sh "docker ps -f name=" + branchName +" -q | xargs --no-run-if-empty docker container stop"
 						sh "docker run --rm -d --name sln-staging-" + imageName + " -p :8000 --network=web -l traefik.backend=sln-staging-" + imageName +" -l traefik.frontend.rule=Host:" + imageName + "-staging.calebjones.dev -l traefik.docker.network=web -l traefik.port=8000 " + registry + ":" + imageName + " 'bash' '-c' 'python /code/manage.py runserver 0.0.0.0:8000'"
+					}
+					docker.withRegistry(doRegistryURL, doRegistryCredential){
+						if (env.BRANCH_NAME == 'master') {
+						    dockerImage.push("${imageName}")
+						    dockerImage.push("production")
+						}
 					}
 				}
 			}
