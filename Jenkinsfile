@@ -18,6 +18,14 @@ def commitMessage() {
     return "${message}"
 }
 
+def defineDockerTag() {
+    def branchName = "${env.BRANCH_NAME}"
+    branchName = branchName.replace ('/', '')
+    branchName = branchName.replace ('_', '')
+    branchName = branchName.replace ('.', '')
+    return "${branchName}b${BUILD_NUMBER}"
+}
+
 def projectName() {
   def jobNameParts = env.JOB_NAME.tokenize('/') as String[]
   return jobNameParts.length < 2 ? env.JOB_NAME : jobNameParts[jobNameParts.length - 2]
@@ -31,6 +39,9 @@ pipeline{
 		registry="registry.calebjones.dev:5050/sln-server"
 		registryURL = "https://registry.calebjones.dev:5050/sln-server"
 		registryCredential = 'calebregistry'
+		doRegistryURL = "https://registry.digitalocean.com/spacelaunchnow-registry"
+		doRegistryCredential= 'digitalocean_registry'
+		dockerTag = defineDockerTag()
         imageName = defineImageName()
 		branchName = defineBranchName()
 		dockerImage = ''
