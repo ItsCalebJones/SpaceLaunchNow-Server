@@ -23,6 +23,7 @@ def get_news(limit=10):
 
 def save_news(item):
     news, created = Article.objects.get_or_create(id=item['_id'])
+    record, created = ArticleNotification.objects.get_or_create(id=news.id, article=news)
     if created:
         news.title = item['title']
         news.link = item['url']
@@ -43,9 +44,9 @@ def save_news(item):
                 logger.error("No launch found with ID %s" % launch_id)
 
         if item['featured']:
-            news.should_notify = True
+            record.should_notify = True
         else:
-            news.should_notify = False
+            record.should_notify = False
         try:
             g = Goose()
             article = g.extract(url=news.link)
@@ -66,11 +67,11 @@ def save_news(item):
             if (news.created_at - datetime.utcfromtimestamp(item['date_published']).replace(
                     tzinfo=pytz.utc)) > timedelta(1):
                 news.created_at = datetime.utcfromtimestamp(item['date_published']).replace(tzinfo=pytz.utc)
-                news.read = False
+                record.read = False
         if item['featured']:
-            news.should_notify = True
+            record.should_notify = True
         else:
-            news.should_notify = False
+            record.should_notify = False
 
         found = False
         for event_id in item['events']:
