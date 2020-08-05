@@ -237,6 +237,7 @@ INSTALLED_APPS = [
     'cachalot',
     'drf_yasg',
     'debug_toolbar',
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 if DEBUG:
