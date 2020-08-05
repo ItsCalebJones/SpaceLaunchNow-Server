@@ -18,7 +18,8 @@ class NewsNotificationHandler:
             self.DEBUG = debug
         self.buffer = BufferAPI()
 
-    def send_notification(self, news):
+    def send_notification(self, article):
+        news = article.article
         data = {"notification_type": 'featured_news',
                 "click_action": "FLUTTER_NOTIFICATION_CLICK",
                 "item": {
@@ -70,7 +71,8 @@ class NewsNotificationHandler:
 
         logger.info('----------------------------------------------------------')
 
-    def send_to_social(self, news_item):
+    def send_to_social(self, article):
+        news_item = article.article
         logger.info('Sending News ID:%s to Buffer!', news_item.id)
         if news_item.link:
             logger.info(self.buffer.send_to_twitter(message=news_item.title, link=news_item.link, now=True))

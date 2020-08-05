@@ -7,7 +7,7 @@ import requests
 from goose3 import Goose
 
 from api.models import Events, Launch, Article
-from bot.models import NewsItem
+from bot.models import ArticleNotification
 
 logger = logging.getLogger('bot.digest')
 
@@ -17,15 +17,12 @@ def get_news(limit=10):
     if response.status_code == 200:
         articles = response.json()['docs']
         logger.info("Found %s articles." % len(articles))
-        models = [NewsItem, Article]
-        for model in models:
-            logger.info("Model: %s" % model)
-            for item in articles:
-                save_news(item, model)
+        for item in articles:
+            save_news(item)
 
 
-def save_news(item, model):
-    news, created = model.objects.get_or_create(id=item['_id'])
+def save_news(item):
+    news, created = Article.objects.get_or_create(id=item['_id'])
     if created:
         news.title = item['title']
         news.link = item['url']
@@ -61,7 +58,7 @@ def save_news(item, model):
             news.description = text
         except Exception as e:
             logger.error(e)
-        logger.info("Added %s (%s) - %s - %s" % (model,  news.id, news.title, news.news_site))
+        logger.info("Added Article (%s) - %s - %s" % (news.id, news.title, news.news_site))
         news.save()
     else:
         if news.title != item['title']:

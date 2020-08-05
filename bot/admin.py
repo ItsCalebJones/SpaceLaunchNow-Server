@@ -61,9 +61,9 @@ class RedditSubmissionAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'text', 'link', 'read', 'created_at')
 
 
-@admin.register(models.NewsItem)
-class NewsAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'news_site', 'created_at')
+@admin.register(models.ArticleNotification)
+class ArticleNotification(admin.ModelAdmin):
+    list_display = ('id', 'created_at', 'article')
 
 
 @admin.register(models.NewsNotificationChannel)

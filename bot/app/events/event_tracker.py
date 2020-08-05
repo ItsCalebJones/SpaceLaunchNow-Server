@@ -2,7 +2,7 @@ from api.models import Events
 from bot.app.events.notification_handler import EventNotificationHandler
 from bot.app.events.social_handler import SocialHandler
 from bot.app.notifications.news_notification_handler import NewsNotificationHandler
-from bot.models import NewsItem
+from bot.models import ArticleNotification
 from spacelaunchnow import config
 import datetime
 import logging
@@ -67,8 +67,9 @@ class EventTracker:
 
     def check_news_item(self):
         logger.debug('Running check news...')
-        news_that_need_to_notify = NewsItem.objects.filter(created_at__gte=datetime.datetime.now() - datetime.timedelta(days=7),
-                                                           should_notify=True, was_notified=False)
+        news_that_need_to_notify = ArticleNotification.objects.filter(
+            created_at__gte=datetime.datetime.now() - datetime.timedelta(days=7),
+            should_notify=True, was_notified=False)
 
         logger.debug('Found %d news items.', len(news_that_need_to_notify))
 

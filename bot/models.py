@@ -2,7 +2,8 @@ from django.db import models
 from django.db.models.functions import datetime
 from pytz import utc
 
-from api.models import Launch, Events
+from api.models import Launch, Events, Article
+
 
 class LaunchNotificationRecord(models.Model):
     launch = models.OneToOneField(Launch, on_delete=models.CASCADE)
@@ -191,27 +192,21 @@ class NewsNotificationChannel(models.Model):
         verbose_name_plural = "News Notification Channels"
 
 
-class NewsItem(models.Model):
+class ArticleNotification(models.Model):
     id = models.CharField(primary_key=True, max_length=255)
-    title = models.CharField(max_length=1048, null=False)
-    link = models.CharField(max_length=1048, null=True, blank=True, default="")
-    description = models.CharField(max_length=40000, null=True, blank=True, default="")
-    featured_image = models.CharField(max_length=1048, null=True, blank=True, default="")
-    news_site = models.CharField(max_length=1048, null=True, blank=True, default="")
-    events = models.ManyToManyField(Events, related_name='news', blank=True)
-    launches = models.ManyToManyField(Launch, related_name='news', blank=True)
+    article = models.OneToOneField(Article, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
     should_notify = models.BooleanField(default=False)
     was_notified = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.title
+        return self.article.title
 
 
 class Notification(models.Model):
     launch = models.ForeignKey(Launch, on_delete=models.CASCADE, null=True, blank=True, default=None)
-    news = models.ForeignKey(NewsItem, on_delete=models.CASCADE, null=True, blank=True, default=None)
+    news = models.ForeignKey(Article, on_delete=models.CASCADE, null=True, blank=True, default=None)
     event = models.ForeignKey(Events, on_delete=models.CASCADE, null=True, blank=True, default=None)
     title = models.TextField(max_length=32)
     message = models.TextField(max_length=300)
