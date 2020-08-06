@@ -11,6 +11,7 @@ def seed_article(apps, schema_editor):
     news_model = apps.get_model('bot', 'newsitem')
     article_model = apps.get_model('api', 'article')
     article_notification_model = apps.get_model('bot', 'articlenotification')
+    articles = article_model.objects.all().delete()
 
     for news_item in news_model.objects.all():
         article, created = article_model.objects.get_or_create(
