@@ -94,9 +94,12 @@ class NotificationHandler:
             if launch.mission is not None \
                     and launch.mission.orbit is not None \
                     and launch.mission.orbit.name is not None:
-                contents = '%s is in flight to %s!' % (launch.rocket.configuration.name, launch.mission.orbit.name)
+                if (launch.mission.orbit.id == 15):
+                    contents = 'Liftoff! %s is in a %s flight!' % (launch.rocket.configuration.name, launch.mission.orbit.name)
+                else:
+                    contents = 'Liftoff! %s is in flight to %s!' % (launch.rocket.configuration.name, launch.mission.orbit.name)
             else:
-                contents = '%s is in flight!' % launch.rocket.configuration.name
+                contents = 'Liftoff! %s is in flight!' % launch.rocket.configuration.name
 
         elif notification_type == 'webcastLive':
 
