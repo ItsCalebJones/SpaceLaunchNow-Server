@@ -8,13 +8,13 @@
         {% for item in news %}
             <div class="col-xl-4 col-lg-6 col-md-12">
                 <div class="card card-background"
-                     style="background-image: url('{{ item.article.featured_image }}'); height: 390px;">
+                     style="background-image: url('{{ item.featured_image }}'); height: 390px;">
                     <div class="card-body">
-                        <h6 class="card-category text-info">{{ item.article.news_site }}</h6>
-                        <h3 class="card-title">{{ item.article.title|truncatechars:65 }}</h3>
+                        <h6 class="card-category text-info">{{ item.news_site }}</h6>
+                        <h3 class="card-title">{{ item.title|truncatechars:65 }}</h3>
                         <div class="d-flex h-50 justify-content-between" style="display: flex; flex-direction: column;">
                             <p class="card-description">
-                                {{ item.article.description|truncatechars:120 }}
+                                {{ item.description|truncatechars:120 }}
                             </p>
                             <div style="justify-content: center;display: flex;">
                                 <a href="{{ item.link }}" class="btn btn-white btn-link">
