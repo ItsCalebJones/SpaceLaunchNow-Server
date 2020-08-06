@@ -19,15 +19,14 @@ class NewsNotificationHandler:
         self.buffer = BufferAPI()
 
     def send_notification(self, article):
-        news = article.article
         data = {"notification_type": 'featured_news',
                 "click_action": "FLUTTER_NOTIFICATION_CLICK",
                 "item": {
-                    "id": news.id,
-                    "news_site_long": news.news_site,
-                    "title": news.title,
-                    "url": news.link,
-                    "featured_image": news.featured_image
+                    "id": article.id,
+                    "news_site_long": article.news_site,
+                    "title": article.title,
+                    "url": article.link,
+                    "featured_image": article.featured_image
                 }}
 
         if not self.DEBUG:
@@ -40,7 +39,7 @@ class NewsNotificationHandler:
         push_service = FCMNotification(api_key=keys['FCM_KEY'])
 
         logger.info('----------------------------------------------------------')
-        logger.info('Sending News notification - %s' % news.title)
+        logger.info('Sending News notification - %s' % article.title)
         try:
             logger.info('News Notification Data - %s' % data)
             logger.info('Topics - %s' % topics)
@@ -72,9 +71,8 @@ class NewsNotificationHandler:
         logger.info('----------------------------------------------------------')
 
     def send_to_social(self, article):
-        news_item = article.article
-        logger.info('Sending News ID:%s to Buffer!', news_item.id)
-        if news_item.link:
-            logger.info(self.buffer.send_to_twitter(message=news_item.title, link=news_item.link, now=True))
-            logger.info(self.buffer.send_to_facebook(message=news_item.title, link=news_item.link, now=True))
+        logger.info('Sending News ID:%s to Buffer!', article.id)
+        if article.link:
+            logger.info(self.buffer.send_to_twitter(message=article.title, link=article.link, now=True))
+            logger.info(self.buffer.send_to_facebook(message=article.title, link=article.link, now=True))
             logger.info('Sent to Buffer!')

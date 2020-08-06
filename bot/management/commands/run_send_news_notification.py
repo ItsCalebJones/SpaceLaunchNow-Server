@@ -1,3 +1,4 @@
+from api.models import Article
 from django.core.management import BaseCommand
 from celery.utils.log import get_task_logger
 
@@ -21,6 +22,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         logger.info('Running Notifications...')
         notification = NewsNotificationHandler()
-        article = ArticleNotification.objects.filter(created_at__isnull=False).latest('created_at')
+        article = Article.objects.filter(created_at__isnull=False).latest('created_at')
         notification.send_notification(article)
 

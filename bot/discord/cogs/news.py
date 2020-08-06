@@ -100,8 +100,8 @@ class News(commands.Cog):
         logger.info("Found %s articles to read." % len(news))
         for news_item in news:
             item = news_item.article
-            item.read = True
-            item.save()
+            news_item.read = True
+            news_item.save()
             for channel in NewsNotificationChannel.objects.filter(subscribed=True):
                 logger.info("Channel %s" % channel.name)
                 logger.info("Channel ID %s" % channel.id)

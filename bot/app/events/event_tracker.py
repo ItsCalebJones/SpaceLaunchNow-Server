@@ -77,6 +77,6 @@ class EventTracker:
             if not news_item.was_notified:
                 news_item.was_notified = True
                 news_item.save()
-                logger.info('Sending %s notification!', news_item.title)
-                self.news_notification_handler.send_notification(news_item)
-                self.news_notification_handler.send_to_social(news_item)
+                logger.info('Sending %s notification!', news_item.article.title)
+                self.news_notification_handler.send_notification(news_item.article)
+                self.news_notification_handler.send_to_social(news_item.article)
