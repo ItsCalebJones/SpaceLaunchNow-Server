@@ -6,7 +6,7 @@ from discord import Colour
 from discord.ext import tasks, commands
 
 from bot.discord.utils import send_to_channel
-from bot.models import NewsNotificationChannel, NewsItem
+from bot.models import NewsNotificationChannel, ArticleNotification
 
 logger = logging.getLogger('bot.discord')
 
@@ -96,9 +96,10 @@ class News(commands.Cog):
     @tasks.loop(minutes=1)
     async def check_news(self):
         logger.debug("Check News Articles")
-        news = NewsItem.objects.filter(read=False)
+        news = ArticleNotification.objects.filter(read=False)
         logger.info("Found %s articles to read." % len(news))
-        for item in news:
+        for news_item in news:
+            item = news_item.article
             item.read = True
             item.save()
             for channel in NewsNotificationChannel.objects.filter(subscribed=True):

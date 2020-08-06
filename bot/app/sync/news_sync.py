@@ -7,7 +7,7 @@ import requests
 from goose3 import Goose
 
 from api.models import Events, Launch, Article
-from bot.models import NewsItem
+from bot.models import ArticleNotification
 
 logger = logging.getLogger('bot.digest')
 
@@ -17,15 +17,13 @@ def get_news(limit=10):
     if response.status_code == 200:
         articles = response.json()['docs']
         logger.info("Found %s articles." % len(articles))
-        models = [NewsItem, Article]
-        for model in models:
-            logger.info("Model: %s" % model)
-            for item in articles:
-                save_news(item, model)
+        for item in articles:
+            save_news(item)
 
 
-def save_news(item, model):
-    news, created = model.objects.get_or_create(id=item['_id'])
+def save_news(item):
+    news, created = Article.objects.get_or_create(id=item['_id'])
+    record, created = ArticleNotification.objects.get_or_create(id=news.id, article=news)
     if created:
         news.title = item['title']
         news.link = item['url']
@@ -46,9 +44,9 @@ def save_news(item, model):
                 logger.error("No launch found with ID %s" % launch_id)
 
         if item['featured']:
-            news.should_notify = True
+            record.should_notify = True
         else:
-            news.should_notify = False
+            record.should_notify = False
         try:
             g = Goose()
             article = g.extract(url=news.link)
@@ -61,7 +59,7 @@ def save_news(item, model):
             news.description = text
         except Exception as e:
             logger.error(e)
-        logger.info("Added %s (%s) - %s - %s" % (model,  news.id, news.title, news.news_site))
+        logger.info("Added Article (%s) - %s - %s" % (news.id, news.title, news.news_site))
         news.save()
     else:
         if news.title != item['title']:
@@ -69,11 +67,11 @@ def save_news(item, model):
             if (news.created_at - datetime.utcfromtimestamp(item['date_published']).replace(
                     tzinfo=pytz.utc)) > timedelta(1):
                 news.created_at = datetime.utcfromtimestamp(item['date_published']).replace(tzinfo=pytz.utc)
-                news.read = False
+                record.read = False
         if item['featured']:
-            news.should_notify = True
+            record.should_notify = True
         else:
-            news.should_notify = False
+            record.should_notify = False
 
         found = False
         for event_id in item['events']:

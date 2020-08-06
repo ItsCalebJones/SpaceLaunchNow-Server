@@ -19,7 +19,7 @@ from bot.app.sync.launch_library_sync import LaunchLibrarySync
 from bot.app.sync.reddit_sync import get_submissions
 from bot.app.sync.twitter_sync import get_new_tweets
 from bot.app.sync.news_sync import get_news
-from bot.models import LaunchNotificationRecord, RedditSubmission, Tweet, NewsItem
+from bot.models import LaunchNotificationRecord, RedditSubmission, Tweet, ArticleNotification
 from spacelaunchnow import config
 
 logger = get_task_logger('bot.digest')
@@ -90,7 +90,7 @@ def check_for_orphaned_launches(send_webhook=True):
     tweet = Tweet.objects.filter(created_at__lte=thirty_days_threshhold)
     tweet.delete()
 
-    news = NewsItem.objects.filter(created_at__lte=thirty_days_threshhold)
+    news = ArticleNotification.objects.filter(created_at__lte=thirty_days_threshhold)
     news.delete()
 
     # Check for stale launches.
