@@ -22,9 +22,9 @@ def get_news(limit=10):
 
 
 def save_news(item):
-    news, created = Article.objects.get_or_create(id=item['_id'])
-    record, created = ArticleNotification.objects.get_or_create(id=news.id, article=news)
-    if created:
+    news, news_created = Article.objects.get_or_create(id=item['_id'])
+    record, record_created = ArticleNotification.objects.get_or_create(id=news.id, article=news)
+    if news_created:
         news.title = item['title']
         news.link = item['url']
         news.featured_image = item['featured_image']

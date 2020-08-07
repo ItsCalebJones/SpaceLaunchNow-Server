@@ -40,17 +40,27 @@ class Notifications(commands.Cog):
         Usage: .sln addNotificationChannel
         """
         channel = context.message.channel
+
         try:
             ownerid = context.message.guild.owner_id
             authorid = context.message.author.id
+
         except:
             await channel.send("Only able to run from a server channel.")
             return
         if ownerid == authorid:
-            discord_channel = DiscordChannel(name=context.message.channel.name,
-                                             channel_id=str(context.message.channel.id),
-                                             server_id=str(context.message.guild.id))
-            discord_channel.save()
+            logger.info("Attempting to add %s (%s) from %s (%s) to notification list." % (context.message.channel,
+                                                                                          context.message.channel.id,
+                                                                                          context.message.guild,
+                                                                                          context.message.guild.id))
+            try:
+                discord_channel = DiscordChannel(name=context.message.channel.name,
+                                                 channel_id=str(context.message.channel.id),
+                                                 server_id=str(context.message.guild.id))
+                discord_channel.save()
+            except Exception as e:
+                logger.error("Unable to add %s to notification list. %s" % (channel.name, e))
+                await channel.send("Unable to add %s to notification list. %s" % (channel.name, e))
             await channel.send("Added %s to notification list." % channel.name)
         else:
             await channel.send("Only server owners can add notification channels.")
@@ -123,17 +133,17 @@ class Notifications(commands.Cog):
                 for bot_channel in bot_channels:
                     logger.info("Sending notification to %s" % bot_channel.name)
                     try:
-                        channel = self.bot.get_channel(int(bot_channel.id))
+                        channel = self.bot.get_channel(int(bot_channel.channel_id))
                         embed = launch_to_small_embed(launch,
                                                       "**Launch was a %s!**\n\n" % launch.status.name, pre_launch=False)
                         await channel.send(embed=embed)
                     except Exception as e:
-                        logger.error(bot_channel.id)
+                        logger.error(bot_channel.channel_id)
                         logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
                             check_is_removed(bot_channel)
-                        return
+                        continue
 
     async def check_in_flight(self, bot_channels):
         logger.debug("Checking in-flight launches...")
@@ -148,11 +158,11 @@ class Notifications(commands.Cog):
                 for bot_channel in bot_channels:
                     logger.info("Sending notification to %s" % bot_channel.name)
                     try:
-                        channel = self.bot.get_channel(int(bot_channel.id))
+                        channel = self.bot.get_channel(int(bot_channel.channel_id))
                         embed = launch_to_small_embed(launch, "**Launch is in flight!**\n\n", pre_launch=False)
                         await channel.send(embed=embed)
                     except Exception as e:
-                        logger.error(bot_channel.id)
+                        logger.error(bot_channel.channel_id)
                         logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
@@ -173,11 +183,11 @@ class Notifications(commands.Cog):
                 for bot_channel in bot_channels:
                     logger.info("Sending notification to %s" % bot_channel.name)
                     try:
-                        channel = self.bot.get_channel(int(bot_channel.id))
+                        channel = self.bot.get_channel(int(bot_channel.channel_id))
                         embed = launch_to_small_embed(launch, "**Launching in one minute!**\n\n")
                         await channel.send(embed=embed)
                     except Exception as e:
-                        logger.error(bot_channel.id)
+                        logger.error(bot_channel.channel_id)
                         logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
@@ -198,11 +208,11 @@ class Notifications(commands.Cog):
                 for bot_channel in bot_channels:
                     logger.info("Sending notification to %s" % bot_channel.name)
                     try:
-                        channel = self.bot.get_channel(int(bot_channel.id))
+                        channel = self.bot.get_channel(int(bot_channel.channel_id))
                         embed = launch_to_small_embed(launch, "**Launching in ten minutes!**\n\n")
                         await channel.send(embed=embed)
                     except Exception as e:
-                        logger.error(bot_channel.id)
+                        logger.error(bot_channel.channel_id)
                         logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
@@ -223,11 +233,11 @@ class Notifications(commands.Cog):
                 for bot_channel in bot_channels:
                     logger.info("Sending notification to %s" % bot_channel.name)
                     try:
-                        channel = self.bot.get_channel(int(bot_channel.id))
+                        channel = self.bot.get_channel(int(bot_channel.channel_id))
                         embed = launch_to_small_embed(launch, "**Launching in twenty four hours!**\n\n")
                         await channel.send(embed=embed)
                     except Exception as e:
-                        logger.error(bot_channel.id)
+                        logger.error(bot_channel.channel_id)
                         logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
@@ -248,11 +258,11 @@ class Notifications(commands.Cog):
                 for bot_channel in bot_channels:
                     logger.info("Sending notification to %s" % bot_channel.name)
                     try:
-                        channel = self.bot.get_channel(int(bot_channel.id))
+                        channel = self.bot.get_channel(int(bot_channel.channel_id))
                         embed = launch_to_small_embed(launch, "**Launching in one hour!**\n\n")
                         await channel.send(embed=embed)
                     except Exception as e:
-                        logger.error(bot_channel.id)
+                        logger.error(bot_channel.channel_id)
                         logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
@@ -273,11 +283,11 @@ class Notifications(commands.Cog):
                 for bot_channel in bot_channels:
                     logger.info("Sending notification to %s" % bot_channel.name)
                     try:
-                        channel = self.bot.get_channel(int(bot_channel.id))
+                        channel = self.bot.get_channel(int(bot_channel.channel_id))
                         embed = event_to_embed(launch, "**Webcast is live!**\n\n")
                         channel.send(embed=embed)
                     except Exception as e:
-                        logger.error(bot_channel.id)
+                        logger.error(bot_channel.channel_id)
                         logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
@@ -295,13 +305,13 @@ class Notifications(commands.Cog):
                 event.save()
                 logger.info("Webcast Live - Event Notification for %s" % event.name)
                 for bot_channel in bot_channels:
-                    logger.info("Sending notification to %s" % bot_channel.id)
+                    logger.info("Sending notification to %s" % bot_channel.channel_id)
                     try:
-                        channel = self.bot.get_channel(int(bot_channel.id))
+                        channel = self.bot.get_channel(int(bot_channel.channel_id))
                         embed = event_to_embed(event, "**Webcast is live!**\n\n")
                         channel.send(embed=embed)
                     except Exception as e:
-                        logger.error(bot_channel.id)
+                        logger.error(bot_channel.channel_id)
                         logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
@@ -321,25 +331,21 @@ class Notifications(commands.Cog):
                 for bot_channel in bot_channels:
                     logger.info("Sending notification to %s" % bot_channel.name)
                     try:
-                        channel = self.bot.get_channel(int(bot_channel.id))
+                        channel = self.bot.get_channel(int(bot_channel.channel_id))
                         embed = event_to_embed(event, "")
                         channel.send(embed=embed)
                     except Exception as e:
-                        logger.error(bot_channel.id)
+                        logger.error(bot_channel.channel_id)
                         logger.error(bot_channel.name)
                         logger.error(e)
                         if 'Missing Permissions' in e.args or 'Received NoneType' in e.args:
                             check_is_removed(bot_channel, e.args)
                         continue
 
-    @tasks.loop(minutes=1)
+    @tasks.loop(seconds=10)
     async def discord_launch_events(self):
-        channels = DiscordChannel.objects.all()
-        bot_channels = []
+        bot_channels = DiscordChannel.objects.all()
         logger.info("Checking Discord launch events...")
-        for channel in channels:
-            discord_channel = self.bot.get_channel(id=int(channel.channel_id))
-            bot_channels.append(discord_channel)
 
         time_threshold_24_hour = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(hours=24)
         time_threshold_1_hour = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(hours=1)
