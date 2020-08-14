@@ -46,25 +46,28 @@ class News(commands.Cog):
         Usage: .sln subscribeNews
 
         """
-        channel = context.message.channel
         try:
-            owner_id = context.message.guild.owner_id
-            author_id = context.message.author.id
-        except:
-            await channel.send("Only able to run from a text channel.")
-            return
-        if owner_id == author_id:
-            channel, created = NewsNotificationChannel.objects.get_or_create(name=context.message.channel.name,
-                                                                             channel_id=context.message.channel.id,
-                                                                             server_id=context.message.server.id)
-            if channel.subscribed:
-                await channel.send("Already subscribed to Space Launch News!")
+            channel = context.message.channel
+            try:
+                owner_id = context.message.guild.owner_id
+                author_id = context.message.author.id
+            except:
+                await channel.send("Only able to run from a text channel.")
                 return
-            channel.subscribed = True
-            channel.save()
-            await channel.send("Subscribed to Space Launch News!")
-        else:
-            await channel.send("Only server owners can add Space Launch News notifications.")
+            if owner_id == author_id:
+                news_channel, created = NewsNotificationChannel.objects.get_or_create(name=context.message.channel.name,
+                                                                                 channel_id=str(context.message.channel.id),
+                                                                                 server_id=str(context.message.guild.id))
+                if news_channel.subscribed:
+                    await channel.send("Already subscribed to Space Launch News!")
+                    return
+                news_channel.subscribed = True
+                news_channel.save()
+                await channel.send("Subscribed to Space Launch News!")
+            else:
+                await channel.send("Only server owners can add Space Launch News notifications.")
+        except Exception as e:
+            logger.error(e)
 
     @commands.command(name='removeNews', pass_context=True)
     async def remove_news(self, context):
@@ -73,25 +76,28 @@ class News(commands.Cog):
         Usage: .sln subscribeNews
 
         """
-        channel = context.message.channel
         try:
-            owner_id = context.message.guild.owner_id
-            author_id = context.message.author.id
-        except:
-            await channel.send("Only able to run from a server channel.")
-            return
-        if owner_id == author_id:
-            channel, created = NewsNotificationChannel.objects.get_or_create(name=context.message.channel.name,
-                                                                             channel_id=context.message.channel.id,
-                                                                             server_id=context.message.server.id)
-            if not channel.subscribed:
-                await channel.send("Not subscribed to Space Launch News!")
+            channel = context.message.channel
+            try:
+                owner_id = context.message.guild.owner_id
+                author_id = context.message.author.id
+            except:
+                await channel.send("Only able to run from a server channel.")
                 return
-            channel.subscribed = False
-            channel.save()
-            await channel.send("Un-subscribed from Space Launch News!")
-        else:
-            await channel.send("Only server owners can edit Space Launch News notifications.")
+            if owner_id == author_id:
+                news_channel, created = NewsNotificationChannel.objects.get_or_create(name=context.message.channel.name,
+                                                                                 channel_id=str(context.message.channel.id),
+                                                                                 server_id=str(context.message.guild.id))
+                if not news_channel.subscribed:
+                    await channel.send("Not subscribed to Space Launch News!")
+                    return
+                news_channel.subscribed = False
+                news_channel.save()
+                await channel.send("Un-subscribed from Space Launch News!")
+            else:
+                await channel.send("Only server owners can edit Space Launch News notifications.")
+        except Exception as e:
+            logger.error(e)
 
     @tasks.loop(minutes=1)
     async def check_news(self):
