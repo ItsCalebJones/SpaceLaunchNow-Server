@@ -101,7 +101,7 @@ if settings.IS_API:
         url(r'^3.2.0/', include(api_v320, namespace='v320')),
         url(r'^api/3.3.0/', include(api_v330, namespace='v330')),
         url(r'^api/3.4.0/', include(api_v340, namespace='v340')),
-        url(r'^api/3.6.0/', include(api_vll2, namespace='ll2')),
+        url(r'^api/ll/2.0.0/', include(api_vll2, namespace='ll2')),
         url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
     ]
