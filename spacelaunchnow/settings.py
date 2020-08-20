@@ -478,6 +478,9 @@ LAUNCH_IMAGE_STORAGE = 'custom_storages.LaunchImageStorage'
 EVENT_IMAGE_LOCATION = MEDIA_LOCATION + '/event_images'  # type: str
 EVENT_IMAGE_STORAGE = 'custom_storages.EventImageStorage'
 
+PROGRAM_IMAGE_LOCATION = MEDIA_LOCATION + '/program_images'  # type: str
+PROGRAM_IMAGE_STORAGE = 'custom_storages.ProgramImageStorage'
+
 APP_IMAGE_LOCATION = MEDIA_LOCATION + '/app_images'  # type: str
 APP_IMAGE_STORAGE = 'custom_storages.AppImageStorage'
 
