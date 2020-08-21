@@ -61,6 +61,7 @@ def save_news(item):
             logger.error(e)
         logger.info("Added Article (%s) - %s - %s" % (news.id, news.title, news.news_site))
         news.save()
+        record.save()
     else:
         if news.title != item['title']:
             news.title = item['title']
@@ -102,3 +103,4 @@ def save_news(item):
         news.link = item['url']
         news.featured_image = item['featured_image']
         news.save()
+        record.save()
