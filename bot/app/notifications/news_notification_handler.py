@@ -53,7 +53,7 @@ class NewsNotificationHandler:
         logger.info('----------------------------------------------------------')
 
         logger.info('----------------------------------------------------------')
-        logger.info('Sending News Flutter notification - %s' % news.title)
+        logger.info('Sending News Flutter notification - %s' % article.title)
         try:
             logger.info('News Notification Data - %s' % data)
             logger.info('Topics - %s' % flutter_topics)
