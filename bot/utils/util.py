@@ -60,6 +60,7 @@ def build_topics(topic_header, topics_set):
     return topics
 
 
+# Deprecated
 def get_fcm_topics_v1(launch, debug=False, flutter=False, notification_type=None):
     location_id = 0
     topics_set = ['all']
@@ -158,6 +159,176 @@ def get_fcm_topics_v2(launch, debug=False, flutter=False, notification_type=None
         topics_set.append('frenchGuiana')
 
     topics = build_topics(topic_header, topics_set)
+    return topics
+
+
+def get_fcm_strict_topics_v3(launch, debug=False, flutter=False, notification_type=None):
+    location_id = 0
+    lsp_topic = None
+    location_topic = None
+    other_topic = None
+    topics = None
+
+    if flutter:
+        if not debug:
+            topic_header = "'flutter_production_v3' in topics && '%s' in topics && 'strict' in topics" % notification_type
+        else:
+            topic_header = "'flutter_debug_v3' in topics && '%s' in topics && 'strict' in topics" % notification_type
+    else:
+        if not debug:
+            topic_header = "'prod_v3' in topics && '%s' in topics && 'strict' in topics" % notification_type
+        else:
+            topic_header = "'debug_v3' in topics && '%s' in topics && 'strict' in topics" % notification_type
+
+    if launch.pad.location is not None:
+        location_id = launch.pad.location.id
+    lsp_id = launch.launch_service_provider.id
+
+    if lsp_id == 44:
+        lsp_topic = 'nasa'
+    elif lsp_id == 115:
+        lsp_topic = 'arianespace'
+    elif lsp_id == 121:
+        lsp_topic = 'spacex'
+    elif lsp_id == 124:
+        lsp_topic = 'ula'
+    elif lsp_id == 111 or lsp_id == 63 or lsp_id ==163:
+        lsp_topic = 'roscosmos'
+    elif lsp_id == 141:
+        lsp_topic = 'blueOrigin'
+    elif lsp_id == 147:
+        lsp_topic = 'rocketLab'
+    elif lsp_id == 257:
+        lsp_topic = 'northrop'
+
+
+    # Locations
+    if location_id == 27 or location_id == 12:
+        location_topic = 'ksc'
+    elif location_id == 15 or location_id == 5 or location_id == 6 or location_id == 18:
+        location_topic = 'russia'
+    elif location_id == 11:
+        location_topic = 'van'
+    elif location_id == 21:
+        location_topic = 'wallops'
+    elif location_id == 10:
+        location_topic = 'newZealand'
+    elif location_id == 13:
+        location_topic = 'frenchGuiana'
+    elif location_id == 143 or location_id == 9999:
+        location_topic = 'texas'
+
+    if location_id == 20 or location_id == 144 or location_id == 22 or location_id == 3:
+        other_topic = 'other'
+    elif location_id == 25:
+        other_topic = 'kodiak'
+    elif location_id == 24 or location_id == 26 or location_id == 32:
+        other_topic = 'japan'
+    elif location_id == 14 or lsp_id == 31:
+        other_topic = 'isro'
+    elif location_id == 17 or location_id == 19 or location_id == 8 or location_id == 16 or location_id == 148:
+        other_topic = 'china'
+
+    if lsp_topic and location_topic:
+        topics = topic_header + " && ('{0}' in topics && '{1}' in topics)".format(lsp_topic, location_topic)
+    elif other_topic:
+        topics = topic_header + " && '{0}' in topics".format(other_topic)
+    else:
+        return None
+
+    logger.info(topics)
+    return topics
+
+
+def get_fcm_not_strict_topics_v3(launch, debug=False, flutter=False, notification_type=None):
+    location_id = 0
+    lsp_topic = None
+    location_topic = None
+    other_topic = None
+
+    if flutter:
+        if not debug:
+            topic_header = "'flutter_production_v3' in topics && '%s' in topics && 'not_strict' in topics" % notification_type
+        else:
+            topic_header = "'flutter_debug_v3' in topics && '%s' in topics && 'not_strict' in topics" % notification_type
+    else:
+        if not debug:
+            topic_header = "'prod_v3' in topics && '%s' in topics && 'not_strict' in topics" % notification_type
+        else:
+            topic_header = "'debug_v3' in topics && '%s' in topics && 'not_strict' in topics" % notification_type
+
+    if launch.pad.location is not None:
+        location_id = launch.pad.location.id
+    lsp_id = launch.launch_service_provider.id
+
+    if lsp_id == 44:
+        lsp_topic = 'nasa'
+    elif lsp_id == 115:
+        lsp_topic = 'arianespace'
+    elif lsp_id == 121:
+        lsp_topic = 'spacex'
+    elif lsp_id == 124:
+        lsp_topic = 'ula'
+    elif lsp_id == 111 or lsp_id == 63 or lsp_id ==163:
+        lsp_topic = 'roscosmos'
+    elif lsp_id == 141:
+        lsp_topic = 'blueOrigin'
+    elif lsp_id == 147:
+        lsp_topic = 'rocketLab'
+    elif lsp_id == 257:
+        lsp_topic = 'northrop'
+
+    if location_id == 27 or location_id == 12:
+        location_topic = 'ksc'
+    elif location_id == 15 or location_id == 5 or location_id == 6 or location_id == 18:
+        location_topic = 'russia'
+    elif location_id == 11:
+        location_topic = 'van'
+    elif location_id == 21:
+        location_topic = 'wallops'
+    elif location_id == 10:
+        location_topic = 'newZealand'
+    elif location_id == 13:
+        location_topic = 'frenchGuiana'
+    elif location_id == 143 or location_id == 9999:
+        location_topic = 'texas'
+    elif location_id == 20 or location_id == 144 or location_id == 22 or location_id == 3:
+        location_topic = 'other'
+    elif location_id == 25:
+        location_topic = 'kodiak'
+    elif location_id == 24 or location_id == 26 or location_id == 32:
+        location_topic = 'japan'
+    elif location_id == 14 or lsp_id == 31:
+        location_topic = 'isro'
+    elif location_id == 17 or location_id == 19 or location_id == 8 or location_id == 16 or location_id == 148:
+        location_topic = 'china'
+
+    if lsp_topic and location_topic:
+        topics = topic_header + " && ('{0}' in topics || '{1}' in topics)".format(lsp_topic, location_topic)
+    elif lsp_topic:
+        topics = topic_header + " && '{0}' in topics".format(lsp_topic)
+    elif location_topic:
+        topics = topic_header + " && '{0}' in topics".format(location_topic)
+    else:
+        return None
+
+    logger.info(topics)
+    return topics
+
+
+def get_fcm_all_topics_v3(debug=False, flutter=False, notification_type=None):
+    if flutter:
+        if not debug:
+            topic_header = "'flutter_production_v3' in topics && '%s' in topics" % notification_type
+        else:
+            topic_header = "'flutter_debug_v3' in topics && '%s' in topics" % notification_type
+    else:
+        if not debug:
+            topic_header = "'prod_v3' in topics && '%s' in topics" % notification_type
+        else:
+            topic_header = "'debug_v3' in topics && '%s' in topics" % notification_type
+    topics = topic_header + " && 'all' in topics"
+    logger.info(topics)
     return topics
 
 

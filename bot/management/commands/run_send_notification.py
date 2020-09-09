@@ -1,3 +1,6 @@
+from datetime import datetime, timedelta
+
+from api.models import Launch
 from django.core.management import BaseCommand
 from celery.utils.log import get_task_logger
 
@@ -20,17 +23,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         logger.info('Running Notifications...')
         notification = NotificationHandler()
-        library = LaunchLibrarySDK()
-        response = library.get_next_launches(next_count=1)
-        if response.status_code is 200:
-            response_json = response.json()
-            launch_data = response_json['launches']
-            for launch in launch_data:
-                launch = launch_json_to_model(launch)
-                notification_obj = LaunchNotificationRecord.objects.get(launch=launch)
-                # TODO pass in parameter for setting the notification_type
-                notification.send_notification(launch, 'webcastLive', notification_obj)
-        else:
-            logger.error(response.status_code + ' ' + response)
+
+        now = datetime.now()
+        dayago = now - timedelta(days=1)
+        launches = Launch.objects.all().filter(net__gte=dayago).order_by('net', 'id').distinct()
+        for launch in launches[:1]:
+            notification_obj = LaunchNotificationRecord.objects.get(launch=launch)
+            # TODO pass in parameter for setting the notification_type
+            notification.send_notification(launch, 'twentyFourHour', notification_obj)
 
 

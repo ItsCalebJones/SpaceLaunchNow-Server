@@ -4,8 +4,8 @@ from django.core.cache import cache
 import pytz
 from pyfcm import FCMNotification
 
-
-from bot.utils.util import get_fcm_topics_v1, get_fcm_topics_v2
+from bot.utils.util import get_fcm_topics_v2, get_fcm_all_topics_v3, \
+    get_fcm_strict_topics_v3, get_fcm_not_strict_topics_v3
 from spacelaunchnow import config
 
 logger = logging.getLogger('bot.notifications')
@@ -26,7 +26,8 @@ class NotificationHandler:
         launch_cooldown = cache.get(cache_key)
         global_cooldown = cache.get(notification_type)
         if launch_cooldown or global_cooldown:
-            logger.error("Notification cooldown window for %s - Launch: %s Global: %s" % (launch.id, launch_cooldown, global_cooldown))
+            logger.error("Notification cooldown window for %s - Launch: %s Global: %s" % (
+            launch.id, launch_cooldown, global_cooldown))
             return
         logger.info('Creating %s notification for %s' % (notification_type, launch.name))
         cache.set(cache_key, "ID: %s Net: %s Type: %s" % (launch.id, launch.net, notification_type), 60)
@@ -95,9 +96,11 @@ class NotificationHandler:
                     and launch.mission.orbit is not None \
                     and launch.mission.orbit.name is not None:
                 if (launch.mission.orbit.id == 15):
-                    contents = 'Liftoff! %s is in a %s flight!' % (launch.rocket.configuration.name, launch.mission.orbit.name)
+                    contents = 'Liftoff! %s is in a %s flight!' % (
+                    launch.rocket.configuration.name, launch.mission.orbit.name)
                 else:
-                    contents = 'Liftoff! %s is in flight to %s!' % (launch.rocket.configuration.name, launch.mission.orbit.name)
+                    contents = 'Liftoff! %s is in flight to %s!' % (
+                    launch.rocket.configuration.name, launch.mission.orbit.name)
             else:
                 contents = 'Liftoff! %s is in flight!' % launch.rocket.configuration.name
 
@@ -114,44 +117,6 @@ class NotificationHandler:
                                                                 launch_time.strftime("%A, %B %d"),
                                                                 launch_time.strftime("%H:%M UTC"))
 
-        # Create a notification
-        topics_v1 = get_fcm_topics_v1(launch,
-                                      notification_type=notification_type,
-                                      debug=self.DEBUG)
-        topics_v2 = get_fcm_topics_v2(launch,
-                                      notification_type=notification_type,
-                                      debug=self.DEBUG)
-        if len(launch.vid_urls.all()) > 0:
-            webcast = True
-        else:
-            webcast = False
-        image = ''
-        if launch.image_url:
-            image = launch.image_url.url
-        elif launch.launch_service_provider.image_url:
-            image = launch.launch_service_provider.image_url.url
-        elif launch.launch_service_provider.legacy_image_url:
-            image = launch.launch_service_provider.legacy_image_url
-        v1_data = {"silent": True,
-                   "background": True,
-                   "launch_id": launch.launch_library_id,
-                   "launch_uuid": str(launch.id),
-                   "launch_name": launch.name,
-                   "launch_image": image,
-                   "launch_net": launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
-                   "launch_location": launch.pad.location.name,
-                   "notification_type": notification_type,
-                   "webcast": webcast
-                   }
-        v2_data = {"notification_type": notification_type,
-                   "launch_id": launch.launch_library_id,
-                   "launch_uuid": str(launch.id),
-                   "launch_name": launch.name,
-                   "launch_image": image,
-                   "launch_net": launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
-                   "launch_location": launch.pad.location.name,
-                   "webcast": webcast
-                   }
         time_since_last_notification = None
         if notification.last_notification_sent is not None:
             time_since_last_notification = datetime.now(tz=pytz.utc) - notification.last_notification_sent
@@ -163,66 +128,111 @@ class NotificationHandler:
             notification.last_notification_sent = datetime.now(tz=pytz.utc)
             notification.save()
             push_service = FCMNotification(api_key=config.keys['FCM_KEY'])
-            flutter_topics = get_fcm_topics_v1(launch,
-                                               debug=self.DEBUG,
-                                               flutter=True,
-                                               notification_type=notification_type)
-            flutter_topics_v2 = get_fcm_topics_v2(launch,
-                                                  notification_type=notification_type,
-                                                  debug=self.DEBUG,
-                                                  flutter=True)
+            self.send_v2_notification(launch, notification_type, push_service, contents)
+            self.send_v3_notification(launch, notification_type, push_service, contents)
 
-            # Send notifications to SLN Android before 3.0.0
-            # Catch any issue with sending notification.
-            if launch.launch_library_id is not None and launch.launch_library:
-                try:
-                    logger.info('Notification v1 Data - %s' % v1_data)
-                    logger.info('Topic Data v1- %s' % topics_v1)
-                    android_result_v1 = push_service.notify_topic_subscribers(data_message=v1_data,
-                                                                              condition=topics_v1,
-                                                                              time_to_live=86400, )
-                    logger.info(android_result_v1)
-                except Exception as e:
-                    logger.error(e)
-
-            # Send notifications to SLN Android after 3.0.0
-            # Catch any issue with sending notification.
-            try:
-                logger.info('Notification v2 Data - %s' % v2_data)
-                logger.info('Topic Data v2- %s' % topics_v2)
-                android_result_v2 = push_service.notify_topic_subscribers(data_message=v2_data,
-                                                                          condition=topics_v2,
-                                                                          time_to_live=86400, )
-                logger.info(android_result_v2)
-            except Exception as e:
-                logger.error(e)
-
-            try:
-                logger.info('Flutter v1 Notification')
-                logger.info('Notification v1 Data - %s' % v1_data)
-                logger.info('Flutter Topic v1- %s' % flutter_topics)
-                flutter_result = push_service.notify_topic_subscribers(data_message=v1_data,
-                                                                       condition=flutter_topics,
-                                                                       time_to_live=86400,
-                                                                       message_title=launch.name,
-                                                                       message_body=contents)
-                logger.debug(flutter_result)
-            except Exception as e:
-                logger.error(e)
-
-            try:
-                logger.info('Flutter v2 Notification')
-                logger.info('Notification v2 Data - %s' % v2_data)
-                logger.info('Flutter Topic v2- %s' % flutter_topics_v2)
-                flutter_result = push_service.notify_topic_subscribers(data_message=v2_data,
-                                                                       condition=flutter_topics_v2,
-                                                                       time_to_live=86400,
-                                                                       message_title=launch.name,
-                                                                       message_body=contents)
-                logger.debug(flutter_result)
-            except Exception as e:
-                logger.error(e)
             logger.info('----------------------------------------------------------')
+
+    def send_v2_notification(self, launch, notification_type, push_service, contents):
+        flutter_topics_v2 = get_fcm_topics_v2(launch,
+                                              notification_type=notification_type,
+                                              debug=self.DEBUG,
+                                              flutter=True)
+        topics_v2 = get_fcm_topics_v2(launch,
+                                      notification_type=notification_type,
+                                      debug=self.DEBUG)
+
+        if len(launch.vid_urls.all()) > 0:
+            webcast = True
+        else:
+            webcast = False
+        image = ''
+        if launch.image_url:
+            image = launch.image_url.url
+        elif launch.launch_service_provider.image_url:
+            image = launch.launch_service_provider.image_url.url
+        elif launch.launch_service_provider.legacy_image_url:
+            image = launch.launch_service_provider.legacy_image_url
+
+        data = {"notification_type": notification_type,
+                "launch_id": launch.launch_library_id,
+                "launch_uuid": str(launch.id),
+                "launch_name": launch.name,
+                "launch_image": image,
+                "launch_net": launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
+                "launch_location": launch.pad.location.name,
+                "webcast": webcast
+                }
+
+        # Send notifications to SLN Android after 3.0.0
+        # Catch any issue with sending notification.
+        try:
+            logger.info('Android v2 Notification')
+            logger.info('Notification v2 Data - %s' % data)
+            logger.info('Topic Data v2- %s' % topics_v2)
+            android_result_v2 = push_service.notify_topic_subscribers(data_message=data,
+                                                                      condition=topics_v2,
+                                                                      time_to_live=86400, )
+            logger.info(android_result_v2)
+        except Exception as e:
+            logger.error(e)
+
+        try:
+            logger.info('Flutter v2 Notification')
+            logger.info('Notification v2 Data - %s' % data)
+            logger.info('Flutter Topic v2- %s' % flutter_topics_v2)
+            flutter_result = push_service.notify_topic_subscribers(data_message=data,
+                                                                   condition=flutter_topics_v2,
+                                                                   time_to_live=86400,
+                                                                   message_title=launch.name,
+                                                                   message_body=contents)
+            logger.debug(flutter_result)
+        except Exception as e:
+            logger.error(e)
+
+    def send_v3_notification(self, launch, notification_type, push_service, contents):
+        if len(launch.vid_urls.all()) > 0:
+            webcast = True
+        else:
+            webcast = False
+        image = ''
+        if launch.image_url:
+            image = launch.image_url.url
+        elif launch.launch_service_provider.image_url:
+            image = launch.launch_service_provider.image_url.url
+        elif launch.launch_service_provider.legacy_image_url:
+            image = launch.launch_service_provider.legacy_image_url
+
+        data = {"notification_type": notification_type,
+                "launch_id": launch.launch_library_id,
+                "launch_uuid": str(launch.id),
+                "launch_name": launch.name,
+                "launch_image": image,
+                "launch_net": launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
+                "launch_location": launch.pad.location.name,
+                "webcast": webcast
+                }
+        all_topics = get_fcm_all_topics_v3(debug=self.DEBUG, notification_type=notification_type)
+        strict_topics = get_fcm_strict_topics_v3(launch, debug=self.DEBUG, notification_type=notification_type)
+        not_strict_topics = get_fcm_not_strict_topics_v3(launch, debug=self.DEBUG, notification_type=notification_type)
+        self.send_android_notif_v3(push_service, data, all_topics)
+        self.send_android_notif_v3(push_service, data, strict_topics)
+        self.send_android_notif_v3(push_service, data, not_strict_topics)
+        logger.info("Topics:\n\nALL: %s\nStrict: %s\nNot Strict: %s" % (all_topics, strict_topics, not_strict_topics))
+
+    def send_android_notif_v3(self, push_service, data, topics):
+
+        # Send notifications to SLN Android > v3.7.0
+        # Catch any issue with sending notification.
+        try:
+            logger.info('Notification v2 Data - %s' % data)
+            logger.info('Topic Data v2- %s' % topics)
+            results = push_service.notify_topic_subscribers(data_message=data,
+                                                            condition=topics,
+                                                            time_to_live=86400,)
+            logger.info(results)
+        except Exception as e:
+            logger.error(e)
 
     def send_custom_ios(self, pending):
         data = self.get_json_data(pending)
