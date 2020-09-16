@@ -30,7 +30,7 @@
         {% endif %}
         <h4 class="card-category text-info">Details</h4>
         <h5>Status - {{ vehicle.status|title }}</h5>
-        <p class="card-text">{{ vehicle.description|truncatewords:60 }} </p>
+        <p class="card-text" style="height:6em;">{{ vehicle.description|truncatewords:60 }} </p>
         <div class="text-left">
             <a class="btn btn-primary" href="/vehicle/spacestation/{{ vehicle.id }}">Explore</a>
         </div>

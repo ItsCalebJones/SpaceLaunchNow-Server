@@ -41,6 +41,10 @@
                             Database</a>
                     </div>
                 </li>
+                <li class="nav-item {% if request.path  == '/starship/' %} active {% endif %}">
+                    <a class="nav-link js-scroll-trigger"
+                       href="/starship/">Starship</a>
+                </li>
                 <li class="nav-item {% if request.path  == '/event/' %} active {% endif %}">
                     <a class="nav-link js-scroll-trigger"
                        href="/event/">Events</a>

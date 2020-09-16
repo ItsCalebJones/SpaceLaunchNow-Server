@@ -125,7 +125,7 @@ if settings.IS_WEBSERVER:
 
         url(r'^launch/(?P<id>\d+)/$', landing_views.launch_by_id, name='launch_by_id'),
         url(r'^launch/(?P<slug>[-\w]+)/$', landing_views.launch_by_slug, name='launch_by_slug'),
-
+        url(r'^starship/$', landing_views.starship_page, name='starship_page'),
         url(r'^event/$', landing_views.events_list, name='events_list'),
         url(r'^event/(?P<id>\d+)/$', landing_views.event_by_id, name='event_by_id'),
         url(r'^event/(?P<slug>[-\w]+)/$', landing_views.event_by_slug, name='event_by_slug'),

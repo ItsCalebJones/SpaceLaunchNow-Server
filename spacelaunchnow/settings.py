@@ -211,6 +211,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'api',
     'bot',
+    'web',
     'configurations',
     'embed_video',
     'jet.dashboard',

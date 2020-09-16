@@ -3,10 +3,12 @@ from __future__ import unicode_literals
 
 import json
 import os
-from datetime import datetime
-import datetime as dt
+from bisect import bisect_left
+from datetime import datetime, timedelta
+from itertools import chain
 from uuid import UUID
 
+import pytz
 from django.views.decorators.cache import cache_page
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
@@ -24,7 +26,7 @@ from django_ical.views import ICalFeed
 from django_tables2 import RequestConfig, LazyPaginator, SingleTableMixin
 
 from api.models import Agency, Launch, Astronaut, Launcher, SpaceStation, SpacecraftConfiguration, LauncherConfig, \
-    Events
+    Events, RoadClosure, Notice, VidURLs
 from django_user_agents.utils import get_user_agent
 
 from bot.models import Article
@@ -44,15 +46,15 @@ def get_youtube_url(launch):
 def asset_file(request):
     json_data = [
         {
-          "relation": ["delegate_permission/common.handle_all_urls"],
-          "target": {
-            "namespace": "android_app",
-            "package_name": "me.calebjones.spacelaunchnow",
-            "sha256_cert_fingerprints":
-            [
-                "9A:53:D2:DE:19:7E:DC:89:84:49:67:00:88:C7:71:39:73:43:8E:53:71:17:F4:4A:03:4F:45:ED:3E:E0:EE:FE"
-            ]
-          }
+            "relation": ["delegate_permission/common.handle_all_urls"],
+            "target": {
+                "namespace": "android_app",
+                "package_name": "me.calebjones.spacelaunchnow",
+                "sha256_cert_fingerprints":
+                    [
+                        "9A:53:D2:DE:19:7E:DC:89:84:49:67:00:88:C7:71:39:73:43:8E:53:71:17:F4:4A:03:4F:45:ED:3E:E0:EE:FE"
+                    ]
+            }
         }
     ]
     json_file = json.dumps(json_data)
@@ -63,7 +65,7 @@ def asset_file(request):
 @cache_page(120)
 def index(request):
     news = Article.objects.all().order_by('-created_at')[:6]
-    last_six_hours = datetime.now() - dt.timedelta(hours=6)
+    last_six_hours = datetime.now() - timedelta(hours=6)
     event = Events.objects.all().filter(date__gte=last_six_hours).order_by('date').first()
     events = Events.objects.all().filter(date__gte=last_six_hours).order_by('date')[1:4]
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
@@ -71,7 +73,7 @@ def index(request):
         'net')[:3]
 
     in_flight_launch = Launch.objects.filter(status__id=6).order_by('-net').first()
-    recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - dt.timedelta(hours=2),
+    recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - timedelta(hours=2),
                                               net__lte=datetime.utcnow()).order_by('-net').first()
     _next_launch = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net').first()
 
@@ -121,16 +123,16 @@ def index(request):
         template = 'web/index.html'
 
     return render(request, template, {'launch': launch,
-                                              'launch_image': launch_image,
-                                              'first_launch': first_launch,
-                                              'first_launch_image': first_launch_image,
-                                              'second_launch': second_launch,
-                                              'second_launch_image': second_launch_image,
-                                              'youtube_url': get_youtube_url(_next_launch),
-                                              'news': news,
-                                              'previous_launches': previous_launches,
-                                              'event': event,
-                                              'events': events})
+                                      'launch_image': launch_image,
+                                      'first_launch': first_launch,
+                                      'first_launch_image': first_launch_image,
+                                      'second_launch': second_launch,
+                                      'second_launch_image': second_launch_image,
+                                      'youtube_url': get_youtube_url(_next_launch),
+                                      'news': news,
+                                      'previous_launches': previous_launches,
+                                      'event': event,
+                                      'events': events})
 
 
 def app(request):
@@ -139,7 +141,7 @@ def app(request):
         return render(request, 'web/app.html', {'launch': in_flight_launch,
                                                 'youtube_url': get_youtube_url(in_flight_launch)})
 
-    recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - dt.timedelta(hours=2),
+    recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - timedelta(hours=2),
                                               net__lte=datetime.utcnow()).order_by('-net').first()
     if recently_launched:
         return render(request, 'web/app.html', {'launch': recently_launched,
@@ -149,19 +151,21 @@ def app(request):
         return render(request, 'web/app.html', {'launch': _next_launch,
                                                 'youtube_url': get_youtube_url(_next_launch)})
 
+
 @cache_page(120)
 # Create your views here.
 def next_launch(request):
     in_flight_launch = Launch.objects.filter(status__id=6).order_by('-net').first()
     if in_flight_launch:
         return redirect('launch_by_slug', slug=in_flight_launch.slug)
-    recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - dt.timedelta(hours=6),
+    recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - timedelta(hours=6),
                                               net__lte=datetime.utcnow()).order_by('-net').first()
     if recently_launched:
         return redirect('launch_by_slug', slug=recently_launched.slug)
     else:
         _next_launch = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net').first()
         return redirect('launch_by_slug', slug=_next_launch.slug)
+
 
 @cache_page(120)
 # Create your views here.
@@ -237,9 +241,9 @@ def create_launch_view(request, launch):
     else:
         template = 'web/launches/launch_detail_page.html'
     return render(request, template, {'launch': launch, 'launch_image': launch_image,
-                                                        'youtube_urls': youtube_urls, 'status': status,
-                                                        'agency': agency, 'launches': launches,
-                                                        'previous_launches': previous_launches})
+                                      'youtube_urls': youtube_urls, 'status': status,
+                                      'agency': agency, 'launches': launches,
+                                      'previous_launches': previous_launches})
 
 
 @cache_page(600)
@@ -269,9 +273,9 @@ def launches(request, ):
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
 
     return render(request, 'web/launches/launches_upcoming.html', {'launches': launches,
-                                                 'query': query,
-                                                 'previous_launches': previous_launches,
-                                                 'filters': True})
+                                                                   'query': query,
+                                                                   'previous_launches': previous_launches,
+                                                                   'filters': True})
 
 
 @cache_page(600)
@@ -327,9 +331,9 @@ def launches_vandenberg(request, ):
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
 
     return render(request, 'web/launches/launches_upcoming.html', {'launches': launches,
-                                                 'query': query,
-                                                 'previous_launches': previous_launches,
-                                                 'filters': False})
+                                                                   'query': query,
+                                                                   'previous_launches': previous_launches,
+                                                                   'filters': False})
 
 
 @cache_page(600)
@@ -361,10 +365,10 @@ def launches_spacex(request, ):
     spacex = Agency.objects.get(name="SpaceX")
 
     return render(request, 'web/launches/launches_upcoming.html', {'launches': launches,
-                                                 'query': query,
-                                                 'previous_launches': previous_launches,
-                                                 'filters': False,
-                                                 'agency': spacex})
+                                                                   'query': query,
+                                                                   'previous_launches': previous_launches,
+                                                                   'filters': False,
+                                                                   'agency': spacex})
 
 
 @cache_page(600)
@@ -394,9 +398,9 @@ def launches_florida(request, ):
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
 
     return render(request, 'web/launches/launches_upcoming.html', {'launches': launches,
-                                                 'query': query,
-                                                 'previous_launches': previous_launches,
-                                                 'filters': False})
+                                                                   'query': query,
+                                                                   'previous_launches': previous_launches,
+                                                                   'filters': False})
 
 
 @cache_page(600)
@@ -431,7 +435,7 @@ def spacecraft_by_id(request, id):
 
 @cache_page(600)
 def events_list(request):
-    last_six_hours = datetime.now() - dt.timedelta(hours=6)
+    last_six_hours = datetime.now() - timedelta(hours=6)
     events = Events.objects.all().filter(date__gte=last_six_hours).order_by('date')
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:6]
     return render(request, 'web/events/event_list.html', {'previous_launches': previous_launches,
@@ -446,6 +450,32 @@ def event_by_slug(request, slug):
         previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
         return render(request, 'web/events/event_detail.html', {'previous_launches': previous_launches,
                                                                 'event': event})
+    except ObjectDoesNotExist:
+        raise redirect('events_list')
+
+
+@cache_page(600)
+# Create your views here.
+def starship_page(request):
+    try:
+        events = Events.objects.filter(program=1).filter(date__gte=datetime.utcnow()).order_by('date')[:10]
+        launches = Launch.objects.filter(program=1).filter(net__gte=datetime.utcnow()).order_by('net')[:10]
+        vehicles = Launcher.objects.filter(launcher_config__program=1).order_by('status', 'serial_number')
+        combined = list(chain(events, launches))
+        combined = sorted(combined, key=lambda x: (x.date if isinstance(x, Events) else x.net))
+        live_streams = VidURLs.objects.filter(program=1)[:5]
+        road_closures = RoadClosure.objects.filter(window_end__gte=datetime.utcnow()).order_by('window_end')[:10]
+        notices = Notice.objects.filter(date__gte=datetime.utcnow()).order_by('date')[:10]
+        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+        return render(request, 'web/starship/starship_detail.html', {'previous_launches': previous_launches,
+                                                                     'events': events,
+                                                                     'launches': launches,
+                                                                     'road_closures': road_closures,
+                                                                     'notices': notices,
+                                                                     'live_streams': live_streams,
+                                                                     'next_up': combined[0],
+                                                                     'combined': combined[1:6],
+                                                                     'vehicles': vehicles})
     except ObjectDoesNotExist:
         raise redirect('events_list')
 
