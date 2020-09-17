@@ -15,6 +15,7 @@ from bot.app.events.event_tracker import EventTracker
 
 from bot.app.notifications.launch_event_tracker import LaunchEventTracker
 from bot.app.repository.launches_repository import LaunchRepository
+from bot.app.sync.closure_sync import get_road_closure
 from bot.app.sync.launch_library_sync import LaunchLibrarySync
 from bot.app.sync.reddit_sync import get_submissions
 from bot.app.sync.twitter_sync import get_new_tweets
@@ -71,6 +72,11 @@ def get_upcoming_launches():
     logger.info('Task - Get Upcoming launches!')
     repository = LaunchRepository()
     repository.get_next_launches(next_count=100, all=True)
+
+
+@periodic_task(run_every=(crontab(hour='*/12')), options={"expires": 15})
+def get_road_closures():
+    get_road_closure()
 
 
 def check_for_orphaned_launches(send_webhook=True):
