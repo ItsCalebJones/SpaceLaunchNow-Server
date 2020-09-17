@@ -41,7 +41,7 @@ from spacelaunchnow import settings
 from web import views as landing_views
 from app.views import staff_view, translator_view, about_view
 from web.sitemaps import StaticViewSitemap
-from web.views import LauncherConfigListView, LaunchFeed, EventFeed, LaunchListView
+from web.views import LauncherConfigListView, LaunchFeed, EventFeed, LaunchListView, AdsView
 
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
@@ -111,6 +111,7 @@ if settings.IS_WEBSERVER:
     web_settings = [
         url(r'^\.well-known/assetlinks\.json', landing_views.asset_file),
         url(r'^ads\.txt', include('ads_txt.urls')),
+        url(r'^app-ads\.txt', AdsView.as_view()),
         url(r'^next/', landing_views.next_launch, name='next'),
         url(r'^launch/$', LaunchListView.as_view()),
         url(r'^launch/upcoming/$', landing_views.launches, name='launches'),

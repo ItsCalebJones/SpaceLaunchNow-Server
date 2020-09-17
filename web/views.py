@@ -9,6 +9,7 @@ from itertools import chain
 from uuid import UUID
 
 import pytz
+from django.views import View
 from django.views.decorators.cache import cache_page
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
@@ -60,6 +61,14 @@ def asset_file(request):
     json_file = json.dumps(json_data)
     response = HttpResponse(json_file, content_type='application/json')
     return response
+
+
+class AdsView(View):
+    """Replace pub-0000000000000000 with your own publisher ID"""
+
+    def get(self, request, *args, **kwargs):
+        line = "google.com, pub-9824528399164059, DIRECT, f08c47fec0942fa0"
+        return HttpResponse(line)
 
 
 @cache_page(120)
