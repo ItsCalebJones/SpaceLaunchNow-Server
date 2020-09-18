@@ -73,13 +73,18 @@
                                         {% video my_video '100% x 100%' %}
                                     {% endif %}
                                 </div>
+                                <div class="card-body">
+                                    <div class="col-md-10 mx-auto">
+                                        <p class="card-description">{{ live_streams.0.description }}</p>
+                                    </div>
+                                </div>
                             {% endvideo %}
                             {% if live_streams.all|length > 1 %}
-                            <h3 class="title">Additional Livestreams</h3>
+                            <h2 class="title">Additional Livestreams</h2>
                                 {% for item in live_streams.all|slice:"1:" %}
                                     <div class="card card-plain card-blog">
                                         <div class="row">
-                                            <div class="col-md-5 mx-auto">
+                                            <div class="col-md-4 mx-auto">
                                             <br>
                                                 <div class="card-header card-header-image">
                                                     <a href="{{ item.vid_url }}">
@@ -90,7 +95,7 @@
                                                     </a>
                                                 </div>
                                             </div>
-                                            <div class="col-md-5 text-left">
+                                            <div class="col-md-6 text-left">
                                                 <h3 class="card-title">{{ item.title }}</h3>
                                                 <p class="card-description mt-1">
                                                     {{ item.description|truncatewords:50 }}
@@ -104,6 +109,9 @@
                             {% endif %}
                         </div>
                         {% endif %}
+                        <div class="col-md-10 mx-auto">
+                            <hr>
+                        </div>
                         {% if next_up|get_type == "event"  %}
                             <div class="card card-plain card-blog">
                                 <div class="card-header card-header-image" style="margin-left:16px!important; margin-right:16px!important;">
