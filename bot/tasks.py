@@ -76,6 +76,7 @@ def get_upcoming_launches():
 
 @periodic_task(run_every=(crontab(hour='*/6')), options={"expires": 15})
 def get_road_closures():
+    logger.info('Task - Get Road Closures!')
     get_road_closure()
 
 
