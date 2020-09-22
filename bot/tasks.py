@@ -74,7 +74,7 @@ def get_upcoming_launches():
     repository.get_next_launches(next_count=100, all=True)
 
 
-@periodic_task(run_every=(crontab(hour='*/12')), options={"expires": 15})
+@periodic_task(run_every=(crontab(hour='*/6')), options={"expires": 15})
 def get_road_closures():
     get_road_closure()
 
