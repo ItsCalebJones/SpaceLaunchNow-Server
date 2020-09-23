@@ -61,6 +61,7 @@ def get_road_closure():
         status = row.split('|')[3].replace('Closure ', '')
         closures.append([staTex, endTex, name, status])
 
+    logger.info("Found %s closures" % len(closures))
     for closure in closures:
         window_start = closure[0].astimezone(tz.tzutc())
         window_end = closure[1].astimezone(tz.tzutc())
@@ -75,5 +76,5 @@ def get_road_closure():
                                              window_start=window_start,
                                              window_end=window_end,
                                              status=status)
+            logger.info("Creating new Road Closure %s" % obj)
         obj.save()
-        logger.info(obj)
