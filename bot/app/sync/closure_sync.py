@@ -21,6 +21,9 @@ def get_road_closure():
     except Exception as e:
         logger.error(e)
         return
+    if response.code != 200:
+        logger.error("Received bad response code %s" % response.code)
+        return
     html_content = response.read()
 
     # Parse the html content
