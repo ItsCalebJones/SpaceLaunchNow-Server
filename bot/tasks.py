@@ -6,6 +6,8 @@ import requests
 from api.models import Launch
 from datetime import datetime, timedelta
 
+from celery import Celery
+
 from bot.app.digest.digest import DigestServer
 from celery.schedules import crontab
 from celery.task import periodic_task
@@ -22,10 +24,27 @@ from bot.app.sync.twitter_sync import get_new_tweets
 from bot.app.sync.news_sync import get_news
 from bot.models import LaunchNotificationRecord, RedditSubmission, Tweet, ArticleNotification
 from spacelaunchnow import config
+from celery.schedules import crontab
 
 logger = get_task_logger('bot.digest')
 
 TAG = 'Digest Server'
+
+app = Celery()
+
+
+@app.on_after_configure.connect
+def setup_periodic_tasks(sender, **kwargs):
+    # Calls test('hello') every 10 seconds.
+    sender.add_periodic_task(10.0, test.s('hello'), name='add every 10')
+
+    # Calls test('world') every 30 seconds
+    sender.add_periodic_task(30.0, test.s('world'), expires=10)
+
+
+@app.task
+def test(arg):
+    print(arg)
 
 
 @periodic_task(
@@ -69,7 +88,7 @@ def run_weekly():
 
 @periodic_task(run_every=(crontab(hour='*/2')), options={"expires": 15})
 def get_upcoming_launches():
-    logger.info('Task - Get Upcoming launches!')
+    logger.info('Task - Get Upcoming launches - every two hours!')
     repository = LaunchRepository()
     repository.get_next_launches(next_count=100, all=True)
 
