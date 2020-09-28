@@ -165,46 +165,6 @@
                                         {% endif %}
                                     {% endfor %}
                                 {% endif %}
-                                {% if launch.articles.all|length > 0 %}
-                                <h2 id="related-news" class="title text-center">Related News</h2>
-                                <hr>
-                                {% for item in launch.articles.all|slice:":5" %}
-                                    <div class="row">
-                                        <div class="col-lg-12 mx-auto">
-                                            <div class="card card-plain card-blog">
-                                                <div class="row">
-                                                    <div class="col-md-12 col-lg-5 my-auto">
-                                                        <div class="card-header card-header-image">
-                                                            <a href="{{ item.link }}">
-                                                                <img class="img" src="{{ item.featured_image }}">
-                                                            </a>
-                                                        <div class="colored-shadow" style="background-image: url({{ item.featured_image }}); opacity: 1;"></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12 col-lg-7">
-                                                        <div class="card-body text-left">
-                                                            <h6 class="card-category text-danger"><b>{{ item.news_site }}</b></h6>
-                                                            <h4 class="card-title">{{ item.title }}</h4>
-                                                            <div class="d-flex h-50 justify-content-between"
-                                                                 style="display: flex; flex-direction: column;">
-                                                                <p class="card-description">
-                                                                    {{ item.description|truncatechars:240 }}
-                                                                </p>
-                                                                <div style="justify-content: left;display: flex;">
-                                                                    <a href="{{ item.link }}" class="btn btn-primary">
-                                                                        <i class="material-icons">subject</i> Read Article
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                                {% endif %}
-
                             </div>
                         </div>
                     </div>
@@ -765,6 +725,52 @@
                         </div>
                     </div>
                 </div>
+                {% if launch.articles.all|length > 0 %}
+                <div class="row">
+                    <div class="card text-center">
+                        <div class="col-lg-12 text-center">
+                            <div class="card-header card-header-info text-center">
+                                    <h1 class="title text-white">Related News</h1>
+                            </div>
+                        </div>
+                        {% for item in launch.articles.all|slice:":5" %}
+                            <div class="row">
+                                <div class="col-lg-12 mx-auto">
+                                    <div class="card card-plain card-blog">
+                                        <div class="row">
+                                            <div class="col-md-12 col-lg-5 my-auto">
+                                                <div class="card-header card-header-image">
+                                                    <a href="{{ item.link }}">
+                                                        <img class="img" src="{{ item.featured_image }}">
+                                                    </a>
+                                                <div class="colored-shadow" style="background-image: url({{ item.featured_image }}); opacity: 1;"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 col-lg-7">
+                                                <div class="card-body text-left">
+                                                    <h6 class="card-category text-danger"><b>{{ item.news_site }}</b></h6>
+                                                    <h4 class="card-title">{{ item.title }}</h4>
+                                                    <div class="d-flex h-50 justify-content-between"
+                                                         style="display: flex; flex-direction: column;">
+                                                        <p class="card-description">
+                                                            {{ item.description|truncatechars:240 }}
+                                                        </p>
+                                                        <div style="justify-content: left;display: flex;">
+                                                            <a href="{{ item.link }}" class="btn btn-primary">
+                                                                <i class="material-icons">subject</i> Read Article
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
                 <div class="row">
                     <div class="card">
                         <div class="card-header card-header-info text-center">

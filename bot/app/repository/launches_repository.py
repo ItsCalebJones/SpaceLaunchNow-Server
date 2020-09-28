@@ -95,20 +95,26 @@ class LaunchRepository:
         total = None
         while total is None or count < total:
             response = self.launchLibrary.get_previous_launches(offset=count)
-            if response.status_code is 200:
-                response_json = response.json()
-                count = response_json['count'] + response_json['offset']
-                total = response_json['total']
-                launch_data = response_json['launches']
-                logger.info("Saving next %i launches - %s out of %s" % (len(launch_data), count, total))
+            try:
+                if response.status_code is 200:
+                    response_json = response.json()
+                    count = response_json['count'] + response_json['offset']
+                    total = response_json['total']
+                    launch_data = response_json['launches']
+                    logger.info("Saving next %i launches - %s out of %s" % (len(launch_data), count, total))
 
-                for launch in launch_data:
-                    launch = launch_json_to_model(launch)
-                    launch.save()
-                    launches.append(launch)
-                    logger.debug("Saving %d" % launch.id)
-            else:
-                logger.error('ERROR ' + str(response.status_code))
+                    for launch in launch_data:
+                        launch = launch_json_to_model(launch)
+                        launch.save()
+                        launches.append(launch)
+                        logger.debug("Saving %d" % launch.id)
+                else:
+                    logger.error('ERROR ' + str(response.status_code))
+                    logger.error('RESPONSE: ' + response.text)
+                    logger.error('URL: ' + response.url)
+                    break
+            except Exception as e:
+                logger.error(e)
                 logger.error('RESPONSE: ' + response.text)
                 logger.error('URL: ' + response.url)
                 break
