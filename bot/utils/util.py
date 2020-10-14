@@ -215,7 +215,7 @@ def get_fcm_strict_topics_v3(launch, debug=False, flutter=False, notification_ty
         location_topic = 'newZealand'
     elif location_id == 13:
         location_topic = 'frenchGuiana'
-    elif location_id == 143 or location_id == 9999:
+    elif location_id == 143 or location_id == 9999 or location_id == 29:
         location_topic = 'texas'
 
     if location_id == 20 or location_id == 144 or location_id == 22 or location_id == 3:
@@ -290,7 +290,7 @@ def get_fcm_not_strict_topics_v3(launch, debug=False, flutter=False, notificatio
         location_topic = 'newZealand'
     elif location_id == 13:
         location_topic = 'frenchGuiana'
-    elif location_id == 143 or location_id == 9999:
+    elif location_id == 143 or location_id == 9999 or location_id == 29:
         location_topic = 'texas'
     elif location_id == 20 or location_id == 144 or location_id == 22 or location_id == 3:
         location_topic = 'other'
