@@ -114,7 +114,7 @@ class Twitter(commands.Cog):
 
         """
         channel = context.message.channel
-        user = user.lower()
+        user_input = user
         if ' ' in user:
             await channel.send("No spaces in Twitter usernames!")
             return
@@ -135,13 +135,13 @@ class Twitter(commands.Cog):
             userObj = None
             tweetObj = None
             try:
-                tweets = twitter.statuses.user_timeline(screen_name=user, count=5)
+                tweets = twitter.statuses.user_timeline(screen_name=user_input, count=5)
             except TwitterError:
                 await channel.send('Error: User Doesn\'t Exist')
                 return
             userObj, created = TwitterUser.objects.get_or_create(user_id=tweets[0]['user']['id'])
             if len(userObj.subscribers.all().filter(channel_id=notif_channel.channel_id)) > 0:
-                await channel.send('Already subscribed to %s in this channel.' % user)
+                await channel.send('Already subscribed to %s in this channel.' % user_input)
                 return
             if not userObj.default:
                 userObj.custom = True
@@ -150,19 +150,7 @@ class Twitter(commands.Cog):
             userObj.profile_image = tweets[0]['user']['profile_image_url_https']
             userObj.subscribers.add(notif_channel)
             userObj.save()
-
-            for tweet in tweets:
-                tweetObj, created = Tweet.objects.get_or_create(id=tweet['id'], user=userObj, tweet_mode='extended')
-                tweetObj.text = tweet['full_text']
-                tweetObj.read = True
-                time_struct = time.strptime(tweet['created_at'], "%a %b %d %H:%M:%S +0000 %Y")
-                date = datetime.datetime.fromtimestamp(time.mktime(time_struct))
-                date = date.replace(tzinfo=pytz.utc)
-                tweetObj.created_at = date
-                tweetObj.user = userObj
-                tweetObj.save()
-            await channel.send('Subscribed to %s - here\'s the last tweet:' % userObj.name,
-                               embed=tweet_to_embed(userObj.tweets.order_by('created_at').first()))
+            await channel.send('Subscribed to @%s' % userObj.screen_name)
         else:
             await channel.send("Only server owners can add Twitter notification channels.")
 
@@ -176,7 +164,7 @@ class Twitter(commands.Cog):
 
         """
         channel = context.message.channel
-        user = user.lower()
+        user_input = user.lower()
         if ' ' in user:
             await channel.send("No spaces in Twitter usernames!")
             return
@@ -194,13 +182,13 @@ class Twitter(commands.Cog):
             )
             notif_channel.save()
             try:
-                user = TwitterUser.objects.get(screen_name=user)
+                user = TwitterUser.objects.get(screen_name__iexact=user_input)
             except TwitterUser.DoesNotExist:
                 user = None
             if user is None:
-                await channel.send("Not subscribed to %s in this channel." % user)
+                await channel.send("Not subscribed to %s in this channel." % user_input)
             else:
-                if len(TwitterUser.objects.filter(subscribers__in=[notif_channel])) > 0:
+                if len(user.subscribers.filter(channel_id=notif_channel.channel_id)) > 0:
                     user.subscribers.remove(notif_channel)
                     if len(user.subscribers.all()) == 0:
                         user.delete()
@@ -211,6 +199,36 @@ class Twitter(commands.Cog):
                     await channel.send("Not subscribed to %s in this channel." % user)
         else:
             await channel.send("Only server owners can add Twitter notification channels.")
+
+    @commands.command(name='nukeAllTwitterSubs', pass_context=True)
+    async def nuke_twitter(self, context):
+        """Remove all twitter subs for the channel this is ran in.
+
+        Usage: .sln nukeAllTwitterSubs
+
+        Examples: .sln nukeAllTwitterSubs
+
+        """
+        channel = context.message.channel
+
+        try:
+            owner_id = context.message.guild.owner_id
+            author_id = context.message.author.id
+        except:
+            await channel.send("Only able to run from a server channel.")
+            return
+        if owner_id == author_id:
+            notif_channel, created = TwitterNotificationChannel.objects.get_or_create(
+                name=context.message.channel.name,
+                channel_id=str(context.message.channel.id),
+                server_id=str(context.message.guild.id)
+            )
+            subscribed = TwitterUser.objects.filter(subscribers__exact=notif_channel)
+            for subscriber in subscribed:
+                subscriber.subscribers.remove(notif_channel)
+                subscriber.save()
+            await channel.send("Unsubscribed from %s users." % len(subscribed))
+
 
     @commands.command(name='listTwitterSubscriptions', pass_context=True)
     async def list_username(self, context):
