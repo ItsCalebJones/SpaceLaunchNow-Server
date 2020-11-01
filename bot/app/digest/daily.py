@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import pytz
 from num2words import num2words
 
@@ -15,9 +17,9 @@ logger = logging.getLogger('digest')
 def check_launch_daily(DEBUG=True):
     confirmed_launches = []
     possible_launches = []
-    repository = LaunchRepository()
     current_time = datetime.now(tz=pytz.utc)
-    for launch in repository.get_next_launches():
+    launches = Launch.objects.filter(net__gte=datetime.now()).filter(net__lte=datetime.now() + timedelta(days=2))
+    for launch in launches:
         update_notification_record(launch)
         if launch.net and (launch.net - current_time).total_seconds() < 172800:
             if launch.status.id == 1:

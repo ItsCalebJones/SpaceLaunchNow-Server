@@ -1,4 +1,7 @@
+from datetime import timedelta
+
 import pytz
+from api.models import Launch
 from num2words import num2words
 
 from bot.app.digest.sender import send_twitter_update
@@ -12,9 +15,9 @@ logger = logging.getLogger('digest')
 def check_launch_weekly(DEBUG=True):
     this_weeks_confirmed_launches = []
     this_weeks_possible_launches = []
-    repository = LaunchRepository()
     try:
-        for launch in repository.get_next_weeks_launches():
+        launches = Launch.objects.filter(net__gte=datetime.now()).filter(net__lte=datetime.now() + timedelta(days=7))
+        for launch in launches:
             update_notification_record(launch)
             if launch.status.id == 1 and launch.net:
                 this_weeks_confirmed_launches.append(launch)
