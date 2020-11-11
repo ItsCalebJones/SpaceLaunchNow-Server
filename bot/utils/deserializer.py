@@ -23,7 +23,7 @@ logger = logging.getLogger('bot.digest')
 def launch_status_json_to_model(data):
     id = data['id']
     name = data['name']
-    launch_status, created = LaunchStatus.objects.get_or_create(id=id, name=name)
+    launch_status, created = LaunchStatus.objects.get_or_create(id=id, legacy_name=name)
     return launch_status
 
 
