@@ -207,23 +207,11 @@ def launch_by_id(request, id):
         return redirect('launches')
 
 
-def get_launch_status(launch):
-    return {
-        1: 'Go for Launch',
-        2: 'Launch is NO-GO',
-        3: 'Successful Launch',
-        4: 'Launch Failed',
-        5: 'Unplanned Hold',
-        6: 'In Flight',
-        7: 'Partial Failure',
-    }[launch.status.id]
-
-
 @cache_page(120)
 def create_launch_view(request, launch):
     youtube_urls = []
     vids = launch.vid_urls.all()
-    status = get_launch_status(launch)
+    status = launch.status.full_name
     agency = launch.rocket.configuration.manufacturer
     launches_good = Launch.objects.filter(rocket__configuration__manufacturer=agency, status=3)
     launches_bad = Launch.objects.filter(Q(rocket__configuration__manufacturer=agency) & Q(Q(status=4) | Q(status=7)))
