@@ -16,7 +16,7 @@
                                                     {% elif launch.status.id == 4 or launch.status.id == 7 %} badge-danger
                                                     {% elif launch.status.id == 6 %} badge-warning
                                                     {% else %} badge-primary
-                                                    {% endif %}">{{ launch.status.name }}</span>
+                                                    {% endif %}">{{ launch.status.full_name }}</span>
                     </div>
                 </div>
                 <small class="text-muted text-center">{{ launch.net|timesince }} ago</small>

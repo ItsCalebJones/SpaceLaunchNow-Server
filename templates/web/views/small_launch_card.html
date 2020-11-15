@@ -2,7 +2,7 @@
 {% load static %}
 
 <div class="card text-left" style="margin-top: 75px">
-    <div class="card-header {% if 'GO' in launch.status.name %} card-header-success {% elif 'TBD' in launch.status.name %} card-header-danger {% else %} card-header-info {% endif %} p-2">
+    <div class="card-header {% if 'GO' in launch.status.full_name %} card-header-success {% elif 'TBD' in launch.status.full_name %} card-header-danger {% else %} card-header-info {% endif %} p-2">
         <div class="row">
             <div class="col-md-4 text-center" style="height: 150px">
                 {% if launch.image_url %}
@@ -30,7 +30,7 @@
     </div>
     <div class="card-body">
         {% if launch.status %}
-            <h5 class="card-text"><b>Status: </b>{{ launch.status.name }}</h5>
+            <h5 class="card-text"><b>Status: </b>{{ launch.status.full_name }}</h5>
         {% endif %}
         {% if launch.mission %}
             <h5 class="card-text"><b>Mission: </b>{{ launch.mission.type_name }}</h5>
