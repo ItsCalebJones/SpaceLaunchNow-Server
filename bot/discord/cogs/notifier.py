@@ -135,7 +135,7 @@ class Notifications(commands.Cog):
                     try:
                         channel = self.bot.get_channel(int(bot_channel.channel_id))
                         embed = launch_to_small_embed(launch,
-                                                      "**Launch was a %s!**\n\n" % launch.status.name, pre_launch=False)
+                                                      "**Launch was a %s!**\n\n" % launch.status.full_name, pre_launch=False)
                         await channel.send(embed=embed)
                     except Exception as e:
                         logger.error(bot_channel.channel_id)

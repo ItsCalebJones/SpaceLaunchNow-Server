@@ -20,7 +20,7 @@ def launch_to_large_embed(launch):
         launch.launch_service_provider.name, launch.launch_service_provider.abbrev,
         launch.launch_service_provider.administrator, launch.launch_service_provider.info_url,
         launch.launch_service_provider.wiki_url)
-    status = "**Status:** %s\n\n" % launch.status.name
+    status = "**Status:** %s\n\n" % launch.status.full_name
     vehicle_text = "\n\n**Launch Vehicle**\n" + launch.rocket.configuration.full_name
     vehicle_text = vehicle_text + "\nLEO: %s (kg) - GTO: %s (kg)" % (launch.rocket.configuration.leo_capacity,
                                                                      launch.rocket.configuration.gto_capacity)
@@ -90,7 +90,7 @@ def get_formatted_countdown(launch):
 def launch_to_small_embed(launch, notification="", pre_launch=False):
     title = "%s" % launch.name
     color = get_color(launch.status.id)
-    status = "**Status:** %s\n" % launch.status.name
+    status = "**Status:** %s\n" % launch.status.full_name
     location = "**Location:** %s\n" % launch.pad.name
     landing = ''
     if len(launch.rocket.firststage.all()) > 0:
@@ -195,7 +195,7 @@ def launch_list_to_embed(launches):
     description_text = "Here are the next five upcoming launches both confirmed and TBD.\n\n"
     for index, launch in enumerate(launches):
         name = "**%s - [%s](%s)**\n" % (index + 1, launch.name, launch.get_full_absolute_url())
-        status = "**Status:** %s\n" % launch.status.name
+        status = "**Status:** %s\n" % launch.status.full_name
         date = "**Date:** %s\n" % launch.net.strftime("%A %B %e, %Y %H:%M %Z")
         location = "**Location:** %s\n" % launch.pad.location.name
         description_text += "%s %s %s %s\n" % (name, status, date, location)
