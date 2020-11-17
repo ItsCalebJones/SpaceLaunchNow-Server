@@ -683,7 +683,7 @@ def astronaut_list(request, ):
                                                                  'nationality': nationality})
 
 
-def handler404(request):
+def handler404(request, exception):
     return render(request, 'web/404.html', status=404)
 
 

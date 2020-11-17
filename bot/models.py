@@ -124,7 +124,7 @@ class TwitterUser(models.Model):
 
 class Tweet(models.Model):
     id = models.BigIntegerField(primary_key=True)
-    user = models.ForeignKey(TwitterUser, related_name='tweets')
+    user = models.ForeignKey(TwitterUser, related_name='tweets', on_delete=models.CASCADE)
     text = models.CharField(max_length=1048, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
@@ -160,7 +160,7 @@ class Subreddit(models.Model):
 
 class RedditSubmission(models.Model):
     id = models.CharField(primary_key=True, max_length=255)
-    subreddit = models.ForeignKey(Subreddit, related_name='submissions')
+    subreddit = models.ForeignKey(Subreddit, related_name='submissions', on_delete=models.CASCADE)
     user = models.CharField(max_length=255, null=False)
     selftext = models.BooleanField(default=False)
     score = models.IntegerField(default=0)

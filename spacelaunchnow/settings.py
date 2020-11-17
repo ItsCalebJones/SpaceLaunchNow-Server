@@ -42,13 +42,8 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
     'DEFAULT_RENDERER_CLASSES': config.API_RENDERER,
     'DEFAULT_THROTTLE_CLASSES': (
-        'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttling.UserRateThrottle'
+        'api.throttle.RoleBasedUserRateThrottle',
     ),
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': '1000/day',
-        'user': '500/minute'
-    },
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
@@ -226,7 +221,6 @@ INSTALLED_APPS = [
     'app',
     'sorl.thumbnail',
     'sorl_thumbnail_serializer',
-    'ads_txt',
     'mathfilters',
     'django_tables2',
     'bootstrap4',
