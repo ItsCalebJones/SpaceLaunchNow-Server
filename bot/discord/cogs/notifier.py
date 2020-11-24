@@ -234,7 +234,7 @@ class Notifications(commands.Cog):
             logger.info("Sending notification to %s" % bot_channel.name)
             try:
                 channel = self.bot.get_channel(int(bot_channel.channel_id))
-                channel.send(embed=embed)
+                await channel.send(embed=embed)
             except Exception as e:
                 logger.error(bot_channel.channel_id)
                 logger.error(bot_channel.name)
