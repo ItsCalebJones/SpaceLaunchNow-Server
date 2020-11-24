@@ -34,10 +34,10 @@ class NewsNotificationHandler:
     def send_v3_notification(self, article, data):
         if not self.DEBUG:
             topics = "'prod_v3' in topics && 'featured_news' in topics"
-            flutter_topics = "'flutter_production_v2' in topics && 'featured_news' in topics"
+            flutter_topics = "'flutter_production_v3' in topics && 'featured_news' in topics"
         else:
             topics = "'debug_v3' in topics && 'featured_news' in topics"
-            flutter_topics = "'flutter_debug_v2' in topics && 'featured_news' in topics"
+            flutter_topics = "'flutter_debug_v3' in topics && 'featured_news' in topics"
         self.send_to_fcm(article, data, topics, flutter_topics)
 
     def send_v2_notification(self, article, data):
