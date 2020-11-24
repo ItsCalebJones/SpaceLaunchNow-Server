@@ -1,2 +1,2 @@
 -r common.txt
-django-launch-library==2.3.3
+django-launch-library==2.3.4

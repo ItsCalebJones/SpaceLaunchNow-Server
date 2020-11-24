@@ -35,6 +35,8 @@ if DEBUG:
 else:
     ALLOWED_HOSTS = ['.calebjones.me', '.spacelaunchnow.me', 'spacelaunchnow.me', '.calebjones.dev', '0.0.0.0']
 
+DISABLE_THROTTLE = os.getenv('DISABLE_THROTTLE', False)
+
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'spacelaunchnow.pagination.SLNLimitOffsetPagination',
     'DEFAULT_MODEL_SERIALIZER_CLASS': 'drf_toolbox.serializers.ModelSerializer',
@@ -42,13 +44,8 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
     'DEFAULT_RENDERER_CLASSES': config.API_RENDERER,
     'DEFAULT_THROTTLE_CLASSES': (
-        'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttling.UserRateThrottle'
+        'api.throttle.RoleBasedUserRateThrottle',
     ),
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': '1000/day',
-        'user': '9999/minute'
-    },
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
