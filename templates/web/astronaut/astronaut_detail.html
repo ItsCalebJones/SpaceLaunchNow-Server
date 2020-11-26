@@ -113,7 +113,7 @@
                         </div>
                         {% for launch in upcoming_launches %}
                             <div class="card text-left" style="margin-top: 75px">
-                                <div class="card-header {% if 'GO' in launch.status.name %} card-header-success {% elif 'TBD' in launch.status.name %} card-header-danger {% else %} card-header-info {% endif %} p-2">
+                                <div class="card-header {% if 'GO' in launch.status.abbrev %} card-header-success {% elif 'TBD' in launch.status.abbrev %} card-header-danger {% else %} card-header-info {% endif %} p-2">
                                     <div class="row">
                                         <div class="col-md-4 text-center" style="height: 150px">
                                             {% if launch.rocket.configuration.image_url %}
@@ -145,7 +145,7 @@
                                 </div>
                                 <div class="card-body">
                                     {% if launch.status %}
-                                        <h5 class="card-text"><b>Status: </b>{{ launch.status.name }}</h5>
+                                        <h5 class="card-text"><b>Status: </b>{{ launch.status.abbrev }}</h5>
                                     {% endif %}
                                     {% if launch.mission %}
                                         <h5 class="card-text"><b>Mission: </b>{{ launch.mission.type_name }}</h5>
@@ -193,7 +193,7 @@
                         </div>
                         {% for launch in previous_astronaut_launches %}
                             <div class="card text-left" style="margin-top: 75px">
-                                <div class="card-header {% if 'GO' in launch.status.name %} card-header-success {% elif 'TBD' in launch.status.name %} card-header-danger {% else %} card-header-info {% endif %} p-2">
+                                <div class="card-header {% if 'GO' in launch.status.abbrev %} card-header-success {% elif 'TBD' in launch.status.abbrev %} card-header-danger {% else %} card-header-info {% endif %} p-2">
                                     <div class="row">
                                         <div class="col-md-4 text-center" style="height: 150px">
                                             {% if launch.rocket.configuration.image_url %}
@@ -225,7 +225,7 @@
                                 </div>
                                 <div class="card-body">
                                     {% if launch.status %}
-                                        <h5 class="card-text"><b>Status: </b>{{ launch.status.name }}</h5>
+                                        <h5 class="card-text"><b>Status: </b>{{ launch.status.abbrev }}</h5>
                                     {% endif %}
                                     {% if launch.mission %}
                                         <h5 class="card-text"><b>Mission: </b>{{ launch.mission.type_name }}</h5>

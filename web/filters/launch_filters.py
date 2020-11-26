@@ -10,8 +10,8 @@ class LaunchListFilter(django_filters.FilterSet):
     location = django_filters.ModelChoiceFilter(field_name='pad__location',
                                                 queryset=Location.objects.all(),
                                                 label="Location")
-    start_date = django_filters.DateFilter(name='net', lookup_expr='gte', label="Start Date")
-    end_date = django_filters.DateFilter(name='net', lookup_expr='lte', label="End Date")
+    start_date = django_filters.DateFilter(field_name='net', lookup_expr='gte', label="Start Date")
+    end_date = django_filters.DateFilter(field_name='net', lookup_expr='lte', label="End Date")
 
     class Meta:
         model = Launch
