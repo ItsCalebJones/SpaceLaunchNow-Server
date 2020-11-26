@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.db.models.functions import datetime
 from pytz import utc
@@ -6,7 +7,7 @@ from api.models import Launch, Events, Article
 
 
 class LaunchNotificationRecord(models.Model):
-    launch = models.OneToOneField(Launch, on_delete=models.CASCADE)
+    launch_id = models.UUIDField(default=uuid.uuid4, editable=False, blank=False, null=False)
 
     wasNotifiedWebcastLive = models.BooleanField(blank=True, default=False)
     wasNotifiedTwentyFourHour = models.BooleanField(blank=True, default=False)
@@ -41,10 +42,10 @@ class LaunchNotificationRecord(models.Model):
     wasNotifiedWebcastDiscord = models.BooleanField(blank=True, default=False)
 
     def __unicode__(self):
-        return self.launch.name
+        return str(self.launch_id)
 
     def __str__(self):
-        return self.launch.name
+        return str(self.launch_id)
 
     def days_to_launch(self):
         if self.last_net_stamp:

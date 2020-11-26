@@ -25,14 +25,14 @@ class NetstampHandler:
         now = datetime.now(tz=pytz.utc)
         old = notification.last_net_stamp
         new = launch.net
-        self.update_notification_record(diff, notification)
+        self.update_notification_record(diff, launch, notification)
 
         if new <= now + timedelta(hours=72) and old <= now + timedelta(hours=24):
             logger.info('Netstamp Changed and within window - sending mobile notification.')
             self.notification_handler.send_notification(launch, 'netstampChanged', notification)
         self.social_handler.send_to_twitter(launch, 'netstampChanged')
 
-    def update_notification_record(self, diff, notification):
+    def update_notification_record(self, diff, launch, notification):
         # If launch is within 24 hours...
         if 86400 >= diff > 3600:
             logger.info('Launch is within 24 hours, resetting notifications.')
@@ -83,9 +83,9 @@ class NetstampHandler:
             notification.wasNotifiedOneHourDiscord = False
             notification.wasNotifiedTenMinutesDiscord = False
         notification.last_twitter_post = datetime.now(tz=pytz.utc)
-        notification.last_net_stamp = notification.launch.net
+        notification.last_net_stamp = launch.net
         notification.last_net_stamp_timestamp = datetime.now(tz=pytz.utc)
-        logger.info('Updating Notification %s to timestamp %s' % (notification.launch.id,
+        logger.info('Updating Notification %s to timestamp %s' % (launch.id,
                                                                   notification.last_twitter_post
                                                                   .strftime("%A %d. %B %Y")))
         notification.save()

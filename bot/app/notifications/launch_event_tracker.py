@@ -30,7 +30,7 @@ class LaunchEventTracker:
 
     def check_next_stamp_changed(self, launch):
         logger.debug('Running check_next_stamp_changed for %s...', launch.name)
-        notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
+        notification, created = LaunchNotificationRecord.objects.get_or_create(launch_id=launch.id)
         if launch.net:
             current_time = datetime.now(tz=pytz.utc)
             launch_time = launch.net
@@ -60,7 +60,7 @@ class LaunchEventTracker:
                 status = 'partial_failure'
             else:
                 return
-            notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
+            notification, created = LaunchNotificationRecord.objects.get_or_create(launch_id=launch.id)
             logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
             try:
                 if not notification.wasNotifiedSuccess:
@@ -78,9 +78,9 @@ class LaunchEventTracker:
                     logger.info('Sending Twitter notification for %s!', launch.name)
                     notification.wasNotifiedSuccessTwitter = True
                     notification.last_twitter_post = datetime.now(tz=pytz.utc)
-                    notification.last_net_stamp = notification.launch.net
+                    notification.last_net_stamp = launch.net
                     notification.last_net_stamp_timestamp = datetime.now(tz=pytz.utc)
-                    logger.debug('Updating Notification %s to timestamp %s' % (notification.launch.id,
+                    logger.debug('Updating Notification %s to timestamp %s' % (launch.id,
                                                                                notification.last_twitter_post
                                                                                .strftime("%A %d. %B %Y")))
                     notification.save()
@@ -95,7 +95,7 @@ class LaunchEventTracker:
 
         logger.debug('Found %d launches in flight - checking state.', len(launches))
         for launch in launches:
-            notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
+            notification, created = LaunchNotificationRecord.objects.get_or_create(launch_id=launch.id)
             logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
             try:
                 if not notification.wasNotifiedInFlight:
@@ -113,9 +113,9 @@ class LaunchEventTracker:
                     logger.info('Sending Twitter notification for %s!', launch.name)
                     notification.wasNotifiedInFlightTwitter = True
                     notification.last_twitter_post = datetime.now(tz=pytz.utc)
-                    notification.last_net_stamp = notification.launch.net
+                    notification.last_net_stamp = launch.net
                     notification.last_net_stamp_timestamp = datetime.now(tz=pytz.utc)
-                    logger.debug('Updating Notification %s to timestamp %s' % (notification.launch.id,
+                    logger.debug('Updating Notification %s to timestamp %s' % (launch.id,
                                                                                notification.last_twitter_post
                                                                                .strftime("%A %d. %B %Y")))
                     notification.save()
@@ -146,7 +146,7 @@ class LaunchEventTracker:
         logger.debug('Found %d launches within one minute - checking state.', len(launches))
         for launch in launches:
             self.check_next_stamp_changed(launch)
-            notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
+            notification, created = LaunchNotificationRecord.objects.get_or_create(launch_id=launch.id)
             logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
 
             try:
@@ -165,9 +165,9 @@ class LaunchEventTracker:
                     logger.info('Sending Twitter notification for %s!', launch.name)
                     notification.wasNotifiedOneMinuteTwitter = True
                     notification.last_twitter_post = datetime.now(tz=pytz.utc)
-                    notification.last_net_stamp = notification.launch.net
+                    notification.last_net_stamp = launch.net
                     notification.last_net_stamp_timestamp = datetime.now(tz=pytz.utc)
-                    logger.debug('Updating Notification %s to timestamp %s' % (notification.launch.id,
+                    logger.debug('Updating Notification %s to timestamp %s' % (launch.id,
                                                                                notification.last_twitter_post
                                                                                .strftime("%A %d. %B %Y")))
                     notification.save()
@@ -185,7 +185,7 @@ class LaunchEventTracker:
         logger.debug('Found %d launches within ten minutes - checking state.', len(launches))
         for launch in launches:
             self.check_next_stamp_changed(launch)
-            notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
+            notification, created = LaunchNotificationRecord.objects.get_or_create(launch_id=launch.id)
             logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
 
             try:
@@ -204,9 +204,9 @@ class LaunchEventTracker:
                     logger.info('Sending Twitter notification for %s!', launch.name)
                     notification.wasNotifiedTenMinutesTwitter = True
                     notification.last_twitter_post = datetime.now(tz=pytz.utc)
-                    notification.last_net_stamp = notification.launch.net
+                    notification.last_net_stamp = launch.net
                     notification.last_net_stamp_timestamp = datetime.now(tz=pytz.utc)
-                    logger.debug('Updating Notification %s to timestamp %s' % (notification.launch.id,
+                    logger.debug('Updating Notification %s to timestamp %s' % (launch.id,
                                                                                notification.last_twitter_post
                                                                                .strftime("%A %d. %B %Y")))
 
@@ -226,7 +226,7 @@ class LaunchEventTracker:
 
         for launch in launches:
             self.check_next_stamp_changed(launch)
-            notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
+            notification, created = LaunchNotificationRecord.objects.get_or_create(launch_id=launch.id)
             logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
 
             try:
@@ -245,9 +245,9 @@ class LaunchEventTracker:
                     logger.info('Sending Twitter notification for %s!', launch.name)
                     notification.wasNotifiedTwentyFourHourTwitter = True
                     notification.last_twitter_post = datetime.now(tz=pytz.utc)
-                    notification.last_net_stamp = notification.launch.net
+                    notification.last_net_stamp = launch.net
                     notification.last_net_stamp_timestamp = datetime.now(tz=pytz.utc)
-                    logger.debug('Updating Notification %s to timestamp %s' % (notification.launch.id,
+                    logger.debug('Updating Notification %s to timestamp %s' % (launch.id,
                                                                                notification.last_twitter_post
                                                                                .strftime("%A %d. %B %Y")))
                     notification.save()
@@ -266,7 +266,7 @@ class LaunchEventTracker:
 
         for launch in launches:
             self.check_next_stamp_changed(launch)
-            notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
+            notification, created = LaunchNotificationRecord.objects.get_or_create(launch_id=launch.id)
             logger.debug('Notification for %s: %s', launch.name, notification.__dict__)
 
             try:
@@ -285,9 +285,9 @@ class LaunchEventTracker:
                     logger.info('Sending Twitter notification for %s!', launch.name)
                     notification.wasNotifiedOneHourTwitter = True
                     notification.last_twitter_post = datetime.now(tz=pytz.utc)
-                    notification.last_net_stamp = notification.launch.net
+                    notification.last_net_stamp = launch.net
                     notification.last_net_stamp_timestamp = datetime.now(tz=pytz.utc)
-                    logger.debug('Updating Notification %s to timestamp %s' % (notification.launch.id,
+                    logger.debug('Updating Notification %s to timestamp %s' % (launch.id,
                                                                                notification.last_twitter_post
                                                                                .strftime("%A %d. %B %Y")))
                     notification.save()
@@ -310,7 +310,7 @@ class LaunchEventTracker:
 
         for launch in launches:
             self.check_next_stamp_changed(launch)
-            notification, created = LaunchNotificationRecord.objects.get_or_create(launch=launch)
+            notification, created = LaunchNotificationRecord.objects.get_or_create(launch_id=launch.id)
             logger.info('Notification for %s: %s', launch.name, notification.__dict__)
 
             try:
@@ -329,9 +329,9 @@ class LaunchEventTracker:
                     logger.info('Sending Twitter notification for %s!', launch.name)
                     notification.wasNotifiedWebcastLiveTwitter = True
                     notification.last_twitter_post = datetime.now(tz=pytz.utc)
-                    notification.last_net_stamp = notification.launch.net
+                    notification.last_net_stamp = launch.net
                     notification.last_net_stamp_timestamp = datetime.now(tz=pytz.utc)
-                    logger.info('Updating Notification %s to timestamp %s' % (notification.launch.id,
+                    logger.info('Updating Notification %s to timestamp %s' % (launch.id,
                                                                                notification.last_twitter_post
                                                                                .strftime("%A %d. %B %Y")))
                     notification.save()

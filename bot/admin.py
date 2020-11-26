@@ -7,11 +7,11 @@ from . import models
 
 @admin.register(models.LaunchNotificationRecord)
 class NotificationAdmin(admin.ModelAdmin):
-    list_display = ('launch', 'last_net_stamp', 'last_twitter_post', 'last_notification_sent',
+    list_display = ('launch_id', 'last_net_stamp', 'last_twitter_post', 'last_notification_sent',
                     'last_notification_recipient_count', 'days_to_launch')
     readonly_fields = ('days_to_launch',)
-    ordering = ('launch__net',)
-    search_fields = ('launch__name',)
+    ordering = ('last_net_stamp',)
+    search_fields = ('launch_id',)
 
 
 @admin.register(models.Notification)

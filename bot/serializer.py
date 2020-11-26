@@ -1,4 +1,4 @@
-from bot.models import Launch, LaunchNotificationRecord, DailyDigestRecord
+from bot.models import LaunchNotificationRecord, DailyDigestRecord
 from rest_framework import serializers
 
 
@@ -7,7 +7,7 @@ class NotificationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = LaunchNotificationRecord
         fields = (
-            'launch', 'url', 'wasNotifiedTwentyFourHour', 'wasNotifiedOneHour', 'wasNotifiedTenMinutes',
+            'launch_id', 'url', 'wasNotifiedTwentyFourHour', 'wasNotifiedOneHour', 'wasNotifiedTenMinutes',
             'wasNotifiedDailyDigest', 'last_twitter_post', 'last_net_stamp',
             'last_net_stamp_timestamp'
         )
