@@ -28,7 +28,7 @@ class Command(BaseCommand):
         dayago = now - timedelta(days=1)
         launches = Launch.objects.all().filter(net__gte=dayago).order_by('net', 'id').distinct()
         for launch in launches[:1]:
-            notification_obj = LaunchNotificationRecord.objects.get(launch=launch)
+            notification_obj = LaunchNotificationRecord.objects.get(launch_id=launch.id)
             # TODO pass in parameter for setting the notification_type
             notification.send_notification(launch, 'twentyFourHour', notification_obj)
 

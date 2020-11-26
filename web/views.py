@@ -448,7 +448,7 @@ def event_by_slug(request, slug):
         return render(request, 'web/events/event_detail.html', {'previous_launches': previous_launches,
                                                                 'event': event})
     except ObjectDoesNotExist:
-        raise redirect('events_list')
+        raise Http404
 
 
 @cache_page(600)
@@ -481,7 +481,7 @@ def event_by_id(request, id):
     try:
         return redirect('event_by_slug', slug=Events.objects.get(id=id).slug)
     except ObjectDoesNotExist:
-        raise redirect('events_list')
+        raise Http404
 
 
 @cache_page(600)
