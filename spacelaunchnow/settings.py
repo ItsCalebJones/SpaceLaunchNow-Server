@@ -51,6 +51,9 @@ REST_FRAMEWORK = {
     )
 }
 
+DISABLE_THROTTLE = os.getenv('DISABLE_THROTTLE', False)
+
+DISCORD_WEBHOOK = os.getenv('WEBHOOK_URL', None)
 
 LOGIN_REDIRECT_URL = '/'
 
