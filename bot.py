@@ -8,7 +8,7 @@ from collections import Counter
 
 import django
 from discord.ext import commands
-
+os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "spacelaunchnow.settings")
 django.setup()
 
