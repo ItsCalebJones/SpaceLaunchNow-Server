@@ -42,6 +42,7 @@ html5lib==0.999999999
 httplib2==0.11.3
 itypes==1.1.0
 markdown==3.1.1
+model-bakery==1.2.1
 num2words==0.5.4
 kombu==4.2.1
 pilkit==2.0
