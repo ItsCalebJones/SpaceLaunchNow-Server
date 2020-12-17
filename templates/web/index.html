@@ -245,6 +245,7 @@
                         </div>
                     </div>
                         <div class="row">
+                            {% if second_launch %}
                             <div class="col-md-4 mx-auto">
                                 <div class="info info-horizontal">
                                     <a href="/launch/upcoming/spacex">
@@ -261,6 +262,7 @@
                                     </a>
                                 </div>
                             </div>
+                            {% endif %}
                             <div class="col-md-4 mx-auto">
                                 <div class="info info-horizontal">
                                     <a href="/launch/upcoming/florida">
@@ -343,13 +345,16 @@
                             <hr>
                         </div>
                         <div class="col-md-12">
+                            {% if event %}
                             <div class="card card-plain card-blog">
                                 <div class="card-header card-header-image">
                                     <a href="/event/{{ event.slug }}">
+                                        {% if event.feature_image %}
                                         <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
                                              src="{{ event.feature_image.url }}">
                                         <div class="colored-shadow"
                                              style="background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
+                                        {% endif %}
                                     </a>
                                 </div>
                                 <div class="card-body">
@@ -372,12 +377,14 @@
                                     </div>
                                 </div>
                             </div>
+                            {% endif %}
                             {% if events|length > 0 %}
                                 <div class="row">
                                     {% for event in events %}
                                         <div class="col-md-4">
                                             <div class="card card-plain card-blog">
                                                 <div class="card-header card-header-image">
+                                                    {% if event.feature_image %}
                                                     <a href="/event/{{ event.slug }}">
                                                         <img class="img img-raised"
                                                              style="height: 175px; object-fit: cover;"
@@ -386,6 +393,7 @@
                                                              style="height: 175px; object-fit: cover;"
                                                              style="background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
                                                     </a>
+                                                    {% endif %}
                                                 </div>
                                                 <div class="card-body">
                                                     <h6 class="card-category text-info"
