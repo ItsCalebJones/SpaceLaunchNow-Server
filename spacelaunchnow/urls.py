@@ -35,7 +35,8 @@ from api.endpoints.sln.v320.router import api_urlpatterns as api_v320
 from api.endpoints.sln.v330.router import api_urlpatterns as api_v330
 from api.endpoints.sln.v340.router import api_urlpatterns as api_v340
 from api.endpoints.sln.v350.router import api_urlpatterns as api_v350
-from api.endpoints.library.v200.router import api_urlpatterns as api_vll2
+from api.endpoints.library.v200.router import api_urlpatterns as ll_api_v200
+from api.endpoints.library.v210.router import api_urlpatterns as ll_api_v210
 
 from spacelaunchnow import settings
 from web import views as landing_views
@@ -101,7 +102,8 @@ if settings.IS_API:
         url(r'^3.2.0/', include(api_v320)),
         url(r'^api/3.3.0/', include(api_v330)),
         url(r'^api/3.4.0/', include(api_v340)),
-        url(r'^api/ll/2.0.0/', include(api_vll2)),
+        url(r'^api/ll/2.0.0/', include(ll_api_v200)),
+        url(r'^api/ll/2.1.0/', include(ll_api_v210)),
         url(r'^api-auth/', include('rest_framework.urls')),
 
     ]

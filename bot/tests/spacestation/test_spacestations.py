@@ -3,9 +3,9 @@ import unittest
 
 from rest_framework import status
 
-from LaunchLibrary import settings
 from api.models import SpaceStation
 from api.tests.test__base import LLAPITests
+from spacelaunchnow import settings
 
 
 class SpaceStationTest(LLAPITests):

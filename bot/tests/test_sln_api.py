@@ -45,6 +45,16 @@ class SLNAPITest(LLAPITests):
             response = self.client.get(path)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_ll_200_api_online(self):
+            path = '/api/ll/2.0.0/'
+            response = self.client.get(path)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_ll_210_api_online(self):
+            path = '/api/ll/2.1.0/'
+            response = self.client.get(path)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
     def check_permissions(self, path):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.post(path, **self.header)

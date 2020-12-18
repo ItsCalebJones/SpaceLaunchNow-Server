@@ -4,7 +4,8 @@ import unittest
 from rest_framework import status
 
 from api.models import SpacecraftConfiguration
-from api.tests.test__base import LLAPITests, settings
+from api.tests.test__base import LLAPITests
+from spacelaunchnow import settings
 
 
 class OrbiterTests(LLAPITests):
