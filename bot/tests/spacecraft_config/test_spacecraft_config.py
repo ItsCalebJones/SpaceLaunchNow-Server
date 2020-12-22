@@ -1,54 +1,16 @@
 import json
+import unittest
 
 from rest_framework import status
 
 from api.models import SpacecraftConfiguration
-from bot.tests.test__base import SLNAPITests
+from api.tests.test__base import LLAPITests
+from spacelaunchnow import settings
 
 
-class OrbiterTests(SLNAPITests):
+class OrbiterTests(LLAPITests):
 
-    # def test_v1_orbiters(self):
-    #     """
-    #     Ensure launch endpoints work as expected.
-    #     """
-    #     # Test Normal endpoint
-    #
-    #     path = '/v1/orbiters/'
-    #     response = self.client.get(path)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     data = json.loads(response.content.decode('utf-8'))
-    #     self.assertEqual(data['count'], 1)
-    #     dragon = SpacecraftConfiguration.objects.get(pk=data['results'][0]['id'])
-    #     self.assertEqual(data['results'][0]['id'], dragon.id)
-    #     self.assertEqual(data['results'][0]['name'], dragon.name)
-    #     self.assertEqual(data['results'][0]['agency'], dragon.manufacturer.name)
-    #     self.assertEqual(data['results'][0]['details'], dragon.details)
-    #     self.assertEqual(data['results'][0]['history'], dragon.history)
-    #
-    #     self.check_permissions(path)
-    #
-    # def test_v200_orbiters(self):
-    #     """
-    #     Ensure launch endpoints work as expected.
-    #     """
-    #     # Test Normal endpoint
-    #     path = '/2.0.0/orbiters/'
-    #     response = self.client.get(path)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     data = json.loads(response.content.decode('utf-8'))
-    #     self.assertEqual(data['count'], 1)
-    #     dragon = SpacecraftConfiguration.objects.get(pk=data['results'][0]['id'])
-    #     self.assertEqual(data['results'][0]['id'], dragon.id)
-    #     self.assertEqual(data['results'][0]['name'], dragon.name)
-    #     self.assertEqual(data['results'][0]['agency'], dragon.manufacturer.name)
-    #     self.assertEqual(data['results'][0]['details'], dragon.details)
-    #     self.assertEqual(data['results'][0]['history'], dragon.history)
-    #     self.assertEqual(data['results'][0]['in_use'], dragon.in_use)
-    #     self.assertEqual(data['results'][0]['capability'], dragon.capability)
-    #
-    #     self.check_permissions(path)
-
+    @unittest.skipIf(settings.IS_LL, "Not supported in this configuration.")
     def test_v300_orbiters(self):
         """
         Ensure launch endpoints work as expected.
@@ -58,7 +20,7 @@ class OrbiterTests(SLNAPITests):
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(data['count'], 1)
+        self.assertEqual(data['count'], SpacecraftConfiguration.objects.all().count())
         dragon = SpacecraftConfiguration.objects.get(pk=data['results'][0]['id'])
         self.assertEqual(data['results'][0]['id'], dragon.id)
         self.assertEqual(data['results'][0]['name'], dragon.name)
@@ -69,6 +31,7 @@ class OrbiterTests(SLNAPITests):
 
         self.check_permissions(path)
 
+    @unittest.skipIf(settings.IS_LL, "Not supported in this configuration.")
     def test_v320_orbiters(self):
         """
         Ensure launch endpoints work as expected.
@@ -78,7 +41,7 @@ class OrbiterTests(SLNAPITests):
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(data['count'], 1)
+        self.assertEqual(data['count'], SpacecraftConfiguration.objects.all().count())
         dragon = SpacecraftConfiguration.objects.get(pk=data['results'][0]['id'])
         self.assertEqual(data['results'][0]['id'], dragon.id)
         self.assertEqual(data['results'][0]['name'], dragon.name)
@@ -97,6 +60,7 @@ class OrbiterTests(SLNAPITests):
 
         self.check_permissions(path)
 
+    @unittest.skipIf(settings.IS_LL, "Not supported in this configuration.")
     def test_v330_orbiters_list(self):
         """
         Ensure orbiter endpoints work as expected. Now config.
@@ -105,7 +69,7 @@ class OrbiterTests(SLNAPITests):
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(data['count'], 1)
+        self.assertEqual(data['count'], SpacecraftConfiguration.objects.all().count())
         dragon = SpacecraftConfiguration.objects.get(pk=data['results'][0]['id'])
         self.assertEqual(data['results'][0]['id'], dragon.id)
         self.assertEqual(data['results'][0]['name'], dragon.name)
@@ -124,6 +88,7 @@ class OrbiterTests(SLNAPITests):
 
         self.check_permissions(path)
 
+    @unittest.skipIf(settings.IS_LL, "Not supported in this configuration.")
     def test_v330_orbiters_by_id(self):
         """
         Ensure orbiter endpoints work as expected. Now config.
@@ -132,7 +97,7 @@ class OrbiterTests(SLNAPITests):
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(data['count'], 1)
+        self.assertEqual(data['count'], SpacecraftConfiguration.objects.all().count())
         dragon = SpacecraftConfiguration.objects.get(pk=data['results'][0]['id'])
 
         path = '/api/3.3.0/config/spacecraft/%s/' % dragon.id
@@ -157,6 +122,7 @@ class OrbiterTests(SLNAPITests):
 
         self.check_permissions(path)
 
+    @unittest.skipIf(settings.IS_LL, "Not supported in this configuration.")
     def test_v330_orbiters_detailed(self):
         """
         Ensure orbiter endpoints work as expected. Now config.
@@ -165,7 +131,7 @@ class OrbiterTests(SLNAPITests):
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(data['count'], 1)
+        self.assertEqual(data['count'], SpacecraftConfiguration.objects.all().count())
         dragon = SpacecraftConfiguration.objects.get(pk=data['results'][0]['id'])
         self.assertEqual(data['results'][0]['id'], dragon.id)
         self.assertEqual(data['results'][0]['name'], dragon.name)

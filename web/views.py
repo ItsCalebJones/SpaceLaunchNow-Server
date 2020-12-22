@@ -114,16 +114,20 @@ def index(request):
         first_launch_image = first_launch.infographic_url.url
     else:
         first_launch_image = None
-    second_launch = _launches[1]
 
-    if second_launch.image_url:
-        second_launch_image = second_launch.image_url.url
-    elif second_launch.rocket.configuration.image_url:
-        second_launch_image = second_launch.rocket.configuration.image_url.url
-    elif second_launch.infographic_url:
-        second_launch_image = second_launch.infographic_url.url
-    else:
-        second_launch_image = None
+    second_launch = None
+    second_launch_image = None
+
+    if len(_launches) > 2:
+        second_launch = _launches[1]
+        if second_launch.image_url:
+            second_launch_image = second_launch.image_url.url
+        elif second_launch.rocket.configuration.image_url:
+            second_launch_image = second_launch.rocket.configuration.image_url.url
+        elif second_launch.infographic_url:
+            second_launch_image = second_launch.infographic_url.url
+        else:
+            second_launch_image = None
 
     user_agent = get_user_agent(request)
     if user_agent.is_mobile:
@@ -686,7 +690,7 @@ def astronaut_list(request, ):
                                                                  'nationality': nationality})
 
 
-def handler404(request):
+def handler404(request, exception):
     return render(request, 'web/404.html', status=404)
 
 

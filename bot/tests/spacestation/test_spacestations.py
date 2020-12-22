@@ -1,13 +1,16 @@
 import json
+import unittest
 
 from rest_framework import status
 
 from api.models import SpaceStation
-from bot.tests.test__base import SLNAPITests
+from api.tests.test__base import LLAPITests
+from spacelaunchnow import settings
 
 
-class SpaceStationTest(SLNAPITests):
+class SpaceStationTest(LLAPITests):
 
+    @unittest.skipIf(settings.IS_LL, "Not supported in this configuration.")
     def test_v330_spacestations(self):
         """
         Ensure spacestation endpoints work as expected.
@@ -23,6 +26,7 @@ class SpaceStationTest(SLNAPITests):
         self.assertEqual(data['results'][0]['description'], iss.description)
         self.assertEqual(data['results'][0]['orbit'], iss.orbit.name)
 
+    @unittest.skipIf(settings.IS_LL, "Not supported in this configuration.")
     def test_v330_spacestations_detailed(self):
         """
         Ensure spacestation endpoints work as expected.

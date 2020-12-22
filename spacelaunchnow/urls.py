@@ -35,7 +35,8 @@ from api.endpoints.sln.v320.router import api_urlpatterns as api_v320
 from api.endpoints.sln.v330.router import api_urlpatterns as api_v330
 from api.endpoints.sln.v340.router import api_urlpatterns as api_v340
 from api.endpoints.sln.v350.router import api_urlpatterns as api_v350
-from api.endpoints.library.v200.router import api_urlpatterns as api_vll2
+from api.endpoints.library.v200.router import api_urlpatterns as ll_api_v200
+from api.endpoints.library.v210.router import api_urlpatterns as ll_api_v210
 
 from spacelaunchnow import settings
 from web import views as landing_views
@@ -69,7 +70,7 @@ debug_settings = []
 
 def get_v350():
     v350_api = [
-        url(r'^api/3.5.0/', include(api_v350, namespace='v350')),
+        url(r'^api/3.5.0/', include(api_v350)),
     ]
     v350_api_schema_view = get_schema_view(
         openapi.Info(
@@ -96,13 +97,14 @@ def get_v350():
 if settings.IS_API:
     api_settings = [
 
-        url(r'^3.0.0/', include(api_v300, namespace='v300')),
-        url(r'^3.1.0/', include(api_v310, namespace='v310')),
-        url(r'^3.2.0/', include(api_v320, namespace='v320')),
-        url(r'^api/3.3.0/', include(api_v330, namespace='v330')),
-        url(r'^api/3.4.0/', include(api_v340, namespace='v340')),
-        url(r'^api/ll/2.0.0/', include(api_vll2, namespace='ll2')),
-        url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+        url(r'^3.0.0/', include(api_v300)),
+        url(r'^3.1.0/', include(api_v310)),
+        url(r'^3.2.0/', include(api_v320)),
+        url(r'^api/3.3.0/', include(api_v330)),
+        url(r'^api/3.4.0/', include(api_v340)),
+        url(r'^api/ll/2.0.0/', include(ll_api_v200)),
+        url(r'^api/ll/2.1.0/', include(ll_api_v210)),
+        url(r'^api-auth/', include('rest_framework.urls')),
 
     ]
     api_settings = api_settings + get_v350()
@@ -110,7 +112,6 @@ if settings.IS_API:
 if settings.IS_WEBSERVER:
     web_settings = [
         url(r'^\.well-known/assetlinks\.json', landing_views.asset_file),
-        url(r'^ads\.txt', include('ads_txt.urls')),
         url(r'^app-ads\.txt', AdsView.as_view()),
         url(r'^next/', landing_views.next_launch, name='next'),
         url(r'^launch/$', LaunchListView.as_view()),
@@ -163,7 +164,7 @@ if settings.IS_ADMIN:
     admin_settings = [
         url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
         url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
-        url(r'^admin/', include(admin.site.urls)),
+        url(r'^admin/', admin.site.urls),
         url('^', include('django.contrib.auth.urls')),
         url(r'^signup/$', landing_views.signup, name='signup'),
     ]

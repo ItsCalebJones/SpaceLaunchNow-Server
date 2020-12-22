@@ -53,6 +53,12 @@ REST_FRAMEWORK = {
     )
 }
 
+DISABLE_THROTTLE = os.getenv('DISABLE_THROTTLE', False)
+
+if DEBUG:
+    DISABLE_THROTTLE = True
+
+DISCORD_WEBHOOK = os.getenv('WEBHOOK_URL', None)
 
 LOGIN_REDIRECT_URL = '/'
 
@@ -223,7 +229,6 @@ INSTALLED_APPS = [
     'app',
     'sorl.thumbnail',
     'sorl_thumbnail_serializer',
-    'ads_txt',
     'mathfilters',
     'django_tables2',
     'bootstrap4',
@@ -289,10 +294,13 @@ MIDDLEWARE = [
     'tz_detect.middleware.TimezoneMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django_user_agents.middleware.UserAgentMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     # 'silk.middleware.SilkyMiddleware',
 ]
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 CORS_ORIGIN_ALLOW_ALL = True
 

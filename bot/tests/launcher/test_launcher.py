@@ -1,13 +1,14 @@
-import json
+import unittest
 
 from rest_framework import status
 
 from api.models import *
-from bot.tests.test__base import SLNAPITests
+from api.tests.test__base import LLAPITests
 
 
-class LauncherTests(SLNAPITests):
+class LauncherTests(LLAPITests):
 
+    @unittest.skipIf(settings.IS_LL, "Not supported in this configuration.")
     def test_v320_launcher(self):
         """
         Ensure Launcher endpoints work as expected.
@@ -16,7 +17,7 @@ class LauncherTests(SLNAPITests):
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(data['count'], Launcher.objects.count())
+        self.assertEqual(data['count'], Launcher.objects.all().count())
         self.assertIn('id', data['results'][0])
         launcher = Launcher.objects.get(pk=data['results'][0]['id'])
         self.assertEqual(data['results'][0]['details'], launcher.details)
@@ -26,6 +27,7 @@ class LauncherTests(SLNAPITests):
 
         self.check_permissions(path)
 
+    @unittest.skipIf(settings.IS_LL, "Not supported in this configuration.")
     def test_v330_launcher(self):
         """
         Ensure Launcher endpoints work as expected.
@@ -34,7 +36,7 @@ class LauncherTests(SLNAPITests):
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(data['count'], Launcher.objects.count())
+        self.assertEqual(data['count'], Launcher.objects.all().count())
         self.assertIn('id', data['results'][0])
         launcher = Launcher.objects.get(pk=data['results'][0]['id'])
         self.assertEqual(data['results'][0]['details'], launcher.details)
@@ -45,6 +47,7 @@ class LauncherTests(SLNAPITests):
 
         self.check_permissions(path)
 
+    @unittest.skipIf(settings.IS_LL, "Not supported in this configuration.")
     def test_v330_launcher_detailed(self):
         """
         Ensure Launcher endpoints work as expected.
@@ -53,7 +56,7 @@ class LauncherTests(SLNAPITests):
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(data['count'], Launcher.objects.count())
+        self.assertEqual(data['count'], Launcher.objects.all().count())
         self.assertIn('id', data['results'][0])
         launcher = Launcher.objects.get(pk=data['results'][0]['id'])
         self.assertEqual(data['results'][0]['details'], launcher.details)
@@ -64,6 +67,7 @@ class LauncherTests(SLNAPITests):
 
         self.check_permissions(path)
 
+    @unittest.skipIf(settings.IS_LL, "Not supported in this configuration.")
     def test_v340_launcher_detailed(self):
         """
         Ensure Launcher endpoints work as expected.
@@ -72,7 +76,7 @@ class LauncherTests(SLNAPITests):
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(data['count'], Launcher.objects.count())
+        self.assertEqual(data['count'], Launcher.objects.all().count())
         self.assertIn('id', data['results'][0])
         launcher = Launcher.objects.get(pk=data['results'][0]['id'])
         self.assertEqual(data['results'][0]['details'], launcher.details)

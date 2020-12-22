@@ -1,14 +1,16 @@
 import datetime
 import json
+import unittest
 
 from rest_framework import status
 
 from api.models import Astronaut
-from bot.tests.test__base import SLNAPITests
+from api.tests.test__base import LLAPITests, settings
 
 
-class AstronautTest(SLNAPITests):
+class AstronautTest(LLAPITests):
 
+    @unittest.skipIf(settings.IS_LL, "Not supported in this configuration.")
     def test_v330_astronauts(self):
         """
         Ensure astronaut endpoints work as expected.
@@ -17,7 +19,7 @@ class AstronautTest(SLNAPITests):
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(data['count'], 1)
+        self.assertEqual(data['count'], Astronaut.objects.all().count())
         starman = Astronaut.objects.get(name=data['results'][0]['name'])
         self.assertEqual(data['results'][0]['name'], starman.name)
         self.assertEqual(data['results'][0]['date_of_birth'],
