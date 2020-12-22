@@ -28,14 +28,28 @@ class NewsNotificationHandler:
                     "url": article.link,
                     "featured_image": article.featured_image
                 }}
+        self.send_v2_notification(article, data)
+        self.send_v3_notification(article, data)
 
+    def send_v3_notification(self, article, data):
+        if not self.DEBUG:
+            topics = "'prod_v3' in topics && 'featured_news' in topics"
+            flutter_topics = "'flutter_production_v3' in topics && 'featured_news' in topics"
+        else:
+            topics = "'debug_v3' in topics && 'featured_news' in topics"
+            flutter_topics = "'flutter_debug_v3' in topics && 'featured_news' in topics"
+        self.send_to_fcm(article, data, topics, flutter_topics)
+
+    def send_v2_notification(self, article, data):
         if not self.DEBUG:
             topics = "'prod_v2' in topics && 'featured_news' in topics"
             flutter_topics = "'flutter_production_v2' in topics && 'featured_news' in topics"
         else:
             topics = "'debug_v2' in topics && 'featured_news' in topics"
             flutter_topics = "'flutter_debug_v2' in topics && 'featured_news' in topics"
+        self.send_to_fcm(article, data, topics, flutter_topics)
 
+    def send_to_fcm(self, article, data, topics, flutter_topics):
         push_service = FCMNotification(api_key=keys['FCM_KEY'])
 
         logger.info('----------------------------------------------------------')

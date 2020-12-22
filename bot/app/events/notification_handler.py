@@ -16,17 +16,10 @@ class EventNotificationHandler:
             self.DEBUG = debug
 
     def send_ten_minute_notification(self, event):
-        self.send_notification(self.build_topics(event),
-                               self.build_data(event, 'event_notification'))
-        self.send_flutter_notification(self.build_flutter_topics(event),
-                                       self.build_data(event, 'event_notification'))
+        self.send_notification(event, 'event_notification')
 
     def send_webcast_notification(self, event):
-        self.send_notification(self.build_topics(event),
-                               self.build_data(event, 'event_webcast'))
-        self.send_flutter_notification(self.build_flutter_topics(event),
-                                       self.build_data(event, 'event_webcast'),
-                                       webcast=True)
+        self.send_notification(event, 'event_webcast', webcast=True)
 
     def build_data(self, event, type):
         if event.video_url:
@@ -59,14 +52,46 @@ class EventNotificationHandler:
             "webcast": webcast
         }
 
-    def build_topics(self, event):
+    def build_v2_topics(self):
         if self.DEBUG:
             topic = "'debug_v2' in topics && 'events' in topics"
         else:
             topic = "'prod_v2' in topics && 'events' in topics"
         return topic
 
-    def send_notification(self, topics, data):
+    def build_v3_topics(self):
+        if self.DEBUG:
+            topic = "'debug_v3' in topics && 'events' in topics"
+        else:
+            topic = "'prod_v3' in topics && 'events' in topics"
+        return topic
+
+    def build_flutter_v2_topics(self):
+        if self.DEBUG:
+            topic = "'flutter_debug_v3' in topics && 'events' in topics"
+        else:
+            topic = "'flutter_production_v3' in topics && 'events' in topics"
+        return topic
+
+    def build_flutter_v3_topics(self):
+        if self.DEBUG:
+            topic = "'flutter_debug_v3' in topics && 'events' in topics"
+        else:
+            topic = "'flutter_production_v3' in topics && 'events' in topics"
+        return topic
+
+    def send_notification(self, event, event_type, webcast: bool = False):
+        data = self.build_data(event, event_type)
+
+        # Send Android notif
+        self.send_to_fcm(self.build_v2_topics(), data)
+        self.send_to_fcm(self.build_v3_topics(), data)
+
+        # Send Flutter notif
+        self.send_flutter_to_fcm(self.build_flutter_v2_topics(), data, webcast)
+        self.send_flutter_to_fcm(self.build_flutter_v3_topics(), data, webcast)
+
+    def send_to_fcm(self, topics, data):
         logger.info('----------------------------------------------------------')
         logger.info('Notification Data: %s' % data)
         logger.info('Topics: %s' % topics)
@@ -77,14 +102,7 @@ class EventNotificationHandler:
         logger.info(notification)
         logger.info('----------------------------------------------------------')
 
-    def build_flutter_topics(self, event):
-        if self.DEBUG:
-            topic = "'flutter_debug_v2' in topics && 'events' in topics"
-        else:
-            topic = "'flutter_production_v2' in topics && 'events' in topics"
-        return topic
-
-    def send_flutter_notification(self, topics, data, webcast: bool = False):
+    def send_flutter_to_fcm(self, topics, data, webcast: bool = False):
         logger.info('----------------------------------------------------------')
         logger.info('Flutter Notification')
         logger.info('Notification Data: %s' % data)

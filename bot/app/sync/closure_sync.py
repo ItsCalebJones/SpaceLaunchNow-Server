@@ -44,14 +44,14 @@ def get_road_closure():
 
         dtP1 = row.split('|')[1]
         dtP2 = row.split('|')[2]
-        dtP2B = dtP2.split('–')[0].strip()
-        dtP2E = dtP2.split('–')[1].strip()
+        dtP2B = dtP2.split(' to ')[0].strip()
+        dtP2E = dtP2.split(' to ')[1].strip()
 
         dtSta = dtP1 + ' ' + dtP2B
-        staTex = tzTex.localize(datetime.strptime(dtSta, "%B %d, %Y %I:%M %p"))
+        staTex = tzTex.localize(datetime.strptime(dtSta, "%A, %b %d, %Y %I:%M %p"))
 
         dtEnd = dtP1 + ' ' + dtP2E
-        endTex = tzTex.localize(datetime.strptime(dtEnd, "%B %d, %Y %I:%M %p"))
+        endTex = tzTex.localize(datetime.strptime(dtEnd, "%A, %b %d, %Y %I:%M %p"))
         if 'PM' in dtP2B and 'AM' in dtP2E:
             endTex += timedelta(days=1)
 

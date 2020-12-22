@@ -92,132 +92,6 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-9 col-md-12 col-xl-9">
-                <div class="row">
-                    <div class="card text-center">
-                        <div class="card-header card-header-info text-center">
-                            {% if launch.mission %}
-                                <h2 class="title">{{ launch.mission.name }}</h2>
-                            {% else %}
-                                <h2 class="title">{{ launch.name }}</h2>
-                            {% endif %}
-                        </div>
-                        <div class="card-body text-center">
-                            <div class="col-lg-12 mx-auto">
-                                {% if launch.mission %}
-                                    <div class="row">
-                                        <div class="col-md-12 mx-auto">
-                                            <h2 class="title">Overview</h2>
-                                            <h4>
-                                                <b>Destination:</b> {{ launch.mission.orbit }}<br><b>Mission:</b> {{ launch.mission.mission_type.name }}
-                                            </h4>
-                                            <div class="row">
-                                                <div class="col-md-12 mx-auto">
-                                                    <span class="badge badge-pill badge-success">{{ launch.mission.orbit.name }}</span>
-                                                    {% if launch.pad %}
-                                                        <span class="badge badge-pill badge-primary">{{ launch.pad.name }}</span>
-                                                    {% endif %}
-                                                    {% if launch.pad.location.name %}
-                                                        <span class="badge badge-pill badge-primary">{{ launch.pad.location.name }}</span>
-                                                    {% endif %}
-                                                    {% if launch.probability > 0 %}
-                                                        <span class="badge badge-pill badge-primary">Probability: {{ launch.probability }}%</span>
-                                                    {% endif %}
-                                                    {% if launch.hashtag %}
-                                                        <span class="badge badge-pill badge-info">{{ launch.hashtag }}</span>
-                                                    {% endif %}
-                                                    <br>
-                                                    {% if launch.rocket.firststage.all|length > 0 %}
-                                                        {% for stage in launch.rocket.firststage.all %}
-                                                            {% if stage.landing.landing_location %}
-                                                                <span class="badge badge-pill {% if stage.landing.success %} badge-success{% elif not stage.landing.success %}badge-danger {% else %} badge-primary {% endif %}"> {{ stage.launcher.serial_number }} - {{ stage.landing.landing_location.name }}</span>
-                                                            {% endif %}
-                                                        {% endfor %}
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                            <p>{{ launch.mission.description }}</p>
-                                        </div>
-                                    </div>
-                                {% endif %}
-                                {% if launch.articles.all|length > 0 %}
-                                    <h2 id="related-news" class="title text-center">Related News</h2>
-                                    <hr>
-                                    {% for item in launch.articles.all|slice:":5" %}
-                                        <div class="row">
-                                            <div class="col-lg-12 mx-auto">
-                                                <div class="card card-plain card-blog">
-                                                    <div class="row">
-                                                        <div class="col-md-12 col-lg-5 my-auto">
-                                                            <div class="card-header card-header-image">
-                                                                <a href="{{ item.link }}">
-                                                                    <img class="img" src="{{ item.featured_image }}">
-                                                                </a>
-                                                            <div class="colored-shadow" style="background-image: url({{ item.featured_image }}); opacity: 1;"></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-12 col-lg-7">
-                                                            <div class="card-body text-left">
-                                                                <h6 class="card-category text-danger"><b>{{ item.news_site }}</b></h6>
-                                                                <h4 class="card-title">{{ item.title }}</h4>
-                                                                <div class="d-flex h-50 justify-content-between"
-                                                                     style="display: flex; flex-direction: column;">
-                                                                    <p class="card-description">
-                                                                        {{ item.description|truncatechars:240 }}
-                                                                    </p>
-                                                                    <div style="justify-content: left;display: flex;">
-                                                                        <a href="{{ item.link }}" class="btn btn-primary">
-                                                                            <i class="material-icons">subject</i> Read Article
-                                                                        </a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                {% endif %}
-                                {% if launch.infographic_url %}
-                                    <h2 class="title">Launch Infographic</h2>
-                                    <div class="card-header card-header-image mt-3">
-                                        <a href="https://gdbarrett.com/">
-
-                                            <img class="img img-raised" src="{{ launch.infographic_url.url }}">
-
-                                        </a>
-                                        <div class="colored-shadow colored-shadow-big"
-                                             style="background-image: url('{{ launch.infographic_url.url }}'); opacity: 1;"></div>
-                                    </div>
-                                    <h4 class="caption">Geoff Barrett is an independent graphic artist that creates
-                                        launch infographics for space flight events.</h4>
-                                    <div class="social text-center mb-2">
-                                        <a href="https://www.facebook.com/Geoffdbarrett/">
-                                            <button class="btn btn-just-icon btn-round btn-facebook">
-                                                <i class="fab fa-facebook"> </i>
-                                            </button>
-                                        </a>
-                                        <a href="https://twitter.com/GeoffdBarrett">
-                                            <button class="btn btn-just-icon btn-round btn-twitter">
-                                                <i class="fab fa-twitter"></i>
-                                            </button>
-                                        </a>
-                                        <a href="https://www.instagram.com/geoffdbarrett/">
-                                            <button class="btn btn-just-icon btn-round btn-instagram">
-                                                <i class="fab fa-instagram"></i>
-                                            </button>
-                                        </a>
-                                        <a href="https://www.patreon.com/geoffbarrett">
-                                            <button class="btn btn-just-icon btn-round btn-danger">
-                                                <i class="fab fa-patreon"></i>
-                                            </button>
-                                        </a>
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 {% if youtube_urls|length > 0 %}
                     <div class="row">
                         <div class="card text-center">
@@ -292,6 +166,93 @@
                         </div>
                     </div>
                 {% endif %}
+                <div class="row">
+                    <div class="card text-center">
+                        <div class="card-header card-header-info text-center">
+                            {% if launch.mission %}
+                                <h2 class="title">{{ launch.mission.name }}</h2>
+                            {% else %}
+                                <h2 class="title">{{ launch.name }}</h2>
+                            {% endif %}
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="col-lg-12 mx-auto">
+                                {% if launch.mission %}
+                                    <div class="row">
+                                        <div class="col-md-12 mx-auto">
+                                            <h2 class="title">Overview</h2>
+                                            <h4>
+                                                <b>Destination:</b> {{ launch.mission.orbit }}<br><b>Mission:</b> {{ launch.mission.mission_type.name }}
+                                            </h4>
+                                            <div class="row">
+                                                <div class="col-md-12 mx-auto">
+                                                    <span class="badge badge-pill badge-success">{{ launch.mission.orbit.name }}</span>
+                                                    {% if launch.pad %}
+                                                        <span class="badge badge-pill badge-primary">{{ launch.pad.name }}</span>
+                                                    {% endif %}
+                                                    {% if launch.pad.location.name %}
+                                                        <span class="badge badge-pill badge-primary">{{ launch.pad.location.name }}</span>
+                                                    {% endif %}
+                                                    {% if launch.probability > 0 %}
+                                                        <span class="badge badge-pill badge-primary">Probability: {{ launch.probability }}%</span>
+                                                    {% endif %}
+                                                    {% if launch.hashtag %}
+                                                        <span class="badge badge-pill badge-info">{{ launch.hashtag }}</span>
+                                                    {% endif %}
+                                                    <br>
+                                                    {% if launch.rocket.firststage.all|length > 0 %}
+                                                        {% for stage in launch.rocket.firststage.all %}
+                                                            {% if stage.landing.landing_location %}
+                                                                <span class="badge badge-pill {% if stage.landing.success %} badge-success{% elif not stage.landing.success %}badge-danger {% else %} badge-primary {% endif %}"> {{ stage.launcher.serial_number }} - {{ stage.landing.landing_location.name }}</span>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <p>{{ launch.mission.description }}</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if launch.infographic_url %}
+                                    <h2 class="title">Launch Infographic</h2>
+                                    <div class="card-header card-header-image mt-3">
+                                        <a href="https://gdbarrett.com/">
+
+                                            <img class="img img-raised" src="{{ launch.infographic_url.url }}">
+
+                                        </a>
+                                        <div class="colored-shadow colored-shadow-big"
+                                             style="background-image: url('{{ launch.infographic_url.url }}'); opacity: 1;"></div>
+                                    </div>
+                                    <h4 class="caption">Geoff Barrett is an independent graphic artist that creates
+                                        launch infographics for space flight events.</h4>
+                                    <div class="social text-center mb-2">
+                                        <a href="https://www.facebook.com/Geoffdbarrett/">
+                                            <button class="btn btn-just-icon btn-round btn-facebook">
+                                                <i class="fab fa-facebook"> </i>
+                                            </button>
+                                        </a>
+                                        <a href="https://twitter.com/GeoffdBarrett">
+                                            <button class="btn btn-just-icon btn-round btn-twitter">
+                                                <i class="fab fa-twitter"></i>
+                                            </button>
+                                        </a>
+                                        <a href="https://www.instagram.com/geoffdbarrett/">
+                                            <button class="btn btn-just-icon btn-round btn-instagram">
+                                                <i class="fab fa-instagram"></i>
+                                            </button>
+                                        </a>
+                                        <a href="https://www.patreon.com/geoffbarrett">
+                                            <button class="btn btn-just-icon btn-round btn-danger">
+                                                <i class="fab fa-patreon"></i>
+                                            </button>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="card text-center">
                         {% with vehicle=launch.rocket.configuration %}
@@ -761,11 +722,59 @@
                         </div>
                     </div>
                 </div>
+                {% if launch.articles.all|length > 0 %}
+                <div class="row">
+                    <div class="card text-center">
+                        <div class="col-lg-12 text-center">
+                            <div class="card-header card-header-info text-center">
+                                    <h1 class="title text-white">Related News</h1>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            {% for item in launch.articles.all|slice:":3" %}
+                                <div class="row">
+                                    <div class="col-lg-12 mx-auto">
+                                        <div class="card card-plain card-blog">
+                                            <div class="row">
+                                                <div class="col-md-12 col-lg-5 my-auto">
+                                                    <div class="card-header card-header-image">
+                                                        <a href="{{ item.link }}">
+                                                            <img class="img" src="{{ item.featured_image }}">
+                                                        </a>
+                                                    <div class="colored-shadow" style="background-image: url({{ item.featured_image }}); opacity: 1;"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 col-lg-7">
+                                                    <div class="card-body text-left">
+                                                        <h6 class="card-category text-danger"><b>{{ item.news_site }}</b></h6>
+                                                        <h4 class="card-title">{{ item.title }}</h4>
+                                                        <div class="d-flex h-50 justify-content-between"
+                                                             style="display: flex; flex-direction: column;">
+                                                            <p class="card-description">
+                                                                {{ item.description|truncatechars:240 }}
+                                                            </p>
+                                                            <div style="justify-content: left;display: flex;">
+                                                                <a href="{{ item.link }}" class="btn btn-primary">
+                                                                    <i class="material-icons">subject</i> Read Article
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
                 <div class="row">
                     <div class="card">
                         <div class="card-header card-header-info text-center">
                             <h3 class="card-title"><b>{{ launch.pad.location.name }}</b></h3>
-                            <h4>Pad: {{ launch.pad.name }}</h4>
+                            <h4>{{ launch.pad.name }}</h4>
                         </div>
                         <div class="card-body">
                             <div class="col-lg-12">

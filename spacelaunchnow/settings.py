@@ -35,6 +35,8 @@ if DEBUG:
 else:
     ALLOWED_HOSTS = ['.calebjones.me', '.spacelaunchnow.me', 'spacelaunchnow.me', '.calebjones.dev', '0.0.0.0']
 
+DISABLE_THROTTLE = os.getenv('DISABLE_THROTTLE', False)
+
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'spacelaunchnow.pagination.SLNLimitOffsetPagination',
     'DEFAULT_MODEL_SERIALIZER_CLASS': 'drf_toolbox.serializers.ModelSerializer',
