@@ -158,6 +158,7 @@ if settings.IS_WEBSERVER:
         url(r'^launches/latest/feed.ics$', LaunchFeed()),
         url(r'^events/latest/feed.ics$', EventFeed()),
         url(r'^tz_detect/', include('tz_detect.urls')),
+        url('ads.txt', AdsView.as_view()),
     ]
 
 if settings.IS_ADMIN:

@@ -311,6 +311,8 @@ GEOIPV6_DATABASE = 'GeoLiteCityv6.dat'
 
 ROOT_URLCONF = 'spacelaunchnow.urls'
 
+AWS_DEFAULT_ACL = 'public-read'
+
 JET_MODULE_GOOGLE_ANALYTICS_CLIENT_SECRETS_FILE = os.path.join(BASE_DIR, 'client_secrets.json')
 
 TEMPLATES = [

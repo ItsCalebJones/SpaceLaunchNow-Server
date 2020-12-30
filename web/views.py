@@ -853,3 +853,10 @@ class EventFeed(ICalFeed):
             return item.video_url
         else:
             return "https://spacelaunchnow.me"
+
+
+class AdsView(View):
+    line = "google.com, pub-9824528399164059, DIRECT, f08c47fec0942fa0"
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse(self.line)
