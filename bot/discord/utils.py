@@ -223,6 +223,10 @@ def get_color(id):
         return Colour.gold()
     elif id is 7:
         return Colour.dark_red()
+    elif id is 8:
+        return Colour.blurple()
+    else:
+        return Colour.blue()
 
 
 def exception_handler(func):
