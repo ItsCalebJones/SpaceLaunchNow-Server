@@ -1,12 +1,8 @@
-from api.models import Article
 from django.core.management import BaseCommand
 from celery.utils.log import get_task_logger
 
 from bot.app.notifications.news_notification_handler import NewsNotificationHandler
-from bot.app.notifications.notification_handler import NotificationHandler
-from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
-from bot.models import LaunchNotificationRecord, ArticleNotification
-from bot.utils.deserializer import launch_json_to_model
+from bot.models import SNAPIArticle
 
 logger = get_task_logger('bot')
 
@@ -22,6 +18,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         logger.info('Running Notifications...')
         notification = NewsNotificationHandler()
-        article = Article.objects.filter(created_at__isnull=False).latest('created_at')
+        article = SNAPIArticle.objects.filter(created_at__isnull=False).latest('created_at')
         notification.send_notification(article)
 

@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 from . import models
+from .utils.admin_forms import SNAPIArticleForm
 
 
 @admin.register(models.LaunchNotificationRecord)
@@ -61,6 +62,14 @@ class RedditSubmissionAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'text', 'link', 'read', 'created_at')
 
 
+@admin.register(models.SNAPIArticle)
+class ArticlesAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'news_site', 'link',)
+    list_filter = ('featured_image', 'news_site', 'events', 'launches')
+    search_fields = ('id', 'title', 'description', 'news_site')
+    form = SNAPIArticleForm
+
+
 @admin.register(models.ArticleNotification)
 class ArticleNotification(admin.ModelAdmin):
     list_display = ('id', 'created_at', 'article')
@@ -69,3 +78,5 @@ class ArticleNotification(admin.ModelAdmin):
 @admin.register(models.NewsNotificationChannel)
 class NewsNotificationChannelAdmin(admin.ModelAdmin):
     list_display = ('id', 'channel_id', 'server_id', 'name', 'subscribed')
+
+
