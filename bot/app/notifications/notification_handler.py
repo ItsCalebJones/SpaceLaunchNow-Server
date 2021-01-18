@@ -234,7 +234,7 @@ class NotificationHandler:
         except Exception as e:
             logger.error(e)
 
-    def send_custom_ios(self, pending):
+    def send_custom_ios_v2(self, pending):
         data = self.get_json_data(pending)
 
         if not self.DEBUG:
@@ -261,13 +261,64 @@ class NotificationHandler:
 
         logger.info('----------------------------------------------------------')
 
-    def send_custom_android(self, pending):
+    def send_custom_ios_v3(self, pending):
+        data = self.get_json_data(pending)
+
+        if not self.DEBUG:
+            flutter_topics = "'flutter_production_v3' in topics && 'custom' in topics"
+        else:
+            flutter_topics = "'flutter_debug_v3' in topics && 'custom' in topics"
+
+        push_service = FCMNotification(api_key=config.keys['FCM_KEY'])
+
+        logger.info('----------------------------------------------------------')
+        logger.info('Sending iOS Custom Flutter notification - %s' % pending.title)
+        try:
+            logger.info('Custom Notification Data - %s' % data)
+            logger.info('Topics - %s' % flutter_topics)
+            flutter_results = push_service.notify_topic_subscribers(data_message=data,
+                                                                    condition=flutter_topics,
+                                                                    time_to_live=86400,
+                                                                    message_title=pending.title,
+                                                                    message_body=pending.message
+                                                                    )
+            logger.info(flutter_results)
+        except Exception as e:
+            logger.error(e)
+
+        logger.info('----------------------------------------------------------')
+
+    def send_custom_android_v2(self, pending):
         data = self.get_json_data(pending)
 
         if not self.DEBUG:
             topics = "'prod_v2' in topics && 'custom' in topics"
         else:
             topics = "'debug_v2' in topics && 'custom' in topics"
+
+        push_service = FCMNotification(api_key=config.keys['FCM_KEY'])
+
+        logger.info('----------------------------------------------------------')
+        logger.info('Sending Android Custom notification - %s' % pending.title)
+        try:
+            logger.info('Custom Notification Data - %s' % data)
+            logger.info('Topics - %s' % topics)
+            android_result = push_service.notify_topic_subscribers(data_message=data,
+                                                                   condition=topics,
+                                                                   time_to_live=86400, )
+            logger.info(android_result)
+        except Exception as e:
+            logger.error(e)
+
+        logger.info('----------------------------------------------------------')
+
+    def send_custom_android_v3(self, pending):
+        data = self.get_json_data(pending)
+
+        if not self.DEBUG:
+            topics = "'prod_v3' in topics && 'custom' in topics"
+        else:
+            topics = "'debug_v3' in topics && 'custom' in topics"
 
         push_service = FCMNotification(api_key=config.keys['FCM_KEY'])
 

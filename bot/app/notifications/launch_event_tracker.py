@@ -131,11 +131,13 @@ class LaunchEventTracker:
         for pending in pending_ios:
             pending.send_ios_complete = True
             pending.save()
-            self.notification_handler.send_custom_ios(pending)
+            self.notification_handler.send_custom_ios_v2(pending)
+            self.notification_handler.send_custom_ios_v3(pending)
         for pending in pending_android:
             pending.send_android_complete = True
             pending.save()
-            self.notification_handler.send_custom_android(pending)
+            self.notification_handler.send_custom_android_v2(pending)
+            self.notification_handler.send_custom_android_v3(pending)
 
     def check_one_minute(self, time_threshold_1_minute):
         logger.debug('Running check_one_minute...')
