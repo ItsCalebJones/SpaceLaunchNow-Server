@@ -4,9 +4,6 @@ import pytz
 from django.core.management import BaseCommand
 from celery.utils.log import get_task_logger
 
-from api.models import Events
-from bot.app.events.notification_handler import EventNotificationHandler
-from bot.app.events.social_handler import SocialHandler
 from bot.app.notifications.launch_event_tracker import LaunchEventTracker
 
 logger = get_task_logger('bot.events')

@@ -7,12 +7,20 @@ from datetime import datetime, timedelta
 from api.models import RoadClosure, RoadClosureStatus
 from bs4 import BeautifulSoup
 from dateutil import tz
+from dateutil import parser
 
 logger = logging.getLogger('bot.digest')
 
 
-def get_road_closure():
+def parse_date(date_string):
     tzTex = pytz.timezone('US/Central')
+    datetime = tzTex.localize(parser.parse(date_string))
+    print(datetime)
+    return datetime
+
+
+def get_road_closure():
+
     url = "http://www.cameroncounty.us/spacex/"
     user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'
     request = urllib.request.Request(url, headers={'User-Agent': user_agent})
@@ -48,10 +56,10 @@ def get_road_closure():
         dtP2E = dtP2.split(' to ')[1].strip()
 
         dtSta = dtP1 + ' ' + dtP2B
-        staTex = tzTex.localize(datetime.strptime(dtSta, "%A, %b %d, %Y %I:%M %p"))
+        staTex = parse_date(dtSta)
 
         dtEnd = dtP1 + ' ' + dtP2E
-        endTex = tzTex.localize(datetime.strptime(dtEnd, "%A, %b %d, %Y %I:%M %p"))
+        endTex = parse_date(dtEnd)
         if 'PM' in dtP2B and 'AM' in dtP2E:
             endTex += timedelta(days=1)
 

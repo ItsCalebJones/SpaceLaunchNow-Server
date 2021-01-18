@@ -63,7 +63,7 @@ class RedditSubmissionAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.SNAPIArticle)
-class ArticlesAdmin(admin.ModelAdmin):
+class SNAPIArticlesAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'news_site', 'link',)
     list_filter = ('featured_image', 'news_site', 'events', 'launches')
     search_fields = ('id', 'title', 'description', 'news_site')
