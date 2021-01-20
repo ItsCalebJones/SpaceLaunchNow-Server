@@ -115,7 +115,7 @@ def index(request):
     second_launch = None
     second_launch_image = None
 
-    if len(_launches) > 2:
+    if len(_launches) >= 2:
         second_launch = _launches[1]
         if second_launch.image_url:
             second_launch_image = second_launch.image_url.url
