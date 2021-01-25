@@ -1,5 +1,7 @@
 import logging
 import urllib
+from parser import ParserError
+
 import pytz
 
 from datetime import datetime, timedelta
@@ -14,7 +16,10 @@ logger = logging.getLogger('bot.digest')
 
 def parse_date(date_string):
     tzTex = pytz.timezone('US/Central')
-    datetime = tzTex.localize(parser.parse(date_string))
+    try:
+        datetime = tzTex.localize(parser.parse(date_string))
+    except Exception as e:
+        datetime = tzTex.localize(parser.parse(date_string.split(', ', 1)[1]))
     print(datetime)
     return datetime
 
