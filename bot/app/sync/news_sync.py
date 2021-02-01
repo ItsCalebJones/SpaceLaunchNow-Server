@@ -6,7 +6,7 @@ import pytz
 import requests
 from goose3 import Goose
 
-from api.models import Events, Launch
+from api.models import Events, Launch, Article
 from bot.models import SNAPIArticle, ArticleNotification
 
 logger = logging.getLogger('bot.digest')
@@ -18,10 +18,77 @@ def get_news(limit=10):
         articles = response.json()
         logger.info("Found %s articles." % len(articles))
         for item in articles:
-            save_news(item)
+            save_news_SLN(item)
+            save_news_LL(item)
 
 
-def save_news(item):
+def save_news_LL(item):
+    news, news_created = Article.objects.get_or_create(id=item['id'])
+
+    if news_created:
+        news.title = item['title']
+        news.link = item['url']
+        news.featured_image = item['imageUrl']
+        news.news_site = item['newsSite']
+        news.description = item['summary']
+        news.created_at = datetime.strptime(item['publishedAt'][:-5], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=pytz.utc)
+        for _event in item['events']:
+            event_id = _event['id']
+            try:
+                event = Events.objects.get(id=event_id)
+                news.events.add(event)
+            except Events.DoesNotExist:
+                logger.error("No event found with ID %s" % event_id)
+        for _launch in item['launches']:
+            launch_id = _launch['id']
+            try:
+                launch = Launch.objects.get(id=launch_id)
+                news.launches.add(launch)
+            except Launch.DoesNotExist:
+                logger.error("No launch found with ID %s" % launch_id)
+        logger.info("Added Article (%s) - %s - %s" % (news.id, news.title, news.news_site))
+        news.save()
+    else:
+        if news.title != item['title']:
+            news.title = item['title']
+            if (news.created_at - datetime.strptime(item['publishedAt'][:-5], '%Y-%m-%dT%H:%M:%S').replace(
+                    tzinfo=pytz.utc)) > timedelta(1):
+                news.created_at = datetime.strptime(item['publishedAt'][:-5], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=pytz.utc)
+
+        found = False
+        for _event in item['events']:
+            event_id = _event['id']
+            for event in news.events.all():
+                if event.id == event_id:
+                    found = True
+
+            if not found:
+                try:
+                    event = Events.objects.get(id=event_id)
+                    news.events.add(event)
+                except Events.DoesNotExist:
+                    logger.error("No event found with ID %s" % event_id)
+
+        found = False
+        for _launch in item['launches']:
+            launch_id = _launch['id']
+            for launch in news.launches.all():
+                if launch.id == launch_id:
+                    found = True
+
+            if not found:
+                try:
+                    launch = Launch.objects.get(id=launch_id)
+                    news.launches.add(launch)
+                except Launch.DoesNotExist:
+                    logger.error("No launch found with ID %s" % launch_id)
+
+        news.link = item['url']
+        news.featured_image = item['imageUrl']
+        news.save()
+
+
+def save_news_SLN(item):
     news, news_created = SNAPIArticle.objects.get_or_create(id=item['id'])
     record, record_created = ArticleNotification.objects.get_or_create(id=news.id, article=news)
     if news_created:
@@ -29,6 +96,7 @@ def save_news(item):
         news.link = item['url']
         news.featured_image = item['imageUrl']
         news.news_site = item['newsSite']
+        news.description = item['summary']
         news.created_at = datetime.strptime(item['publishedAt'][:-5], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=pytz.utc)
         for _event in item['events']:
             event_id = _event['id']
@@ -94,8 +162,11 @@ def save_news(item):
         for _launch in item['launches']:
             launch_id = _launch['id']
             for launch in news.launches.all():
-                if launch.id == launch_id['id']:
-                    found = True
+                try:
+                    if launch.id == launch_id:
+                        found = True
+                except Exception as e:
+                    logger.error(e)
 
             if not found:
                 try:
