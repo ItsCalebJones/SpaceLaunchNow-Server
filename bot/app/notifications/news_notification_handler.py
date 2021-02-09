@@ -24,9 +24,11 @@ class NewsNotificationHandler:
                 "item": {
                     "id": article.id,
                     "news_site_long": article.news_site,
+                    "newsSite": article.news_site,
                     "title": article.title,
                     "url": article.link,
-                    "featured_image": article.featured_image
+                    "featured_image": article.featured_image,
+                    "imageUrl": article.featured_image
                 }}
         self.send_v2_notification(article, data)
         self.send_v3_notification(article, data)
