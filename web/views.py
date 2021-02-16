@@ -25,7 +25,7 @@ from django_ical.views import ICalFeed
 from django_tables2 import RequestConfig, LazyPaginator, SingleTableMixin
 
 from api.models import Agency, Launch, Astronaut, Launcher, SpaceStation, SpacecraftConfiguration, LauncherConfig, \
-    Events, RoadClosure, Notice, VidURLs
+    Events, RoadClosure, Notice, VidURLs, Update
 from django_user_agents.utils import get_user_agent
 
 from bot.models import SNAPIArticle
@@ -464,6 +464,7 @@ def starship_page(request):
         next_up = None
         if len(combined) > 0:
             next_up = combined[0]
+        updates = Update.objects.filter(Q(program=1) | Q(launch__program=1)).order_by('-created_on')[:5]
         live_streams = VidURLs.objects.filter(program=1)[:5]
         road_closures = RoadClosure.objects.filter(window_end__gte=datetime.utcnow()).order_by('window_end')[:10]
         notices = Notice.objects.filter(date__gte=datetime.utcnow()).order_by('date')[:10]
@@ -476,7 +477,8 @@ def starship_page(request):
                                                                      'live_streams': live_streams,
                                                                      'next_up': next_up,
                                                                      'combined': combined[1:6],
-                                                                     'vehicles': vehicles})
+                                                                     'vehicles': vehicles,
+                                                                     'updates': updates})
     except ObjectDoesNotExist:
         raise redirect('events_list')
 

@@ -212,6 +212,7 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'django.contrib.humanize',
     'rest_framework',
+    'avatar',
     'api',
     'bot',
     'web',

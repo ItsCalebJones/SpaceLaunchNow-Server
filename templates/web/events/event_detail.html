@@ -102,8 +102,44 @@
                             {% endvideo %}
                         {% endif %}
 
+                        {% if event.updates.all|length > 1 %}
+                            <div class="row">
+                                <div class="card">
+                                    <div class="card-header card-header-info text-center">
+                                        <h1 class="title">Updates</h1>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="col-md-8 ml-auto mr-auto">
+                                            {% for item in event.updates.all %}
+                                                <div class="media mt-5">
+                                                    <a class="float-left">
+                                                        <div class="avatar">
+                                                            <img class="media-object"
+                                                                 src="{% if item.created_by.tsdstaff.profile %}{{ item.created_by.tsdstaff.profile.url }}{% else %}{% static "img/ll2_logo.png" %}{% endif %}">
+                                                        </div>
+                                                    </a>
+                                                    <div class="media-body">
+                                                        {% if item.launch %}
+                                                            <h5 class="media-heading">{{ item.created_by }} <small>• {{ item.created_on }}</small></h5>
+                                                        {% endif %}
+                                                        <h6 class="text-muted"></h6>
+                                                        <p>{{ item.comment }}</p>
+                                                        {% if item.info_url %}
+                                                            <div class="media-footer">
+                                                                <b>Link</b> <a href="{{ item.info_url }}" class="text-reset">{{ item.info_url }}</a>
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+
                         {% if event.launch.first or event.spacestation.first %}
-                            <h3 class="title">Related Information</h3>
+                            <h2 class="title text-center">Related Information</h2>
                             <hr>
                         {% endif %}
 
