@@ -5,6 +5,7 @@
 {% load sln_utils %}
 {% load thumbnail %}
 {% block extrahead %}
+
     <link rel="canonical" href="https://spacelaunchnow.me/starship">
     <title>Space Launch Now - SpaceX Starship Tracker</title>
     <meta name="title" content="Space Launch Now - SpaceX Starship Tracker">
@@ -17,7 +18,7 @@
           content="Follow SpaceX's development of it's next generation heavy lift vehicle - providing live updates of the SpaceX Starship construction and testing site in Boca Chica, Texas."/>
     <meta property="og:url" content="https://spacelaunchnow.me/starship/"/>
     <meta property="og:image" content="{{ event.feature_image.url }}"/>
-        {% if event.feature_image %}
+    {% if event.feature_image %}
         <meta name="og:image" content="{{ event.feature_image.url }}"/>
     {% else %}
         <meta name="og:image" content="{% static  'img/social.png' %}"/>
@@ -32,7 +33,8 @@
 
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:title" content="Space Launch Now - SpaceX Starship Tracker">
-    <meta name="twitter:description" content="Follow SpaceX's development of it's next generation heavy lift vehicle - providing live updates of the SpaceX Starship construction and testing site in Boca Chica, Texas.">
+    <meta name="twitter:description"
+          content="Follow SpaceX's development of it's next generation heavy lift vehicle - providing live updates of the SpaceX Starship construction and testing site in Boca Chica, Texas.">
     <meta name="twitter:image" content="{% static  'img/social.png' %}">
     {% if event.feature_image %}
         <meta name="twitter:image" content="{{ event.feature_image.url }}"/>
@@ -55,66 +57,107 @@
         <div class="row">
             <div class="col-lg-9 col-md-12 col-xl-9">
                 <div class="row">
-                    <div class="card text-center">
+                    <div class="card">
                         <div class="card-header card-header-danger text-center">
                             <h1 class="title">SpaceX Starship Development</h1>
                         </div>
                         {% if live_streams|length > 0 %}
-                        <div class="card-body">
-                            <div class="text-center">
-                                <h2 class="title">{{ live_streams.0.title }}</h2>
-                            </div>
-                            <!-- Title -->
-                            {% video live_streams|first query="autoplay=1&mute=1" as my_video %}
-                                <div class="videoWrapper">
-                                    {% if request|is_mobile %}
-                                        {% video my_video '85% x 25%' %}
-                                    {% else %}
-                                        {% video my_video '100% x 100%' %}
-                                    {% endif %}
+                            <div class="card-body">
+                                <div class="text-center">
+                                    <h2 class="title">{{ live_streams.0.title }}</h2>
                                 </div>
-                                <div class="card-body">
-                                    <div class="col-md-10 mx-auto">
-                                        <p class="card-description">{{ live_streams.0.description }}</p>
+                                <!-- Title -->
+                                {% video live_streams|first query="autoplay=1&mute=1" as my_video %}
+                                    <div class="videoWrapper">
+                                        {% if request|is_mobile %}
+                                            {% video my_video '85% x 25%' %}
+                                        {% else %}
+                                            {% video my_video '100% x 100%' %}
+                                        {% endif %}
                                     </div>
-                                </div>
-                            {% endvideo %}
-                            {% if live_streams.all|length > 1 %}
-                            <h2 class="title">Additional Livestreams</h2>
-                                {% for item in live_streams.all|slice:"1:" %}
-                                    <div class="card card-plain card-blog">
+                                    <div class="card-body">
+                                        <div class="col-md-10 mx-auto">
+                                            <p class="card-description">{{ live_streams.0.description }}</p>
+                                        </div>
+                                    </div>
+                                {% endvideo %}
+                                {% if updates.all|length > 1 %}
+                                    <div class="section section-comments">
                                         <div class="row">
-                                            <div class="col-md-4 mx-auto">
-                                            <br>
-                                                <div class="card-header card-header-image">
-                                                    <a href="{{ item.vid_url }}">
-                                                        <img class="img"
-                                                             src="{% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
-                                                        <div class="colored-shadow"
-                                                             style="background-image: url('{% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
-                                                    </a>
+                                            <div class="col-md-8 ml-auto mr-auto">
+                                                <div class="media-area">
+                                                    <h2 class="title text-center">Launch Library Updates<br><small>Updates from the librarians that run Launch Library 2.</small></h2>
+                                                    {% for item in updates.all %}
+                                                        <div class="media mt-5">
+                                                            <a class="float-left">
+                                                                <div class="avatar">
+                                                                    <img class="media-object"
+                                                                         src="{% if item.created_by.tsdstaff.profile %}{{ item.created_by.tsdstaff.profile.url }}{% else %}{% static "img/ll2_logo.png" %}{% endif %}">
+                                                                </div>
+                                                            </a>
+                                                            <div class="media-body">
+                                                                {% if item.launch %}
+                                                                    <h5 class="media-heading">{{ item.launch.name }} Update<br>{{ item.created_by }} <small>• {{ item.created_on }}</small></h5>
+                                                                {% else %}
+                                                                    <h5 class="media-heading">Starship Program Update<br>{{ item.created_by }} <small>• {{ item.created_on }}</small></h5>
+                                                                {% endif %}
+                                                                <h6 class="text-muted"></h6>
+                                                                <p>{{ item.comment }}</p>
+                                                                {% if item.info_url %}
+                                                                    <div class="media-footer">
+                                                                        <b>Link</b> <a href="{{ item.info_url }}" class="text-reset">{{ item.info_url }}</a>
+                                                                    </div>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    {% endfor %}
                                                 </div>
-                                            </div>
-                                            <div class="col-md-6 text-left">
-                                                <h3 class="card-title">{{ item.title }}</h3>
-                                                <p class="card-description mt-1">
-                                                    {{ item.description|truncatewords:50 }}
-                                                    <br>
-                                                </p>
-                                                <a href="{{ item.vid_url }}"><button class="btn btn-danger btn-round"><i class="material-icons mx-1">tv</i>{% if 'youtube' in item.vid_url %} Watch on YouTube{% else %} Watch {% endif %}</button></a>
                                             </div>
                                         </div>
                                     </div>
-                                {% endfor %}
-                            {% endif %}
-                        </div>
+                                {% endif %}
+                                {% if live_streams.all|length > 1 %}
+                                    <h2 class="title">Additional Livestreams</h2>
+                                    {% for item in live_streams.all|slice:"1:" %}
+                                        <div class="card card-plain card-blog">
+                                            <div class="row">
+                                                <div class="col-md-4 mx-auto">
+                                                    <br>
+                                                    <div class="card-header card-header-image">
+                                                        <a href="{{ item.vid_url }}">
+                                                            <img class="img"
+                                                                 src="{% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
+                                                            <div class="colored-shadow"
+                                                                 style="background-image: url('{% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 text-left">
+                                                    <h3 class="card-title">{{ item.title }}</h3>
+                                                    <p class="card-description mt-1">
+                                                        {{ item.description|truncatewords:50 }}
+                                                        <br>
+                                                    </p>
+                                                    <a href="{{ item.vid_url }}">
+                                                        <button class="btn btn-danger btn-round"><i
+                                                                class="material-icons mx-1">tv</i>
+                                                            {% if 'youtube' in item.vid_url %} Watch on
+                                                                YouTube{% else %} Watch {% endif %}</button>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
                         {% endif %}
                         <div class="col-md-10 mx-auto">
                             <hr>
                         </div>
-                        {% if next_up|get_type == "event"  %}
+                        {% if next_up|get_type == "event" %}
                             <div class="card card-plain card-blog">
-                                <div class="card-header card-header-image" style="margin-left:16px!important; margin-right:16px!important;">
+                                <div class="card-header card-header-image"
+                                     style="margin-left:16px!important; margin-right:16px!important;">
                                     <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
                                          src="{{ next_up.feature_image.url }}">
                                     <div class="colored-shadow"
@@ -142,17 +185,18 @@
                             </div>
                         {% else %}
                             <div class="card card-plain card-blog">
-                                <div class="card-header card-header-image" style="margin-left:16px!important; margin-right:16px!important;">
+                                <div class="card-header card-header-image"
+                                     style="margin-left:16px!important; margin-right:16px!important;">
                                     {% if next_up.image_url %}
                                         <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
                                              src="{{ next_up.image_url.url }}">
                                         <div class="colored-shadow"
-                                             style="background-image: url({{next_up.image_url.url }}); opacity: 1;"></div>
+                                             style="background-image: url({{ next_up.image_url.url }}); opacity: 1;"></div>
                                     {% elif next_up.rocket.configuration.image_url %}
                                         <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
                                              src="{{ next_up.rocket.configuration.image_url.url }}">
                                         <div class="colored-shadow"
-                                             style="background-image: url({{next_up.rocket.configuration.image_url.url }}); opacity: 1;"></div>
+                                             style="background-image: url({{ next_up.rocket.configuration.image_url.url }}); opacity: 1;"></div>
                                     {% else %}
                                         <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
                                              src="{% static 'img/header.jpg' %}">
@@ -209,58 +253,58 @@
                             <div class="col-lg-12">
                                 <table class="table">
                                     <thead>
-                                        <tr>
-                                            <th class="text-center"></th>
-                                            <th>Name</th>
-                                            <th>Date</th>
-                                            <th>Description</th>
-                                        </tr>
+                                    <tr>
+                                        <th class="text-center"></th>
+                                        <th>Name</th>
+                                        <th>Date</th>
+                                        <th>Description</th>
+                                    </tr>
                                     </thead>
                                     {% for item in combined %}
-                                        {% if item|get_type == "event"  %}
-                                        <tr>
-                                            <td>
-                                                {% if item.feature_image %}
-                                                    {% thumbnail item.feature_image "100x100" as im %}
-                                                        <img class="img-raised rounded-circle img-fluid text-center"
-                                                             src="{{ im.url }}"
-                                                             style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                                    {% endthumbnail %}
-                                                {% else %}
-                                                    <img class="img-raised rounded-circle img-fluid"
-                                                         style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;"
-                                                         src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
-                                                {% endif %}
-                                            </td>
-                                            <td><a href="/event/{{ item.id }}">{{ item.name }}</a>
-                                            <td>{{ item.date|date:"F j, Y" }}</td>
-                                            <td>{{ item.type.name}}</td>
-                                        </tr>
+                                        {% if item|get_type == "event" %}
+                                            <tr>
+                                                <td>
+                                                    {% if item.feature_image %}
+                                                        {% thumbnail item.feature_image "100x100" as im %}
+                                                            <img class="img-raised rounded-circle img-fluid text-center"
+                                                                 src="{{ im.url }}"
+                                                                 style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                                                        {% endthumbnail %}
+                                                    {% else %}
+                                                        <img class="img-raised rounded-circle img-fluid"
+                                                             style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;"
+                                                             src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
+                                                    {% endif %}
+                                                </td>
+                                                <td><a href="/event/{{ item.id }}">{{ item.name }}</a>
+                                                <td>{{ item.date|date:"F j, Y" }}</td>
+                                                <td>{{ item.type.name }}</td>
+                                            </tr>
                                         {% else %}
-                                        <tr>
-                                            <td>
-                                                {% if item.image_url %}
-                                                    {% thumbnail item.image_url "100x100" as im %}
-                                                        <img class="img-raised rounded-circle img-fluid text-center"
-                                                             src="{{ im.url }}"
-                                                             style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                                    {% endthumbnail %}
-                                                {% elif item.rocket.configuration.image_url %}
-                                                    {% thumbnail item.rocket.configuration.image_url "100x100" as im %}
-                                                        <img class="img-raised rounded-circle img-fluid text-center"
-                                                             src="{{ im.url }}"
-                                                             style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                                    {% endthumbnail %}
-                                                {% else %}
-                                                    <img class="img-raised rounded-circle img-fluid"
-                                                         style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;"
-                                                         src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
-                                                {% endif %}
-                                            </td>
-                                            <td><a href="/launch/{{ item.id }}">{{ item.name }}</a>
-                                            <td>{{ item.net|date:"F j, Y" }}</td>
-                                            <td>{{ item.mission.orbit.name }}</td>
-                                        </tr>
+                                            <tr>
+                                                <td>
+                                                    {% if item.image_url %}
+                                                        {% thumbnail item.image_url "100x100" as im %}
+                                                            <img class="img-raised rounded-circle img-fluid text-center"
+                                                                 src="{{ im.url }}"
+                                                                 style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                                                        {% endthumbnail %}
+                                                    {% elif item.rocket.configuration.image_url %}
+                                                        {% thumbnail item.rocket.configuration.image_url "100x100" as im %}
+                                                            <img class="img-raised rounded-circle img-fluid text-center"
+                                                                 src="{{ im.url }}"
+                                                                 style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                                                        {% endthumbnail %}
+                                                    {% else %}
+                                                        <img class="img-raised rounded-circle img-fluid"
+                                                             style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;"
+                                                             src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
+                                                    {% endif %}
+                                                </td>
+                                                <td><a href="/launch/{{ item.id }}">{{ item.name }}</a>
+                                                <td>{{ item.net|date:"F j, Y" }}</td>
+                                                <td>{{ item.mission.orbit.name }}</td>
+                                            </tr>
                                         {% endif %}
                                     {% endfor %}
                                 </table>
@@ -268,32 +312,33 @@
                         {% endif %}
 
                         {% if road_closures|length > 0 %}
-                                <div class="text-center">
-                                    <h1 class="title">Road Closures</h1>
-                                </div>
-                                <div class="col-lg-12">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-center">#</th>
-                                                <th>Name</th>
-                                                <th>Status</th>
-                                                <th>Date</th>
-                                                <th>Window</th>
-                                            </tr>
-                                        </thead>
-                                        {% for closure in road_closures %}
-                                            <tr>
-                                                <td class="text-center">{{ forloop.counter }}</td>
-                                                <td>{{ closure.title}}</td>
-                                                <td>{{ closure.status.name }}</td>
-                                                <td>{{ closure.window_start|date:"F j, Y" }}</td>
-                                                <td>{{ closure.window_start|date:"h:i a" }} - {{ closure.window_end|date:"h:i a" }}</td>
-                                            </tr>
-                                        {% endfor %}
-                                    </table>
-                                </div>
-                            {% endif %}
+                            <div class="text-center">
+                                <h1 class="title">Road Closures</h1>
+                            </div>
+                            <div class="col-lg-12">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-center">#</th>
+                                        <th>Name</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Window</th>
+                                    </tr>
+                                    </thead>
+                                    {% for closure in road_closures %}
+                                        <tr>
+                                            <td class="text-center">{{ forloop.counter }}</td>
+                                            <td>{{ closure.title }}</td>
+                                            <td>{{ closure.status.name }}</td>
+                                            <td>{{ closure.window_start|date:"F j, Y" }}</td>
+                                            <td>{{ closure.window_start|date:"h:i a" }}
+                                                - {{ closure.window_end|date:"h:i a" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        {% endif %}
 
                         {% if notices|length > 0 %}
                             <div class="text-center">
@@ -302,17 +347,17 @@
                             <div class="col-lg-12">
                                 <table class="table">
                                     <thead>
-                                        <tr>
-                                            <th class="text-center">#</th>
-                                            <th>Type</th>
-                                            <th>Date</th>
-                                            <th>Link</th>
-                                        </tr>
+                                    <tr>
+                                        <th class="text-center">#</th>
+                                        <th>Type</th>
+                                        <th>Date</th>
+                                        <th>Link</th>
+                                    </tr>
                                     </thead>
                                     {% for notice in notices %}
                                         <tr>
                                             <td class="text-center">{{ forloop.counter }}</td>
-                                            <td>{{ notice.type.name}}</td>
+                                            <td>{{ notice.type.name }}</td>
                                             <td>{{ notice.date|date:"F j, Y" }}</td>
                                             <td class="td-actions">
                                                 <button type="button" rel="tooltip" class="btn btn-white btn-round">
