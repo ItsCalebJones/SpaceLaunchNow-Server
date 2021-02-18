@@ -90,28 +90,32 @@
 
                         {% if event.video_url %}
                             {% video event.video_url as my_video %}
-                                <h2 class="title text-center">Watch Here</h2>
-                                <hr>
-                                <div class="videoWrapper">
-                                    {% if request|is_mobile %}
-                                        {% video my_video '85% x 25%' %}
-                                    {% else %}
-                                        {% video my_video '100% x 100%' %}
-                                    {% endif %}
+                                <div class="row">
+                                    <div class="col-md-12 ml-auto mr-auto">
+                                        <h2 class="title text-center">Watch Here</h2>
+                                        <hr>
+                                        <div class="videoWrapper">
+                                            {% if request|is_mobile %}
+                                                {% video my_video '85% x 25%' %}
+                                            {% else %}
+                                                {% video my_video '100% x 100%' %}
+                                            {% endif %}
+                                        </div>
+                                    </div>
                                 </div>
                             {% endvideo %}
                         {% endif %}
 
-                        {% if event.updates.all|length > 1 %}
-                            <div class="row">
+                        {% if event.updates.all|length > 0 %}
+                            <div class="row mt-5">
                                 <div class="card">
                                     <div class="card-header card-header-info text-center">
                                         <h1 class="title">Updates</h1>
                                     </div>
                                     <div class="card-body">
-                                        <div class="col-md-8 ml-auto mr-auto">
+                                        <div class="col-md-10 ml-auto mr-auto">
                                             {% for item in event.updates.all %}
-                                                <div class="media mt-5">
+                                                <div class="media mt-5 {% if forloop.last %} mb-5 {% endif %}">
                                                     <a class="float-left">
                                                         <div class="avatar">
                                                             <img class="media-object"
@@ -131,6 +135,9 @@
                                                         {% endif %}
                                                     </div>
                                                 </div>
+                                                {% if not forloop.last %}
+                                                    <hr>
+                                                {% endif %}
                                             {% endfor %}
                                         </div>
                                     </div>

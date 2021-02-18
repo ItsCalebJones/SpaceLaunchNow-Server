@@ -256,16 +256,16 @@
                         </div>
                     </div>
                 </div>
-                {% if launch.updates.all|length > 1 %}
+                {% if launch.updates.all|length > 0 %}
                     <div class="row">
                         <div class="card">
                             <div class="card-header card-header-info text-center">
                                 <h1 class="title">Updates</h1>
                             </div>
                             <div class="card-body">
-                                <div class="col-md-8 ml-auto mr-auto">
+                                <div class="col-md-10 ml-auto mr-auto">
                                     {% for item in launch.updates.all %}
-                                        <div class="media mt-5">
+                                        <div class="media mt-5 {% if forloop.last %} mb-5 {% endif %}">
                                             <a class="float-left">
                                                 <div class="avatar">
                                                     <img class="media-object"
@@ -285,6 +285,9 @@
                                                 {% endif %}
                                             </div>
                                         </div>
+                                        {% if not forloop.last %}
+                                            <hr>
+                                        {% endif %}
                                     {% endfor %}
                                 </div>
                             </div>

@@ -81,14 +81,14 @@
                                         </div>
                                     </div>
                                 {% endvideo %}
-                                {% if updates.all|length > 1 %}
+                                {% if updates.all|length > 0 %}
                                     <div class="section section-comments">
                                         <div class="row">
-                                            <div class="col-md-8 ml-auto mr-auto">
+                                            <div class="col-md-10 ml-auto mr-auto">
                                                 <div class="media-area">
                                                     <h2 class="title text-center">Starship Program Updates</h2>
                                                     {% for item in updates.all %}
-                                                        <div class="media mt-5">
+                                                        <div class="media mt-5 {% if forloop.last %} mb-5 {% endif %}">
                                                             <a class="float-left">
                                                                 <div class="avatar">
                                                                     <img class="media-object"
@@ -110,6 +110,9 @@
                                                                 {% endif %}
                                                             </div>
                                                         </div>
+                                                        {% if not forloop.last %}
+                                                            <hr>
+                                                        {% endif %}
                                                     {% endfor %}
                                                 </div>
                                             </div>
