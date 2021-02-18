@@ -123,9 +123,7 @@
                                                         </div>
                                                     </a>
                                                     <div class="media-body">
-                                                        {% if item.launch %}
-                                                            <h5 class="media-heading">{{ item.created_by }} <small>• {{ item.created_on }}</small></h5>
-                                                        {% endif %}
+                                                        <h5 class="media-heading">{{ item.created_by }} <small>• {{ item.created_on }}</small></h5>
                                                         <h6 class="text-muted"></h6>
                                                         <p>{{ item.comment }}</p>
                                                         {% if item.info_url %}
