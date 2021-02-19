@@ -243,7 +243,7 @@ def create_launch_view(request, launch):
                                       'youtube_urls': youtube_urls, 'status': status,
                                       'agency': agency, 'launches': launches,
                                       'previous_launches': previous_launches,
-                                      'updates': launch.updates.all()[:5]})
+                                      'updates': launch.updates.all()[:3]})
 
 
 @cache_page(600)
@@ -870,7 +870,7 @@ def lazy_load_updates(request, id):
 
     # use Django's pagination
     # https://docs.djangoproject.com/en/dev/topics/pagination/
-    results_per_page = 5
+    results_per_page = 3
     paginator = Paginator(updates, results_per_page)
     try:
         updates = paginator.page(page)
