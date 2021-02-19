@@ -41,6 +41,11 @@
     {% endif %}
     <meta name="twitter:site" content="@SpaceLaunchNow">
     <meta name="twitter:creator" content="@SpaceLaunchNow">
+    <script type="text/javascript">
+      // A CSRF token is required when making post requests in Django
+      // To be used for making AJAX requests in script.js
+      window.CSRF_TOKEN = "{{ csrf_token }}";
+    </script>
 {% endblock %}
 
 {% block navigation %}
@@ -264,31 +269,12 @@
                             </div>
                             <div class="card-body">
                                 <div class="col-md-10 ml-auto mr-auto">
-                                    {% for item in launch.updates.all %}
-                                        <div class="media mt-5 {% if forloop.last %} mb-5 {% endif %}">
-                                            <a class="float-left">
-                                                <div class="avatar">
-                                                    <img class="media-object"
-                                                         src="{% if item.created_by.tsdstaff.profile %}{{ item.created_by.tsdstaff.profile.url }}{% else %}{% static "img/ll2_logo.png" %}{% endif %}">
-                                                </div>
-                                            </a>
-                                            <div class="media-body">
-                                                {% if item.launch %}
-                                                    <h5 class="media-heading">{{ item.created_by }} <small>• {{ item.created_on }}</small></h5>
-                                                {% endif %}
-                                                <h6 class="text-muted"></h6>
-                                                <p>{{ item.comment|linebreaks }}</p>
-                                                {% if item.info_url %}
-                                                    <div class="media-footer">
-                                                        <b>Link</b> <a href="{{ item.info_url }}" class="text-reset">{{ item.info_url }}</a>
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                        {% if not forloop.last %}
-                                            <hr>
-                                        {% endif %}
-                                    {% endfor %}
+                                    <div id="updates">
+                                      {% include 'web/views/small_update.html' %}
+                                    </div>
+                                    <div class="text-center">
+                                        <a class="btn btn-primary btn" id="lazyLoadLink" href="javascript:void(0);" data-page="2">Load More</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -852,6 +838,38 @@
             (adsbygoogle = window.adsbygoogle || []).push({});
         </script>
     </div>
+    <script>
+    (function($) {
+      $('#lazyLoadLink').on('click', function() {
+        var link = $(this);
+        var page = link.data('page');
+
+        $.ajax({
+          type: 'post',
+          url: '/lazy_load_updates/{{ launch.id }}/',
+          data: {
+            'page': page,
+            'csrfmiddlewaretoken': window.CSRF_TOKEN // from index.html
+          },
+          success: function(data) {
+            // if there are still more pages to load,
+            // add 1 to the "Load More Posts" link's page data attribute
+            // else hide the link
+            if (data.has_next) {
+                link.data('page', page+1);
+            } else {
+              link.hide();
+            }
+            // append html to the posts div
+            $('#updates').append(data.updates_html);
+          },
+          error: function(xhr, status, error) {
+            // shit happens friends!
+          }
+        });
+      });
+    }(jQuery));
+    </script>
     <script src="{% static 'material_kit/js/dateFormat.js' %}" type="text/javascript"></script>
     <script>
         var countDownDate = new Date("{{launch.net.isoformat}}");

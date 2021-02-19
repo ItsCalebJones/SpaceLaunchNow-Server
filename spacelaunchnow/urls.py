@@ -161,6 +161,7 @@ if settings.IS_WEBSERVER:
         url(r'^events/latest/feed.ics$', EventFeed()),
         url(r'^tz_detect/', include('tz_detect.urls')),
         url('ads.txt', AdsView.as_view()),
+        url(r'^lazy_load_updates/(?P<id>[-\w]+)/$', landing_views.lazy_load_updates, name='lazy_load_updates'),
     ]
 
 if settings.IS_ADMIN:

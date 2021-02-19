@@ -7,6 +7,7 @@ from itertools import chain
 from uuid import UUID
 
 import pytz
+from django.template import loader
 from django.views import View
 from django.views.decorators.cache import cache_page
 from django.contrib.auth import authenticate, login
@@ -15,7 +16,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django import forms
 
@@ -241,7 +242,8 @@ def create_launch_view(request, launch):
     return render(request, template, {'launch': launch, 'launch_image': launch_image,
                                       'youtube_urls': youtube_urls, 'status': status,
                                       'agency': agency, 'launches': launches,
-                                      'previous_launches': previous_launches})
+                                      'previous_launches': previous_launches,
+                                      'updates': launch.updates.all()[:5]})
 
 
 @cache_page(600)
@@ -859,3 +861,27 @@ class AdsView(View):
 
     def get(self, request, *args, **kwargs):
         return HttpResponse(self.line)
+
+
+def lazy_load_updates(request, id):
+    launch = Launch.objects.get(id=id)
+    page = request.POST.get('page')
+    updates = launch.updates.all()
+
+    # use Django's pagination
+    # https://docs.djangoproject.com/en/dev/topics/pagination/
+    results_per_page = 5
+    paginator = Paginator(updates, results_per_page)
+    try:
+        updates = paginator.page(page)
+    except PageNotAnInteger:
+        updates = paginator.page(2)
+    except EmptyPage:
+        updates = paginator.page(paginator.num_pages)
+
+    # build a html posts list with the paginated posts
+    updates_html = loader.render_to_string('web/views/small_update.html', {'updates': updates})
+
+    # package output data and return it as a JSON object
+    output_data = {'updates_html': updates_html, 'has_next': updates.has_next()}
+    return JsonResponse(output_data)
