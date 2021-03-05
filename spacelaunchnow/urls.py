@@ -94,6 +94,110 @@ def get_v350():
     ]
     return v350_api + v350_api_docs
 
+def get_v200():
+    v200_api = [
+        url(r'^api/ll/2.0.0/', include(ll_api_v200)),
+    ]
+    v200_api_schema_view = get_schema_view(
+        openapi.Info(
+            title="Launch Library",
+            default_version='v2.0.0',
+            description="The Launch Library API is a product by The Space Devs with an up-to-date database of "
+                        "Spaceflight events. "
+                        "\n\nWhile this API is free to use it is subject to rate limiting for non-authenticated requests."
+                        "\n\nPlease use https://lldev.thespacedevs.com for development testing"
+                        " - this endpoint has stale data but is not subject to any rate limits."
+                        "\n\nIf you are interested in a higher rate limit please consider supporting the project on Patreon for access to an API Key.",
+            contact=openapi.Contact(email="support@thespacedevs.com"),
+            license=openapi.License(name="Apache License 2.0"),
+        ),
+        patterns=v200_api,
+        public=True, permission_classes=(permissions.AllowAny,),
+    )
+
+    v200_api_docs = [
+        url(r'^api/ll/2.0.0/swagger(?P<format>\.json|\.yaml)$',
+            v200_api_schema_view.without_ui(cache_timeout=0),
+            name='v2_schema-json'),
+        url(r'^api/ll/2.0.0/swagger$',
+            v200_api_schema_view.with_ui('swagger', cache_timeout=0),
+            name='v2_schema-swagger-ui'),
+        url(r'^api/ll/2.0.0/redoc/$',
+            v200_api_schema_view.with_ui('redoc', cache_timeout=0),
+            name='v2_schema-redoc'),
+    ]
+    return v200_api + v200_api_docs
+
+
+def get_v210():
+    v210_api = [
+        url(r'^api/ll/2.1.0/', include(ll_api_v210)),
+    ]
+    v210_api_schema_view = get_schema_view(
+        openapi.Info(
+            title="Launch Library",
+            default_version='v2.1.0',
+            description="The Launch Library API is a product by The Space Devs with an up-to-date database of "
+                        "Spaceflight events. "
+                        "\n\nWhile this API is free to use it is subject to rate limiting for non-authenticated requests."
+                        "\n\nPlease use https://lldev.thespacedevs.com for development testing"
+                        " - this endpoint has stale data but is not subject to any rate limits."
+                        "\n\nIf you are interested in a higher rate limit please consider supporting the project on Patreon for access to an API Key.",
+            contact=openapi.Contact(email="support@thespacedevs.com"),
+            license=openapi.License(name="Apache License 2.0"),
+        ),
+        patterns=v210_api,
+        public=True, permission_classes=(permissions.AllowAny,),
+    )
+
+    v210_api_docs = [
+        url(r'^api/ll/2.1.0/swagger(?P<format>\.json|\.yaml)$',
+            v210_api_schema_view.without_ui(cache_timeout=0),
+            name='v2_schema-json'),
+        url(r'^api/ll/2.1.0/swagger$',
+            v210_api_schema_view.with_ui('swagger', cache_timeout=0),
+            name='v2_schema-swagger-ui'),
+        url(r'^api/ll/2.1.0/redoc/$',
+            v210_api_schema_view.with_ui('redoc', cache_timeout=0),
+            name='v2_schema-redoc'),
+    ]
+    return v210_api + v210_api_docs
+
+
+def get_v220():
+    v220_api = [
+        url(r'^api/ll/2.2.0/', include(ll_api_v220)),
+    ]
+    v220_api_schema_view = get_schema_view(
+        openapi.Info(
+            title="Launch Library",
+            default_version='v2.2.0',
+            description="The Launch Library API is a product by The Space Devs with an up-to-date database of "
+                        "Spaceflight events. "
+                        "\n\nWhile this API is free to use it is subject to rate limiting for non-authenticated requests."
+                        "\n\nPlease use https://lldev.thespacedevs.com for development testing"
+                        " - this endpoint has stale data but is not subject to any rate limits."
+                        "\n\nIf you are interested in a higher rate limit please consider supporting the project on Patreon for access to an API Key.",
+            contact=openapi.Contact(email="support@thespacedevs.com"),
+            license=openapi.License(name="Apache License 2.0"),
+        ),
+        patterns=v220_api,
+        public=True, permission_classes=(permissions.AllowAny,),
+    )
+
+    v220_api_docs = [
+        url(r'^2.2.0/swagger(?P<format>\.json|\.yaml)$',
+            v220_api_schema_view.without_ui(cache_timeout=0),
+            name='v2_schema-json'),
+        url(r'^2.2.0/swagger$',
+            v220_api_schema_view.with_ui('swagger', cache_timeout=0),
+            name='v2_schema-swagger-ui'),
+        url(r'^2.2.0/redoc/$',
+            v220_api_schema_view.with_ui('redoc', cache_timeout=0),
+            name='v2_schema-redoc'),
+    ]
+    return v220_api + v220_api_docs
+
 
 if settings.IS_API:
     api_settings = [
@@ -103,13 +207,10 @@ if settings.IS_API:
         url(r'^3.2.0/', include(api_v320)),
         url(r'^api/3.3.0/', include(api_v330)),
         url(r'^api/3.4.0/', include(api_v340)),
-        url(r'^api/ll/2.0.0/', include(ll_api_v200)),
-        url(r'^api/ll/2.1.0/', include(ll_api_v210)),
-        url(r'^api/ll/2.2.0/', include(ll_api_v220)),
         url(r'^api-auth/', include('rest_framework.urls')),
 
     ]
-    api_settings = api_settings + get_v350()
+    api_settings = api_settings + get_v350() + get_v200() + get_v210() + get_v220()
 
 if settings.IS_WEBSERVER:
     web_settings = [
