@@ -32,8 +32,8 @@ FROM base as celerybeat
 CMD sh -c "celery -A spacelaunchnow beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
 
 FROM base as api
-ENV IS_WEBSERVER=False
-ENV IS_API=True
+ENV IS_WEBSERVER=false
+ENV IS_API=true
 CMD ["gunicorn"  , "-b", ":8000", "spacelaunchnow.wsgi", "--workers", "3"]
 
 FROM base as discordbot
