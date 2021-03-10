@@ -103,16 +103,16 @@ pipeline{
                             def dockerReg = registry + ":" + imageName
                             baseDockerImage = docker.build(dockerReg, buildArg)
 
-                            def buildArg = '--target web --build-arg EXTRA_INDEX_URL="$INDEX_URL" .'
-                            def dockerReg = registry + ":" + imageName + "_web"
+                            buildArg = '--target web --build-arg EXTRA_INDEX_URL="$INDEX_URL" .'
+                            dockerReg = registry + ":" + imageName + "_web"
                             webDockerImage = docker.build(dockerReg, buildArg)
 
-                            def buildArg = '--target discord --build-arg EXTRA_INDEX_URL="$INDEX_URL" .'
-                            def dockerReg = registry + ":" + imageName + "_discord"
+                            buildArg = '--target discord --build-arg EXTRA_INDEX_URL="$INDEX_URL" .'
+                            dockerReg = registry + ":" + imageName + "_discord"
                             discordDockerImage = docker.build(dockerReg, buildArg)
 
-                            def buildArg = '--target api --build-arg EXTRA_INDEX_URL="$INDEX_URL" .'
-                            def dockerReg = registry + ":" + imageName + "_api"
+                            buildArg = '--target api --build-arg EXTRA_INDEX_URL="$INDEX_URL" .'
+                            dockerReg = registry + ":" + imageName + "_api"
                             apiDockerImage = docker.build(dockerReg, buildArg)
                         }
 					}
