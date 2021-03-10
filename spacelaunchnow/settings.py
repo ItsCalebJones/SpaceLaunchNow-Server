@@ -241,6 +241,12 @@ INSTALLED_APPS = [
     'drf_yasg',
     'debug_toolbar',
     'django_cleanup.apps.CleanupConfig',
+    'health_check',  # required
+    'health_check.db',  # stock Django health checkers
+    'health_check.cache',
+    'health_check.storage',
+    'health_check.contrib.migrations',
+    'health_check.contrib.s3boto3_storage',  # requires boto3 and S3BotoStorage backend
 ]
 
 if DEBUG:

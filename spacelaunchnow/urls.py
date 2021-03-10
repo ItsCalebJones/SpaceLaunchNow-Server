@@ -62,6 +62,7 @@ sitemaps = {
 default_settings = [
     url(r'^robots\.txt', include('robots.urls')),
     url(r'^sitemap\.xml/$', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
+    url(r'^health_check/', include('health_check.urls')),
 ]
 api_settings = []
 web_settings = []
@@ -93,6 +94,7 @@ def get_v350():
         url(r'^api/3.5.0/redoc/$', v350_api_schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     ]
     return v350_api + v350_api_docs
+
 
 def get_v200():
     v200_api = [
