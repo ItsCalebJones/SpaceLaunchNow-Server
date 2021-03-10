@@ -107,7 +107,7 @@ pipeline{
                             dockerReg = registry + ":" + imageName + "_web"
                             webDockerImage = docker.build(dockerReg, buildArg)
 
-                            buildArg = '--target discord --build-arg EXTRA_INDEX_URL="$INDEX_URL" .'
+                            buildArg = '--target discordbot --build-arg EXTRA_INDEX_URL="$INDEX_URL" .'
                             dockerReg = registry + ":" + imageName + "_discord"
                             discordDockerImage = docker.build(dockerReg, buildArg)
 
