@@ -1,4 +1,4 @@
-FROM python:3.6-slim-buster
+FROM python:3.6-slim-buster as base
 
 ARG SSH_PRIVATE_KEY
 ENV PYTHONUNBUFFERED 1
@@ -21,3 +21,20 @@ COPY . /code/
 WORKDIR /code/
 
 EXPOSE 8000
+
+FROM base as web
+CMD gunicorn "--bind :8000 spacelaunchnow.wsgi --workers 3 --threads 2"
+
+FROM base as celeryworker
+CMD sh -c "celery -A spacelaunchnow worker --loglevel=INFO"
+
+FROM base as celerybeat
+CMD sh -c "celery -A spacelaunchnow beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
+
+FROM base as api
+ENV IS_WEBSERVER=False
+ENV IS_API=True
+CMD gunicorn "--bind :8000 spacelaunchnow.wsgi --workers 3 --threads 2"
+
+FROM base as discordbot
+CMD bash -c "python /code/bot.py"

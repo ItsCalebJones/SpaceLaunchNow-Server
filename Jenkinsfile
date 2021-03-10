@@ -82,7 +82,7 @@ pipeline{
 				}
 			}
 		}
-		stage('Build Docker Image'){
+		stage('Build Docker Images'){
 
 			steps{
 				script{
@@ -99,9 +99,21 @@ pipeline{
 						echo "No Dockerfile";
 					} else {
 					    withCredentials([string(credentialsId: 'EXTRA_INDEX_URL', variable: 'INDEX_URL')]) {
-                            def buildArg = '--build-arg EXTRA_INDEX_URL="$INDEX_URL" .'
+                            def buildArg = '--target base --build-arg EXTRA_INDEX_URL="$INDEX_URL" .'
                             def dockerReg = registry + ":" + imageName
-                            dockerImage = docker.build(dockerReg, buildArg)
+                            baseDockerImage = docker.build(dockerReg, buildArg)
+
+                            def buildArg = '--target web --build-arg EXTRA_INDEX_URL="$INDEX_URL" .'
+                            def dockerReg = registry + ":" + imageName + "_web"
+                            webDockerImage = docker.build(dockerReg, buildArg)
+
+                            def buildArg = '--target discord --build-arg EXTRA_INDEX_URL="$INDEX_URL" .'
+                            def dockerReg = registry + ":" + imageName + "_discord"
+                            discordDockerImage = docker.build(dockerReg, buildArg)
+
+                            def buildArg = '--target api --build-arg EXTRA_INDEX_URL="$INDEX_URL" .'
+                            def dockerReg = registry + ":" + imageName + "_api"
+                            apiDockerImage = docker.build(dockerReg, buildArg)
                         }
 					}
 				}
@@ -111,19 +123,30 @@ pipeline{
 			steps{
 				script{
 					docker.withRegistry(registryURL, registryCredential){
-						dockerImage.push()
-						if (env.BRANCH_NAME == 'master') {
-						    dockerImage.push("${dockerTag}")
-						    dockerImage.push("production")
-						}
-						sh "docker ps -f name=" + branchName +" -q | xargs --no-run-if-empty docker container stop"
-						sh "docker run --rm -d --name sln-staging-" + imageName + " -p :8000 --network=web -l traefik.backend=sln-staging-" + imageName +" -l traefik.frontend.rule=Host:" + imageName + "-staging.calebjones.dev -l traefik.docker.network=web -l traefik.port=8000 " + registry + ":" + imageName + " 'bash' '-c' 'python /code/manage.py runserver 0.0.0.0:8000'"
+						baseDockerImage.push()
+						webDockerImage.push()
+						discordDockerImage.push()
+						apiDockerImage.push()
+
+                        baseDockerImage.push("${dockerTag}")
+                        baseDockerImage.push("k8s_base")
+                        webDockerImage.push("k8s_web")
+                        discordDockerImage.push("k8s_discord")
+                        apiDockerImage.push("k8s_api")
 					}
+
 					docker.withRegistry(doRegistryURL, doRegistryCredential){
-						if (env.BRANCH_NAME == 'master') {
-						    sh "docker tag ${registry}:production ${doRegistry}/sln-server:production"
-						    sh "docker push ${doRegistry}/sln-server:production"
-						}
+                        sh "docker tag ${registry}:k8s_base ${doRegistry}/sln-server:k8s_base"
+                        sh "docker push ${doRegistry}/sln-server:k8s_base"
+
+                        sh "docker tag ${registry}:k8s_web ${doRegistry}/sln-server:k8s_web"
+                        sh "docker push ${doRegistry}/sln-server:k8s_web"
+
+                        sh "docker tag ${registry}:k8s_discord ${doRegistry}/sln-server:k8s_discord"
+                        sh "docker push ${doRegistry}/sln-server:k8s_discord"
+
+                        sh "docker tag ${registry}:k8s_api ${doRegistry}/sln-server:k8s_api"
+                        sh "docker push ${doRegistry}/sln-server:k8s_api"
 					}
 				}
 			}
