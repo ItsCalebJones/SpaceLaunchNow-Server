@@ -23,7 +23,7 @@ WORKDIR /code/
 EXPOSE 8000
 
 FROM base as web
-CMD gunicorn "--bind :8000 spacelaunchnow.wsgi --workers 3 --threads 2"
+CMD ["gunicorn"  , "-b", ":8000", "spacelaunchnow.wsgi", "--workers", "3"]
 
 FROM base as celeryworker
 CMD sh -c "celery -A spacelaunchnow worker --loglevel=INFO"
@@ -34,7 +34,7 @@ CMD sh -c "celery -A spacelaunchnow beat -l info --scheduler django_celery_beat.
 FROM base as api
 ENV IS_WEBSERVER=False
 ENV IS_API=True
-CMD gunicorn "--bind :8000 spacelaunchnow.wsgi --workers 3 --threads 2"
+CMD ["gunicorn"  , "-b", ":8000", "spacelaunchnow.wsgi", "--workers", "3"]
 
 FROM base as discordbot
 CMD bash -c "python /code/bot.py"
