@@ -668,11 +668,7 @@ def astronaut_list(request, ):
         astronaut_list = Astronaut.objects.only("name", "nationality", "twitter", "instagram", "wiki", "bio",
                                                 "profile_image", "slug").filter(status=query).order_by('name')
 
-    previous_launches = Launch.objects.only("slug", "net", "name", "status__name", "mission__name",
-                                            "mission__description", "rocket__configuration__name").prefetch_related(
-        'info_urls').prefetch_related('vid_urls').select_related('rocket').prefetch_related('mission').prefetch_related(
-        'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
-        'mission__mission_type').prefetch_related('status').filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
 
     page = request.GET.get('page', 1)
 
