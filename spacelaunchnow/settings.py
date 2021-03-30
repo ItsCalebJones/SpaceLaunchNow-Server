@@ -100,6 +100,14 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'standard'
         },
+        'autoscaler': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'log/autoscaler.log',
+            'formatter': 'standard',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5,
+            'encoding': 'utf8'
+        },
         'digest': {
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'log/daily_digest.log',
@@ -165,6 +173,11 @@ LOGGING = {
             'handlers': ['django_default', 'console'],
             'propagate': True,
         },
+        'autoscaler': {
+            'handlers': ['django_default', 'console', 'autoscaler'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
         'bot.digest': {
             'handlers': ['django_default', 'digest', 'console'],
             'level': config.BOT_DIGEST,
@@ -215,6 +228,7 @@ INSTALLED_APPS = [
     'api',
     'bot',
     'web',
+    'autoscaler',
     'configurations',
     'embed_video',
     'jet.dashboard',
