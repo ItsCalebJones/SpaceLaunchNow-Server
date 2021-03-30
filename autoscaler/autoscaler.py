@@ -45,7 +45,7 @@ def check_autoscaler():
         # Some providers have a heavier weight.
         expected_worker_count = 0
         for launch in launches:
-            if launch.program is not None:
+            if launch.program is not None and launch.program.count() > 1:
                 for program in launch.program.all():
                     if "Starship" in program.name:
                         expected_worker_count += autoscaler_settings.starship_launch_weight
