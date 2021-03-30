@@ -12,8 +12,8 @@ class DevOpsJenkins:
         self.jenkins_server = jenkins.Jenkins(JENKINS_URL, username=JENKINS_USERNAME, password=JENKINS_PASSWORD)
         user = self.jenkins_server.get_whoami()
         version = self.jenkins_server.get_version()
-        logger.info("Jenkins Version: {}".format(version))
-        logger.info("Jenkins User: {}".format(user['id']))
+        logger.debug("Jenkins Version: {}".format(version))
+        logger.debug("Jenkins User: {}".format(user['id']))
 
     def build_job(self, name, parameters=None, token=None):
         next_build_number = self.jenkins_server.get_job_info(name)['nextBuildNumber']

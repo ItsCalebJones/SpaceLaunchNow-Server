@@ -1,15 +1,15 @@
-from celery import Celery
-from celery.schedules import crontab
+import logging
 
+from celery.schedules import crontab
 from celery.task import periodic_task
-from celery.utils.log import get_task_logger
 
 from autoscaler.autoscaler import check_autoscaler
 
-logger = get_task_logger('autoscaler')
+logger = logging.getLogger('autoscaler')
 
 
-@periodic_task(run_every=(crontab(minute='*/5')), options={"expires": 120})
+@periodic_task(run_every=(crontab(minute='*/15')), options={"expires": 120})
 def check_autoscaler_task():
-    logger.info('Task - Running autoscaler...')
+    logger.info('Task - Running Autoscaler...')
     check_autoscaler()
+    logger.info('Task - Completed Autoscaler...')

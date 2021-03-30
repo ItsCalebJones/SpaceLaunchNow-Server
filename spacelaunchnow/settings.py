@@ -212,7 +212,7 @@ LOGGING = {
     },
 }
 
-CELERY_IMPORTS = ('bot.tasks',)
+CELERY_IMPORTS = ('bot.tasks', 'autoscaler.tasks')
 
 # Application definition
 INSTALLED_APPS = [

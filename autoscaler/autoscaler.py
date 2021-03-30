@@ -7,51 +7,82 @@ from autoscaler.digitalocean_helper import *
 import datetime as dtime
 import pytz
 
+from autoscaler.models import AutoscalerSettings
+
 logger = logging.getLogger('autoscaler')
 
 
 def check_autoscaler():
+    # First initialize helper classes.
     do = DigitalOceanHelper()
     jenkins = DevOpsJenkins()
-    max_worker_count = 5
-    worker_count = do.get_worker_node_count()
-    logger.info("Max Worker Count: %s" % max_worker_count)
-    logger.info("Current Count: %s" % worker_count)
-    threshold_plus_1_hour = dtime.datetime.now(tz=pytz.utc) + dtime.timedelta(hours=1) + dtime.timedelta(minutes=15)
-    threshold_minus_1_hour = dtime.datetime.now(tz=pytz.utc) - dtime.timedelta(hours=1) - dtime.timedelta(minutes=15)
 
-    launches = Launch.objects.filter(net__lte=threshold_plus_1_hour,
-                                     net__gte=threshold_minus_1_hour,
-                                     notifications_enabled=True)
+    # Get Autoscaler settings and make sure the latest worker node count is correct
+    autoscaler_settings = AutoscalerSettings.load()
+    autoscaler_settings.current_workers = do.get_worker_node_count()
+    autoscaler_settings.save()
 
-    events = Events.objects.filter(date__lte=threshold_plus_1_hour,
-                                   date__gte=threshold_minus_1_hour,
-                                   notifications_enabled=True)
+    # If autoscaler is enabled and not using a custom count proceed.
+    if autoscaler_settings.enabled and autoscaler_settings.custom_worker_count is None:
 
-    expected_worker_count = 0
-    for launch in launches:
-        if "SpaceX" in launch.launch_service_provider.name:
-            expected_worker_count += 3
-        elif "United Launch Alliance" in launch.launch_service_provider.name:
-            expected_worker_count += 2
-        elif "Rocket Lab" in launch.launch_service_provider.name:
-            expected_worker_count += 2
+        # Get all launches and events that are +/- one hour and fifteen minutes
+        # This is to ensure we have enough time to spin up resources before the T-Minus one hour notifs go out and
+        # have enough workers online to handle the surge through the execution of the launch. One small scenario worth
+        # considering is what happens if a launch has just scrubbed and had its date moved before the traffic dies down?
+        logger.info("Max Workers: %s" % autoscaler_settings.max_workers)
+        logger.info("Current Workers: %s" % autoscaler_settings.current_workers)
+        threshold_plus_1_hour = dtime.datetime.now(tz=pytz.utc) + dtime.timedelta(hours=1) + dtime.timedelta(minutes=30)
+        threshold_minus_1_hour = dtime.datetime.now(tz=pytz.utc) - dtime.timedelta(hours=1) - dtime.timedelta(minutes=30)
+
+        launches = Launch.objects.filter(net__lte=threshold_plus_1_hour,
+                                         net__gte=threshold_minus_1_hour,
+                                         notifications_enabled=True)
+
+        events = Events.objects.filter(date__lte=threshold_plus_1_hour,
+                                       date__gte=threshold_minus_1_hour,
+                                       notifications_enabled=True)
+
+        # Some providers have a heavier weight.
+        expected_worker_count = 0
+        for launch in launches:
+            if "SpaceX" in launch.launch_service_provider.name:
+                expected_worker_count += 3
+            elif "United Launch Alliance" in launch.launch_service_provider.name:
+                expected_worker_count += 2
+            elif "Rocket Lab" in launch.launch_service_provider.name:
+                expected_worker_count += 2
+            else:
+                expected_worker_count += 1
+
+        for event in events:
+            if event.program is not None:
+                for program in event.program.all():
+                    if "Starship" in program.name:
+                        expected_worker_count += 2
+            else:
+                expected_worker_count += 1
+
+        # Ensure we adhere to our max worker count.
+        if expected_worker_count > autoscaler_settings.max_workers:
+            expected_worker_count = autoscaler_settings.max_workers
+
+        # Check to see if the expected worker count matches the current worker count and act.
+        if expected_worker_count != autoscaler_settings.current_workers:
+            logger.info(f"Expected {expected_worker_count} vs actual  {autoscaler_settings.current_workers} - triggering Terraform...")
+            jenkins.scale_worker_count(expected_worker_count)
         else:
-            expected_worker_count += 1
+            logger.debug(f"No changes required...")
 
-    for event in events:
-        if event.program is not None:
-            for program in event.program.all():
-                if "Starship" in program.name:
-                    expected_worker_count += 2
+    # If autoscaler is enabled and a customer worker count is set use that value instead of calculating.
+    elif autoscaler_settings.enabled and autoscaler_settings.custom_worker_count is not None:
+        expected_worker_count = autoscaler_settings.custom_worker_count
+
+        # Check to see if the expected worker count matches the current worker count and act.
+        if expected_worker_count != autoscaler_settings.current_workers:
+            logger.info(f"Custom - Expected {expected_worker_count} vs actual  {autoscaler_settings.current_workers} - triggering Terraform...")
+            jenkins.scale_worker_count(expected_worker_count)
         else:
-            expected_worker_count += 1
+            logger.debug(f"No changes required...")
 
-    if expected_worker_count > max_worker_count:
-        expected_worker_count = max_worker_count
-
-    if expected_worker_count != worker_count:
-        logger.info(f"Expected {expected_worker_count} vs actual  {worker_count} - triggering Terraform...")
-        jenkins.scale_worker_count(expected_worker_count)
     else:
-        logger.info(f"No changes required...")
+        logger.debug(f"Autoscaler is not enabled and no custom count set - doing nothing.")
