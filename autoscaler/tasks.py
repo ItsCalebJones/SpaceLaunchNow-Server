@@ -1,11 +1,14 @@
 import logging
-
+from celery import Celery
 from celery.schedules import crontab
 from celery.task import periodic_task
+from celery.utils.log import get_task_logger
 
 from autoscaler.autoscaler import check_autoscaler
 
-logger = logging.getLogger('autoscaler')
+logger = get_task_logger('autoscaler')
+
+app = Celery()
 
 
 @periodic_task(run_every=(crontab(minute='*/15')), options={"expires": 120})
