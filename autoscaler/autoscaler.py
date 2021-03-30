@@ -45,22 +45,26 @@ def check_autoscaler():
         # Some providers have a heavier weight.
         expected_worker_count = 0
         for launch in launches:
-            if "SpaceX" in launch.launch_service_provider.name:
-                expected_worker_count += 3
+            if launch.program is not None:
+                for program in launch.program.all():
+                    if "Starship" in program.name:
+                        expected_worker_count += autoscaler_settings.starship_launch_weight
+            elif "SpaceX" in launch.launch_service_provider.name:
+                expected_worker_count += autoscaler_settings.spacex_weight
             elif "United Launch Alliance" in launch.launch_service_provider.name:
-                expected_worker_count += 2
+                expected_worker_count += autoscaler_settings.ula_weight
             elif "Rocket Lab" in launch.launch_service_provider.name:
-                expected_worker_count += 2
+                expected_worker_count += autoscaler_settings.rocket_lab_weight
             else:
-                expected_worker_count += 1
+                expected_worker_count += autoscaler_settings.other_weight
 
         for event in events:
             if event.program is not None:
                 for program in event.program.all():
                     if "Starship" in program.name:
-                        expected_worker_count += 2
+                        expected_worker_count += autoscaler_settings.starship_event_weight
             else:
-                expected_worker_count += 1
+                expected_worker_count += autoscaler_settings.other_weight
 
         # Ensure we adhere to our max worker count.
         if expected_worker_count > autoscaler_settings.max_workers:
@@ -68,7 +72,7 @@ def check_autoscaler():
 
         # Check to see if the expected worker count matches the current worker count and act.
         if expected_worker_count != autoscaler_settings.current_workers:
-            logger.info(f"Expected {expected_worker_count} vs actual  {autoscaler_settings.current_workers} - triggering Terraform...")
+            logger.info(f"Expected {expected_worker_count} vs actual {autoscaler_settings.current_workers} - triggering Terraform...")
             jenkins.scale_worker_count(expected_worker_count)
         else:
             logger.debug(f"No changes required...")
@@ -79,7 +83,7 @@ def check_autoscaler():
 
         # Check to see if the expected worker count matches the current worker count and act.
         if expected_worker_count != autoscaler_settings.current_workers:
-            logger.info(f"Custom - Expected {expected_worker_count} vs actual  {autoscaler_settings.current_workers} - triggering Terraform...")
+            logger.info(f"Custom - Expected {expected_worker_count} vs actual {autoscaler_settings.current_workers} - triggering Terraform...")
             jenkins.scale_worker_count(expected_worker_count)
         else:
             logger.debug(f"No changes required...")
