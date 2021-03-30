@@ -1,5 +1,7 @@
 import logging
 from datetime import datetime
+
+from api.models import Launch, Article, Events
 from django.core.cache import cache
 import pytz
 from pyfcm import FCMNotification
@@ -341,55 +343,63 @@ class NotificationHandler:
                 "click_action": "FLUTTER_NOTIFICATION_CLICK",
                 "title": pending.title,
                 "message": pending.message}
-        if pending.launch is not None:
+
+        if pending.launch_id is not None:
+            launch = Launch.objects.get(id=pending.launch_id)
 
             image = ''
-            if pending.launch.image_url:
-                image = pending.launch.image_url.url
-            elif pending.launch.launch_service_provider.image_url:
-                image = pending.launch.launch_service_provider.image_url.url
-            elif pending.launch.launch_service_provider.legacy_image_url:
-                image = pending.launch.launch_service_provider.legacy_image_url
+            if launch.image_url:
+                image = launch.image_url.url
+            elif launch.launch_service_provider.image_url:
+                image = launch.launch_service_provider.image_url.url
+            elif launch.launch_service_provider.legacy_image_url:
+                image = launch.launch_service_provider.legacy_image_url
 
             data.update({
                 "launch": {
-                    "launch_id": pending.launch.launch_library_id,
-                    "launch_uuid": str(pending.launch.id),
-                    "launch_name": pending.launch.name,
+                    "launch_id": launch.launch_library_id,
+                    "launch_uuid": str(launch.id),
+                    "launch_name": launch.name,
                     "launch_image": image,
-                    "launch_net": pending.launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
-                    "launch_location": pending.launch.pad.location.name,
-                    "webcast": pending.launch.webcast_live
+                    "launch_net": launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
+                    "launch_location": launch.pad.location.name,
+                    "webcast": launch.webcast_live
                 }
             })
-        if pending.news is not None:
+
+        if pending.news_id is not None:
+            news = Article.objects.get(id=pending.news_id)
+
             data.update({
                 "news": {
-                    "id": pending.news.id,
-                    "news_site_long": pending.news.news_site,
-                    "title": pending.news.title,
-                    "url": pending.news.link,
-                    "featured_image": pending.news.featured_image
+                    "id": news.id,
+                    "news_site_long": news.news_site,
+                    "title": news.title,
+                    "url": news.link,
+                    "featured_image": news.featured_image
                 }
             })
-        if pending.event is not None:
+
+        if pending.event_id is not None:
+            event = Events.objects.get(id=pending.event_id)
+
             feature_image = None
-            if pending.event.feature_image and hasattr(pending.event.feature_image, 'url'):
-                feature_image = pending.event.feature_image.url
+            if event.feature_image and hasattr(event.feature_image, 'url'):
+                feature_image = event.feature_image.url
             data.update({
                 "event": {
-                    "id": pending.event.id,
-                    "name": pending.event.name,
-                    "description": pending.event.description,
+                    "id": event.id,
+                    "name": event.name,
+                    "description": event.description,
                     "type": {
-                        "id": pending.event.type.id,
-                        "name": pending.event.type.name,
+                        "id": event.type.id,
+                        "name": event.type.name,
                     },
-                    "date": pending.event.date.strftime("%B %d, %Y %H:%M:%S %Z"),
-                    "location": pending.event.location,
-                    "news_url": pending.event.news_url,
-                    "video_url": pending.event.video_url,
-                    "webcast_live": pending.event.webcast_live,
+                    "date": event.date.strftime("%B %d, %Y %H:%M:%S %Z"),
+                    "location": event.location,
+                    "news_url": event.news_url,
+                    "video_url": event.video_url,
+                    "webcast_live": event.webcast_live,
                     "feature_image": feature_image,
                 },
             })

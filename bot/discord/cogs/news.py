@@ -2,6 +2,7 @@ import asyncio
 import logging
 
 import discord
+from api.models import Article
 from discord import Colour
 from discord.ext import tasks, commands
 
@@ -105,7 +106,7 @@ class News(commands.Cog):
         news = ArticleNotification.objects.filter(read=False)
         logger.info("Found %s articles to read." % len(news))
         for news_item in news:
-            item = news_item.article
+            item = Article.objects.get(id=news_item.id)
             news_item.read = True
             news_item.save()
             for channel in NewsNotificationChannel.objects.filter(subscribed=True):

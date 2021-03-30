@@ -1,4 +1,4 @@
-from api.models import Events
+from api.models import Events, Article
 from bot.app.events.notification_handler import EventNotificationHandler
 from bot.app.events.social_handler import SocialHandler
 from bot.app.notifications.news_notification_handler import NewsNotificationHandler
@@ -74,9 +74,11 @@ class EventTracker:
         logger.debug('Found %d news items.', len(news_that_need_to_notify))
 
         for news_item in news_that_need_to_notify:
+            item = Article.objects.get(id=news_item.id)
+
             if not news_item.was_notified:
                 news_item.was_notified = True
                 news_item.save()
-                logger.info('Sending %s notification!', news_item.article.title)
-                self.news_notification_handler.send_notification(news_item.article)
-                self.news_notification_handler.send_to_social(news_item.article)
+                logger.info('Sending %s notification!', item.title)
+                self.news_notification_handler.send_notification(item)
+                self.news_notification_handler.send_to_social(item)

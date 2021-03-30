@@ -26,10 +26,9 @@ from django_ical.views import ICalFeed
 from django_tables2 import RequestConfig, LazyPaginator, SingleTableMixin
 
 from api.models import Agency, Launch, Astronaut, Launcher, SpaceStation, SpacecraftConfiguration, LauncherConfig, \
-    Events, RoadClosure, Notice, VidURLs, Update
+    Events, RoadClosure, Notice, VidURLs, Update, Article
 from django_user_agents.utils import get_user_agent
 
-from bot.models import SNAPIArticle
 from web.filters.launch_filters import LaunchListFilter
 from web.filters.launch_vehicle_filters import LauncherConfigListFilter
 from web.tables.launch_table import LaunchTable
@@ -71,7 +70,7 @@ class AdsView(View):
 
 @cache_page(120)
 def index(request):
-    news = SNAPIArticle.objects.all().order_by('-created_at')[:6]
+    news = Article.objects.all().order_by('-created_at')[:6]
     last_six_hours = datetime.now() - timedelta(hours=6)
     event = Events.objects.all().filter(date__gte=last_six_hours).order_by('date').first()
     events = Events.objects.all().filter(date__gte=last_six_hours).order_by('date')[1:4]
@@ -413,7 +412,7 @@ def astronaut(request, id):
 
 @cache_page(600)
 def vehicle_root(request):
-    news = SNAPIArticle.objects.all().order_by('created_at')[:6]
+    news = Article.objects.all().order_by('created_at')[:6]
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:15]
     return render(request, 'web/vehicles/index.html', {'previous_launches': previous_launches,
                                                        'news': news})
