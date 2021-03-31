@@ -69,7 +69,7 @@ def check_autoscaler():
         # Ensure we adhere to our max worker count.
         if expected_worker_count > autoscaler_settings.max_workers:
             expected_worker_count = autoscaler_settings.max_workers
-
+        logger.debug(f"Expected workers calculated {expected_worker_count}")
         # Check to see if the expected worker count matches the current worker count and act.
         if expected_worker_count != autoscaler_settings.current_workers:
             logger.info(f"Expected {expected_worker_count} vs actual {autoscaler_settings.current_workers} - triggering Terraform...")
@@ -80,7 +80,7 @@ def check_autoscaler():
     # If autoscaler is enabled and a customer worker count is set use that value instead of calculating.
     elif autoscaler_settings.enabled and autoscaler_settings.custom_worker_count is not None:
         expected_worker_count = autoscaler_settings.custom_worker_count
-
+        logger.debug(f"Expected workers custom set to  {expected_worker_count}")
         # Check to see if the expected worker count matches the current worker count and act.
         if expected_worker_count != autoscaler_settings.current_workers:
             logger.info(f"Custom - Expected {expected_worker_count} vs actual {autoscaler_settings.current_workers} - triggering Terraform...")
