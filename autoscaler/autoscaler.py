@@ -35,12 +35,10 @@ def check_autoscaler():
         threshold_minus_1_hour = dtime.datetime.now(tz=pytz.utc) - dtime.timedelta(hours=1) - dtime.timedelta(minutes=30)
 
         launches = Launch.objects.filter(net__lte=threshold_plus_1_hour,
-                                         net__gte=threshold_minus_1_hour,
-                                         notifications_enabled=True)
+                                         net__gte=threshold_minus_1_hour)
 
         events = Events.objects.filter(date__lte=threshold_plus_1_hour,
-                                       date__gte=threshold_minus_1_hour,
-                                       notifications_enabled=True)
+                                       date__gte=threshold_minus_1_hour)
 
         # Some providers have a heavier weight.
         expected_worker_count = 0
