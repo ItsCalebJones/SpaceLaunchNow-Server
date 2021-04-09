@@ -47,6 +47,8 @@ def check_autoscaler():
                 for program in launch.program.all():
                     if "Starship" in program.name:
                         expected_worker_count += autoscaler_settings.starship_launch_weight
+                    else:
+                        expected_worker_count += autoscaler_settings.other_weight
             elif "SpaceX" in launch.launch_service_provider.name:
                 expected_worker_count += autoscaler_settings.spacex_weight
             elif "United Launch Alliance" in launch.launch_service_provider.name:
