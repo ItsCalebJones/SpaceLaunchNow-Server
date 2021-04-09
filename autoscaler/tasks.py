@@ -11,7 +11,7 @@ logger = get_task_logger('autoscaler')
 app = Celery()
 
 
-@periodic_task(run_every=(crontab(minute='*/15')), options={"expires": 120})
+@periodic_task(run_every=(crontab(minute='*/5')), options={"expires": 120})
 def check_autoscaler_task():
     logger.info('Task - Running Autoscaler...')
     check_autoscaler()
