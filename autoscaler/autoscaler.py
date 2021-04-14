@@ -31,14 +31,19 @@ def check_autoscaler():
         # considering is what happens if a launch has just scrubbed and had its date moved before the traffic dies down?
         logger.info("Max Workers: %s" % autoscaler_settings.max_workers)
         logger.info("Current Workers: %s" % autoscaler_settings.current_workers)
-        threshold_plus_1_hour = dtime.datetime.now(tz=pytz.utc) + dtime.timedelta(hours=1) + dtime.timedelta(minutes=30)
-        threshold_minus_1_hour = dtime.datetime.now(tz=pytz.utc) - dtime.timedelta(hours=1) - dtime.timedelta(minutes=30)
+        threshold_plus_1_hour = dtime.datetime.now(tz=pytz.utc) + dtime.timedelta(hours=1) + dtime.timedelta(minutes=15)
+        threshold_minus_1_hour = dtime.datetime.now(tz=pytz.utc) - dtime.timedelta(hours=1)
 
-        launches = Launch.objects.filter(net__lte=threshold_plus_1_hour,
-                                         net__gte=threshold_minus_1_hour)
+        threshold_plus_24_hour = dtime.datetime.now(tz=pytz.utc) + dtime.timedelta(hours=24) + dtime.timedelta(minutes=15)
+        threshold_minus_24_hour = dtime.datetime.now(tz=pytz.utc) + dtime.timedelta(hours=24) - dtime.timedelta(minutes=15)
 
-        events = Events.objects.filter(date__lte=threshold_plus_1_hour,
-                                       date__gte=threshold_minus_1_hour)
+        launches_1 = Launch.objects.filter(net__range=[threshold_minus_1_hour, threshold_plus_1_hour])
+
+        events = Events.objects.filter(date__range=[threshold_minus_1_hour, threshold_plus_1_hour])
+
+        launches_24 = Launch.objects.filter(net__range=[threshold_minus_24_hour, threshold_plus_24_hour])
+
+        launches = launches_1.union(launches_24)
 
         # Some providers have a heavier weight.
         expected_worker_count = 0
