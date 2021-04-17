@@ -19,7 +19,7 @@ from bot.app.sync.twitter_sync import get_new_tweets
 from bot.app.sync.news_sync import get_news
 from celery.schedules import crontab
 
-logger = get_task_logger('bot.digest')
+logger = get_task_logger('tasks')
 
 TAG = 'Digest Server'
 

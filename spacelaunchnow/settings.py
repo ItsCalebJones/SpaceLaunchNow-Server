@@ -108,6 +108,14 @@ LOGGING = {
             'backupCount': 5,
             'encoding': 'utf8'
         },
+        'tasks': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'log/tasks.log',
+            'formatter': 'standard',
+            'maxBytes': 1024 * 1024 * 5,
+            'backupCount': 5,
+            'encoding': 'utf8'
+        },
         'digest': {
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'log/daily_digest.log',
@@ -209,10 +217,15 @@ LOGGING = {
             'level': config.DISCORD_TWEETS,
             'propagate': False,
         },
+        'tasks': {
+            'handlers': ['django_default', 'tasks', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        }
     },
 }
 
-CELERY_IMPORTS = ('bot.tasks', 'autoscaler.tasks')
+CELERY_IMPORTS = ('bot.tasks', 'autoscaler.tasks', 'api.tasks')
 
 # Application definition
 INSTALLED_APPS = [
