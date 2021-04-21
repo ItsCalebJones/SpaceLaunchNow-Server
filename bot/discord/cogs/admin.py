@@ -1,8 +1,13 @@
 import asyncio
 import logging
 
+import discord
+from io import StringIO
+
 from discord import Embed
 from discord.ext import tasks, commands
+from django.conf import settings
+from django.core.management import call_command
 
 from bot.models import *
 from bot.tasks import run_daily
@@ -54,28 +59,18 @@ class SLNAdmin(commands.Cog):
                     logger.info("Found channel %s-%s - (%s)" % (channel.id, channel.name, channel.server_id))
             if len(pending_deletable) > 0:
                 logger.info("Deletable channels %s" % pending_deletable)
-                message = ""
-                for channel in pending_deletable:
-                    message += "\n%s (%s)" % (channel.name, channel.channel_id)
-                await staff_channel.send('Found %s deletable channels:\n %s \n\nProceed?' % (len(pending_deletable), message))
 
-                def check(reaction, user):
-                    return str(reaction.emoji) == '👍'
-
-                try:
-                    reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
-                except asyncio.TimeoutError:
-                    await staff_channel.send('Ok - moving on.')
-                else:
-                    for channel in pending_deletable:
-                        channel.delete()
-                    await staff_channel.send('Done.')
+                # If Debug == False - delete!
+                if not settings.DEBUG and settings.SQUID_BOT_CLIENT_ID == "485112161367097367":
+                    # for channel in pending_deletable:
+                    #     channel.delete()
+                    await staff_channel.send('Deleted stuff.')
 
         except Exception as e:
             logger.error(e)
 
-    @commands.command(name='checkUsage', pass_context=True, hidden=True)
-    async def check_usage(self, context):
+    @commands.command(pass_context=True, hidden=True)
+    async def checkUsage(self, context):
         """Displays the current Space Launch Bot server count..
 
         Usage: .sln checkUsage
@@ -83,6 +78,7 @@ class SLNAdmin(commands.Cog):
         Examples: .sln checkUsage
         """
         channel = context.message.channel
+        logger.info(f"Processing: {context.message.content}")
         async with channel.typing():
             member_count = 0
             logger.info("IS staff")
@@ -94,31 +90,29 @@ class SLNAdmin(commands.Cog):
 
         await channel.send(content=message)
 
-    @commands.command(name='checkStale', pass_context=True, hidden=True)
-    async def stale(self, context):
-        """Checks for stale launches.
-
-        Usage: .sln checkStale
-
-        Examples: .sln checkStale
-        """
-        channel = context.message.channel
-        staff_channel = self.bot.get_channel(608829443661889536)
-        async with staff_channel.typing():
-            if "staff" in [y.name.lower() for y in context.message.author.roles]:
-                if channel.id != staff_channel.id:
-                    await channel.send("Check for response in <#608829443661889536>")
-                data = run_daily(send_webhook=False)
-                embeds = []
-                for data_embed in data['embeds']:
-                    embed = Embed(
-                        title=data_embed["title"],
-                        description=data_embed["description"]
-                    )
-                    embeds.append(embed)
-                await staff_channel.send(content=data['content'], embed=embeds[0])
-            else:
-                await channel.send("This is a staff only command.")
+    # @commands.command(pass_context=True, hidden=True)
+    # async def runCommand(self, context, command: str = None):
+    #     """Run a Management command.
+    #
+    #     Usage: .sln runCommand showmigrations
+    #
+    #     Examples: .sln showmigrations
+    #     """
+    #     channel = context.message.channel
+    #     logger.info(f"Processing: {context.message.content}")
+    #     if settings.DEBUG:
+    #         staff_channel = self.bot.get_channel(708387934973198438)
+    #     else:
+    #         staff_channel = self.bot.get_channel(608829443661889536)
+    #     if channel.id == staff_channel.id:
+    #         content = StringIO()
+    #         call_command('api', command, stdout=content)
+    #         content.seek(0)
+    #         embed = discord.Embed(type="rich", title=f"Ran Command - {command}",
+    #                               description=content.read())
+    #         await channel.send(embed=embed)
+    #     else:
+    #         await channel.send("This is a staff only command.")
 
     @commands.command(name='checkChannels', pass_context=True, hidden=True)
     async def check_channels(self, context):

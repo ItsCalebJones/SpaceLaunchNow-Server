@@ -8,6 +8,8 @@ from collections import Counter
 
 import django
 from discord.ext import commands
+from django.conf import settings
+
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "spacelaunchnow.settings")
 django.setup()
@@ -29,7 +31,10 @@ Check out this project at https://spacelaunchnow.me!
 
 log = logging.getLogger('bot.discord')
 help_attrs = dict(hidden=False)
-prefix = ['.sln ']
+if not settings.DEBUG:
+    prefix = ['.sln ']
+else:
+    prefix = ['.slnd ']
 bot = commands.Bot(command_prefix=prefix, description=description, pm_help=None, help_attrs=help_attrs)
 bot_start_time = datetime.datetime.utcnow()
 initial_extensions = ['bot.discord.cogs.admin', 'bot.discord.cogs.about', 'bot.discord.cogs.launches',
