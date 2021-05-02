@@ -261,22 +261,26 @@
                         </div>
                     </div>
                 </div>
-                {% if launch.updates.all|length > 0 %}
-                    <div class="row">
-                        <div class="card">
-                            <div class="card-header card-header-info text-center">
-                                <h1 class="title">Updates</h1>
-                            </div>
-                            <div class="card-body mt-3">
-                                <div id="updates" class="col-md-10 ml-auto mr-auto">
-                                      {% include 'web/views/small_update.html' %}
-                                    <div class="text-center">
-                                        <a class="btn btn-primary btn" id="lazyLoadLink" href="javascript:void(0);" data-page="2">Load More</a>
+                {% if updates|length > 0 %}
+                    {% with list_updates=updates|slice:"3"%}
+                        <div class="row">
+                            <div class="card">
+                                <div class="card-header card-header-info text-center">
+                                    <h1 class="title">Updates</h1>
+                                </div>
+                                <div class="card-body mt-3">
+                                    <div id="updates" class="col-md-10 ml-auto mr-auto">
+                                          {% include 'web/views/small_update.html' %}
+                                        {% if updates|length > 3 %}
+                                            <div class="text-center">
+                                                <a class="btn btn-primary btn" id="lazyLoadLink" href="javascript:void(0);" data-page="2">Load More</a>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    {% endwith %}
                 {% endif %}
                 <div class="row">
                     <div class="card text-center">
@@ -854,9 +858,9 @@
             // add 1 to the "Load More Posts" link's page data attribute
             // else hide the link
             if (data.has_next) {
-                link.data('page', page+1);
+                link.data('page', page + 1);
             } else {
-              link.hide();
+                link.hide();
             }
             // append html to the posts div
             $('#updates').append(data.updates_html);

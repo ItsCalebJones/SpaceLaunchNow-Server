@@ -75,11 +75,10 @@ def index(request):
     event = Events.objects.all().filter(date__gte=last_six_hours).order_by('date').first()
     events = Events.objects.all().filter(date__gte=last_six_hours).order_by('date')[1:4]
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
-    _launches = Launch.objects.filter(net__gte=datetime.utcnow()).filter(Q(status__id=1) | Q(status__id=2)).order_by(
-        'net')[:3]
+    _launches = Launch.objects.filter(net__gte=datetime.utcnow()).filter(Q(status__id=1) | Q(status__id=2) | Q(status__id=8)).order_by('net')[:3]
 
     in_flight_launch = Launch.objects.filter(status__id=6).order_by('-net').first()
-    recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - timedelta(hours=2),
+    recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - timedelta(hours=1),
                                               net__lte=datetime.utcnow()).order_by('-net').first()
     _next_launch = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net').first()
 
@@ -238,11 +237,12 @@ def create_launch_view(request, launch):
         template = 'web/launches/launch_detail_page_mobile.html'
     else:
         template = 'web/launches/launch_detail_page.html'
+
     return render(request, template, {'launch': launch, 'launch_image': launch_image,
                                       'youtube_urls': youtube_urls, 'status': status,
                                       'agency': agency, 'launches': launches,
                                       'previous_launches': previous_launches,
-                                      'updates': launch.updates.all()[:3]})
+                                      'updates': launch.updates.all()})
 
 
 @cache_page(600)
@@ -875,7 +875,7 @@ def lazy_load_updates(request, id):
         updates = paginator.page(paginator.num_pages)
 
     # build a html posts list with the paginated posts
-    updates_html = loader.render_to_string('web/views/small_update.html', {'updates': updates})
+    updates_html = loader.render_to_string('web/views/small_update.html', {'list_updates': updates})
 
     # package output data and return it as a JSON object
     output_data = {'updates_html': updates_html, 'has_next': updates.has_next()}
