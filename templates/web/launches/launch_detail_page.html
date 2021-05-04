@@ -221,6 +221,15 @@
                                         </div>
                                     </div>
                                 {% endif %}
+                                {% if launch.flightclub_url %}
+                                <h2 class="title">Launch Telemetry</h2>
+                                <p>Launch trajectory and telemetry simulations provided by Flight Club - a the rocket launch simulator and orbital trajectory visualiser for all things space!</p>
+                                <div class="text-center">
+                                    <a class="btn btn-primary btn-round" href="{{ launch.flightclub_url }}">
+                                        <img src="https://flightclub.io/assets/img/brand/fc-icon-no-bg.png" width="30" /> View in Flightclub
+                                    </a>
+                                </div>
+                                {% endif %}
                                 {% if launch.infographic_url %}
                                     <h2 class="title">Launch Infographic</h2>
                                     <div class="card-header card-header-image mt-3">
@@ -232,8 +241,8 @@
                                         <div class="colored-shadow colored-shadow-big"
                                              style="background-image: url('{{ launch.infographic_url.url }}'); opacity: 1;"></div>
                                     </div>
-                                    <h4 class="caption">Geoff Barrett is an independent graphic artist that creates
-                                        launch infographics for space flight events.</h4>
+                                    <p>Geoff Barrett is an independent graphic artist that creates
+                                        launch infographics for space flight events.</p>
                                     <div class="social text-center mb-2">
                                         <a href="https://www.facebook.com/Geoffdbarrett/">
                                             <button class="btn btn-just-icon btn-round btn-facebook">
