@@ -41,6 +41,15 @@ def get_youtube_url(launch):
             return url.vid_url
 
 
+def get_youtube_urls(launch):
+    youtube_urls = []
+    vids = launch.vid_urls.all()
+    for url in vids:
+        if 'youtube' in url.vid_url:
+            youtube_urls.append(url.vid_url)
+    return youtube_urls
+
+
 def asset_file(request):
     json_data = [
         {
@@ -137,7 +146,7 @@ def index(request):
                                       'first_launch_image': first_launch_image,
                                       'second_launch': second_launch,
                                       'second_launch_image': second_launch_image,
-                                      'youtube_url': get_youtube_url(_next_launch),
+                                      'youtube_urls': get_youtube_urls(launch),
                                       'news': news,
                                       'previous_launches': previous_launches,
                                       'event': event,
