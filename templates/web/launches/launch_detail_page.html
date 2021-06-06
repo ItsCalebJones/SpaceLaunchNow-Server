@@ -188,6 +188,12 @@
                                 {% if launch.mission %}
                                     <div class="row">
                                         <div class="col-md-12 mx-auto">
+                                            {% if launch.mission_patches.all|length > 0 %}
+                                                <img src="{{ launch.mission_patches.first.image_url.url }}"
+                                                     alt="Circle Image"
+                                                     class="img-fluid mx-auto"
+                                                     style="max-width: 75%;max-height: 400px;">
+                                            {% endif %}
                                             <h2 class="title">Overview</h2>
                                             <h4>
                                                 <b>Destination:</b> {{ launch.mission.orbit }}<br><b>Mission:</b> {{ launch.mission.mission_type.name }}
