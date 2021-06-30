@@ -77,7 +77,7 @@ class AdsView(View):
         return HttpResponse(line)
 
 
-@cache_page(120)
+@cache_page(60)
 def index(request):
     news = Article.objects.all().order_by('-created_at')[:6]
     last_six_hours = datetime.now() - timedelta(hours=6)
@@ -170,7 +170,7 @@ def app(request):
                                                 'youtube_url': get_youtube_url(_next_launch)})
 
 
-@cache_page(120)
+@cache_page(60)
 # Create your views here.
 def next_launch(request):
     in_flight_launch = Launch.objects.filter(status__id=6).order_by('-net').first()
