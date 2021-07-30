@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 
 import pytz
 import requests
-from goose3 import Goose
 
 from api.models import Events, Launch, Article
 from bot.models import ArticleNotification
@@ -13,7 +12,7 @@ logger = logging.getLogger('bot.digest')
 
 
 def get_news(limit=10):
-    response = requests.get(url='https://spaceflightnewsapi.net/api/v2/articles?_limit=%s' % limit)
+    response = requests.get(url='https://api.spaceflightnewsapi.net/v3/articles?_limit=%s' % limit)
     if response.status_code == 200:
         articles = response.json()
         logger.info("Found %s articles." % len(articles))
