@@ -22,7 +22,8 @@ class NewsNotificationHandler:
         data = {"notification_type": 'featured_news',
                 "click_action": "FLUTTER_NOTIFICATION_CLICK",
                 "item": {
-                    "id": article.id,
+                    "id": None,
+                    "article_id": article.id,
                     "news_site_long": article.news_site,
                     "newsSite": article.news_site,
                     "title": article.title,
