@@ -761,10 +761,8 @@
                 {% if launch.articles.all|length > 0 %}
                 <div class="row">
                     <div class="card text-center">
-                        <div class="col-lg-12 text-center">
-                            <div class="card-header card-header-info text-center">
-                                    <h1 id="related_news"  class="title text-white">Related News</h1>
-                            </div>
+                        <div class="card-header card-header-info text-center">
+                                <h1 id="related_news"  class="title text-white">Related News</h1>
                         </div>
                         <div class="card-body">
                             {% for item in launch.articles.all|slice:":3" %}

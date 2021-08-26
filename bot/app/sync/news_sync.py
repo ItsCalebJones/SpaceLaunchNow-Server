@@ -20,10 +20,34 @@ def get_news(limit=10):
             save_news_LL(item)
 
 
+def get_related_news():
+    launches = Launch.objects.all()
+    for launch in launches:
+        url = f'https://api.spaceflightnewsapi.net/v3/articles/launch/{launch.id}'
+        logger.debug(f"Looking for related articles - {url}")
+        response = requests.get(url=url)
+        if response.status_code == 200:
+            data = response.json()
+            logger.info(f"Found {len(data)} articles.")
+            for item in data:
+                save_news_LL(item)
+    events = Events.objects.all()
+    for event in events:
+        url = f'https://api.spaceflightnewsapi.net/v3/articles/event/{event.id}'
+        logger.debug(f"Looking for related articles - {url}")
+        response = requests.get(url=url)
+        if response.status_code == 200:
+            data = response.json()
+            logger.info(f"Found {len(data)} articles.")
+            for item in data:
+                save_news_LL(item)
+
+
 def save_news_LL(item):
     news, news_created = Article.objects.get_or_create(id=item['id'])
     record, record_created = ArticleNotification.objects.get_or_create(id=news.id)
     if news_created:
+        logger.debug(f"Creating article for article id {item['id']}.")
         news.title = item['title']
         news.link = item['url']
         news.featured_image = item['imageUrl']
@@ -55,12 +79,14 @@ def save_news_LL(item):
         record.save()
 
     else:
+        logger.debug(f"Updating article for article id {item['id']}.")
         if news.title != item['title']:
             news.title = item['title']
             if (news.created_at - datetime.strptime(item['publishedAt'][:-5], '%Y-%m-%dT%H:%M:%S').replace(
                     tzinfo=pytz.utc)) > timedelta(1):
                 news.created_at = datetime.strptime(item['publishedAt'][:-5], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=pytz.utc)
-                record.read = False
+                record.read = True
+                record.was_notified = True
 
         if item['featured']:
             record.should_notify = True
@@ -99,3 +125,4 @@ def save_news_LL(item):
         news.featured_image = item['imageUrl']
         news.save()
         record.save()
+        logger.debug(f"Article saved for article id {item['id']}.")

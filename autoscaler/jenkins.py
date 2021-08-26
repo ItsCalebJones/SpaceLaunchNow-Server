@@ -23,7 +23,7 @@ class DevOpsJenkins:
         return build_info
 
     def scale_worker_count(self, worker_count):
-        NAME_OF_JOB = "SpaceLaunchNow-Terraform/master"
+        NAME_OF_JOB = "Space Launch Now/Server/Production/apply/master"
         PARAMETERS = {'SLN_WORKERS': worker_count, 'AUTO_APPLY': True}
         output = self.build_job(NAME_OF_JOB, parameters=PARAMETERS)
         logger.info("Jenkins Build URL: {}".format(output['url']))
