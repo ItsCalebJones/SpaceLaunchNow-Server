@@ -86,26 +86,35 @@
                                         <div class="row">
                                             <div class="col-md-10 ml-auto mr-auto">
                                                 <div class="media-area">
-                                                    <h2 id="updates" class="title text-center">Starship Program Updates</h2>
+                                                    <h2 id="updates" class="title text-center">Starship Program
+                                                        Updates</h2>
                                                     {% for item in updates.all %}
                                                         <div class="media mt-5 {% if forloop.last %} mb-5 {% endif %}">
                                                             <a class="float-left">
                                                                 <div class="avatar">
                                                                     <img class="media-object"
-                                                                         src="{% if item.created_by.tsdstaff.profile %}{{ item.created_by.tsdstaff.profile.url }}{% else %}{% static "img/ll2_logo.png" %}{% endif %}">
+                                                                         src="
+
+
+                                                                                 {% if item.created_by.tsdstaff.profile %}{{ item.created_by.tsdstaff.profile.url }}{% else %}{% static "img/ll2_logo.png" %}{% endif %}">
                                                                 </div>
                                                             </a>
                                                             <div class="media-body">
                                                                 {% if item.launch %}
-                                                                    <h5 class="media-heading">{{ item.launch.name }} Update<br>{{ item.created_by }} <small>• {{ item.created_on }}</small></h5>
+                                                                    <h5 class="media-heading">{{ item.launch.name }}
+                                                                        Update<br>{{ item.created_by }}
+                                                                        <small>• {{ item.created_on }}</small></h5>
                                                                 {% else %}
-                                                                    <h5 class="media-heading">Starship Program Update<br>{{ item.created_by }} <small>• {{ item.created_on }}</small></h5>
+                                                                    <h5 class="media-heading">Starship Program
+                                                                        Update<br>{{ item.created_by }}
+                                                                        <small>• {{ item.created_on }}</small></h5>
                                                                 {% endif %}
                                                                 <h6 class="text-muted"></h6>
                                                                 <p>{{ item.comment|linebreaks }}</p>
                                                                 {% if item.info_url %}
                                                                     <div class="media-footer">
-                                                                        <b>Link</b> <a href="{{ item.info_url }}" class="text-reset">{{ item.info_url }}</a>
+                                                                        <b>Link</b> <a href="{{ item.info_url }}"
+                                                                                       class="text-reset">{{ item.info_url }}</a>
                                                                     </div>
                                                                 {% endif %}
                                                             </div>
@@ -129,7 +138,10 @@
                                                     <div class="card-header card-header-image">
                                                         <a href="{{ item.vid_url }}">
                                                             <img class="img"
-                                                                 src="{% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
+                                                                 src="
+
+
+                                                                         {% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
                                                             <div class="colored-shadow"
                                                                  style="background-image: url('{% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
                                                         </a>
@@ -154,102 +166,100 @@
                                 {% endif %}
                             </div>
                         {% endif %}
-                        <div class="col-md-10 mx-auto">
-                            <hr>
-                        </div>
+
                         {% if next_up|get_type == "event" %}
                             <div class="col-md-11 mx-auto">
                                 <div class="card card-plain card-blog">
-                                <div class="card-header card-header-image"
-                                     style="margin-left:16px!important; margin-right:16px!important;">
-                                    <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
-                                         src="{{ next_up.feature_image.url }}">
-                                    <div class="colored-shadow"
-                                         style="background-image: url({{ next_up.feature_image.url }}); opacity: 1;"></div>
-                                </div>
-                                <div class="card-body">
-
-                                    <h6 class="card-category text-info"
-                                        style="display:inline;">{{ next_up.type.name }}</h6>
-                                    <h6 class="card-category"
-                                        style="display:inline;">{{ next_up.date }}</h6>
-                                    <h2 class="card-title">{{ next_up.name }}</h2>
-                                    {% if next_up.location %}
-                                        <span class="badge badge-pill badge-primary">{{ next_up.location }}</span>
-                                    {% endif %}
-                                    <p class="card-description mt-2">
-                                        {{ next_up.description|linebreaks }}
-                                    </p>
-                                </div>
-                                <div class="text-center">
-                                    <a href="/event/{{ next_up.id }}" class="btn btn-primary btn-round">
-                                        <i class="material-icons">calendar_today</i> Explore
-                                    </a>
-                                </div>
-                            </div>
-                            </div>
-                        {% else %}
-                            <div class="col-md-11 mx-auto">
-                                <div class="card card-plain card-blog">
-                                <div class="card-header card-header-image"
-                                     style="margin-left:16px!important; margin-right:16px!important;">
-                                    {% if next_up.image_url %}
+                                    <div class="card-header card-header-image"
+                                         style="margin-left:16px!important; margin-right:16px!important;">
                                         <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
-                                             src="{{ next_up.image_url.url }}">
+                                             src="{{ next_up.feature_image.url }}">
                                         <div class="colored-shadow"
-                                             style="background-image: url({{ next_up.image_url.url }}); opacity: 1;"></div>
-                                    {% elif next_up.rocket.configuration.image_url %}
-                                        <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
-                                             src="{{ next_up.rocket.configuration.image_url.url }}">
-                                        <div class="colored-shadow"
-                                             style="background-image: url({{ next_up.rocket.configuration.image_url.url }}); opacity: 1;"></div>
-                                    {% else %}
-                                        <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
-                                             src="{% static 'img/header.jpg' %}">
-                                        <div class="colored-shadow"
-                                             style="background-image: url({% static 'img/header.jpg' %}); opacity: 1;"></div>
-                                    {% endif %}
-
-                                </div>
-                                <div class="card-body">
-                                    <h6 class="card-category text-info"
-                                        style="display:inline;">{{ next_up.mission.orbit.name }}</h6>
-                                    <h6 class="card-category"
-                                        style="display:inline;">{{ next_up.net }}</h6>
-                                    <h2 class="card-title">{{ next_up.name }}</h2>
-                                    <div class="row">
-                                        <div class="col-md-12 mx-auto">
-                                            {% if next_up.pad %}
-                                                <span class="badge badge-pill badge-primary">{{ next_up.pad.name }}</span>
-                                            {% endif %}
-                                            {% if next_up.pad.location.name %}
-                                                <span class="badge badge-pill badge-primary">{{ next_up.pad.location.name }}</span>
-                                            {% endif %}
-                                            {% if next_up.probability > 0 %}
-                                                <span class="badge badge-pill badge-primary">Probability: {{ next_up.probability }}%</span>
-                                            {% endif %}
-                                            {% if next_up.hashtag %}
-                                                <span class="badge badge-pill badge-info">{{ next_up.hashtag }}</span>
-                                            {% endif %}
-                                            {% if next_up.rocket.firststage.all|length > 0 %}
-                                                {% for stage in next_up.rocket.firststage.all %}
-                                                    {% if stage.landing.landing_location %}
-                                                        <span class="badge badge-pill {% if stage.landing.success %} badge-success{% elif not stage.landing.success %}badge-danger {% else %} badge-primary {% endif %}"> {{ stage.launcher.serial_number }} - {{ stage.landing.landing_location.name }}</span>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            {% endif %}
-                                        </div>
+                                             style="background-image: url({{ next_up.feature_image.url }}); opacity: 1;"></div>
                                     </div>
-                                    <p class="card-description mt-2">
-                                        {{ next_up.mission.description|linebreaks }}
-                                    </p>
+                                    <div class="card-body">
+
+                                        <h6 class="card-category text-info"
+                                            style="display:inline;">{{ next_up.type.name }}</h6>
+                                        <h6 class="card-category"
+                                            style="display:inline;">{{ next_up.date }}</h6>
+                                        <h2 class="card-title">{{ next_up.name }}</h2>
+                                        {% if next_up.location %}
+                                            <span class="badge badge-pill badge-primary">{{ next_up.location }}</span>
+                                        {% endif %}
+                                        <p class="card-description mt-2">
+                                            {{ next_up.description|linebreaks }}
+                                        </p>
+                                    </div>
                                     <div class="text-center">
-                                        <a href="/launch/{{ next_up.id }}" class="btn btn-primary btn-round">
+                                        <a href="/event/{{ next_up.id }}" class="btn btn-primary btn-round">
                                             <i class="material-icons">calendar_today</i> Explore
                                         </a>
                                     </div>
                                 </div>
                             </div>
+                        {% else %}
+                            <div class="col-md-11 mx-auto">
+                                <div class="card card-plain card-blog">
+                                    <div class="card-header card-header-image"
+                                         style="margin-left:16px!important; margin-right:16px!important;">
+                                        {% if next_up.image_url %}
+                                            <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
+                                                 src="{{ next_up.image_url.url }}">
+                                            <div class="colored-shadow"
+                                                 style="background-image: url({{ next_up.image_url.url }}); opacity: 1;"></div>
+                                        {% elif next_up.rocket.configuration.image_url %}
+                                            <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
+                                                 src="{{ next_up.rocket.configuration.image_url.url }}">
+                                            <div class="colored-shadow"
+                                                 style="background-image: url({{ next_up.rocket.configuration.image_url.url }}); opacity: 1;"></div>
+                                        {% else %}
+                                            <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
+                                                 src="{% static 'img/header.jpg' %}">
+                                            <div class="colored-shadow"
+                                                 style="background-image: url({% static 'img/header.jpg' %}); opacity: 1;"></div>
+                                        {% endif %}
+
+                                    </div>
+                                    <div class="card-body">
+                                        <h6 class="card-category text-info"
+                                            style="display:inline;">{{ next_up.mission.orbit.name }}</h6>
+                                        <h6 class="card-category"
+                                            style="display:inline;">{{ next_up.net }}</h6>
+                                        <h2 class="card-title">{{ next_up.name }}</h2>
+                                        <div class="row">
+                                            <div class="col-md-12 mx-auto">
+                                                {% if next_up.pad %}
+                                                    <span class="badge badge-pill badge-primary">{{ next_up.pad.name }}</span>
+                                                {% endif %}
+                                                {% if next_up.pad.location.name %}
+                                                    <span class="badge badge-pill badge-primary">{{ next_up.pad.location.name }}</span>
+                                                {% endif %}
+                                                {% if next_up.probability > 0 %}
+                                                    <span class="badge badge-pill badge-primary">Probability: {{ next_up.probability }}%</span>
+                                                {% endif %}
+                                                {% if next_up.hashtag %}
+                                                    <span class="badge badge-pill badge-info">{{ next_up.hashtag }}</span>
+                                                {% endif %}
+                                                {% if next_up.rocket.firststage.all|length > 0 %}
+                                                    {% for stage in next_up.rocket.firststage.all %}
+                                                        {% if stage.landing.landing_location %}
+                                                            <span class="badge badge-pill {% if stage.landing.success %} badge-success{% elif not stage.landing.success %}badge-danger {% else %} badge-primary {% endif %}"> {{ stage.launcher.serial_number }} - {{ stage.landing.landing_location.name }}</span>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <p class="card-description mt-2">
+                                            {{ next_up.mission.description|linebreaks }}
+                                        </p>
+                                        <div class="text-center">
+                                            <a href="/launch/{{ next_up.id }}" class="btn btn-primary btn-round">
+                                                <i class="material-icons">calendar_today</i> Explore
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         {% endif %}
 
