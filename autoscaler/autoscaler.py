@@ -64,12 +64,11 @@ def check_autoscaler():
                 expected_worker_count += autoscaler_settings.other_weight
 
         for event in events:
+            expected_worker_count += autoscaler_settings.other_weight
             if event.program is not None:
                 for program in event.program.all():
                     if "Starship" in program.name:
                         expected_worker_count += autoscaler_settings.starship_event_weight
-            else:
-                expected_worker_count += autoscaler_settings.other_weight
 
         # Ensure we adhere to our max worker count.
         if expected_worker_count > autoscaler_settings.max_workers:
