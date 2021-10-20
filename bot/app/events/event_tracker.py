@@ -69,7 +69,7 @@ class EventTracker:
         logger.debug('Running check news...')
         # TODO set this back to 7 days after migration for Article ID
         news_that_need_to_notify = ArticleNotification.objects.filter(
-            created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=1),
+            created_at__gte=datetime.datetime.now() - datetime.timedelta(days=7),
             should_notify=True, was_notified=False)
 
         logger.debug('Found %d news items.', len(news_that_need_to_notify))
@@ -78,8 +78,9 @@ class EventTracker:
             item = Article.objects.get(id=news_item.id)
 
             if not news_item.was_notified:
-                news_item.was_notified = True
-                news_item.save()
-                logger.info('Sending %s notification!', item.title)
-                self.news_notification_handler.send_notification(item)
-                self.news_notification_handler.send_to_social(item)
+                if (datetime.datetime.now().replace(tzinfo=datetime.timezone.utc) - item.created_at.replace(tzinfo=datetime.timezone.utc)) < datetime.timedelta(days=7):
+                    news_item.was_notified = True
+                    news_item.save()
+                    logger.info('Sending %s notification!', item.title)
+                    self.news_notification_handler.send_notification(item)
+                    self.news_notification_handler.send_to_social(item)
