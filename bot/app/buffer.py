@@ -36,14 +36,17 @@ class BufferAPI:
 
     def send_to_instagram(self, message: str = None, image: str = None, now: bool = False):
         profile = Profiles(api=self.api).filter(service='instagram')[0]
-        return profile.updates.new(text=message, photo=image, now=now)
+        if not self.DEBUG:
+            return profile.updates.new(text=message, photo=image, now=now)
 
     def send_to_facebook(self, message: str = None, image: str = None, link: str = None, now: bool = False):
         profile = Profiles(api=self.api).filter(service='facebook')[0]
-        return profile.updates.new(text=message, link=link, photo=image, now=now)
+        if not self.DEBUG:
+            return profile.updates.new(text=message, link=link, photo=image, now=now)
 
     def send_to_twitter(self, message: str = None, image: str = None, link: str = None, now: bool = False):
         if len(message) > 280:
             message = (message[:277] + '...')
         profile = Profiles(api=self.api).filter(service='twitter')[0]
-        return profile.updates.new(text=message, photo=image, link=link, now=now)
+        if not self.DEBUG:
+            return profile.updates.new(text=message, photo=image, link=link, now=now)
