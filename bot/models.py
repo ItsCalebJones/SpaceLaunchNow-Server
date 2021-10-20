@@ -197,6 +197,7 @@ class ArticleNotification(models.Model):
     read = models.BooleanField(default=False)
     should_notify = models.BooleanField(default=False)
     was_notified = models.BooleanField(default=False)
+    sent_at = models.DateTimeField(default=None, blank=True, null=True)
 
     def __str__(self):
         return self.id

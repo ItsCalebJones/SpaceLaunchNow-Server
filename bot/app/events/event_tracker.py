@@ -67,19 +67,34 @@ class EventTracker:
 
     def check_news_item(self):
         logger.debug('Running check news...')
-        # TODO set this back to 7 days after migration for Article ID
         news_that_need_to_notify = ArticleNotification.objects.filter(
-            created_at__gte=datetime.datetime.now() - datetime.timedelta(hours=1),
+            created_at__gte=datetime.datetime.now() - datetime.timedelta(days=7),
             should_notify=True, was_notified=False)
 
         logger.debug('Found %d news items.', len(news_that_need_to_notify))
 
-        for news_item in news_that_need_to_notify:
-            item = Article.objects.get(id=news_item.id)
+        if len(news_that_need_to_notify) > 0:
+            for news_item in news_that_need_to_notify:
+                item = Article.objects.get(id=news_item.id)
+                if not news_item.was_notified and self.check_if_news_notification_allowed and (
+                        datetime.datetime.now().replace(tzinfo=datetime.timezone.utc) - item.created_at.replace(
+                    tzinfo=datetime.timezone.utc)) < datetime.timedelta(days=7):
+                    news_item.was_notified = True
+                    news_item.sent_at = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
+                    news_item.save()
+                    logger.info('Sending %s notification!', item.title)
+                    self.news_notification_handler.send_notification(item)
+                    self.news_notification_handler.send_to_social(item)
 
-            if not news_item.was_notified:
-                news_item.was_notified = True
-                news_item.save()
-                logger.info('Sending %s notification!', item.title)
-                self.news_notification_handler.send_notification(item)
-                self.news_notification_handler.send_to_social(item)
+    @property
+    def check_if_news_notification_allowed(self):
+        last_sent = ArticleNotification.objects.filter(sent_at__isnull=False).order_by('-sent_at').first()
+
+        time_since_last_update = 3600
+        if last_sent and last_sent.sent_at:
+            time_since_last_update = (
+                    datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc) - last_sent.sent_at.replace(
+                tzinfo=datetime.timezone.utc)
+            ).total_seconds()
+
+        return time_since_last_update >= 3600
