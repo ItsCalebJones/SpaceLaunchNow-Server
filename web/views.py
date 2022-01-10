@@ -26,10 +26,9 @@ from django_ical.views import ICalFeed
 from django_tables2 import RequestConfig, LazyPaginator, SingleTableMixin
 
 from api.models import Agency, Launch, Astronaut, Launcher, SpaceStation, SpacecraftConfiguration, LauncherConfig, \
-    Events, RoadClosure, Notice, VidURLs, Update
+    Events, RoadClosure, Notice, VidURLs, Update, Article
 from django_user_agents.utils import get_user_agent
 
-from bot.models import SNAPIArticle
 from web.filters.launch_filters import LaunchListFilter
 from web.filters.launch_vehicle_filters import LauncherConfigListFilter
 from web.tables.launch_table import LaunchTable
@@ -40,6 +39,15 @@ def get_youtube_url(launch):
     for url in launch.vid_urls.all():
         if 'youtube' in url.vid_url:
             return url.vid_url
+
+
+def get_youtube_urls(launch):
+    youtube_urls = []
+    vids = launch.vid_urls.all()
+    for url in vids:
+        if 'youtube' in url.vid_url:
+            youtube_urls.append(url.vid_url)
+    return youtube_urls
 
 
 def asset_file(request):
@@ -69,18 +77,17 @@ class AdsView(View):
         return HttpResponse(line)
 
 
-@cache_page(120)
+@cache_page(60)
 def index(request):
-    news = SNAPIArticle.objects.all().order_by('-created_at')[:6]
+    news = Article.objects.all().order_by('-created_at')[:6]
     last_six_hours = datetime.now() - timedelta(hours=6)
     event = Events.objects.all().filter(date__gte=last_six_hours).order_by('date').first()
     events = Events.objects.all().filter(date__gte=last_six_hours).order_by('date')[1:4]
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
-    _launches = Launch.objects.filter(net__gte=datetime.utcnow()).filter(Q(status__id=1) | Q(status__id=2)).order_by(
-        'net')[:3]
+    _launches = Launch.objects.filter(net__gte=datetime.utcnow()).filter(Q(status__id=1) | Q(status__id=2) | Q(status__id=8)).order_by('net')[:3]
 
     in_flight_launch = Launch.objects.filter(status__id=6).order_by('-net').first()
-    recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - timedelta(hours=2),
+    recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - timedelta(hours=1),
                                               net__lte=datetime.utcnow()).order_by('-net').first()
     _next_launch = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net').first()
 
@@ -139,7 +146,7 @@ def index(request):
                                       'first_launch_image': first_launch_image,
                                       'second_launch': second_launch,
                                       'second_launch_image': second_launch_image,
-                                      'youtube_url': get_youtube_url(_next_launch),
+                                      'youtube_urls': get_youtube_urls(launch),
                                       'news': news,
                                       'previous_launches': previous_launches,
                                       'event': event,
@@ -163,7 +170,7 @@ def app(request):
                                                 'youtube_url': get_youtube_url(_next_launch)})
 
 
-@cache_page(120)
+@cache_page(60)
 # Create your views here.
 def next_launch(request):
     in_flight_launch = Launch.objects.filter(status__id=6).order_by('-net').first()
@@ -239,11 +246,12 @@ def create_launch_view(request, launch):
         template = 'web/launches/launch_detail_page_mobile.html'
     else:
         template = 'web/launches/launch_detail_page.html'
+
     return render(request, template, {'launch': launch, 'launch_image': launch_image,
                                       'youtube_urls': youtube_urls, 'status': status,
                                       'agency': agency, 'launches': launches,
                                       'previous_launches': previous_launches,
-                                      'updates': launch.updates.all()[:3]})
+                                      'updates': launch.updates.all()})
 
 
 @cache_page(600)
@@ -413,7 +421,7 @@ def astronaut(request, id):
 
 @cache_page(600)
 def vehicle_root(request):
-    news = SNAPIArticle.objects.all().order_by('created_at')[:6]
+    news = Article.objects.all().order_by('created_at')[:6]
     previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:15]
     return render(request, 'web/vehicles/index.html', {'previous_launches': previous_launches,
                                                        'news': news})
@@ -668,11 +676,7 @@ def astronaut_list(request, ):
         astronaut_list = Astronaut.objects.only("name", "nationality", "twitter", "instagram", "wiki", "bio",
                                                 "profile_image", "slug").filter(status=query).order_by('name')
 
-    previous_launches = Launch.objects.only("slug", "net", "name", "status__name", "mission__name",
-                                            "mission__description", "rocket__configuration__name").prefetch_related(
-        'info_urls').prefetch_related('vid_urls').select_related('rocket').prefetch_related('mission').prefetch_related(
-        'rocket__configuration').prefetch_related('rocket__configuration__manufacturer').prefetch_related(
-        'mission__mission_type').prefetch_related('status').filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
 
     page = request.GET.get('page', 1)
 
@@ -880,7 +884,7 @@ def lazy_load_updates(request, id):
         updates = paginator.page(paginator.num_pages)
 
     # build a html posts list with the paginated posts
-    updates_html = loader.render_to_string('web/views/small_update.html', {'updates': updates})
+    updates_html = loader.render_to_string('web/views/small_update.html', {'list_updates': updates})
 
     # package output data and return it as a JSON object
     output_data = {'updates_html': updates_html, 'has_next': updates.has_next()}

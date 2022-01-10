@@ -180,6 +180,12 @@
                                 {% if launch.mission %}
                                     <div class="row">
                                         <div class="col-md-12 mx-auto">
+                                            {% if launch.mission_patches.all|length > 0 %}
+                                                <img src="{{ launch.mission_patches.first.image_url.url }}"
+                                                     alt="Circle Image"
+                                                     class="img-fluid mx-auto"
+                                                     style="max-width: 75%;max-height: 400px;">
+                                            {% endif %}
                                             <h2 class="title">Overview</h2>
                                             <h4>
                                                 <b>Destination:</b> {{ launch.mission.orbit }}<br><b>Mission:</b> {{ launch.mission.mission_type.name }}
@@ -213,8 +219,17 @@
                                         </div>
                                     </div>
                                 {% endif %}
+                                {% if launch.flightclub_url %}
+                                <h2 class="title">Telemetry</h2>
+                                <p>Launch trajectory and telemetry simulations provided by Flight Club - a rocket launch simulator and orbital trajectory visualiser for all things space!</p>
+                                <div class="text-center">
+                                    <a class="btn btn-round" href="{{ launch.flightclub_url }}" style="background-color:#203956;">
+                                        <img src="https://flightclub.io/assets/img/brand/fc-icon-no-bg.png" width="30" /> View in Flightclub
+                                    </a>
+                                </div>
+                                {% endif %}
                                 {% if launch.infographic_url %}
-                                    <h2 class="title">Launch Infographic</h2>
+                                    <h2 class="title">Infographic</h2>
                                     <div class="card-header card-header-image mt-3">
                                         <a href="https://gdbarrett.com/">
 
@@ -253,22 +268,26 @@
                         </div>
                     </div>
                 </div>
-                {% if launch.updates.all|length > 0 %}
-                    <div class="row">
-                        <div class="card">
-                            <div class="card-header card-header-info text-center">
-                                <h1 id="updates" class="title">Updates</h1>
-                            </div>
-                            <div class="card-body mt-3">
-                                <div class="col-md-10 ml-auto mr-auto">
-                                      {% include 'web/views/small_update.html' %}
-                                    <div class="text-center">
-                                        <a class="btn btn-primary btn" id="lazyLoadLink" href="javascript:void(0);" data-page="2">Load More</a>
+                {% if updates|length > 0 %}
+                    {% with list_updates=updates|slice:"3"%}
+                        <div class="row">
+                            <div class="card">
+                                <div class="card-header card-header-info text-center">
+                                    <h1 class="title">Updates</h1>
+                                </div>
+                                <div class="card-body mt-3">
+                                    <div id="updates" class="col-md-10 ml-auto mr-auto">
+                                          {% include 'web/views/small_update.html' %}
+                                        {% if updates|length > 3 %}
+                                            <div class="text-center">
+                                                <a class="btn btn-primary btn" id="lazyLoadLink" href="javascript:void(0);" data-page="2">Load More</a>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    {% endwith %}
                 {% endif %}
                 <div class="row">
                     <div class="card text-center">
@@ -742,10 +761,8 @@
                 {% if launch.articles.all|length > 0 %}
                 <div class="row">
                     <div class="card text-center">
-                        <div class="col-lg-12 text-center">
-                            <div class="card-header card-header-info text-center">
-                                    <h1 id="related_news"  class="title text-white">Related News</h1>
-                            </div>
+                        <div class="card-header card-header-info text-center">
+                                <h1 id="related_news"  class="title text-white">Related News</h1>
                         </div>
                         <div class="card-body">
                             {% for item in launch.articles.all|slice:":3" %}
@@ -815,7 +832,38 @@
         </div>
     </div>
     <!-- /.row -->
+    <script>
+    (function($) {
+      $('#lazyLoadLink').on('click', function() {
+        var link = $(this);
+        var page = link.data('page');
 
+        $.ajax({
+          type: 'post',
+          url: '/lazy_load_updates/{{ launch.id }}/',
+          data: {
+            'page': page,
+            'csrfmiddlewaretoken': window.CSRF_TOKEN // from index.html
+          },
+          success: function(data) {
+            // if there are still more pages to load,
+            // add 1 to the "Load More Posts" link's page data attribute
+            // else hide the link
+            if (data.has_next) {
+                link.data('page', page + 1);
+            } else {
+                link.hide();
+            }
+            // append html to the posts div
+            $('#updates').append(data.updates_html);
+          },
+          error: function(xhr, status, error) {
+            // shit happens friends!
+          }
+        });
+      });
+    }(jQuery));
+    </script>
     <div class="container">
         <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
         <!-- Space Launch Now -->

@@ -86,7 +86,8 @@
                                         <div class="row">
                                             <div class="col-md-10 ml-auto mr-auto">
                                                 <div class="media-area">
-                                                    <h2 id="updates" class="title text-center">Starship Program Updates</h2>
+                                                    <h2 id="updates" class="title text-center">Starship Program
+                                                        Updates</h2>
                                                     {% for item in updates.all %}
                                                         <div class="media mt-5 {% if forloop.last %} mb-5 {% endif %}">
                                                             <a class="float-left">
@@ -97,15 +98,20 @@
                                                             </a>
                                                             <div class="media-body">
                                                                 {% if item.launch %}
-                                                                    <h5 class="media-heading">{{ item.launch.name }} Update<br>{{ item.created_by }} <small>• {{ item.created_on }}</small></h5>
+                                                                    <h5 class="media-heading">{{ item.launch.name }}
+                                                                        Update<br>{{ item.created_by }}
+                                                                        <small>• {{ item.created_on }}</small></h5>
                                                                 {% else %}
-                                                                    <h5 class="media-heading">Starship Program Update<br>{{ item.created_by }} <small>• {{ item.created_on }}</small></h5>
+                                                                    <h5 class="media-heading">Starship Program
+                                                                        Update<br>{{ item.created_by }}
+                                                                        <small>• {{ item.created_on }}</small></h5>
                                                                 {% endif %}
                                                                 <h6 class="text-muted"></h6>
                                                                 <p>{{ item.comment|linebreaks }}</p>
                                                                 {% if item.info_url %}
                                                                     <div class="media-footer">
-                                                                        <b>Link</b> <a href="{{ item.info_url }}" class="text-reset">{{ item.info_url }}</a>
+                                                                        <b>Link</b> <a href="{{ item.info_url }}"
+                                                                                       class="text-reset">{{ item.info_url }}</a>
                                                                     </div>
                                                                 {% endif %}
                                                             </div>
@@ -131,7 +137,8 @@
                                                             <img class="img"
                                                                  src="{% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
                                                             <div class="colored-shadow"
-                                                                 style="background-image: url('{% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
+                                                                 style="background-image: url('
+                                                                         {% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
                                                         </a>
                                                     </div>
                                                 </div>
@@ -154,12 +161,11 @@
                                 {% endif %}
                             </div>
                         {% endif %}
-                        <div class="col-md-10 mx-auto">
-                            <hr>
-                        </div>
-                        {% if next_up|get_type == "event" %}
-                            <div class="col-md-11 mx-auto">
-                                <div class="card card-plain card-blog">
+                    </div>
+
+                    {% if next_up|get_type == "event" %}
+                        <div class="col-md-11 mx-auto">
+                            <div class="card card-plain card-blog">
                                 <div class="card-header card-header-image"
                                      style="margin-left:16px!important; margin-right:16px!important;">
                                     <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
@@ -187,8 +193,9 @@
                                     </a>
                                 </div>
                             </div>
-                            </div>
-                        {% else %}
+                        </div>
+                    {% else %}
+                        <div class="col-md-11 mx-auto">
                             <div class="card card-plain card-blog">
                                 <div class="card-header card-header-image"
                                      style="margin-left:16px!important; margin-right:16px!important;">
@@ -249,153 +256,154 @@
                                     </div>
                                 </div>
                             </div>
-                        {% endif %}
-
-                        {% if combined|length > 0 %}
-                            <div class="text-center">
-                                <h1 class="title">Upcoming Events</h1>
-                            </div>
-                            <div class="col-lg-12">
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th class="text-center"></th>
-                                        <th>Name</th>
-                                        <th>Date</th>
-                                        <th>Description</th>
-                                    </tr>
-                                    </thead>
-                                    {% for item in combined %}
-                                        {% if item|get_type == "event" %}
-                                            <tr>
-                                                <td>
-                                                    {% if item.feature_image %}
-                                                        {% thumbnail item.feature_image "100x100" as im %}
-                                                            <img class="img-raised rounded-circle img-fluid text-center"
-                                                                 src="{{ im.url }}"
-                                                                 style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                                        {% endthumbnail %}
-                                                    {% else %}
-                                                        <img class="img-raised rounded-circle img-fluid"
-                                                             style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;"
-                                                             src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
-                                                    {% endif %}
-                                                </td>
-                                                <td><a href="/event/{{ item.id }}">{{ item.name }}</a>
-                                                <td>{{ item.date|date:"F j, Y" }}</td>
-                                                <td>{{ item.type.name }}</td>
-                                            </tr>
-                                        {% else %}
-                                            <tr>
-                                                <td>
-                                                    {% if item.image_url %}
-                                                        {% thumbnail item.image_url "100x100" as im %}
-                                                            <img class="img-raised rounded-circle img-fluid text-center"
-                                                                 src="{{ im.url }}"
-                                                                 style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                                        {% endthumbnail %}
-                                                    {% elif item.rocket.configuration.image_url %}
-                                                        {% thumbnail item.rocket.configuration.image_url "100x100" as im %}
-                                                            <img class="img-raised rounded-circle img-fluid text-center"
-                                                                 src="{{ im.url }}"
-                                                                 style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                                        {% endthumbnail %}
-                                                    {% else %}
-                                                        <img class="img-raised rounded-circle img-fluid"
-                                                             style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;"
-                                                             src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
-                                                    {% endif %}
-                                                </td>
-                                                <td><a href="/launch/{{ item.id }}">{{ item.name }}</a>
-                                                <td>{{ item.net|date:"F j, Y" }}</td>
-                                                <td>{{ item.mission.orbit.name }}</td>
-                                            </tr>
-                                        {% endif %}
-                                    {% endfor %}
-                                </table>
-                            </div>
-                        {% endif %}
-
-                        {% if road_closures|length > 0 %}
-                            <div class="text-center">
-                                <h1 class="title">Road Closures</h1>
-                            </div>
-                            <div class="col-lg-12">
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th class="text-center">#</th>
-                                        <th>Name</th>
-                                        <th>Status</th>
-                                        <th>Date</th>
-                                        <th>Window</th>
-                                    </tr>
-                                    </thead>
-                                    {% for closure in road_closures %}
-                                        <tr>
-                                            <td class="text-center">{{ forloop.counter }}</td>
-                                            <td>{{ closure.title }}</td>
-                                            <td>{{ closure.status.name }}</td>
-                                            <td>{{ closure.window_start|date:"F j, Y" }}</td>
-                                            <td>{{ closure.window_start|date:"h:i a" }}
-                                                - {{ closure.window_end|date:"h:i a" }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                </table>
-                            </div>
-                        {% endif %}
-
-                        {% if notices|length > 0 %}
-                            <div class="text-center">
-                                <h1 class="title">Public Notices</h1>
-                            </div>
-                            <div class="col-lg-12">
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th class="text-center">#</th>
-                                        <th>Type</th>
-                                        <th>Date</th>
-                                        <th>Link</th>
-                                    </tr>
-                                    </thead>
-                                    {% for notice in notices %}
-                                        <tr>
-                                            <td class="text-center">{{ forloop.counter }}</td>
-                                            <td>{{ notice.type.name }}</td>
-                                            <td>{{ notice.date|date:"F j, Y" }}</td>
-                                            <td class="td-actions">
-                                                <button type="button" rel="tooltip" class="btn btn-white btn-round">
-                                                    <a href="{{ notice.url }}"> <i class="material-icons">launch</i></a>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                </table>
-                            </div>
-                        {% endif %}
-                    </div>
-                    <div class="card card-plain card-blog" style="margin-top:0px!important;">
-                        <div class="text-center">
-                            <h1 class="title">Vehicles</h1>
                         </div>
-                    </div>
-                    <div class="row">
-                        {% if vehicles|length > 0 %}
-                            {% for vehicle in vehicles %}
-                                <div class="col-sm-6">
-                                    {% include 'web/views/small_launcher.html' with vehicle=vehicle %}
-                                </div>
-                            {% endfor %}
-                        {% endif %}
+                    {% endif %}
+
+                    {% if combined|length > 0 %}
+                        <div class="text-center">
+                            <h1 class="title">Upcoming Events</h1>
+                        </div>
+                        <div class="col-lg-12">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="text-center"></th>
+                                    <th>Name</th>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                {% for item in combined %}
+                                    {% if item|get_type == "event" %}
+                                        <tr>
+                                            <td>
+                                                {% if item.feature_image %}
+                                                    {% thumbnail item.feature_image "100x100" as im %}
+                                                        <img class="img-raised rounded-circle img-fluid text-center"
+                                                             src="{{ im.url }}"
+                                                             style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                                                    {% endthumbnail %}
+                                                {% else %}
+                                                    <img class="img-raised rounded-circle img-fluid"
+                                                         style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;"
+                                                         src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
+                                                {% endif %}
+                                            </td>
+                                            <td><a href="/event/{{ item.id }}">{{ item.name }}</a>
+                                            <td>{{ item.date|date:"F j, Y" }}</td>
+                                            <td>{{ item.type.name }}</td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td>
+                                                {% if item.image_url %}
+                                                    {% thumbnail item.image_url "100x100" as im %}
+                                                        <img class="img-raised rounded-circle img-fluid text-center"
+                                                             src="{{ im.url }}"
+                                                             style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                                                    {% endthumbnail %}
+                                                {% elif item.rocket.configuration.image_url %}
+                                                    {% thumbnail item.rocket.configuration.image_url "100x100" as im %}
+                                                        <img class="img-raised rounded-circle img-fluid text-center"
+                                                             src="{{ im.url }}"
+                                                             style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                                                    {% endthumbnail %}
+                                                {% else %}
+                                                    <img class="img-raised rounded-circle img-fluid"
+                                                         style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;"
+                                                         src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
+                                                {% endif %}
+                                            </td>
+                                            <td><a href="/launch/{{ item.id }}">{{ item.name }}</a>
+                                            <td>{{ item.net|date:"F j, Y" }}</td>
+                                            <td>{{ item.mission.orbit.name }}</td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            </table>
+                        </div>
+                    {% endif %}
+
+                    {% if road_closures|length > 0 %}
+                        <div class="text-center">
+                            <h1 class="title">Road Closures</h1>
+                        </div>
+                        <div class="col-lg-12">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="text-center">#</th>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Window</th>
+                                </tr>
+                                </thead>
+                                {% for closure in road_closures %}
+                                    <tr>
+                                        <td class="text-center">{{ forloop.counter }}</td>
+                                        <td>{{ closure.title }}</td>
+                                        <td>{{ closure.status.name }}</td>
+                                        <td>{{ closure.window_start|date:"F j, Y" }}</td>
+                                        <td>{{ closure.window_start|date:"h:i a" }}
+                                            - {{ closure.window_end|date:"h:i a" }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    {% endif %}
+
+                    {% if notices|length > 0 %}
+                        <div class="text-center">
+                            <h1 class="title">Public Notices</h1>
+                        </div>
+                        <div class="col-lg-12">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="text-center">#</th>
+                                    <th>Type</th>
+                                    <th>Date</th>
+                                    <th>Link</th>
+                                </tr>
+                                </thead>
+                                {% for notice in notices %}
+                                    <tr>
+                                        <td class="text-center">{{ forloop.counter }}</td>
+                                        <td>{{ notice.type.name }}</td>
+                                        <td>{{ notice.date|date:"F j, Y" }}</td>
+                                        <td class="td-actions">
+                                            <button type="button" rel="tooltip" class="btn btn-white btn-round">
+                                                <a href="{{ notice.url }}"> <i class="material-icons">launch</i></a>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card card-plain card-blog" style="margin-top:0px!important;">
+                    <div class="text-center">
+                        <h1 class="title">Vehicles</h1>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-3 col-md-12 col-xl-3">
-                <!-- Categories Widget -->
-                {% include "web/sidebar_launches_only.html" %}
+                <div class="row">
+                    {% if vehicles|length > 0 %}
+                        {% for vehicle in vehicles %}
+                            <div class="col-sm-6">
+                                {% include 'web/views/small_launcher.html' with vehicle=vehicle %}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
             </div>
         </div>
+        <div class="col-lg-3 col-md-12 col-xl-3">
+            <!-- Categories Widget -->
+            {% include "web/sidebar_launches_only.html" %}
+        </div>
+    </div>
     </div>
     <div class="container">
         <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>

@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 from dateutil import tz
 from dateutil import parser
 
-logger = logging.getLogger('bot.digest')
+logger = logging.getLogger('tasks')
 
 
 def parse_date(date_string):
@@ -52,30 +52,34 @@ def get_road_closure():
 
     closures = []
     for row in tableRows:
-        row = row.replace('a.m.', 'AM')
-        row = row.replace('p.m.', 'PM')
+        try:
+            row = row.replace('a.m.', 'AM')
+            row = row.replace('p.m.', 'PM')
 
-        dtP1 = row.split('|')[1]
-        dtP2 = row.split('|')[2]
-        dtP2B = dtP2.split(' to ')[0].strip()
-        dtP2E = dtP2.split(' to ')[1].strip()
+            dtP1 = row.split('|')[1]
+            dtP2 = row.split('|')[2]
+            dtP2B = dtP2.split(' to ')[0].strip()
+            dtP2E = dtP2.split(' to ')[1].strip()
 
-        dtSta = dtP1 + ' ' + dtP2B
-        staTex = parse_date(dtSta)
+            dtSta = dtP1 + ' ' + dtP2B
+            staTex = parse_date(dtSta)
 
-        dtEnd = dtP1 + ' ' + dtP2E
-        endTex = parse_date(dtEnd)
-        if 'PM' in dtP2B and 'AM' in dtP2E:
-            endTex += timedelta(days=1)
+            dtEnd = dtP1 + ' ' + dtP2E
+            endTex = parse_date(dtEnd)
+            if 'PM' in dtP2B and 'AM' in dtP2E:
+                endTex += timedelta(days=1)
 
-        nowTex = datetime.now(tz=pytz.utc)
+            nowTex = datetime.now(tz=pytz.utc)
 
-        if endTex < nowTex:
-            continue
+            if endTex < nowTex:
+                continue
 
-        name = row.split('|')[0]
-        status = row.split('|')[3].replace('Closure ', '')
-        closures.append([staTex, endTex, name, status])
+            name = row.split('|')[0]
+            status = row.split('|')[3].replace('Closure ', '')
+            closures.append([staTex, endTex, name, status])
+        except Exception as e:
+            logger.error(row)
+            logger.error(e)
 
     logger.info("Found %s closures" % len(closures))
     for closure in closures:

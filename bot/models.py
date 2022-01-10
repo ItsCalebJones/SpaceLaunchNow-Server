@@ -3,8 +3,6 @@ from django.db import models
 from django.db.models.functions import datetime
 from pytz import utc
 
-from api.models import Launch, Events
-
 
 class LaunchNotificationRecord(models.Model):
     launch_id = models.UUIDField(default=uuid.uuid4, editable=False, blank=False, null=False)
@@ -193,37 +191,22 @@ class NewsNotificationChannel(models.Model):
         verbose_name_plural = "News Notification Channels"
 
 
-class SNAPIArticle(models.Model):
-    id = models.CharField(primary_key=True, max_length=255)
-    title = models.CharField(max_length=1048, null=False)
-    link = models.CharField(max_length=1048, null=True, blank=True, default="")
-    description = models.CharField(max_length=40000, null=True, blank=True, default="")
-    featured_image = models.CharField(max_length=1048, null=True, blank=True, default="")
-    news_site = models.CharField(max_length=1048, null=True, blank=True, default="")
-    events = models.ManyToManyField(Events, related_name='snapi_articles', blank=True)
-    launches = models.ManyToManyField(Launch, related_name='snapi_articles', blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.title
-
-
 class ArticleNotification(models.Model):
     id = models.CharField(primary_key=True, max_length=255)
-    article = models.OneToOneField(SNAPIArticle, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
     should_notify = models.BooleanField(default=False)
     was_notified = models.BooleanField(default=False)
+    sent_at = models.DateTimeField(default=None, blank=True, null=True)
 
     def __str__(self):
-        return self.article.title
+        return self.id
 
 
 class Notification(models.Model):
-    launch = models.ForeignKey(Launch, on_delete=models.CASCADE, null=True, blank=True, default=None)
-    news = models.ForeignKey(SNAPIArticle, related_name='snapi_articles', on_delete=models.CASCADE, null=True, blank=True, default=None)
-    event = models.ForeignKey(Events, on_delete=models.CASCADE, null=True, blank=True, default=None)
+    launch_id = models.UUIDField(null=True, blank=True, default=None)
+    news_id = models.CharField(max_length=255, null=True, blank=True, default=None)
+    event_id = models.IntegerField(null=True, blank=True, default=None)
     title = models.TextField(max_length=32)
     message = models.TextField(max_length=300)
     send_ios = models.BooleanField(default=False)

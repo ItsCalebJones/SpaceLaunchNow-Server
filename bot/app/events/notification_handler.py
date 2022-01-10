@@ -68,9 +68,9 @@ class EventNotificationHandler:
 
     def build_flutter_v2_topics(self):
         if self.DEBUG:
-            topic = "'flutter_debug_v3' in topics && 'events' in topics"
+            topic = "'flutter_debug_v2' in topics && 'events' in topics"
         else:
-            topic = "'flutter_production_v3' in topics && 'events' in topics"
+            topic = "'flutter_production_v2' in topics && 'events' in topics"
         return topic
 
     def build_flutter_v3_topics(self):
