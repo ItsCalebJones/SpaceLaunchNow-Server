@@ -64,5 +64,5 @@ tzlocal==1.4
 vine==1.3.0
 python-jenkins
 python-digitalocean
--e git://github.com/ItsCalebJones/django-jet.git@ll-django-3.0#egg=django-jet
--e git://github.com/ItsCalebJones/buffpy.git@master#egg=buffpy
+-e git+https://github.com/ItsCalebJones/django-jet.git@ll-django-3.0#egg=django-jet
+-e git+https://github.com/ItsCalebJones/buffpy.git@master#egg=buffpy
