@@ -440,7 +440,7 @@ DISCORD_WEBHOOK = os.getenv('WEBHOOK_URL', None)
 GA_TRACKING_ID = config.GOOGLE_ANALYTICS_TRACKING_ID
 
 # CELERY STUFF
-CELERY_BROKER_URL = 'amqp://slns-rabbitmq:5672'
+CELERY_BROKER_URL = os.getenv('REDIS_URL', 'amqp://slns-rabbitmq:5672')
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'

@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
+from django.http import HttpResponse
 from django.views.generic import TemplateView
 
 import web
@@ -215,7 +216,11 @@ if settings.IS_API:
     api_settings = api_settings + get_v350() + get_v200() + get_v210() + get_v220()
 
 if settings.IS_WEBSERVER:
+    def health(request):
+        return HttpResponse("ok", content_type="text/plain")
+
     web_settings = [
+        url("_health/", health),
         url(r'^\.well-known/assetlinks\.json', landing_views.asset_file),
         url(r'^app-ads\.txt', AdsView.as_view()),
         url(r'^next/', landing_views.next_launch, name='next'),
