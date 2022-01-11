@@ -123,6 +123,9 @@ pipeline{
 						if (env.BRANCH_NAME == 'master') {
 						    sh "docker tag ${registry}:production ${doRegistry}/sln-server:production"
 						    sh "docker push ${doRegistry}/sln-server:production"
+						} else {
+                            sh "docker tag ${registry}:${dockerTag} ${doRegistry}/sln-server:${dockerTag}"
+						    sh "docker push ${doRegistry}/sln-server:${dockerTag}"
 						}
 					}
 				}
