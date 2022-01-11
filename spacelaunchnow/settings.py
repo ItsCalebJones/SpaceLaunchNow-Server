@@ -553,12 +553,12 @@ else:
 CACHALOT_TIMEOUT = 60
 
 
-IS_API = os.getenv('IS_API', config.IS_API).lower() in ['true', '1']
-IS_WEBSERVER = os.getenv('IS_WEBSERVER', config.IS_WEBSERVER).lower() in ['true', '1']
-IS_BOTSERVER = os.getenv('IS_BOTSERVER', config.IS_BOTSERVER).lower() in ['true', '1']
-IS_ADMIN = os.getenv('IS_ADMIN', config.IS_ADMIN).lower() in ['true', '1']
-IS_SLN = os.getenv('IS_SLN', True).lower() in ['true', '1']
-IS_LL = os.getenv('IS_LL', False).lower() in ['true', '1']
+IS_API = os.getenv('IS_API', config.IS_API)
+IS_WEBSERVER = os.getenv('IS_WEBSERVER', config.IS_WEBSERVER)
+IS_BOTSERVER = os.getenv('IS_BOTSERVER', config.IS_BOTSERVER)
+IS_ADMIN = os.getenv('IS_ADMIN', config.IS_ADMIN)
+IS_SLN = os.getenv('IS_SLN', True)
+IS_LL = os.getenv('IS_LL', False)
 
 GOOGLE_API_KEY = config.GOOGLE_API_KEY
 
