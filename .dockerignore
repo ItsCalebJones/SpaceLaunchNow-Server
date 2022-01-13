@@ -2,4 +2,7 @@
 .idea
 .gitignore
 *env*/
-static/
+Dockerfile
+Jenkinsfile
+LICENSE.md
+README.md

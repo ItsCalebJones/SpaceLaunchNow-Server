@@ -6,7 +6,7 @@ ENV DJANGO_ENV dev
 ENV DOCKER_CONTAINER 1
 COPY ./requirements /code/requirements
 COPY ./requirements.txt /code/requirements.txt
-COPY ./static /code/static
+
 
 RUN apt-get update && apt-get install -y --no-install-recommends git ssh gcc python-dev
 
