@@ -55,10 +55,10 @@ pipeline{
         stage('Setup'){
 			steps {
 				withCredentials([file(credentialsId: 'SLNTestConfig', variable: 'configFile')]) {
-					sh 'cp $configFile spacelaunchnow/config.py'
+					sh 'cp $configFile src/spacelaunchnow/config.py'
 				}
 				sh 'mkdir -p log'
-				sh 'touch log/daily_digest.log'
+				sh 'touch src/log/daily_digest.log'
 				withPythonEnv('python3') {
 					sh 'python3 -m pip install -r requirements.txt'
 				}
@@ -69,14 +69,14 @@ pipeline{
 				stage('Run Django Tests'){
 					steps {
 						withPythonEnv('python3') {
-							sh 'python3 manage.py test'
+							sh 'python3 src/manage.py test'
 						}
 					}
 				}
 				stage('Run Formatting Checks'){
 					steps {
 						catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-							sh 'pylint **/*.py'
+							sh 'pylint src/**/*.py'
 						}
 					}
 				}
@@ -88,18 +88,18 @@ pipeline{
 				script{
                     if (env.BRANCH_NAME == 'master') {
                         withCredentials([file(credentialsId: 'SLNProductionConfig', variable: 'configFile')]) {
-                            sh 'cp $configFile spacelaunchnow/config.py'
+                            sh 'cp $configFile src/spacelaunchnow/config.py'
                         }
                     } else {
                         withCredentials([file(credentialsId: 'SLNConfig', variable: 'configFile')]) {
-                            sh 'cp $configFile spacelaunchnow/config.py'
+                            sh 'cp $configFile src/spacelaunchnow/config.py'
                         }
                     }
 					if(!fileExists("Dockerfile")){
 						echo "No Dockerfile";
 					} else {
 					    withCredentials([string(credentialsId: 'EXTRA_INDEX_URL', variable: 'INDEX_URL')]) {
-                            def buildArg = '--build-arg EXTRA_INDEX_URL="$INDEX_URL" .'
+                            def buildArg = '--build-arg EXTRA_INDEX_URL="$INDEX_URL" .src/'
                             def dockerReg = registry + ":" + imageName
                             dockerImage = docker.build(dockerReg, buildArg)
                         }

@@ -223,12 +223,11 @@ class NotificationHandler:
         logger.info("Topics:\n\nALL: %s\nStrict: %s\nNot Strict: %s" % (all_topics, strict_topics, not_strict_topics))
 
     def send_android_notif_v3(self, push_service, data, topics):
-
         # Send notifications to SLN Android > v3.7.0
         # Catch any issue with sending notification.
         try:
-            logger.info('Notification v2 Data - %s' % data)
-            logger.info('Topic Data v2- %s' % topics)
+            logger.info('Notification v3 Data - %s' % data)
+            logger.info('Topic Data v3- %s' % topics)
             results = push_service.notify_topic_subscribers(data_message=data,
                                                             condition=topics,
                                                             time_to_live=86400,)

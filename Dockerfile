@@ -4,8 +4,8 @@ ARG SSH_PRIVATE_KEY
 ENV PYTHONUNBUFFERED 1
 ENV DJANGO_ENV dev
 ENV DOCKER_CONTAINER 1
-COPY ./requirements /code/requirements
-COPY ./requirements.txt /code/requirements.txt
+COPY .src/requirements /code/requirements
+COPY .src/requirements.txt /code/requirements.txt
 
 
 RUN apt-get update && apt-get install -y --no-install-recommends git ssh gcc python-dev
@@ -18,7 +18,7 @@ RUN rm -rf /var/lib/apt/lists/* \
     && apt-get purge -y --auto-remove git gcc python-dev
 
 
-COPY . /code/
+COPY .src/ /code/
 WORKDIR /code/
 
 EXPOSE 8000

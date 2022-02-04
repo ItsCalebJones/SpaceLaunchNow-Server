@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: sln-web-tls
+  namespace: default
+spec:
+  dnsNames:
+    - "dev.spacelaunchnow.me"
+  secretName: spacelaunchnow
+  issuerRef:
+    name: le-global-issuer
+    kind: ClusterIssuer
