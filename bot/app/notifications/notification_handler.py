@@ -7,11 +7,13 @@ import pytz
 from pyfcm import FCMNotification
 
 from bot.utils.util import get_fcm_topics_v2, get_fcm_all_topics_v3, \
-    get_fcm_strict_topics_v3, get_fcm_not_strict_topics_v3
+    get_fcm_strict_topics_v3, get_fcm_not_strict_topics_v3, get_flutter_topics_v3
 from spacelaunchnow import config
 
 logger = logging.getLogger('bot.notifications')
 
+
+# TODO refactor to separate files/modules per version
 
 class NotificationHandler:
     def __init__(self, debug=None):
@@ -217,21 +219,29 @@ class NotificationHandler:
         all_topics = get_fcm_all_topics_v3(debug=self.DEBUG, notification_type=notification_type)
         strict_topics = get_fcm_strict_topics_v3(launch, debug=self.DEBUG, notification_type=notification_type)
         not_strict_topics = get_fcm_not_strict_topics_v3(launch, debug=self.DEBUG, notification_type=notification_type)
-        self.send_android_notif_v3(push_service, data, all_topics)
-        self.send_android_notif_v3(push_service, data, strict_topics)
-        self.send_android_notif_v3(push_service, data, not_strict_topics)
+        self.send_notif_v3(push_service, data, all_topics)
+        self.send_notif_v3(push_service, data, strict_topics)
+        self.send_notif_v3(push_service, data, not_strict_topics)
         logger.info("Topics:\n\nALL: %s\nStrict: %s\nNot Strict: %s" % (all_topics, strict_topics, not_strict_topics))
 
-    def send_android_notif_v3(self, push_service, data, topics):
+        # Reusing topics from v2 - not doing strict topics
+        flutter_topics_v3 = get_flutter_topics_v3(launch,
+                                                  notification_type=notification_type,
+                                                  debug=self.DEBUG,
+                                                  flutter=True)
+        self.send_notif_v3(push_service, data, flutter_topics_v3, message_title=launch.name, message_body=contents)
 
+    def send_notif_v3(self, push_service, data, topics, message_title=None, message_body=None):
         # Send notifications to SLN Android > v3.7.0
         # Catch any issue with sending notification.
         try:
-            logger.info('Notification v2 Data - %s' % data)
-            logger.info('Topic Data v2- %s' % topics)
+            logger.info('Notification v3 Data - %s' % data)
+            logger.info('Topic Data v3- %s' % topics)
             results = push_service.notify_topic_subscribers(data_message=data,
                                                             condition=topics,
-                                                            time_to_live=86400,)
+                                                            time_to_live=86400,
+                                                            message_title=message_title,
+                                                            message_body=message_body)
             logger.info(results)
         except Exception as e:
             logger.error(e)
