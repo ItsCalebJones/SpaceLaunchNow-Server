@@ -132,7 +132,7 @@ pipeline{
 		                sh '''
 		                    kubectl config use-context do-nyc1-k8s-spacelaunchnow-dev
 		                    export STAGING_NAMESPACE=sln-dev
-		                    export RELEASE_NAME=sln-dev
+		                    export RELEASE_NAME=sln-dev-app
 		                    export DEPLOYS=$(helm ls | grep $RELEASE_NAME | wc -l)
 		                    if [ $DEPLOYS  -eq 0 ];
                             then
