@@ -57,7 +57,7 @@ pipeline{
 				withCredentials([file(credentialsId: 'SLNTestConfig', variable: 'configFile')]) {
 					sh 'cp $configFile src/spacelaunchnow/config.py'
 				}
-				sh 'mkdir -p log'
+				sh 'mkdir -p src/log'
 				sh 'touch src/log/daily_digest.log'
 				withPythonEnv('python3') {
 					sh 'python3 -m pip install -r requirements.txt'
@@ -166,9 +166,9 @@ pipeline{
                 webhookURL: DISCORD_URL,
                 thumbnail: "https://i.imgur.com/FASV6fJ.png",
                 notes: "Hey <@&641718676046872588>, new build completed for ${PROJECT_NAME}!"
-            // This needs to be removed in favor or removing credential files instead.
+            // This needs to be removed in favor of removing credential files instead.
             sh '''
-               rm spacelaunchnow/config.py
+               rm src/spacelaunchnow/config.py
                '''
         }
     }
