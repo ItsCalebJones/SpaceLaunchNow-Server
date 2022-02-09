@@ -133,6 +133,27 @@ pipeline{
 				}
 			}
 		}
+
+		stage('Deploy Helm Release'){
+		    steps {
+		        script {
+		            if (env.BRANCH_NAME == 'feature/k8s') {
+		                sh '''
+		                    kubectl config use-context do-nyc1-k8s-spacelaunchnow-dev
+		                    export STAGING_NAMESPACE=sln-dev
+		                    export RELEASE_NAME=sln-dev
+		                    export DEPLOYS=$(helm ls | grep $RELEASE_NAME | wc -l)
+		                    if [ $DEPLOYS  -eq 0 ];
+                            then
+		                        helm install --name=$RELEASE_NAME . --namespace=$STAGING_NAMESPACE;
+		                    else
+		                        helm upgrade $RELEASE_NAME . --namespace=$STAGING_NAMESPACE;
+		                    fi
+		                '''
+		            }
+		        }
+		    }
+		}
     }
     post {
         always {
