@@ -65,22 +65,15 @@ pipeline{
 			}
 		}
 		stage('Tests'){
-			parallel {
-				stage('Run Django Tests'){
-					steps {
-						withPythonEnv('python3') {
-							sh 'python3 src/manage.py test'
-						}
-					}
-				}
-				stage('Run Formatting Checks'){
-					steps {
-						catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-							sh 'pylint src/**/*.py'
-						}
-					}
-				}
-			}
+            stage('Run Django Tests'){
+                steps {
+                    withPythonEnv('python3') {
+                        dir ("src") {
+                            sh 'python3 manage.py test'
+                        }
+                    }
+                }
+            }
 		}
 		stage('Build Docker Image'){
 
@@ -145,9 +138,9 @@ pipeline{
 		                    export DEPLOYS=$(helm ls | grep $RELEASE_NAME | wc -l)
 		                    if [ $DEPLOYS  -eq 0 ];
                             then
-		                        helm install --name=$RELEASE_NAME . --namespace=$STAGING_NAMESPACE;
+		                        helm install --name=$RELEASE_NAME k8s/helm/ --namespace=$STAGING_NAMESPACE --values k8s/helm/values.yaml;
 		                    else
-		                        helm upgrade $RELEASE_NAME . --namespace=$STAGING_NAMESPACE;
+		                        helm upgrade $RELEASE_NAME k8s/helm/ --namespace=$STAGING_NAMESPACE --values k8s/helm/values.yaml;
 		                    fi
 		                '''
 		            }
