@@ -60,7 +60,7 @@ pipeline{
 				sh 'mkdir -p src/log'
 				sh 'touch src/log/daily_digest.log'
 				withPythonEnv('python3') {
-					sh 'python3 -m pip install -r requirements.txt'
+					sh 'python3 -m pip install -r src/requirements.txt'
 				}
 			}
 		}
