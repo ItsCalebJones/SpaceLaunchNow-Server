@@ -136,7 +136,7 @@ pipeline{
 		                    export DEPLOYS=$(helm ls | grep $RELEASE_NAME | wc -l)
 		                    if [ $DEPLOYS  -eq 0 ];
                             then
-		                        helm install --name=$RELEASE_NAME k8s/helm/ --namespace=$STAGING_NAMESPACE --values k8s/helm/values.yaml;
+		                        helm install $RELEASE_NAME k8s/helm/ --namespace=$STAGING_NAMESPACE --values k8s/helm/values.yaml;
 		                    else
 		                        helm upgrade $RELEASE_NAME k8s/helm/ --namespace=$STAGING_NAMESPACE --values k8s/helm/values.yaml;
 		                    fi
