@@ -64,13 +64,11 @@ pipeline{
 				}
 			}
 		}
-		stage('Tests'){
-            stage('Run Django Tests'){
-                steps {
-                    withPythonEnv('python3') {
-                        dir ("src") {
-                            sh 'python3 manage.py test'
-                        }
+		stage('Run Django Test'){
+            steps {
+                withPythonEnv('python3') {
+                    dir ("src") {
+                        sh 'python3 manage.py test'
                     }
                 }
             }
