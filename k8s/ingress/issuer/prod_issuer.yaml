@@ -9,9 +9,9 @@ spec:
     privateKeySecretRef:
       name: letsencrypt-key
     solvers:
-    - dns01:
-        cloudflare:
-          email: cjones@spacelaunchnow.me
-          apiTokenSecretRef:
-            name: cloudflare-api-token-secret
-            key: api-token
+      - dns01:
+          cloudflare:
+            email: cjones@spacelaunchnow.me
+            apiTokenSecretRef:
+              name: cloudflare-api-token-secret
+              key: api-token

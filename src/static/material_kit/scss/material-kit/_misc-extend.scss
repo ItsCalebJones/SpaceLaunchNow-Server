@@ -8,6 +8,7 @@
       display: block;
     }
   }
+
   .dropdown-menu.show {
     .dropdown-item.dropdown-toggle + .dropdown-menu.show {
       left: 101% !important;
@@ -25,16 +26,17 @@
 .navbar {
   &.navbar-transparent {
     .logo-big {
-       width: 150px;
-       height: 50px;
-       overflow: hidden;
-       margin-top: -10px;
-       display: block;
+      width: 150px;
+      height: 50px;
+      overflow: hidden;
+      margin-top: -10px;
+      display: block;
 
-       img {
-         height: 100%;
-       }
+      img {
+        height: 100%;
+      }
     }
+
     .logo-small {
       display: none;
     }
@@ -88,6 +90,7 @@
         display: none;
       }
     }
+
     &.pagination-info {
       .page-item:nth-of-type(2) {
         display: none;
@@ -104,7 +107,7 @@
 // documentation
 
 .bd-docs .bd-example {
-  .social-buttons-demo .btn{
+  .social-buttons-demo .btn {
     margin-bottom: 10px;
   }
 
@@ -130,7 +133,7 @@
 }
 
 .error-page {
-  >.container {
+  > .container {
     position: absolute !important;
     top: 50%;
     left: 50%;

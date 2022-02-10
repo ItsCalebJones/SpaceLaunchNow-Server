@@ -15,12 +15,14 @@
     margin-right: auto;
   }
 }
+
 @mixin pull-right {
   float: right !important;
   @if $enable-flex {
     margin-left: auto;
   }
 }
+
 // #853 end - https://github.com/twbs/bootstrap/pull/18976/files
 
 // Reset and dependencies

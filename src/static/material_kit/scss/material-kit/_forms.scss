@@ -2,9 +2,10 @@ form {
   // ensure enough room at the bottom of any form to display a one-line bmd-help
   margin-bottom: ($bmd-help-size-ratio * $font-size-base) * $line-height-base;
 
-  .card &{
-      margin: 0;
+  .card & {
+    margin: 0;
   }
+
   // reverse the above for navbars (no help expected in a navbar form)
   .navbar & {
     margin-bottom: 0; // only adjust bottom so that pull-xs-right flexed margin-left: auto works
@@ -46,18 +47,17 @@ form {
   }
 
   @include material-placeholder() {
-      color: $mdb-input-placeholder-color;
-      font-weight: 400;
-      font-size: $mdb-input-font-size-base;
-}
+    color: $mdb-input-placeholder-color;
+    font-weight: 400;
+    font-size: $mdb-input-font-size-base;
+  }
 
-  .has-white &{
-      @include material-placeholder(){
-          color: $white-color;
-      }
+  .has-white & {
+    @include material-placeholder() {
+      color: $white-color;
+    }
   }
 }
-
 
 
 // Help blocks (not in v4)
@@ -103,14 +103,14 @@ form {
   @include bmd-form-color($brand-info, $brand-info, $brand-info, $input-border-color);
 }
 
-.has-white{
+.has-white {
   @include bmd-form-color($white-color, $white-color, $white-color, $input-border-color-white);
 
-    .form-control{
-        &:focus{
-            color: $white-color;
-        }
+  .form-control {
+    &:focus {
+      color: $white-color;
     }
+  }
 }
 
 .has-warning {
@@ -140,14 +140,15 @@ form {
   // Reference http://www.google.com/design/spec/components/text-fields.html
   // MDL implementation: http://www.getmdl.io/components/index.html#textfields-section
 
-    &:not(.has-success):not(.has-danger){
-        [class^='bmd-label'],
-        [class*=' bmd-label']{
-            &.bmd-label-floating{
-                color: $mdb-input-placeholder-color;
-            }
-        }
+  &:not(.has-success):not(.has-danger) {
+    [class^='bmd-label'],
+    [class*=' bmd-label'] {
+      &.bmd-label-floating {
+        color: $mdb-input-placeholder-color;
+      }
     }
+  }
+
   [class^='bmd-label'],
   [class*=' bmd-label'] {
     position: absolute;
@@ -182,6 +183,7 @@ form {
     .collapse {
       flex: 1;
       display: none;
+
       &.show {
         // This is an unfortunate hack. Animating between widths in percent (%)
         // in many browsers (Chrome, Firefox) only animates the inner visual style
@@ -193,7 +195,7 @@ form {
 
     .collapsing,
     .width:not(.collapse),
-    // collapsing is removed and momentarily only width is present
+      // collapsing is removed and momentarily only width is present
     .collapse.show {
       display: block;
     }
@@ -277,39 +279,39 @@ select {
   }
 }
 
-.form-control-feedback{
-    position: absolute;
-    top: 33px;
-    right: 0;
-    z-index: 2;
-    display: block;
-    width: 34px;
-    height: 34px;
-    line-height: 34px;
-    text-align: center;
-    pointer-events: none;
-    opacity: 0;
+.form-control-feedback {
+  position: absolute;
+  top: 33px;
+  right: 0;
+  z-index: 2;
+  display: block;
+  width: 34px;
+  height: 34px;
+  line-height: 34px;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
 
-    .has-success &{
-        color: $green;
-        opacity: 1;
-    }
+  .has-success & {
+    color: $green;
+    opacity: 1;
+  }
 
-    .has-danger &{
-        color: $red;
-        opacity: 1;
-    }
+  .has-danger & {
+    color: $red;
+    opacity: 1;
+  }
 }
 
-.form-group{
-    margin-bottom: 17px;
-    position: relative;
+.form-group {
+  margin-bottom: 17px;
+  position: relative;
 }
 
-textarea{
-    height: auto !important;
-    resize: none;
-    line-height: $bmd-line-height !important;
+textarea {
+  height: auto !important;
+  resize: none;
+  line-height: $bmd-line-height !important;
 }
 
 .form-group input[type=file] {
@@ -324,37 +326,37 @@ textarea{
   z-index: -1;
 }
 
-.form-newsletter{
-    .input-group,
-    .form-group{
-        float: left;
-        width: 78%;
-        margin-right: 2%;
-        margin-top: 9px;
-        padding-top: 5px;
-    }
+.form-newsletter {
+  .input-group,
+  .form-group {
+    float: left;
+    width: 78%;
+    margin-right: 2%;
+    margin-top: 9px;
+    padding-top: 5px;
+  }
 
-    .btn{
-        float: left;
-        width: 20%;
-        margin: 9px 0 0;
-    }
+  .btn {
+    float: left;
+    width: 20%;
+    margin: 9px 0 0;
+  }
 }
 
-.form-file-upload{
-    .input-group-btn:last-child>.btn-round{
-        border-radius: 30px;
-    }
+.form-file-upload {
+  .input-group-btn:last-child > .btn-round {
+    border-radius: 30px;
+  }
 
-    .input-group-btn .btn{
-        margin: 0;
-    }
+  .input-group-btn .btn {
+    margin: 0;
+  }
 
-    .input-group{
-        width: 100%;
-    }
+  .input-group {
+    width: 100%;
+  }
 }
 
-.input-group .input-group-btn{
-    padding: 0 12px;
+.input-group .input-group-btn {
+  padding: 0 12px;
 }

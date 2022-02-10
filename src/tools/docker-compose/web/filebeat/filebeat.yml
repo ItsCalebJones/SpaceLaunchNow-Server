@@ -17,20 +17,20 @@ fields:
 filebeat.config.modules:
   path: ${path.config}/modules.d/*.yml
 filebeat.inputs:
-- type: log
-  enabled: true
-  paths:
-    - /log/nginx/*.log
-    - /log/web*/*.log
+  - type: log
+    enabled: true
+    paths:
+      - /log/nginx/*.log
+      - /log/web*/*.log
 
 filebeat.modules:
-- module: nginx
-  access:
-    enabled: true
-    var.paths: ["/log/nginx/access.log"]
-  error:
-    enabled: true
-    var.paths: ["/log/nginx/error.log"]
+  - module: nginx
+    access:
+      enabled: true
+      var.paths: ["/log/nginx/access.log"]
+    error:
+      enabled: true
+      var.paths: ["/log/nginx/error.log"]
 
 output.elasticsearch:
   hosts: ["mir.weijers.xyz:9200"]

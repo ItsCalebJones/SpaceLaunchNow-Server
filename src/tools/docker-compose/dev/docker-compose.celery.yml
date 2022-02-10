@@ -14,7 +14,7 @@ services:
   slns-celery_worker:
     command: sh -c "celery -A spacelaunchnow worker -l info"
     depends_on:
-    - rabbitmq
+      - rabbitmq
     deploy:
       replicas: 2
       restart_policy:
@@ -29,18 +29,18 @@ services:
     hostname: slns-celery_worker
     build: ../../..
     networks:
-    - main
+      - main
     restart: on-failure
 
   slns-celery_beat:
     command: sh -c "celery -A spacelaunchnow beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler"
     container_name: slns-celery_beat
     depends_on:
-    - rabbitmq
+      - rabbitmq
     hostname: slns-celery_beat
     build: ../../..
     networks:
-    - main
+      - main
     restart: on-failure
 
 networks:

@@ -3,15 +3,15 @@
 // Material Design element Dialogs
 // --------------------------------------------------
 .modal-dialog {
-  & .modal-content{
+  & .modal-content {
     @include shadow-z-5();
     border-radius: $border-radius-large;
     border: none;
 
-    .card-signup{
+    .card-signup {
       margin: 0;
 
-      .modal-header{
+      .modal-header {
         padding-top: 0;
       }
     }
@@ -21,26 +21,28 @@
   // Top section of the modal w/ title and dismiss
   .modal-header {
     border-bottom: none;
-    padding-top:    24px;
-    padding-right:  24px;
+    padding-top: 24px;
+    padding-right: 24px;
     padding-bottom: 0;
-    padding-left:   24px;
+    padding-left: 24px;
   }
+
   // Modal body
   // Where all modal content resides (sibling of .modal-header and .modal-footer)
   .modal-body {
-    padding-top:    24px;
-    padding-right:  24px;
+    padding-top: 24px;
+    padding-right: 24px;
     padding-bottom: 16px;
-    padding-left:   24px;
+    padding-left: 24px;
   }
+
   // Footer (for actions)
   .modal-footer {
     border-top: none;
     padding: 24px;
 
-    &.text-center{
-        text-align: center;
+    &.text-center {
+      text-align: center;
     }
 
     button {
@@ -48,6 +50,7 @@
       padding-left: 16px;
       padding-right: 16px;
       width: auto;
+
       &.pull-left {
         padding-left: 5px;
         padding-right: 5px;
@@ -56,28 +59,31 @@
       }
     }
   }
+
   .modal-body + .modal-footer {
     padding-top: 0;
   }
 }
+
 .modal-backdrop {
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
 }
 
-.modal{
-  .modal-dialog{
+.modal {
+  .modal-dialog {
     margin-top: 130px;
   }
-  .modal-header .close{
+
+  .modal-header .close {
     color: $gray-light;
 
     &:hover,
-    &:focus{
-        opacity: 1;
+    &:focus {
+      opacity: 1;
     }
 
-    i{
-        font-size: 16px;
+    i {
+      font-size: 16px;
     }
   }
 }

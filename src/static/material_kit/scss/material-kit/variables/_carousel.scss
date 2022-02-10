@@ -1,9 +1,10 @@
-.carousel{
-  &.carousel-full-nagivation{
-    .left{
+.carousel {
+  &.carousel-full-nagivation {
+    .left {
       cursor: url("../../img/arrow-left.png"), url("../../img/arrow-left.cur"), default !important;
     }
-    .right{
+
+    .right {
       cursor: url("../../img/arrow-right.png"), url("../../img/arrow-right.cur"), default !important;
     }
   }

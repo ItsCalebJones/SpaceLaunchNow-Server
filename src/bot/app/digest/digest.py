@@ -2,17 +2,18 @@ import logging
 
 import bot.app.digest.daily as daily_check
 import bot.app.digest.weekly as weekly_check
+
+# Get an instance of a logger
+from spacelaunchnow import config
 from spacelaunchnow.config import keys
 
 # import the logging library
 
-# Get an instance of a logger
-from spacelaunchnow import config
 
-logger = logging.getLogger('digest')
+logger = logging.getLogger("digest")
 
-AUTH_TOKEN_HERE = keys['AUTH_TOKEN_HERE']
-APP_ID = keys['APP_ID']
+AUTH_TOKEN_HERE = keys["AUTH_TOKEN_HERE"]
+APP_ID = keys["APP_ID"]
 DAEMON_SLEEP = 6000
 
 
@@ -34,4 +35,3 @@ class DigestServer:
             weekly_check.check_launch_weekly(self.DEBUG)
         else:
             logger.error("Both daily and weekly false...ignoring request.")
-

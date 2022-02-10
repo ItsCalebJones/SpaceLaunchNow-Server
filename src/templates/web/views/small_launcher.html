@@ -11,7 +11,8 @@
         </div>
     {% endif %}
     <div class="card-body">
-        <h2 class="title text-center" style="height:3em;">{{ vehicle.launcher_config.name }}<br>{{ vehicle.serial_number }}</h2>
+        <h2 class="title text-center"
+            style="height:3em;">{{ vehicle.launcher_config.name }}<br>{{ vehicle.serial_number }}</h2>
         <hr>
         {% if vehicle.flight_proven %}
             <span class="badge badge-pill badge-success">✓ Flight Proven</span>

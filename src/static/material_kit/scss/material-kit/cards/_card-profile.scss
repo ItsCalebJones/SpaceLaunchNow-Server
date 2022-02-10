@@ -1,11 +1,12 @@
-.card-profile{
+.card-profile {
   @extend %common-card-testimonial;
 }
 
-.card-profile{
-  .card-header:not([class*="card-header-"]){
+.card-profile {
+  .card-header:not([class*="card-header-"]) {
     background: transparent;
   }
+
   .card-avatar {
     width: 130px;
     max-width: 130px;

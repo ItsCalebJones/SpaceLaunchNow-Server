@@ -25,4 +25,4 @@ spec:
         name: memory
         targetAverageUtilization: {{ .Values.worker.autoscaling.targetMemoryUtilizationPercentage }}
     {{- end }}
-{{- end }}
+  {{- end }}

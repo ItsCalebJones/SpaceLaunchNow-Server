@@ -2,77 +2,78 @@
 {% load i18n zinnia %}
 
 {% block navigation %}
-<nav class="navbar navbar-expand-lg navbar-light fixed-top navbar-shrink-alt" id="indexNav">
-    <div class="container">
-        <a class="navbar-brand js-scroll-trigger" href="/">Space Launch Now</a>
-        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
-                data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
-                aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top navbar-shrink-alt" id="indexNav">
+        <div class="container">
+            <a class="navbar-brand js-scroll-trigger" href="/">Space Launch Now</a>
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+                    data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <div class="collapse navbar-collapse" id="navbarResponsive">
 
-            <ul class="navbar-nav ml-auto">
+                <ul class="navbar-nav ml-auto">
 
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="/">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger " href="/next">Next</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger active" href="/launch/">Launches</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link twitter" href="https://twitter.com/SpaceLaunchNow"><i class="fa fa-twitter"></i></a>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger " href="/next">Next</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger active" href="/launch/">Launches</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link twitter" href="https://twitter.com/SpaceLaunchNow"><i
+                                class="fa fa-twitter"></i></a>
+                    </li>
 
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="/v1">API</a>
-                </li>
-            </ul>
+                    <li class="nav-item">
+                        <a class="nav-link js-scroll-trigger" href="/v1">API</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 {% endblock %}
 {% block content %}
-<div class="container" style="margin-top:64px;margin-bottom: 16px">
-    {% zinnia_breadcrumbs "News" template="zinnia/tags/breadcrumbs.html" %}
-    <div id="main" class="row">
-        <div id="content" class="col-xl-8">
-        {% block zinnia-content %}
-        {% endblock %}
-        </div>
-        <div id="sidebar" class="col-sm">
+    <div class="container" style="margin-top:64px;margin-bottom: 16px">
+        {% zinnia_breadcrumbs "News" template="zinnia/tags/breadcrumbs.html" %}
+        <div id="main" class="row">
+            <div id="content" class="col-xl-8">
+                {% block zinnia-content %}
+                {% endblock %}
+            </div>
+            <div id="sidebar" class="col-sm">
                 {% block sidebar %}
-            <div id="widget-categories" class="card mt-4">
-                <div class="card-header">
-                    <h4 class="card-title">{% trans "Categories" %}</h4>
-                </div>
-                <div class="card-body">
-                    {% get_categories "zinnia/tags/categories.html"  %}
-                </div>
-            </div>
-            <div id="widget-recents" class="card mt-4">
-                <div class="card-header">
-                <h4 class="card-title">{% trans "Recent Articles" %}</h4>
-                </div>
-                <div class="card-body">
-                    {% get_recent_entries %}
-                </div>
-            </div>
-            <!-- Categories Widget -->
-            <div class="card my-2 desktop-only">
-                <a class="twitter-timeline desktop-only"
-                   href="https://twitter.com/SpaceLaunchNow/lists/space-launch-news"
-                   data-tweet-limit="8"
-                   data-show-replies="true"
-                >Tweets from https://twitter.com/SpaceLaunchNow/lists/space-launch-news</a>
-                <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
-            </div>
+                    <div id="widget-categories" class="card mt-4">
+                        <div class="card-header">
+                            <h4 class="card-title">{% trans "Categories" %}</h4>
+                        </div>
+                        <div class="card-body">
+                            {% get_categories "zinnia/tags/categories.html" %}
+                        </div>
+                    </div>
+                    <div id="widget-recents" class="card mt-4">
+                        <div class="card-header">
+                            <h4 class="card-title">{% trans "Recent Articles" %}</h4>
+                        </div>
+                        <div class="card-body">
+                            {% get_recent_entries %}
+                        </div>
+                    </div>
+                    <!-- Categories Widget -->
+                    <div class="card my-2 desktop-only">
+                        <a class="twitter-timeline desktop-only"
+                           href="https://twitter.com/SpaceLaunchNow/lists/space-launch-news"
+                           data-tweet-limit="8"
+                           data-show-replies="true"
+                        >Tweets from https://twitter.com/SpaceLaunchNow/lists/space-launch-news</a>
+                        <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+                    </div>
                 {% endblock sidebar %}
+            </div>
         </div>
     </div>
-</div>
 {% endblock content %}

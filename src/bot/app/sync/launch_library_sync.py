@@ -1,22 +1,22 @@
-from bot.app.repository.launches_repository import LaunchRepository
-from spacelaunchnow.config import keys
 import logging
 
+from bot.app.repository.launches_repository import LaunchRepository
 from spacelaunchnow import config
+from spacelaunchnow.config import keys
 
-AUTH_TOKEN_HERE = keys['AUTH_TOKEN_HERE']
-APP_ID = keys['APP_ID']
+AUTH_TOKEN_HERE = keys["AUTH_TOKEN_HERE"]
+APP_ID = keys["APP_ID"]
 DAEMON_SLEEP = 600
-TAG = 'Notification Server'
+TAG = "Notification Server"
 
 # Get an instance of a logger
-logger = logging.getLogger('bot.notifications')
+logger = logging.getLogger("bot.notifications")
 
 
 class LaunchLibrarySync:
     def __init__(self, debug=None, version=None):
         if version is None:
-            version = '1.4.1'
+            version = "1.4.1"
         self.repository = LaunchRepository(version=version)
         if debug is None:
             self.DEBUG = config.DEBUG

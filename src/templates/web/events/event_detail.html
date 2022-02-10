@@ -119,16 +119,19 @@
                                                     <a class="float-left">
                                                         <div class="avatar">
                                                             <img class="media-object"
-                                                                 src="{% if item.created_by.tsdstaff.profile %}{{ item.created_by.tsdstaff.profile.url }}{% else %}{% static "img/ll2_logo.png" %}{% endif %}">
+                                                                 src="
+                                                                         {% if item.created_by.tsdstaff.profile %}{{ item.created_by.tsdstaff.profile.url }}{% else %}{% static "img/ll2_logo.png" %}{% endif %}">
                                                         </div>
                                                     </a>
                                                     <div class="media-body">
-                                                        <h5 class="media-heading">{{ item.created_by }} <small>• {{ item.created_on }}</small></h5>
+                                                        <h5 class="media-heading">{{ item.created_by }}
+                                                            <small>• {{ item.created_on }}</small></h5>
                                                         <h6 class="text-muted"></h6>
                                                         <p>{{ item.comment|linebreaks }}</p>
                                                         {% if item.info_url %}
                                                             <div class="media-footer">
-                                                                <b>Link</b> <a href="{{ item.info_url }}" class="text-reset">{{ item.info_url }}</a>
+                                                                <b>Link</b> <a href="{{ item.info_url }}"
+                                                                               class="text-reset">{{ item.info_url }}</a>
                                                             </div>
                                                         {% endif %}
                                                     </div>

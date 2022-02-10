@@ -93,7 +93,8 @@
                                                             <a class="float-left">
                                                                 <div class="avatar">
                                                                     <img class="media-object"
-                                                                         src="{% if item.created_by.tsdstaff.profile %}{{ item.created_by.tsdstaff.profile.url }}{% else %}{% static "img/ll2_logo.png" %}{% endif %}">
+                                                                         src="
+                                                                                 {% if item.created_by.tsdstaff.profile %}{{ item.created_by.tsdstaff.profile.url }}{% else %}{% static "img/ll2_logo.png" %}{% endif %}">
                                                                 </div>
                                                             </a>
                                                             <div class="media-body">
@@ -135,7 +136,8 @@
                                                     <div class="card-header card-header-image">
                                                         <a href="{{ item.vid_url }}">
                                                             <img class="img"
-                                                                 src="{% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
+                                                                 src="
+                                                                         {% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
                                                             <div class="colored-shadow"
                                                                  style="background-image: url('
                                                                          {% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>

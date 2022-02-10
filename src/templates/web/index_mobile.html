@@ -114,7 +114,8 @@
                 <div class="container mb-2">
                     <a style="margin: 5px"
                        href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-                        <img alt='Get it on Google Play' src="{% static 'img/button/google.png' %}" width="135" height="40"
+                        <img alt='Get it on Google Play' src="{% static 'img/button/google.png' %}" width="135"
+                             height="40"
                              alt="">
                     </a>
                     <a style="margin: 5px" href='https://itunes.apple.com/us/app/space-launch-now/id1399715731'>
@@ -122,7 +123,9 @@
                              alt="">
                     </a>
                 </div>
-                <a href="https://www.patreon.com/bePatron?u=20029265" data-patreon-widget-type="become-patron-button">Become a Patron!</a><script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>
+                <a href="https://www.patreon.com/bePatron?u=20029265" data-patreon-widget-type="become-patron-button">Become
+                    a Patron!</a>
+                <script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>
                 <hr class="col-lg-8" style="background-color: white">
             </div>
         </div>
@@ -137,7 +140,8 @@
                     </div>
                     <div class="col-md-12">
                         <div class="card card-raised card-background"
-                             style="background-image: url('{% if launch_image %}{{ launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); min-height: 500px">
+                             style="background-image: url('
+                                     {% if launch_image %}{{ launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); min-height: 500px">
                             <div class="card-body" style="max-width: 600px">
                                 <h3 class="card-title">{{ launch.name }}</h3>
                                 <h3 class="title text-white" style="margin: 5px;" id="countdown">L - -- : -- : -- :
@@ -177,9 +181,11 @@
                                 <div class="card-header card-header-image">
                                     <a href="/launch/{{ first_launch.slug }}">
                                         <img class="img"
-                                             src="{% if first_launch_image %}{{ first_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
+                                             src="
+                                                     {% if first_launch_image %}{{ first_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
                                         <div class="colored-shadow"
-                                             style="background-image: url('{% if first_launch_image %}{{ first_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
+                                             style="background-image: url('
+                                                     {% if first_launch_image %}{{ first_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
                                     </a>
                                 </div>
                             </div>
@@ -233,107 +239,109 @@
                                 <div class="card-header card-header-image">
                                     <a href="/launch/{{ second_launch.slug }}">
                                         <img class="img"
-                                             src="{% if second_launch_image %}{{ second_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
+                                             src="
+                                                     {% if second_launch_image %}{{ second_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
                                         <div class="colored-shadow"
-                                             style="background-image: url('{% if second_launch_image %}{{ second_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
+                                             style="background-image: url('
+                                                     {% if second_launch_image %}{{ second_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
                                     </a>
                                 </div>
                             </div>
                         </div>
                     </div>
-                        <div class="row">
-                            <div class="col-md-4 mx-auto">
-                                <div class="info info-horizontal">
-                                    <a href="/launch/upcoming/spacex">
-                                        <div class="icon icon-info">
-                                            <i class="fal fa-rocket"></i>
-                                        </div>
-                                        <div class="description">
-                                            <h4 class="info-title">SpaceX</h4>
-                                            <p class="description">
-                                                An up-to-date schedule tracking all of SpaceX's activity and news updates.
-                                            </p>
+                    <div class="row">
+                        <div class="col-md-4 mx-auto">
+                            <div class="info info-horizontal">
+                                <a href="/launch/upcoming/spacex">
+                                    <div class="icon icon-info">
+                                        <i class="fal fa-rocket"></i>
+                                    </div>
+                                    <div class="description">
+                                        <h4 class="info-title">SpaceX</h4>
+                                        <p class="description">
+                                            An up-to-date schedule tracking all of SpaceX's activity and news updates.
+                                        </p>
 
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mx-auto">
-                                <div class="info info-horizontal">
-                                    <a href="/launch/upcoming/florida">
-                                        <div class="icon icon-success">
-                                            <i class="far fa-tree-palm"></i>
-                                        </div>
-                                        <div class="description">
-                                            <h4 class="info-title">Florida</h4>
-                                            <p class="description">
-                                                View upcoming launches from Cape Canaveral and Kennedy Space Center
-                                            </p>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mx-auto">
-                                <div class="info info-horizontal">
-                                    <a href="/launch/upcoming/vandenberg">
-                                        <div class="icon icon-warning">
-                                            <i class="fas fa-coffee"></i>
-                                        </div>
-                                        <div class="description">
-                                            <h4 class="info-title">Vandenberg AFB</h4>
-                                            <p class="description">
-                                                All of Vandenberg AFB's spaceflight launches available here.
-                                            </p>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mx-auto">
-                                <div class="info info-horizontal">
-                                    <a href="/launch/upcoming">
-                                        <div class="icon icon-primary">
-                                            <i class="fas fa-clipboard-list-check"></i>
-                                        </div>
-                                        <div class="description">
-                                            <h4 class="info-title">Upcoming</h4>
-                                            <p class="description">
-                                                View a list of upcoming launches with basic filters.
-                                            </p>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mx-auto">
-                                <div class="info info-horizontal">
-                                    <a href="/launch/previous">
-                                        <div class="icon icon-rose">
-                                            <i class="fas fa-history"></i>
-                                        </div>
-                                        <div class="description">
-                                            <h4 class="info-title">Previous</h4>
-                                            <p class="description">
-                                                View a list of recent previous launches with basic filters.
-                                            </p>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mx-auto">
-                                <div class="info info-horizontal">
-                                    <a href="/launch/">
-                                        <div class="icon icon-success">
-                                            <i class="far fa-database"></i>
-                                        </div>
-                                        <div class="description">
-                                            <h4 class="info-title">Database</h4>
-                                            <p class="description">
-                                                Search through the entire launch database with advanced search filters.
-                                            </p>
-                                        </div>
-                                    </a>
-                                </div>
+                                    </div>
+                                </a>
                             </div>
                         </div>
+                        <div class="col-md-4 mx-auto">
+                            <div class="info info-horizontal">
+                                <a href="/launch/upcoming/florida">
+                                    <div class="icon icon-success">
+                                        <i class="far fa-tree-palm"></i>
+                                    </div>
+                                    <div class="description">
+                                        <h4 class="info-title">Florida</h4>
+                                        <p class="description">
+                                            View upcoming launches from Cape Canaveral and Kennedy Space Center
+                                        </p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mx-auto">
+                            <div class="info info-horizontal">
+                                <a href="/launch/upcoming/vandenberg">
+                                    <div class="icon icon-warning">
+                                        <i class="fas fa-coffee"></i>
+                                    </div>
+                                    <div class="description">
+                                        <h4 class="info-title">Vandenberg AFB</h4>
+                                        <p class="description">
+                                            All of Vandenberg AFB's spaceflight launches available here.
+                                        </p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mx-auto">
+                            <div class="info info-horizontal">
+                                <a href="/launch/upcoming">
+                                    <div class="icon icon-primary">
+                                        <i class="fas fa-clipboard-list-check"></i>
+                                    </div>
+                                    <div class="description">
+                                        <h4 class="info-title">Upcoming</h4>
+                                        <p class="description">
+                                            View a list of upcoming launches with basic filters.
+                                        </p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mx-auto">
+                            <div class="info info-horizontal">
+                                <a href="/launch/previous">
+                                    <div class="icon icon-rose">
+                                        <i class="fas fa-history"></i>
+                                    </div>
+                                    <div class="description">
+                                        <h4 class="info-title">Previous</h4>
+                                        <p class="description">
+                                            View a list of recent previous launches with basic filters.
+                                        </p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mx-auto">
+                            <div class="info info-horizontal">
+                                <a href="/launch/">
+                                    <div class="icon icon-success">
+                                        <i class="far fa-database"></i>
+                                    </div>
+                                    <div class="description">
+                                        <h4 class="info-title">Database</h4>
+                                        <p class="description">
+                                            Search through the entire launch database with advanced search filters.
+                                        </p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                     {% if event %}
                         <div class="col-md-12 text-center">
                             <h3 class="title">Upcoming Events</h3>
@@ -467,15 +475,16 @@
 
                         </button>
                     </a>
-                    <br>
-                    <a href="https://www.patreon.com/bePatron?u=20029265&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2F&utm_medium=widget" style="color:white">
-                        <button class="btn btn-social btn-fill btn-youtube"
-                                style="background-color:rgb(232, 91, 70); width: -webkit-fill-available; text-align: left;">
-                            <i class="fab fa-patreon"></i> Become a Patron
-                            <div class="ripple-container"></div>
+                        <br>
+                        <a href="https://www.patreon.com/bePatron?u=20029265&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2F&utm_medium=widget"
+                           style="color:white">
+                            <button class="btn btn-social btn-fill btn-youtube"
+                                    style="background-color:rgb(232, 91, 70); width: -webkit-fill-available; text-align: left;">
+                                <i class="fab fa-patreon"></i> Become a Patron
+                                <div class="ripple-container"></div>
 
-                        </button>
-                    </a>
+                            </button>
+                        </a>
                         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
                         <!-- Web - Square -->
                         <ins class="adsbygoogle"
@@ -485,7 +494,7 @@
                              data-ad-format="auto"
                              data-full-width-responsive="true"></ins>
                         <script>
-                             (adsbygoogle = window.adsbygoogle || []).push({});
+                            (adsbygoogle = window.adsbygoogle || []).push({});
                         </script>
                     </div>
 

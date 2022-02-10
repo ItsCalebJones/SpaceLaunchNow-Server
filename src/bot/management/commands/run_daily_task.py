@@ -1,15 +1,16 @@
-from django.core.management import BaseCommand
-from bot.tasks import run_daily
 from celery.utils.log import get_task_logger
+from django.core.management import BaseCommand
 
-logger = get_task_logger('bot')
+from bot.tasks import run_daily
 
-TAG = 'Digest Server'
+logger = get_task_logger("bot")
+
+TAG = "Digest Server"
 
 
 class Command(BaseCommand):
-    help = 'Run Check Next Launch manually.'
+    help = "Run Check Next Launch manually."
 
     def handle(self, *args, **options):
-        logger.info('Run Daily Check')
+        logger.info("Run Daily Check")
         run_daily()

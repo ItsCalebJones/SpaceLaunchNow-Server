@@ -4,24 +4,36 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='AutoscalerSettings',
+            name="AutoscalerSettings",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('enabled', models.BooleanField(default=False)),
-                ('custom_worker_count', models.IntegerField(blank=True, default=None, null=True)),
-                ('current_workers', models.IntegerField(blank=True, default=None, null=True)),
-                ('max_workers', models.IntegerField(default=5)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("enabled", models.BooleanField(default=False)),
+                (
+                    "custom_worker_count",
+                    models.IntegerField(blank=True, default=None, null=True),
+                ),
+                (
+                    "current_workers",
+                    models.IntegerField(blank=True, default=None, null=True),
+                ),
+                ("max_workers", models.IntegerField(default=5)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

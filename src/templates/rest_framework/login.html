@@ -1,18 +1,19 @@
 {% extends "rest_framework/login_base.html" %}
-{% load static%}
+{% load static %}
 
 {% block head %}
 
-<title>{% block title %}{% if name and 'Space Launch' not in name%}{{ name }} | {% endif %}Space Launch Now - Login{% endblock %}</title>
+    <title>{% block title %}{% if name and 'Space Launch' not in name %}{{ name }} | {% endif %}Space Launch Now -
+        Login{% endblock %}</title>
 
-{% block style %}
-{{ block.super }}
-<link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.ico' %}" />
-{% endblock %}
+    {% block style %}
+        {{ block.super }}
+        <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.ico' %}"/>
+    {% endblock %}
 
-{% block bootstrap_theme %}
-    <link href="{% static  'material_kit/css/bootswatch-paper.css' %}" rel="stylesheet">
-{% endblock %}
+    {% block bootstrap_theme %}
+        <link href="{% static  'material_kit/css/bootswatch-paper.css' %}" rel="stylesheet">
+    {% endblock %}
 
 {% endblock %}
 

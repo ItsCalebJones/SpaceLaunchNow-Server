@@ -4,7 +4,8 @@
         <a class="float-left">
             <div class="avatar">
                 <img class="media-object"
-                     src="{% if item.created_by.tsdstaff.profile %}{{ item.created_by.tsdstaff.profile.url }}{% else %}{% static "img/ll2_logo.png" %}{% endif %}">
+                     src="
+                             {% if item.created_by.tsdstaff.profile %}{{ item.created_by.tsdstaff.profile.url }}{% else %}{% static "img/ll2_logo.png" %}{% endif %}">
             </div>
         </a>
         <div class="media-body" style="word-break: break-all;">

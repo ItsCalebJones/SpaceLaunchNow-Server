@@ -1,8 +1,10 @@
 .togglebutton {
   vertical-align: middle;
+
   &, label, input, .toggle {
     user-select: none;
   }
+
   label {
     cursor: pointer;
     color: $mdb-toggle-label-color;
@@ -19,6 +21,7 @@
       text-align: left; // Issue #737 horizontal form
       margin-left: 5px;
     }
+
     // Switch bg off and disabled
     .toggle,
     input[type=checkbox][disabled] + .toggle {
@@ -32,6 +35,7 @@
       transition: background 0.3s ease;
       vertical-align: middle;
     }
+
     // Handle off
     .toggle:after {
       content: "";
@@ -47,6 +51,7 @@
       border: 1px solid $mdb-checkbox-border-color;
       transition: left 0.3s ease, background 0.3s ease, box-shadow 0.1s ease;
     }
+
     input[type=checkbox] {
       // Handle disabled
       &[disabled] {

@@ -4,45 +4,44 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('autoscaler', '0001_initial'),
+        ("autoscaler", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='autoscalersettings',
-            name='other_weight',
+            model_name="autoscalersettings",
+            name="other_weight",
             field=models.IntegerField(default=1),
         ),
         migrations.AddField(
-            model_name='autoscalersettings',
-            name='rocket_lab_weight',
+            model_name="autoscalersettings",
+            name="rocket_lab_weight",
             field=models.IntegerField(default=3),
         ),
         migrations.AddField(
-            model_name='autoscalersettings',
-            name='spacex_weight',
+            model_name="autoscalersettings",
+            name="spacex_weight",
             field=models.IntegerField(default=5),
         ),
         migrations.AddField(
-            model_name='autoscalersettings',
-            name='starship_event_weight',
+            model_name="autoscalersettings",
+            name="starship_event_weight",
             field=models.IntegerField(default=5),
         ),
         migrations.AddField(
-            model_name='autoscalersettings',
-            name='starship_launch_weight',
+            model_name="autoscalersettings",
+            name="starship_launch_weight",
             field=models.IntegerField(default=3),
         ),
         migrations.AddField(
-            model_name='autoscalersettings',
-            name='ula_weight',
+            model_name="autoscalersettings",
+            name="ula_weight",
             field=models.IntegerField(default=3),
         ),
         migrations.AlterField(
-            model_name='autoscalersettings',
-            name='max_workers',
+            model_name="autoscalersettings",
+            name="max_workers",
             field=models.IntegerField(default=10),
         ),
     ]

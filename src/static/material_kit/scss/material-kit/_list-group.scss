@@ -81,7 +81,7 @@
 
   // add the padding to icons (margin-left is used for alignment)
   .material-icons.pull-xs-right,
-  // need the specificity
+    // need the specificity
   .material-icons.pull-sm-right,
   .material-icons.pull-md-right,
   .material-icons.pull-lg-right,
@@ -89,6 +89,7 @@
   .material-icons ~ .material-icons:last-child {
     padding-left: 1rem; // guarantee space per spec
   }
+
   //------
 
   .list-group-item-heading {
