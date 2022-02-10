@@ -1,4 +1,2 @@
 -r common.txt
 -e ../LaunchLibrary-API
-flake8
-black

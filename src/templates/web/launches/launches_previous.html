@@ -144,9 +144,7 @@
                                 <p>View all launches available - including launches from the past and utilize powerful
                                     search
                                     filters.</p>
-                                <a href="/launch">
-                                    <button class="btn btn-primary">Launch Database</button>
-                                </a>
+                                <a href="/launch"><button class="btn btn-primary" >Launch Database</button></a>
                             </div>
                         </div>
                     {% endif %}
@@ -180,7 +178,6 @@
 
 
 
-
                                                                              {{ launches.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Previous</a>
                                             </li>
                                         {% else %}
@@ -203,7 +200,6 @@
 
 
 
-
                                                                                      {{ i }}{% if query %}&q={{ query }}{% endif %}">{{ i }}</a>
                                                     </li>
                                                 {% endif %}
@@ -216,12 +212,10 @@
 
 
 
-
                                                                                  {{ launches.paginator.count }}{% if query %}&q={{ query }}{% endif %}">Last</a>
                                             {% endif %}
                                             <li class="page-item"><a class="page-link"
                                                                      href="?page=
-
 
 
 

@@ -1,5 +1,4 @@
 import digitalocean
-
 from spacelaunchnow.config import DO_TOKEN
 
 

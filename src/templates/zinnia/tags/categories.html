@@ -1,18 +1,16 @@
 {% load i18n %}
 {% load mptt_tags %}
 <ul class="{% if not categories %}no-{% endif %}categories-tree category-root list-group list-group-flush">
-    {% recursetree categories %}
-        <li{% if node.slug == context_category.slug %} class="current list-group-item">{% else %}
-            class="list-group-item">{% endif %}
-        <a href="{{ node.get_absolute_url }}"
-           title="{% blocktrans with category=node %}Show all articles in {{ category }}{% endblocktrans %}">{{ node }}</a>
-        {% blocktrans count entry_count=node.count_entries %} {{ entry_count }} - Article{% plural %}{{ entry_count }} -
-            Articles{% endblocktrans %}
-        </li>
-    {% endrecursetree %}
-    {% if not categories %}
-        <li>
-            {% trans "No categories yet." %}
-        </li>
-    {% endif %}
+  {% recursetree categories %}
+  <li{% if node.slug == context_category.slug %} class="current list-group-item">{% else %}class="list-group-item">{% endif %}
+    <a href="{{ node.get_absolute_url }}"
+       title="{% blocktrans with category=node %}Show all articles in {{ category }}{% endblocktrans %}">{{ node }}</a>
+    {% blocktrans count entry_count=node.count_entries %} {{ entry_count }} - Article{% plural %}{{ entry_count }} - Articles{% endblocktrans %}
+  </li>
+  {% endrecursetree %}
+  {% if not categories %}
+  <li>
+    {% trans "No categories yet." %}
+  </li>
+  {% endif %}
 </ul>

@@ -1,5 +1,5 @@
 {{- if .Values.worker.enabled -}}
-  {{- if .Values.beat.enabled -}}
+{{- if .Values.beat.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -24,35 +24,35 @@ spec:
         app.kubernetes.io/component: beat
     spec:
     {{- with .Values.imagePullSecrets }}
-    imagePullSecrets:
-      {{- toYaml . | nindent 8 }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
     {{- end }}
-    securityContext:
-      {{- toYaml .Values.podSecurityContext | nindent 8 }}
-    containers:
-      - name: {{ .Chart.Name }}
-        command: ["celery", "beat", "-A", "spacelaunchnow", "-l", "info"]
-        {{- if .Values.beat.args }}
-        args: {{- toYaml .Values.beat.args | nindent 10}}
-        {{- end }}
-        securityContext:
-          {{- toYaml .Values.securityContext | nindent 12 }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        resources:
-          limits:
-            cpu: 50m
-            memory: 256Mi
-          requests:
-            cpu: 5m
-            memory: 32Mi
-        env:
-          - name: SERVER_ROLE
-            value: "beat"
-        envFrom:
-          - secretRef:
-              name: {{ include "django.fullname" . }}
-          - configMapRef:
-              name: {{ include "django.fullname" . }}
-  {{- end }}
-  {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          command: ["celery", "beat", "-A", "spacelaunchnow", "-l", "info"]
+          {{- if .Values.beat.args }}
+          args: {{- toYaml .Values.beat.args | nindent 10}}
+          {{- end }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          resources:
+            limits:
+              cpu: 50m
+              memory: 256Mi
+            requests:
+              cpu: 5m
+              memory: 32Mi
+          env:
+            - name: SERVER_ROLE
+              value: "beat"
+          envFrom:
+            - secretRef:
+                name: {{ include "django.fullname" . }}
+            - configMapRef:
+                name: {{ include "django.fullname" . }}
+{{- end }}
+{{- end }}

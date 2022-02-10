@@ -1,22 +1,21 @@
 {% extends "rest_framework/base.html" %}
 {% load rest_framework %}
-{% load static %}
+{% load static%}
 
 
 
 {% block head %}
 
-    <title>{% block title %}{% if name and 'Space Launch' not in name %}{{ name }} | {% endif %}Space Launch Now -
-        API{% endblock %}</title>
+<title>{% block title %}{% if name and 'Space Launch' not in name%}{{ name }} | {% endif %}Space Launch Now - API{% endblock %}</title>
 
-    {% block style %}
-        {{ block.super }}
-        <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.ico' %}"/>
-    {% endblock %}
+{% block style %}
+{{ block.super }}
+<link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.ico' %}" />
+{% endblock %}
 
-    {% block bootstrap_theme %}
-        <link href="{% static  'material_kit/css/bootswatch-paper.css' %}" rel="stylesheet">
-    {% endblock %}
+{% block bootstrap_theme %}
+    <link href="{% static  'material_kit/css/bootswatch-paper.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% endblock %}
 
@@ -40,8 +39,7 @@
                             <li><a href="/3.2.0">Version 3.2.0</a></li>
                             <li><a href="/api/3.3.0">Version 3.3.0</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="https://github.com/ItsCalebJones/SpaceLaunchNow-Server/releases">Changelog</a>
-                            </li>
+                            <li><a href="https://github.com/ItsCalebJones/SpaceLaunchNow-Server/releases">Changelog</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="https://github.com/ItsCalebJones">GitHub</a></li>
                         </ul>

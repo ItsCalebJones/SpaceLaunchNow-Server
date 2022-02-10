@@ -6,9 +6,7 @@
  */
 
 @at-root {
-  @-ms-viewport {
-    width: device-width;
-  } // stylelint-disable-line at-rule-no-vendor-prefix
+  @-ms-viewport { width: device-width; } // stylelint-disable-line at-rule-no-vendor-prefix
 }
 
 html {

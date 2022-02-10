@@ -7,7 +7,7 @@ services:
   web1:
     container_name: slns-web1
     image: registry.calebjones.dev:5050/sln-server:production
-    deploy:
+    deploy:   
       restart_policy:
         condition: always
     sysctls:
@@ -22,7 +22,7 @@ services:
   web2:
     container_name: slns-web2
     image: registry.calebjones.dev:5050/sln-server:production
-    deploy:
+    deploy:   
       restart_policy:
         condition: always
     sysctls:
@@ -37,7 +37,7 @@ services:
   web3:
     container_name: slns-web3
     image: registry.calebjones.dev:5050/sln-server:production
-    deploy:
+    deploy:   
       restart_policy:
         condition: always
     sysctls:
@@ -54,7 +54,7 @@ services:
     image: memcached:latest
     labels:
       - "io.portainer.accesscontrol.teams=Space Launch Now"
-    deploy:
+    deploy:   
       restart_policy:
         condition: always
     entrypoint:
@@ -73,7 +73,7 @@ services:
     build:
       context: .
       dockerfile: nginx/Dockerfile
-    deploy:
+    deploy:   
       restart_policy:
         condition: always
     ports:
@@ -101,8 +101,8 @@ services:
       context: filebeat
       dockerfile: Dockerfile
     volumes:
-      # needed to access all docker logs (read only) :
-      - "/var/lib/docker/containers:/usr/share/dockerlogs/data:ro"
-      # needed to access additional informations about containers
-      - "/var/run/docker.sock:/var/run/docker.sock"
-      - "./log:/log"
+    # needed to access all docker logs (read only) :
+    - "/var/lib/docker/containers:/usr/share/dockerlogs/data:ro"
+    # needed to access additional informations about containers
+    - "/var/run/docker.sock:/var/run/docker.sock"
+    - "./log:/log"

@@ -3,18 +3,17 @@
   @include generic-variations($component, $selector-suffix, $brand-default, "alert-variations-content", null);
 }
 
-@mixin alert-variations-content($args) {
+@mixin alert-variations-content($args){
   $variation-color: map-get($args, variation-color);
   $variation-color-text: map-get($args, variation-color-text);
 
-  background-color: lighten($variation-color, 3%);
+  background-color: lighten($variation-color,3%);
   color: $variation-color-text;
 
   a, .alert-link {
     color: $variation-color-text;
   }
 }
-
 // interpolation of mixin-name is not allowed evidently, so we statically include based on the mixin-name given
 @mixin call-variations-content-mixin($args) {
   $mixin-name: map-get($args, mixin-name);
@@ -34,7 +33,7 @@
     @include bg-img-variations-content($args);
   } @else if $mixin-name == navbar-variations-content {
     @include navbar-variations-content($args);
-  } @else if $mixin-name == alert-variations-content {
+  }@else if $mixin-name == alert-variations-content {
     @include alert-variations-content($args);
   } @else {
     @error "Unknown mixin: #{$mixin-name}"
@@ -55,8 +54,8 @@
 
   //setup map to pass parameters (instead of the incredibly long-error-prone list for each and every @include)
   $args: (
-    //extra: $selector-suffix,
-    //default: $color-default,
+          //extra: $selector-suffix,
+          //default: $color-default,
           mixin-name: $mixin-name,
           material-param-1: $mdb-param-1
   );

@@ -4,43 +4,44 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+
     dependencies = [
-        ("bot", "0002_auto_20210114_0956"),
+        ('bot', '0002_auto_20210114_0956'),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name="articlenotification",
-            name="article",
+            model_name='articlenotification',
+            name='article',
         ),
         migrations.RemoveField(
-            model_name="notification",
-            name="event",
+            model_name='notification',
+            name='event',
         ),
         migrations.RemoveField(
-            model_name="notification",
-            name="launch",
+            model_name='notification',
+            name='launch',
         ),
         migrations.RemoveField(
-            model_name="notification",
-            name="news",
+            model_name='notification',
+            name='news',
         ),
         migrations.AddField(
-            model_name="notification",
-            name="event_id",
+            model_name='notification',
+            name='event_id',
             field=models.IntegerField(blank=True, default=None, null=True),
         ),
         migrations.AddField(
-            model_name="notification",
-            name="launch_id",
+            model_name='notification',
+            name='launch_id',
             field=models.UUIDField(blank=True, default=None, null=True),
         ),
         migrations.AddField(
-            model_name="notification",
-            name="news_id",
+            model_name='notification',
+            name='news_id',
             field=models.CharField(blank=True, default=None, max_length=255, null=True),
         ),
         migrations.DeleteModel(
-            name="SNAPIArticle",
+            name='SNAPIArticle',
         ),
     ]

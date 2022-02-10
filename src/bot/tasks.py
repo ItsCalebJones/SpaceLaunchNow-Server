@@ -1,34 +1,40 @@
 # coding=utf-8
+import json
+
+import requests
 from datetime import timedelta
 
 from celery import Celery
-from celery.schedules import crontab
+
+from bot.app.digest.digest import DigestServer
 from celery.task import periodic_task
 from celery.utils.log import get_task_logger
 
-from bot.app.digest.digest import DigestServer
 from bot.app.events.event_tracker import EventTracker
+
 from bot.app.notifications.launch_event_tracker import LaunchEventTracker
 from bot.app.sync.closure_sync import get_road_closure
-from bot.app.sync.news_sync import get_news
 from bot.app.sync.reddit_sync import get_submissions
 from bot.app.sync.twitter_sync import get_new_tweets
+from bot.app.sync.news_sync import get_news
+from celery.schedules import crontab
 
-logger = get_task_logger("tasks")
+logger = get_task_logger('tasks')
 
-TAG = "Digest Server"
+TAG = 'Digest Server'
 
 app = Celery()
 
 
 @periodic_task(
-    run_every=(crontab(minute=0, hour=12, day_of_week="mon-sun")),
+    run_every=(crontab(minute=0, hour=12,
+                       day_of_week='mon-sun')),
     name="run_daily",
     ignore_result=True,
-    options={"expires": 3600},
+    options={"expires": 3600}
 )
 def run_daily():
-    logger.info("Task - Running Digest - Daily...")
+    logger.info('Task - Running Digest - Daily...')
     daily_digest = DigestServer()
     daily_digest.run(daily=True)
 
@@ -47,13 +53,14 @@ def run_daily():
 
 
 @periodic_task(
-    run_every=(crontab(minute=0, hour=12, day_of_week="mon")),
+    run_every=(crontab(minute=0, hour=12,
+                       day_of_week='mon')),
     name="run_weekly",
     ignore_result=True,
-    options={"expires": 3600},
+    options={"expires": 3600}
 )
 def run_weekly():
-    logger.info("Task - Running Digest - Weekly...")
+    logger.info('Task - Running Digest - Weekly...')
     daily_digest = DigestServer()
     daily_digest.run(weekly=True)
 
@@ -65,9 +72,9 @@ def run_weekly():
 #     repository.get_next_launches(next_count=100, all=True)
 
 
-@periodic_task(run_every=(crontab(hour="*/2")), options={"expires": 15})
+@periodic_task(run_every=(crontab(hour='*/2')), options={"expires": 15})
 def get_road_closures():
-    logger.info("Task - Get Road Closures!")
+    logger.info('Task - Get Road Closures!')
     get_road_closure()
 
 
@@ -160,40 +167,40 @@ def get_road_closures():
 #     notification.check_next_launch()
 
 
-@periodic_task(run_every=(crontab(minute="*/2")), options={"expires": 60})
+@periodic_task(run_every=(crontab(minute='*/2')), options={"expires": 60})
 def get_tweets_task():
-    logger.info("Task - Running get_new_tweets...")
+    logger.info('Task - Running get_new_tweets...')
     get_new_tweets()
 
 
-@periodic_task(run_every=(crontab(minute="*/5")), options={"expires": 120})
+@periodic_task(run_every=(crontab(minute='*/5')), options={"expires": 120})
 def get_news_task():
-    logger.info("Task - Running get_news...")
+    logger.info('Task - Running get_news...')
     get_news()
 
 
-@periodic_task(run_every=(crontab(hour="*/1")), options={"expires": 120})
+@periodic_task(run_every=(crontab(hour='*/1')), options={"expires": 120})
 def get_news_task_hourly():
-    logger.info("Task - Running get_news...")
+    logger.info('Task - Running get_news...')
     get_news(limit=50)
 
 
-@periodic_task(run_every=(crontab(minute="*/30")), options={"expires": 120})
+@periodic_task(run_every=(crontab(minute='*/30')), options={"expires": 120})
 def get_reddit_submissions_task():
-    logger.info("Task - Running get_reddit_submissions...")
+    logger.info('Task - Running get_reddit_submissions...')
     get_submissions()
 
 
 @periodic_task(run_every=timedelta(seconds=15), options={"expires": 5})
 def launch_tracker():
-    logger.info("Task - Running Launch Event Tracker")
+    logger.info('Task - Running Launch Event Tracker')
     tracker = LaunchEventTracker()
     tracker.check_events()
 
 
 @periodic_task(run_every=timedelta(seconds=60), options={"expires": 5})
 def event_tracker():
-    logger.info("Task - Running Event Tracker")
+    logger.info('Task - Running Event Tracker')
     tracker = EventTracker()
     tracker.check_events()
     tracker.check_news_item()

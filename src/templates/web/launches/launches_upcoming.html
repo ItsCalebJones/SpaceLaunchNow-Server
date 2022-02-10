@@ -244,9 +244,7 @@
                             <p>View all launches available - including launches from the past and utilize powerful
                                 search
                                 filters.</p>
-                            <a href="/launch">
-                                <button class="btn btn-primary">Launch Database</button>
-                            </a>
+                            <a href="/launch"><button class="btn btn-primary" >Launch Database</button></a>
                         </div>
                     </div>
                 {% endif %}
@@ -275,8 +273,7 @@
                                 <ul class="pagination justify-content-center">
                                     {% if launches.has_previous %}
                                         <li class="page-item"><a class="page-link"
-                                                                 href="?page=
-                                                                         {{ launches.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Previous</a>
+                                                                 href="?page={{ launches.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Previous</a>
                                         </li>
                                     {% else %}
                                         <li class="page-item disabled"><span>Previous</span></li>
@@ -294,8 +291,7 @@
                                                 </li>
                                             {% else %}
                                                 <li class="page-item"><a class="page-link"
-                                                                         href="?page=
-                                                                                 {{ i }}{% if query %}&q={{ query }}{% endif %}">{{ i }}</a>
+                                                                         href="?page={{ i }}{% if query %}&q={{ query }}{% endif %}">{{ i }}</a>
                                                 </li>
                                             {% endif %}
                                         {% endif %}
@@ -303,12 +299,10 @@
                                     {% if launches.has_next %}
                                         {% if launches.paginator.count >= 10 %}
                                             <li class="page-item"><a class="page-link"
-                                                                     href="?page=
-                                                                             {{ launches.paginator.count }}{% if query %}&q={{ query }}{% endif %}">Last</a>
+                                                                     href="?page={{ launches.paginator.count }}{% if query %}&q={{ query }}{% endif %}">Last</a>
                                         {% endif %}
                                         <li class="page-item"><a class="page-link"
-                                                                 href="?page=
-                                                                         {{ launches.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Next</a>
+                                                                 href="?page={{ launches.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Next</a>
                                         </li>
                                     {% else %}
                                         <li class="page-item disabled"><span class="page-link">Next</span></li>

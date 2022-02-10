@@ -1,7 +1,6 @@
 <ol class="breadcrumb">{% spaceless %}
-    {% for crumb in breadcrumbs %}
-        <li class="breadcrumb-item">{% if crumb.url %}
-            <a href="{{ crumb.url }}" title="{{ crumb.name }}">{{ crumb.name }}</a>
-        {% else %}{{ crumb.name|truncatewords:5 }}{% endif %}</li>
-    {% endfor %}
-    </ol>{% endspaceless %}
+{% for crumb in breadcrumbs %}
+	<li class="breadcrumb-item">{% if crumb.url %}<a href="{{ crumb.url }}" title="{{ crumb.name }}">{{ crumb.name }}</a>
+		{% else %}{{ crumb.name|truncatewords:5 }}{% endif %}</li>
+{% endfor %}
+</ol>{% endspaceless %}

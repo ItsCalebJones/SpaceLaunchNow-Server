@@ -25,4 +25,4 @@ spec:
         name: memory
         targetAverageUtilization: {{ .Values.web.autoscaling.targetMemoryUtilizationPercentage }}
     {{- end }}
-  {{- end }}
+{{- end }}

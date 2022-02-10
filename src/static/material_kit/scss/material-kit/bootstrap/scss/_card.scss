@@ -201,7 +201,6 @@
           .card-header {
             border-top-right-radius: 0;
           }
-
           .card-img-bottom,
           .card-footer {
             border-bottom-right-radius: 0;
@@ -215,7 +214,6 @@
           .card-header {
             border-top-left-radius: 0;
           }
-
           .card-img-bottom,
           .card-footer {
             border-bottom-left-radius: 0;
@@ -229,7 +227,6 @@
           .card-header {
             @include border-top-radius($card-border-radius);
           }
-
           .card-img-bottom,
           .card-footer {
             @include border-bottom-radius($card-border-radius);

@@ -16,28 +16,28 @@ spec:
   template:
     spec:
     {{- with .Values.imagePullSecrets }}
-    imagePullSecrets:
-      {{- toYaml . | nindent 8 }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
     {{- end }}
-    restartPolicy: Never
-    containers:
+      restartPolicy: Never
+      containers:
       - name: pre-install-job
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
           - name: DEBUG
             value: "True"
-  {{- if .Values.env.secret.DATABASE_URL }}
-- name: DATABASE_URL
-  value: {{ .Values.env.secret.DATABASE_URL }}
-  {{- end }}
-  {{- if .Values.redis.enabled }}
-- name: REDIS_URL
-  value: {{ include "django.redis.url" . | quote }}
-  {{- end }}
-- name: SECRET_KEY
-  value: {{ required "env.secret.SECRET_KEY is a required value." .Values.env.secret.SECRET_KEY }}
-  {{- range $k, $v := .Values.env.normal }}
-- name: {{ $k }}
-  value: {{ $v | quote }}
-  {{- end }}
+{{- if .Values.env.secret.DATABASE_URL }}
+          - name: DATABASE_URL
+            value: {{ .Values.env.secret.DATABASE_URL }}
+{{- end }}
+          {{- if .Values.redis.enabled }}
+          - name: REDIS_URL
+            value: {{ include "django.redis.url" . | quote }}
+          {{- end }}
+          - name: SECRET_KEY
+            value: {{ required "env.secret.SECRET_KEY is a required value." .Values.env.secret.SECRET_KEY }}
+        {{- range $k, $v := .Values.env.normal }}
+          - name: {{ $k }}
+            value: {{ $v | quote }}
+        {{- end }}

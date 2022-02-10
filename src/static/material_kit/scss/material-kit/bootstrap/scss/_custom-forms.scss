@@ -103,7 +103,6 @@
     &::before {
       @include gradient-bg($custom-control-indicator-checked-bg);
     }
-
     &::after {
       background-image: $custom-checkbox-indicator-icon-checked;
     }
@@ -114,7 +113,6 @@
       @include gradient-bg($custom-checkbox-indicator-indeterminate-bg);
       @include box-shadow($custom-checkbox-indicator-indeterminate-box-shadow);
     }
-
     &::after {
       background-image: $custom-checkbox-indicator-icon-indeterminate;
     }
@@ -124,7 +122,6 @@
     &:checked ~ .custom-control-label::before {
       background-color: $custom-control-indicator-checked-disabled-bg;
     }
-
     &:indeterminate ~ .custom-control-label::before {
       background-color: $custom-control-indicator-checked-disabled-bg;
     }
@@ -144,7 +141,6 @@
     &::before {
       @include gradient-bg($custom-control-indicator-checked-bg);
     }
-
     &::after {
       background-image: $custom-radio-indicator-icon-checked;
     }
