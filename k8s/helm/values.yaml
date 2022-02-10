@@ -35,7 +35,7 @@ web:
   replicaCount: 1
   port: 8080
   autoscaling:
-    enabled: true
+    enabled: false
     minReplicas: 2
     maxReplicas: 10
     targetCPUUtilizationPercentage: 80

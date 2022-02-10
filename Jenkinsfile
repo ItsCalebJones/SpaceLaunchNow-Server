@@ -133,7 +133,7 @@ pipeline{
 		                    kubectl config use-context do-nyc1-k8s-spacelaunchnow-dev
 		                    export STAGING_NAMESPACE=sln-dev
 		                    export RELEASE_NAME=sln-dev-app
-		                    export DEPLOYS=$(helm ls | grep $RELEASE_NAME | wc -l)
+		                    export DEPLOYS=$(helm ls --all-namespaces | grep $RELEASE_NAME | wc -l)
 		                    if [ $DEPLOYS  -eq 0 ];
                             then
 		                        helm install $RELEASE_NAME k8s/helm/ --namespace=$STAGING_NAMESPACE --values k8s/helm/values.yaml;
