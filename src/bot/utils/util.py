@@ -332,6 +332,67 @@ def get_fcm_all_topics_v3(debug=False, flutter=False, notification_type=None):
     return topics
 
 
+def get_flutter_topics_v3(launch, debug=False, flutter=False, notification_type=None):
+    location_id = 0
+    topics_set = ['all']
+    if flutter:
+        if not debug:
+            topic_header = "'flutter_production_v3' in topics && '%s' in topics" % notification_type
+        else:
+            topic_header = "'flutter_debug_v3' in topics && '%s' in topics" % notification_type
+    else:
+        if not debug:
+            topic_header = "'prod_v2' in topics && '%s' in topics" % notification_type
+        else:
+            topic_header = "'debug_v2' in topics && '%s' in topics" % notification_type
+
+    if launch.pad.location is not None:
+        location_id = launch.pad.location.id
+    lsp_id = launch.launch_service_provider.id
+
+    # LSPs
+    if lsp_id == 44:
+        topics_set.append('nasa')
+    if lsp_id == 115:
+        topics_set.append('arianespace')
+    if lsp_id == 121:
+        topics_set.append('spacex')
+    if lsp_id == 124:
+        topics_set.append('ula')
+    if lsp_id == 111 or lsp_id == 63 or lsp_id ==163:
+        topics_set.append('roscosmos')
+    if lsp_id == 141:
+        topics_set.append('blueOrigin')
+    if lsp_id == 147:
+        topics_set.append('rocketLab')
+    if lsp_id == 257:
+        topics_set.append('northrop')
+
+
+    # Locations
+    if location_id == 17 or location_id == 19 or location_id == 8 or location_id == 16:
+        topics_set.append('china')
+    if location_id == 27 or location_id == 12:
+        topics_set.append('ksc')
+    if location_id == 15 or location_id == 5 or location_id == 6 or location_id == 18:
+        topics_set.append('russia')
+    if location_id == 11:
+        topics_set.append('van')
+    if location_id == 14 or lsp_id == 31:
+        topics_set.append('isro')
+    if location_id == 21:
+        topics_set.append('wallops')
+    if location_id == 10:
+        topics_set.append('newZealand')
+    if location_id == 24 or location_id == 26:
+        topics_set.append('japan')
+    if location_id == 13:
+        topics_set.append('frenchGuiana')
+
+    topics = build_topics(topic_header, topics_set)
+    return topics
+
+
 def suffix(d):
     return 'th' if 11 <= d <= 13 else {1: 'st', 2: 'nd', 3: 'rd'}.get(d % 10, 'th')
 

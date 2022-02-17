@@ -121,6 +121,8 @@ def save_news_LL(item):
                 except Launch.DoesNotExist:
                     logger.error("No launch found with ID %s" % launch_id)
 
+        news.news_site = item['newsSite']
+        news.description = item['summary']
         news.link = item['url']
         news.featured_image = item['imageUrl']
         news.save()
