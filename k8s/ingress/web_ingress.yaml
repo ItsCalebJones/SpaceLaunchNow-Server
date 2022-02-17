@@ -11,12 +11,13 @@ spec:
   ingressClassName: nginx
   defaultBackend:
     service:
-      name: sln-dev-django-web
+      name: sln-prod-django-web
       port:
         number: 8080
   tls:
   - hosts:
     - "*.spacelaunchnow.me"
+    - "spacelaunchnow.me"
     secretName: sln-web-tls
   rules:
   - host: "*.spacelaunchnow.me"
@@ -26,6 +27,16 @@ spec:
           path: "/"
           backend:
               service:
-                name: sln-dev-django-web
+                name: sln-prod-django-web
                 port:
                   number: 8080
+  - host: "spacelaunchnow.me"
+    http:
+      paths:
+        - pathType: Prefix
+          path: "/"
+          backend:
+            service:
+              name: sln-prod-django-web
+              port:
+                number: 8080

@@ -167,7 +167,7 @@ def get_road_closures():
 #     notification.check_next_launch()
 
 
-@periodic_task(run_every=(crontab(minute='*/2')), options={"expires": 60})
+@periodic_task(run_every=(crontab(minute='*/5')), options={"expires": 60})
 def get_tweets_task():
     logger.info('Task - Running get_new_tweets...')
     get_new_tweets()

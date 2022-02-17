@@ -128,11 +128,11 @@ pipeline{
 		stage('Deploy Helm Release'){
 		    steps {
 		        script {
-		            if (env.BRANCH_NAME == 'feature/k8s') {
+		            if (env.BRANCH_NAME == 'master') {
 		                sh '''
 		                    kubectl config use-context do-nyc1-k8s-spacelaunchnow-dev
-		                    export STAGING_NAMESPACE=sln-dev
-		                    export RELEASE_NAME=sln-dev-app
+		                    export STAGING_NAMESPACE=sln-prod
+		                    export RELEASE_NAME=sln-prod-app
 		                    export DEPLOYS=$(helm ls --all-namespaces | grep $RELEASE_NAME | wc -l)
 		                    if [ $DEPLOYS  -eq 0 ];
                             then

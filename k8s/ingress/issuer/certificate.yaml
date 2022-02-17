@@ -6,6 +6,8 @@ metadata:
 spec:
   dnsNames:
     - "dev.spacelaunchnow.me"
+    - "api.spacelaunchnow.me"
+    - "spacelaunchnow.me"
   secretName: spacelaunchnow
   issuerRef:
     name: le-global-issuer
