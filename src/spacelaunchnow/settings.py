@@ -33,7 +33,7 @@ DEBUG = config.DEBUG
 if DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = ['.calebjones.me', '.spacelaunchnow.me', 'spacelaunchnow.me', '.calebjones.dev', '0.0.0.0']
+    ALLOWED_HOSTS = ['*']
 
 DISABLE_THROTTLE = os.getenv('DISABLE_THROTTLE', False)
 
