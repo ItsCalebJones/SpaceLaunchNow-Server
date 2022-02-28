@@ -1,0 +1,58 @@
+{{- if .Values.worker.enabled -}}
+{{- if .Values.beat.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "django.fullname" . }}-beat
+  labels:
+    {{- include "django.labels" . | nindent 4 }}
+    app.kubernetes.io/component: beat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "django.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: beat
+  template:
+    metadata:
+      annotations:
+        checksum/secret: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+        checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        tag: "{{ .Values.image.tag }}"
+      labels:
+        {{- include "django.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: beat
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          command: ["celery", "beat", "-A", "spacelaunchnow", "-l", "info"]
+          {{- if .Values.beat.args }}
+          args: {{- toYaml .Values.beat.args | nindent 10}}
+          {{- end }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          resources:
+            limits:
+              cpu: 50m
+              memory: 256Mi
+            requests:
+              cpu: 5m
+              memory: 32Mi
+          env:
+            - name: SERVER_ROLE
+              value: "beat"
+          envFrom:
+            - secretRef:
+                name: {{ include "django.fullname" . }}
+            - configMapRef:
+                name: {{ include "django.fullname" . }}
+{{- end }}
+{{- end }}
