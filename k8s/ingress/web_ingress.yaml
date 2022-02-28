@@ -29,6 +29,7 @@ spec:
               name: sln-prod-app-django-web
               port:
                 number: 8080
+
   - host: "spacelaunchnow.me"
     http:
       paths:
