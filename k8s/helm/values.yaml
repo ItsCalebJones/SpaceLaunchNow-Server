@@ -230,7 +230,7 @@ jobs:
     successfulJobsHistoryLimit: 10
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
-  - name: sln-launch-tracker
+  - name: sln-event-tracker
     image:
       repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
       tag: production
