@@ -1,5 +1,3 @@
-import logging
-
 from api.models import Launch, Events
 
 from autoscaler.jenkins import *
@@ -15,11 +13,10 @@ logger = logging.getLogger('autoscaler')
 def check_autoscaler():
     # First initialize helper classes.
     do = DigitalOceanHelper()
-    jenkins = DevOpsJenkins()
 
     # Get Autoscaler settings and make sure the latest worker node count is correct
     autoscaler_settings = AutoscalerSettings.load()
-    autoscaler_settings.current_workers = do.get_worker_node_count()
+    autoscaler_settings.current_min = do.get_node_pool_min()
     autoscaler_settings.save()
 
     # If autoscaler is enabled and not using a custom count proceed.
@@ -30,7 +27,7 @@ def check_autoscaler():
         # have enough workers online to handle the surge through the execution of the launch. One small scenario worth
         # considering is what happens if a launch has just scrubbed and had its date moved before the traffic dies down?
         logger.info("Max Workers: %s" % autoscaler_settings.max_workers)
-        logger.info("Current Workers: %s" % autoscaler_settings.current_workers)
+        logger.info("Current Min: %s" % autoscaler_settings.current_min)
         threshold_plus_1_hour = dtime.datetime.now(tz=pytz.utc) + dtime.timedelta(hours=1) + dtime.timedelta(minutes=15)
         threshold_minus_1_hour = dtime.datetime.now(tz=pytz.utc) - dtime.timedelta(hours=1)
 
@@ -46,7 +43,7 @@ def check_autoscaler():
         launches = launches_1.union(launches_24)
 
         # Some providers have a heavier weight.
-        expected_worker_count = 0
+        expected_worker_count = 1
         for launch in launches:
             if launch.program is not None and launch.program.count() > 1:
                 for program in launch.program.all():
@@ -75,9 +72,9 @@ def check_autoscaler():
             expected_worker_count = autoscaler_settings.max_workers
         logger.debug(f"Expected workers calculated {expected_worker_count}")
         # Check to see if the expected worker count matches the current worker count and act.
-        if expected_worker_count != autoscaler_settings.current_workers:
-            logger.info(f"Expected {expected_worker_count} vs actual {autoscaler_settings.current_workers} - triggering Terraform...")
-            jenkins.scale_worker_count(expected_worker_count)
+        if expected_worker_count != autoscaler_settings.current_min:
+            logger.info(f"Expected {expected_worker_count} vs actual {autoscaler_settings.current_min} - triggering update...")
+            do.update_node_pools(expected_worker_count, autoscaler_settings.max_workers)
         else:
             logger.debug(f"No changes required...")
 
@@ -86,9 +83,9 @@ def check_autoscaler():
         expected_worker_count = autoscaler_settings.custom_worker_count
         logger.debug(f"Expected workers custom set to  {expected_worker_count}")
         # Check to see if the expected worker count matches the current worker count and act.
-        if expected_worker_count != autoscaler_settings.current_workers:
-            logger.info(f"Custom - Expected {expected_worker_count} vs actual {autoscaler_settings.current_workers} - triggering Terraform...")
-            jenkins.scale_worker_count(expected_worker_count)
+        if expected_worker_count != autoscaler_settings.current_min:
+            logger.info(f"Custom - Expected {expected_worker_count} vs actual {autoscaler_settings.current_min} - triggering update...")
+            do.update_node_pools(expected_worker_count, autoscaler_settings.max_workers)
         else:
             logger.debug(f"No changes required...")
 

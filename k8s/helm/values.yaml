@@ -35,9 +35,9 @@ web:
   replicaCount: 1
   port: 8080
   autoscaling:
-    enabled: false
-    minReplicas: 2
-    maxReplicas: 10
+    enabled: true
+    minReplicas: 5
+    maxReplicas: 40
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
 
@@ -237,6 +237,17 @@ jobs:
       imagePullPolicy: IfNotPresent
     schedule: "*/2 * * * *"
     command: "['python', 'manage.py', 'check_launch_events', '--event']"
+    failedJobsHistoryLimit: 1
+    successfulJobsHistoryLimit: 10
+    concurrencyPolicy: Forbid
+    restartPolicy: OnFailure
+  - name: sln-autoscaler
+    image:
+      repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
+      tag: production
+      imagePullPolicy: IfNotPresent
+    schedule: "*/5 * * * *"
+    command: "['python', 'manage.py', 'check_autoscaler']"
     failedJobsHistoryLimit: 1
     successfulJobsHistoryLimit: 10
     concurrencyPolicy: Forbid
