@@ -150,7 +150,7 @@ jobs:
     schedule: "0 5 * * *"
     command: "['python', 'manage.py', 'run_flightclub_import']"
     failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 5
+    successfulJobsHistoryLimit: 10
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
   - name: ll-rspacex-sync
@@ -161,7 +161,7 @@ jobs:
     schedule: "0 5 * * *"
     command: "['python', 'manage.py', 'run_spacex_core_importer']"
     failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 5
+    successfulJobsHistoryLimit: 10
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
   - name: sln-daily-digest
@@ -169,10 +169,10 @@ jobs:
       repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
       tag: production
       imagePullPolicy: IfNotPresent
-    schedule: "0 12 * * *"
+    schedule: "30 12 * * *"
     command: "['python', 'manage.py', 'run_digest', '--daily']"
     failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 5
+    successfulJobsHistoryLimit: 10
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
   - name: sln-weekly-digest
@@ -183,7 +183,7 @@ jobs:
     schedule: "0 12 * * mon"
     command: "['python', 'manage.py', 'run_digest', '--weekly']"
     failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 5
+    successfulJobsHistoryLimit: 10
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
   - name: sln-roadclosure-sync
@@ -194,7 +194,7 @@ jobs:
     schedule: "0 */3 * * *"
     command: "['python', 'manage.py', 'run_update_closures']"
     failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 5
+    successfulJobsHistoryLimit: 10
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
   - name: sln-news-sync
@@ -205,7 +205,7 @@ jobs:
     schedule: "*/5 * * * *"
     command: "['python', 'manage.py', 'run_get_news']"
     failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 5
+    successfulJobsHistoryLimit: 10
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
   - name: sln-news-deep-sync
@@ -213,10 +213,10 @@ jobs:
       repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
       tag: production
       imagePullPolicy: IfNotPresent
-    schedule: "* */1 * * *"
+    schedule: "0 */1 * * *"
     command: "['python', 'manage.py', 'run_get_news', '--limit', '50']"
     failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 5
+    successfulJobsHistoryLimit: 10
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
   - name: sln-launch-tracker
@@ -227,7 +227,7 @@ jobs:
     schedule: "*/1 * * * *"
     command: "['python', 'manage.py', 'check_launch_events', '--launch']"
     failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 10
+    successfulJobsHistoryLimit: 30
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
   - name: sln-event-tracker
@@ -235,7 +235,7 @@ jobs:
       repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
       tag: production
       imagePullPolicy: IfNotPresent
-    schedule: "*/1 * * * *"
+    schedule: "*/2 * * * *"
     command: "['python', 'manage.py', 'check_launch_events', '--event']"
     failedJobsHistoryLimit: 1
     successfulJobsHistoryLimit: 10
