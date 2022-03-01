@@ -191,7 +191,7 @@ jobs:
       repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
       tag: production
       imagePullPolicy: IfNotPresent
-    schedule: "0 */3 * * *"
+    schedule: "0 */6 * * *"
     command: "['python', 'manage.py', 'run_update_closures']"
     failedJobsHistoryLimit: 1
     successfulJobsHistoryLimit: 10
@@ -202,7 +202,7 @@ jobs:
       repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
       tag: production
       imagePullPolicy: IfNotPresent
-    schedule: "*/5 * * * *"
+    schedule: "*/30 * * * *"
     command: "['python', 'manage.py', 'run_get_news']"
     failedJobsHistoryLimit: 1
     successfulJobsHistoryLimit: 10
@@ -213,7 +213,7 @@ jobs:
       repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
       tag: production
       imagePullPolicy: IfNotPresent
-    schedule: "0 */1 * * *"
+    schedule: "0 */12 * * *"
     command: "['python', 'manage.py', 'run_get_news', '--limit', '50']"
     failedJobsHistoryLimit: 1
     successfulJobsHistoryLimit: 10
@@ -235,7 +235,7 @@ jobs:
       repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
       tag: production
       imagePullPolicy: IfNotPresent
-    schedule: "*/2 * * * *"
+    schedule: "*/5 * * * *"
     command: "['python', 'manage.py', 'check_launch_events', '--event']"
     failedJobsHistoryLimit: 1
     successfulJobsHistoryLimit: 10
@@ -246,7 +246,7 @@ jobs:
       repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
       tag: production
       imagePullPolicy: IfNotPresent
-    schedule: "*/5 * * * *"
+    schedule: "*/7 * * * *"
     command: "['python', 'manage.py', 'check_autoscaler']"
     failedJobsHistoryLimit: 1
     successfulJobsHistoryLimit: 10
