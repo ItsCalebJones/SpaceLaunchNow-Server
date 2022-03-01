@@ -27,8 +27,7 @@ class Command(BaseCommand):
                 debug = False
             if response == "N":
                 debug = True
-        version = options['version']
-        daily_digest = DigestServer(debug=debug, version=version)
+        daily_digest = DigestServer(debug=debug)
         if options['daily'] is True:
             daily_digest.run(daily=True)
         elif options['daily'] is False:
