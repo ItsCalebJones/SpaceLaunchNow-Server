@@ -13,8 +13,13 @@ TAG = 'Digest Server'
 class Command(BaseCommand):
     help = 'Run get News manually.'
 
+    def add_arguments(self, parser):
+        parser.add_argument('--limit', dest="limit", type=int)
+
     def handle(self, *args, **options):
         logger.info('Check Events')
-        get_news()
-        get_new_tweets()
-        get_submissions()
+        limit = options['limit']
+        if limit:
+            get_news(limit=limit)
+        else:
+            get_news()
