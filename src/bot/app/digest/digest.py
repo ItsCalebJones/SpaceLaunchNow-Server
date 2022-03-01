@@ -17,7 +17,7 @@ DAEMON_SLEEP = 6000
 
 
 class DigestServer:
-    def __init__(self, debug=None, version=None):
+    def __init__(self, debug=None):
 
         if debug is None:
             self.DEBUG = config.DEBUG
