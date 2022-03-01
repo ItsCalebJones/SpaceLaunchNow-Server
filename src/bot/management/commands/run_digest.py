@@ -21,12 +21,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         logger.info('Running Digest - Daily = %s' % options['daily'])
         debug = options['debug']
-        while debug is None:
-            response = input('Continue in production mode? (Y/N)')
-            if response == "Y":
-                debug = False
-            if response == "N":
-                debug = True
         daily_digest = DigestServer(debug=debug)
         if options['daily'] is True:
             daily_digest.run(daily=True)
