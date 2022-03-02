@@ -25,6 +25,7 @@ env:
     IS_ADMIN: "True"
     CACHE_BACKEND: "django.core.cache.backends.memcached.MemcachedCache"
     CACHE_LOCATION: "sln-prod-memcache-memcached.sln-prod.svc.cluster.local:11211"
+    DISABLE_THROTTLE: "True"
 
   secret:
     SECRET_KEY: "NWRjMTdlZTctNzIzN2JkODA5YWJl"
