@@ -28,11 +28,11 @@ def check_autoscaler():
         # considering is what happens if a launch has just scrubbed and had its date moved before the traffic dies down?
         logger.info("Max Workers: %s" % autoscaler_settings.max_workers)
         logger.info("Current Min: %s" % autoscaler_settings.current_min)
-        threshold_plus_1_hour = dtime.datetime.now(tz=pytz.utc) + dtime.timedelta(hours=1) + dtime.timedelta(minutes=15)
-        threshold_minus_1_hour = dtime.datetime.now(tz=pytz.utc) - dtime.timedelta(hours=1)
+        threshold_plus_1_hour = dtime.datetime.now(tz=pytz.utc) + dtime.timedelta(hours=1) + dtime.timedelta(minutes=10)
+        threshold_minus_1_hour = dtime.datetime.now(tz=pytz.utc) - dtime.timedelta(minutes=15)
 
         threshold_plus_24_hour = dtime.datetime.now(tz=pytz.utc) + dtime.timedelta(hours=24) + dtime.timedelta(minutes=15)
-        threshold_minus_24_hour = dtime.datetime.now(tz=pytz.utc) + dtime.timedelta(hours=24) - dtime.timedelta(minutes=15)
+        threshold_minus_24_hour = dtime.datetime.now(tz=pytz.utc) + dtime.timedelta(hours=24) - dtime.timedelta(minutes=5)
 
         launches_1 = Launch.objects.filter(net__range=[threshold_minus_1_hour, threshold_plus_1_hour])
 
