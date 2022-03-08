@@ -73,11 +73,20 @@
                 <span class="badge badge-pill badge-warning">{{ launch.holdreason }}</span>
             {% endif %}
             <hr class="col-lg-8" style="background-color: white">
-            <h1 class="title text-white" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h1>
-            <h3 class="title text-white" style="margin: -5px;" id="date">{{ launch.net }}</h3>
-            {% if launch.window_start == launch.window_end %}
-                <p class="caption">Instantaneous launch window.</p>
+            {% if launch.status.id == 8 %}
+                <h1 class="title text-white" style="margin: 5px;">L - -- : -- : -- : --</h1>
+                <h3 class="title text-white" style="margin: -5px;">{{ launch.net|date:"F d, Y"}}</h3>
+            {% elif launch.status.id == 2 %}
+                <h1 class="title text-white" style="margin: 5px;">L - -- : -- : -- : --</h1>
+                <h3 class="title text-white" style="margin: -5px;">{{ launch.net|date:"F, Y"}}</h3>
             {% else %}
+                <h1 class="title text-white" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h1>
+                <h3 class="title text-white" style="margin: -5px;" id="date">{{ launch.net }}</h3>
+
+                {% if launch.window_start == launch.window_end %}
+                    <p class="caption">Instantaneous launch window.</p>
+                {% else %}
+            {% endif %}
                 <br>
                 <h3 class="title text-white">Launch Window</h3>
                 <p id="window_date">{{ launch.window_start }} - {{ launch.window_end }}</p>

@@ -153,10 +153,19 @@
                             <span class="badge badge-pill badge-warning">{{ launch.holdreason }}</span>
                         {% endif %}
                         <hr class="col-lg-8" style="background-color: white">
-                        <h2 class="title" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h2>
-                        <h3 style="margin: -5px;" id="date">{{ launch.net }}</h3>
-                        <h3 style="margin: 5px;"><b>Status:</b> {{ launch.status }}</h3>
 
+                        {% if launch.status.id == 8 %}
+                            <h2 class="title" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h2>
+                            <h3 style="margin: -5px;" id="date">{{ launch.net|date:"F d, Y"}}</h3>
+                        {% elif launch.status.id == 2 %}
+                            <h2 class="title" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h2>
+                            <h3 style="margin: -5px;" id="date">{{ launch.net|date:"F, Y"}}</h3>
+                        {% else %}
+                            <h2 class="title" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h2>
+                            <h3 style="margin: -5px;" id="date">{{ launch.net }}</h3>
+                        {% endif %}
+
+                        <h3 style="margin: 5px;"><b>Status:</b> {{ launch.status }}</h3>
                         <span class="badge badge-pill badge-primary">{{ launch.rocket.configuration.manufacturer.name }}</span>
                         {% if launch.pad %}
                             <span class="badge badge-pill badge-primary">{{ launch.pad.name }}</span>

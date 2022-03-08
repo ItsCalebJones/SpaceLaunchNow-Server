@@ -24,7 +24,13 @@
                 {{ launch.rocket.configuration.manufacturer.name }}
                 | {{ launch.rocket.configuration.manufacturer.country_code }}<br>
                 {{ launch.pad.location.name }}<br>
-                <i>{{ launch.net }}</i><br>
+                {% if launch.status.id == 8 %}
+                    <i>{{ launch.net|date:"F d, Y"}}</i><br>
+                {% elif launch.status.id == 2 %}
+                    <i>TBD {{ launch.net|date:"F, Y"}}</i><br>
+                {% else %}
+                    <i>{{ launch.net}}</i><br>
+                {% endif %}
             </div>
         </div>
     </div>
