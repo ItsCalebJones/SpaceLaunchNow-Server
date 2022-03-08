@@ -154,6 +154,13 @@ jobs:
     successfulJobsHistoryLimit: 10
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
+    resources:
+      limits:
+        cpu: 100m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
   - name: ll-rspacex-sync
     image:
       repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
@@ -165,6 +172,13 @@ jobs:
     successfulJobsHistoryLimit: 10
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
+    resources:
+      limits:
+        cpu: 100m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
   - name: sln-daily-digest
     image:
       repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
@@ -176,6 +190,13 @@ jobs:
     successfulJobsHistoryLimit: 10
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
+    resources:
+      limits:
+        cpu: 100m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
   - name: sln-weekly-digest
     image:
       repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
@@ -187,6 +208,13 @@ jobs:
     successfulJobsHistoryLimit: 10
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
+    resources:
+      limits:
+        cpu: 100m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
   - name: sln-roadclosure-sync
     image:
       repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
@@ -198,6 +226,13 @@ jobs:
     successfulJobsHistoryLimit: 10
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
+    resources:
+      limits:
+        cpu: 100m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
   - name: sln-news-sync
     image:
       repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
@@ -209,6 +244,13 @@ jobs:
     successfulJobsHistoryLimit: 10
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
+    resources:
+      limits:
+        cpu: 100m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
   - name: sln-news-deep-sync
     image:
       repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
@@ -220,6 +262,13 @@ jobs:
     successfulJobsHistoryLimit: 10
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
+    resources:
+      limits:
+        cpu: 100m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
   - name: sln-launch-tracker
     image:
       repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
@@ -231,6 +280,13 @@ jobs:
     successfulJobsHistoryLimit: 30
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
+    resources:
+      limits:
+        cpu: 100m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
   - name: sln-event-tracker
     image:
       repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
@@ -242,6 +298,13 @@ jobs:
     successfulJobsHistoryLimit: 10
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
+    resources:
+      limits:
+        cpu: 100m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
   - name: sln-autoscaler
     image:
       repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
@@ -253,4 +316,11 @@ jobs:
     successfulJobsHistoryLimit: 10
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
+    resources:
+      limits:
+        cpu: 100m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
 
