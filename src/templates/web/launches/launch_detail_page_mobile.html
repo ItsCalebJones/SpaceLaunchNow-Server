@@ -71,7 +71,7 @@
                 <h4 class="title text-white" style="margin: -5px;">{{ launch.net|date:"F d, Y"}}</h4>
             {% elif launch.status.id == 2 %}
                 <h3 class="title text-white" style="margin: 5px;">L - -- : -- : -- : --</h3>
-                <h4 class="title text-white" style="margin: -5px;">{{ launch.net|date:"F, Y"}}</h4>
+                <h4 class="title text-white" style="margin: -5px;">NET {{ launch.net|date:"F, Y"}}</h4>
             {% else %}
                 <h3 class="title text-white" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h3>
                 <h4 class="title text-white" style="margin: -5px;" id="date">{{ launch.net }}</h4>
