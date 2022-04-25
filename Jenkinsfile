@@ -36,12 +36,9 @@ pipeline{
 	
 	environment {
 		BRANCH = "${BRANCH_NAME}"
-		registry="registry.calebjones.dev:5050/sln-server"
-		registryURL = "https://registry.calebjones.dev:5050/sln-server"
-		registryCredential = 'calebregistry'
-		doRegistry = "registry.digitalocean.com/spacelaunchnow-registry"
-		doRegistryURL = "https://registry.digitalocean.com/spacelaunchnow-registry"
-		doRegistryCredential= 'digitalocean_registry'
+		registry="registry.digitalocean.com/spacelaunchnow-registry"
+		registryURL = "https://registry.digitalocean.com/spacelaunchnow-registry"
+		registryCredential = 'digitalocean_registry'
 		dockerTag = defineDockerTag()
         imageName = defineImageName()
 		branchName = defineBranchName()
@@ -108,15 +105,6 @@ pipeline{
 						    dockerImage.push("production")
 						} else {
                             dockerImage.push("${dockerTag}")
-						}
-					}
-					docker.withRegistry(doRegistryURL, doRegistryCredential){
-						if (env.BRANCH_NAME == 'master') {
-						    sh "docker tag ${registry}:production ${doRegistry}/sln-server:production"
-						    sh "docker push ${doRegistry}/sln-server:production"
-						} else {
-                            sh "docker tag ${registry}:${dockerTag} ${doRegistry}/sln-server:${dockerTag}"
-						    sh "docker push ${doRegistry}/sln-server:${dockerTag}"
 						}
 					}
 				}
