@@ -36,8 +36,8 @@ pipeline{
 	
 	environment {
 		BRANCH = "${BRANCH_NAME}"
-		registry="registry.digitalocean.com/spacelaunchnow-registry"
-		registryURL = "https://registry.digitalocean.com/spacelaunchnow-registry"
+		registry="registry.digitalocean.com/spacelaunchnow-registry/spacelaunchnow-registry"
+		registryURL = "https://registry.digitalocean.com/spacelaunchnow-registry/spacelaunchnow-registry"
 		registryCredential = 'digitalocean_registry'
 		dockerTag = defineDockerTag()
         imageName = defineImageName()
