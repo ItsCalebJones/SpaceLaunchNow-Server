@@ -1,17 +1,17 @@
-{{- if .Values.worker.enabled -}}
+{{- if .Values.notification_service.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "django.fullname" . }}-worker
+  name: {{ include "django.fullname" . }}-notification-service
   labels:
     {{- include "django.labels" . | nindent 4 }}
-    app.kubernetes.io/component: worker
+    app.kubernetes.io/component: notification_service
 spec:
-  replicas: {{ .Values.worker.replicaCount }}
+  replicas: 1
   selector:
     matchLabels:
       {{- include "django.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: worker
+      app.kubernetes.io/component: notification_service
   template:
     metadata:
       annotations:
@@ -20,7 +20,7 @@ spec:
         tag: "{{ .Values.image.tag }}"
       labels:
         {{- include "django.selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: worker
+        app.kubernetes.io/component: notification_service
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -30,17 +30,21 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
-          command: ["celery", "worker", "-A", "spacelaunchnow", "-l", "info", "-Q", "celery", "--scheduler",
-                    "django_celery_beat.schedulers:DatabaseScheduler"]
-          {{- if .Values.worker.args }}
-          args: {{- toYaml .Values.worker.args | nindent 10}}
+          command: ["python", "manage.py", "run_notification_service"]
+          {{- if .Values.notification_service.args }}
+          args: {{- toYaml .Values.notification_service.args | nindent 10}}
           {{- end }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           resources:
-            {{- toYaml .Values.worker.resources | nindent 12 }}
+            limits:
+              cpu: 50m
+              memory: 256Mi
+            requests:
+              cpu: 5m
+              memory: 32Mi
           env:
             - name: SERVER_ROLE
               value: "worker"
@@ -48,17 +52,5 @@ spec:
             - secretRef:
                 name: {{ include "django.fullname" . }}
             - configMapRef:
-                name: {{ include "django.fullname" . }}-worker
-      {{- with .Values.worker.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-    {{- with .Values.worker.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
-    {{- with .Values.worker.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
+                name: {{ include "django.fullname" . }}-notification-service
 {{- end }}
