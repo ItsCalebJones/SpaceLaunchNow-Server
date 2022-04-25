@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: spacelaunchnow-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-production
+    nginx.ingress.kubernetes.io/proxy-body-size: 10m
+spec:
+  tls:
+  - hosts:
+    - dev.spacelaunchnow.me
+    - spacelaunchnow.me
+    secretName: spacelaunchnow-tls
+  rules:
+  - host: "dev.spacelaunchnow.me"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: sln-prod-app-django-web
+            port:
+              number: 8080
+  - host: "spacelaunchnow.me"
+    http:
+      paths:
+        - pathType: Prefix
+          path: "/"
+          backend:
+            service:
+              name: sln-prod-app-django-web
+              port:
+                number: 8080

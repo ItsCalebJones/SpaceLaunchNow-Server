@@ -1,13 +1,13 @@
-apiVersion: cert-manager.io/v1
+apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer
 metadata:
-  name: le-global-issuer
+  name: letsencrypt-production
 spec:
   acme:
-    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    server: https://acme-v02.api.letsencrypt.org/directory
     email: cjones@spacelaunchnow.me
     privateKeySecretRef:
-      name: letsencrypt-key
+      name: letsencrypt-production
     solvers:
     - dns01:
         cloudflare:
