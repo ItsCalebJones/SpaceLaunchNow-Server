@@ -13,6 +13,7 @@ def run():
     logger.info("Starting health check...")
     while True:
         logger.info("Health check!")
+        time.sleep(30)
 
 
 class Command(BaseCommand):
@@ -20,4 +21,3 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         run()
-        time.sleep(5)
