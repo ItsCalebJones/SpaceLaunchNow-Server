@@ -30,6 +30,7 @@ SECRET_KEY = config.DJANGO_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', config.DEBUG)
+LOGLEVEL = "DEBUG" if DEBUG else "INFO"
 if DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
@@ -63,163 +64,33 @@ LOGIN_REDIRECT_URL = '/'
 if DEBUG:
     import logging
 
-    l = logging.getLogger('django.db.backends')
+    l = logging.getLogger(__name__)
     l.setLevel(logging.DEBUG)
     l.addHandler(logging.StreamHandler())
 
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'formatters': {
-        'standard': {
-            'format': '%(asctime)s [%(levelname)s] - [%(name)s - %(module)s - %(lineno)s] - %(message)s',
-            'datefmt': '%m-%d-%Y %H:%M:%S'
+    "formatters": {
+        "standard": {
+            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            "datefmt": "%m-%d-%Y %H:%M:%S",
         },
     },
     'handlers': {
-        'django_default': {
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'log/django.log',
-            'formatter': 'standard',
-            'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5,
-            'encoding': 'utf8'
-        },
-        'django_error': {
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'log/error.log',
-            'formatter': 'standard',
-            'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5,
-            'encoding': 'utf8'
-        },
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'standard'
-        },
-        'autoscaler': {
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'log/autoscaler.log',
-            'formatter': 'standard',
-            'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5,
-            'encoding': 'utf8'
-        },
-        'tasks': {
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'log/tasks.log',
-            'formatter': 'standard',
-            'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5,
-            'encoding': 'utf8'
-        },
-        'digest': {
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'log/daily_digest.log',
-            'formatter': 'standard',
-            'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5,
-            'encoding': 'utf8'
-        },
-        'notifications': {
-            'level': config.BOT_NOTIFICATIONS,
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'log/notification.log',
-            'formatter': 'standard',
-            'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5,
-            'encoding': 'utf8'
-        },
-        'events': {
-            'level': config.BOT_EVENTS,
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'log/events.log',
-            'formatter': 'standard',
-            'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5,
-            'encoding': 'utf8'
-        },
-        'discord': {
-            'level': config.DISCORD,
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'log/discord.log',
-            'formatter': 'standard',
-            'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5,
-            'encoding': 'utf8'
-        },
-        'discord.notifications': {
-            'level': config.DISCORD_NOTIFICATIONS,
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'log/discord_notifications.log',
-            'formatter': 'standard',
-            'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5,
-            'encoding': 'utf8'
-        },
-        'discord.tweets': {
-            'level': config.DISCORD_TWEETS,
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'log/discord_tweets.log',
-            'formatter': 'standard',
-            'maxBytes': 1024 * 1024 * 5,
-            'backupCount': 5,
-            'encoding': 'utf8'
+        "console": {
+            "class": "logging.StreamHandler",
+            "stream": sys.stdout,
+            "formatter": "standard",
         },
     },
     'loggers': {
-        # Again, default Django configuration to email unhandled exceptions
-        'django.request': {
-            'handlers': ['django_default', 'django_error'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
+        "": {"handlers": ["console"], "level": LOGLEVEL, "propogate": True},
         'django': {
-            'handlers': ['django_default', 'console'],
+            'handlers': ['console'],
+            'level': LOGLEVEL,
             'propagate': True,
         },
-        'autoscaler': {
-            'handlers': ['django_default', 'console', 'autoscaler'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'bot.digest': {
-            'handlers': ['django_default', 'digest', 'console'],
-            'level': config.BOT_DIGEST,
-            'propagate': True,
-        },
-        'bot.notifications': {
-            'handlers': ['django_default', 'notifications', 'console'],
-            'level': config.BOT_NOTIFICATIONS,
-            'propagate': True,
-        },
-        'bot.events': {
-            'handlers': ['django_default', 'events', 'console'],
-            'level': config.BOT_EVENTS,
-            'propagate': True,
-        },
-        'bot.discord': {
-            'handlers': ['django_default', 'discord', 'console'],
-            'level': config.DISCORD,
-            'propagate': True,
-            'encoding': 'utf-8',
-        },
-        'bot.discord.notifications': {
-            'handlers': ['django_default', 'discord.notifications', 'console'],
-            'level': config.DISCORD_NOTIFICATIONS,
-            'propagate': False,
-        },
-        'bot.discord.tweets': {
-            'handlers': ['django_default', 'discord.tweets', 'console'],
-            'level': config.DISCORD_TWEETS,
-            'propagate': False,
-        },
-        'tasks': {
-            'handlers': ['django_default', 'tasks', 'console'],
-            'level': 'INFO',
-            'propagate': True,
-        }
     },
 }
 

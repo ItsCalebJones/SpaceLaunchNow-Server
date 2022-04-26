@@ -1,10 +1,10 @@
+import logging
+
 import time
 
 from django.core.management import BaseCommand
-from celery.utils.log import get_task_logger
 
-
-logger = get_task_logger('bot')
+logger = logging.getLogger(__name__)
 
 TAG = 'Notification Service'
 

@@ -1,11 +1,9 @@
 import datetime
-# import the logging library
 import logging
 
-# Get an instance of a logger
 from PIL import Image, ImageFilter
 
-logger = logging.getLogger('bot.utils.util')
+logger = logging.getLogger(__name__)
 
 
 def log(tag, message):

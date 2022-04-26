@@ -12,12 +12,12 @@ except ImportError:
     from urllib.parse import quote  # Python 3+
 
 from api.models import *
-from api.utils.utilities import get_mission_type, get_agency_type, get_launch_status
+from api.utils.utilities import get_mission_type
 from bot.models import *
 from configurations.models import *
 from django.core import files
 
-logger = logging.getLogger('bot.digest')
+logger = logging.getLogger(__name__)
 
 
 def launch_status_json_to_model(data):

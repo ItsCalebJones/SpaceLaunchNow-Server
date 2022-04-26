@@ -2,9 +2,7 @@ from bot.app.buffer import BufferAPI
 import logging
 from spacelaunchnow import config
 
-
-# Get an instance of a logger
-logger = logging.getLogger('bot.events')
+logger = logging.getLogger(__name__)
 
 
 class SocialHandler:

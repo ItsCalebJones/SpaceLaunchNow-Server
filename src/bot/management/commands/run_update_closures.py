@@ -1,9 +1,10 @@
+import logging
+
 from django.core.management import BaseCommand
-from celery.utils.log import get_task_logger
 
 from bot.app.sync.closure_sync import get_road_closure
 
-logger = get_task_logger('bot.digest')
+logger = logging.getLogger(__name__)
 
 TAG = 'Digest Server'
 

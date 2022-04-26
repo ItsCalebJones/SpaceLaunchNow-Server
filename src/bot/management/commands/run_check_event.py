@@ -1,14 +1,13 @@
 import datetime
+import logging
 
 import pytz
 from django.core.management import BaseCommand
-from celery.utils.log import get_task_logger
 
 from api.models import Events
 from bot.app.events.notification_handler import EventNotificationHandler
-from bot.app.events.social_handler import SocialHandler
 
-logger = get_task_logger('bot.events')
+logger = logging.getLogger(__name__)
 
 TAG = 'Digest Server'
 

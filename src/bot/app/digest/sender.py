@@ -5,10 +5,7 @@ from twitter import Twitter, OAuth, TwitterHTTPError
 
 from spacelaunchnow.config import keys
 
-# import the logging library
-
-# Get an instance of a logger
-logger = logging.getLogger('digest')
+logger = logging.getLogger(__name__)
 
 token_key = keys['TOKEN_KEY']
 token_secret = keys['TOKEN_SECRET']

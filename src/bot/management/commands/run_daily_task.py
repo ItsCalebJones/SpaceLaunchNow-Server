@@ -1,8 +1,9 @@
+import logging
+
 from django.core.management import BaseCommand
 from bot.tasks import run_daily
-from celery.utils.log import get_task_logger
 
-logger = get_task_logger('bot')
+logger = logging.getLogger(__name__)
 
 TAG = 'Digest Server'
 

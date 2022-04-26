@@ -8,7 +8,7 @@ import requests
 from api.models import Events, Launch, Article
 from bot.models import ArticleNotification
 
-logger = logging.getLogger('bot.digest')
+logger = logging.getLogger(__name__)
 
 
 def get_news(limit=10):

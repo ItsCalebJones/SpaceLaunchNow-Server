@@ -3,7 +3,7 @@ import logging
 from datetime import timedelta
 from django.utils.datetime_safe import datetime
 
-logger = logging.getLogger('bot.notifications')
+logger = logging.getLogger(__name__)
 
 BASE_URL = 'https://launchlibrary.net/'
 headers = {

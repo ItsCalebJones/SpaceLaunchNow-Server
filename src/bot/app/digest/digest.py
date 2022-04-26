@@ -4,12 +4,9 @@ import bot.app.digest.daily as daily_check
 import bot.app.digest.weekly as weekly_check
 from spacelaunchnow.config import keys
 
-# import the logging library
-
-# Get an instance of a logger
 from spacelaunchnow import config
 
-logger = logging.getLogger('digest')
+logger = logging.getLogger(__name__)
 
 AUTH_TOKEN_HERE = keys['AUTH_TOKEN_HERE']
 APP_ID = keys['APP_ID']

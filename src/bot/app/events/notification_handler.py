@@ -5,7 +5,7 @@ from pyfcm import FCMNotification
 from spacelaunchnow.config import keys
 from spacelaunchnow import config
 
-logger = logging.getLogger('bot.events')
+logger = logging.getLogger(__name__)
 
 
 class EventNotificationHandler:

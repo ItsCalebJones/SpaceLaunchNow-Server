@@ -29,7 +29,7 @@ Check out this project at https://spacelaunchnow.me!
 """
 
 
-log = logging.getLogger('bot.discord')
+logger = logging.getLogger(__name__)
 help_attrs = dict(hidden=False)
 if not settings.DEBUG:
     prefix = ['.sln ']

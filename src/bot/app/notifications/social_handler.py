@@ -3,9 +3,6 @@ import re
 from datetime import datetime
 
 import pytz
-from buffpy import API
-from buffpy.managers.profiles import Profiles
-from twitter import Twitter, OAuth, TwitterHTTPError
 
 from bot.app.buffer import BufferAPI, hashtags
 from spacelaunchnow.config import keys
@@ -17,8 +14,7 @@ token_secret = keys['TOKEN_SECRET']
 consumer_key = keys['CONSUMER_KEY']
 consumer_secret = keys['CONSUMER_SECRET']
 
-# Get an instance of a logger
-logger = logging.getLogger('bot.notifications')
+logger = logging.getLogger(__name__)
 
 
 def get_message(launch, notification_type):

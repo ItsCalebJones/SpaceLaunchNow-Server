@@ -2,11 +2,10 @@ import logging
 from celery import Celery
 from celery.schedules import crontab
 from celery.task import periodic_task
-from celery.utils.log import get_task_logger
 
 from autoscaler.autoscaler import check_autoscaler
 
-logger = get_task_logger('autoscaler')
+logger = logging.getLogger(__name__)
 
 app = Celery()
 

@@ -6,7 +6,7 @@ from goose3 import Goose
 from twitter import Twitter, OAuth
 
 from spacelaunchnow import config
-from bot.models import SubredditNotificationChannel, Subreddit, RedditSubmission
+from bot.models import Subreddit, RedditSubmission
 
 import praw
 
@@ -22,7 +22,7 @@ twitter = Twitter(auth=OAuth(consumer_key=config.keys['CONSUMER_KEY'],
                              token=config.keys['TOKEN_KEY'],
                              token_secret=config.keys['TOKEN_SECRET']))
 
-logger = logging.getLogger('bot.discord')
+logger = logging.getLogger(__name__)
 
 
 def get_submissions():

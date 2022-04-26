@@ -1,15 +1,13 @@
+import logging
 from datetime import datetime, timedelta
 
 from api.models import Launch
 from django.core.management import BaseCommand
-from celery.utils.log import get_task_logger
 
 from bot.app.notifications.notification_handler import NotificationHandler
-from bot.libraries.launchlibrarysdk import LaunchLibrarySDK
 from bot.models import LaunchNotificationRecord
-from bot.utils.deserializer import launch_json_to_model
 
-logger = get_task_logger('bot')
+logger = logging.getLogger(__name__)
 
 TAG = 'Notification Server'
 

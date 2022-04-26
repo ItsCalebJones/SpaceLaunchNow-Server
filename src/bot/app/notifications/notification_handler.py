@@ -10,7 +10,7 @@ from bot.utils.util import get_fcm_topics_v2, get_fcm_all_topics_v3, \
     get_fcm_strict_topics_v3, get_fcm_not_strict_topics_v3, get_flutter_topics_v3
 from spacelaunchnow import config
 
-logger = logging.getLogger('bot.notifications')
+logger = logging.getLogger(__name__)
 
 
 # TODO refactor to separate files/modules per version

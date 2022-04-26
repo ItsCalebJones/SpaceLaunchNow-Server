@@ -13,7 +13,7 @@ twitter = Twitter(auth=OAuth(consumer_key=config.keys['CONSUMER_KEY'],
                              token=config.keys['TOKEN_KEY'],
                              token_secret=config.keys['TOKEN_SECRET']))
 
-logger = logging.getLogger('bot.discord.tweets')
+logger = logging.getLogger(__name__)
 
 
 def get_new_tweets():

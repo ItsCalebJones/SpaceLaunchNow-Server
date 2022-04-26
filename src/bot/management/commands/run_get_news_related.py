@@ -1,9 +1,10 @@
+import logging
+
 from django.core.management import BaseCommand
-from celery.utils.log import get_task_logger
 
 from bot.app.sync.news_sync import get_related_news
 
-logger = get_task_logger('bot.events')
+logger = logging.getLogger(__name__)
 
 TAG = 'Digest Server'
 

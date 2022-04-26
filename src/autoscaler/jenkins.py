@@ -4,7 +4,7 @@ import jenkins
 import time
 
 from spacelaunchnow.config import JENKINS_URL, JENKINS_USERNAME, JENKINS_PASSWORD
-logger = logging.getLogger('autoscaler')
+logger = logging.getLogger(__name__)
 
 
 class DevOpsJenkins:

@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 from dateutil import tz
 from dateutil import parser
 
-logger = logging.getLogger('tasks')
+logger = logging.getLogger(__name__)
 
 
 def parse_date(date_string):

@@ -9,8 +9,7 @@ APP_ID = keys['APP_ID']
 DAEMON_SLEEP = 600
 TAG = 'Notification Server'
 
-# Get an instance of a logger
-logger = logging.getLogger('bot.notifications')
+logger = logging.getLogger(__name__)
 
 
 class LaunchLibrarySync:

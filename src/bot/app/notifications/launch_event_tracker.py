@@ -15,7 +15,7 @@ from bot.models import LaunchNotificationRecord, Notification
 from bot.utils.util import seconds_to_time
 from spacelaunchnow import config
 
-logger = logging.getLogger('bot.notifications')
+logger = logging.getLogger(__name__)
 
 
 class LaunchEventTracker:

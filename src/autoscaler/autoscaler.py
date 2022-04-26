@@ -7,7 +7,7 @@ import pytz
 
 from autoscaler.models import AutoscalerSettings
 
-logger = logging.getLogger('autoscaler')
+logger = logging.getLogger(__name__)
 
 
 def check_autoscaler():

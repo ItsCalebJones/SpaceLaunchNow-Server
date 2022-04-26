@@ -8,7 +8,7 @@ from bot.app.notifications.social_handler import SocialEvents
 from bot.utils.util import seconds_to_time
 from spacelaunchnow import config
 
-logger = logging.getLogger('bot.notifications')
+logger = logging.getLogger(__name__)
 
 
 class NetstampHandler:

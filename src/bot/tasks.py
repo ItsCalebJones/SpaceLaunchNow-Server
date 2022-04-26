@@ -1,14 +1,11 @@
-# coding=utf-8
-import json
+import logging
 
-import requests
 from datetime import timedelta
 
 from celery import Celery
 
 from bot.app.digest.digest import DigestServer
 from celery.task import periodic_task
-from celery.utils.log import get_task_logger
 
 from bot.app.events.event_tracker import EventTracker
 
@@ -19,7 +16,7 @@ from bot.app.sync.twitter_sync import get_new_tweets
 from bot.app.sync.news_sync import get_news
 from celery.schedules import crontab
 
-logger = get_task_logger('tasks')
+logger = logging.getLogger(__name__)
 
 TAG = 'Digest Server'
 

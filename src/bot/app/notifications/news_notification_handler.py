@@ -6,7 +6,7 @@ from bot.app.buffer import BufferAPI
 from spacelaunchnow.config import keys
 from spacelaunchnow import config
 
-logger = logging.getLogger('bot.notifications')
+logger = logging.getLogger(__name__)
 
 
 class NewsNotificationHandler:

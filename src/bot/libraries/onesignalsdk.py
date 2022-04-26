@@ -21,8 +21,7 @@ import json
 import logging
 import requests
 
-# Get an instance of a logger
-logger = logging.getLogger('bot')
+logger = logging.getLogger(__name__)
 
 BASE_URL = 'https://onesignal.com/api/'
 

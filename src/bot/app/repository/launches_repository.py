@@ -9,10 +9,7 @@ from bot.models import LaunchNotificationRecord, DailyDigestRecord
 from bot.utils.deserializer import launch_json_to_model, launch_status_json_to_model, mission_type_json_to_model, \
     agency_type_json_to_model, rocket_json_to_model
 
-# import the logging library
-
-# Get an instance of a logger
-logger = logging.getLogger('bot.digest')
+logger = logging.getLogger(__name__)
 
 
 class LaunchRepository:

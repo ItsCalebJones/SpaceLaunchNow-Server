@@ -11,7 +11,7 @@ from bot.app.repository.launches_repository import *
 # Get an instance of a logger
 from bot.utils.util import custom_strftime
 
-logger = logging.getLogger('digest')
+logger = logging.getLogger(__name__)
 
 
 def check_launch_daily(DEBUG=True):
