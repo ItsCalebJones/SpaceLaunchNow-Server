@@ -446,7 +446,7 @@ def spacecraft_by_id(request, id):
 
 @cache_page(600)
 def events_list(request):
-    last_six_hours = datetime.now() - timedelta(hours=6)
+    last_six_hours = UTC_NOW - timedelta(hours=6)
     events = Events.objects.all().filter(date__gte=last_six_hours).order_by('date')
     previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')[:6]
     return render(request, 'web/events/event_list.html', {'previous_launches': previous_launches,
