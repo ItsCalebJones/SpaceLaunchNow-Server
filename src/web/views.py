@@ -2,7 +2,8 @@
 from __future__ import unicode_literals
 
 import json
-from datetime import datetime, timedelta
+import datetime
+from datetime import timedelta
 from itertools import chain
 from uuid import UUID
 
@@ -33,6 +34,8 @@ from web.filters.launch_filters import LaunchListFilter
 from web.filters.launch_vehicle_filters import LauncherConfigListFilter
 from web.tables.launch_table import LaunchTable
 from web.tables.launch_vehicle_table import LaunchVehicleTable
+
+UTC_NOW = datetime.datetime.now(datetime.timezone.utc)
 
 
 def get_youtube_url(launch):
@@ -80,16 +83,16 @@ class AdsView(View):
 @cache_page(60)
 def index(request):
     news = Article.objects.all().order_by('-created_at')[:6]
-    last_six_hours = datetime.now() - timedelta(hours=6)
+    last_six_hours = UTC_NOW - timedelta(hours=6)
     event = Events.objects.all().filter(date__gte=last_six_hours).order_by('date').first()
     events = Events.objects.all().filter(date__gte=last_six_hours).order_by('date')[1:4]
-    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
-    _launches = Launch.objects.filter(net__gte=datetime.utcnow()).filter(Q(status__id=1) | Q(status__id=2) | Q(status__id=8)).order_by('net')[:3]
+    previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')[:10]
+    _launches = Launch.objects.filter(net__gte=UTC_NOW).filter(Q(status__id=1) | Q(status__id=2) | Q(status__id=8)).order_by('net')[:3]
 
     in_flight_launch = Launch.objects.filter(status__id=6).order_by('-net').first()
-    recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - timedelta(hours=1),
-                                              net__lte=datetime.utcnow()).order_by('-net').first()
-    _next_launch = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net').first()
+    recently_launched = Launch.objects.filter(net__gte=UTC_NOW - timedelta(hours=1),
+                                              net__lte=UTC_NOW).order_by('-net').first()
+    _next_launch = Launch.objects.filter(net__gte=UTC_NOW).order_by('net').first()
 
     if in_flight_launch:
         launch = in_flight_launch
@@ -159,13 +162,13 @@ def app(request):
         return render(request, 'web/app.html', {'launch': in_flight_launch,
                                                 'youtube_url': get_youtube_url(in_flight_launch)})
 
-    recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - timedelta(hours=2),
-                                              net__lte=datetime.utcnow()).order_by('-net').first()
+    recently_launched = Launch.objects.filter(net__gte=UTC_NOW - timedelta(hours=2),
+                                              net__lte=UTC_NOW).order_by('-net').first()
     if recently_launched:
         return render(request, 'web/app.html', {'launch': recently_launched,
                                                 'youtube_url': get_youtube_url(recently_launched)})
     else:
-        _next_launch = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net').first()
+        _next_launch = Launch.objects.filter(net__gte=UTC_NOW).order_by('net').first()
         return render(request, 'web/app.html', {'launch': _next_launch,
                                                 'youtube_url': get_youtube_url(_next_launch)})
 
@@ -176,12 +179,12 @@ def next_launch(request):
     in_flight_launch = Launch.objects.filter(status__id=6).order_by('-net').first()
     if in_flight_launch:
         return redirect('launch_by_slug', slug=in_flight_launch.slug)
-    recently_launched = Launch.objects.filter(net__gte=datetime.utcnow() - timedelta(hours=6),
-                                              net__lte=datetime.utcnow()).order_by('-net').first()
+    recently_launched = Launch.objects.filter(net__gte=UTC_NOW - timedelta(hours=6),
+                                              net__lte=UTC_NOW).order_by('-net').first()
     if recently_launched:
         return redirect('launch_by_slug', slug=recently_launched.slug)
     else:
-        _next_launch = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net').first()
+        _next_launch = Launch.objects.filter(net__gte=UTC_NOW).order_by('net').first()
         return redirect('launch_by_slug', slug=_next_launch.slug)
 
 
@@ -230,7 +233,7 @@ def create_launch_view(request, launch):
     for url in vids:
         if 'youtube' in url.vid_url:
             youtube_urls.append(url.vid_url)
-    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+    previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')[:10]
 
     if launch.image_url:
         launch_image = launch.image_url.url
@@ -260,13 +263,13 @@ def launches(request, ):
     query = request.GET.get('q')
 
     if query is not None and query != "None":
-        _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
+        _launches = Launch.objects.filter(net__gte=UTC_NOW).order_by('net')
         _launches = _launches.filter(Q(rocket__configuration__manufacturer__abbrev__contains=query) |
                                      Q(rocket__configuration__manufacturer__name__contains=query) |
                                      Q(pad__location__name__contains=query) |
                                      Q(rocket__configuration__name__contains=query))
     else:
-        _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
+        _launches = Launch.objects.filter(net__gte=UTC_NOW).order_by('net')
 
     page = request.GET.get('page', 1)
     paginator = Paginator(_launches, 10)
@@ -278,7 +281,7 @@ def launches(request, ):
     except EmptyPage:
         launches = paginator.page(paginator.num_pages)
 
-    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+    previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')[:10]
 
     return render(request, 'web/launches/launches_upcoming.html', {'launches': launches,
                                                                    'query': query,
@@ -291,13 +294,13 @@ def previous(request, ):
     query = request.GET.get('q')
 
     if query is not None and query != "None":
-        _launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')
+        _launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')
         _launches = _launches.filter(Q(rocket__configuration__manufacturer__abbrev__contains=query) |
                                      Q(rocket__configuration__manufacturer__name__contains=query) |
                                      Q(pad__location__name__contains=query) |
                                      Q(rocket__configuration__name__contains=query))
     else:
-        _launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')
+        _launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')
 
     page = request.GET.get('page', 1)
     paginator = Paginator(_launches, 10)
@@ -318,13 +321,13 @@ def launches_vandenberg(request, ):
     query = 'Vandenberg'
 
     if query is not None and query != "None":
-        _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
+        _launches = Launch.objects.filter(net__gte=UTC_NOW).order_by('net')
         _launches = _launches.filter(Q(rocket__configuration__manufacturer__abbrev__contains=query) |
                                      Q(rocket__configuration__manufacturer__name__contains=query) |
                                      Q(pad__location__name__contains=query) |
                                      Q(rocket__configuration__name__contains=query))
     else:
-        _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
+        _launches = Launch.objects.filter(net__gte=UTC_NOW).order_by('net')
 
     page = request.GET.get('page', 1)
     paginator = Paginator(_launches, 10)
@@ -336,7 +339,7 @@ def launches_vandenberg(request, ):
     except EmptyPage:
         launches = paginator.page(paginator.num_pages)
 
-    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+    previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')[:10]
 
     return render(request, 'web/launches/launches_upcoming.html', {'launches': launches,
                                                                    'query': query,
@@ -350,13 +353,13 @@ def launches_spacex(request, ):
     query = 'SpaceX'
 
     if query is not None and query != "None":
-        _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
+        _launches = Launch.objects.filter(net__gte=UTC_NOW).order_by('net')
         _launches = _launches.filter(Q(rocket__configuration__manufacturer__abbrev__contains=query) |
                                      Q(rocket__configuration__manufacturer__name__contains=query) |
                                      Q(pad__location__name__contains=query) |
                                      Q(rocket__configuration__name__contains=query))
     else:
-        _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
+        _launches = Launch.objects.filter(net__gte=UTC_NOW).order_by('net')
 
     page = request.GET.get('page', 1)
     paginator = Paginator(_launches, 10)
@@ -368,7 +371,7 @@ def launches_spacex(request, ):
     except EmptyPage:
         launches = paginator.page(paginator.num_pages)
 
-    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+    previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')[:10]
 
     spacex = Agency.objects.get(name="SpaceX")
 
@@ -385,13 +388,13 @@ def launches_florida(request, ):
     query = 'FL'
 
     if query is not None and query != "None":
-        _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
+        _launches = Launch.objects.filter(net__gte=UTC_NOW).order_by('net')
         _launches = _launches.filter(Q(rocket__configuration__manufacturer__abbrev__contains=query) |
                                      Q(rocket__configuration__manufacturer__name__contains=query) |
                                      Q(pad__location__name__contains=query) |
                                      Q(rocket__configuration__name__contains=query))
     else:
-        _launches = Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
+        _launches = Launch.objects.filter(net__gte=UTC_NOW).order_by('net')
 
     page = request.GET.get('page', 1)
     paginator = Paginator(_launches, 10)
@@ -403,7 +406,7 @@ def launches_florida(request, ):
     except EmptyPage:
         launches = paginator.page(paginator.num_pages)
 
-    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+    previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')[:10]
 
     return render(request, 'web/launches/launches_upcoming.html', {'launches': launches,
                                                                    'query': query,
@@ -422,7 +425,7 @@ def astronaut(request, id):
 @cache_page(600)
 def vehicle_root(request):
     news = Article.objects.all().order_by('created_at')[:6]
-    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:15]
+    previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')[:15]
     return render(request, 'web/vehicles/index.html', {'previous_launches': previous_launches,
                                                        'news': news})
 
@@ -436,7 +439,7 @@ def spacecraft_list(request):
 @cache_page(600)
 def spacecraft_by_id(request, id):
     spacecraft = SpacecraftConfiguration.objects.get(pk=id)
-    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+    previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')[:10]
     return render(request, 'web/vehicles/spacecraft/spacecraft_detail.html', {'previous_launches': previous_launches,
                                                                               'vehicle': spacecraft})
 
@@ -445,7 +448,7 @@ def spacecraft_by_id(request, id):
 def events_list(request):
     last_six_hours = datetime.now() - timedelta(hours=6)
     events = Events.objects.all().filter(date__gte=last_six_hours).order_by('date')
-    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:6]
+    previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')[:6]
     return render(request, 'web/events/event_list.html', {'previous_launches': previous_launches,
                                                           'events': events})
 
@@ -455,7 +458,7 @@ def events_list(request):
 def event_by_slug(request, slug):
     try:
         event = Events.objects.get(slug=slug)
-        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+        previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')[:10]
         return render(request, 'web/events/event_detail.html', {'previous_launches': previous_launches,
                                                                 'event': event})
     except ObjectDoesNotExist:
@@ -466,8 +469,8 @@ def event_by_slug(request, slug):
 # Create your views here.
 def starship_page(request):
     try:
-        events = Events.objects.filter(program=1).filter(date__gte=datetime.utcnow()).order_by('date')[:10]
-        launches = Launch.objects.filter(program=1).filter(net__gte=datetime.utcnow()).order_by('net')[:10]
+        events = Events.objects.filter(program=1).filter(date__gte=UTC_NOW).order_by('date')[:10]
+        launches = Launch.objects.filter(program=1).filter(net__gte=UTC_NOW).order_by('net')[:10]
         vehicles = Launcher.objects.filter(launcher_config__program=1).order_by('status', 'serial_number')
         combined = list(chain(events, launches))
         combined = sorted(combined, key=lambda x: (x.date if isinstance(x, Events) else x.net))
@@ -476,9 +479,9 @@ def starship_page(request):
             next_up = combined[0]
         updates = Update.objects.filter(Q(program=1) | Q(launch__program=1)).order_by('-created_on')[:5]
         live_streams = VidURLs.objects.filter(program=1)[:5]
-        road_closures = RoadClosure.objects.filter(window_end__gte=datetime.utcnow()).order_by('window_end')[:10]
-        notices = Notice.objects.filter(date__gte=datetime.utcnow()).order_by('date')[:10]
-        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+        road_closures = RoadClosure.objects.filter(window_end__gte=UTC_NOW).order_by('window_end')[:10]
+        notices = Notice.objects.filter(date__gte=UTC_NOW).order_by('date')[:10]
+        previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')[:10]
         return render(request, 'web/starship/starship_detail.html', {'previous_launches': previous_launches,
                                                                      'events': events,
                                                                      'launches': launches,
@@ -517,7 +520,7 @@ def booster_reuse(request):
     except EmptyPage:
         vehicles = paginator.page(paginator.num_pages)
 
-    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+    previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')[:10]
     return render(request, 'web/vehicles/boosters/booster_list.html', {'previous_launches': previous_launches,
                                                                        'status': status,
                                                                        'vehicles': vehicles})
@@ -530,7 +533,7 @@ def booster_reuse_search(request):
     if query is not None:
         _vehicles = Launcher.objects.filter(
             Q(launcher_config__name__icontains=query) | Q(serial_number__icontains=query))
-        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
+        previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')[:5]
         return render(request, 'web/vehicles/boosters/boosters_search.html', {'vehicles': _vehicles,
                                                                               'query': query,
                                                                               'previous_launches': previous_launches})
@@ -543,10 +546,10 @@ def booster_reuse_id(request, id):
     if id is not None:
         vehicle = Launcher.objects.get(pk=id)
         upcoming_vehicle_launches = Launch.objects.filter(rocket__firststage__launcher_id=vehicle.id).filter(
-            net__gte=datetime.utcnow()).order_by('net')
+            net__gte=UTC_NOW).order_by('net')
         previous_vehicle_launches = Launch.objects.filter(rocket__firststage__launcher_id=vehicle.id).filter(
-            net__lte=datetime.utcnow()).order_by('-net')
-        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
+            net__lte=UTC_NOW).order_by('-net')
+        previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')[:5]
         return render(request, 'web/vehicles/boosters/booster_detail.html', {'vehicle': vehicle,
                                                                              'previous_launches': previous_launches,
                                                                              'upcoming_vehicle_launches': upcoming_vehicle_launches,
@@ -575,11 +578,11 @@ class LaunchListView(SingleTableMixin, FilterView):
 def launch_vehicle_id(request, id):
     if id is not None:
         vehicle = LauncherConfig.objects.get(pk=id)
-        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
+        previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')[:5]
         upcoming_vehicle_launches = Launch.objects.filter(rocket__configuration=vehicle.id).filter(
-            net__gte=datetime.utcnow()).order_by('net')
+            net__gte=UTC_NOW).order_by('net')
         previous_vehicle_launches = Launch.objects.filter(rocket__configuration=vehicle.id).filter(
-            net__lte=datetime.utcnow()).order_by('-net')
+            net__lte=UTC_NOW).order_by('-net')
 
         return render(request, 'web/vehicles/launch_vehicle/launch_vehicle_detail.html',
                       {'vehicle': vehicle, 'previous_launches': previous_launches,
@@ -600,7 +603,7 @@ def spacestation_list(request):
 def spacestation_by_id(request, id):
     if id is not None:
         spacestation = SpaceStation.objects.get(pk=id)
-        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
+        previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')[:5]
         return render(request, 'web/vehicles/spacestations/spacestations_details.html', {'vehicle': spacestation,
                                                                                          'previous_launches': previous_launches})
     else:
@@ -615,19 +618,19 @@ def astronaut_by_slug(request, slug):
             (Launch.objects.filter(Q(rocket__spacecraftflight__launch_crew__astronaut__id=_astronaut.pk) |
                                    Q(rocket__spacecraftflight__onboard_crew__astronaut__id=_astronaut.pk) |
                                    Q(rocket__spacecraftflight__landing_crew__astronaut__id=_astronaut.pk))
-             .filter(net__lte=datetime.utcnow())
+             .filter(net__lte=UTC_NOW)
              .values_list('pk', flat=True)
              .distinct()))
         upcoming_list = list(
             (Launch.objects.filter(Q(rocket__spacecraftflight__launch_crew__astronaut__id=_astronaut.pk) |
                                    Q(rocket__spacecraftflight__onboard_crew__astronaut__id=_astronaut.pk) |
                                    Q(rocket__spacecraftflight__landing_crew__astronaut__id=_astronaut.pk))
-             .filter(net__gte=datetime.utcnow())
+             .filter(net__gte=UTC_NOW)
              .values_list('pk', flat=True)
              .distinct()))
         _launches = Launch.objects.filter(pk__in=previous_list).order_by('net')
         _upcoming_launches = Launch.objects.filter(pk__in=upcoming_list).order_by('net')
-        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
+        previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')[:5]
         return render(request, 'web/astronaut/astronaut_detail.html', {'astronaut': _astronaut,
                                                                        'previous_astronaut_launches': _launches,
                                                                        'upcoming_launches': _upcoming_launches,
@@ -676,7 +679,7 @@ def astronaut_list(request, ):
         astronaut_list = Astronaut.objects.only("name", "nationality", "twitter", "instagram", "wiki", "bio",
                                                 "profile_image", "slug").filter(status=query).order_by('name')
 
-    previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:10]
+    previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')[:10]
 
     page = request.GET.get('page', 1)
 
@@ -746,7 +749,7 @@ def astronaut_search(request):
 
     if query is not None:
         _astronauts = Astronaut.objects.filter(name__icontains=query).order_by('name')
-        previous_launches = Launch.objects.filter(net__lte=datetime.utcnow()).order_by('-net')[:5]
+        previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by('-net')[:5]
         return render(request, 'web/astronaut/astronaut_search.html', {'astronauts': _astronauts,
                                                                        'query': query,
                                                                        'previous_launches': previous_launches})
@@ -775,7 +778,7 @@ class LaunchFeed(ICalFeed):
     file_name = "launches.ics"
 
     def items(self):
-        return Launch.objects.filter(net__gte=datetime.utcnow()).order_by('net')
+        return Launch.objects.filter(net__gte=UTC_NOW).order_by('net')
 
     def item_guid(self, item):
         return "{}{}".format(item.id, "@spacelaunchnow")
@@ -825,7 +828,7 @@ class EventFeed(ICalFeed):
     file_name = "events.ics"
 
     def items(self):
-        return Events.objects.filter(date__gte=datetime.utcnow()).order_by('date')
+        return Events.objects.filter(date__gte=UTC_NOW).order_by('date')
 
     def item_guid(self, item):
         return "{}{}".format(item.id, "@spacelaunchnow")

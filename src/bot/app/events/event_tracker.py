@@ -80,7 +80,7 @@ class EventTracker:
                         datetime.datetime.now().replace(tzinfo=datetime.timezone.utc) - item.created_at.replace(
                     tzinfo=datetime.timezone.utc)) < datetime.timedelta(days=7):
                     news_item.was_notified = True
-                    news_item.sent_at = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
+                    news_item.sent_at = datetime.datetime.now(datetime.timezone.utc)
                     news_item.save()
                     logger.info('Sending %s notification!', item.title)
                     self.news_notification_handler.send_notification(item)
@@ -93,7 +93,7 @@ class EventTracker:
         time_since_last_update = 3600
         if last_sent and last_sent.sent_at:
             time_since_last_update = (
-                    datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc) - last_sent.sent_at.replace(
+                    datetime.datetime.now(datetime.timezone.utc) - last_sent.sent_at.replace(
                 tzinfo=datetime.timezone.utc)
             ).total_seconds()
 

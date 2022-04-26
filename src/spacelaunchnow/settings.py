@@ -30,7 +30,9 @@ SECRET_KEY = config.DJANGO_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', config.DEBUG)
-LOGLEVEL = "DEBUG" if DEBUG else "INFO"
+DEBUG_LOGGING = os.getenv('DEBUG_LOGGING')
+LOGLEVEL = "DEBUG" if DEBUG_LOGGING else "INFO"
+
 if DEBUG:
     ALLOWED_HOSTS = ['*']
 else:

@@ -36,7 +36,7 @@ if not settings.DEBUG:
 else:
     prefix = ['.slnd ']
 bot = commands.Bot(command_prefix=prefix, description=description, pm_help=None, help_attrs=help_attrs)
-bot_start_time = datetime.datetime.utcnow()
+bot_start_time = datetime.datetime.now(datetime.timezone.utc)
 initial_extensions = ['bot.discord.cogs.admin', 'bot.discord.cogs.about', 'bot.discord.cogs.launches',
                       'bot.discord.cogs.notifier', 'bot.discord.cogs.reddit', 'bot.discord.cogs.twitter',
                       'bot.discord.cogs.news']
