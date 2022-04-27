@@ -10,7 +10,7 @@ discord.py==1.5.1
 Django==3.2.1
 django-bootstrap4==2.3.1
 django-bootstrap-form==3.4
-django-cachalot==2.3.3
+django-cachalot==2.4.2
 django-compat==1.0.14
 django-cors-headers==3.1.1
 django-celery-beat==1.1.1
