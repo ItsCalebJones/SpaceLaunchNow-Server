@@ -17,7 +17,8 @@ import sys
 from datetime import timedelta
 
 from celery.schedules import crontab
-from . import config
+
+import config
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
