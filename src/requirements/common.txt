@@ -5,11 +5,12 @@ boto3==1.7.10
 botocore==1.10.12
 celery==4.2.1
 collectfast==0.6.2
+coverage
 discord.py==1.5.1
-Django==3.0.11
+Django==3.2.1
 django-bootstrap4==2.3.1
 django-bootstrap-form==3.4
-django-cachalot==2.3.3
+django-cachalot==2.4.2
 django-compat==1.0.14
 django-cors-headers==3.1.1
 django-celery-beat==1.1.1
@@ -29,7 +30,7 @@ django-tz-detect==0.2.10
 django-tables2==2.3.3
 django-user-agents==0.3.2
 django_extensions==2.1.9
-djangorestframework==3.12.2
+djangorestframework==3.13.1
 djangorestframework-bulk==0.2.1
 djangorestframework-queryfields==1.0.0
 docutils==0.14
@@ -46,10 +47,10 @@ model-bakery==1.2.1
 num2words==0.5.4
 kombu==4.2.1
 pilkit==2.0
-Pillow==6.1.0
+pillow
 pyfcm==1.4.7
 pytz==2017.2
-psycopg2==2.7.5
+psycopg2-binary==2.8.6
 psutil==5.6.3
 python-memcached==1.59
 python-dateutil

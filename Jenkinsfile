@@ -54,24 +54,9 @@ pipeline{
 				withCredentials([file(credentialsId: 'SLNTestConfig', variable: 'configFile')]) {
 					sh 'cp $configFile src/spacelaunchnow/config.py'
 				}
-				sh 'mkdir -p src/log'
-				sh 'touch src/log/daily_digest.log'
-				withPythonEnv('python3') {
-					sh 'python3 -m pip install -r src/requirements.txt'
-				}
 			}
 		}
-		stage('Run Django Test'){
-            steps {
-                withPythonEnv('python3') {
-                    dir ("src") {
-                        sh 'python3 manage.py test'
-                    }
-                }
-            }
-		}
 		stage('Build Docker Image'){
-
 			steps{
 				script{
                     if (env.BRANCH_NAME == 'master') {
@@ -95,6 +80,11 @@ pipeline{
 				}
 			}
 		}
+        stage('Run Tests') {
+            steps {
+                sh "docker run --rm ${registry}:${imageName} coverage run /code/manage.py test --settings=spacelaunchnow.settings.test"
+            }
+        }
 		stage('Deploy Docker Image'){
 			steps{
 				script{
@@ -110,24 +100,24 @@ pipeline{
 				}
 			}
 		}
-
 		stage('Deploy Helm Release'){
+            when {
+                branch 'master'
+            }
 		    steps {
 		        script {
-		            if (env.BRANCH_NAME == 'master') {
-		                sh '''
-		                    kubectl config use-context do-nyc1-k8s-spacelaunchnow-dev
-		                    export STAGING_NAMESPACE=sln-prod
-		                    export RELEASE_NAME=sln-prod-app
-		                    export DEPLOYS=$(helm ls --all-namespaces | grep $RELEASE_NAME | wc -l)
-		                    if [ $DEPLOYS  -eq 0 ];
-                            then
-		                        helm install $RELEASE_NAME k8s/helm/ --namespace=$STAGING_NAMESPACE --values k8s/helm/values.yaml;
-		                    else
-		                        helm upgrade $RELEASE_NAME k8s/helm/ --namespace=$STAGING_NAMESPACE --values k8s/helm/values.yaml --recreate-pods;
-		                    fi
-		                '''
-		            }
+                    sh '''
+                        kubectl config use-context do-nyc1-k8s-spacelaunchnow-dev
+                        export STAGING_NAMESPACE=sln-prod
+                        export RELEASE_NAME=sln-prod-app
+                        export DEPLOYS=$(helm ls --all-namespaces | grep $RELEASE_NAME | wc -l)
+                        if [ $DEPLOYS  -eq 0 ];
+                        then
+                            helm install $RELEASE_NAME k8s/helm/ --namespace=$STAGING_NAMESPACE --values k8s/helm/values.yaml;
+                        else
+                            helm upgrade $RELEASE_NAME k8s/helm/ --namespace=$STAGING_NAMESPACE --values k8s/helm/values.yaml --recreate-pods;
+                        fi
+                    '''
 		        }
 		    }
 		}
