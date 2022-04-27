@@ -82,7 +82,7 @@ pipeline{
 		}
         stage('Run Tests') {
             steps {
-                sh "docker run --rm ${registry}:${imageName} coverage run /code/manage.py test --settings=LaunchLibrary.settings.test"
+                sh "docker run --rm ${registry}:${imageName} coverage run /code/manage.py test --settings=spacelaunchnow.settings.test"
             }
         }
 		stage('Deploy Docker Image'){
