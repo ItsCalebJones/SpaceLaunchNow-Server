@@ -18,7 +18,7 @@ from datetime import timedelta
 
 from celery.schedules import crontab
 
-import config
+from spacelaunchnow import config
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
