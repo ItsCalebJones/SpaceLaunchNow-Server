@@ -7,7 +7,7 @@ celery==4.2.1
 collectfast==0.6.2
 coverage
 discord.py==1.5.1
-Django==3.2.1
+Django==3.2.13
 django-bootstrap4==2.3.1
 django-bootstrap-form==3.4
 django-cachalot==2.4.2
