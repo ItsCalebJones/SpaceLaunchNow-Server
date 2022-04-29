@@ -9,21 +9,21 @@ metadata:
 spec:
   tls:
   - hosts:
-    - dev.spacelaunchnow.me
+    - api.spacelaunchnow.me
     - spacelaunchnow.me
     secretName: spacelaunchnow-tls
   rules:
-  - host: "dev.spacelaunchnow.me"
+  - host: "spacelaunchnow.me"
     http:
       paths:
-      - pathType: Prefix
-        path: "/"
-        backend:
-          service:
-            name: sln-prod-app-django-web
-            port:
-              number: 8080
-  - host: "spacelaunchnow.me"
+        - pathType: Prefix
+          path: "/"
+          backend:
+            service:
+              name: sln-prod-app-django-web
+              port:
+                number: 8080
+  - host: "api.spacelaunchnow.me"
     http:
       paths:
         - pathType: Prefix

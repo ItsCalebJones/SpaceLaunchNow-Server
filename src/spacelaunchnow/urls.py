@@ -189,13 +189,13 @@ def get_v220():
     )
 
     v220_api_docs = [
-        url(r'^2.2.0/swagger(?P<format>\.json|\.yaml)$',
+        url(r'^api/ll/2.2.0/swagger(?P<format>\.json|\.yaml)$',
             v220_api_schema_view.without_ui(cache_timeout=0),
             name='v2_schema-json'),
-        url(r'^2.2.0/swagger$',
+        url(r'^api/ll/2.2.0/swagger$',
             v220_api_schema_view.with_ui('swagger', cache_timeout=0),
             name='v2_schema-swagger-ui'),
-        url(r'^2.2.0/redoc/$',
+        url(r'^api/ll/2.2.0/redoc/$',
             v220_api_schema_view.with_ui('redoc', cache_timeout=0),
             name='v2_schema-redoc'),
     ]
