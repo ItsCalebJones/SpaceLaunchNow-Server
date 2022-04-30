@@ -37,6 +37,8 @@ DEBUG = os.getenv('DEBUG', config.DEBUG)
 DEBUG_LOGGING = os.getenv('DEBUG_LOGGING')
 LOGLEVEL = "DEBUG" if DEBUG_LOGGING else "INFO"
 
+DO_CLUSTER_ID = os.getenv('DO_CLUSTER_ID', None)
+
 if DEBUG:
     ALLOWED_HOSTS = ['*']
 else:

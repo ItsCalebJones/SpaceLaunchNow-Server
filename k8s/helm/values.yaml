@@ -26,6 +26,7 @@ env:
     CACHE_BACKEND: "django.core.cache.backends.memcached.MemcachedCache"
     CACHE_LOCATION: "sln-prod-memcache-memcached.sln-prod.svc.cluster.local:11211"
     DISABLE_THROTTLE: "False"
+
   service:
     IS_WEBSERVER: "False"
     IS_API: "False"
@@ -306,4 +307,9 @@ jobs:
       requests:
         cpu: 100m
         memory: 256Mi
-
+    env:
+    - name: DO_CLUSTER_ID
+      valueFrom:
+        secretKeyRef:
+          name:  do-cluster-id
+          key:  do-cluster-id

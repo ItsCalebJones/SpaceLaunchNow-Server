@@ -3,10 +3,11 @@ import logging
 import digitalocean
 import requests
 
+from spacelaunchnow import settings
 from spacelaunchnow.config import DO_TOKEN
 
 DIGITAL_OCEAN_URL = "https://api.digitalocean.com"
-K8S_CLUSTER_ID = "9635eba5-0a95-4345-a29f-189f0b1b4cc7"
+K8S_CLUSTER_ID = settings.DO_CLUSTER_ID
 
 logger = logging.getLogger(__name__)
 
