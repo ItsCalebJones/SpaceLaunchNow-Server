@@ -17,7 +17,9 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.http import HttpResponse
+from django.urls import path
 from django.views.generic import TemplateView
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 import web
 
@@ -169,7 +171,7 @@ def get_v210():
 
 def get_v220():
     v220_api = [
-        url(r'^api/ll/2.2.0/', include(ll_api_v220)),
+        url(r'^api/ll/2.2.0/', include((ll_api_v220, "v2.2.0"))),
     ]
     v220_api_schema_view = get_schema_view(
         openapi.Info(
@@ -198,6 +200,15 @@ def get_v220():
         url(r'^api/ll/2.2.0/redoc/$',
             v220_api_schema_view.with_ui('redoc', cache_timeout=0),
             name='v2_schema-redoc'),
+
+        # Schema
+        path("api/ll/2.2.0/new/schema/", SpectacularAPIView.as_view(api_version="v2.2.0"), name="v2.2.0/schema"),
+        # Swagger UI:
+        path(
+            "api/ll/2.2.0/new/swagger/",
+            SpectacularSwaggerView.as_view(url_name="v2.2.0/schema"),
+            name="swagger-ui",
+        ),
     ]
     return v220_api + v220_api_docs
 

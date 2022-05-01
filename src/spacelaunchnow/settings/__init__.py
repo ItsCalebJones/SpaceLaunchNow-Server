@@ -57,7 +57,22 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
-    )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Launch Library',
+    'DESCRIPTION': "The Launch Library API is a product by The Space Devs with an up-to-date database of Spaceflight events. "
+                    "\n\nWhile this API is free to use it is subject to rate limiting for non-authenticated requests."
+                    "\n\nPlease use https://lldev.thespacedevs.com for development testing"
+                    " - the development endpoint has stale data but is not subject to any rate limits."
+                    "\n\nIf you are interested in a higher rate limit please consider supporting the project on Patreon for access to an API Key.",
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SCHEMA_PATH_PREFIX': '/[0-9].[0-9].[0.9]',
+    'CONTACT': {"name": "The Space Devs", "email": "support@thespacedevs.com"},
+    'LICENSE': {"name": "Apache License 2.0"},
+    'VERSION': None,
 }
 
 DISABLE_THROTTLE = os.getenv('DISABLE_THROTTLE', False)
