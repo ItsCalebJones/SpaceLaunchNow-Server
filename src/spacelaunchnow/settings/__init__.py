@@ -69,7 +69,7 @@ SPECTACULAR_SETTINGS = {
                     " - the development endpoint has stale data but is not subject to any rate limits."
                     "\n\nIf you are interested in a higher rate limit please consider supporting the project on Patreon for access to an API Key.",
     'SERVE_INCLUDE_SCHEMA': False,
-    'SCHEMA_PATH_PREFIX': '/[0-9].[0-9].[0.9]',
+    'SCHEMA_PATH_PREFIX': '/api/ll/[0-9].[0-9].[0.9]',
     'CONTACT': {"name": "The Space Devs", "email": "support@thespacedevs.com"},
     'LICENSE': {"name": "Apache License 2.0"},
     'VERSION': None,
@@ -157,6 +157,7 @@ INSTALLED_APPS = [
     'django_celery_results',
     'cachalot',
     'drf_yasg',
+    'drf_spectacular',
     'debug_toolbar',
     'django_cleanup.apps.CleanupConfig',
     'health_check',  # required
