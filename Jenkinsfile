@@ -82,7 +82,8 @@ pipeline{
 		}
         stage('Run Tests') {
             steps {
-                sh "docker run --rm ${registry}:${imageName} coverage run /code/manage.py test --settings=spacelaunchnow.settings.test"
+                sh "docker run --rm -v ${pwd()}/xmlrunner/:/code/xmlrunner ${registry}:${imageName} coverage run /code/manage.py test --settings=spacelaunchnow.settings.test"
+                junit "${pwd()}/xmlrunner/*.xml"
             }
         }
 		stage('Deploy Docker Image'){

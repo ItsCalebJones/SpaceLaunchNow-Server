@@ -93,7 +93,7 @@ def get_v350():
     v350_api_docs = [
         url(r'^api/3.5.0/swagger(?P<format>\.json|\.yaml)$', v350_api_schema_view.without_ui(cache_timeout=0),
             name='schema-json'),
-        url(r'^api/3.5.0/swagger$', v350_api_schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+        url(r'^api/3.5.0/swagger/$', v350_api_schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
         url(r'^api/3.5.0/redoc/$', v350_api_schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     ]
     return v350_api + v350_api_docs
@@ -124,7 +124,7 @@ def get_v200():
         url(r'^api/ll/2.0.0/swagger(?P<format>\.json|\.yaml)$',
             v200_api_schema_view.without_ui(cache_timeout=0),
             name='v2_schema-json'),
-        url(r'^api/ll/2.0.0/swagger$',
+        url(r'^api/ll/2.0.0/swagger/$',
             v200_api_schema_view.with_ui('swagger', cache_timeout=0),
             name='v2_schema-swagger-ui'),
         url(r'^api/ll/2.0.0/redoc/$',
@@ -159,7 +159,7 @@ def get_v210():
         url(r'^api/ll/2.1.0/swagger(?P<format>\.json|\.yaml)$',
             v210_api_schema_view.without_ui(cache_timeout=0),
             name='v2_schema-json'),
-        url(r'^api/ll/2.1.0/swagger$',
+        url(r'^api/ll/2.1.0/swagger/$',
             v210_api_schema_view.with_ui('swagger', cache_timeout=0),
             name='v2_schema-swagger-ui'),
         url(r'^api/ll/2.1.0/redoc/$',
@@ -194,7 +194,7 @@ def get_v220():
         url(r'^api/ll/2.2.0/swagger(?P<format>\.json|\.yaml)$',
             v220_api_schema_view.without_ui(cache_timeout=0),
             name='v2_schema-json'),
-        url(r'^api/ll/2.2.0/swagger$',
+        url(r'^api/ll/2.2.0/swagger/$',
             v220_api_schema_view.with_ui('swagger', cache_timeout=0),
             name='v2_schema-swagger-ui'),
         url(r'^api/ll/2.2.0/redoc/$',
@@ -233,8 +233,14 @@ if settings.IS_WEBSERVER:
     web_settings = [
         url("_health/", health),
         url(r'^\.well-known/assetlinks\.json', landing_views.asset_file),
+
         url(r'^app-ads\.txt', AdsView.as_view()),
+        url(r'^ads\.txt', AdsView.as_view()),
+
+        url(r'^$', landing_views.index, name='index'),
+
         url(r'^next/', landing_views.next_launch, name='next'),
+
         url(r'^launch/$', LaunchListView.as_view()),
         url(r'^launch/upcoming/$', landing_views.launches, name='launches'),
         url(r'^launch/previous/$', landing_views.previous, name='previous'),
@@ -245,13 +251,13 @@ if settings.IS_WEBSERVER:
         url(r'^spacex/$', landing_views.launches_spacex, name='direct_launches_spacex'),
         url(r'^florida/$', landing_views.launches_florida, name='direct_launches_florida'),
 
-
         url(r'^launch/(?P<id>\d+)/$', landing_views.launch_by_id, name='launch_by_id'),
         url(r'^launch/(?P<slug>[-\w]+)/$', landing_views.launch_by_slug, name='launch_by_slug'),
         url(r'^starship/$', landing_views.starship_page, name='starship_page'),
         url(r'^event/$', landing_views.events_list, name='events_list'),
         url(r'^event/(?P<id>\d+)/$', landing_views.event_by_id, name='event_by_id'),
         url(r'^event/(?P<slug>[-\w]+)/$', landing_views.event_by_slug, name='event_by_slug'),
+
         url(r'^vehicle/$', landing_views.vehicle_root, name='vehicle_root'),
         url(r'^vehicle/launcher$', landing_views.booster_reuse, name='booster_reuse'),
         url(r'^vehicle/launcher/(?P<id>\d+)/$', landing_views.booster_reuse_id, name='booster_reuse_id'),
@@ -262,24 +268,32 @@ if settings.IS_WEBSERVER:
         url(r'^vehicle/spacestation/(?P<id>\d+)/$', landing_views.spacestation_by_id, name='spacestation_by_id'),
         url(r'^vehicle/spacecraft$', landing_views.spacecraft_list, name='spacecraft_list'),
         url(r'^vehicle/spacecraft/(?P<id>\d+)/$', landing_views.spacecraft_by_id, name='spacecraft_by_id'),
+
         url(r'^astronaut/$', landing_views.astronaut_list, name='astronauts'),
         url(r'^astronaut/search/?$', landing_views.astronaut_search, name='astronaut_search'),
         url(r'^astronaut/(?P<id>\d+)/$', landing_views.astronaut, name='astronaut_by_id'),
         url(r'^astronaut/(?P<slug>[-\w]+)/$', landing_views.astronaut_by_slug, name='astronaut_by_slug'),
+
         url(r'^about/$', about_view, name='staff'),
         url(r'^about/staff/$', staff_view, name='staff'),
         url(r'^about/translators/$', translator_view, name='translators'),
+
         url(r'^app/privacy', TemplateView.as_view(template_name='web/app/privacy.html'), name='privacy'),
         url(r'^app/tos', TemplateView.as_view(template_name='web/app/tos.html'), name='tos'),
+
         url(r'^site/privacy', TemplateView.as_view(template_name='web/site/privacy.html'), name='privacy'),
         url(r'^site/tos', TemplateView.as_view(template_name='web/site/tos.html'), name='tos'),
+
         url(r'^ajax/astronaut/$', landing_views.astronaut_search_ajax, name='ajax-astronaut'),
+
         url(r'^app$', landing_views.app, name='app'),
-        url(r'^$', landing_views.index, name='index'),
+
+
         url(r'^launches/latest/feed.ics$', LaunchFeed()),
         url(r'^events/latest/feed.ics$', EventFeed()),
+
         url(r'^tz_detect/', include('tz_detect.urls')),
-        url('ads.txt', AdsView.as_view()),
+
         url(r'^lazy_load_updates/(?P<id>[-\w]+)/$', landing_views.lazy_load_updates, name='lazy_load_updates'),
     ]
 

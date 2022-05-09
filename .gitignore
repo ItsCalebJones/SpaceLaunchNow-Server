@@ -19,3 +19,4 @@ bot/.DS_Store
 .pypirc
 k8s/ingress/issuer/secret.yaml
 k8s/ingress/issuer/secret.yaml
+src/xmlrunner/**

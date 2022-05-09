@@ -2,10 +2,7 @@ import logging
 
 from datetime import timedelta
 
-from celery import Celery
-
 from bot.app.digest.digest import DigestServer
-from celery.task import periodic_task
 
 from bot.app.events.event_tracker import EventTracker
 
@@ -20,16 +17,7 @@ logger = logging.getLogger(__name__)
 
 TAG = 'Digest Server'
 
-app = Celery()
 
-
-@periodic_task(
-    run_every=(crontab(minute=0, hour=12,
-                       day_of_week='mon-sun')),
-    name="run_daily",
-    ignore_result=True,
-    options={"expires": 3600}
-)
 def run_daily():
     logger.info('Task - Running Digest - Daily...')
     daily_digest = DigestServer()
@@ -49,13 +37,7 @@ def run_daily():
 #     return data
 
 
-@periodic_task(
-    run_every=(crontab(minute=0, hour=12,
-                       day_of_week='mon')),
-    name="run_weekly",
-    ignore_result=True,
-    options={"expires": 3600}
-)
+
 def run_weekly():
     logger.info('Task - Running Digest - Weekly...')
     daily_digest = DigestServer()
@@ -69,7 +51,7 @@ def run_weekly():
 #     repository.get_next_launches(next_count=100, all=True)
 
 
-@periodic_task(run_every=(crontab(hour='*/2')), options={"expires": 15})
+
 def get_road_closures():
     logger.info('Task - Get Road Closures!')
     get_road_closure()
@@ -143,59 +125,32 @@ def get_road_closures():
 #         return data
 
 
-# @periodic_task(
-#     run_every=(crontab(minute=0, hour=3,
-#                        day_of_week='mon-sun')),
-#     name="get_previous",
-#     ignore_result=True,
-#     options={"expires": 3600}
-# )
-# def get_previous_launches():
-#     logger.info('Task - Get Previous launches!')
-#     repository = LaunchRepository()
-#     repository.get_previous_launches()
-#     logger.info('Task - Getting SpaceX cores!')
-
-
-# @periodic_task(run_every=(crontab(minute='*/1')), options={"expires": 60})
-# def check_next_launch(debug=config.DEBUG):
-#     logger.info('Task - Running Notifications...')
-#     notification = LaunchLibrarySync(debug=debug)
-#     notification.check_next_launch()
-
-
-@periodic_task(run_every=(crontab(minute='*/5')), options={"expires": 60})
 def get_tweets_task():
     logger.info('Task - Running get_new_tweets...')
     get_new_tweets()
 
 
-@periodic_task(run_every=(crontab(minute='*/5')), options={"expires": 120})
 def get_news_task():
     logger.info('Task - Running get_news...')
     get_news()
 
 
-@periodic_task(run_every=(crontab(hour='*/1')), options={"expires": 120})
 def get_news_task_hourly():
     logger.info('Task - Running get_news...')
     get_news(limit=50)
 
 
-@periodic_task(run_every=(crontab(minute='*/30')), options={"expires": 120})
 def get_reddit_submissions_task():
     logger.info('Task - Running get_reddit_submissions...')
     get_submissions()
 
 
-@periodic_task(run_every=timedelta(seconds=15), options={"expires": 5})
 def launch_tracker():
     logger.info('Task - Running Launch Event Tracker')
     tracker = LaunchEventTracker()
     tracker.check_events()
 
 
-@periodic_task(run_every=timedelta(seconds=60), options={"expires": 5})
 def event_tracker():
     logger.info('Task - Running Event Tracker')
     tracker = EventTracker()
@@ -203,7 +158,6 @@ def event_tracker():
     tracker.check_news_item()
 
 
-# @periodic_task(run_every=(crontab(minute='*/5')), options={"expires": 60})
 # def get_recent_previous_launches():
 #     logger.info('Task - Get Recent Previous launches!')
 #     repository = LaunchRepository()
