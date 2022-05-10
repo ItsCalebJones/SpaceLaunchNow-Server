@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends git ssh gcc pyt
 RUN rm -rf /var/lib/apt/lists/*
 
 ARG EXTRA_INDEX_URL
-RUN pipenv install --deploy
+RUN pipenv install --system --deploy
 RUN apt-get purge -y --auto-remove git gcc python-dev libsqlite3-dev libpng-dev libjpeg-dev
 
 EXPOSE 8000
