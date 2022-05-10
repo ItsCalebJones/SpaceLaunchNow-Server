@@ -1,6 +1,5 @@
 from api.models import Launch, Events
 
-from autoscaler.jenkins import *
 from autoscaler.digitalocean_helper import *
 import datetime as dtime
 import pytz

@@ -17,8 +17,6 @@ import sys
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from datetime import timedelta
 
-from celery.schedules import crontab
-
 from spacelaunchnow import config
 
 BASE_DIR = os.path.abspath(os.path.dirname(__name__))
@@ -46,7 +44,7 @@ else:
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'spacelaunchnow.pagination.SLNLimitOffsetPagination',
-    'DEFAULT_MODEL_SERIALIZER_CLASS': 'drf_toolbox.serializers.ModelSerializer',
+    'DEFAULT_MODEL_SERIALIZER_CLASS': 'rest_framework.serializers.ModelSerializer',
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
     'DEFAULT_RENDERER_CLASSES': config.API_RENDERER,
@@ -57,7 +55,22 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
-    )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Launch Library',
+    'DESCRIPTION': "The Launch Library API is a product by The Space Devs with an up-to-date database of Spaceflight events. "
+                    "\n\nWhile this API is free to use it is subject to rate limiting for non-authenticated requests."
+                    "\n\nPlease use https://lldev.thespacedevs.com for development testing"
+                    " - the development endpoint has stale data but is not subject to any rate limits."
+                    "\n\nIf you are interested in a higher rate limit please consider supporting the project on Patreon for access to an API Key.",
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SCHEMA_PATH_PREFIX': '/api/ll/[0-9].[0-9].[0.9]',
+    'CONTACT': {"name": "The Space Devs", "email": "support@thespacedevs.com"},
+    'LICENSE': {"name": "Apache License 2.0"},
+    'VERSION': None,
 }
 
 DISABLE_THROTTLE = os.getenv('DISABLE_THROTTLE', False)
@@ -125,6 +138,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django_user_agents',
     'django_filters',
+    'django_jenkins',
     'rest_framework.authtoken',
     'storages',
     'collectfast',
@@ -138,10 +152,9 @@ INSTALLED_APPS = [
     'django_extensions',
     'tz_detect',
     'corsheaders',
-    'django_celery_beat',
-    'django_celery_results',
     'cachalot',
     'drf_yasg',
+    'drf_spectacular',
     'debug_toolbar',
     'django_cleanup.apps.CleanupConfig',
     'health_check',  # required
@@ -314,16 +327,6 @@ USE_TZ = True
 DISCORD_WEBHOOK = os.getenv('WEBHOOK_URL', None)
 
 GA_TRACKING_ID = config.GOOGLE_ANALYTICS_TRACKING_ID
-
-# CELERY STUFF
-CELERY_BROKER_URL = os.getenv('REDIS_URL', 'amqp://slns-rabbitmq:5672')
-CELERY_RESULT_BACKEND = 'django-db'
-CELERY_CACHE_BACKEND = 'django-cache'
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
 
 # Name of cache backend to cache user agents. If it not specified default
 # cache alias will be used. Set to `None` to disable caching.

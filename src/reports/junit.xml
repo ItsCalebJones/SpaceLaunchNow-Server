@@ -1,0 +1,558 @@
+<testsuite name="Django Project Tests" errors="13" failures="0" skips="0" tests="0" time="1.070"><testcase time="1.046151" classname="unittest.suite._ErrorHolder" name="setUpClass (bot.tests.agency.test_agency_sln_300.AgencySLN300Tests)"><error type="django.db.utils.IntegrityError" message="UNIQUE constraint failed: api_pad.id">Traceback (most recent call last):
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 423, in execute
+    return Database.Cursor.execute(self, query, params)
+sqlite3.IntegrityError: UNIQUE constraint failed: api_pad.id
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 70, in setUpClass
+    cls.load_data(cls)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 357, in load_data
+    pad_39a = Pad.objects.create(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 453, in create
+    obj.save(force_insert=True, using=self.db)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/models.py", line 692, in save
+    super(Pad, self).save(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 739, in save
+    self.save_base(using=using, force_insert=force_insert,
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 776, in save_base
+    updated = self._save_table(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 881, in _save_table
+    results = self._do_insert(cls._base_manager, using, fields, returning_fields, raw)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 919, in _do_insert
+    return manager._insert(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 1270, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 37, in inner
+    return original(compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 113, in inner
+    return original(write_compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1416, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 137, in inner
+    return original(cursor, sql, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 79, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/sqlite3/base.py", line 423, in execute
+    return Database.Cursor.execute(self, query, params)
+django.db.utils.IntegrityError: UNIQUE constraint failed: api_pad.id
+</error></testcase><testcase time="1.050589" classname="unittest.suite._ErrorHolder" name="setUpClass (bot.tests.agency.test_agency_sln_320.AgencySLN320Tests)"><error type="django.db.transaction.TransactionManagementError" message="An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.">Traceback (most recent call last):
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 70, in setUpClass
+    cls.load_data(cls)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 78, in load_data
+    get_launch_status()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 24, in get_launch_status
+    LaunchStatus.objects.create(id=status[0], legacy_name=status[1], abbrev=status[2], full_name=status[3])
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 453, in create
+    obj.save(force_insert=True, using=self.db)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/utils/modeldiffmixin.py", line 81, in save
+    super(ModelDiffMixin, self).save(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 739, in save
+    self.save_base(using=using, force_insert=force_insert,
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 776, in save_base
+    updated = self._save_table(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 881, in _save_table
+    results = self._do_insert(cls._base_manager, using, fields, returning_fields, raw)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 919, in _do_insert
+    return manager._insert(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 1270, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 37, in inner
+    return original(compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 113, in inner
+    return original(write_compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1416, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 137, in inner
+    return original(cursor, sql, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 78, in _execute
+    self.db.validate_no_broken_transaction()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/base/base.py", line 447, in validate_no_broken_transaction
+    raise TransactionManagementError(
+django.db.transaction.TransactionManagementError: An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.
+</error></testcase><testcase time="1.052947" classname="unittest.suite._ErrorHolder" name="setUpClass (bot.tests.astronauts.test_astronauts.AstronautTest)"><error type="django.db.transaction.TransactionManagementError" message="An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.">Traceback (most recent call last):
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 70, in setUpClass
+    cls.load_data(cls)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 78, in load_data
+    get_launch_status()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 24, in get_launch_status
+    LaunchStatus.objects.create(id=status[0], legacy_name=status[1], abbrev=status[2], full_name=status[3])
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 453, in create
+    obj.save(force_insert=True, using=self.db)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/utils/modeldiffmixin.py", line 81, in save
+    super(ModelDiffMixin, self).save(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 739, in save
+    self.save_base(using=using, force_insert=force_insert,
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 776, in save_base
+    updated = self._save_table(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 881, in _save_table
+    results = self._do_insert(cls._base_manager, using, fields, returning_fields, raw)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 919, in _do_insert
+    return manager._insert(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 1270, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 37, in inner
+    return original(compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 113, in inner
+    return original(write_compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1416, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 137, in inner
+    return original(cursor, sql, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 78, in _execute
+    self.db.validate_no_broken_transaction()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/base/base.py", line 447, in validate_no_broken_transaction
+    raise TransactionManagementError(
+django.db.transaction.TransactionManagementError: An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.
+</error></testcase><testcase time="1.054626" classname="unittest.suite._ErrorHolder" name="setUpClass (bot.tests.launcher.test_launcher.LauncherTests)"><error type="django.db.transaction.TransactionManagementError" message="An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.">Traceback (most recent call last):
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 70, in setUpClass
+    cls.load_data(cls)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 78, in load_data
+    get_launch_status()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 24, in get_launch_status
+    LaunchStatus.objects.create(id=status[0], legacy_name=status[1], abbrev=status[2], full_name=status[3])
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 453, in create
+    obj.save(force_insert=True, using=self.db)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/utils/modeldiffmixin.py", line 81, in save
+    super(ModelDiffMixin, self).save(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 739, in save
+    self.save_base(using=using, force_insert=force_insert,
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 776, in save_base
+    updated = self._save_table(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 881, in _save_table
+    results = self._do_insert(cls._base_manager, using, fields, returning_fields, raw)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 919, in _do_insert
+    return manager._insert(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 1270, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 37, in inner
+    return original(compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 113, in inner
+    return original(write_compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1416, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 137, in inner
+    return original(cursor, sql, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 78, in _execute
+    self.db.validate_no_broken_transaction()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/base/base.py", line 447, in validate_no_broken_transaction
+    raise TransactionManagementError(
+django.db.transaction.TransactionManagementError: An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.
+</error></testcase><testcase time="1.055766" classname="unittest.suite._ErrorHolder" name="setUpClass (bot.tests.launches.test_launches_sln_300.LaunchSLNv300Tests)"><error type="django.db.transaction.TransactionManagementError" message="An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.">Traceback (most recent call last):
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 70, in setUpClass
+    cls.load_data(cls)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 78, in load_data
+    get_launch_status()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 24, in get_launch_status
+    LaunchStatus.objects.create(id=status[0], legacy_name=status[1], abbrev=status[2], full_name=status[3])
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 453, in create
+    obj.save(force_insert=True, using=self.db)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/utils/modeldiffmixin.py", line 81, in save
+    super(ModelDiffMixin, self).save(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 739, in save
+    self.save_base(using=using, force_insert=force_insert,
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 776, in save_base
+    updated = self._save_table(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 881, in _save_table
+    results = self._do_insert(cls._base_manager, using, fields, returning_fields, raw)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 919, in _do_insert
+    return manager._insert(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 1270, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 37, in inner
+    return original(compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 113, in inner
+    return original(write_compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1416, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 137, in inner
+    return original(cursor, sql, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 78, in _execute
+    self.db.validate_no_broken_transaction()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/base/base.py", line 447, in validate_no_broken_transaction
+    raise TransactionManagementError(
+django.db.transaction.TransactionManagementError: An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.
+</error></testcase><testcase time="1.056827" classname="unittest.suite._ErrorHolder" name="setUpClass (bot.tests.launches.test_launches_sln_310.LaunchSLNv310Tests)"><error type="django.db.transaction.TransactionManagementError" message="An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.">Traceback (most recent call last):
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 70, in setUpClass
+    cls.load_data(cls)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 78, in load_data
+    get_launch_status()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 24, in get_launch_status
+    LaunchStatus.objects.create(id=status[0], legacy_name=status[1], abbrev=status[2], full_name=status[3])
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 453, in create
+    obj.save(force_insert=True, using=self.db)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/utils/modeldiffmixin.py", line 81, in save
+    super(ModelDiffMixin, self).save(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 739, in save
+    self.save_base(using=using, force_insert=force_insert,
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 776, in save_base
+    updated = self._save_table(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 881, in _save_table
+    results = self._do_insert(cls._base_manager, using, fields, returning_fields, raw)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 919, in _do_insert
+    return manager._insert(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 1270, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 37, in inner
+    return original(compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 113, in inner
+    return original(write_compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1416, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 137, in inner
+    return original(cursor, sql, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 78, in _execute
+    self.db.validate_no_broken_transaction()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/base/base.py", line 447, in validate_no_broken_transaction
+    raise TransactionManagementError(
+django.db.transaction.TransactionManagementError: An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.
+</error></testcase><testcase time="1.058192" classname="unittest.suite._ErrorHolder" name="setUpClass (bot.tests.launches.test_launches_sln_320.LaunchSLNv320Tests)"><error type="django.db.transaction.TransactionManagementError" message="An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.">Traceback (most recent call last):
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 70, in setUpClass
+    cls.load_data(cls)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 78, in load_data
+    get_launch_status()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 24, in get_launch_status
+    LaunchStatus.objects.create(id=status[0], legacy_name=status[1], abbrev=status[2], full_name=status[3])
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 453, in create
+    obj.save(force_insert=True, using=self.db)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/utils/modeldiffmixin.py", line 81, in save
+    super(ModelDiffMixin, self).save(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 739, in save
+    self.save_base(using=using, force_insert=force_insert,
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 776, in save_base
+    updated = self._save_table(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 881, in _save_table
+    results = self._do_insert(cls._base_manager, using, fields, returning_fields, raw)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 919, in _do_insert
+    return manager._insert(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 1270, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 37, in inner
+    return original(compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 113, in inner
+    return original(write_compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1416, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 137, in inner
+    return original(cursor, sql, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 78, in _execute
+    self.db.validate_no_broken_transaction()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/base/base.py", line 447, in validate_no_broken_transaction
+    raise TransactionManagementError(
+django.db.transaction.TransactionManagementError: An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.
+</error></testcase><testcase time="1.060140" classname="unittest.suite._ErrorHolder" name="setUpClass (bot.tests.launches.test_launches_sln_330.LaunchSLNv330Tests)"><error type="django.db.transaction.TransactionManagementError" message="An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.">Traceback (most recent call last):
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 70, in setUpClass
+    cls.load_data(cls)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 78, in load_data
+    get_launch_status()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 24, in get_launch_status
+    LaunchStatus.objects.create(id=status[0], legacy_name=status[1], abbrev=status[2], full_name=status[3])
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 453, in create
+    obj.save(force_insert=True, using=self.db)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/utils/modeldiffmixin.py", line 81, in save
+    super(ModelDiffMixin, self).save(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 739, in save
+    self.save_base(using=using, force_insert=force_insert,
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 776, in save_base
+    updated = self._save_table(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 881, in _save_table
+    results = self._do_insert(cls._base_manager, using, fields, returning_fields, raw)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 919, in _do_insert
+    return manager._insert(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 1270, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 37, in inner
+    return original(compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 113, in inner
+    return original(write_compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1416, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 137, in inner
+    return original(cursor, sql, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 78, in _execute
+    self.db.validate_no_broken_transaction()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/base/base.py", line 447, in validate_no_broken_transaction
+    raise TransactionManagementError(
+django.db.transaction.TransactionManagementError: An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.
+</error></testcase><testcase time="1.061970" classname="unittest.suite._ErrorHolder" name="setUpClass (bot.tests.launches.test_launches_sln_340.LaunchSLNv340Tests)"><error type="django.db.transaction.TransactionManagementError" message="An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.">Traceback (most recent call last):
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 70, in setUpClass
+    cls.load_data(cls)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 78, in load_data
+    get_launch_status()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 24, in get_launch_status
+    LaunchStatus.objects.create(id=status[0], legacy_name=status[1], abbrev=status[2], full_name=status[3])
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 453, in create
+    obj.save(force_insert=True, using=self.db)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/utils/modeldiffmixin.py", line 81, in save
+    super(ModelDiffMixin, self).save(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 739, in save
+    self.save_base(using=using, force_insert=force_insert,
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 776, in save_base
+    updated = self._save_table(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 881, in _save_table
+    results = self._do_insert(cls._base_manager, using, fields, returning_fields, raw)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 919, in _do_insert
+    return manager._insert(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 1270, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 37, in inner
+    return original(compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 113, in inner
+    return original(write_compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1416, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 137, in inner
+    return original(cursor, sql, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 78, in _execute
+    self.db.validate_no_broken_transaction()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/base/base.py", line 447, in validate_no_broken_transaction
+    raise TransactionManagementError(
+django.db.transaction.TransactionManagementError: An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.
+</error></testcase><testcase time="1.063991" classname="unittest.suite._ErrorHolder" name="setUpClass (bot.tests.spacecraft_config.test_spacecraft_config.OrbiterTests)"><error type="django.db.transaction.TransactionManagementError" message="An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.">Traceback (most recent call last):
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 70, in setUpClass
+    cls.load_data(cls)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 78, in load_data
+    get_launch_status()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 24, in get_launch_status
+    LaunchStatus.objects.create(id=status[0], legacy_name=status[1], abbrev=status[2], full_name=status[3])
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 453, in create
+    obj.save(force_insert=True, using=self.db)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/utils/modeldiffmixin.py", line 81, in save
+    super(ModelDiffMixin, self).save(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 739, in save
+    self.save_base(using=using, force_insert=force_insert,
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 776, in save_base
+    updated = self._save_table(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 881, in _save_table
+    results = self._do_insert(cls._base_manager, using, fields, returning_fields, raw)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 919, in _do_insert
+    return manager._insert(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 1270, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 37, in inner
+    return original(compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 113, in inner
+    return original(write_compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1416, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 137, in inner
+    return original(cursor, sql, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 78, in _execute
+    self.db.validate_no_broken_transaction()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/base/base.py", line 447, in validate_no_broken_transaction
+    raise TransactionManagementError(
+django.db.transaction.TransactionManagementError: An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.
+</error></testcase><testcase time="1.065946" classname="unittest.suite._ErrorHolder" name="setUpClass (bot.tests.spacestation.test_spacestations.SpaceStationTest)"><error type="django.db.transaction.TransactionManagementError" message="An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.">Traceback (most recent call last):
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 70, in setUpClass
+    cls.load_data(cls)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 78, in load_data
+    get_launch_status()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 24, in get_launch_status
+    LaunchStatus.objects.create(id=status[0], legacy_name=status[1], abbrev=status[2], full_name=status[3])
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 453, in create
+    obj.save(force_insert=True, using=self.db)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/utils/modeldiffmixin.py", line 81, in save
+    super(ModelDiffMixin, self).save(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 739, in save
+    self.save_base(using=using, force_insert=force_insert,
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 776, in save_base
+    updated = self._save_table(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 881, in _save_table
+    results = self._do_insert(cls._base_manager, using, fields, returning_fields, raw)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 919, in _do_insert
+    return manager._insert(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 1270, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 37, in inner
+    return original(compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 113, in inner
+    return original(write_compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1416, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 137, in inner
+    return original(cursor, sql, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 78, in _execute
+    self.db.validate_no_broken_transaction()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/base/base.py", line 447, in validate_no_broken_transaction
+    raise TransactionManagementError(
+django.db.transaction.TransactionManagementError: An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.
+</error></testcase><testcase time="1.067793" classname="unittest.suite._ErrorHolder" name="setUpClass (bot.tests.test_sln_api.SLNAPITest)"><error type="django.db.transaction.TransactionManagementError" message="An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.">Traceback (most recent call last):
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 70, in setUpClass
+    cls.load_data(cls)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 78, in load_data
+    get_launch_status()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 24, in get_launch_status
+    LaunchStatus.objects.create(id=status[0], legacy_name=status[1], abbrev=status[2], full_name=status[3])
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 453, in create
+    obj.save(force_insert=True, using=self.db)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/utils/modeldiffmixin.py", line 81, in save
+    super(ModelDiffMixin, self).save(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 739, in save
+    self.save_base(using=using, force_insert=force_insert,
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 776, in save_base
+    updated = self._save_table(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 881, in _save_table
+    results = self._do_insert(cls._base_manager, using, fields, returning_fields, raw)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 919, in _do_insert
+    return manager._insert(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 1270, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 37, in inner
+    return original(compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 113, in inner
+    return original(write_compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1416, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 137, in inner
+    return original(cursor, sql, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 78, in _execute
+    self.db.validate_no_broken_transaction()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/base/base.py", line 447, in validate_no_broken_transaction
+    raise TransactionManagementError(
+django.db.transaction.TransactionManagementError: An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.
+</error></testcase><testcase time="1.069417" classname="unittest.suite._ErrorHolder" name="setUpClass (web.tests.WebTests)"><error type="django.db.transaction.TransactionManagementError" message="An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.">Traceback (most recent call last):
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 70, in setUpClass
+    cls.load_data(cls)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 78, in load_data
+    get_launch_status()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/tests/test__base.py", line 24, in get_launch_status
+    LaunchStatus.objects.create(id=status[0], legacy_name=status[1], abbrev=status[2], full_name=status[3])
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 453, in create
+    obj.save(force_insert=True, using=self.db)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/api/utils/modeldiffmixin.py", line 81, in save
+    super(ModelDiffMixin, self).save(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 739, in save
+    self.save_base(using=using, force_insert=force_insert,
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 776, in save_base
+    updated = self._save_table(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 881, in _save_table
+    results = self._do_insert(cls._base_manager, using, fields, returning_fields, raw)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/base.py", line 919, in _do_insert
+    return manager._insert(
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/query.py", line 1270, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 37, in inner
+    return original(compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 113, in inner
+    return original(write_compiler, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1416, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/cachalot/monkey_patch.py", line 137, in inner
+    return original(cursor, sql, *args, **kwargs)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/utils.py", line 78, in _execute
+    self.db.validate_no_broken_transaction()
+  File "/home/cajones/.local/share/virtualenvs/src--TD5E-7R/lib/python3.10/site-packages/django/db/backends/base/base.py", line 447, in validate_no_broken_transaction
+    raise TransactionManagementError(
+django.db.transaction.TransactionManagementError: An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.
+</error></testcase></testsuite>

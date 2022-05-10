@@ -1,0 +1,69 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[[source]]
+url = "${EXTRA_INDEX_URL}"
+verify_ssl = true
+name = "pypiserver"
+
+[packages]
+
+buffpy = {editable = true, ref = "master", git = "https://github.com/ItsCalebJones/buffpy.git"}
+boto3 = "*"
+botocore = "*"
+coverage = "*"
+Collectfast = "*"
+Django = "==3.2.13"
+django-bootstrap4 = "*"
+django-bootstrap-form = "*"
+django-cachalot = "*"
+django-compat = "*"
+django-cors-headers = "*"
+django-cleanup = "*"
+django-debug-toolbar = "*"
+django-embed-video = "*"
+django-extensions = "*"
+django-filter = "*"
+django-health-check = "*"
+django-ical = "*"
+django-jenkins = "*"
+django-jet = {editable = true, ref = "ll-python-3", git = "https://github.com/ItsCalebJones/django-jet.git"}
+django-launch-library = {version="==3.0.0", index="pypiserver"}
+django-mathfilters = "*"
+django-robots = "*"
+django-storages = "*"
+django-tz-detect = "*"
+django-tables2 = "*"
+django-user-agents = "*"
+djangorestframework = "==3.13.1"
+djangorestframework-bulk = "*"
+djangorestframework-queryfields = "*"
+drf-yasg = "*"
+drf-spectacular = "*"
+goose3 = "*"
+gunicorn = "*"
+Markdown = "*"
+num2word = "*"
+pilkit = "*"
+Pillow = "*"
+pyfcm = "*"
+pytz = "*"
+psycopg2-binary = "*"
+python-digitalocean = "*"
+python-memcached = "*"
+python-dateutil = "*"
+praw = "*"
+regex = "*"
+sorl-thumbnail = "*"
+sorl-thumbnail-serializer-field = "*"
+twitter = "==1.18.0"
+tzlocal = "*"
+unittest-xml-reporting = "*"
+
+[dev-packages]
+
+
+[requires]
+python_version = "3.10"

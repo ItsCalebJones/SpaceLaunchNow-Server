@@ -14,7 +14,11 @@
     <meta property="og:description"
           content="{{ event.description|truncatechars:150 }}"/>
     <meta property="og:url" content="https://spacelaunchnow.me/event/{{ event.slug }}"/>
-    <meta property="og:image" content="{{ event.feature_image.url }}"/>
+    {% if event.feature_image %}
+        <meta property="og:image" content="{{ event.feature_image.url }}"/>
+    {% else %}
+        <meta name="twitter:image" content="{% static  'img/social.png' %}"/>
+    {% endif %}
     <meta property="og:image:width" content="3000"/>
     <meta property="og:image:height" content="2000"/>
 
@@ -55,10 +59,12 @@
                 </nav>
                 <div class="card card-plain card-blog">
                     <div class="card-header card-header-image">
-                        <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
-                             src="{{ event.feature_image.url }}">
-                        <div class="colored-shadow"
-                             style="background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
+                        {% if event.feature_image %}
+                            <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
+                                 src="{{ event.feature_image.url }}">
+                            <div class="colored-shadow"
+                                 style="background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
+                        {% endif %}
                     </div>
                     <div class="card-body">
                         <h6 class="card-category text-info"

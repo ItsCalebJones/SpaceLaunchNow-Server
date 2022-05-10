@@ -27,7 +27,7 @@ class LaunchRepository:
         total = None
         while total is None or count < total:
             response = self.launchLibrary.get_next_launches(next_count=next_count, offset=count, status=status)
-            if response.status_code is 200:
+            if response.status_code == 200:
                 response_json = response.json()
                 count = response_json['count'] + response_json['offset']
                 total = response_json['total']
@@ -50,7 +50,7 @@ class LaunchRepository:
 
     def get_next_launch(self):
         response = self.launchLibrary.get_next_launches()
-        if response.status_code is 200:
+        if response.status_code == 200:
             response_json = response.json()
             launch_data = response_json['launches']
             logger.debug("Found %i launches" % len(launch_data))
@@ -67,7 +67,7 @@ class LaunchRepository:
         total = None
         while total is None or count < total:
             response = self.launchLibrary.get_next_weeks_launches(offset=count)
-            if response.status_code is 200:
+            if response.status_code == 200:
                 response_json = response.json()
                 count = response_json['count'] + response_json['offset']
                 total = response_json['total']
@@ -93,7 +93,7 @@ class LaunchRepository:
         while total is None or count < total:
             response = self.launchLibrary.get_previous_launches(offset=count)
             try:
-                if response.status_code is 200:
+                if response.status_code == 200:
                     response_json = response.json()
                     count = response_json['count'] + response_json['offset']
                     total = response_json['total']
@@ -124,7 +124,7 @@ class LaunchRepository:
         total = None
         while total is None or count < total:
             response = self.launchLibrary.get_recent_previous_launches(offset=count)
-            if response.status_code is 200:
+            if response.status_code == 200:
                 response_json = response.json()
                 count = response_json['count'] + response_json['offset']
                 total = response_json['total']

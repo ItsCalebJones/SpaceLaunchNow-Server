@@ -111,7 +111,7 @@ def launch_json_to_model(data):
             try:
                 g = Goose()
                 article = g.extract(url=url)
-                if article.meta_description is not None and article.meta_description is not "":
+                if article.meta_description is not None and article.meta_description != "":
                     text = article.meta_description
                 elif article.cleaned_text is not None:
                     text = (article.cleaned_text[:300] + '...') if len(article.cleaned_text) > 300 else article.cleaned_text
@@ -134,7 +134,7 @@ def launch_json_to_model(data):
             try:
                 g = Goose()
                 article = g.extract(url=url)
-                if article.meta_description is not None and article.meta_description is not "":
+                if article.meta_description is not None and article.meta_description != "":
                     text = article.meta_description
                 elif article.cleaned_text is not None:
                     text = (article.cleaned_text[:300] + '...') if len(article.cleaned_text) > 300 else article.cleaned_text

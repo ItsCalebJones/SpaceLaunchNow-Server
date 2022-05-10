@@ -17,7 +17,6 @@
     <meta property="og:description"
           content="Follow SpaceX's development of it's next generation heavy lift vehicle - providing live updates of the SpaceX Starship construction and testing site in Boca Chica, Texas."/>
     <meta property="og:url" content="https://spacelaunchnow.me/starship/"/>
-    <meta property="og:image" content="{{ event.feature_image.url }}"/>
     {% if event.feature_image %}
         <meta name="og:image" content="{{ event.feature_image.url }}"/>
     {% else %}
@@ -169,9 +168,9 @@
                                 <div class="card-header card-header-image"
                                      style="margin-left:16px!important; margin-right:16px!important;">
                                     <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
-                                         src="{{ next_up.feature_image.url }}">
+                                         src="{% if next_up.feature_image %}{{ next_up.feature_image.url }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
                                     <div class="colored-shadow"
-                                         style="background-image: url({{ next_up.feature_image.url }}); opacity: 1;"></div>
+                                         style="background-image: url({% if next_up.feature_image %}{{ next_up.feature_image.url }}{% endif %}); opacity: 1;"></div>
                                 </div>
                                 <div class="card-body">
 
