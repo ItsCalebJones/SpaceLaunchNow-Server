@@ -82,8 +82,9 @@ pipeline{
 		}
         stage('Run Tests') {
             steps {
-                sh "docker run --rm -v ${pwd()}/xmlrunner/:/code/xmlrunner ${registry}:${imageName} coverage run /code/manage.py test --settings=spacelaunchnow.settings.test"
-                junit "${pwd()}/xmlrunner/*.xml"
+              docker.image('${registry}:${imageName}').withRun{c ->
+                    sh "coverage run /code/manage.py test --settings=spacelaunchnow.settings.test"
+                }
             }
         }
 		stage('Deploy Docker Image'){
@@ -138,6 +139,10 @@ pipeline{
             sh '''
                rm src/spacelaunchnow/config.py
                '''
+            always {
+                archiveArtifacts artifacts: 'build/xmlrunner/*.xml', fingerprint: true
+                junit 'build/xmlrunner/*.xml'
+            }
         }
     }
 }
