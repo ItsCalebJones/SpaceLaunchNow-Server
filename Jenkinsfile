@@ -82,9 +82,7 @@ pipeline{
 		}
         stage('Run Tests') {
             steps {
-              docker.image('${registry}:${imageName}').withRun{c ->
-                    sh "coverage run /code/manage.py test --settings=spacelaunchnow.settings.test"
-                }
+              sh "docker run --rm ${registry}:${imageName} coverage run /code/manage.py test --settings=spacelaunchnow.settings.test"
             }
         }
 		stage('Deploy Docker Image'){
