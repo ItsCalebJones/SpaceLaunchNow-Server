@@ -20,3 +20,4 @@ bot/.DS_Store
 k8s/ingress/issuer/secret.yaml
 k8s/ingress/issuer/secret.yaml
 src/xmlrunner/**
+.env
