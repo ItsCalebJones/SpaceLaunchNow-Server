@@ -49,13 +49,6 @@ pipeline{
 	}
 	
 	stages{
-        stage('Setup'){
-			steps {
-				withCredentials([file(credentialsId: 'SLNTestConfig', variable: 'configFile')]) {
-					sh 'cp $configFile src/spacelaunchnow/config.py'
-				}
-			}
-		}
 		stage('Build Docker Image'){
 			steps{
 				script{
