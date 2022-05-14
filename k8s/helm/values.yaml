@@ -261,7 +261,7 @@ jobs:
     schedule: "*/1 * * * *"
     command: "['python', 'manage.py', 'check_launch_events', '--launch']"
     failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 100
+    successfulJobsHistoryLimit: 5
     concurrencyPolicy: Forbid
     restartPolicy: OnFailure
     resources:
