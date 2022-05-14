@@ -110,7 +110,7 @@ web:
           - spacelaunchnow.me
 
 notification_service:
-  enabled: false
+  enabled: true
   resources:
     limits:
       cpu: 900m
@@ -242,42 +242,6 @@ jobs:
       imagePullPolicy: IfNotPresent
     schedule: "0 */12 * * *"
     command: "['python', 'manage.py', 'run_get_news', '--limit', '50']"
-    failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 5
-    concurrencyPolicy: Forbid
-    restartPolicy: OnFailure
-    resources:
-      limits:
-        cpu: 100m
-        memory: 256Mi
-      requests:
-        cpu: 100m
-        memory: 256Mi
-  - name: sln-launch-tracker
-    image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
-      tag: production
-      imagePullPolicy: IfNotPresent
-    schedule: "*/1 * * * *"
-    command: "['python', 'manage.py', 'check_launch_events', '--launch']"
-    failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 5
-    concurrencyPolicy: Forbid
-    restartPolicy: OnFailure
-    resources:
-      limits:
-        cpu: 100m
-        memory: 256Mi
-      requests:
-        cpu: 100m
-        memory: 256Mi
-  - name: sln-event-tracker
-    image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
-      tag: production
-      imagePullPolicy: IfNotPresent
-    schedule: "*/5 * * * *"
-    command: "['python', 'manage.py', 'check_launch_events', '--event']"
     failedJobsHistoryLimit: 1
     successfulJobsHistoryLimit: 5
     concurrencyPolicy: Forbid
