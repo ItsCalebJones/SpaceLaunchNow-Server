@@ -1,6 +1,5 @@
 import logging
 import urllib
-from parser import ParserError
 
 import pytz
 
