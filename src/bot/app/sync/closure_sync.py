@@ -56,27 +56,33 @@ def get_road_closure():
             row = row.replace('a.m.', 'AM')
             row = row.replace('p.m.', 'PM')
 
-            dtP1 = row.split('|')[1]
-            dtP2 = row.split('|')[2]
-            dtP2B = dtP2.split(' to ')[0].strip()
-            dtP2E = dtP2.split(' to ')[1].strip()
+            start_date = row.split('|')[1]
+            closure_time = row.split('|')[2]
+            start_time = closure_time.split(' to ')[0].strip()
+            closure_end = closure_time.split(' to ')[1].strip()
 
-            dtSta = dtP1 + ' ' + dtP2B
-            staTex = parse_date(dtSta)
+            start_string = start_date + ' ' + start_time
+            start_datetime = parse_date(start_string)
 
-            dtEnd = dtP1 + ' ' + dtP2E
-            endTex = parse_date(dtEnd)
-            if 'PM' in dtP2B and 'AM' in dtP2E:
-                endTex += timedelta(days=1)
+            now = datetime.now(tz=pytz.utc)
 
-            nowTex = datetime.now(tz=pytz.utc)
+            if '–' in closure_end:
+                end_date = closure_end.split('–')[0].strip()
+                end_time = closure_end.split('–')[1].strip()
+                end_date = datetime.strptime(end_date, '%B %d').replace(year=now.year).strftime('%A, %B %d, %Y')
+                end_string = end_date + ' ' + end_time
+            else:
+                end_string = start_date + ' ' + closure_end
+            end_datetime = parse_date(end_string)
+            if end_datetime < start_datetime:
+                end_datetime += timedelta(days=1)
 
-            if endTex < nowTex:
+            if end_datetime < now:
                 continue
 
             name = row.split('|')[0]
-            status = row.split('|')[3].replace('Closure ', '')
-            closures.append([staTex, endTex, name, status])
+            status = row.split('|')[3].replace('Closure', '').strip()
+            closures.append([start_datetime, end_datetime, name, status])
         except Exception as e:
             logger.error(row)
             logger.error(e)
