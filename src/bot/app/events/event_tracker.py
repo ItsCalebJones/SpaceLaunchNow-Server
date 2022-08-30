@@ -66,12 +66,12 @@ class EventTracker:
                     self.notification_handler.send_webcast_notification(event)
 
     def check_news_item(self):
-        logger.debug('Running check news...')
+        logger.info('Running check news...')
         news_that_need_to_notify = ArticleNotification.objects.filter(
             created_at__gte=datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=7),
             should_notify=True, was_notified=False)
 
-        logger.debug('Found %d news items.', len(news_that_need_to_notify))
+        logger.info('Found %d news items.', len(news_that_need_to_notify))
 
         if len(news_that_need_to_notify) > 0:
             for news_item in news_that_need_to_notify:

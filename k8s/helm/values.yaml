@@ -222,7 +222,7 @@ jobs:
       repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
       tag: production
       imagePullPolicy: IfNotPresent
-    schedule: "*/30 * * * *"
+    schedule: "*/5 * * * *"
     command: "['python', 'manage.py', 'run_get_news']"
     failedJobsHistoryLimit: 1
     successfulJobsHistoryLimit: 5

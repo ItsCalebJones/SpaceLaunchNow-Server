@@ -284,6 +284,7 @@ DATABASES = {
          'PASSWORD': os.getenv('DATABASE_PASSWORD', config.DATABASE['default'].get('PASSWORD', None)),
          'HOST': os.getenv('DATABASE_HOST', config.DATABASE['default'].get('HOST', None)),
          'PORT': os.getenv('DATABASE_PORT', config.DATABASE['default'].get('PORT', None)),
+         'CONN_MAX_AGE': None,
      }
  }
 

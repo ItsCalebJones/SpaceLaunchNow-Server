@@ -27,7 +27,6 @@ class Command(BaseCommand):
         while True:
             logger.info("Health check!")
             self.launch_tracker.check_events()
-
             self.event_tracker.check_events()
             self.event_tracker.check_news_item()
             time.sleep(30)
