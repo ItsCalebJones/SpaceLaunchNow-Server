@@ -141,7 +141,7 @@ class InstagramBot:
         Mission: %s
         Location: %s
         Date: %s
-        """ % (launch.mission.type_name, launch.pad.location.name,
+        """ % (launch.mission.mission_type.name, launch.pad.location.name,
                custom_strftime("%B {S} at %I:%M %p %Z", launch.net))
         font = ImageFont.truetype(
             'static/font/RobotoCondensed-Bold.ttf', 60)
