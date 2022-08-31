@@ -25,12 +25,12 @@ django-cleanup = "*"
 django-debug-toolbar = "*"
 django-embed-video = "*"
 django-extensions = "*"
-django-filter = "*"
+django-filter = "==2.4.0"
 django-health-check = "*"
 django-ical = "*"
 django-jenkins = "*"
 django-jet = {editable = true, ref = "ll-python-3", git = "https://github.com/ItsCalebJones/django-jet.git"}
-django-launch-library = {version="==3.0.0", index="pypiserver"}
+django-launch-library = {version="==3.1.1", index="pypiserver"}
 django-mathfilters = "*"
 django-robots = "*"
 django-storages = "*"
