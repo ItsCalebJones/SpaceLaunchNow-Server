@@ -30,7 +30,7 @@ django-health-check = "*"
 django-ical = "==1.8.2"
 django-jenkins = "*"
 django-jet = {editable = true, ref = "ll-python-3", git = "https://github.com/ItsCalebJones/django-jet.git"}
-django-launch-library = {version="==3.1.1", index="pypiserver"}
+django-launch-library = {version="==3.1.2", index="pypiserver"}
 django-mathfilters = "*"
 django-robots = "*"
 django-storages = "*"
