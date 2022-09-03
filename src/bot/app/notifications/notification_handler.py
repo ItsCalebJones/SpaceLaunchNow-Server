@@ -40,7 +40,7 @@ class NotificationHandler:
             if launch.status.id == 1:
                 contents = 'UPDATE: New launch attempt scheduled on %s at %s.' % (launch.net.strftime("%A, %B %d"),
                                                                                   launch.net.strftime("%H:%M UTC"))
-            elif launch.status.id == 2 or launch.status == 5:
+            elif launch.status.id == 2 or launch.status.id == 5 or launch.status.id == 8:
                 contents = 'UPDATE: Launch has slipped, new launch date is unconfirmed.'
             else:
                 logger.error("Invalid state for sending a notification - Launch: %s" % launch)
