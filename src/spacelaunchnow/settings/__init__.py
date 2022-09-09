@@ -261,14 +261,6 @@ TEMPLATES = [
     },
 ]
 
-ZINNIA_ENTRY_CONTENT_TEMPLATES = [
-    ('zinnia/_short_entry_detail.html', 'Short entry template'),
-]
-
-ZINNIA_ENTRY_DETAIL_TEMPLATES = [
-    ('zinnia/fullwidth_entry_detail.html', 'Fullwidth template'),
-]
-
 USE_GA = not config.DEBUG
 
 WSGI_APPLICATION = 'spacelaunchnow.wsgi.application'
@@ -305,8 +297,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-ZINNIA_MARKUP_LANGUAGE = 'markdown'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

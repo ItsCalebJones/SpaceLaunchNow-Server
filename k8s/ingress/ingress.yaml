@@ -5,7 +5,14 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: letsencrypt-production
-    nginx.ingress.kubernetes.io/proxy-body-size: 10m
+    nginx.ingress.kubernetes.io/proxy-body-size: 25m
+    nginx.ingress.kubernetes.io/proxy-buffering: "on"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_cache static-cache;
+      proxy_cache_key $scheme$host$request_uri;
+      proxy_cache_valid 429 10m;
+      proxy_cache_valid any 1m;
+      add_header X-Cache-Status $upstream_cache_status;
 spec:
   tls:
   - hosts:
