@@ -45,20 +45,20 @@ web:
   port: 8080
   autoscaling:
     enabled: true
-    minReplicas: 3
+    minReplicas: 8
     maxReplicas: 40
-    targetCPUUtilizationPercentage: 80
+    targetCPUUtilizationPercentage: 60
     targetMemoryUtilizationPercentage: 80
 
   budget:
     minAvailable: 1 # Ignored when replicaCount is 1
   resources:
     limits:
-      cpu: 300m
-      memory: 750Mi
-    requests:
-      cpu: 150m
+      cpu: 200m
       memory: 500Mi
+    requests:
+      cpu: 100m
+      memory: 250Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
