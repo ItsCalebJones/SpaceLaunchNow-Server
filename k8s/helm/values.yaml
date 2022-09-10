@@ -48,7 +48,7 @@ web:
     minReplicas: 8
     maxReplicas: 40
     targetCPUUtilizationPercentage: 60
-    targetMemoryUtilizationPercentage: 80
+#    targetMemoryUtilizationPercentage: 80
 
   budget:
     minAvailable: 1 # Ignored when replicaCount is 1
@@ -58,7 +58,7 @@ web:
       memory: 500Mi
     requests:
       cpu: 100m
-      memory: 250Mi
+      memory: 350Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
