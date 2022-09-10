@@ -54,7 +54,7 @@ web:
     minAvailable: 1 # Ignored when replicaCount is 1
   resources:
     limits:
-      cpu: 200m
+      cpu: 250m
       memory: 500Mi
     requests:
       cpu: 100m
