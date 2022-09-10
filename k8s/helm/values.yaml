@@ -47,7 +47,7 @@ web:
     enabled: true
     minReplicas: 8
     maxReplicas: 40
-    targetCPUUtilizationPercentage: 60
+    targetCPUUtilizationPercentage: 70
 #    targetMemoryUtilizationPercentage: 80
 
   budget:
