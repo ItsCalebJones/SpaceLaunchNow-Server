@@ -24,7 +24,7 @@ class DigitalOceanHelper:
         pools = self.get_node_pools()
 
         for pool in pools['node_pools']:
-            if 'prod' in pool['name']:
+            if 'scalable' in pool['tags']:
                 path = f"/v2/kubernetes/clusters/{K8S_CLUSTER_ID}/node_pools/{pool['id']}"
                 data = {
                     'name': pool['name'],
@@ -53,5 +53,5 @@ class DigitalOceanHelper:
     def get_node_pool_min(self):
         pools = self.get_node_pools()
         for pool in pools['node_pools']:
-            if 'prod' in pool['name']:
+            if 'scalable' in pool['tags']:
                 return pool['min_nodes']
