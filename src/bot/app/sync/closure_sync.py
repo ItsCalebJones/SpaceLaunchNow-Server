@@ -19,7 +19,6 @@ def parse_date(date_string):
         datetime = tzTex.localize(parser.parse(date_string))
     except Exception as e:
         datetime = tzTex.localize(parser.parse(date_string.split(', ', 1)[1]))
-    print(datetime)
     return datetime
 
 
@@ -64,7 +63,8 @@ def get_road_closure():
             start_datetime = parse_date(start_string)
 
             now = datetime.now(tz=pytz.utc)
-
+            if 'of' in closure_end:
+                closure_end = closure_end.split('of')[0].strip()
             if '–' in closure_end:
                 end_date = closure_end.split('–')[0].strip()
                 end_time = closure_end.split('–')[1].strip()
@@ -75,8 +75,10 @@ def get_road_closure():
             end_datetime = parse_date(end_string)
             if end_datetime < start_datetime:
                 end_datetime += timedelta(days=1)
+            print(f"start: {start_datetime} end: {end_datetime}")
 
             if end_datetime < now:
+                print('skipping as end date is in the past')
                 continue
 
             name = row.split('|')[0]
