@@ -3,20 +3,3 @@ repos:
     rev: v2.37.0
     hooks:
       - id: commitizen
-
-  - repo: https://github.com/psf/black
-    rev: 22.10.0
-    hooks:
-      - id: black
-        args: ["--target-version", "py310"]
-        types_or: [python, pyi]
-
-  - repo: https://github.com/pycqa/isort
-    rev: 5.10.1
-    hooks:
-      - id: isort
-
-  - repo: https://github.com/flakeheaven/flakeheaven
-    rev: 3.2.1
-    hooks:
-      - id: flakeheaven
