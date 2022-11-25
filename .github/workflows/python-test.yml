@@ -1,0 +1,20 @@
+name: Python Tests
+
+on:
+  pull_request:
+    branches:
+      - "workflow/**"
+    paths:
+      - src/**
+      - tests/**
+      - pyproject.toml
+      - poetry.lock
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Run Python Tests
+        uses: ./.github/actions/python-test

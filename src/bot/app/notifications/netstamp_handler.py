@@ -5,18 +5,15 @@ import pytz
 
 from bot.app.notifications.notification_handler import NotificationHandler
 from bot.app.notifications.social_handler import SocialEvents
-from bot.utils.util import seconds_to_time
-from spacelaunchnow import config
+
+from spacelaunchnow import settings
 
 logger = logging.getLogger(__name__)
 
 
 class NetstampHandler:
-    def __init__(self, debug=None):
-        if debug is None:
-            self.DEBUG = config.DEBUG
-        else:
-            self.DEBUG = debug
+    def __init__(self, debug=settings.DEBUG):
+        self.DEBUG = debug
         self.social_handler = SocialEvents()
         self.notification_handler = NotificationHandler()
 

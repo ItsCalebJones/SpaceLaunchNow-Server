@@ -5,14 +5,9 @@ from datetime import datetime
 import pytz
 
 from bot.app.buffer import BufferAPI, hashtags
-from spacelaunchnow.config import keys
+from spacelaunchnow import settings
 from bot.utils.util import seconds_to_time
-from spacelaunchnow import config
 
-token_key = keys['TOKEN_KEY']
-token_secret = keys['TOKEN_SECRET']
-consumer_key = keys['CONSUMER_KEY']
-consumer_secret = keys['CONSUMER_SECRET']
 
 logger = logging.getLogger(__name__)
 
@@ -148,11 +143,8 @@ def get_message(launch, notification_type):
 
 
 class SocialEvents:
-    def __init__(self, debug=None):
-        if debug is None:
-            self.DEBUG = config.DEBUG
-        else:
-            self.DEBUG = debug
+    def __init__(self, debug=settings.DEBUG):
+        self.DEBUG = debug
         self.buffer = BufferAPI()
 
     def send_to_all(self, launch, notification_type):

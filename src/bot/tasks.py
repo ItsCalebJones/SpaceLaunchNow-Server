@@ -1,17 +1,12 @@
 import logging
 
-from datetime import timedelta
-
 from bot.app.digest.digest import DigestServer
 
 from bot.app.events.event_tracker import EventTracker
 
 from bot.app.notifications.launch_event_tracker import LaunchEventTracker
 from bot.app.sync.closure_sync import get_road_closure
-from bot.app.sync.reddit_sync import get_submissions
-from bot.app.sync.twitter_sync import get_new_tweets
 from bot.app.sync.news_sync import get_news
-from celery.schedules import crontab
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +30,6 @@ def run_daily():
 #     logger.info('Task - Running Digest - Daily Cleanup...')
 #     data = check_for_orphaned_launches(send_webhook=send_webhook)
 #     return data
-
 
 
 def run_weekly():
@@ -125,11 +119,6 @@ def get_road_closures():
 #         return data
 
 
-def get_tweets_task():
-    logger.info('Task - Running get_new_tweets...')
-    get_new_tweets()
-
-
 def get_news_task():
     logger.info('Task - Running get_news...')
     get_news()
@@ -138,11 +127,6 @@ def get_news_task():
 def get_news_task_hourly():
     logger.info('Task - Running get_news...')
     get_news(limit=50)
-
-
-def get_reddit_submissions_task():
-    logger.info('Task - Running get_reddit_submissions...')
-    get_submissions()
 
 
 def launch_tracker():

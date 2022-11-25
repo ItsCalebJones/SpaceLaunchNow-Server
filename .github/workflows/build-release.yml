@@ -1,0 +1,62 @@
+name: Build LL Release
+
+on:
+  push:
+    branches:
+      - "workflow/initial_testing"
+    tags:
+      - 'v*'
+
+env:
+  IMAGE_NAME: space-launch-now-base
+  POETRY_HTTP_BASIC_TSD_USERNAME: $PRIVATE_USERNAME
+  POETRY_HTTP_BASIC_TSD_PASSWORD: $PRIVATE_PASSWORD
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Run Python Tests
+        uses: ./.github/actions/python-test
+
+  doctl-registry:
+    # Ensure test job passes before pushing image.
+    needs: test
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          tags: |
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
+
+      - name: Login to container registry
+        run: doctl registry login --expiry-seconds 600
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: registry.digitalocean.com/spacelaunchnow-registry/${{ env.IMAGE_NAME }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

@@ -1,3 +1,4 @@
+import logging
 from datetime import timedelta
 
 import pytz
@@ -5,10 +6,9 @@ from num2words import num2words
 
 from api.models import Launch
 from bot.app.digest.sender import send_twitter_update
-from bot.app.repository.launches_repository import *
+from django.utils.datetime_safe import datetime
+from bot.app.utils import update_notification_record, create_daily_digest_record
 
-
-# Get an instance of a logger
 from bot.utils.util import custom_strftime
 
 logger = logging.getLogger(__name__)

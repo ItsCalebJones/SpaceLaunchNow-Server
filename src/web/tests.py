@@ -7,7 +7,6 @@ from django.test import TestCase
 # Create your tests here.
 from rest_framework import status
 
-from bot.app.repository.launches_repository import LaunchRepository
 
 
 class WebTests(LLAPITests):

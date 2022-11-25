@@ -1,0 +1,21 @@
+---
+actions:
+  - .github/**/*
+deps:
+  - poetry.lock
+config:
+  - .editorconfig
+  - .yamllint.yml
+  - .gitignore
+  - pyproject.toml
+docs:
+  - README.md
+  - CONTRIBUTING.md
+  - CODE_OF_CONDUCT.md
+  - docs/**/*
+tests:
+  - src/**/test*.py
+source:
+  - src/**/*
+k8s:
+  - k8s/**/*

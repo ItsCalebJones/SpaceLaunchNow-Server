@@ -17,8 +17,6 @@ import sys
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from datetime import timedelta
 
-from spacelaunchnow import config
-
 BASE_DIR = os.path.abspath(os.path.dirname(__name__))
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
@@ -28,14 +26,17 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config.DJANGO_SECRET_KEY
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', config.DEBUG)
+DEBUG = os.getenv('DEBUG', False)
 DEBUG_LOGGING = os.getenv('DEBUG_LOGGING')
 LOGLEVEL = "DEBUG" if DEBUG_LOGGING else "INFO"
 
-DO_CLUSTER_ID = os.getenv('DO_CLUSTER_ID', None)
+if 'test' in sys.argv:
+    TESTING = True
+else:
+    TESTING = False
 
 if DEBUG:
     ALLOWED_HOSTS = ['*']
@@ -47,7 +48,10 @@ REST_FRAMEWORK = {
     'DEFAULT_MODEL_SERIALIZER_CLASS': 'rest_framework.serializers.ModelSerializer',
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
-    'DEFAULT_RENDERER_CLASSES': config.API_RENDERER,
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ),
     'DEFAULT_THROTTLE_CLASSES': (
         'api.throttle.RoleBasedUserRateThrottle',
     ),
@@ -229,6 +233,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 SILKY_PYTHON_PROFILER = True
 
 GEOIP_DATABASE = 'GeoLiteCity.dat'
+
 GEOIPV6_DATABASE = 'GeoLiteCityv6.dat'
 
 ROOT_URLCONF = 'spacelaunchnow.urls'
@@ -261,22 +266,20 @@ TEMPLATES = [
     },
 ]
 
-USE_GA = not config.DEBUG
+USE_GA = not DEBUG
 
 WSGI_APPLICATION = 'spacelaunchnow.wsgi.application'
 
 # Database
-# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-
+# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 DATABASES = {
      'default': {
-         'ENGINE': os.getenv('DATABASE_ENGINE', config.DATABASE['default']['ENGINE']),
-         'NAME': os.getenv('DATABASE_NAME', config.DATABASE['default']['NAME']),
-         'USER': os.getenv('DATABASE_USERNAME', config.DATABASE['default'].get('USER', None)),
-         'PASSWORD': os.getenv('DATABASE_PASSWORD', config.DATABASE['default'].get('PASSWORD', None)),
-         'HOST': os.getenv('DATABASE_HOST', config.DATABASE['default'].get('HOST', None)),
-         'PORT': os.getenv('DATABASE_PORT', config.DATABASE['default'].get('PORT', None)),
-         'CONN_MAX_AGE': None,
+         'ENGINE': os.getenv('DATABASE_ENGINE'),
+         'NAME': os.getenv('DATABASE_NAME'),
+         'USER': os.getenv('DATABASE_USERNAME'),
+         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+         'HOST': os.getenv('DATABASE_HOST'),
+         'PORT': os.getenv('DATABASE_PORT'),
      }
  }
 
@@ -317,49 +320,42 @@ USE_TZ = True
 
 DISCORD_WEBHOOK = os.getenv('WEBHOOK_URL', None)
 
-GA_TRACKING_ID = config.GOOGLE_ANALYTICS_TRACKING_ID
+# GOOGLE KEYS
+GA_TRACKING_ID = os.getenv('GOOGLE_ANALYTICS_TRACKING_ID', None)
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
 # Name of cache backend to cache user agents. If it not specified default
 # cache alias will be used. Set to `None` to disable caching.
 USER_AGENTS_CACHE = None
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = config.EMAIL_HOST
-EMAIL_PORT = config.EMAIL_PORT
-EMAIL_HOST_USER = config.EMAIL_HOST_USER
-EMAIL_HOST_PASSWORD = config.EMAIL_HOST_PASSWORD
-EMAIL_USE_TLS = config.EMAIL_HOST_TLS
-DEFAULT_FROM_EMAIL = config.EMAIL_FROM_EMAIL
-
-# AWS Storage Information
-
-AWS_STORAGE_BUCKET_NAME = config.STORAGE_BUCKET_NAME
-
-# Not using CloudFront?
-# S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-# Using CloudFront?
-# S3_CUSTOM_DOMAIN = CLOUDFRONT_DOMAIN
-# AWS_S3_CUSTOM_DOMAIN = config.S3_CUSTOM_DOMAIN
-
-# Static URL always ends in /
-# STATIC_URL = config.S3_CUSTOM_DOMAIN + "/"
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = os.getenv('EMAIL_HOST_TLS')
+DEFAULT_FROM_EMAIL = os.getenv('EMAIL_FROM_EMAIL')
 
 # If not using CloudFront, leave None in config.
-CLOUDFRONT_DOMAIN = config.CLOUDFRONT_DOMAIN
-CLOUDFRONT_ID = config.CLOUDFRONT_ID
+CLOUDFRONT_DOMAIN = os.getenv('CLOUDFRONT_DOMAIN')
+CLOUDFRONT_ID = os.getenv('CLOUDFRONT_ID')
 
 AWS_QUERYSTRING_AUTH = False
-AWS_ACCESS_KEY_ID = config.AWS_ACCESS_KEY_ID
-AWS_SECRET_ACCESS_KEY = config.AWS_SECRET_ACCESS_KEY
+# AWS_S3_SIGNATURE_VERSION = 'v2'
+AWS_STORAGE_BUCKET_NAME = os.getenv('STORAGE_BUCKET_NAME')
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL')
+
 AWS_S3_URL_PROTOCOL = 'https'
 AWS_LOCATION = 'static'
-AWS_S3_ENDPOINT_URL = config.AWS_S3_ENDPOINT_URL
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
-
 }
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.nyc3.digitaloceanspaces.com'
 
-STATIC_URL = f'https://{config.S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
+# Static URL always ends in /
+STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
 
 MEDIA_LOCATION = 'media'
 PROJECT_PATH = os.path.abspath(os.path.dirname(__name__))
@@ -419,21 +415,38 @@ if os.getenv('CACHE_BACKEND') and os.getenv('CACHE_LOCATION'):
         }
     }
 else:
-    CACHES = config.CACHE
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        }
+    }
 
 CACHALOT_TIMEOUT = 60
 
-
-IS_API = os.getenv('IS_API', config.IS_API)
-IS_WEBSERVER = os.getenv('IS_WEBSERVER', config.IS_WEBSERVER)
-IS_BOTSERVER = os.getenv('IS_BOTSERVER', config.IS_BOTSERVER)
-IS_ADMIN = os.getenv('IS_ADMIN', config.IS_ADMIN)
+IS_API = os.getenv('IS_API', True)
+IS_WEBSERVER = os.getenv('IS_WEBSERVER', True)
+IS_ADMIN = os.getenv('IS_ADMIN', True)
 IS_SLN = os.getenv('IS_SLN', True)
 IS_LL = os.getenv('IS_LL', False)
 
-GOOGLE_API_KEY = config.GOOGLE_API_KEY
 
-if 'test' in sys.argv:
-    TESTING = True
-else:
-    TESTING = False
+# Buffer SETTINGS
+
+BUFFER_CLIENT_ID = os.getenv('BUFFER_CLIENT_ID')
+BUFFER_SECRET_ID = os.getenv('BUFFER_SECRET_ID')
+BUFFER_ACCESS_TOKEN = os.getenv('BUFFER_ACCESS_TOKEN')
+
+# Twitter SETTINGS
+
+TOKEN_KEY = os.getenv('TOKEN_KEY')
+TOKEN_SECRET = os.getenv('TOKEN_SECRET')
+CONSUMER_KEY = os.getenv('CONSUMER_KEY')
+CONSUMER_SECRET = os.getenv('CONSUMER_SECRET')
+
+# FCM SETTINGS
+
+FCM_KEY = os.getenv('FCM_KEY')
+
+# DigitalOcean SETTINGS
+
+DO_CLUSTER_ID = os.getenv('DO_CLUSTER_ID', None)

@@ -1,19 +1,43 @@
-FROM python:3.10.4-slim-buster
+FROM python:3.10.4-slim-buster AS builder
 
-ARG SSH_PRIVATE_KEY
+ARG PRIVATE_USERNAME
+ARG PRIVATE_PASSWORD
+ENV POETRY_HTTP_BASIC_TSD_USERNAME $PRIVATE_USERNAME
+ENV POETRY_HTTP_BASIC_TSD_PASSWORD $PRIVATE_PASSWORD
+
 ENV PYTHONUNBUFFERED 1
-ENV DJANGO_ENV dev
 ENV DOCKER_CONTAINER 1
+ENV POETRY_CACHE_DIR='/var/cache/pypoetry'
+ENV POETRY_HOME='/usr/local'
 
-COPY src/ /code/
 WORKDIR /code/
+COPY pyproject.toml poetry.lock README.md /code/
 
-RUN pip install pipenv
-RUN apt-get update && apt-get install -y --no-install-recommends git ssh gcc python-dev libsqlite3-dev libpng-dev libjpeg-dev
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+     git \
+     gcc \
+     curl \
+     python-dev \
+     libsqlite3-dev \
+     libpng-dev \
+     libjpeg-dev
 RUN rm -rf /var/lib/apt/lists/*
 
-ARG EXTRA_INDEX_URL
-RUN pipenv install --system --deploy
-RUN apt-get purge -y --auto-remove git gcc python-dev libsqlite3-dev libpng-dev libjpeg-dev
+# Installing `poetry` package manager:
+# https://github.com/python-poetry/poetry
+RUN curl -sSL 'https://install.python-poetry.org' | python
+RUN poetry config virtualenvs.in-project true
+#RUN #poetry config http-basic.tsd $POETRY_HTTP_BASIC_PRIVATE_USERNAME $POETRY_HTTP_BASIC_PRIVATE_PASSWORD
+RUN poetry config experimental.new-installer false
+RUN poetry install --no-interaction --no-root --no-ansi
+
+FROM python:3.10.4-slim-buster
+
+WORKDIR /code/
+COPY --from=builder /code /code
+
+COPY src/ /code/
+ENV PATH="/code/.venv/bin:$PATH"
 
 EXPOSE 8000

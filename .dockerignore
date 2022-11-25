@@ -3,6 +3,3 @@
 .gitignore
 *env*/
 Dockerfile
-Jenkinsfile
-LICENSE.md
-README.md

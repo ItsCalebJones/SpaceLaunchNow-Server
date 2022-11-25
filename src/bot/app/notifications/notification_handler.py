@@ -8,7 +8,7 @@ from pyfcm import FCMNotification
 
 from bot.utils.util import get_fcm_topics_v2, get_fcm_all_topics_v3, \
     get_fcm_strict_topics_v3, get_fcm_not_strict_topics_v3, get_flutter_topics_v3
-from spacelaunchnow import config
+from spacelaunchnow import settings
 
 logger = logging.getLogger(__name__)
 
@@ -16,11 +16,12 @@ logger = logging.getLogger(__name__)
 # TODO refactor to separate files/modules per version
 
 class NotificationHandler:
-    def __init__(self, debug=None):
-        if debug is None:
-            self.DEBUG = config.DEBUG
-        else:
-            self.DEBUG = debug
+    def __init__(self, debug=settings.DEBUG):
+        self.DEBUG = debug
+        self.api_key = settings.FCM_KEY
+
+        if self.api_key is None:
+            raise Exception("No FCM_KEY provided.")
 
     def send_notification(self, launch, notification_type, notification):
         current_time = datetime.now(tz=pytz.utc)
@@ -131,7 +132,7 @@ class NotificationHandler:
             logger.info('Sending notification - %s' % contents)
             notification.last_notification_sent = datetime.now(tz=pytz.utc)
             notification.save()
-            push_service = FCMNotification(api_key=config.keys['FCM_KEY'])
+            push_service = FCMNotification(api_key=self.api_key)
             self.send_v2_notification(launch, notification_type, push_service, contents)
             self.send_v3_notification(launch, notification_type, push_service, contents)
 
@@ -253,7 +254,7 @@ class NotificationHandler:
         else:
             flutter_topics = "'flutter_debug_v2' in topics && 'custom' in topics"
 
-        push_service = FCMNotification(api_key=config.keys['FCM_KEY'])
+        push_service = FCMNotification(api_key=self.api_key)
 
         logger.info('----------------------------------------------------------')
         logger.info('Sending iOS Custom Flutter notification - %s' % pending.title)
@@ -280,7 +281,7 @@ class NotificationHandler:
         else:
             flutter_topics = "'flutter_debug_v3' in topics && 'custom' in topics"
 
-        push_service = FCMNotification(api_key=config.keys['FCM_KEY'])
+        push_service = FCMNotification(api_key=self.api_key)
 
         logger.info('----------------------------------------------------------')
         logger.info('Sending iOS Custom Flutter notification - %s' % pending.title)
@@ -307,7 +308,7 @@ class NotificationHandler:
         else:
             topics = "'debug_v2' in topics && 'custom' in topics"
 
-        push_service = FCMNotification(api_key=config.keys['FCM_KEY'])
+        push_service = FCMNotification(api_key=self.api_key)
 
         logger.info('----------------------------------------------------------')
         logger.info('Sending Android Custom notification - %s' % pending.title)
@@ -331,7 +332,7 @@ class NotificationHandler:
         else:
             topics = "'debug_v3' in topics && 'custom' in topics"
 
-        push_service = FCMNotification(api_key=config.keys['FCM_KEY'])
+        push_service = FCMNotification(api_key=self.api_key)
 
         logger.info('----------------------------------------------------------')
         logger.info('Sending Android Custom notification - %s' % pending.title)

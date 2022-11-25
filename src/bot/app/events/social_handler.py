@@ -1,16 +1,14 @@
 from bot.app.buffer import BufferAPI
 import logging
-from spacelaunchnow import config
+
+from spacelaunchnow import settings
 
 logger = logging.getLogger(__name__)
 
 
 class SocialHandler:
-    def __init__(self, debug=None):
-        if debug is None:
-            self.DEBUG = config.DEBUG
-        else:
-            self.DEBUG = debug
+    def __init__(self, debug=settings.DEBUG):
+        self.DEBUG = debug
         self.buffer = BufferAPI()
 
     def send_ten_minute_social(self, event):

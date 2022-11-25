@@ -3,21 +3,21 @@ from bot.app.events.notification_handler import EventNotificationHandler
 from bot.app.events.social_handler import SocialHandler
 from bot.app.notifications.news_notification_handler import NewsNotificationHandler
 from bot.models import ArticleNotification
-from spacelaunchnow import config
+
+
 import datetime
 import logging
 
 import pytz
 
+from spacelaunchnow import settings
+
 logger = logging.getLogger(__name__)
 
 
 class EventTracker:
-    def __init__(self, debug=None):
-        if debug is None:
-            self.DEBUG = config.DEBUG
-        else:
-            self.DEBUG = debug
+    def __init__(self, debug=settings.DEBUG):
+        self.DEBUG = debug
         self.twitter = SocialHandler()
         self.notification_handler = EventNotificationHandler()
         self.news_notification_handler = NewsNotificationHandler()

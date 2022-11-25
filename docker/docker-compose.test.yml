@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:11-alpine
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  test:
+    build:
+      context: ../
+      args:
+        - PRIVATE_USERNAME=${PRIVATE_USERNAME}
+        - PRIVATE_PASSWORD=${PRIVATE_PASSWORD}
+    image: sln_test
+    command: >
+      bash -c "coverage run --data-file=/code/coverage/.coverage manage.py test --settings=spacelaunchnow.settings.test
+      && coverage html --data-file=/code/coverage/.coverage
+      && coverage report --data-file=/code/coverage/.coverage"
+    volumes:
+      - ../report/coverage/:/code/coverage/
+      - ../report/htmlcov/:/code/htmlcov/
+      - ../report/xmlrunner/:/code/xmlrunner/
+    environment:
+      - DEBUG=true
+      - DJANGO_SECRET_KEY=j6^iquvp9%(6i(4jw07(tg%#o_!s=wh@+l977@l008%+&+3^j7
+      - DATABASE_NAME=postgres
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
+      - DATABASE_ENGINE=django.db.backends.postgresql_psycopg2
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+    depends_on:
+      - db

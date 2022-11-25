@@ -4,7 +4,6 @@ import digitalocean
 import requests
 
 from spacelaunchnow import settings
-from spacelaunchnow.config import DO_TOKEN
 
 DIGITAL_OCEAN_URL = "https://api.digitalocean.com"
 K8S_CLUSTER_ID = settings.DO_CLUSTER_ID

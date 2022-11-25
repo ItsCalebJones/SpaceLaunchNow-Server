@@ -3,17 +3,17 @@ import re
 
 from twitter import Twitter, OAuth, TwitterHTTPError
 
-from spacelaunchnow.config import keys
+from spacelaunchnow import settings
 
 logger = logging.getLogger(__name__)
 
-token_key = keys['TOKEN_KEY']
-token_secret = keys['TOKEN_SECRET']
-consumer_key = keys['CONSUMER_KEY']
-consumer_secret = keys['CONSUMER_SECRET']
+token_key = settings.TOKEN_KEY
+token_secret = settings.TOKEN_SECRET
+consumer_key = settings.CONSUMER_KEY
+consumer_secret = settings.CONSUMER_SECRET
 
 
-def send_twitter_update(message, DEBUG=True, status_id=None):
+def send_twitter_update(message, debug=True, status_id=None):
     twitter = Twitter(auth=OAuth(token_key, token_secret, consumer_key, consumer_secret))
     twitter_upload = Twitter(domain='upload.twitter.com',
                              auth=OAuth(token_key, token_secret, consumer_key, consumer_secret))
@@ -28,8 +28,8 @@ def send_twitter_update(message, DEBUG=True, status_id=None):
                 message = (message[:271] + '... ' + end)
             else:
                 message = (message[:277] + '...')
-        logger.info('Sending to Twitter | %s | %s | DEBUG %s' % (message, str(len(message)), DEBUG))
-        if not DEBUG:
+        logger.info('Sending to Twitter | %s | %s | DEBUG %s' % (message, str(len(message)), debug))
+        if not debug:
             logger.debug('Sending to twitter - message: %s' % message)
             if status_id:
                 response = twitter.statuses.update(status=message, in_reply_to_status_id=status_id)
@@ -37,7 +37,7 @@ def send_twitter_update(message, DEBUG=True, status_id=None):
                 response = twitter.statuses.update(status=message)
             return response['id']
 
-        if DEBUG:
+        if debug:
             twitter.direct_messages.new(user="koun7erfit", text=message)
             return None
 

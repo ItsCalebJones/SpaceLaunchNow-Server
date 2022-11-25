@@ -1,7 +1,7 @@
 from buffpy import API
 from buffpy.managers.profiles import Profiles
 
-from spacelaunchnow import config
+from spacelaunchnow import settings
 
 hashtags = '''\n
 .
@@ -13,15 +13,13 @@ hashtags = '''\n
 #moonlanding #spaceshuttle #spacewalk #esa #science #picoftheday #blueorigin #Florida #Falcon9
  #falconheavy #starship #ULA'''
 
+
 class BufferAPI:
-    def __init__(self, debug=None):
-        if debug is None:
-            self.DEBUG = config.DEBUG
-        else:
-            self.DEBUG = debug
-        self.api = API(client_id=config.BUFFER_CLIENT_ID,
-                       client_secret=config.BUFFER_SECRET_ID,
-                       access_token=config.BUFFER_ACCESS_TOKEN)
+    def __init__(self, debug=settings.DEBUG):
+        self.DEBUG = debug
+        self.api = API(client_id=settings.BUFFER_CLIENT_ID,
+                       client_secret=settings.BUFFER_SECRET_ID,
+                       access_token=settings.BUFFER_ACCESS_TOKEN)
 
     def send_to_all(self, message: str = None, image: str = None, link: str = None, now: bool = False, shorten: bool = True):
         profiles = Profiles(api=self.api).all()
