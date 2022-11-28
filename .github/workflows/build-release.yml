@@ -11,6 +11,9 @@ env:
   IMAGE_NAME: space-launch-now-base
   POETRY_HTTP_BASIC_TSD_USERNAME: $PRIVATE_USERNAME
   POETRY_HTTP_BASIC_TSD_PASSWORD: $PRIVATE_PASSWORD
+  RELEASE_NAME: sln-stage
+  DEPLOYMENT_NAMESPACE: sln-stage
+  VALUES: k8s/helm/values-debug.yaml
 
 jobs:
   test:
@@ -60,3 +63,30 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+    deploy:
+      needs: doctl-registry
+      name: Deploy Release to Kubernetes
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+        - name: Create kubeconfig
+          run: |
+            mkdir ${HOME}/.kube
+            echo ${{ secrets.KUBE_CONFIG }} | base64 --decode > ${HOME}/.kube/config
+            cat ${HOME}/.kube/config
+        - name: Use context
+          run: kubectl config use-context do-nyc1-k8s-spacelaunchnow-prod
+        - name: Deploy to K8s
+          uses: stefanprodan/kube-tools@v1
+          with:
+            kubectl: 1.23.
+            helmv3: 3.7.2
+            command: |
+              export DEPLOYS=$(helm ls --all-namespaces | grep $RELEASE_NAME | wc -l)
+              if [ $DEPLOYS  -eq 0 ];
+              then
+                echo "helm install $RELEASE_NAME k8s/helm/ --namespace=$DEPLOYMENT_NAMESPACE --values $VALUES;"
+              else
+                echo "helm upgrade $RELEASE_NAME k8s/helm/ --namespace=$DEPLOYMENT_NAMESPACE --values $VALUES --recreate-pods;"
+              fi

@@ -17,7 +17,7 @@ helm repo update
 ### 3) Install cert-manager and nginx-ingress
 (this will add DO load balancer)
 ```
-helm install cert-manager jetstack/cert-manager --version v1.2.0 --set installCRDs=true
+helm install cert-manager jetstack/cert-manager --version v1.5.5 --set installCRDs=true
 helm install nginx-ingress ingress-nginx \
 --repo https://kubernetes.github.io/ingress-nginx \
 --namespace ingress-nginx \
