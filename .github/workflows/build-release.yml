@@ -62,8 +62,8 @@ jobs:
         with:
           context: .
           build-args: |
-            PRIVATE_USERNAME: ${{ secrets.PRIVATE_USERNAME }}
-            PRIVATE_USERNAME: ${{ secrets.PRIVATE_PASSWORD }}
+            PRIVATE_USERNAME=${{ secrets.PRIVATE_USERNAME }}
+            PRIVATE_PASSWORD=${{ secrets.PRIVATE_PASSWORD }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
