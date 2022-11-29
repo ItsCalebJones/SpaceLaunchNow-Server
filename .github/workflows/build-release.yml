@@ -74,24 +74,29 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - uses: azure/setup-kubectl@v3
+        with:
+          version: '1.24.0'
+        id: install
+      - uses: azure/setup-helm@v3
+        with:
+          version: '3.8.1'
+        id: install
       - name: Create kubeconfig
         run: |
           mkdir ${HOME}/.kube
           echo ${{ secrets.KUBE_CONFIG }} | base64 --decode > ${HOME}/.kube/config
           cat ${HOME}/.kube/config
-      - name: Use context
-        run: kubectl config use-context do-nyc1-k8s-spacelaunchnow-prod
       - name: Deploy to K8s
-        uses: stefanprodan/kube-tools@v1
-        with:
-          kubectl: 1.23.
-          helmv3: 3.8.1
-          command: |
-            export DEPLOYS=$(helm ls --all-namespaces | grep $RELEASE_NAME | wc -l)
-            helm ls --all-namespaces
-            if [ $DEPLOYS  -eq 0 ];
-            then
-              echo "helm install $RELEASE_NAME k8s/helm/ --namespace=$DEPLOYMENT_NAMESPACE --values $VALUES;"
-            else
-              echo "helm upgrade $RELEASE_NAME k8s/helm/ --namespace=$DEPLOYMENT_NAMESPACE --values $VALUES --recreate-pods;"
-            fi
+        run: |
+          kubectl config use-context do-nyc1-k8s-spacelaunchnow-prod
+          kubectl version
+          helm version
+          
+          export DEPLOYS=$(helm ls --all-namespaces | grep $RELEASE_NAME | wc -l)
+          if [ $DEPLOYS  -eq 0 ];
+          then
+            echo "helm install $RELEASE_NAME k8s/helm/ --namespace=$DEPLOYMENT_NAMESPACE --values $VALUES;"
+          else
+            echo "helm upgrade $RELEASE_NAME k8s/helm/ --namespace=$DEPLOYMENT_NAMESPACE --values $VALUES --recreate-pods;"
+          fi
