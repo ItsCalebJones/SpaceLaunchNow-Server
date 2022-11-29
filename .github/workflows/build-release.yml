@@ -20,7 +20,7 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Run Python Tests
@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
@@ -73,15 +73,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install kubectl
         uses: azure/setup-kubectl@v3
         with:
-          version: '1.24.0'
+          version: 'v1.24.0'
       - name: Install helm
         uses: azure/setup-helm@v3
         with:
-          version: '3.8.1'
+          version: 'v3.8.1'
       - name: Create kubeconfig
         run: |
           mkdir ${HOME}/.kube
