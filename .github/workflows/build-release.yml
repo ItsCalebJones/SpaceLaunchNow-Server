@@ -17,6 +17,7 @@ env:
 
 jobs:
   test:
+    name: Run Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -28,7 +29,7 @@ jobs:
   doctl-registry:
     # Ensure test job passes before pushing image.
     needs: test
-
+    name: Deploy to DigitalOcean Container Registry
     runs-on: ubuntu-latest
 
     steps:
@@ -63,30 +64,30 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-    deploy:
-      needs: doctl-registry
-      name: Deploy Release to Kubernetes
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v2
-        - name: Create kubeconfig
-          run: |
-            mkdir ${HOME}/.kube
-            echo ${{ secrets.KUBE_CONFIG }} | base64 --decode > ${HOME}/.kube/config
-            cat ${HOME}/.kube/config
-        - name: Use context
-          run: kubectl config use-context do-nyc1-k8s-spacelaunchnow-prod
-        - name: Deploy to K8s
-          uses: stefanprodan/kube-tools@v1
-          with:
-            kubectl: 1.23.
-            helmv3: 3.7.2
-            command: |
-              export DEPLOYS=$(helm ls --all-namespaces | grep $RELEASE_NAME | wc -l)
-              if [ $DEPLOYS  -eq 0 ];
-              then
-                echo "helm install $RELEASE_NAME k8s/helm/ --namespace=$DEPLOYMENT_NAMESPACE --values $VALUES;"
-              else
-                echo "helm upgrade $RELEASE_NAME k8s/helm/ --namespace=$DEPLOYMENT_NAMESPACE --values $VALUES --recreate-pods;"
-              fi
+  deploy:
+    needs: doctl-registry
+    name: Deploy Release to Kubernetes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Create kubeconfig
+        run: |
+          mkdir ${HOME}/.kube
+          echo ${{ secrets.KUBE_CONFIG }} | base64 --decode > ${HOME}/.kube/config
+          cat ${HOME}/.kube/config
+      - name: Use context
+        run: kubectl config use-context do-nyc1-k8s-spacelaunchnow-prod
+      - name: Deploy to K8s
+        uses: stefanprodan/kube-tools@v1
+        with:
+          kubectl: 1.23.
+          helmv3: 3.7.2
+          command: |
+            export DEPLOYS=$(helm ls --all-namespaces | grep $RELEASE_NAME | wc -l)
+            if [ $DEPLOYS  -eq 0 ];
+            then
+              echo "helm install $RELEASE_NAME k8s/helm/ --namespace=$DEPLOYMENT_NAMESPACE --values $VALUES;"
+            else
+              echo "helm upgrade $RELEASE_NAME k8s/helm/ --namespace=$DEPLOYMENT_NAMESPACE --values $VALUES --recreate-pods;"
+            fi
