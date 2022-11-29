@@ -10,13 +10,6 @@ ENV DOCKER_CONTAINER 1
 ENV POETRY_CACHE_DIR='/var/cache/pypoetry'
 ENV POETRY_HOME='/usr/local'
 
-RUN echo "$PRIVATE_USERNAME"
-RUN echo "$PRIVATE_PASSWORD"
-RUN echo "$POETRY_HTTP_BASIC_TSD_USERNAME"
-RUN echo "$POETRY_HTTP_BASIC_TSD_PASSWORD"
-
-RUN printenv
-
 WORKDIR /code/
 COPY pyproject.toml poetry.lock README.md /code/
 
