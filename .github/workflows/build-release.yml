@@ -39,6 +39,13 @@ jobs:
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Login to container registry
+        run: doctl registry login --expiry-seconds 600
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: registry.digitalocean.com/spacelaunchnow-registry/${{ env.IMAGE_NAME }}
           tags: |
             type=schedule
             type=ref,event=branch
@@ -47,16 +54,6 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
             type=sha
-
-      - name: Login to container registry
-        run: doctl registry login --expiry-seconds 600
-
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: registry.digitalocean.com/spacelaunchnow-registry/${{ env.IMAGE_NAME }}
-
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
@@ -90,9 +87,11 @@ jobs:
       - name: Deploy to K8s
         run: |
           kubectl config use-context do-nyc1-k8s-spacelaunchnow-prod
+          
           kubectl version
           helm version
           
+          helm ls --all-namespaces
           export DEPLOYS=$(helm ls --all-namespaces | grep $RELEASE_NAME | wc -l)
           if [ $DEPLOYS  -eq 0 ];
           then
