@@ -4,6 +4,9 @@ services:
   web:
     build:
       context: ../
+      args:
+        - POETRY_HTTP_BASIC_TSD_USERNAME=${POETRY_HTTP_BASIC_TSD_USERNAME}
+        - POETRY_HTTP_BASIC_TSD_PASSWORD=${POETRY_HTTP_BASIC_TSD_PASSWORD}
     image: space_launch_now_web
     command: python manage.py runserver 0.0.0.0:8080
     ports:

@@ -11,8 +11,8 @@ services:
     build:
       context: ../
       args:
-        - PRIVATE_USERNAME=${PRIVATE_USERNAME}
-        - PRIVATE_PASSWORD=${PRIVATE_PASSWORD}
+        - PRIVATE_USERNAME=${POETRY_HTTP_BASIC_TSD_USERNAME}
+        - PRIVATE_PASSWORD=${POETRY_HTTP_BASIC_TSD_PASSWORD}
     image: sln_test
     command: >
       bash -c "coverage run --data-file=/code/coverage/.coverage manage.py test --settings=spacelaunchnow.settings.test
