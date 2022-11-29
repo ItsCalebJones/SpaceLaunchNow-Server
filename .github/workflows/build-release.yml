@@ -85,9 +85,10 @@ jobs:
         uses: stefanprodan/kube-tools@v1
         with:
           kubectl: 1.23.
-          helmv3: 3.7.2
+          helmv3: 3.8.1
           command: |
             export DEPLOYS=$(helm ls --all-namespaces | grep $RELEASE_NAME | wc -l)
+            helm ls --all-namespaces
             if [ $DEPLOYS  -eq 0 ];
             then
               echo "helm install $RELEASE_NAME k8s/helm/ --namespace=$DEPLOYMENT_NAMESPACE --values $VALUES;"
