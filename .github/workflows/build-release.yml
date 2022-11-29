@@ -74,14 +74,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - uses: azure/setup-kubectl@v3
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
         with:
           version: '1.24.0'
-        id: install
-      - uses: azure/setup-helm@v3
+      - name: Install helm
+        uses: azure/setup-helm@v3
         with:
           version: '3.8.1'
-        id: install
       - name: Create kubeconfig
         run: |
           mkdir ${HOME}/.kube
