@@ -4,17 +4,15 @@ from pyfcm import FCMNotification
 
 from bot.app.buffer import BufferAPI
 from spacelaunchnow import settings
-from spacelaunchnow.config import keys
-
 
 logger = logging.getLogger(__name__)
-
 
 class NewsNotificationHandler:
 
     def __init__(self, debug=settings.DEBUG):
         self.DEBUG = debug
         self.buffer = BufferAPI()
+        self.api_key = settings.FCM_KEY
 
     def send_notification(self, article):
         data = {"notification_type": 'featured_news',
@@ -51,7 +49,7 @@ class NewsNotificationHandler:
         self.send_to_fcm(article, data, topics, flutter_topics)
 
     def send_to_fcm(self, article, data, topics, flutter_topics):
-        push_service = FCMNotification(api_key=keys['FCM_KEY'])
+        push_service = FCMNotification(api_key=self.api_key)
 
         logger.info('----------------------------------------------------------')
         logger.info('Sending News notification - %s' % article.title)

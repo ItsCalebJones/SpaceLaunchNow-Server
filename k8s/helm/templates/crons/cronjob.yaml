@@ -1,7 +1,7 @@
 {{- $chart_name := .Chart.Name }}
 {{- $chart_version := .Chart.Version | replace "+" "_" }}
 {{- $release_name := .Release.Name }}
-
+{{- $name := include "django.fullname" . }}
 {{- range $job := .Values.jobs }}
 ---
 apiVersion: batch/v1
@@ -44,14 +44,38 @@ spec:
           - image: "{{ $job.image.repository }}:{{ $job.image.tag }}"
             imagePullPolicy: {{ $job.image.imagePullPolicy }}
             name: {{ $job.name }}
-            {{- with $job.env }}
             env:
+            - name: DJANGO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sln-auth-prod
+                  key: django-secret-key
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sln-auth-prod
+                  key: database-password
+            - name: DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: sln-auth-prod
+                  key: database-username
+            - name: DATABASE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: sln-auth-prod
+                  key: database-host
+            - name: DATABASE_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: sln-auth-prod
+                  key: database-port
+            {{- with $job.env }}
 {{ toYaml . | indent 12 }}
             {{- end }}
-            {{- with $job.envFrom }}
             envFrom:
-{{ toYaml . | indent 12 }}
-            {{- end }}
+              - configMapRef:
+                  name: {{ $name }}
             {{- if $job.command }}
             command: {{ $job.command }}
             {{- end }}

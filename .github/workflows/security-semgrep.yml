@@ -3,7 +3,7 @@ name: Security Semgrep
 on:
   pull_request:
     branches:
-      - "workflow/**"
+      - "**"
   schedule:
     - cron: 0 3 * * *
 

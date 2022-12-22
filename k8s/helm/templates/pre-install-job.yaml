@@ -25,10 +25,6 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         env:
-          - name: DEBUG
-            value: "True"
-          - name: SECRET_KEY
-            value: {{ required "env.secret.SECRET_KEY is a required value." .Values.env.secret.SECRET_KEY }}
         {{- range $k, $v := .Values.env.normal }}
           - name: {{ $k }}
             value: {{ $v | quote }}

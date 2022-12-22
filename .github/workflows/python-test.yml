@@ -3,7 +3,7 @@ name: Python Tests
 on:
   pull_request:
     branches:
-      - "workflow/**"
+      - "**"
     paths:
       - src/**
       - tests/**

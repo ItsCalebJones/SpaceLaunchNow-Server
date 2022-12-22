@@ -1,9 +1,9 @@
-name: Build LL Release
+name: Build SLN Release
 
 on:
   push:
     branches:
-      - "workflow/initial_testing"
+      - "master"
     tags:
       - 'v*'
 
@@ -11,9 +11,9 @@ env:
   IMAGE_NAME: space-launch-now-base
   POETRY_HTTP_BASIC_TSD_USERNAME: ${{ secrets.PRIVATE_USERNAME }}
   POETRY_HTTP_BASIC_TSD_PASSWORD: ${{ secrets.PRIVATE_PASSWORD }}
-  RELEASE_NAME: sln-stage
-  DEPLOYMENT_NAMESPACE: sln-stage
-  VALUES: k8s/helm/values-debug.yaml
+  RELEASE_NAME: sln-prod
+  DEPLOYMENT_NAMESPACE: sln-prod
+  VALUES: k8s/helm/values-prod.yaml
 
 jobs:
   test:
