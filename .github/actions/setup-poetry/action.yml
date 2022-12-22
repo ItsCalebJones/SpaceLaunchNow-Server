@@ -34,8 +34,6 @@ runs:
       id: pipx-env-vars
       shell: bash
       run: |
-        export POETRY_HTTP_BASIC_TSD_USERNAME=${{inputs.repo_username}}
-        export POETRY_HTTP_BASIC_TSD_PASSWORD=${{inputs.repo_password}}
         echo "pipx-home=${PIPX_HOME}" >> $GITHUB_OUTPUT
         echo "pipx-bin-dir=${PIPX_BIN_DIR}" >> $GITHUB_OUTPUT
     - name: Load pipx cache
@@ -71,5 +69,7 @@ runs:
       if: steps.setup-python.outputs.cache-hit != 'true'
       shell: bash
       run: |
+        export POETRY_HTTP_BASIC_TSD_USERNAME=${{inputs.repo_username}}
+        export POETRY_HTTP_BASIC_TSD_PASSWORD=${{inputs.repo_password}}
         printenv
         poetry install --all-extras --with dev
