@@ -12,10 +12,6 @@ permissions:
   checks: write
   contents: write
 
-env:
-  POETRY_HTTP_BASIC_TSD_USERNAME: $PRIVATE_USERNAME
-  POETRY_HTTP_BASIC_TSD_PASSWORD: $PRIVATE_PASSWORD
-
 jobs:
 # TODO: Add at some future time
 #  format:
@@ -63,8 +59,8 @@ jobs:
       - name: Setup Dependencies
         uses: ./.github/actions/setup-poetry
         with:
-          repo_username: $PRIVATE_USERNAME
-          repo_password: $PRIVATE_PASSWORD
+          repo_username: ${{ secrets.PRIVATE_USERNAME }}
+          repo_password: ${{ secrets.PRIVATE_PASSWORD }}
       - name: Run linters
         run: |
           poetry run flakeheaven lint .
@@ -78,8 +74,8 @@ jobs:
       - name: Setup Dependencies
         uses: ./.github/actions/setup-poetry
         with:
-          repo_username: $PRIVATE_USERNAME
-          repo_password: $PRIVATE_PASSWORD
+          repo_username: ${{ secrets.PRIVATE_USERNAME }}
+          repo_password: ${{ secrets.PRIVATE_PASSWORD }}
       - name: Run reporters
         run: |
           echo "# Code condition report" >> $GITHUB_STEP_SUMMARY
