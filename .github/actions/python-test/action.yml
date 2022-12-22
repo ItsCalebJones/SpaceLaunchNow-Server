@@ -30,8 +30,6 @@ runs:
     - name: Run Test Suite
       shell: bash
       run: |
-        echo "POETRY_HTTP_BASIC_TSD_USERNAME"
-        echo "POETRY_HTTP_BASIC_TSD_PASSWORD"
         docker-compose -f docker/docker-compose.test.yml run test
     - name: Upload Coverage Data
       if: inputs.upload-coverage
