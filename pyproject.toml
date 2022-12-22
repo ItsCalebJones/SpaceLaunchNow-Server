@@ -12,7 +12,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.10.4"
+python = ">=3.10.4,<4.0"
 buffpy = {git = "https://github.com/ItsCalebJones/buffpy.git", rev = "ItsCalebJones-patch-requirements"}
 boto3 = "==1.23.0"
 botocore = "==1.26.0"
@@ -61,7 +61,6 @@ sorl-thumbnail = "==12.9.0"
 sorl-thumbnail-serializer-field = "==0.2.1"
 twitter = "==1.18.0"
 tzlocal = "==4.2"
-unittest-xml-reporting = "==3.2.0"
 django-launch-library = {version = "^3.3.1", source = "tsd"}
 
 
@@ -78,6 +77,12 @@ flakeheaven = "^3.2.1"
 radon = "^5.1.0"
 vulture = "^2.6"
 cohesion = "^1.0.0"
+
+[tool.poetry.group.ci]
+optional = true
+
+[tool.poetry.group.ci.dependencies]
+unittest-xml-reporting = "==3.2.0"
 
 ###############################################################################
 #
