@@ -28,9 +28,8 @@ RUN rm -rf /var/lib/apt/lists/*
 # https://github.com/python-poetry/poetry
 RUN curl -sSL 'https://install.python-poetry.org' | python
 RUN poetry config virtualenvs.in-project true
-#RUN #poetry config http-basic.tsd $POETRY_HTTP_BASIC_PRIVATE_USERNAME $POETRY_HTTP_BASIC_PRIVATE_PASSWORD
 RUN poetry config experimental.new-installer false
-RUN poetry install --no-interaction --no-root --no-ansi
+RUN poetry install --no-interaction --no-root --no-ansi --with ci
 
 FROM python:3.10.4-slim-buster
 
