@@ -34,8 +34,8 @@ runs:
       id: pipx-env-vars
       shell: bash
       run: |
-        echo "POETRY_HTTP_BASIC_TSD_USERNAME: ${{inputs.repo_username}}"
-        echo "POETRY_HTTP_BASIC_TSD_PASSWORD: ${{inputs.repo_password}}"
+        export POETRY_HTTP_BASIC_TSD_USERNAME=${{inputs.repo_username}}
+        export POETRY_HTTP_BASIC_TSD_PASSWORD=${{inputs.repo_password}}
         echo "pipx-home=${PIPX_HOME}" >> $GITHUB_OUTPUT
         echo "pipx-bin-dir=${PIPX_BIN_DIR}" >> $GITHUB_OUTPUT
     - name: Load pipx cache
