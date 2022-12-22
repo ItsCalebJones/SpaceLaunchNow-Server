@@ -27,6 +27,7 @@ runs:
       id: pipx-env-vars
       shell: bash
       run: |
+        printenv
         echo "pipx-home=${PIPX_HOME}" >> $GITHUB_OUTPUT
         echo "pipx-bin-dir=${PIPX_BIN_DIR}" >> $GITHUB_OUTPUT
     - name: Load pipx cache
@@ -61,4 +62,6 @@ runs:
       # If we missed poetry cache install dependencies
       if: steps.setup-python.outputs.cache-hit != 'true'
       shell: bash
-      run: poetry install --all-extras --with dev
+      run: |
+        printenv
+        poetry install --all-extras --with dev

@@ -9,7 +9,7 @@ on:
       - tests/**
       - pyproject.toml
       - poetry.lock
-        
+
 env:
   POETRY_HTTP_BASIC_TSD_USERNAME: ${{ secrets.PRIVATE_USERNAME }}
   POETRY_HTTP_BASIC_TSD_PASSWORD: ${{ secrets.PRIVATE_PASSWORD }}
