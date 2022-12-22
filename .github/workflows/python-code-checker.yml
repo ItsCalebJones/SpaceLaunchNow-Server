@@ -63,8 +63,8 @@ jobs:
       - name: Setup Dependencies
         uses: ./.github/actions/setup-poetry
         with:
-          repo_username: ${{ secrets.$PRIVATE_USERNAME }}
-          repo_password: ${{ secrets.$PRIVATE_PASSWORD }}
+          repo_username: $PRIVATE_USERNAME
+          repo_password: $PRIVATE_PASSWORD
       - name: Run linters
         run: |
           poetry run flakeheaven lint .
@@ -78,8 +78,8 @@ jobs:
       - name: Setup Dependencies
         uses: ./.github/actions/setup-poetry
         with:
-          repo_username: ${{ secrets.$PRIVATE_USERNAME }}
-          repo_password: ${{ secrets.$PRIVATE_PASSWORD }}
+          repo_username: $PRIVATE_USERNAME
+          repo_password: $PRIVATE_PASSWORD
       - name: Run reporters
         run: |
           echo "# Code condition report" >> $GITHUB_STEP_SUMMARY
