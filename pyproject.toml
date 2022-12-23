@@ -121,6 +121,7 @@ max_doc_length = 120
 format = "grouped"
 show_source  = true
 ignore = [
+  "W503",
   "H601",
   "W503",
   "BLK100",
@@ -129,6 +130,11 @@ ignore = [
   "H60",
   "CFQ003"
 ]
+
+[tool.flakeheaven.plugins]
+pyflakes = ["+*"]
+
+
 
 [[tool.poetry.source]]
 name = "tsd"

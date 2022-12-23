@@ -7,14 +7,16 @@ from spacelaunchnow import settings
 
 DIGITAL_OCEAN_URL = "https://api.digitalocean.com"
 K8S_CLUSTER_ID = settings.DO_CLUSTER_ID
+DO_TOKEN = settings.DO_TOKEN
 
 logger = logging.getLogger(__name__)
 
 
 class DigitalOceanHelper:
     def __init__(self):
+        self.DO_TOKEN = settings
         self.manager = digitalocean.Manager(token=DO_TOKEN)
-        self.header = {'Authorization': f'Bearer {DO_TOKEN}'}
+        self.header = {"Authorization": f"Bearer {DO_TOKEN}"}
 
     def get_worker_node_count(self):
         return len(self.manager.get_all_droplets(tag_name="prod-worker"))
@@ -22,17 +24,17 @@ class DigitalOceanHelper:
     def update_node_pools(self, min_nodes, max_nodes):
         pools = self.get_node_pools()
 
-        for pool in pools['node_pools']:
-            if 'scalable' in pool['tags']:
+        for pool in pools["node_pools"]:
+            if "scalable" in pool["tags"]:
                 path = f"/v2/kubernetes/clusters/{K8S_CLUSTER_ID}/node_pools/{pool['id']}"
                 data = {
-                    'name': pool['name'],
-                    'count': min_nodes,
-                    'tags': pool['tags'],
-                    'labels': pool['labels'],
-                    'taints': pool['taints'],
-                    'min_nodes': min_nodes,
-                    'max_nodes': max_nodes,
+                    "name": pool["name"],
+                    "count": min_nodes,
+                    "tags": pool["tags"],
+                    "labels": pool["labels"],
+                    "taints": pool["taints"],
+                    "min_nodes": min_nodes,
+                    "max_nodes": max_nodes,
                 }
 
                 url = f"{DIGITAL_OCEAN_URL}{path}"
@@ -51,6 +53,6 @@ class DigitalOceanHelper:
 
     def get_node_pool_min(self):
         pools = self.get_node_pools()
-        for pool in pools['node_pools']:
-            if 'scalable' in pool['tags']:
-                return pool['min_nodes']
+        for pool in pools["node_pools"]:
+            if "scalable" in pool["tags"]:
+                return pool["min_nodes"]

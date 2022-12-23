@@ -1,15 +1,16 @@
 import os
+
 import django
+from api.models import Astronaut
+from configurations.models import AstronautStatus
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "spacelaunchnow.settings")
 django.setup()
 
-from api.models import *
-from configurations.models import *
 
-if __name__ == '__main__':
-    deceased, created = AstronautStatus.objects.get_or_create(name='Deceased')
-    retired = AstronautStatus.objects.get(name='Retired')
+if __name__ == "__main__":
+    deceased, created = AstronautStatus.objects.get_or_create(name="Deceased")
+    retired = AstronautStatus.objects.get(name="Retired")
     retired_with_death_date = Astronaut.objects.filter(status=retired).filter(date_of_death__isnull=False)
     for astronaut in retired_with_death_date:
         print("--------------------------------")

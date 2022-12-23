@@ -1,10 +1,10 @@
 import json
 import unittest
 
-from rest_framework import status
-
 from api.models import SpacecraftConfiguration
 from api.tests.test__base import LLAPITests
+from rest_framework import status
+
 from spacelaunchnow import settings
 
 

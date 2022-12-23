@@ -20,4 +20,3 @@ class DigestServer:
             weekly_check.check_launch_weekly(self.DEBUG)
         else:
             logger.error("Both daily and weekly false...ignoring request.")
-

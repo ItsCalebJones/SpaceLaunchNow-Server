@@ -6,13 +6,13 @@ from bot.app.sync.news_sync import get_related_news
 
 logger = logging.getLogger(__name__)
 
-TAG = 'Digest Server'
+TAG = "Digest Server"
 
 
 class Command(BaseCommand):
-    help = 'Run get News manually.'
+    help = "Run get News manually."
 
     def handle(self, *args, **options):
-        logger.info('Check related news!')
+        logger.info("Check related news!")
         get_related_news()
-        logger.info('Done!')
+        logger.info("Done!")

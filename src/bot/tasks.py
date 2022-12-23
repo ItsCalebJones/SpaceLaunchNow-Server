@@ -1,20 +1,18 @@
 import logging
 
 from bot.app.digest.digest import DigestServer
-
 from bot.app.events.event_tracker import EventTracker
-
 from bot.app.notifications.launch_event_tracker import LaunchEventTracker
 from bot.app.sync.closure_sync import get_road_closure
 from bot.app.sync.news_sync import get_news
 
 logger = logging.getLogger(__name__)
 
-TAG = 'Digest Server'
+TAG = "Digest Server"
 
 
 def run_daily():
-    logger.info('Task - Running Digest - Daily...')
+    logger.info("Task - Running Digest - Daily...")
     daily_digest = DigestServer()
     daily_digest.run(daily=True)
 
@@ -33,7 +31,7 @@ def run_daily():
 
 
 def run_weekly():
-    logger.info('Task - Running Digest - Weekly...')
+    logger.info("Task - Running Digest - Weekly...")
     daily_digest = DigestServer()
     daily_digest.run(weekly=True)
 
@@ -45,9 +43,8 @@ def run_weekly():
 #     repository.get_next_launches(next_count=100, all=True)
 
 
-
 def get_road_closures():
-    logger.info('Task - Get Road Closures!')
+    logger.info("Task - Get Road Closures!")
     get_road_closure()
 
 
@@ -120,23 +117,23 @@ def get_road_closures():
 
 
 def get_news_task():
-    logger.info('Task - Running get_news...')
+    logger.info("Task - Running get_news...")
     get_news()
 
 
 def get_news_task_hourly():
-    logger.info('Task - Running get_news...')
+    logger.info("Task - Running get_news...")
     get_news(limit=50)
 
 
 def launch_tracker():
-    logger.info('Task - Running Launch Event Tracker')
+    logger.info("Task - Running Launch Event Tracker")
     tracker = LaunchEventTracker()
     tracker.check_events()
 
 
 def event_tracker():
-    logger.info('Task - Running Event Tracker')
+    logger.info("Task - Running Event Tracker")
     tracker = EventTracker()
     tracker.check_events()
     tracker.check_news_item()

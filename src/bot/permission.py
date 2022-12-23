@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
 from rest_framework import permissions
 
 
@@ -15,7 +15,7 @@ class HasGroupPermission(permissions.BasePermission):
 
         if required_groups is None:
             return False
-        elif '_Public' in required_groups:
+        elif "_Public" in required_groups:
             return True
         else:
             return any([is_in_group(request.user, group_name) for group_name in required_groups])
