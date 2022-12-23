@@ -71,5 +71,5 @@ runs:
       run: |
         export POETRY_HTTP_BASIC_TSD_USERNAME=${{inputs.repo_username}}
         export POETRY_HTTP_BASIC_TSD_PASSWORD=${{inputs.repo_password}}
-        poetry config virtualenvs.in-project true
+        poetry config experimental.new-installer false
         poetry install --all-extras --with dev
