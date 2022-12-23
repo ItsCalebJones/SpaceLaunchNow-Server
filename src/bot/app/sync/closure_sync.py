@@ -9,6 +9,13 @@ from dateutil import parser, tz
 
 logger = logging.getLogger(__name__)
 
+user_agent = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/35.0.1916.47 "
+    "Safari/537.36"
+)
+
 
 def parse_date(date_string):
     tzTex = pytz.timezone("US/Central")
@@ -21,8 +28,7 @@ def parse_date(date_string):
 
 def get_road_closure():
 
-    url = "http://www.cameroncounty.us/spacex/"
-    user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36"
+    url = "https://www.cameroncountytx.gov/spacex/"
     request = urllib.request.Request(url, headers={"User-Agent": user_agent})
     try:
         response = urllib.request.urlopen(request)

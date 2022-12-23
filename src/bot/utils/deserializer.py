@@ -287,7 +287,7 @@ def get_lsp(data):
 
 
 def download_launcher_image(launcher):
-    result = requests.get("http://launchlibrary.net/1.3/rocket/" + str(launcher.id))
+    result = requests.get("https://launchlibrary.net/1.3/rocket/" + str(launcher.id))
     webrocket = result.json()["rockets"][0]
 
     request = requests.get(webrocket["imageURL"], stream=True)
