@@ -1,0 +1,18 @@
+repos:
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v2.37.0
+    hooks:
+      - id: commitizen
+  - repo: https://github.com/pycqa/isort
+    rev: fd5ba70665a37ec301a1f714ed09336048b3be63  # frozen: 5.9.3
+    hooks:
+      - id: isort
+        args: [ "--profile", "black" ]
+  - repo: https://github.com/psf/black
+    rev: ae2c0758c9e61a385df9700dc9c231bf54887041 # frozen: 22.3.0
+    hooks:
+      - id: black
+  - repo: https://github.com/pycqa/flake8
+    rev: dcd740bc0ebaf2b3d43e59a0060d157c97de13f3  # frozen: 3.9.2
+    hooks:
+      - id: flake8

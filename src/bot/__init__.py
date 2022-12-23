@@ -1,1 +1,1 @@
-default_app_config = 'bot.apps.BotConfig'
+default_app_config = "bot.apps.BotConfig"

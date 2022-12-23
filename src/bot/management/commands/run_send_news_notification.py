@@ -7,18 +7,17 @@ from bot.app.notifications.news_notification_handler import NewsNotificationHand
 
 logger = logging.getLogger(__name__)
 
-TAG = 'Notification Server'
+TAG = "Notification Server"
 
 
 class Command(BaseCommand):
-    help = 'Run Notifications manually.'
+    help = "Run Notifications manually."
 
     def add_arguments(self, parser):
-        parser.add_argument('-version', dest="version", type=str)
+        parser.add_argument("-version", dest="version", type=str)
 
     def handle(self, *args, **options):
-        logger.info('Running Notifications...')
+        logger.info("Running Notifications...")
         notification = NewsNotificationHandler()
-        article = Article.objects.filter(created_at__isnull=False).latest('created_at')
+        article = Article.objects.filter(created_at__isnull=False).latest("created_at")
         notification.send_notification(article)
-

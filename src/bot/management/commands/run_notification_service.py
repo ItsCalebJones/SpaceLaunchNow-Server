@@ -1,6 +1,4 @@
 import logging
-import os
-
 import time
 
 from django.core.management import BaseCommand
@@ -10,11 +8,11 @@ from bot.app.notifications.launch_event_tracker import LaunchEventTracker
 
 logger = logging.getLogger(__name__)
 
-TAG = 'Notification Service'
+TAG = "Notification Service"
 
 
 class Command(BaseCommand):
-    help = 'Runs the notification service.'
+    help = "Runs the notification service."
 
     def handle(self, *args, **options):
         self._run()

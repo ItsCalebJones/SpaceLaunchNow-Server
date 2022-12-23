@@ -1,4 +1,5 @@
 import uuid
+
 from django.db import models
 from django.db.models.functions import datetime
 from pytz import utc
@@ -58,11 +59,12 @@ class LaunchNotificationRecord(models.Model):
             if diff.total_seconds() > 0:
                 return True
         return False
+
     is_future.boolean = True
 
     class Meta:
-        verbose_name = 'Notification Record'
-        verbose_name_plural = 'Notification Records'
+        verbose_name = "Notification Record"
+        verbose_name_plural = "Notification Records"
 
 
 class DailyDigestRecord(models.Model):
@@ -76,8 +78,8 @@ class DailyDigestRecord(models.Model):
         return self.id
 
     class Meta:
-        verbose_name = 'Daily Digest - Record'
-        verbose_name_plural = 'Daily Digest - Records'
+        verbose_name = "Daily Digest - Record"
+        verbose_name_plural = "Daily Digest - Records"
 
 
 class DiscordChannel(models.Model):
@@ -86,7 +88,7 @@ class DiscordChannel(models.Model):
     name = models.CharField(max_length=4000)
 
     def __str__(self):
-        return '{} ({})'.format(self.name, self.channel_id)
+        return "{} ({})".format(self.name, self.channel_id)
 
     class Meta:
         verbose_name = "Channel"
@@ -101,7 +103,7 @@ class TwitterNotificationChannel(models.Model):
     default_subscribed = models.BooleanField(default=False)
 
     def __str__(self):
-        return '{} ({})'.format(self.name, self.channel_id)
+        return "{} ({})".format(self.name, self.channel_id)
 
     class Meta:
         verbose_name = "Twitter Notification Channel"
@@ -123,7 +125,7 @@ class TwitterUser(models.Model):
 
 class Tweet(models.Model):
     id = models.BigIntegerField(primary_key=True)
-    user = models.ForeignKey(TwitterUser, related_name='tweets', on_delete=models.CASCADE)
+    user = models.ForeignKey(TwitterUser, related_name="tweets", on_delete=models.CASCADE)
     text = models.CharField(max_length=1048, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
@@ -140,7 +142,7 @@ class SubredditNotificationChannel(models.Model):
     name = models.CharField(max_length=4000)
 
     def __str__(self):
-        return '{} ({})'.format(self.name, self.channel_id)
+        return "{} ({})".format(self.name, self.channel_id)
 
     class Meta:
         verbose_name = "Reddit Notification Channel"
@@ -159,7 +161,7 @@ class Subreddit(models.Model):
 
 class RedditSubmission(models.Model):
     id = models.CharField(primary_key=True, max_length=255)
-    subreddit = models.ForeignKey(Subreddit, related_name='submissions', on_delete=models.CASCADE)
+    subreddit = models.ForeignKey(Subreddit, related_name="submissions", on_delete=models.CASCADE)
     user = models.CharField(max_length=255, null=False)
     selftext = models.BooleanField(default=False)
     score = models.IntegerField(default=0)
@@ -184,7 +186,7 @@ class NewsNotificationChannel(models.Model):
     subscribed = models.BooleanField(default=False)
 
     def __str__(self):
-        return '{} ({})'.format(self.name, self.channel_id)
+        return "{} ({})".format(self.name, self.channel_id)
 
     class Meta:
         verbose_name = "News Notification Channel"

@@ -18,6 +18,7 @@ bot/.DS_Store
 **config.py
 .pypirc
 k8s/ingress/issuer/secret.yaml
-k8s/ingress/issuer/secret.yaml
 src/xmlrunner/**
-.env
+**.env
+report/
+secrets.yaml

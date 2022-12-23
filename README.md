@@ -7,6 +7,12 @@ Backend services and current web front end for Space Launch Now.
 * Firebase messaging notifications to Android and iOS clients
 * Kubernetes cluster node-scaling on predictive algorithm
 
+## Development Environment Setup
+1. Install [Poetry](https://python-poetry.org/docs/#installing-with-the-official-installer)
+2. Install python venv - `poetry install --with dev`
+3. Setup pre-commit - `poetry run pre-commit install`
+4. Run locally via `docker-compose` in `/docker`
+
 ## Authors
 
 * **Caleb Jones**           - *Initial work*    - [ItsCalebJones](https://github.com/ItsCalebJones)

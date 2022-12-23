@@ -3,8 +3,8 @@
 # Declare variables to be passed into your templates.
 
 image:
-  repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
-  tag: production
+  repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
+  tag: master
   pullPolicy: Always
 
 imagePullSecrets: []
@@ -26,19 +26,13 @@ env:
     CACHE_BACKEND: "django.core.cache.backends.memcached.MemcachedCache"
     CACHE_LOCATION: "sln-prod-memcache-memcached.sln-prod.svc.cluster.local:11211"
     DISABLE_THROTTLE: "False"
-
   service:
     IS_WEBSERVER: "False"
     IS_API: "False"
     IS_ADMIN: "False"
     CACHE_BACKEND: "django.core.cache.backends.memcached.MemcachedCache"
     CACHE_LOCATION: "sln-prod-memcache-memcached.sln-prod.svc.cluster.local:11211"
-    DISABLE_THROTTLE: "False"
-
-  secret:
-    SECRET_KEY: "NWRjMTdlZTctNzIzN2JkODA5YWJl"
-    # DATABASE_URL:
-    # REDIS_URL:
+  secret: {}
 
 web:
   replicaCount: 1
@@ -88,44 +82,10 @@ web:
     port: 8080
 
   ingress:
-    enabled: true
-    className: ""
-    annotations:
-     kubernetes.io/ingress.class: nginx
-     cert-manager.io/cluster-issuer: letsencrypt-production
-     nginx.ingress.kubernetes.io/proxy-body-size: 25m
-     nginx.ingress.kubernetes.io/proxy-buffering: "on"
-     nginx.ingress.kubernetes.io/configuration-snippet: |
-       proxy_cache static-cache;
-       proxy_cache_key $scheme$host$request_uri;
-       proxy_cache_valid 429 10m;
-       proxy_cache_valid any 1m;
-       add_header X-Cache-Status $upstream_cache_status;
-    # kubernetes.io/tls-acme: "true"
-    hosts:
-      - host: api.spacelaunchnow.me
-        paths:
-          - path: /
-            pathType: ImplementationSpecific
-      - host: spacelaunchnow.me
-        paths:
-          - path: /
-            pathType: ImplementationSpecific
-    tls:
-      - secretName: spacelaunchnow-tls
-        hosts:
-          - api.spacelaunchnow.me
-          - spacelaunchnow.me
+    enabled: false
 
 notification_service:
-  enabled: true
-  resources:
-    limits:
-      cpu: 900m
-      memory: 768Mi
-    requests:
-      cpu: 100m
-      memory: 128Mi
+  enabled: false
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -134,154 +94,4 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name:
 
-jobs:
-  - name: ll-flightclub-sync
-    image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
-      tag: production
-      imagePullPolicy: IfNotPresent
-    schedule: "0 5 * * *"
-    command: "['python', 'manage.py', 'run_flightclub_import']"
-    failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 5
-    concurrencyPolicy: Forbid
-    restartPolicy: OnFailure
-    resources:
-      limits:
-        cpu: 100m
-        memory: 256Mi
-      requests:
-        cpu: 100m
-        memory: 256Mi
-  - name: ll-rspacex-sync
-    image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
-      tag: production
-      imagePullPolicy: IfNotPresent
-    schedule: "0 5 * * *"
-    command: "['python', 'manage.py', 'run_spacex_core_importer']"
-    failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 5
-    concurrencyPolicy: Forbid
-    restartPolicy: OnFailure
-    resources:
-      limits:
-        cpu: 100m
-        memory: 256Mi
-      requests:
-        cpu: 100m
-        memory: 256Mi
-  - name: sln-daily-digest
-    image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
-      tag: production
-      imagePullPolicy: IfNotPresent
-    schedule: "30 12 * * *"
-    command: "['python', 'manage.py', 'run_digest', '--daily']"
-    failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 5
-    concurrencyPolicy: Forbid
-    restartPolicy: OnFailure
-    resources:
-      limits:
-        cpu: 100m
-        memory: 256Mi
-      requests:
-        cpu: 100m
-        memory: 256Mi
-  - name: sln-weekly-digest
-    image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
-      tag: production
-      imagePullPolicy: IfNotPresent
-    schedule: "0 12 * * mon"
-    command: "['python', 'manage.py', 'run_digest', '--weekly']"
-    failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 5
-    concurrencyPolicy: Forbid
-    restartPolicy: OnFailure
-    resources:
-      limits:
-        cpu: 100m
-        memory: 256Mi
-      requests:
-        cpu: 100m
-        memory: 256Mi
-  - name: sln-roadclosure-sync
-    image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
-      tag: production
-      imagePullPolicy: IfNotPresent
-    schedule: "0 */6 * * *"
-    command: "['python', 'manage.py', 'run_update_closures']"
-    failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 5
-    concurrencyPolicy: Forbid
-    restartPolicy: OnFailure
-    resources:
-      limits:
-        cpu: 100m
-        memory: 256Mi
-      requests:
-        cpu: 100m
-        memory: 256Mi
-  - name: sln-news-sync
-    image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
-      tag: production
-      imagePullPolicy: IfNotPresent
-    schedule: "*/5 * * * *"
-    command: "['python', 'manage.py', 'run_get_news']"
-    failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 5
-    concurrencyPolicy: Forbid
-    restartPolicy: OnFailure
-    resources:
-      limits:
-        cpu: 100m
-        memory: 256Mi
-      requests:
-        cpu: 100m
-        memory: 256Mi
-  - name: sln-news-deep-sync
-    image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
-      tag: production
-      imagePullPolicy: IfNotPresent
-    schedule: "0 */12 * * *"
-    command: "['python', 'manage.py', 'run_get_news', '--limit', '50']"
-    failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 5
-    concurrencyPolicy: Forbid
-    restartPolicy: OnFailure
-    resources:
-      limits:
-        cpu: 100m
-        memory: 256Mi
-      requests:
-        cpu: 100m
-        memory: 256Mi
-  - name: sln-autoscaler
-    image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
-      tag: production
-      imagePullPolicy: IfNotPresent
-    schedule: "*/7 * * * *"
-    command: "['python', 'manage.py', 'check_autoscaler']"
-    failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 5
-    concurrencyPolicy: Forbid
-    restartPolicy: OnFailure
-    resources:
-      limits:
-        cpu: 100m
-        memory: 256Mi
-      requests:
-        cpu: 100m
-        memory: 256Mi
-    env:
-    - name: DO_CLUSTER_ID
-      valueFrom:
-        secretKeyRef:
-          name:  do-cluster-id
-          key:  do-cluster-id
+jobs: []

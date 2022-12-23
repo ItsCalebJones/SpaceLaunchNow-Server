@@ -38,7 +38,7 @@ Remember that Kubernetes "args" are Docker's CMD (or command). Pretty confusing!
 # Usage
 
 1. Add our Helm chart repo `helm repo add django https://burke-software.gitlab.io/django-helm-chart/`
-2. Review our values.yaml. At a minimum you'll need to set env.secret.SECRET_KEY and env.secret.DATABASE_URL.
+2. Review our values.yaml.
 3. Install the chart `helm install your-app django/django -f your-values.yml`
 
 # Tips
