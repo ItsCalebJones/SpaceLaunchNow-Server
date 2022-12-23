@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "spacelaunchnow-server"
-version = "0.1.0"
+version = "3.2.0"
 description = "The Backend and Webserver for Space Launch Now"
 authors = ["Caleb Jones <ca.jones9119@gmail.com>"]
 readme = "README.md"
@@ -59,6 +59,7 @@ praw = "==7.6.0"
 regex = "==2022.8.17"
 sorl-thumbnail = "==12.9.0"
 sorl-thumbnail-serializer-field = "==0.2.1"
+python-semantic-release = "7.32.2"
 twitter = "==1.18.0"
 tzlocal = "==4.2"
 django-launch-library = {version = "^4.0.0", source = "tsd"}
@@ -73,7 +74,7 @@ isort = "5.10.1"
 commitizen = "^2.37.0"
 toml = "^0.10.2"
 pre-commit = "^2.20.0"
-flakeheaven = "^3.2.1"
+flakeheaven = "3.2.1"
 radon = "^5.1.0"
 vulture = "^2.6"
 cohesion = "^1.0.0"
@@ -83,6 +84,27 @@ optional = true
 
 [tool.poetry.group.ci.dependencies]
 unittest-xml-reporting = "==3.2.0"
+
+###############################################################################
+#
+#                             SEMANTIC RELEASE
+#
+###############################################################################
+
+[tool.semantic_release]
+version_variable = [
+    "src/version.py:__version__"
+]
+version_toml = [
+    "pyproject.toml:tool.poetry.version"
+]
+branch = "master"
+
+upload_to_repository = false
+upload_to_release = true
+
+build_command = "pip install poetry && poetry build"
+
 
 ###############################################################################
 #

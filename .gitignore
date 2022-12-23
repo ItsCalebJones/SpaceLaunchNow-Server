@@ -22,3 +22,4 @@ src/xmlrunner/**
 **.env
 report/
 secrets.yaml
+dist/**
