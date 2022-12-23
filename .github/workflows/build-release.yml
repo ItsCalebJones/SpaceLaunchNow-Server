@@ -11,7 +11,7 @@ env:
   IMAGE_NAME: space-launch-now-base
   POETRY_HTTP_BASIC_TSD_USERNAME: ${{ secrets.PRIVATE_USERNAME }}
   POETRY_HTTP_BASIC_TSD_PASSWORD: ${{ secrets.PRIVATE_PASSWORD }}
-  RELEASE_NAME: sln-prod
+  RELEASE_NAME: sln-prod-app
   DEPLOYMENT_NAMESPACE: sln-prod
   VALUES: k8s/helm/values-prod.yaml
 
@@ -101,6 +101,7 @@ jobs:
           mkdir ${HOME}/.kube
           echo ${{ secrets.KUBE_CONFIG }} | base64 --decode > ${HOME}/.kube/config
           cat ${HOME}/.kube/config
+          chmod go-r ${HOME}/.kube/config
       - name: Deploy to K8s
         run: |
           kubectl config use-context do-nyc1-k8s-spacelaunchnow-prod
