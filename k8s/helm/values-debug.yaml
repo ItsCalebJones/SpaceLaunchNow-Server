@@ -138,3 +138,8 @@ jobs:
           secretKeyRef:
             name: do-cluster-id
             key: do-cluster-id
+      - name: DO_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: sln-auth-prod
+            key: do-token

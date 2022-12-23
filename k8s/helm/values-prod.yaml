@@ -15,25 +15,31 @@ env:
   normal:
     DEBUG: "False"
     DATABASE_ENGINE: "django.db.backends.postgresql_psycopg2"
-    DATABASE_NAME: "spacelaunchnow_dev_04"
-    DATABASE_USERNAME: "spacelaunchnow_prod_user"
-    DATABASE_HOST: "nyc3-postgres-db-do-user-2683444-0.db.ondigitalocean.com"
-    DATABASE_PORT: "25060"
+    DATABASE_NAME: "spacelaunchnow_prod_01"
     CACHE_BACKEND: "django.core.cache.backends.memcached.MemcachedCache"
     CACHE_LOCATION: "sln-prod-memcache-memcached.sln-prod.svc.cluster.local:11211"
     DISABLE_THROTTLE: "False"
+    STORAGE_BUCKET_NAME: "spacelaunchnow-prod-east"
+    AWS_S3_ENDPOINT_URL: "nyc3.digitaloceanspaces.com"
+    EMAIL_HOST: "smtp.gmail.com"
+    EMAIL_PORT: "587"
+    EMAIL_HOST_TLS: "True"
+
   worker:
     IS_WEBSERVER: "False"
     IS_API: "False"
     IS_ADMIN: "False"
+
   web:
     IS_WEBSERVER: "True"
     IS_API: "True"
     IS_ADMIN: "True"
+
   service:
     IS_WEBSERVER: "False"
     IS_API: "False"
     IS_ADMIN: "False"
+
   secret: {}
 
 web:
@@ -45,12 +51,6 @@ web:
     maxReplicas: 40
     targetCPUUtilizationPercentage: 80
 #    targetMemoryUtilizationPercentage: 80
-  env:
-    - name: DO_CLUSTER_ID
-      valueFrom:
-        secretKeyRef:
-          name: do-cluster-id
-          key: do-cluster-id
 
   budget:
     minAvailable: 1 # Ignored when replicaCount is 1
@@ -139,8 +139,8 @@ serviceAccount:
 jobs:
   - name: ll-flightclub-sync
     image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
-      tag: production
+      repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
+      tag: master
       imagePullPolicy: IfNotPresent
     schedule: "0 5 * * *"
     command: "['python', 'manage.py', 'run_flightclub_import']"
@@ -157,8 +157,8 @@ jobs:
         memory: 256Mi
   - name: ll-rspacex-sync
     image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
-      tag: production
+      repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
+      tag: master
       imagePullPolicy: IfNotPresent
     schedule: "0 5 * * *"
     command: "['python', 'manage.py', 'run_spacex_core_importer']"
@@ -175,8 +175,8 @@ jobs:
         memory: 256Mi
   - name: sln-daily-digest
     image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
-      tag: production
+      repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
+      tag: master
       imagePullPolicy: IfNotPresent
     schedule: "30 12 * * *"
     command: "['python', 'manage.py', 'run_digest', '--daily']"
@@ -193,8 +193,8 @@ jobs:
         memory: 256Mi
   - name: sln-weekly-digest
     image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
-      tag: production
+      repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
+      tag: master
       imagePullPolicy: IfNotPresent
     schedule: "0 12 * * mon"
     command: "['python', 'manage.py', 'run_digest', '--weekly']"
@@ -211,8 +211,8 @@ jobs:
         memory: 256Mi
   - name: sln-roadclosure-sync
     image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
-      tag: production
+      repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
+      tag: master
       imagePullPolicy: IfNotPresent
     schedule: "0 */6 * * *"
     command: "['python', 'manage.py', 'run_update_closures']"
@@ -229,8 +229,8 @@ jobs:
         memory: 256Mi
   - name: sln-news-sync
     image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
-      tag: production
+      repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
+      tag: master
       imagePullPolicy: IfNotPresent
     schedule: "*/5 * * * *"
     command: "['python', 'manage.py', 'run_get_news']"
@@ -247,8 +247,8 @@ jobs:
         memory: 256Mi
   - name: sln-news-deep-sync
     image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
-      tag: production
+      repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
+      tag: master
       imagePullPolicy: IfNotPresent
     schedule: "0 */12 * * *"
     command: "['python', 'manage.py', 'run_get_news', '--limit', '50']"
@@ -265,8 +265,8 @@ jobs:
         memory: 256Mi
   - name: sln-autoscaler
     image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/sln-server
-      tag: production
+      repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
+      tag: master
       imagePullPolicy: IfNotPresent
     schedule: "*/7 * * * *"
     command: "['python', 'manage.py', 'check_autoscaler']"
@@ -287,3 +287,8 @@ jobs:
         secretKeyRef:
           name:  do-cluster-id
           key:  do-cluster-id
+    - name: DO_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: sln-auth-prod
+          key: do-token
