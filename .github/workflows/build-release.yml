@@ -1,5 +1,4 @@
 name: Build SLN Release
-runs-on: [self-hosted, linux, x64]
 
 on:
   push:
