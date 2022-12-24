@@ -1,4 +1,5 @@
 name: Build SLN Release
+runs-on: [self-hosted, linux, x64]
 
 on:
   push:
@@ -114,6 +115,6 @@ jobs:
             helm install $RELEASE_NAME k8s/helm/ --namespace=$DEPLOYMENT_NAMESPACE --values $VALUES
           else
             helm upgrade $RELEASE_NAME k8s/helm/ --namespace=$DEPLOYMENT_NAMESPACE --values $VALUES
-            kubectl rollout restart deploy $WEB_DEPLOYMENT
-            kubectl rollout restart deploy $SERVICE_DEPLOYMENT
+            kubectl rollout restart deploy $WEB_DEPLOYMENT --namespace=$DEPLOYMENT_NAMESPACE
+            kubectl rollout restart deploy $SERVICE_DEPLOYMENT --namespace=$DEPLOYMENT_NAMESPACE
           fi
