@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v3.3.4 (2023-01-03)
+### Fix
+* Issue with boolean environment variables not being correct type ([#215](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/issues/215)) ([`23f92a4`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/23f92a4bbc738b371cbecf0bfd5bad49289e19fb))
+
 ## v3.3.3 (2022-12-24)
 ### Fix
 * Delay using self-hosted ([`2e614b8`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/2e614b80578bba4ae8a1ebb66d8b08beb04a9d6c))
