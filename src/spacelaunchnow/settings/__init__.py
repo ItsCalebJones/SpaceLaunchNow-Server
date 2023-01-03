@@ -13,6 +13,11 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 import sys
 
+from environs import Env
+
+env = Env()
+env.read_env()
+
 BASE_DIR = os.path.abspath(os.path.dirname(__name__))
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
@@ -22,11 +27,11 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+SECRET_KEY = env.str("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", False)
-DEBUG_LOGGING = os.getenv("DEBUG_LOGGING")
+DEBUG = env.bool("DEBUG", False)
+DEBUG_LOGGING = env.str("DEBUG_LOGGING", None)
 LOGLEVEL = "DEBUG" if DEBUG_LOGGING else "INFO"
 
 if "test" in sys.argv:
@@ -71,12 +76,10 @@ SPECTACULAR_SETTINGS = {
     "VERSION": None,
 }
 
-DISABLE_THROTTLE = os.getenv("DISABLE_THROTTLE", False)
+DISABLE_THROTTLE = env.bool("DISABLE_THROTTLE", False)
 
 if DEBUG:
     DISABLE_THROTTLE = True
-
-DISCORD_WEBHOOK = os.getenv("WEBHOOK_URL", None)
 
 LOGIN_REDIRECT_URL = "/"
 
@@ -250,12 +253,12 @@ WSGI_APPLICATION = "spacelaunchnow.wsgi.application"
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 DATABASES = {
     "default": {
-        "ENGINE": os.getenv("DATABASE_ENGINE"),
-        "NAME": os.getenv("DATABASE_NAME"),
-        "USER": os.getenv("DATABASE_USERNAME"),
-        "PASSWORD": os.getenv("DATABASE_PASSWORD"),
-        "HOST": os.getenv("DATABASE_HOST"),
-        "PORT": os.getenv("DATABASE_PORT"),
+        "ENGINE": env.str("DATABASE_ENGINE"),
+        "NAME": env.str("DATABASE_NAME"),
+        "USER": env.str("DATABASE_USERNAME"),
+        "PASSWORD": env.str("DATABASE_PASSWORD"),
+        "HOST": env.str("DATABASE_HOST"),
+        "PORT": env.str("DATABASE_PORT"),
     }
 }
 
@@ -294,34 +297,34 @@ USE_L10N = True
 
 USE_TZ = True
 
-DISCORD_WEBHOOK = os.getenv("WEBHOOK_URL", None)
+DISCORD_WEBHOOK = env.str("WEBHOOK_URL", None)
 
 # GOOGLE KEYS
-GA_TRACKING_ID = os.getenv("GOOGLE_ANALYTICS_TRACKING_ID", None)
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+GA_TRACKING_ID = env.str("GOOGLE_ANALYTICS_TRACKING_ID", None)
+GOOGLE_API_KEY = env.str("GOOGLE_API_KEY", None)
 
 # Name of cache backend to cache user agents. If it not specified default
 # cache alias will be used. Set to `None` to disable caching.
 USER_AGENTS_CACHE = None
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = os.getenv("EMAIL_HOST")
-EMAIL_PORT = os.getenv("EMAIL_PORT")
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-EMAIL_USE_TLS = os.getenv("EMAIL_HOST_TLS")
-DEFAULT_FROM_EMAIL = os.getenv("EMAIL_FROM_EMAIL")
+EMAIL_HOST = env.str("EMAIL_HOST", None)
+EMAIL_PORT = env.str("EMAIL_PORT", None)
+EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", None)
+EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD", None)
+EMAIL_USE_TLS = env.str("EMAIL_HOST_TLS", None)
+DEFAULT_FROM_EMAIL = env.str("EMAIL_FROM_EMAIL", None)
 
 # If not using CloudFront, leave None in config.
-CLOUDFRONT_DOMAIN = os.getenv("CLOUDFRONT_DOMAIN")
-CLOUDFRONT_ID = os.getenv("CLOUDFRONT_ID")
+CLOUDFRONT_DOMAIN = env.str("CLOUDFRONT_DOMAIN", None)
+CLOUDFRONT_ID = env.str("CLOUDFRONT_ID", None)
 
 AWS_QUERYSTRING_AUTH = False
 # AWS_S3_SIGNATURE_VERSION = 'v2'
-AWS_STORAGE_BUCKET_NAME = os.getenv("STORAGE_BUCKET_NAME")
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL")
+AWS_STORAGE_BUCKET_NAME = env.str("STORAGE_BUCKET_NAME", None)
+AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID", None)
+AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY", None)
+AWS_S3_ENDPOINT_URL = env.str("AWS_S3_ENDPOINT_URL", None)
 
 AWS_S3_URL_PROTOCOL = "https"
 AWS_LOCATION = "static"
@@ -383,11 +386,11 @@ DEFAULT_FILE_STORAGE = DEFAULT_STORAGE
 
 AWS_IS_GZIPPED = True
 
-if os.getenv("CACHE_BACKEND") and os.getenv("CACHE_LOCATION"):
+if env.str("CACHE_BACKEND", None) and env.str("CACHE_LOCATION", None):
     CACHES = {
         "default": {
-            "BACKEND": os.getenv("CACHE_BACKEND"),
-            "LOCATION": os.getenv("CACHE_LOCATION"),
+            "BACKEND": env.str("CACHE_BACKEND", None),
+            "LOCATION": env.str("CACHE_LOCATION", None),
         }
     }
 else:
@@ -399,30 +402,30 @@ else:
 
 CACHALOT_TIMEOUT = 60
 
-IS_API = os.getenv("IS_API", True)
-IS_WEBSERVER = os.getenv("IS_WEBSERVER", True)
-IS_ADMIN = os.getenv("IS_ADMIN", True)
-IS_SLN = os.getenv("IS_SLN", True)
-IS_LL = os.getenv("IS_LL", False)
+IS_API = env.bool("IS_API", True)
+IS_WEBSERVER = env.bool("IS_WEBSERVER", True)
+IS_ADMIN = env.bool("IS_ADMIN", True)
+IS_SLN = env.bool("IS_SLN", True)
+IS_LL = env.bool("IS_LL", False)
 
 
 # Buffer SETTINGS
 
-BUFFER_CLIENT_ID = os.getenv("BUFFER_CLIENT_ID")
-BUFFER_SECRET_ID = os.getenv("BUFFER_SECRET_ID")
-BUFFER_ACCESS_TOKEN = os.getenv("BUFFER_ACCESS_TOKEN")
+BUFFER_CLIENT_ID = env.str("BUFFER_CLIENT_ID", None)
+BUFFER_SECRET_ID = env.str("BUFFER_SECRET_ID", None)
+BUFFER_ACCESS_TOKEN = env.str("BUFFER_ACCESS_TOKEN", None)
 
 # Twitter SETTINGS
 
-TOKEN_KEY = os.getenv("TOKEN_KEY")
-TOKEN_SECRET = os.getenv("TOKEN_SECRET")
-CONSUMER_KEY = os.getenv("CONSUMER_KEY")
-CONSUMER_SECRET = os.getenv("CONSUMER_SECRET")
+TOKEN_KEY = env.str("TOKEN_KEY", None)
+TOKEN_SECRET = env.str("TOKEN_SECRET", None)
+CONSUMER_KEY = env.str("CONSUMER_KEY", None)
+CONSUMER_SECRET = env.str("CONSUMER_SECRET", None)
 
 # FCM SETTINGS
 
-FCM_KEY = os.getenv("FCM_KEY")
+FCM_KEY = env.str("FCM_KEY", None)
 
 # DigitalOcean SETTINGS
-DO_CLUSTER_ID = os.getenv("DO_CLUSTER_ID", None)
-DO_TOKEN = os.getenv("DO_TOKEN", None)
+DO_CLUSTER_ID = env.str("DO_CLUSTER_ID", None)
+DO_TOKEN = env.str("DO_TOKEN", None)
