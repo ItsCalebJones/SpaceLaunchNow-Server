@@ -142,7 +142,6 @@ line_length = 120
 max_line_length = 120
 max_doc_length = 120
 format = "grouped"
-show_source  = true
 ignore = [
   "W503",
   "H601",
@@ -157,7 +156,20 @@ ignore = [
 [tool.flakeheaven.plugins]
 pyflakes = ["+*"]
 
+[tool.flakeheaven.exceptions."src/app/tests/"]
+pycodestyle = ["-*"]
+pyflakes = ["-*"]
 
+[tool.flakeheaven.exceptions."src/bot/tests/"]
+pycodestyle = ["-*"]
+pyflakes = ["-*"]
+
+[tool.flakeheaven.exceptions."src/**/migrations/*"]
+pycodestyle = ["-*"]
+pyflakes = ["-*"]
+
+[tool.flakeheaven.exceptions."src/manage.py"]
+pyflakes = ["-*"]
 
 [[tool.poetry.source]]
 name = "tsd"
