@@ -20,7 +20,7 @@ env:
     CACHE_LOCATION: "sln-prod-memcache-memcached.sln-prod.svc.cluster.local:11211"
     DISABLE_THROTTLE: "True"
     STORAGE_BUCKET_NAME: "spacelaunchnow-prod-east"
-    AWS_S3_ENDPOINT_URL: "nyc3.digitaloceanspaces.com"
+    AWS_S3_ENDPOINT_URL: "https://nyc3.digitaloceanspaces.com"
     EMAIL_HOST: "smtp.gmail.com"
     EMAIL_PORT: "587"
     EMAIL_HOST_TLS: "True"

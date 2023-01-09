@@ -63,7 +63,7 @@ jobs:
           repo_password: ${{ secrets.PRIVATE_PASSWORD }}
       - name: Run linters
         run: |
-          poetry run flakeheaven lint .
+          poetry run flakeheaven lint src/
   report:
 #    needs: format
     runs-on: ubuntu-latest
