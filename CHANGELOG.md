@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v3.3.5 (2023-01-09)
+### Fix
+* Aws endpoint url ([#216](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/issues/216)) ([`873ab1d`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/873ab1d5dd689d6a8e610285bdb472c3414e57be))
+
 ## v3.3.4 (2023-01-03)
 ### Fix
 * Issue with boolean environment variables not being correct type ([#215](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/issues/215)) ([`23f92a4`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/23f92a4bbc738b371cbecf0bfd5bad49289e19fb))
