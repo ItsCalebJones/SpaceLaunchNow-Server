@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v3.4.0 (2023-01-17)
+### Feature
+* Remove spacex api sync ([`7ff5e8c`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/7ff5e8c1ede101c77c3a8fcbea2d3cfdfc1416e3))
+
+### Fix
+* Properly pass needed envs ([`6797318`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/679731839c4a04b667d5f268f4fea006d32d7d6c))
+* Aws endpoint url ([`c3bc175`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/c3bc175c290f77622d25c06bf47843033b04b5be))
+
 ## v3.3.5 (2023-01-09)
 ### Fix
 * Aws endpoint url ([#216](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/issues/216)) ([`873ab1d`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/873ab1d5dd689d6a8e610285bdb472c3414e57be))
