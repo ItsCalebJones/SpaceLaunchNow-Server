@@ -70,6 +70,16 @@ spec:
                 secretKeyRef:
                   name: sln-auth-prod
                   key: database-port
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: sln-auth-prod
+                  key: aws-access-key-id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sln-auth-prod
+                  key: aws-secret-access-key
             {{- with $job.env }}
 {{ toYaml . | indent 12 }}
             {{- end }}
