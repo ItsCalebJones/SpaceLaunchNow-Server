@@ -1,0 +1,83 @@
+name: Build SLN Release
+
+on:
+  push:
+    branches:
+      - "master"
+    tags:
+      - '**'
+
+env:
+  IMAGE_NAME: space-launch-now-base
+  POETRY_HTTP_BASIC_TSD_USERNAME: ${{ secrets.PRIVATE_USERNAME }}
+  POETRY_HTTP_BASIC_TSD_PASSWORD: ${{ secrets.PRIVATE_PASSWORD }}
+  RELEASE_NAME: sln-prod-app
+  WEB_DEPLOYMENT: sln-prod-app-django-web
+  SERVICE_DEPLOYMENT: sln-prod-app-django-notification-service
+  DEPLOYMENT_NAMESPACE: sln-prod
+  VALUES: k8s/helm/values-prod.yaml
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Run Python Tests
+        uses: ./.github/actions/python-test
+
+  doctl-registry:
+    # Ensure test job passes before pushing image.
+    needs: test
+    name: Deploy to Container Registry
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Login to container registry
+        run: doctl registry login --expiry-seconds 600
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: registry.digitalocean.com/spacelaunchnow-registry/${{ env.IMAGE_NAME }}
+          tags: |
+            type=schedule
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
+
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: registry.digitalocean.com/spacelaunchnow-registry/${{ env.IMAGE_NAME }}:staging
+          labels: ${{ steps.meta.outputs.labels }}
+
+  release:
+    name: Build Release
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10.4'
+
+      - name: Python Semantic Release
+        uses: ItsCalebJones/python-semantic-release@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
