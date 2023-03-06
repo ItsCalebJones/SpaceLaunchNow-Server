@@ -214,8 +214,6 @@ GEOIPV6_DATABASE = "GeoLiteCityv6.dat"
 
 ROOT_URLCONF = "spacelaunchnow.urls"
 
-AWS_DEFAULT_ACL = "public-read"
-
 JET_MODULE_GOOGLE_ANALYTICS_CLIENT_SECRETS_FILE = os.path.join(BASE_DIR, "client_secrets.json")
 
 TEMPLATES = [
@@ -325,7 +323,7 @@ AWS_STORAGE_BUCKET_NAME = env.str("STORAGE_BUCKET_NAME", None)
 AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID", None)
 AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY", None)
 AWS_S3_ENDPOINT_URL = env.str("AWS_S3_ENDPOINT_URL", None)
-
+AWS_DEFAULT_ACL = "public-read"
 AWS_S3_URL_PROTOCOL = "https"
 AWS_LOCATION = "static"
 AWS_S3_OBJECT_PARAMETERS = {
