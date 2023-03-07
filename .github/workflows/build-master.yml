@@ -59,6 +59,9 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
+          build-args: |
+            PRIVATE_USERNAME=${{ secrets.PRIVATE_USERNAME }}
+            PRIVATE_PASSWORD=${{ secrets.PRIVATE_PASSWORD }}
           push: true
           tags: registry.digitalocean.com/spacelaunchnow-registry/${{ env.IMAGE_NAME }}:staging
           labels: ${{ steps.meta.outputs.labels }}
