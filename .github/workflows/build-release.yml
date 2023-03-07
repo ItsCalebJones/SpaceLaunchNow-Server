@@ -1,4 +1,4 @@
-name: Build SLN Release
+name: Deploy SLN Release
 
 on:
   workflow_dispatch:
