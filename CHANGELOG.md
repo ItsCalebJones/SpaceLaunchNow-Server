@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v3.5.0 (2023-03-07)
+### Feature
+* Update deps ([`072da71`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/072da71895acea3679aede6730586921eb51d5d7))
+
 ## v3.4.0 (2023-01-17)
 ### Feature
 * Remove spacex api sync ([`7ff5e8c`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/7ff5e8c1ede101c77c3a8fcbea2d3cfdfc1416e3))
