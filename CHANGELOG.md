@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v3.6.0 (2023-03-17)
+### Feature
+* Bump LL version ([`44eb9c1`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/44eb9c1778e7d90058aade19992d9e39957d12c3))
+
+### Fix
+* Run poetry lock ([`c12d1bd`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/c12d1bd9ba4fa03675554b40b617d9314520bf03))
+
 ## v3.5.0 (2023-03-07)
 ### Feature
 * Update deps ([`072da71`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/072da71895acea3679aede6730586921eb51d5d7))
