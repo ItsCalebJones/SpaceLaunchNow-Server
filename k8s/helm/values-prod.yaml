@@ -137,24 +137,6 @@ serviceAccount:
   name:
 
 jobs:
-  - name: ll-flightclub-sync
-    image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
-      tag: master
-      imagePullPolicy: Always
-    schedule: "0 5 * * *"
-    command: "['python', 'manage.py', 'run_flightclub_import']"
-    failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 5
-    concurrencyPolicy: Forbid
-    restartPolicy: OnFailure
-    resources:
-      limits:
-        cpu: 100m
-        memory: 256Mi
-      requests:
-        cpu: 100m
-        memory: 256Mi
   - name: sln-daily-digest
     image:
       repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
