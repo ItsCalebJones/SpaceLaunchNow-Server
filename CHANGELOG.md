@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v3.7.0 (2023-04-12)
+### Feature
+* Import latest LL with timezone feature ([`595a4e0`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/595a4e01fb866e3e530c077b3708f38532c2761e))
+
 ## v3.6.0 (2023-03-17)
 ### Feature
 * Bump LL version ([`44eb9c1`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/44eb9c1778e7d90058aade19992d9e39957d12c3))
