@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v3.8.0 (2023-04-16)
+### Feature
+* Bump min replicas for starship ([`ccfa176`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ccfa176ec3339a75bc18cfa714a5cc5791148c1c))
+
 ## v3.7.0 (2023-04-12)
 ### Feature
 * Import latest LL with timezone feature ([`595a4e0`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/595a4e01fb866e3e530c077b3708f38532c2761e))
