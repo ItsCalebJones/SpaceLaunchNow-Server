@@ -47,7 +47,7 @@ web:
   port: 8080
   autoscaling:
     enabled: true
-    minReplicas: 6
+    minReplicas: 10
     maxReplicas: 40
     targetCPUUtilizationPercentage: 80
 #    targetMemoryUtilizationPercentage: 80
