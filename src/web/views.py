@@ -82,7 +82,6 @@ def asset_file(request):
     return response
 
 
-@cache_page(60)
 def index(request):
     news = Article.objects.all().order_by("-created_at")[:6]
     last_six_hours = UTC_NOW - timedelta(hours=6)

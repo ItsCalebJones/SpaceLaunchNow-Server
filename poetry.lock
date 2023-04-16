@@ -175,7 +175,7 @@ crt = ["awscrt (==0.13.8)"]
 [[package]]
 name = "buffpy"
 version = "3.0"
-description = ""
+description = "Python library for Buffer App"
 category = "main"
 optional = false
 python-versions = "*"
