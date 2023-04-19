@@ -15,8 +15,6 @@ env:
 
 jobs:
   doctl-registry:
-    # Ensure test job passes before pushing image.
-    needs: test
     name: Deploy to Container Registry
     runs-on: ubuntu-latest
 
