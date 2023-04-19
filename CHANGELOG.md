@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v3.8.1 (2023-04-19)
+### Fix
+* **web:** Fix overhang on starship page ([`854c655`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/854c655de48e12ea13bffa3593690b243c253f8c))
+
 ## v3.8.0 (2023-04-16)
 ### Feature
 * Bump min replicas for starship ([`ccfa176`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ccfa176ec3339a75bc18cfa714a5cc5791148c1c))
