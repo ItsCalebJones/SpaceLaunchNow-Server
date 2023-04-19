@@ -14,6 +14,27 @@ env:
   VALUES: k8s/helm/values-prod.yaml
 
 jobs:
+  doctl-registry:
+    # Ensure test job passes before pushing image.
+    needs: test
+    name: Deploy to Container Registry
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Login to container registry
+        run: doctl registry login --expiry-seconds 600
+
+      - name: Retag Docker Image
+        run: |
+          docker tag registry.digitalocean.com/spacelaunchnow-registry/${{ env.IMAGE_NAME }}:staging registry.digitalocean.com/spacelaunchnow-registry/${{ env.IMAGE_NAME }}:master
+          docker push registry.digitalocean.com/spacelaunchnow-registry/${{ env.IMAGE_NAME }}:master
+
   deploy:
     name: Deploy to Kubernetes
     runs-on: ubuntu-latest
