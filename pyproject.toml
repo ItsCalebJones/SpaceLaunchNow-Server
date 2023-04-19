@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "spacelaunchnow-server"
-version = "3.8.1"
+version = "3.8.2"
 description = "The Backend and Webserver for Space Launch Now"
 authors = ["Caleb Jones <ca.jones9119@gmail.com>"]
 readme = "README.md"

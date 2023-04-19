@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v3.8.2 (2023-04-19)
+### Fix
+* Layout of starship dashboard ([`a42cea6`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a42cea6c9f5006450ec7d0fe1ceb1faee025b0f9))
+
 ## v3.8.1 (2023-04-19)
 ### Fix
 * **web:** Fix overhang on starship page ([`854c655`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/854c655de48e12ea13bffa3593690b243c253f8c))
