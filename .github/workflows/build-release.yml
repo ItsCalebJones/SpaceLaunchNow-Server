@@ -30,10 +30,12 @@ jobs:
 
       - name: Retag Docker Image
         run: |
+          docker pull registry.digitalocean.com/spacelaunchnow-registry/${{ env.IMAGE_NAME }}:master
           docker tag registry.digitalocean.com/spacelaunchnow-registry/${{ env.IMAGE_NAME }}:staging registry.digitalocean.com/spacelaunchnow-registry/${{ env.IMAGE_NAME }}:master
           docker push registry.digitalocean.com/spacelaunchnow-registry/${{ env.IMAGE_NAME }}:master
 
   deploy:
+    needs: doctl-registry
     name: Deploy to Kubernetes
     runs-on: ubuntu-latest
     steps:
