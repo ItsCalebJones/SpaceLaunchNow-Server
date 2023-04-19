@@ -80,6 +80,103 @@
                                         </div>
                                     </div>
                                 {% endvideo %}
+                                {% if next_up|get_type == "event" %}
+                <div class="col-md-12 mx-auto">
+                    <div class="card card-plain card-blog">
+                        <div class="card-header card-header-image"
+                             style="margin-left:16px!important; margin-right:16px!important;">
+                            <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
+                                 src="
+                                         {% if next_up.feature_image %}{{ next_up.feature_image.url }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
+                            <div class="colored-shadow"
+                                 style="background-image: url(
+                                         {% if next_up.feature_image %}{{ next_up.feature_image.url }}{% endif %}); opacity: 1;"></div>
+                        </div>
+                        <div class="card-body">
+
+                            <h6 class="card-category text-info"
+                                style="display:inline;">{{ next_up.type.name }}</h6>
+                            <h6 class="card-category"
+                                style="display:inline;">{{ next_up.date }}</h6>
+                            <h2 class="card-title">{{ next_up.name }}</h2>
+                            {% if next_up.location %}
+                                <span class="badge badge-pill badge-primary">{{ next_up.location }}</span>
+                            {% endif %}
+                            <p class="card-description mt-2">
+                                {{ next_up.description|linebreaks }}
+                            </p>
+                        </div>
+                        <div class="text-center">
+                            <a href="/event/{{ next_up.id }}" class="btn btn-primary btn-round">
+                                <i class="material-icons">calendar_today</i> Explore
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-md-12 mx-auto">
+                    <div class="card card-plain card-blog">
+                        <div class="card-header card-header-image"
+                             style="margin-left:16px!important; margin-right:16px!important;">
+                            {% if next_up.image_url %}
+                                <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
+                                     src="{{ next_up.image_url.url }}">
+                                <div class="colored-shadow"
+                                     style="background-image: url({{ next_up.image_url.url }}); opacity: 1;"></div>
+                            {% elif next_up.rocket.configuration.image_url %}
+                                <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
+                                     src="{{ next_up.rocket.configuration.image_url.url }}">
+                                <div class="colored-shadow"
+                                     style="background-image: url({{ next_up.rocket.configuration.image_url.url }}); opacity: 1;"></div>
+                            {% else %}
+                                <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
+                                     src="{% static 'img/header.jpg' %}">
+                                <div class="colored-shadow"
+                                     style="background-image: url({% static 'img/header.jpg' %}); opacity: 1;"></div>
+                            {% endif %}
+
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-category text-info"
+                                style="display:inline;">{{ next_up.mission.orbit.name }}</h6>
+                            <h6 class="card-category"
+                                style="display:inline;">{{ next_up.net }}</h6>
+                            <h2 class="card-title">{{ next_up.name }}</h2>
+                            <div class="row">
+                                <div class="col-md-12 mx-auto">
+                                    {% if next_up.pad %}
+                                        <span class="badge badge-pill badge-primary">{{ next_up.pad.name }}</span>
+                                    {% endif %}
+                                    {% if next_up.pad.location.name %}
+                                        <span class="badge badge-pill badge-primary">{{ next_up.pad.location.name }}</span>
+                                    {% endif %}
+                                    {% if next_up.probability > 0 %}
+                                        <span class="badge badge-pill badge-primary">Probability: {{ next_up.probability }}%</span>
+                                    {% endif %}
+                                    {% if next_up.hashtag %}
+                                        <span class="badge badge-pill badge-info">{{ next_up.hashtag }}</span>
+                                    {% endif %}
+                                    {% if next_up.rocket.firststage.all|length > 0 %}
+                                        {% for stage in next_up.rocket.firststage.all %}
+                                            {% if stage.landing.landing_location %}
+                                                <span class="badge badge-pill {% if stage.landing.success %} badge-success{% elif not stage.landing.success %}badge-danger {% else %} badge-primary {% endif %}"> {{ stage.launcher.serial_number }} - {{ stage.landing.landing_location.name }}</span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <p class="card-description mt-2">
+                                {{ next_up.mission.description|linebreaks }}
+                            </p>
+                            <div class="text-center">
+                                <a href="/launch/{{ next_up.id }}" class="btn btn-primary btn-round">
+                                    <i class="material-icons">calendar_today</i> Explore
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
                                 {% if updates.all|length > 0 %}
                                     <div class="section section-comments">
                                         <div class="row">
@@ -92,7 +189,8 @@
                                                             <a class="float-left">
                                                                 <div class="avatar">
                                                                     <img class="media-object"
-                                                                         src="{% if item.created_by.tsdstaff.profile %}{{ item.created_by.tsdstaff.profile.url }}{% else %}{% static "img/ll2_logo.png" %}{% endif %}">
+                                                                         src="
+                                                                                 {% if item.created_by.tsdstaff.profile %}{{ item.created_by.tsdstaff.profile.url }}{% else %}{% static "img/ll2_logo.png" %}{% endif %}">
                                                                 </div>
                                                             </a>
                                                             <div class="media-body">
@@ -134,10 +232,10 @@
                                                     <div class="card-header card-header-image">
                                                         <a href="{{ item.vid_url }}">
                                                             <img class="img"
-                                                                 src="{% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
+                                                                 src="
+                                                                         {% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
                                                             <div class="colored-shadow"
-                                                                 style="background-image: url('
-                                                                         {% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
+                                                                 style="background-image: url('{% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
                                                         </a>
                                                     </div>
                                                 </div>
@@ -161,246 +259,152 @@
                             </div>
                         {% endif %}
                     </div>
-
-                    {% if next_up|get_type == "event" %}
-                        <div class="col-md-11 mx-auto">
-                            <div class="card card-plain card-blog">
-                                <div class="card-header card-header-image"
-                                     style="margin-left:16px!important; margin-right:16px!important;">
-                                    <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
-                                         src="{% if next_up.feature_image %}{{ next_up.feature_image.url }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
-                                    <div class="colored-shadow"
-                                         style="background-image: url({% if next_up.feature_image %}{{ next_up.feature_image.url }}{% endif %}); opacity: 1;"></div>
-                                </div>
-                                <div class="card-body">
-
-                                    <h6 class="card-category text-info"
-                                        style="display:inline;">{{ next_up.type.name }}</h6>
-                                    <h6 class="card-category"
-                                        style="display:inline;">{{ next_up.date }}</h6>
-                                    <h2 class="card-title">{{ next_up.name }}</h2>
-                                    {% if next_up.location %}
-                                        <span class="badge badge-pill badge-primary">{{ next_up.location }}</span>
-                                    {% endif %}
-                                    <p class="card-description mt-2">
-                                        {{ next_up.description|linebreaks }}
-                                    </p>
-                                </div>
-                                <div class="text-center">
-                                    <a href="/event/{{ next_up.id }}" class="btn btn-primary btn-round">
-                                        <i class="material-icons">calendar_today</i> Explore
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    {% else %}
-                        <div class="col-md-11 mx-auto">
-                            <div class="card card-plain card-blog">
-                                <div class="card-header card-header-image"
-                                     style="margin-left:16px!important; margin-right:16px!important;">
-                                    {% if next_up.image_url %}
-                                        <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
-                                             src="{{ next_up.image_url.url }}">
-                                        <div class="colored-shadow"
-                                             style="background-image: url({{ next_up.image_url.url }}); opacity: 1;"></div>
-                                    {% elif next_up.rocket.configuration.image_url %}
-                                        <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
-                                             src="{{ next_up.rocket.configuration.image_url.url }}">
-                                        <div class="colored-shadow"
-                                             style="background-image: url({{ next_up.rocket.configuration.image_url.url }}); opacity: 1;"></div>
-                                    {% else %}
-                                        <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
-                                             src="{% static 'img/header.jpg' %}">
-                                        <div class="colored-shadow"
-                                             style="background-image: url({% static 'img/header.jpg' %}); opacity: 1;"></div>
-                                    {% endif %}
-
-                                </div>
-                                <div class="card-body">
-                                    <h6 class="card-category text-info"
-                                        style="display:inline;">{{ next_up.mission.orbit.name }}</h6>
-                                    <h6 class="card-category"
-                                        style="display:inline;">{{ next_up.net }}</h6>
-                                    <h2 class="card-title">{{ next_up.name }}</h2>
-                                    <div class="row">
-                                        <div class="col-md-12 mx-auto">
-                                            {% if next_up.pad %}
-                                                <span class="badge badge-pill badge-primary">{{ next_up.pad.name }}</span>
-                                            {% endif %}
-                                            {% if next_up.pad.location.name %}
-                                                <span class="badge badge-pill badge-primary">{{ next_up.pad.location.name }}</span>
-                                            {% endif %}
-                                            {% if next_up.probability > 0 %}
-                                                <span class="badge badge-pill badge-primary">Probability: {{ next_up.probability }}%</span>
-                                            {% endif %}
-                                            {% if next_up.hashtag %}
-                                                <span class="badge badge-pill badge-info">{{ next_up.hashtag }}</span>
-                                            {% endif %}
-                                            {% if next_up.rocket.firststage.all|length > 0 %}
-                                                {% for stage in next_up.rocket.firststage.all %}
-                                                    {% if stage.landing.landing_location %}
-                                                        <span class="badge badge-pill {% if stage.landing.success %} badge-success{% elif not stage.landing.success %}badge-danger {% else %} badge-primary {% endif %}"> {{ stage.launcher.serial_number }} - {{ stage.landing.landing_location.name }}</span>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                    <p class="card-description mt-2">
-                                        {{ next_up.mission.description|linebreaks }}
-                                    </p>
-                                    <div class="text-center">
-                                        <a href="/launch/{{ next_up.id }}" class="btn btn-primary btn-round">
-                                            <i class="material-icons">calendar_today</i> Explore
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    {% if combined|length > 0 %}
-                        <div class="text-center">
-                            <h1 class="title">Upcoming Events</h1>
-                        </div>
-                        <div class="col-lg-12">
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th class="text-center"></th>
-                                    <th>Name</th>
-                                    <th>Date</th>
-                                    <th>Description</th>
-                                </tr>
-                                </thead>
-                                {% for item in combined %}
-                                    {% if item|get_type == "event" %}
-                                        <tr>
-                                            <td>
-                                                {% if item.feature_image %}
-                                                    {% thumbnail item.feature_image "100x100" as im %}
-                                                        <img class="img-raised rounded-circle img-fluid text-center"
-                                                             src="{{ im.url }}"
-                                                             style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                                    {% endthumbnail %}
-                                                {% else %}
-                                                    <img class="img-raised rounded-circle img-fluid"
-                                                         style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;"
-                                                         src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
-                                                {% endif %}
-                                            </td>
-                                            <td><a href="/event/{{ item.id }}">{{ item.name }}</a>
-                                            <td>{{ item.date|date:"F j, Y" }}</td>
-                                            <td>{{ item.type.name }}</td>
-                                        </tr>
-                                    {% else %}
-                                        <tr>
-                                            <td>
-                                                {% if item.image_url %}
-                                                    {% thumbnail item.image_url "100x100" as im %}
-                                                        <img class="img-raised rounded-circle img-fluid text-center"
-                                                             src="{{ im.url }}"
-                                                             style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                                    {% endthumbnail %}
-                                                {% elif item.rocket.configuration.image_url %}
-                                                    {% thumbnail item.rocket.configuration.image_url "100x100" as im %}
-                                                        <img class="img-raised rounded-circle img-fluid text-center"
-                                                             src="{{ im.url }}"
-                                                             style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                                    {% endthumbnail %}
-                                                {% else %}
-                                                    <img class="img-raised rounded-circle img-fluid"
-                                                         style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;"
-                                                         src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
-                                                {% endif %}
-                                            </td>
-                                            <td><a href="/launch/{{ item.id }}">{{ item.name }}</a>
-                                            <td>{{ item.net|date:"F j, Y" }}</td>
-                                            <td>{{ item.mission.orbit.name }}</td>
-                                        </tr>
-                                    {% endif %}
-                                {% endfor %}
-                            </table>
-                        </div>
-                    {% endif %}
-
-                    {% if road_closures|length > 0 %}
-                        <div class="text-center">
-                            <h1 class="title">Road Closures</h1>
-                        </div>
-                        <div class="col-lg-12">
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th class="text-center">#</th>
-                                    <th>Name</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
-                                    <th>Window</th>
-                                </tr>
-                                </thead>
-                                {% for closure in road_closures %}
-                                    <tr>
-                                        <td class="text-center">{{ forloop.counter }}</td>
-                                        <td>{{ closure.title }}</td>
-                                        <td>{{ closure.status.name }}</td>
-                                        <td>{{ closure.window_start|date:"F j, Y" }}</td>
-                                        <td>{{ closure.window_start|date:"h:i a" }}
-                                            - {{ closure.window_end|date:"h:i a" }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </table>
-                        </div>
-                    {% endif %}
-
-                    {% if notices|length > 0 %}
-                        <div class="text-center">
-                            <h1 class="title">Public Notices</h1>
-                        </div>
-                        <div class="col-lg-12">
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th class="text-center">#</th>
-                                    <th>Type</th>
-                                    <th>Date</th>
-                                    <th>Link</th>
-                                </tr>
-                                </thead>
-                                {% for notice in notices %}
-                                    <tr>
-                                        <td class="text-center">{{ forloop.counter }}</td>
-                                        <td>{{ notice.type.name }}</td>
-                                        <td>{{ notice.date|date:"F j, Y" }}</td>
-                                        <td class="td-actions">
-                                            <button type="button" rel="tooltip" class="btn btn-white btn-round">
-                                                <a href="{{ notice.url }}"> <i class="material-icons">launch</i></a>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </table>
-                        </div>
-                    {% endif %}
                 </div>
+            </div>
+        <div class="col-lg-3 col-md-12 col-xl-3">
+            <!-- Categories Widget -->
+            {% include "web/sidebar_launches_only.html" %}
+        </div>
+        <div class="col-md-12 text-center">
+
+            {% if combined|length > 0 %}
+                <div class="text-center">
+                    <h1 class="title">Upcoming Events</h1>
+                </div>
+                <div class="col-lg-12">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th class="text-center"></th>
+                            <th>Name</th>
+                            <th>Date</th>
+                            <th>Description</th>
+                        </tr>
+                        </thead>
+                        {% for item in combined %}
+                            {% if item|get_type == "event" %}
+                                <tr>
+                                    <td>
+                                        {% if item.feature_image %}
+                                            {% thumbnail item.feature_image "100x100" as im %}
+                                                <img class="img-raised rounded-circle img-fluid text-center"
+                                                     src="{{ im.url }}"
+                                                     style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                                            {% endthumbnail %}
+                                        {% else %}
+                                            <img class="img-raised rounded-circle img-fluid"
+                                                 style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;"
+                                                 src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
+                                        {% endif %}
+                                    </td>
+                                    <td><a href="/event/{{ item.id }}">{{ item.name }}</a>
+                                    <td>{{ item.date|date:"F j, Y" }}</td>
+                                    <td>{{ item.type.name }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td>
+                                        {% if item.image_url %}
+                                            {% thumbnail item.image_url "100x100" as im %}
+                                                <img class="img-raised rounded-circle img-fluid text-center"
+                                                     src="{{ im.url }}"
+                                                     style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                                            {% endthumbnail %}
+                                        {% elif item.rocket.configuration.image_url %}
+                                            {% thumbnail item.rocket.configuration.image_url "100x100" as im %}
+                                                <img class="img-raised rounded-circle img-fluid text-center"
+                                                     src="{{ im.url }}"
+                                                     style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                                            {% endthumbnail %}
+                                        {% else %}
+                                            <img class="img-raised rounded-circle img-fluid"
+                                                 style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;"
+                                                 src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
+                                        {% endif %}
+                                    </td>
+                                    <td><a href="/launch/{{ item.id }}">{{ item.name }}</a>
+                                    <td>{{ item.net|date:"F j, Y" }}</td>
+                                    <td>{{ item.mission.orbit.name }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </table>
+                </div>
+            {% endif %}
+
+            {% if road_closures|length > 0 %}
+                <div class="col-lg-12 text-center">
+                    <h1 class="title text-center">Road Closures</h1>
+                </div>
+                <div class="col-lg-12">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Window</th>
+                        </tr>
+                        </thead>
+                        {% for closure in road_closures %}
+                            <tr>
+                                <td class="text-center">{{ forloop.counter }}</td>
+                                <td>{{ closure.title }}</td>
+                                <td>{{ closure.status.name }}</td>
+                                <td>{{ closure.window_start|date:"F j, Y" }}</td>
+                                <td>{{ closure.window_start|date:"h:i a" }}
+                                    - {{ closure.window_end|date:"h:i a" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            {% endif %}
+
+            {% if notices|length > 0 %}
+                <div class="text-center">
+                    <h1 class="title">Public Notices</h1>
+                </div>
+                <div class="col-lg-12">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Link</th>
+                        </tr>
+                        </thead>
+                        {% for notice in notices %}
+                            <tr>
+                                <td class="text-center">{{ forloop.counter }}</td>
+                                <td>{{ notice.type.name }}</td>
+                                <td>{{ notice.date|date:"F j, Y" }}</td>
+                                <td class="td-actions">
+                                    <button type="button" rel="tooltip" class="btn btn-white btn-round">
+                                        <a href="{{ notice.url }}"> <i class="material-icons">launch</i></a>
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            {% endif %}
+
+            <div class="row">
                 <div class="card card-plain card-blog" style="margin-top:0px!important;">
                     <div class="text-center">
                         <h1 class="title">Vehicles</h1>
                     </div>
                 </div>
-                <div class="row">
-                    {% if vehicles|length > 0 %}
-                        {% for vehicle in vehicles %}
-                            <div class="col-sm-6">
-                                {% include 'web/views/small_launcher.html' with vehicle=vehicle %}
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
+                {% if vehicles|length > 0 %}
+                    {% for vehicle in vehicles %}
+                        <div class="col-md-4 col-sm-6">
+                            {% include 'web/views/small_launcher.html' with vehicle=vehicle %}
+                        </div>
+                    {% endfor %}
+                {% endif %}
             </div>
-        </div>
-        <div class="col-lg-3 col-md-12 col-xl-3">
-            <!-- Categories Widget -->
-            {% include "web/sidebar_launches_only.html" %}
         </div>
     </div>
     </div>

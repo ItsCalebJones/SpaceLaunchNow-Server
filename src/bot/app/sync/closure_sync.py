@@ -43,53 +43,58 @@ def get_road_closure():
     # Parse the html content
     soup = BeautifulSoup(html_content, "lxml")
     tableRows = []
-    gdp_table = soup.find("table")
-    gdp_table_data = gdp_table.tbody.find_all("tr")  # contains 2 rows
-    for row in gdp_table_data:
-        aux = ""
-        for cell in row.find_all("td"):
-            aux += str(cell.text.strip()) + "|"
-        tableRows.append(aux[:-1])
+    gdp_table = soup.find_all("tbody")
+    gdp_table_data = []
+    for table in gdp_table:
+        gdp_table_data.append(table.find_all("tr"))  # contains 2 rows
+    for table in gdp_table_data:
+        for row in table:
+            aux = ""
+            for cell in row.find_all("td"):
+                aux += str(cell.text.strip()) + "|"
+            tableRows.append(aux[:-1])
 
     closures = []
     for row in tableRows:
         try:
-            row = row.replace("a.m.", "AM")
-            row = row.replace("p.m.", "PM")
+            if len(row) > 3:
+                row = row.replace("a.m.", "AM")
+                row = row.replace("p.m.", "PM")
 
-            start_date = row.split("|")[1]
-            closure_time = row.split("|")[2]
-            start_time = closure_time.split(" to ")[0].strip()
-            closure_end = closure_time.split(" to ")[1].strip()
+                start_date = row.split("|")[1]
+                closure_time = row.split("|")[2]
+                start_time = closure_time.split(" to ")[0].strip()
+                closure_end = closure_time.split(" to ")[1].strip()
 
-            start_string = start_date + " " + start_time
-            start_datetime = parse_date(start_string)
+                start_string = start_date + " " + start_time
+                start_datetime = parse_date(start_string)
 
-            now = datetime.now(tz=pytz.utc)
-            if "of" in closure_end:
-                closure_end = closure_end.split("of")[0].strip()
-            if "–" in closure_end:
-                end_date = closure_end.split("–")[0].strip()
-                end_time = closure_end.split("–")[1].strip()
-                end_date = datetime.strptime(end_date, "%B %d").replace(year=now.year).strftime("%A, %B %d, %Y")
-                end_string = end_date + " " + end_time
-            else:
-                end_string = start_date + " " + closure_end
-            end_datetime = parse_date(end_string)
-            if end_datetime < start_datetime:
-                end_datetime += timedelta(days=1)
-            print(f"start: {start_datetime} end: {end_datetime}")
+                now = datetime.now(tz=pytz.utc)
+                if "of" in closure_end:
+                    closure_end = closure_end.split("of")[0].strip()
+                if "–" in closure_end:
+                    end_date = closure_end.split("–")[0].strip()
+                    end_time = closure_end.split("–")[1].strip()
+                    end_date = datetime.strptime(end_date, "%B %d").replace(year=now.year).strftime("%A, %B %d, %Y")
+                    end_string = end_date + " " + end_time
+                else:
+                    end_string = start_date + " " + closure_end
+                end_datetime = parse_date(end_string)
+                if end_datetime < start_datetime:
+                    end_datetime += timedelta(days=1)
+                print(f"start: {start_datetime} end: {end_datetime}")
 
-            if end_datetime < now:
-                print("skipping as end date is in the past")
-                continue
+                if end_datetime < now:
+                    print("skipping as end date is in the past")
+                    continue
 
-            name = row.split("|")[0]
-            status = row.split("|")[3].replace("Closure", "").strip()
-            closures.append([start_datetime, end_datetime, name, status])
+                name = row.split("|")[0]
+                status = row.split("|")[3].replace("Closure", "").strip()
+                closures.append([start_datetime, end_datetime, name, status])
         except Exception as e:
             logger.error(row)
             logger.error(e)
+            continue
 
     logger.info("Found %s closures" % len(closures))
     for closure in closures:
