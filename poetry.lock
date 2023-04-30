@@ -918,14 +918,14 @@ resolved_reference = "73df4f1a7378e7e3db1e3c09b0a14156463ada02"
 
 [[package]]
 name = "django-launch-library"
-version = "4.8.0"
+version = "4.9.0"
 description = "The Django lib for supporting Launch Library."
 category = "main"
 optional = false
 python-versions = ">=3.10.4,<4.0.0"
 files = [
-    {file = "django_launch_library-4.8.0-py3-none-any.whl", hash = "sha256:17ae4d4ba4394b8348093aaa12f27257d4710894d52b0a08da32ac9d7d66e477"},
-    {file = "django_launch_library-4.8.0.tar.gz", hash = "sha256:d14cbdf625acc47e1d493c5a902d4a335f9343da0787efb47d35602ccd3c0962"},
+    {file = "django_launch_library-4.9.0-py3-none-any.whl", hash = "sha256:932faef3bf423afa1657105e65bda68d063f89d7308a0389133f5c3d7f611a39"},
+    {file = "django_launch_library-4.9.0.tar.gz", hash = "sha256:5363cbc7d7d76f0beea90a87bc02735154ef30fa7fba6372e53ab0a88d47e713"},
 ]
 
 [package.dependencies]
