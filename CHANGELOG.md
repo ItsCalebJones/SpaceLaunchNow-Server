@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v3.9.0 (2023-05-07)
+### Feature
+* Bump LL update poetry.lock ([`ad99769`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ad99769f589742f31db3a502cb52bf6f40234d60))
+
 ## v3.8.2 (2023-04-19)
 ### Fix
 * Layout of starship dashboard ([`a42cea6`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a42cea6c9f5006450ec7d0fe1ceb1faee025b0f9))
