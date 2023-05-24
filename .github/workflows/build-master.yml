@@ -10,6 +10,7 @@ on:
 
 env:
   IMAGE_NAME: space-launch-now-base
+  REGISTRY_NAME: registry.digitalocean.com/spacelaunchnow-registry/
   POETRY_HTTP_BASIC_TSD_USERNAME: ${{ secrets.PRIVATE_USERNAME }}
   POETRY_HTTP_BASIC_TSD_PASSWORD: ${{ secrets.PRIVATE_PASSWORD }}
   RELEASE_NAME: sln-prod-app
@@ -64,7 +65,7 @@ jobs:
             PRIVATE_USERNAME=${{ secrets.PRIVATE_USERNAME }}
             PRIVATE_PASSWORD=${{ secrets.PRIVATE_PASSWORD }}
           push: true
-          tags: registry.digitalocean.com/spacelaunchnow-registry/${{ env.IMAGE_NAME }}:staging
+          tags: ${{ steps.meta.outputs.tags }}, ${{env.REGISTRY_NAME}}${{ env.IMAGE_NAME }}:staging
           labels: ${{ steps.meta.outputs.labels }}
 
   release:

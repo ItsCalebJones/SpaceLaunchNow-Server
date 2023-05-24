@@ -5,6 +5,7 @@ on:
 
 env:
   IMAGE_NAME: space-launch-now-base
+  REGISTRY_NAME: registry.digitalocean.com/spacelaunchnow-registry/
   POETRY_HTTP_BASIC_TSD_USERNAME: ${{ secrets.PRIVATE_USERNAME }}
   POETRY_HTTP_BASIC_TSD_PASSWORD: ${{ secrets.PRIVATE_PASSWORD }}
   RELEASE_NAME: sln-prod-app
@@ -30,9 +31,9 @@ jobs:
 
       - name: Retag Docker Image
         run: |
-          docker pull registry.digitalocean.com/spacelaunchnow-registry/${{ env.IMAGE_NAME }}:staging
-          docker tag registry.digitalocean.com/spacelaunchnow-registry/${{ env.IMAGE_NAME }}:staging registry.digitalocean.com/spacelaunchnow-registry/${{ env.IMAGE_NAME }}:master
-          docker push registry.digitalocean.com/spacelaunchnow-registry/${{ env.IMAGE_NAME }}:master
+          docker pull ${{env.REGISTRY_NAME}}${{ env.IMAGE_NAME }}:staging
+          docker tag ${{env.REGISTRY_NAME}}${{ env.IMAGE_NAME }}:staging ${{env.REGISTRY_NAME}}${{ env.IMAGE_NAME }}:latest
+          docker push ${{env.REGISTRY_NAME}}${{ env.IMAGE_NAME }}:latest
 
   deploy:
     needs: doctl-registry

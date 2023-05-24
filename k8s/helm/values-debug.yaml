@@ -4,7 +4,7 @@
 
 image:
   repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
-  tag: workflow-initial_testing
+  tag: staging
   pullPolicy: Always
 
 imagePullSecrets: []

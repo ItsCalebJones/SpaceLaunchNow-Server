@@ -4,7 +4,7 @@
 
 image:
   repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
-  tag: master
+  tag: latest
   pullPolicy: Always
 
 imagePullSecrets: []
