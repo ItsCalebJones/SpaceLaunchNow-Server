@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v3.11.0 (2023-05-26)
+### Feature
+* Update to ll 4.12.0 ([`5a3d5f8`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/5a3d5f8cfa58780a942aee5256c281926d8f06fd))
+
 ## v3.10.0 (2023-05-26)
 ### Feature
 * Use precision field in launches and events ([`6437a8c`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/6437a8cd4705db233ee81610622bc26c79e47116))
