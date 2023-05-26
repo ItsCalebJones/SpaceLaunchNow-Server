@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v3.10.0 (2023-05-26)
+### Feature
+* Use precision field in launches and events ([`6437a8c`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/6437a8cd4705db233ee81610622bc26c79e47116))
+
 ## v3.9.0 (2023-05-07)
 ### Feature
 * Bump LL update poetry.lock ([`ad99769`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ad99769f589742f31db3a502cb52bf6f40234d60))
