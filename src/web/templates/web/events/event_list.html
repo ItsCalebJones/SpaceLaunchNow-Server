@@ -87,7 +87,7 @@
                                         <h6 class="card-category text-info"
                                             style="display:inline;">{{ event.type.name }}</h6>
                                         <h6 class="card-category"
-                                            style="display:inline;">{{ event.date }}</h6>
+                                            style="display:inline;">{{ event.date|date:"M d, Y" }}</h6>
                                         <h3 class="card-title">
                                             <a href="/event/{{ event.slug }}">{{ event.name }}</a>
                                         </h3>

@@ -68,13 +68,13 @@
 
             {% if launch.status.id == 8 %}
                 <h3 class="title text-white" style="margin: 5px;">L - -- : -- : -- : --</h3>
-                <h4 class="title text-white" style="margin: -5px;">{{ launch.net|date:"F d, Y"}}</h4>
+                <h4 class="title text-white" style="margin: -5px;" id="date"></h4>
             {% elif launch.status.id == 2 %}
                 <h3 class="title text-white" style="margin: 5px;">L - -- : -- : -- : --</h3>
-                <h4 class="title text-white" style="margin: -5px;">NET {{ launch.net|date:"F, Y"}}</h4>
+                <h4 class="title text-white" style="margin: -5px;" id="date"></h4>
             {% else %}
                 <h3 class="title text-white" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h3>
-                <h4 class="title text-white" style="margin: -5px;" id="date">{{ launch.net }}</h4>
+                <h4 class="title text-white" style="margin: -5px;" id="date"></h4>
                 {% if launch.window_start == launch.window_end %}
                     <p class="caption">Instantaneous launch window.</p>
                 {% else %}
@@ -891,11 +891,59 @@
         var startDate = new Date("{{launch.window_start.isoformat}}");
         var endDate = new Date("{{launch.window_end.isoformat}}");
 
+        function getDateFormat(date, netPrecisionID) {
+            const momentVar = moment(date, 'YYYY-MM-DD HH:mm:ss ZZ')
+            const netDate = momentVar.toDate();
+
+            const timeZoneString = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const momentTZ = momentVar.tz(timeZoneString)
+
+            switch (netPrecisionID) {
+                case 0:
+                    return momentTZ.format("MMMM DD, YYYY - h:mm:ss z")
+                case 1:
+                    return momentTZ.format("MMMM DD, YYYY - h:mm z")
+                case 2:
+                    return momentTZ.format("MMMM DD, YYYY - [NET] h:00 z")
+                case 3:
+                    return momentVar.format("[Morning (local)] MMMM DD, YYYY")
+                case 4:
+                    return momentVar.format("[Afternoon (local)] MMMM DD, YYYY")
+                case 5:
+                    return momentVar.format("MMMM DD, YYYY")
+                case 6:
+                    return momentVar.format("[Week of] MMMM DD, YYYY")
+                case 7:
+                    return momentVar.format("MMMM YYYY")
+                case 8:
+                    return momentVar.format("[Q1] YYYY")
+                case 9:
+                    return momentVar.format("[Q2] YYYY")
+                case 10:
+                    return momentVar.format("[Q3] YYYY")
+                case 11:
+                    return momentVar.format("[Q4] YYYY")
+                case 12:
+                    return momentVar.format("[H1] YYYY")
+                case 13:
+                    return momentVar.format("[H2] YYYY")
+                case 14:
+                    return momentVar.format("[NET] YYYY")
+                case 15:
+                    return momentVar.format("[FY] YYYY")
+                case 16:
+                    return "During the " + (Math.floor(netDate.getFullYear() / 10) * 10).toString() + "s"
+                default:
+                    console.error("Default net precision")
+                    return momentTZ.format("MMMM DD, YYYY - HH:mm:ss z")
+            }
+        }
+
         try {
-            document.getElementById("date").innerHTML = dateFormat(countDownDate, "mmmm dS, yyyy - h:MM TT Z");
+            {% comment %} document.getElementById("date").innerHTML = getDateFormat(countDownDate, {{ launch.net }}) {% endcomment %}
             document.getElementById("window_date").innerHTML = dateFormat(startDate, "h:MM TT Z") + " - " + dateFormat(endDate, "h:MM TT Z");
         } catch (err) {
-
+            console.error(err)
         }
         // Set the date we're counting down to
 

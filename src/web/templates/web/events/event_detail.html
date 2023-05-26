@@ -70,7 +70,8 @@
                         <h6 class="card-category text-info"
                             style="display:inline;">{{ event.type.name }}</h6>
                         <h6 class="card-category"
-                            style="display:inline;">{{ event.date }}</h6>
+                            style="display:inline;"
+                            id="event_date"></h6>
                         <h2 class="card-title">{{ event.name }}</h2>
                         {% if event.location %}
                             <span class="badge badge-pill badge-primary">{{ event.location }}</span>
@@ -219,4 +220,61 @@
         </script>
     </div>
     {% include "web/install_buttons.html" %}
+    <script>
+        var eventDate = new Date("{{event.date.isoformat}}");
+
+        function getDateFormat(date, netPrecisionID) {
+            const momentVar = moment(date, 'YYYY-MM-DD HH:mm:ss ZZ')
+            const netDate = momentVar.toDate();
+
+            const timeZoneString = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const momentTZ = momentVar.tz(timeZoneString)
+
+            switch (netPrecisionID) {
+                case 0:
+                    return momentTZ.format("MMMM DD, YYYY - h:mm:ss z")
+                case 1:
+                    return momentTZ.format("MMMM DD, YYYY - h:mm z")
+                case 2:
+                    return momentTZ.format("MMMM DD, YYYY - [NET] h:00 z")
+                case 3:
+                    return momentVar.format("[Morning (local)] MMMM DD, YYYY")
+                case 4:
+                    return momentVar.format("[Afternoon (local)] MMMM DD, YYYY")
+                case 5:
+                    return momentVar.format("MMMM DD, YYYY")
+                case 6:
+                    return momentVar.format("[Week of] MMMM DD, YYYY")
+                case 7:
+                    return momentVar.format("MMMM YYYY")
+                case 8:
+                    return momentVar.format("[Q1] YYYY")
+                case 9:
+                    return momentVar.format("[Q2] YYYY")
+                case 10:
+                    return momentVar.format("[Q3] YYYY")
+                case 11:
+                    return momentVar.format("[Q4] YYYY")
+                case 12:
+                    return momentVar.format("[H1] YYYY")
+                case 13:
+                    return momentVar.format("[H2] YYYY")
+                case 14:
+                    return momentVar.format("[NET] YYYY")
+                case 15:
+                    return momentVar.format("[FY] YYYY")
+                case 16:
+                    return "During the " + (Math.floor(netDate.getFullYear() / 10) * 10).toString() + "s"
+                default:
+                    console.error("Default net precision")
+                    return momentTZ.format("MMMM DD, YYYY - HH:mm:ss z")
+            }
+        }
+
+        try {
+            document.getElementById("event_date").innerHTML = getDateFormat(eventDate, {{ event.date_precision.id }})
+        } catch (err) {
+            console.error(err)
+        }
+    </script>
 {% endblock content %}
