@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.12.0 (2023-06-20)
+
+### Feature
+
+* Add logging and handle news sync better ([`1e4bd55`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/1e4bd55e6763c1ed4e2cd2d6b72fea5453e309ba))
+
 ## v3.11.0 (2023-05-26)
 ### Feature
 * Update to ll 4.12.0 ([`5a3d5f8`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/5a3d5f8cfa58780a942aee5256c281926d8f06fd))
