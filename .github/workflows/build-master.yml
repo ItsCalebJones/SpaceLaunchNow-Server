@@ -83,6 +83,6 @@ jobs:
           python-version: '3.10.4'
 
       - name: Python Semantic Release
-        uses: python-semantic-release/python-semantic-release@v7.33.2
+        uses: python-semantic-release/python-semantic-release@v7.34.6
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
