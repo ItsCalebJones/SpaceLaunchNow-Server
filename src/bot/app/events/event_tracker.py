@@ -70,24 +70,22 @@ class EventTracker:
             created_at__gte=datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=7),
             should_notify=True,
             was_notified=False,
+            sent_at__isnull=True,
         )
 
         logger.info(f"Found {len(news_that_need_to_notify)} news items.")
 
         if len(news_that_need_to_notify) > 0:
             for news_item in news_that_need_to_notify:
+                logger.info(f"Found {len(news_that_need_to_notify)} news items.")
                 item = Article.objects.get(id=news_item.id)
-                if (
-                    not news_item.was_notified
-                    and self.check_if_news_notification_allowed
-                    and (
-                        datetime.datetime.now().replace(tzinfo=datetime.timezone.utc)
-                        - item.created_at.replace(tzinfo=datetime.timezone.utc)
-                    )
-                    < datetime.timedelta(days=7)
-                ):
+                # Log the news_item with its properties
+                logger.info(
+                    f"Checking record {news_item.id} was notified: {news_item.was_notified} sent at: {news_item.sent_at} should notify: {news_item.should_notify}"
+                )
+                if self.check_if_news_notification_allowed:
                     news_item.was_notified = True
-                    news_item.sent_at = datetime.datetime.now(datetime.timezone.utc)
+                    news_item.sent_at = datetime.datetime.now()
                     news_item.save()
                     logger.info(f"Sending {item.id} {item.title} notification!")
                     self.news_notification_handler.send_notification(item)

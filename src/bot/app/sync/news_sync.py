@@ -78,7 +78,7 @@ def save_news_LL(item):
         record.save()
 
     else:
-        logger.debug(f"Updating article for article id {item['id']}.")
+        logger.info(f"Updating article for article id {item['id']} | {news.id} and record id {record.id}.")
         if news.title != item["title"]:
             news.title = item["title"]
             if (
@@ -130,4 +130,4 @@ def save_news_LL(item):
         news.featured_image = item["imageUrl"]
         news.save()
         record.save()
-        logger.debug(f"Article saved for article id {item['id']}.")
+        logger.info(f"Article saved for article id {item['id']}.")
