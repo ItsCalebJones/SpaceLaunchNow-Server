@@ -18,7 +18,12 @@ user_agent = (
 
 
 def parse_date(date_string):
-    return datetime.strptime(date_string, "%b %d, %Y %I:%M %p").replace(tzinfo=pytz.timezone("US/Central"))
+    tzTex = pytz.timezone("US/Central")
+    try:
+        datetime = tzTex.localize(parser.parse(date_string))
+    except Exception:
+        datetime = tzTex.localize(parser.parse(date_string.split(", ", 1)[1]))
+    return datetime
 
 
 def get_road_closure():
