@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.13.0 (2023-08-12)
+
+### Feature
+
+* Remove road closure ([`637c484`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/637c484f5758d8a12cb12f9a8b12f75053b519d2))
+
 ## v3.12.0 (2023-06-20)
 
 ### Feature
