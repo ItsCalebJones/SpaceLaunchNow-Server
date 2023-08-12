@@ -173,24 +173,6 @@ jobs:
       requests:
         cpu: 100m
         memory: 256Mi
-  - name: sln-roadclosure-sync
-    image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
-      tag: master
-      imagePullPolicy: Always
-    schedule: "0 */6 * * *"
-    command: "['python', 'manage.py', 'run_update_closures']"
-    failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 5
-    concurrencyPolicy: Forbid
-    restartPolicy: OnFailure
-    resources:
-      limits:
-        cpu: 100m
-        memory: 256Mi
-      requests:
-        cpu: 100m
-        memory: 256Mi
   - name: sln-news-sync
     image:
       repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
