@@ -22,7 +22,7 @@ from api.endpoints.sln.v320.router import api_urlpatterns as api_v320
 from api.endpoints.sln.v330.router import api_urlpatterns as api_v330
 from api.endpoints.sln.v340.router import api_urlpatterns as api_v340
 from api.endpoints.sln.v350.router import api_urlpatterns as api_v350
-from api.sitemaps import (
+from app.sitemaps import (
     AstronautSitemap,
     BoosterSitemap,
     EventSitemap,
