@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v3.13.1 (2023-08-21)
+
+### Fix
+
+* **sitemaps:** Locally own sitemaps ([`a542870`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a5428705ab83cc9542960d58a760729ab9d0743f))
+* Use latest ll lib ([`4d939e9`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/4d939e906fd0e4b10dced09850b9855c04fc23f5))
+
 ## v3.13.0 (2023-08-12)
 
 ### Feature
