@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.13.2 (2023-08-30)
+
+### Fix
+
+* Bump LL version ([`d8c56f9`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/d8c56f9d34a293c5d36f57b845efb69a6a2aca2e))
+
 ## v3.13.1 (2023-08-21)
 
 ### Fix
