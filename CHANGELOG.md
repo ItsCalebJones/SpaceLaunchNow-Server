@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.13.3 (2023-09-15)
+
+### Fix
+
+* Update libs and helm ([`688f4a9`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/688f4a9b5975b3ed514d18d93e563bef6e88d9fc))
+
 ## v3.13.2 (2023-08-30)
 
 ### Fix
