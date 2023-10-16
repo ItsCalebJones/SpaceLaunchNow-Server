@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.14.0 (2023-10-16)
+
+### Feature
+
+* Migrate to snapi v4 ([`20506ed`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/20506ed5320b2f22fa5dd8710b7b2286118e37a4))
+
 ## v3.13.3 (2023-09-15)
 
 ### Fix
