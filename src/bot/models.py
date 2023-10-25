@@ -212,6 +212,6 @@ class Notification(models.Model):
     title = models.TextField(max_length=32)
     message = models.TextField(max_length=300)
     send_ios = models.BooleanField(default=False)
-    send_ios_complete = models.NullBooleanField(default=False)
+    send_ios_complete = models.BooleanField(default=False, null=True)
     send_android = models.BooleanField(default=False)
-    send_android_complete = models.NullBooleanField(default=False)
+    send_android_complete = models.BooleanField(default=False, null=True)
