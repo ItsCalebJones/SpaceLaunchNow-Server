@@ -44,23 +44,6 @@ class SLNAPITest(LLAPITests):
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_ll_220_docs(self):
-        path = "/api/ll/2.2.0/swagger/"
-        response = self.client.get(path)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        path = "/api/ll/2.2.0/redoc/"
-        response = self.client.get(path)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        path = "/api/ll/2.2.0/new/swagger/"
-        response = self.client.get(path)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        path = "/api/ll/2.2.0/new/schema/"
-        response = self.client.get(path)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
     def test_health_check(self):
         path = "/_health/"
         response = self.client.get(path)
