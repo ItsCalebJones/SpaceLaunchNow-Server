@@ -2,6 +2,17 @@
 
 <!--next-version-placeholder-->
 
+## v3.15.0 (2023-10-27)
+
+### Feature
+
+* Upgrade to django 4 LTS ([`701cbb3`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/701cbb3023757213416428f207a216ca2a7ed573))
+
+### Fix
+
+* Linting and remove launch.json ([`4eea76b`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/4eea76b388d08dddd3ca6ea5d209759f2fe333b0))
+* Linting issues ([`11c0fa1`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/11c0fa1c053d574c05b56dbf6e33cefc76cb841c))
+
 ## v3.14.0 (2023-10-16)
 
 ### Feature
