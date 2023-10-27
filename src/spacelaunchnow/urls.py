@@ -22,6 +22,13 @@ from api.endpoints.sln.v320.router import api_urlpatterns as api_v320
 from api.endpoints.sln.v330.router import api_urlpatterns as api_v330
 from api.endpoints.sln.v340.router import api_urlpatterns as api_v340
 from api.endpoints.sln.v350.router import api_urlpatterns as api_v350
+from django.contrib import admin
+from django.contrib.sitemaps.views import sitemap
+from django.http import HttpResponse
+from django.urls import include, path, re_path
+from django.views.generic import TemplateView
+
+import web
 from app.sitemaps import (
     AstronautSitemap,
     BoosterSitemap,
@@ -30,15 +37,6 @@ from app.sitemaps import (
     SpacestationSitemap,
     UpcomingLaunchSitemap,
 )
-from django.urls import include, path, re_path
-from django.contrib import admin
-from django.contrib.sitemaps.views import sitemap
-from django.http import HttpResponse
-from django.views.generic import TemplateView
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
-from rest_framework import permissions
-
-import web
 from app.views import about_view, staff_view, translator_view
 from spacelaunchnow import settings
 from web import views as landing_views
