@@ -170,6 +170,41 @@ spec:
                 name: {{ include "django.fullname" . }}
             - configMapRef:
                 name: {{ include "django.fullname" . }}-web
+      initContainers:
+        - name: {{ .Chart.Name }}-migration
+          command: ["python", "manage.py", "run_locked_migration"]
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: Always
+          env:
+            - name: DJANGO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sln-auth-prod
+                  key: django-secret-key
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sln-auth-prod
+                  key: database-password
+            - name: DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: sln-auth-prod
+                  key: database-username
+            - name: DATABASE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: sln-auth-prod
+                  key: database-host
+            - name: DATABASE_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: sln-auth-prod
+                  key: database-port
+          {{- range $k, $v := .Values.env.web }}
+            - name: {{ $k }}
+              value: {{ $v | quote }}
+          {{- end }}
       {{- with .Values.web.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

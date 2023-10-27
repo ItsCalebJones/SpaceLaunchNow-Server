@@ -16,7 +16,7 @@ env:
     DEBUG: "True"
     DATABASE_ENGINE: "django.db.backends.postgresql_psycopg2"
     DATABASE_NAME: "spacelaunchnow_dev_04"
-    CACHE_BACKEND: "django.core.cache.backends.memcached.MemcachedCache"
+    CACHE_BACKEND: "django.core.cache.backends.memcached.PyMemcacheCache"
     CACHE_LOCATION: "sln-prod-memcache-memcached.sln-prod.svc.cluster.local:11211"
     DISABLE_THROTTLE: "True"
     STORAGE_BUCKET_NAME: "spacelaunchnow-prod-east"

@@ -51,7 +51,6 @@ pyfcm = "==1.5.1"
 pytz = "==2022.2.1"
 psycopg2-binary = "2.9.7"
 python-digitalocean = "==1.17.0"
-python-memcached = "==1.59"
 python-dateutil = "==2.8.2"
 praw = "==7.6.0"
 regex = "==2022.8.17"
@@ -63,6 +62,7 @@ tzlocal = "==4.2"
 django-launch-library = {version = "^4.58.4", source = "tsd"}
 environs = "^9.5.0"
 django-jet-reboot = "^1.3.3"
+pymemcache = "^4.0.0"
 
 
 [tool.poetry.group.dev]
