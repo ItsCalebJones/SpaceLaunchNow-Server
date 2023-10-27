@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.15.1 (2023-10-27)
+
+### Fix
+
+* Issues with old memcache ([`a6743ff`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a6743fff735fe48cf85b59999bd1b9e3a8e4fcf4))
+
 ## v3.15.0 (2023-10-27)
 
 ### Feature
