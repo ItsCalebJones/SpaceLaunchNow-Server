@@ -51,7 +51,6 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "DEFAULT_RENDERER_CLASSES": (
         "rest_framework.renderers.JSONRenderer",
-        "rest_framework.renderers.BrowsableAPIRenderer",
     ),
     "DEFAULT_THROTTLE_CLASSES": ("api.throttle.RoleBasedUserRateThrottle",),
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -154,7 +153,6 @@ INSTALLED_APPS = [
     "tz_detect",
     "corsheaders",
     "cachalot",
-    "drf_yasg",
     "drf_spectacular",
     "debug_toolbar",
     "django_cleanup.apps.CleanupConfig",
@@ -291,7 +289,6 @@ TIME_ZONE = "UTC"
 
 USE_I18N = True
 
-USE_L10N = True
 
 USE_TZ = True
 
