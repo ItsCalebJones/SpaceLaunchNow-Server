@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.15.2 (2023-10-27)
+
+### Fix
+
+* Deployment issue ([`fc3c0d1`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/fc3c0d123a4165e5aa8bb320fe8d614334890384))
+
 ## v3.15.1 (2023-10-27)
 
 ### Fix
