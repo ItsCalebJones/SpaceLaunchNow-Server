@@ -201,10 +201,11 @@ spec:
                 secretKeyRef:
                   name: sln-auth-prod
                   key: database-port
-          {{- range $k, $v := .Values.env.web }}
-            - name: {{ $k }}
-              value: {{ $v | quote }}
-          {{- end }}
+          envFrom:
+            - secretRef:
+                name: {{ include "django.fullname" . }}
+            - configMapRef:
+                name: {{ include "django.fullname" . }}-web
       {{- with .Values.web.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
