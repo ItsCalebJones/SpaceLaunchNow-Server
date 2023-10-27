@@ -1,7 +1,6 @@
 import logging
 from datetime import datetime, timedelta, timezone
 
-import pytz
 import requests
 from api.models import Article, Events, Launch
 

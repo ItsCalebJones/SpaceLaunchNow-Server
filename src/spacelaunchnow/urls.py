@@ -34,7 +34,6 @@ from django.urls import include, path, re_path
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.http import HttpResponse
-from django.urls import path
 from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework import permissions
@@ -84,7 +83,7 @@ def get_v210():
     v210_api = [
         re_path(r"^api/ll/2.1.0/", include(ll_api_v210)),
     ]
-    return v210_api 
+    return v210_api
 
 
 def get_v220():
