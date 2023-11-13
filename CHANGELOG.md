@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v3.15.3 (2023-11-13)
+
+### Fix
+
+* Use latest image in prod ([`d9b90d9`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/d9b90d9d9af80ce725dc75b66373fa6cf47af73d))
+
 ## v3.15.2 (2023-10-27)
 
 ### Fix
