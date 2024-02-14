@@ -1,9 +1,8 @@
 import datetime
 import logging
 
+from api.models import Astronaut, Events, Launch
 from PIL import Image, ImageFilter
-
-from django.db import models
 
 logger = logging.getLogger(__name__)
 
@@ -444,5 +443,5 @@ def drop_shadow(image, offset=(5, 5), background=0xFFFFFF, shadow=0x444444, bord
     return back
 
 
-def get_SLN_url(path: str = None, object: models.Model = None):
-    return f"https://spacelaunchnow.me/{path}/{object.self.get_absolute_url()}"
+def get_SLN_url(path: str = None, object: Launch | Events | Astronaut = None):
+    return f"https://spacelaunchnow.me/{path}/{object.get_absolute_url()}"

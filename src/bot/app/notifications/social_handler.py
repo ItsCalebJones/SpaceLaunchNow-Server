@@ -217,8 +217,8 @@ class SocialEvents:
 
     def send_to_twitter(self, launch, notification_type):
         message = get_message(launch, notification_type)
-        if len(message + get_SLN_url(path="launch", object_id=launch.id)) < 280:
-            message = message + "\n%s" % get_SLN_url(path="launch", object_id=launch)
+        if len(message + get_SLN_url(path="launch", object=launch.id)) < 280:
+            message = message + "\n%s" % get_SLN_url(path="launch", object=launch)
         if len(message) > 280:
             end = message[-5:]
 
@@ -262,6 +262,6 @@ class SocialEvents:
             logger.debug("Sending to twitter via Buffer - message: %s" % message)
             logger.info(
                 self.buffer.send_to_facebook(
-                    message=message, link=get_SLN_url(path="launch", object_id=launch), now=True
+                    message=message, link=get_SLN_url(path="launch", object=launch), now=True
                 )
             )

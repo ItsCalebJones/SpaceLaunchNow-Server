@@ -949,7 +949,7 @@ class LaunchFeed(ICalFeed):
         description = ""
         if item.mission is not None and item.mission.description is not None:
             description = item.mission.description
-        urls = "\n\nWatch Live: " + get_SLN_url(path="launch", object_id=item)
+        urls = "\n\nWatch Live: " + get_SLN_url(path="launch", object=item)
         description = (
             description + urls + "\n\n===============\nSpace Launch Now\nID: " + str(item.id) + "\n==============="
         )
@@ -980,7 +980,7 @@ class LaunchFeed(ICalFeed):
             return item.pad.location.name
 
     def item_link(self, item):
-        return get_SLN_url(path="launch", object_id=item)
+        return get_SLN_url(path="launch", object=item)
 
 
 class EventFeed(ICalFeed):
