@@ -16,12 +16,6 @@ Including another URLconf
 from api.endpoints.library.v200.router import api_urlpatterns as ll_api_v200
 from api.endpoints.library.v210.router import api_urlpatterns as ll_api_v210
 from api.endpoints.library.v220.router import api_urlpatterns as ll_api_v220
-from api.endpoints.sln.v300.router import api_urlpatterns as api_v300
-from api.endpoints.sln.v310.router import api_urlpatterns as api_v310
-from api.endpoints.sln.v320.router import api_urlpatterns as api_v320
-from api.endpoints.sln.v330.router import api_urlpatterns as api_v330
-from api.endpoints.sln.v340.router import api_urlpatterns as api_v340
-from api.endpoints.sln.v350.router import api_urlpatterns as api_v350
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.http import HttpResponse
@@ -63,13 +57,6 @@ admin_settings = []
 debug_settings = []
 
 
-def get_v350():
-    v350_api = [
-        re_path(r"^api/3.5.0/", include(api_v350)),
-    ]
-    return v350_api
-
-
 def get_v200():
     v200_api = [
         re_path(r"^api/ll/2.0.0/", include(ll_api_v200)),
@@ -93,14 +80,9 @@ def get_v220():
 
 if settings.IS_API:
     api_settings = [
-        re_path(r"^3.0.0/", include(api_v300)),
-        re_path(r"^3.1.0/", include(api_v310)),
-        re_path(r"^3.2.0/", include(api_v320)),
-        re_path(r"^api/3.3.0/", include(api_v330)),
-        re_path(r"^api/3.4.0/", include(api_v340)),
         path("api-auth/", include("rest_framework.urls")),
     ]
-    api_settings = api_settings + get_v350() + get_v200() + get_v210() + get_v220()
+    api_settings = api_settings + get_v200() + get_v210() + get_v220()
 
 if settings.IS_WEBSERVER:
 

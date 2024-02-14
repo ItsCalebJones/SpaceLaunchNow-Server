@@ -5,7 +5,7 @@ from datetime import datetime
 import pytz
 
 from bot.app.buffer import BufferAPI, hashtags
-from bot.utils.util import seconds_to_time
+from bot.utils.util import get_SLN_url, seconds_to_time
 from spacelaunchnow import settings
 
 logger = logging.getLogger(__name__)
@@ -217,8 +217,8 @@ class SocialEvents:
 
     def send_to_twitter(self, launch, notification_type):
         message = get_message(launch, notification_type)
-        if len(message + launch.get_full_absolute_url()) < 280:
-            message = message + "\n%s" % launch.get_full_absolute_url()
+        if len(message + get_SLN_url(path="launch", object=launch.id)) < 280:
+            message = message + "\n%s" % get_SLN_url(path="launch", object=launch)
         if len(message) > 280:
             end = message[-5:]
 
@@ -260,4 +260,8 @@ class SocialEvents:
 
         if not self.DEBUG:
             logger.debug("Sending to twitter via Buffer - message: %s" % message)
-            logger.info(self.buffer.send_to_facebook(message=message, link=launch.get_full_absolute_url(), now=True))
+            logger.info(
+                self.buffer.send_to_facebook(
+                    message=message, link=get_SLN_url(path="launch", object=launch), now=True
+                )
+            )

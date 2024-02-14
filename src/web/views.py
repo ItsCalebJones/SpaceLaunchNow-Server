@@ -41,6 +41,7 @@ from django_ical.views import ICalFeed
 from django_tables2 import SingleTableMixin
 from django_user_agents.utils import get_user_agent
 
+from bot.utils.util import get_SLN_url
 from web.filters.launch_filters import LaunchListFilter
 from web.filters.launch_vehicle_filters import LauncherConfigListFilter
 from web.tables.launch_table import LaunchTable
@@ -948,7 +949,7 @@ class LaunchFeed(ICalFeed):
         description = ""
         if item.mission is not None and item.mission.description is not None:
             description = item.mission.description
-        urls = "\n\nWatch Live: " + item.get_full_absolute_url()
+        urls = "\n\nWatch Live: " + get_SLN_url(path="launch", object=item)
         description = (
             description + urls + "\n\n===============\nSpace Launch Now\nID: " + str(item.id) + "\n==============="
         )
@@ -979,7 +980,7 @@ class LaunchFeed(ICalFeed):
             return item.pad.location.name
 
     def item_link(self, item):
-        return item.get_full_absolute_url()
+        return get_SLN_url(path="launch", object=item)
 
 
 class EventFeed(ICalFeed):

@@ -4,31 +4,6 @@ from rest_framework import status
 
 
 class SLNAPITest(LLAPITests):
-    def test_sln_300_api_online(self):
-        path = "/3.0.0/"
-        response = self.client.get(path)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_sln_310_api_online(self):
-        path = "/3.1.0/"
-        response = self.client.get(path)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_sln_320_api_online(self):
-        path = "/3.2.0/"
-        response = self.client.get(path)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_sln_330_api_online(self):
-        path = "/api/3.3.0/"
-        response = self.client.get(path)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_sln_340_api_online(self):
-        path = "/api/3.4.0/"
-        response = self.client.get(path)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
     def test_ll_200_api_online(self):
         path = "/api/ll/2.0.0/"
         response = self.client.get(path)
