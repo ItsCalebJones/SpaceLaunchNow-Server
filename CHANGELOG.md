@@ -2,6 +2,14 @@
 
 <!--next-version-placeholder-->
 
+## v3.15.4 (2024-02-14)
+
+### Fix
+
+* Stupid syntax fuckup ([`175d661`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/175d661e34263677431e9e51c7c5b6c2fb375c00))
+* Broken shit from LL removal of SLN stuff ([`3d2dcb4`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/3d2dcb495e56a84487bf51f793310ce679d82c3e))
+* Update LL lib and other services ([`2cfab15`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/2cfab1588b2378f0f0131f2ff69208e33dd6b640))
+
 ## v3.15.3 (2023-11-13)
 
 ### Fix
