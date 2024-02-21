@@ -2,6 +2,16 @@
 
 <!--next-version-placeholder-->
 
+## v3.16.0 (2024-02-21)
+
+### Feature
+
+* Add dependabot config ([`126a5bd`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/126a5bd97d924890c6473ead2b749ba219c0d7d7))
+
+### Fix
+
+* Broken buttons and stuff ([`e02f6ee`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/e02f6eec9c5b6e84f9971c59ded935b66b2f050b))
+
 ## v3.15.4 (2024-02-14)
 
 ### Fix
