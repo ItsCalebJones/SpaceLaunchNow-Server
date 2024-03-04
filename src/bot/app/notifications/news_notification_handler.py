@@ -2,7 +2,6 @@ import logging
 
 from pyfcm import FCMNotification
 
-from bot.app.buffer import BufferAPI
 from spacelaunchnow import settings
 
 logger = logging.getLogger(__name__)
@@ -11,7 +10,6 @@ logger = logging.getLogger(__name__)
 class NewsNotificationHandler:
     def __init__(self, debug=settings.DEBUG):
         self.DEBUG = debug
-        self.buffer = BufferAPI()
         self.api_key = settings.FCM_KEY
 
     def send_notification(self, article):
@@ -29,7 +27,6 @@ class NewsNotificationHandler:
                 "imageUrl": article.featured_image,
             },
         }
-        self.send_v2_notification(article, data)
         self.send_v3_notification(article, data)
 
     def send_v3_notification(self, article, data):
@@ -39,15 +36,6 @@ class NewsNotificationHandler:
         else:
             topics = "'debug_v3' in topics && 'featured_news' in topics"
             flutter_topics = "'flutter_debug_v3' in topics && 'featured_news' in topics"
-        self.send_to_fcm(article, data, topics, flutter_topics)
-
-    def send_v2_notification(self, article, data):
-        if not self.DEBUG:
-            topics = "'prod_v2' in topics && 'featured_news' in topics"
-            flutter_topics = "'flutter_production_v2' in topics && 'featured_news' in topics"
-        else:
-            topics = "'debug_v2' in topics && 'featured_news' in topics"
-            flutter_topics = "'flutter_debug_v2' in topics && 'featured_news' in topics"
         self.send_to_fcm(article, data, topics, flutter_topics)
 
     def send_to_fcm(self, article, data, topics, flutter_topics):
@@ -86,10 +74,3 @@ class NewsNotificationHandler:
             logger.error(e)
 
         logger.info("----------------------------------------------------------")
-
-    def send_to_social(self, article):
-        logger.info("Sending News ID:%s to Buffer!", article.id)
-        if article.link:
-            logger.info(self.buffer.send_to_twitter(message=article.title, link=article.link, now=True))
-            logger.info(self.buffer.send_to_facebook(message=article.title, link=article.link, now=True))
-            logger.info("Sent to Buffer!")

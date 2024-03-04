@@ -15,8 +15,8 @@
     <meta property="og:description"
           content="{{ vehicle.name }} - {{ vehicle.description|truncatechars:100 }}">
     <meta property="og:url" content="https://spacelaunchnow.me/astronaut/{{ astronaut.slug }}"/>
-    {% if vehicle.image_url %}
-        <meta property="og:image" content="{{ vehicle.image_url.url }}"/>
+    {% if vehicle.image %}
+        <meta property="og:image" content="{{ vehicle.image.image.url }}"/>
     {% else %}
         <meta property="og:image" content="{% static  'img/social.png' %}"/>
         <meta property="og:image:width" content="3000"/>
@@ -31,8 +31,8 @@
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:title" content="Space Launch Now - {{ vehicle.name }}">
     <meta name="twitter:description" content="{{ vehicle.name }} - {{ vehicle.description|truncatechars:100 }}">
-    {% if vehicle.image_url %}
-        <meta name="twitter:image" content="{{ vehicle.image_url.url }}"/>
+    {% if vehicle.image %}
+        <meta name="twitter:image" content="{{ vehicle.image.image.url }}"/>
     {% else %}
         <meta name="twitter:image" content="{% static  'img/social.png' %}"/>
     {% endif %}
@@ -76,10 +76,10 @@
                 </div>
                 <div class="col-sm-12">
                     <div class="card card-blog">
-                        {% if vehicle.image_url %}
+                        {% if vehicle.image %}
                             <div class="card-header card-header-image">
                                 <img class="img"
-                                     src="{{ vehicle.image_url.url }}">
+                                     src="{{ vehicle.image.image.url }}">
                             </div>
                         {% else %}
                             <div class="card-header card-header-image">

@@ -1,67 +1,17 @@
-from django.conf import settings
 from storages.backends.s3boto3 import S3Boto3Storage
 
+STATICFILES_LOCATION = "static/home"
+MEDIA_LOCATION = "media"
 
-class DefaultStorage(S3Boto3Storage):
-    location = settings.DEFAULT_LOCATION
+APP_IMAGE_LOCATION = MEDIA_LOCATION + "/app_images"  # type: str
+APP_IMAGE_STORAGE = "custom_storages.AppImageStorage"
+
+
+class AppImageStorage(S3Boto3Storage):
+    location = APP_IMAGE_LOCATION
     file_overwrite = True
 
 
 class StaticStorage(S3Boto3Storage):
-    location = settings.STATICFILES_LOCATION
-    file_overwrite = True
-
-
-class LogoStorage(S3Boto3Storage):
-    location = settings.LOGO_LOCATION
-    file_overwrite = True
-
-
-class AgencyImageStorage(S3Boto3Storage):
-    location = settings.AGENCY_IMAGE_LOCATION
-    file_overwrite = True
-
-
-class AgencyNationStorage(S3Boto3Storage):
-    location = settings.AGENCY_NATION_LOCATION
-    file_overwrite = True
-
-
-class OrbiterImageStorage(S3Boto3Storage):
-    location = settings.ORBITER_IMAGE_LOCATION
-    file_overwrite = True
-
-
-class LauncherImageStorage(S3Boto3Storage):
-    location = settings.LAUNCHER_IMAGE_LOCATION
-    file_overwrite = True
-
-
-class LaunchImageStorage(S3Boto3Storage):
-    location = settings.LAUNCH_IMAGE_LOCATION
-    file_overwrite = True
-
-
-class EventImageStorage(S3Boto3Storage):
-    location = settings.EVENT_IMAGE_LOCATION
-    file_overwrite = True
-
-
-class AppImageStorage(S3Boto3Storage):
-    location = settings.APP_IMAGE_LOCATION
-    file_overwrite = True
-
-
-class AstronautImageStorage(S3Boto3Storage):
-    location = settings.ASTRONAUT_IMAGE_LOCATION
-    file_overwrite = True
-
-
-class SpaceStationImageStorage(S3Boto3Storage):
-    location = settings.SPACESTATION_IMAGE_LOCATION
-    file_overwrite = True
-
-
-class LauncherCoreImageStorage(S3Boto3Storage):
-    location = settings.LAUNCHER_CORE_IMAGE_LOCATION
+    location = STATICFILES_LOCATION
     file_overwrite = True

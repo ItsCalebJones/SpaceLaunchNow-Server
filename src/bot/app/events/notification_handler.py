@@ -41,33 +41,19 @@ class EventNotificationHandler:
                 },
                 "date": event.date.strftime("%B %d, %Y %H:%M:%S %Z"),
                 "location": event.location,
-                "news_url": event.news_url,
-                "video_url": event.video_url,
+                "news_url": event.info_urls.first(),
+                "video_url": event.vid_urls.first(),
                 "webcast_live": event.webcast_live,
                 "feature_image": feature_image,
             },
             "webcast": webcast,
         }
 
-    def build_v2_topics(self):
-        if self.DEBUG:
-            topic = "'debug_v2' in topics && 'events' in topics"
-        else:
-            topic = "'prod_v2' in topics && 'events' in topics"
-        return topic
-
     def build_v3_topics(self):
         if self.DEBUG:
             topic = "'debug_v3' in topics && 'events' in topics"
         else:
             topic = "'prod_v3' in topics && 'events' in topics"
-        return topic
-
-    def build_flutter_v2_topics(self):
-        if self.DEBUG:
-            topic = "'flutter_debug_v2' in topics && 'events' in topics"
-        else:
-            topic = "'flutter_production_v2' in topics && 'events' in topics"
         return topic
 
     def build_flutter_v3_topics(self):
@@ -81,11 +67,9 @@ class EventNotificationHandler:
         data = self.build_data(event, event_type)
 
         # Send Android notif
-        self.send_to_fcm(self.build_v2_topics(), data)
         self.send_to_fcm(self.build_v3_topics(), data)
 
         # Send Flutter notif
-        self.send_flutter_to_fcm(self.build_flutter_v2_topics(), data, webcast)
         self.send_flutter_to_fcm(self.build_flutter_v3_topics(), data, webcast)
 
     def send_to_fcm(self, topics, data):

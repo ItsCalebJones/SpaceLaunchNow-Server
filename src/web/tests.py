@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from api.models import Launch
 from api.tests.test__base import LLAPITests
 
 # Create your tests here.
@@ -9,33 +10,22 @@ from rest_framework import status
 
 class WebTests(LLAPITests):
     def test_home(self):
-        """
-        Ensure launch endpoints work as expected.
-        """
         # Test Normal endpoint
         response = self.client.get("/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_next(self):
-        """
-        Ensure launch endpoints work as expected.
-        """
         # Test Normal endpoint
         response = self.client.get("/next/")
         self.assertEqual(response.status_code, status.HTTP_302_FOUND)
 
     def test_launches(self):
-        """
-        Ensure launch endpoints work as expected.
-        """
         # Test Normal endpoint
         response = self.client.get("/launch/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_launch_by_id(self):
-        """
-        Ensure launch endpoints work as expected.
-        """
         # Test Normal endpoint
-        response = self.client.get("/launch/%d" % self.launches[0].id)
+        launch = Launch.objects.first()
+        response = self.client.get("/launch/%d" % launch.id)
         self.assertEqual(response.status_code, status.HTTP_301_MOVED_PERMANENTLY)

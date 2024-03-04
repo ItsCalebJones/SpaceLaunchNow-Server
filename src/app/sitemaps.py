@@ -1,12 +1,11 @@
+from api.models import Astronaut, Events, Launch, Launcher, SpaceStation
 from django.contrib.sitemaps import Sitemap
 from django.utils import timezone
-
-from api.models import Astronaut, Events, Launch, Launcher, SpaceStation
 
 
 class UpcomingLaunchSitemap(Sitemap):
     def items(self):
-        return Launch.objects.all().filter(net__gte=timezone.now())
+        return Launch.objects.all().filter(net__gte=timezone.now()).order_by("net")
 
     def lastmod(self, obj):
         return obj.last_updated
@@ -51,7 +50,7 @@ class UpcomingLaunchSitemap(Sitemap):
 
 class PreviousLaunchSitemap(Sitemap):
     def items(self):
-        return Launch.objects.all().filter(net__lte=timezone.now())
+        return Launch.objects.all().filter(net__lte=timezone.now()).order_by("-net")
 
     def lastmod(self, obj):
         return obj.last_updated
@@ -98,7 +97,7 @@ class EventSitemap(Sitemap):
     changefreq = "weekly"
 
     def items(self):
-        return Events.objects.all()
+        return Events.objects.all().order_by("date")
 
     def lastmod(self, obj):
         return obj.last_updated
@@ -133,7 +132,7 @@ class AstronautSitemap(Sitemap):
     changefreq = "weekly"
 
     def items(self):
-        return Astronaut.objects.all()
+        return Astronaut.objects.all().order_by("date_of_birth")
 
     def lastmod(self, obj):
         return timezone.now()
@@ -149,7 +148,7 @@ class BoosterSitemap(Sitemap):
     changefreq = "weekly"
 
     def items(self):
-        return Launcher.objects.all()
+        return Launcher.objects.all().order_by("id")
 
     def lastmod(self, obj):
         return timezone.now()
@@ -165,7 +164,7 @@ class SpacestationSitemap(Sitemap):
     changefreq = "weekly"
 
     def items(self):
-        return SpaceStation.objects.all()
+        return SpaceStation.objects.all().order_by("id")
 
     def lastmod(self, obj):
         return timezone.now()

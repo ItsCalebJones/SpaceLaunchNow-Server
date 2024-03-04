@@ -5,13 +5,13 @@
     <div class="card-header {% if 'GO' in launch.status.full_name %} card-header-success {% elif 'TBD' in launch.status.full_name %} card-header-danger {% else %} card-header-info {% endif %} p-2">
         <div class="row">
             <div class="col-md-4 text-center" style="height: 150px">
-                {% if launch.image_url %}
+                {% if launch.image %}
                     <img class="img-raised rounded-circle img-fluid text-center"
-                         src="{{ launch.image_url.url }}"
+                         src="{{ launch.image.image.url }}"
                          style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                {% elif launch.rocket.configuration.image_url %}
+                {% elif launch.rocket.configuration.image %}
                     <img class="img-raised rounded-circle img-fluid text-center"
-                         src="{{ launch.rocket.configuration.image_url.url }}"
+                         src="{{ launch.rocket.configuration.image.image.url }}"
                          style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                 {% else %}
                     <img class="img-raised rounded-circle img-fluid text-center"

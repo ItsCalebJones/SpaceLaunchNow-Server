@@ -13,7 +13,7 @@ services:
       args:
         - PRIVATE_USERNAME=${POETRY_HTTP_BASIC_TSD_USERNAME}
         - PRIVATE_PASSWORD=${POETRY_HTTP_BASIC_TSD_PASSWORD}
-    image: sln_test
+    image: space_launch_now_local
     command: >
       bash -c "coverage run --data-file=/code/coverage/.coverage manage.py test --settings=spacelaunchnow.settings.test
       && coverage html --data-file=/code/coverage/.coverage

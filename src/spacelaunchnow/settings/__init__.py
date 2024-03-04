@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 import sys
 
+from api.custom_storages import DEFAULT_STORAGE
 from environs import Env
 
 env = Env()
@@ -49,9 +50,7 @@ REST_FRAMEWORK = {
     "DEFAULT_MODEL_SERIALIZER_CLASS": "rest_framework.serializers.ModelSerializer",
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
-    "DEFAULT_RENDERER_CLASSES": (
-        "rest_framework.renderers.JSONRenderer",
-    ),
+    "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
     "DEFAULT_THROTTLE_CLASSES": ("api.throttle.RoleBasedUserRateThrottle",),
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.TokenAuthentication",
@@ -161,8 +160,10 @@ INSTALLED_APPS = [
     "health_check.cache",
     "health_check.storage",
     "health_check.contrib.migrations",
-    "health_check.contrib.s3boto3_storage",  # requires boto3 and S3BotoStorage backend
 ]
+
+if not TESTING:
+    INSTALLED_APPS.append("health_check.contrib.s3boto3_storage")
 
 if DEBUG:
     # INSTALLED_APPS.append('debug_toolbar')
@@ -279,8 +280,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
+# Needed for Debug Toolbar only - don't remove
+LOCAL_IP = "127.0.0.1"
 INTERNAL_IPS = [
-    "127.0.0.1",
+    LOCAL_IP,
 ]
 
 LANGUAGE_CODE = "en-us"
@@ -314,72 +317,39 @@ DEFAULT_FROM_EMAIL = env.str("EMAIL_FROM_EMAIL", None)
 CLOUDFRONT_DOMAIN = env.str("CLOUDFRONT_DOMAIN", None)
 CLOUDFRONT_ID = env.str("CLOUDFRONT_ID", None)
 
-AWS_QUERYSTRING_AUTH = False
-# AWS_S3_SIGNATURE_VERSION = 'v2'
-AWS_STORAGE_BUCKET_NAME = env.str("STORAGE_BUCKET_NAME", None)
-AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID", None)
-AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY", None)
-AWS_S3_ENDPOINT_URL = env.str("AWS_S3_ENDPOINT_URL", None)
-AWS_DEFAULT_ACL = "public-read"
-AWS_S3_URL_PROTOCOL = "https"
-AWS_LOCATION = "static"
-AWS_S3_OBJECT_PARAMETERS = {
-    "CacheControl": "max-age=86400",
-}
-AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.nyc3.digitaloceanspaces.com"
+USE_LOCAL_STORAGE = env.bool("USE_LOCAL_STORAGE", False)
 
-# Static URL always ends in /
-STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/"
+if USE_LOCAL_STORAGE:
+    # Local storage settings
+    DOMAIN = f"{LOCAL_IP}:8000"
+    DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+    STATIC_URL = "/static/"
+    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+else:
+    AWS_QUERYSTRING_AUTH = False
+    AWS_STORAGE_BUCKET_NAME = env.str("STORAGE_BUCKET_NAME", None)
+    AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID", None)
+    AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY", None)
+    AWS_S3_ENDPOINT_URL = env.str("AWS_S3_ENDPOINT_URL", None)
+    AWS_DEFAULT_ACL = "public-read"
+    AWS_S3_URL_PROTOCOL = "https"
+    AWS_LOCATION = "static/home"
+    AWS_S3_OBJECT_PARAMETERS = {
+        "CacheControl": "max-age=86400",
+    }
+    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.nyc3.digitaloceanspaces.com"
+    DEFAULT_FILE_STORAGE = DEFAULT_STORAGE
+    # Static URL always ends in /
+    STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/"
+    MEDIA_LOCATION = "media"
+    PROJECT_PATH = os.path.abspath(os.path.dirname(__name__))
+    STATICFILES_DIRS = [os.path.join(PROJECT_PATH, "static")]
+    STATICFILES_LOCATION = "static/home"
+    STATICFILES_STORAGE = "custom_storages.StaticStorage"
+    AWS_PRELOAD_METADATA = True
+    APP_IMAGE_LOCATION = MEDIA_LOCATION + "/app_images"  # type: str
+    APP_IMAGE_STORAGE = "custom_storages.AppImageStorage"
 
-MEDIA_LOCATION = "media"
-PROJECT_PATH = os.path.abspath(os.path.dirname(__name__))
-STATICFILES_DIRS = [os.path.join(PROJECT_PATH, "static")]
-STATICFILES_LOCATION = "static/home"
-STATICFILES_STORAGE = "custom_storages.StaticStorage"
-AWS_PRELOAD_METADATA = True
-
-LOGO_LOCATION = MEDIA_LOCATION + "/logo"  # type: str
-LOGO_STORAGE = "custom_storages.LogoStorage"
-
-DEFAULT_LOCATION = MEDIA_LOCATION + "/default"  # type: str
-DEFAULT_STORAGE = "custom_storages.DefaultStorage"
-
-AGENCY_IMAGE_LOCATION = MEDIA_LOCATION + "/agency_images"  # type: str
-AGENCY_IMAGE_STORAGE = "custom_storages.AgencyImageStorage"
-
-AGENCY_NATION_LOCATION = MEDIA_LOCATION + "/agency_nation"  # type: str
-AGENCY_NATION_STORAGE = "custom_storages.AgencyNationStorage"
-
-ORBITER_IMAGE_LOCATION = MEDIA_LOCATION + "/orbiter_images"  # type: str
-ORBITER_IMAGE_STORAGE = "custom_storages.OrbiterImageStorage"
-
-LAUNCHER_IMAGE_LOCATION = MEDIA_LOCATION + "/launcher_images"  # type: str
-LAUNCHER_IMAGE_STORAGE = "custom_storages.LauncherImageStorage"
-
-LAUNCH_IMAGE_LOCATION = MEDIA_LOCATION + "/launch_images"  # type: str
-LAUNCH_IMAGE_STORAGE = "custom_storages.LaunchImageStorage"
-
-EVENT_IMAGE_LOCATION = MEDIA_LOCATION + "/event_images"  # type: str
-EVENT_IMAGE_STORAGE = "custom_storages.EventImageStorage"
-
-PROGRAM_IMAGE_LOCATION = MEDIA_LOCATION + "/program_images"  # type: str
-PROGRAM_IMAGE_STORAGE = "custom_storages.ProgramImageStorage"
-
-APP_IMAGE_LOCATION = MEDIA_LOCATION + "/app_images"  # type: str
-APP_IMAGE_STORAGE = "custom_storages.AppImageStorage"
-
-ASTRONAUT_IMAGE_LOCATION = MEDIA_LOCATION + "/astronaut_images"  # type: str
-ASTRONAUT_IMAGE_STORAGE = "custom_storages.AstronautImageStorage"
-
-SPACESTATION_IMAGE_LOCATION = MEDIA_LOCATION + "/spacestation_images"  # type: str
-SPACESTATION_IMAGE_STORAGE = "custom_storages.SpaceStationImageStorage"
-
-LAUNCHER_CORE_IMAGE_LOCATION = MEDIA_LOCATION + "/launcher_core_images"  # type: str
-LAUNCHER_CORE_IMAGE_STORAGE = "custom_storages.LauncherCoreImageStorage"
-
-DEFAULT_FILE_STORAGE = DEFAULT_STORAGE
-
-AWS_IS_GZIPPED = True
 
 if env.str("CACHE_BACKEND", None) and env.str("CACHE_LOCATION", None):
     CACHES = {
@@ -404,21 +374,7 @@ IS_SLN = env.bool("IS_SLN", True)
 IS_LL = env.bool("IS_LL", False)
 
 
-# Buffer SETTINGS
-
-BUFFER_CLIENT_ID = env.str("BUFFER_CLIENT_ID", None)
-BUFFER_SECRET_ID = env.str("BUFFER_SECRET_ID", None)
-BUFFER_ACCESS_TOKEN = env.str("BUFFER_ACCESS_TOKEN", None)
-
-# Twitter SETTINGS
-
-TOKEN_KEY = env.str("TOKEN_KEY", None)
-TOKEN_SECRET = env.str("TOKEN_SECRET", None)
-CONSUMER_KEY = env.str("CONSUMER_KEY", None)
-CONSUMER_SECRET = env.str("CONSUMER_SECRET", None)
-
 # FCM SETTINGS
-
 FCM_KEY = env.str("FCM_KEY", None)
 
 # DigitalOcean SETTINGS

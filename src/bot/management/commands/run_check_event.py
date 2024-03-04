@@ -24,5 +24,3 @@ class Command(BaseCommand):
         if event:
             notification = EventNotificationHandler()
             notification.send_webcast_notification(event)
-            # twitter = EventTwitterHandler()
-            # twitter.send_ten_minute_tweet(event)

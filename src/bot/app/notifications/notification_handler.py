@@ -6,11 +6,11 @@ from api.models import Article, Events, Launch
 from django.core.cache import cache
 from pyfcm import FCMNotification
 
+from bot.models import LaunchNotificationRecord
 from bot.utils.util import (
     get_fcm_all_topics_v3,
     get_fcm_not_strict_topics_v3,
     get_fcm_strict_topics_v3,
-    get_fcm_topics_v2,
     get_flutter_topics_v3,
 )
 from spacelaunchnow import settings
@@ -26,16 +26,20 @@ class NotificationHandler:
         self.DEBUG = debug
         self.api_key = settings.FCM_KEY
 
-        if self.api_key is None:
+        if self.api_key is None and not settings.DEBUG:
             raise Exception("No FCM_KEY provided.")
 
-    def send_notification(self, launch, notification_type, notification):
+        if settings.DEBUG:
+            self.api_key = None
+
+    def send_notification(self, launch: Launch, notification_type: str, notification: LaunchNotificationRecord):
         current_time = datetime.now(tz=pytz.utc)
         launch_time = launch.net
         diff = int((launch_time - current_time).total_seconds())
         cache_key = str(launch.id) + notification_type
         launch_cooldown = cache.get(cache_key)
         global_cooldown = cache.get(notification_type)
+        logger.info(f"Launch Cooldown: {launch_cooldown} Global Cooldown: {global_cooldown}")
         if launch_cooldown or global_cooldown:
             logger.error(
                 "Notification cooldown window for %s - Launch: %s Global: %s"
@@ -54,7 +58,7 @@ class NotificationHandler:
             elif launch.status.id == 2 or launch.status.id == 5 or launch.status.id == 8:
                 contents = "UPDATE: Launch has slipped, new launch date is unconfirmed."
             else:
-                logger.error("Invalid state for sending a notification - Launch: %s" % launch)
+                logger.warning("Invalid state for sending a notification - Launch: %s" % launch)
                 return
         elif notification_type == "tenMinutes":
             minutes = round(diff / 60)
@@ -63,13 +67,13 @@ class NotificationHandler:
             if launch.status.id == 1:
                 contents = "Launch attempt from %s in %s minute(s)." % (launch.pad.location.name, minutes)
             else:
-                logger.error("Invalid state for sending a notification - Launch: %s" % launch)
+                logger.warning("Invalid state for sending a notification - Launch: %s" % launch)
                 return
         elif notification_type == "oneMinute":
             if launch.status.id == 1:
                 contents = "Launch attempt from %s in less than one minute." % launch.pad.location.name
             else:
-                logger.error("Invalid state for sending a notification - Launch: %s" % launch)
+                logger.warning("Invalid state for sending a notification - Launch: %s" % launch)
                 return
         elif notification_type == "twentyFourHour":
             hours = round(diff / 60 / 60)
@@ -80,7 +84,7 @@ class NotificationHandler:
             elif launch.status.id == 2 or launch.status.id == 5:
                 contents = "Might be launching from %s in %s hours." % (launch.pad.location.name, hours)
             else:
-                logger.error("Invalid state for sending a notification - Launch: %s" % launch)
+                logger.warning("Invalid state for sending a notification - Launch: %s" % launch)
                 return
         elif notification_type == "oneHour":
             if launch.status.id == 1:
@@ -159,82 +163,22 @@ class NotificationHandler:
             notification.last_notification_sent = datetime.now(tz=pytz.utc)
             notification.save()
             push_service = FCMNotification(api_key=self.api_key)
-            self.send_v2_notification(launch, notification_type, push_service, contents)
             self.send_v3_notification(launch, notification_type, push_service, contents)
 
             logger.info("----------------------------------------------------------")
 
-    def send_v2_notification(self, launch, notification_type, push_service, contents):
-        flutter_topics_v2 = get_fcm_topics_v2(
-            launch, notification_type=notification_type, debug=self.DEBUG, flutter=True
-        )
-        topics_v2 = get_fcm_topics_v2(launch, notification_type=notification_type, debug=self.DEBUG)
-
+    def send_v3_notification(
+        self, launch: Launch, notification_type: str, push_service: FCMNotification, contents: str
+    ):
         if len(launch.vid_urls.all()) > 0:
             webcast = True
         else:
             webcast = False
         image = ""
-        if launch.image_url:
-            image = launch.image_url.url
-        elif launch.launch_service_provider.image_url:
-            image = launch.launch_service_provider.image_url.url
-        elif launch.launch_service_provider.legacy_image_url:
-            image = launch.launch_service_provider.legacy_image_url
-
-        data = {
-            "notification_type": notification_type,
-            "launch_id": launch.launch_library_id,
-            "launch_uuid": str(launch.id),
-            "launch_name": launch.name,
-            "launch_image": image,
-            "launch_net": launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
-            "launch_location": launch.pad.location.name,
-            "webcast": webcast,
-        }
-
-        # Send notifications to SLN Android after 3.0.0
-        # Catch any issue with sending notification.
-        try:
-            logger.info("Android v2 Notification")
-            logger.info("Notification v2 Data - %s" % data)
-            logger.info("Topic Data v2- %s" % topics_v2)
-            android_result_v2 = push_service.notify_topic_subscribers(
-                data_message=data,
-                condition=topics_v2,
-                time_to_live=86400,
-            )
-            logger.info(android_result_v2)
-        except Exception as e:
-            logger.error(e)
-
-        try:
-            logger.info("Flutter v2 Notification")
-            logger.info("Notification v2 Data - %s" % data)
-            logger.info("Flutter Topic v2- %s" % flutter_topics_v2)
-            flutter_result = push_service.notify_topic_subscribers(
-                data_message=data,
-                condition=flutter_topics_v2,
-                time_to_live=86400,
-                message_title=launch.name,
-                message_body=contents,
-            )
-            logger.debug(flutter_result)
-        except Exception as e:
-            logger.error(e)
-
-    def send_v3_notification(self, launch, notification_type, push_service, contents):
-        if len(launch.vid_urls.all()) > 0:
-            webcast = True
-        else:
-            webcast = False
-        image = ""
-        if launch.image_url:
-            image = launch.image_url.url
-        elif launch.launch_service_provider.image_url:
-            image = launch.launch_service_provider.image_url.url
-        elif launch.launch_service_provider.legacy_image_url:
-            image = launch.launch_service_provider.legacy_image_url
+        if launch.image:
+            image = launch.image.image.url
+        elif launch.launch_service_provider and launch.launch_service_provider.image:
+            image = launch.launch_service_provider.image.image.url
 
         data = {
             "notification_type": notification_type,
@@ -276,34 +220,6 @@ class NotificationHandler:
         except Exception as e:
             logger.error(e)
 
-    def send_custom_ios_v2(self, pending):
-        data = self.get_json_data(pending)
-
-        if not self.DEBUG:
-            flutter_topics = "'flutter_production_v2' in topics && 'custom' in topics"
-        else:
-            flutter_topics = "'flutter_debug_v2' in topics && 'custom' in topics"
-
-        push_service = FCMNotification(api_key=self.api_key)
-
-        logger.info("----------------------------------------------------------")
-        logger.info("Sending iOS Custom Flutter notification - %s" % pending.title)
-        try:
-            logger.info("Custom Notification Data - %s" % data)
-            logger.info("Topics - %s" % flutter_topics)
-            flutter_results = push_service.notify_topic_subscribers(
-                data_message=data,
-                condition=flutter_topics,
-                time_to_live=86400,
-                message_title=pending.title,
-                message_body=pending.message,
-            )
-            logger.info(flutter_results)
-        except Exception as e:
-            logger.error(e)
-
-        logger.info("----------------------------------------------------------")
-
     def send_custom_ios_v3(self, pending):
         data = self.get_json_data(pending)
 
@@ -327,32 +243,6 @@ class NotificationHandler:
                 message_body=pending.message,
             )
             logger.info(flutter_results)
-        except Exception as e:
-            logger.error(e)
-
-        logger.info("----------------------------------------------------------")
-
-    def send_custom_android_v2(self, pending):
-        data = self.get_json_data(pending)
-
-        if not self.DEBUG:
-            topics = "'prod_v2' in topics && 'custom' in topics"
-        else:
-            topics = "'debug_v2' in topics && 'custom' in topics"
-
-        push_service = FCMNotification(api_key=self.api_key)
-
-        logger.info("----------------------------------------------------------")
-        logger.info("Sending Android Custom notification - %s" % pending.title)
-        try:
-            logger.info("Custom Notification Data - %s" % data)
-            logger.info("Topics - %s" % topics)
-            android_result = push_service.notify_topic_subscribers(
-                data_message=data,
-                condition=topics,
-                time_to_live=86400,
-            )
-            logger.info(android_result)
         except Exception as e:
             logger.error(e)
 
@@ -396,12 +286,10 @@ class NotificationHandler:
             launch = Launch.objects.get(id=pending.launch_id)
 
             image = ""
-            if launch.image_url:
-                image = launch.image_url.url
-            elif launch.launch_service_provider.image_url:
-                image = launch.launch_service_provider.image_url.url
-            elif launch.launch_service_provider.legacy_image_url:
-                image = launch.launch_service_provider.legacy_image_url
+            if launch.image:
+                image = launch.image.image.url
+            elif launch.launch_service_provider and launch.launch_service_provider.image:
+                image = launch.launch_service_provider.image.image.url
 
             data.update(
                 {
@@ -436,8 +324,8 @@ class NotificationHandler:
             event = Events.objects.get(id=pending.event_id)
 
             feature_image = None
-            if event.feature_image and hasattr(event.feature_image, "url"):
-                feature_image = event.feature_image.url
+            if event.image and hasattr(event.image.image, "url"):
+                feature_image = event.image.image.url
             data.update(
                 {
                     "event": {
@@ -450,8 +338,8 @@ class NotificationHandler:
                         },
                         "date": event.date.strftime("%B %d, %Y %H:%M:%S %Z"),
                         "location": event.location,
-                        "news_url": event.news_url,
-                        "video_url": event.video_url,
+                        "news_url": event.info_urls.first(),
+                        "video_url": event.vid_urls.first(),
                         "webcast_live": event.webcast_live,
                         "feature_image": feature_image,
                     },

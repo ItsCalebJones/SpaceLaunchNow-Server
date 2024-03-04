@@ -5,7 +5,6 @@ import pytz
 from api.models import Article, Events
 
 from bot.app.events.notification_handler import EventNotificationHandler
-from bot.app.events.social_handler import SocialHandler
 from bot.app.notifications.news_notification_handler import NewsNotificationHandler
 from bot.models import ArticleNotification
 from spacelaunchnow import settings
@@ -16,7 +15,6 @@ logger = logging.getLogger(__name__)
 class EventTracker:
     def __init__(self, debug=settings.DEBUG):
         self.DEBUG = debug
-        self.twitter = SocialHandler()
         self.notification_handler = EventNotificationHandler()
         self.news_notification_handler = NewsNotificationHandler()
 
@@ -31,11 +29,6 @@ class EventTracker:
             logger.debug(f"Event: {event.name}")
             logger.debug(f"{event}")
             if event.notifications_enabled:
-                if not event.was_tweeted_ten_minutes:
-                    event.was_tweeted_ten_minutes = True
-                    event.save()
-                    logger.info(f"Sending {event.name} to Twitter!")
-                    self.twitter.send_ten_minute_social(event)
                 if not event.was_notified_ten_minutes:
                     event.was_notified_ten_minutes = True
                     event.save()
@@ -51,13 +44,6 @@ class EventTracker:
             logger.debug("Web-cast Live! Event: %s", event.name)
             logger.debug(f"{event}")
             if event.notifications_enabled:
-                if not event.was_tweeted_webcast_live:
-                    event.was_tweeted_webcast_live = True
-                    event.save()
-                    logger.info(
-                        f"Sending {event.name} to Twitter!",
-                    )
-                    self.twitter.send_webcast_social(event)
                 if not event.was_notified_webcast_live:
                     event.was_notified_webcast_live = True
                     event.save()

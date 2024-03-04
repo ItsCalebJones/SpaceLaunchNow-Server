@@ -19,7 +19,7 @@
     <meta property="og:url" content="https://spacelaunchnow.me/starship/"/>
     {% if event.feature_image %}
         <meta name="og:image" content="{{ event.feature_image.url }}"/>
-    {% else %}
+`    {% else %}
         <meta name="og:image" content="{% static  'img/social.png' %}"/>
     {% endif %}
     <meta property="og:image:width" content="3000"/>
@@ -118,16 +118,16 @@
                     <div class="card card-plain card-blog">
                         <div class="card-header card-header-image"
                              style="margin-left:16px!important; margin-right:16px!important;">
-                            {% if next_up.image_url %}
+                            {% if next_up.image %}
                                 <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
-                                     src="{{ next_up.image_url.url }}">
+                                     src="{{ next_up.image.image.url }}">
                                 <div class="colored-shadow"
-                                     style="background-image: url({{ next_up.image_url.url }}); opacity: 1;"></div>
-                            {% elif next_up.rocket.configuration.image_url %}
+                                     style="background-image: url({{ next_up.image.image.url }}); opacity: 1;"></div>
+                            {% elif next_up.rocket.configuration.image %}
                                 <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
-                                     src="{{ next_up.rocket.configuration.image_url.url }}">
+                                     src="{{ next_up.rocket.configuration.image.image.url }}">
                                 <div class="colored-shadow"
-                                     style="background-image: url({{ next_up.rocket.configuration.image_url.url }}); opacity: 1;"></div>
+                                     style="background-image: url({{ next_up.rocket.configuration.image.image.url }}); opacity: 1;"></div>
                             {% else %}
                                 <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
                                      src="{% static 'img/header.jpg' %}">
@@ -304,14 +304,14 @@
                             {% else %}
                                 <tr>
                                     <td>
-                                        {% if item.image_url %}
-                                            {% thumbnail item.image_url "100x100" as im %}
+                                        {% if item.image %}
+                                            {% thumbnail item.image.image.url "100x100" as im %}
                                                 <img class="img-raised rounded-circle img-fluid text-center"
                                                      src="{{ im.url }}"
                                                      style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                                             {% endthumbnail %}
-                                        {% elif item.rocket.configuration.image_url %}
-                                            {% thumbnail item.rocket.configuration.image_url "100x100" as im %}
+                                        {% elif item.rocket.configuration.image %}
+                                            {% thumbnail item.rocket.configuration.image.image.url "100x100" as im %}
                                                 <img class="img-raised rounded-circle img-fluid text-center"
                                                      src="{{ im.url }}"
                                                      style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
