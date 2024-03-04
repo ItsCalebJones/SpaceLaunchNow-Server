@@ -31,5 +31,6 @@ services:
       - DATABASE_ENGINE=django.db.backends.postgresql_psycopg2
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
+      - USE_LOCAL_STORAGE=true
     depends_on:
       - db

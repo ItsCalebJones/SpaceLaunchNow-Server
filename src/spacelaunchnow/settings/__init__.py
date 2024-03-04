@@ -19,7 +19,7 @@ from environs import Env
 env = Env()
 env.read_env()
 
-BASE_DIR = os.path.abspath(os.path.dirname(__name__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
@@ -323,8 +323,11 @@ if USE_LOCAL_STORAGE:
     # Local storage settings
     DOMAIN = f"{LOCAL_IP}:8000"
     DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
-    STATIC_URL = "/static/"
+    STATIC_URL = "static/"
     STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+    MEDIA_URL = os.path.join(BASE_DIR, "media/")
 else:
     AWS_QUERYSTRING_AUTH = False
     AWS_STORAGE_BUCKET_NAME = env.str("STORAGE_BUCKET_NAME", None)

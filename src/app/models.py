@@ -9,6 +9,7 @@ except ImportError:
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.db import models
+from storages.backends.s3boto3 import S3Boto3Storage
 
 from custom_storages import AppImageStorage
 from spacelaunchnow.base_models import SingletonModel
@@ -36,13 +37,13 @@ def profile_image_path(instance, filename):
     return name
 
 
-def select_storage():
-    return default_storage if (settings.DEBUG or settings.TESTING) else AppImageStorage()
+def select_storage(storage: S3Boto3Storage = None):
+    return default_storage if (settings.USE_LOCAL_STORAGE) else AppImageStorage()
 
 
 class AppConfig(SingletonModel):
     navigation_drawer_image = models.FileField(
-        storage=select_storage, default=None, null=True, blank=True, upload_to=image_path
+        storage=select_storage(storage=AppImageStorage), default=None, null=True, blank=True, upload_to=image_path
     )
 
     def __str__(self):

@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+
 from api.endpoints.library.v200.router import api_urlpatterns as ll_api_v200
 from api.endpoints.library.v210.router import api_urlpatterns as ll_api_v210
 from api.endpoints.library.v220.router import api_urlpatterns as ll_api_v220
@@ -50,7 +51,7 @@ sitemaps = {
 default_settings = [
     re_path(r"^robots\.txt", include("robots.urls")),
     path(
-        "sitemap.xml",
+        "sitemap.xml/",
         cache_page(86400)(sitemaps_views.index),
         {"sitemaps": sitemaps, "sitemap_url_name": "sitemaps"},
     ),
@@ -66,6 +67,11 @@ api_settings = []
 web_settings = []
 admin_settings = []
 debug_settings = []
+
+if settings.USE_LOCAL_STORAGE:
+    from django.conf.urls.static import static
+
+    default_settings += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
 def get_v200():
