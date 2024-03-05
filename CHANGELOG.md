@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v4.0.1 (2024-03-05)
+
+### Fix
+
+* Update bucket name ([`bba9bb3`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/bba9bb31424b28bb14cffe5caab71e967f8bf76f))
+* Bug with new staging environment ([`b725dd4`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/b725dd45369219a5defe0bbc4cd73176416d9631))
+
 ## v4.0.0 (2024-03-05)
 
 ### Feature
