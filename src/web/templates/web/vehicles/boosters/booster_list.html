@@ -135,8 +135,8 @@
                             {% for vehicle in vehicles %}
                                 <tr>
                                     <td>
-                                        {% if vehicle.image_url %}
-                                            {% thumbnail vehicle.image_url "100x100" as im %}
+                                        {% if vehicle.image %}
+                                            {% thumbnail vehicle.image.image.url "100x100" as im %}
                                                 <img class="img-raised rounded-circle img-fluid text-center"
                                                      src="{{ im.url }}"
                                                      style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">

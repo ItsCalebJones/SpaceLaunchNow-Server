@@ -111,20 +111,18 @@ def index(request):
         launch = _next_launch
         _launches = _launches[1:3]
 
-    if launch.image_url:
-        launch_image = launch.image_url.url
-    elif launch.rocket.configuration.image_url:
-        launch_image = launch.rocket.configuration.image_url.url
-    elif launch.infographic_url:
-        launch_image = launch.infographic_url.url
+    if launch.image:
+        launch_image = launch.image.image.url
+    elif launch.rocket.configuration.image:
+        launch_image = launch.rocket.configuration.image.image.url
     else:
         launch_image = None
 
     first_launch = _launches[0]
-    if first_launch.image_url:
-        first_launch_image = first_launch.image_url.url
-    elif first_launch.rocket.configuration.image_url:
-        first_launch_image = first_launch.rocket.configuration.image_url.url
+    if first_launch.image:
+        first_launch_image = first_launch.image.image.url
+    elif first_launch.rocket.configuration.image:
+        first_launch_image = first_launch.rocket.configuration.image.image.url
     elif first_launch.infographic_url:
         first_launch_image = first_launch.infographic_url.url
     else:
@@ -135,10 +133,10 @@ def index(request):
 
     if len(_launches) >= 2:
         second_launch = _launches[1]
-        if second_launch.image_url:
-            second_launch_image = second_launch.image_url.url
-        elif second_launch.rocket.configuration.image_url:
-            second_launch_image = second_launch.rocket.configuration.image_url.url
+        if second_launch.image:
+            second_launch_image = second_launch.image.image.url
+        elif second_launch.rocket.configuration.image:
+            second_launch_image = second_launch.rocket.configuration.image.image.url
         elif second_launch.infographic_url:
             second_launch_image = second_launch.infographic_url.url
         else:
@@ -252,12 +250,10 @@ def create_launch_view(request, launch):
             youtube_urls.append(url.vid_url)
     previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by("-net")[:10]
 
-    if launch.image_url:
-        launch_image = launch.image_url.url
-    elif launch.rocket.configuration.image_url:
-        launch_image = launch.rocket.configuration.image_url.url
-    elif launch.infographic_url:
-        launch_image = launch.infographic_url.url
+    if launch.image:
+        launch_image = launch.image.image.url
+    elif launch.rocket.configuration.image:
+        launch_image = launch.rocket.configuration.image.image.url
     else:
         launch_image = None
 
@@ -570,7 +566,7 @@ def booster_reuse(request):
     if status is None:
         status = "active"
 
-    _vehicles = Launcher.objects.filter(status__icontains=status)
+    _vehicles = Launcher.objects.filter(status__name__icontains=status)
     page = request.GET.get("page", 1)
     paginator = Paginator(_vehicles, 20)
 
@@ -937,7 +933,7 @@ class LaunchFeed(ICalFeed):
     file_name = "launches.ics"
 
     def items(self):
-        return Launch.objects.filter(net__gte=UTC_NOW).order_by("net")
+        return Launch.objects.filter(net__gte=UTC_NOW).order_by("net")[:10]
 
     def item_guid(self, item):
         return "{}{}".format(item.id, "@spacelaunchnow")
@@ -945,7 +941,7 @@ class LaunchFeed(ICalFeed):
     def item_title(self, item):
         return "{}".format(item.name)
 
-    def item_description(self, item):
+    def item_description(self, item: Launch):
         description = ""
         if item.mission is not None and item.mission.description is not None:
             description = item.mission.description
@@ -993,7 +989,7 @@ class EventFeed(ICalFeed):
     file_name = "events.ics"
 
     def items(self):
-        return Events.objects.filter(date__gte=UTC_NOW).order_by("date")
+        return Events.objects.filter(date__gte=UTC_NOW).order_by("date")[:10]
 
     def item_guid(self, item):
         return "{}{}".format(item.id, "@spacelaunchnow")
@@ -1001,14 +997,14 @@ class EventFeed(ICalFeed):
     def item_title(self, item):
         return "{}".format(item.name)
 
-    def item_description(self, item):
+    def item_description(self, item: Events):
         description = ""
         if item.description is not None:
             description = item.description
-        if item.news_url is not None:
-            description = description + "\nRead More:\n" + item.news_url
-        if item.video_url is not None:
-            description = description + "\nWatch Here:\n" + item.video_url
+        if item.info_urls.first() is not None:
+            description = description + "\nRead More:\n" + item.info_urls.first().info_url
+        if item.vid_urls.first() is not None:
+            description = description + "\nWatch Here:\n" + item.vid_urls.first().vid_url
 
         description = description + "\n\n===============\nSpace Launch Now\nID: " + str(item.id) + "\n==============="
         return description
@@ -1020,10 +1016,10 @@ class EventFeed(ICalFeed):
         return item.location
 
     def item_link(self, item):
-        if item.news_url is not None:
-            return item.news_url
-        elif item.video_url is not None:
-            return item.video_url
+        if item.info_urls.first() is not None:
+            return item.info_urls.first().info_url
+        elif item.vid_urls.first() is not None:
+            return item.vid_urls.first().vid_url
         else:
             return "https://spacelaunchnow.me"
 

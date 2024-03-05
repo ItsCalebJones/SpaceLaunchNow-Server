@@ -15,8 +15,8 @@
     <meta property="og:description"
           content="{{ vehicle.serial_number }} - {{ vehicle.details|truncatechars:100 }}">
     <meta property="og:url" content="https://spacelaunchnow.me/vehicle/launcher/{{ vehicle.id }}"/>
-    {% if vehicle.image_url %}
-        <meta property="og:image" content="{{ vehicle.image_url.url }}"/>
+    {% if vehicle.image %}
+        <meta property="og:image" content="{{ vehicle.image.image.url }}"/>
     {% else %}
         <meta property="og:image" content="{% static  'img/social.png' %}"/>
         <meta property="og:image:width" content="3000"/>
@@ -33,8 +33,8 @@
     <meta name="twitter:title" content="Space Launch Now - {{ vehicle.serial_number }}">
     <meta name="twitter:description" content="{{ vehicle.serial_number }} - {{ vehicle.details|truncatechars:100 }}">
     <meta name="twitter:image" content="{% static  'img/social.png' %}">
-    {% if vehicle.image_url %}
-        <meta name="twitter:image" content="{{ vehicle.image_url.url }}"/>
+    {% if vehicle.image %}
+        <meta name="twitter:image" content="{{ vehicle.image.image.url }}"/>
     {% else %}
         <meta name="twitter:image" content="{% static  'img/social.png' %}"/>
     {% endif %}
@@ -75,16 +75,16 @@
                     (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
                 <div class="card card-blog">
-                    {% if vehicle.image_url %}
+                    {% if vehicle.image %}
                         <div class="card-header card-header-image">
                             <img class="img"
-                                 src="{{ vehicle.image_url.url }}">
+                                 src="{{ vehicle.image.image.url }}">
                         </div>
 
-                    {% elif vehicle.launcher_config.image_url %}
+                    {% elif vehicle.launcher_config.image %}
                         <div class="card-header card-header-image">
                             <img class="img"
-                                 src="{{ vehicle.launcher_config.image_url.url }}">
+                                 src="{{ vehicle.launcher_config.image.image.url }}">
                         </div>
                     {% else %}
                         <div class="card-header card-header-image">

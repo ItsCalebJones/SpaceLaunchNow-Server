@@ -75,10 +75,10 @@
                         {% for vehicle in vehicles %}
                             <div class="col-sm-6">
                                 <div class="card card-blog">
-                                    {% if vehicle.image_url %}
+                                    {% if vehicle.image %}
                                         <div class="card-header card-header-image">
                                             <img class="img" style="height: 250px; object-fit: cover;"
-                                                 src="{{ vehicle.image_url.url }}">
+                                                 src="{{ vehicle.image.image.url }}">
                                         </div>
                                     {% else %}
                                         <div class="card-header card-header-image">

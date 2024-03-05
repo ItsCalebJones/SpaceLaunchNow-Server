@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  sln_db:
+    container_name: sln_db
+    image: postgres:14-alpine
+    env_file:
+      - .env
+  sln_cache:
+    container_name: sln_cache
+    image: memcached
+    expose:
+      - "11211"
+  sln_web:
+    container_name: sln_web
+    build:
+      context: ../
+      args:
+        - PRIVATE_USERNAME=${POETRY_HTTP_BASIC_TSD_USERNAME}
+        - PRIVATE_PASSWORD=${POETRY_HTTP_BASIC_TSD_PASSWORD}
+    image: space_launch_now_local
+    command: >
+      bash -c "python manage.py migrate --noinput
+      && gunicorn --workers 1 --threads 2 --bind :8080 --log-level INFO spacelaunchnow.wsgi"
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      - sln_db
+      - sln_cache

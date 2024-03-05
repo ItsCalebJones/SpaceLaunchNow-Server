@@ -190,7 +190,7 @@
                                     <div class="row">
                                         <div class="col-md-12 mx-auto">
                                             {% if launch.mission_patches.all|length > 0 %}
-                                                <img src="{{ launch.mission_patches.first.image_url.url }}"
+                                                <img src="{{ launch.mission_patches.first.image_url.image.url }}"
                                                      alt="Circle Image"
                                                      class="img-fluid mx-auto"
                                                      style="max-width: 75%;max-height: 400px;">
@@ -488,8 +488,8 @@
                                                 <div class="row">
                                                     <!-- Date/Time -->
                                                     <div class="col-lg-5 mx-auto my-auto mr-auto">
-                                                        {% if stage.launcher.image_url %}
-                                                            {% thumbnail stage.launcher.image_url "300x300" crop="80%" as im %}
+                                                        {% if stage.launcher.image %}
+                                                            {% thumbnail stage.launcher.image.image.url "300x300" crop="80%" as im %}
                                                                 <img class="img-raised rounded-circle img-fluid text-center"
                                                                      src="{{ im.url }}"
                                                                      style="padding:1px;border:1px solid #cccccc;max-height: 200px;max-width: 200px">
@@ -628,8 +628,8 @@
                                         <div class="row">
                                             <!-- Date/Time -->
                                             <div class="col-lg-5 mx-auto my-auto mr-auto">
-                                                {% if spacecraft_flight.spacecraft.spacecraft_config.image_url %}
-                                                    {% thumbnail spacecraft_flight.spacecraft.spacecraft_config.image_url "300x300" crop="80%" as im %}
+                                                {% if spacecraft_flight.spacecraft.spacecraft_config.image %}
+                                                    {% thumbnail spacecraft_flight.spacecraft.spacecraft_config.image.image.url "300x300" crop="80%" as im %}
                                                         <img class="img-raised rounded-circle img-fluid text-center"
                                                              src="{{ im.url }}"
                                                              style="padding:1px;border:1px solid #cccccc;max-height: 200px;max-width: 200px">

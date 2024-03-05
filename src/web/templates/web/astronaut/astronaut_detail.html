@@ -2,7 +2,6 @@
 {% load static %}
 {% load thumbnail %}
 {% load humanize %}
-{% load static %}
 {% block extrahead %}
     <link rel="canonical" href="https://spacelaunchnow.me/astronaut/{{ astronaut.slug }}">
     <title>Space Launch Now - {{ astronaut.name }}</title>
@@ -55,7 +54,7 @@
             <div class="col-lg-9 col-md-12 col-xl-9">
                 <div class="text-center">
                     {% if astronaut.profile_image %}
-                        <img src="{{ astronaut.profile_image.url }}"
+                        <img src="{{ astronaut.profile_image }}"
                              alt="Circle Image"
                              class="img-raised rounded-circle img-fluid text-center"
                              style="overflow: hidden;width: 400px;height: 400px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
@@ -116,14 +115,14 @@
                                 <div class="card-header {% if 'GO' in launch.status.abbrev %} card-header-success {% elif 'TBD' in launch.status.abbrev %} card-header-danger {% else %} card-header-info {% endif %} p-2">
                                     <div class="row">
                                         <div class="col-md-4 text-center" style="height: 150px">
-                                            {% if launch.rocket.configuration.image_url %}
-                                                {% thumbnail launch.rocket.configuration.image_url "200" as im %}
+                                            {% if launch.rocket.configuration.image %}
+                                                {% thumbnail launch.rocket.configuration.image.image.url "200" as im %}
                                                     <img class="img-raised rounded-circle img-fluid text-center"
                                                          src="{{ im.url }}"
                                                          style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                                                 {% endthumbnail %}
-                                            {% elif launch.rocket.configuration.manufacturer.image_url %}
-                                                {% thumbnail launch.rocket.configuration.manufacturer.image_url "200" as im %}
+                                            {% elif launch.rocket.configuration.manufacturer.image %}
+                                                {% thumbnail launch.rocket.configuration.manufacturer.image.image.url "200" as im %}
                                                     <img class="img-raised rounded-circle img-fluid text-center"
                                                          src="{{ im.url }}"
                                                          style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
@@ -196,14 +195,14 @@
                                 <div class="card-header {% if 'GO' in launch.status.abbrev %} card-header-success {% elif 'TBD' in launch.status.abbrev %} card-header-danger {% else %} card-header-info {% endif %} p-2">
                                     <div class="row">
                                         <div class="col-md-4 text-center" style="height: 150px">
-                                            {% if launch.rocket.configuration.image_url %}
-                                                {% thumbnail launch.rocket.configuration.image_url "200" as im %}
+                                            {% if launch.rocket.configuration.image %}
+                                                {% thumbnail launch.rocket.configuration.image.image.url "200" as im %}
                                                     <img class="img-raised rounded-circle img-fluid text-center"
                                                          src="{{ im.url }}"
                                                          style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                                                 {% endthumbnail %}
-                                            {% elif launch.rocket.configuration.manufacturer.image_url %}
-                                                {% thumbnail launch.rocket.configuration.manufacturer.image_url "200" as im %}
+                                            {% elif launch.rocket.configuration.manufacturer.image %}
+                                                {% thumbnail launch.rocket.configuration.manufacturer.image.image.url "200" as im %}
                                                     <img class="img-raised rounded-circle img-fluid text-center"
                                                          src="{{ im.url }}"
                                                          style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">

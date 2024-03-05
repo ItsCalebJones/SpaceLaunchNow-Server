@@ -42,14 +42,14 @@ class SLNAPITest(LLAPITests):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_launch_slugs(self):
-        launches = Launch.objects.all()
+        launches = Launch.objects.all().order_by("-net")
         for launch in launches:
             path = f"/launch/{launch.slug}/"
             response = self.client.get(path)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_event_slugs(self):
-        events = Events.objects.all()
+        events = Events.objects.all().order_by("id")
         for event in events:
             path = f"/event/{event.slug}/"
             response = self.client.get(path)
@@ -65,7 +65,7 @@ class SLNAPITest(LLAPITests):
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        launchers = Launcher.objects.all()
+        launchers = Launcher.objects.all().order_by("id")
         for launcher in launchers:
             path = f"/vehicle/launcher/{launcher.id}/"
             response = self.client.get(path)
@@ -76,7 +76,7 @@ class SLNAPITest(LLAPITests):
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        launcher_configs = LauncherConfig.objects.all()
+        launcher_configs = LauncherConfig.objects.all().order_by("id")
         for launcher_config in launcher_configs:
             path = f"/vehicle/launch_vehicle/{launcher_config.id}/"
             response = self.client.get(path)

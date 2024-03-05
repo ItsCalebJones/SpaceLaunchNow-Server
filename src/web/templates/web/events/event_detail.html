@@ -89,9 +89,9 @@
                             {{ event.description|linebreaks }}
                         </p>
 
-                        {% if event.news_url %}
+                        {% if event.info_urls %}
                             <div class="text-left">
-                                <a class="btn btn-primary" href="{{ event.news_url }}">Read More</a>
+                                <a class="btn btn-primary" href="{{ event.info_urls.first }}">Read More</a>
                             </div>
                         {% endif %}
 
@@ -133,9 +133,9 @@
                                                         <h5 class="media-heading">{{ item.created_by }} <small>• {{ item.created_on }}</small></h5>
                                                         <h6 class="text-muted"></h6>
                                                         <p>{{ item.comment|linebreaks }}</p>
-                                                        {% if item.info_url %}
+                                                        {% if item.info_urls.first %}
                                                             <div class="media-footer">
-                                                                <b>Link</b> <a href="{{ item.info_url }}" class="text-reset">{{ item.info_url }}</a>
+                                                                <b>Link</b> <a href="{{ item.info_urls.first }}" class="text-reset">{{ item.info_urls.first }}</a>
                                                             </div>
                                                         {% endif %}
                                                     </div>

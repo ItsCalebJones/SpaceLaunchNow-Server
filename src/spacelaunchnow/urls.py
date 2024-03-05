@@ -13,13 +13,15 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+
 from api.endpoints.library.v200.router import api_urlpatterns as ll_api_v200
 from api.endpoints.library.v210.router import api_urlpatterns as ll_api_v210
 from api.endpoints.library.v220.router import api_urlpatterns as ll_api_v220
 from django.contrib import admin
-from django.contrib.sitemaps.views import sitemap
+from django.contrib.sitemaps import views as sitemaps_views
 from django.http import HttpResponse
 from django.urls import include, path, re_path
+from django.views.decorators.cache import cache_page
 from django.views.generic import TemplateView
 
 import web
@@ -48,13 +50,28 @@ sitemaps = {
 }
 default_settings = [
     re_path(r"^robots\.txt", include("robots.urls")),
-    re_path(r"^sitemap\.xml/$", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
+    path(
+        "sitemap.xml/",
+        cache_page(86400)(sitemaps_views.index),
+        {"sitemaps": sitemaps, "sitemap_url_name": "sitemaps"},
+    ),
+    path(
+        "sitemap-<section>.xml",
+        cache_page(86400)(sitemaps_views.sitemap),
+        {"sitemaps": sitemaps},
+        name="sitemaps",
+    ),
     path("health_check/", include("health_check.urls")),
 ]
 api_settings = []
 web_settings = []
 admin_settings = []
 debug_settings = []
+
+if settings.USE_LOCAL_STORAGE:
+    from django.conf.urls.static import static
+
+    default_settings += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
 def get_v200():

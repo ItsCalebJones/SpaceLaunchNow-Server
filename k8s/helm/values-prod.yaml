@@ -137,42 +137,6 @@ serviceAccount:
   name:
 
 jobs:
-  - name: sln-daily-digest
-    image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
-      tag: latest
-      imagePullPolicy: Always
-    schedule: "30 12 * * *"
-    command: "['python', 'manage.py', 'run_digest', '--daily']"
-    failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 5
-    concurrencyPolicy: Forbid
-    restartPolicy: OnFailure
-    resources:
-      limits:
-        cpu: 100m
-        memory: 256Mi
-      requests:
-        cpu: 100m
-        memory: 256Mi
-  - name: sln-weekly-digest
-    image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
-      tag: latest
-      imagePullPolicy: Always
-    schedule: "0 12 * * mon"
-    command: "['python', 'manage.py', 'run_digest', '--weekly']"
-    failedJobsHistoryLimit: 1
-    successfulJobsHistoryLimit: 5
-    concurrencyPolicy: Forbid
-    restartPolicy: OnFailure
-    resources:
-      limits:
-        cpu: 100m
-        memory: 256Mi
-      requests:
-        cpu: 100m
-        memory: 256Mi
   - name: sln-news-sync
     image:
       repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base

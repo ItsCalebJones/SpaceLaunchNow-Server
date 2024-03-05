@@ -116,21 +116,6 @@ spec:
                 secretKeyRef:
                   name: sln-auth-prod
                   key: google-analytics-tracking-id
-            - name: BUFFER_CLIENT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: sln-auth-prod
-                  key: buffer-client-id
-            - name: BUFFER_SECRET_ID
-              valueFrom:
-                secretKeyRef:
-                  name: sln-auth-prod
-                  key: buffer-secret-id
-            - name: BUFFER_ACCESS_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: sln-auth-prod
-                  key: buffer-access-token
             - name: TOKEN_KEY
               valueFrom:
                 secretKeyRef:
