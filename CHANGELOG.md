@@ -2,6 +2,21 @@
 
 <!--next-version-placeholder-->
 
+## v4.0.0 (2024-03-05)
+
+### Feature
+
+* Add staging build environment and fix up models storage ([`922ea70`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/922ea70de10ffd4bf25dd6191955f7dc11168941))
+* Rework images with LL breaking changes ([`cd5f46e`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/cd5f46e01e6b3af6495440e7bb2edd3cdd82d779))
+
+### Fix
+
+* Issue with static files with USE_LOCAL_STORAGE ([`b00badf`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/b00badf12d4884786aa31f3ad982762dae816dc6))
+
+### Breaking
+
+* rework images with LL breaking changes ([`cd5f46e`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/cd5f46e01e6b3af6495440e7bb2edd3cdd82d779))
+
 ## v3.16.0 (2024-02-21)
 
 ### Feature
