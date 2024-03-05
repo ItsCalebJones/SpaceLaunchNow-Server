@@ -7,7 +7,7 @@ except ImportError:
     from urllib.parse import quote  # Python 3+
 
 from django.conf import settings
-from django.core.files.storage import default_storage
+from django.core.files.storage import DefaultStorage, default_storage
 from django.db import models
 from storages.backends.s3boto3 import S3Boto3Storage
 
@@ -37,13 +37,19 @@ def profile_image_path(instance, filename):
     return name
 
 
-def select_storage(storage: S3Boto3Storage = None):
-    return default_storage if (settings.USE_LOCAL_STORAGE) else AppImageStorage()
+def select_storage(model_storage: S3Boto3Storage) -> S3Boto3Storage | DefaultStorage:
+    """
+    Selects the appropriate storage backend for a model field.
+
+    :param model_storage: An instance of S3Boto3Storage to be used if not using local storage.
+    :return: An instance of either S3Boto3Storage or DefaultStorage, depending on the USE_LOCAL_STORAGE setting.
+    """
+    return default_storage if (settings.USE_LOCAL_STORAGE) else model_storage
 
 
 class AppConfig(SingletonModel):
     navigation_drawer_image = models.FileField(
-        storage=select_storage(storage=AppImageStorage), default=None, null=True, blank=True, upload_to=image_path
+        storage=select_storage(model_storage=AppImageStorage), default=None, null=True, blank=True, upload_to=image_path
     )
 
     def __str__(self):
@@ -60,7 +66,7 @@ class AppConfig(SingletonModel):
 class Nationality(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
-    flag = models.FileField(storage=select_storage, upload_to=language_image_path)
+    flag = models.FileField(storage=select_storage(model_storage=AppImageStorage), upload_to=language_image_path)
 
     def __str__(self):
         return self.name
@@ -114,7 +120,7 @@ class Staff(models.Model):
         null=True,
         blank=True,
     )
-    profile = models.FileField(storage=select_storage, upload_to=profile_image_path)
+    profile = models.FileField(storage=select_storage(model_storage=AppImageStorage), upload_to=profile_image_path)
 
     def __str__(self):
         return self.name
