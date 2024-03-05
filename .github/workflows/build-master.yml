@@ -16,7 +16,7 @@ env:
   RELEASE_NAME: sln-staging-app
   WEB_DEPLOYMENT: sln-staging-app-django-web
   DEPLOYMENT_NAMESPACE: sln-dev
-  VALUES: k8s/helm/values-dev.yaml
+  VALUES: k8s/helm/values-staging.yaml
 
 jobs:
   test:
