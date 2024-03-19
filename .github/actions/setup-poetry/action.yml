@@ -26,11 +26,10 @@ runs:
   steps:
     - name: Install poetry
       shell: bash
-      run: curl -sSL https://install.python-poetry.org | python3 - --version 1.4.1
+      run: curl -sSL https://install.python-poetry.org | python3 - --version 1.8.2
     - name: Install poetry dependencies
       shell: bash
       run: |
         export POETRY_HTTP_BASIC_TSD_USERNAME=${{inputs.repo_username}}
         export POETRY_HTTP_BASIC_TSD_PASSWORD=${{inputs.repo_password}}
-        poetry config experimental.new-installer false
         poetry install --all-extras --with dev
