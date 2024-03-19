@@ -26,9 +26,8 @@ RUN rm -rf /var/lib/apt/lists/*
 
 # Installing `poetry` package manager:
 # https://github.com/python-poetry/poetry
-RUN curl -sSL https://install.python-poetry.org | python3 - --version 1.4.1
+RUN curl -sSL https://install.python-poetry.org | python3 - --version 1.8.2
 RUN poetry config virtualenvs.in-project true
-RUN poetry config experimental.new-installer false
 RUN poetry install --no-interaction --no-root --no-ansi --with ci
 
 FROM python:3.10.4-slim-buster
