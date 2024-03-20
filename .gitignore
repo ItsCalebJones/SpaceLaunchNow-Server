@@ -21,6 +21,6 @@ k8s/ingress/issuer/secret.yaml
 src/xmlrunner/**
 **.env
 report/
-secrets.yaml
+*secret*.yaml
 dist/**
 .vscode/**

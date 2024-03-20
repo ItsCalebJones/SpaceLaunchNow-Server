@@ -116,6 +116,11 @@ spec:
                 secretKeyRef:
                   name: sln-auth-prod
                   key: fcm-key
+            - name: SLN_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sln-sentry-key
+                  key: sln-sentry-key
             - name: SERVER_ROLE
               value: "worker"
           envFrom:

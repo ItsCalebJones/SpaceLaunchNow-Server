@@ -24,6 +24,7 @@ env:
     EMAIL_HOST: "smtp.gmail.com"
     EMAIL_PORT: "587"
     EMAIL_HOST_TLS: "True"
+    SLN_ENVIRONMENT: "staging"
 
   worker:
     IS_WEBSERVER: "False"
