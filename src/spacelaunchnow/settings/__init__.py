@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 import sys
 
+import pkg_resources
+import sentry_sdk
 from api.custom_storages import DEFAULT_STORAGE
 from environs import Env
 
@@ -383,3 +385,25 @@ FCM_KEY = env.str("FCM_KEY", None)
 # DigitalOcean SETTINGS
 DO_CLUSTER_ID = env.str("DO_CLUSTER_ID", None)
 DO_TOKEN = env.str("DO_TOKEN", None)
+
+SLN_SENTRY_KEY = env.str("SLN_SENTRY_KEY", None)
+SLN_ENVIRONMENT = env.str("SLN_ENVIRONMENT", "development")
+
+
+# SENTRY SETTINGS
+
+if SLN_SENTRY_KEY:
+    PACKAGE_NAME = "spacelaunchnow-server"
+    sln_version = pkg_resources.get_distribution(PACKAGE_NAME).version
+    sentry_sdk.init(
+        dsn=SLN_SENTRY_KEY,
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        traces_sample_rate=1.0 if DEBUG else 0.2,
+        # Set profiles_sample_rate to 1.0 to profile 100%
+        # of sampled transactions.
+        # We recommend adjusting this value in production.
+        profiles_sample_rate=1.0 if DEBUG else 0.2,
+        release=f"{PACKAGE_NAME}@{sln_version}",
+        environment=SLN_ENVIRONMENT,
+    )

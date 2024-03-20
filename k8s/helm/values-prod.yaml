@@ -24,6 +24,7 @@ env:
     EMAIL_HOST: "smtp.gmail.com"
     EMAIL_PORT: "587"
     EMAIL_HOST_TLS: "True"
+    SLN_ENVIRONMENT: "production"
 
   worker:
     IS_WEBSERVER: "False"
@@ -195,7 +196,7 @@ jobs:
     - name: DO_CLUSTER_ID
       valueFrom:
         secretKeyRef:
-          name:  do-cluster-id
+          name:  sln-auth-prod
           key:  do-cluster-id
     - name: DO_TOKEN
       valueFrom:
