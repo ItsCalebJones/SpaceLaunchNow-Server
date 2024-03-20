@@ -8,6 +8,7 @@ TEST_RUNNER = "xmlrunner.extra.djangotestrunner.XMLTestRunner"
 TEST_OUTPUT_VERBOSE = True
 TEST_OUTPUT_DESCRIPTIONS = True
 TEST_OUTPUT_DIR = "xmlrunner"
+SLN_ENVIRONMENT = "testing"
 
 CACHES = {
     "default": {
