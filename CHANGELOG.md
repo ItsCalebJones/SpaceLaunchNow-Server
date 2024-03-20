@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v4.1.0 (2024-03-20)
+
+### Feature
+
+* Add sentry sdk and configure ([`70bcd10`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/70bcd103ebaab5ee51ff3c4d2e5ff4e493928f92))
+
 ## v4.0.1 (2024-03-05)
 
 ### Fix
