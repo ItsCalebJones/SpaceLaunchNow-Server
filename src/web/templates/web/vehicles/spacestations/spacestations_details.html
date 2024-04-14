@@ -134,8 +134,8 @@
                                         <div class="col-md-4">
                                             <div class="card card-profile card-plain">
                                                 <div class="card-header card-avatar">
-                                                    {% if crew.astronaut.profile_image %}
-                                                        {% thumbnail crew.astronaut.profile_image "300x300" crop="80% top" as im %}
+                                                    {% if crew.astronaut.astronaut_image.image %}
+                                                        {% thumbnail crew.astronaut.astronaut_image.image "300x300" crop="80% top" as im %}
                                                             <img class="img-raised rounded-circle img-fluid text-center"
                                                                  src="{{ im.url }}"
                                                                  style="padding:1px;border:1px solid #cccccc;max-height: 200px;max-width: 200px">

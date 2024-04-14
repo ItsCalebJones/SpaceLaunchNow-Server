@@ -173,8 +173,7 @@ pyflakes = ["-*"]
 [[tool.poetry.source]]
 name = "tsd"
 url = "https://pypi.spacelaunchnow.me/simple/"
-default = false
-secondary = true
+priority = "supplemental"
 
 [build-system]
 requires = ["poetry-core"]

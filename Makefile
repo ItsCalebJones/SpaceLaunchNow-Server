@@ -33,7 +33,7 @@ local-test: ## Run Django tests locally
 .PHONY: local-run
 local-run: ## Run Django app locally
 	@echo "🚀 Running Django app locally"
-	@poetry run python src/manage.py runserver
+	@cd src/ && poetry run python manage.py runserver
 
 .PHONY: docker-run
 docker-run: build ## Run local instance using Docker

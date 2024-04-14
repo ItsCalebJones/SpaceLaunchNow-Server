@@ -19,7 +19,7 @@ from api.custom_storages import DEFAULT_STORAGE
 from environs import Env
 
 env = Env()
-env.read_env()
+env.read_env(".env")
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -220,7 +220,7 @@ JET_MODULE_GOOGLE_ANALYTICS_CLIENT_SECRETS_FILE = os.path.join(BASE_DIR, "client
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR + "/templates/"],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -260,6 +260,7 @@ DATABASES = {
         "PORT": env.str("DATABASE_PORT"),
     }
 }
+CACHALOT_DATABASES = ["default"]
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -407,3 +408,7 @@ if SLN_SENTRY_KEY:
         release=f"{PACKAGE_NAME}@{sln_version}",
         environment=SLN_ENVIRONMENT,
     )
+
+SILENCED_SYSTEM_CHECKS = [
+    "debug_toolbar.W006",  # See jazzband/django-debug-toolbar#1780
+]
