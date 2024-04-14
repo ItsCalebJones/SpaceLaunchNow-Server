@@ -14,8 +14,8 @@
     <meta property="og:description"
           content="{{ astronaut.name }} - {{ astronaut.bio|truncatechars:100 }}">
     <meta property="og:url" content="https://spacelaunchnow.me/astronaut/{{ astronaut.slug }}"/>
-    {% if astronaut.profile_image %}
-        <meta property="og:image" content="{{ astronaut.profile_image.url }}"/>
+    {% if astronaut.astronaut_image.image %}
+        <meta property="og:image" content="{{ astronaut.astronaut_image.image.url }}"/>
     {% else %}
         <meta property="og:image" content="{% static  'img/social.png' %}"/>
         <meta property="og:image:width" content="3000"/>
@@ -31,8 +31,8 @@
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:title" content="Space Launch Now - {{ astronaut.name }}">
     <meta name="twitter:description" content="{{ astronaut.name }} - {{ astronaut.bio|truncatechars:100 }}">
-        {% if astronaut.profile_image %}
-        <meta name="twitter:image" content="{{ astronaut.profile_image.url }}"/>
+        {% if astronaut.astronaut_image.image %}
+        <meta name="twitter:image" content="{{ astronaut.astronaut_image.image.url }}"/>
     {% else %}
         <meta name="twitter:image" content="{% static  'img/social.png' %}"/>
     {% endif %}
@@ -53,8 +53,8 @@
             <!-- Post Content Column -->
             <div class="col-lg-9 col-md-12 col-xl-9">
                 <div class="text-center">
-                    {% if astronaut.profile_image %}
-                        <img src="{{ astronaut.profile_image }}"
+                    {% if astronaut.astronaut_image.image %}
+                        <img src="{{ astronaut.astronaut_image.image }}"
                              alt="Circle Image"
                              class="img-raised rounded-circle img-fluid text-center"
                              style="overflow: hidden;width: 400px;height: 400px;object-fit: cover;padding:1px;border:1px solid #cccccc;">

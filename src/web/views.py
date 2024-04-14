@@ -749,27 +749,21 @@ def astronaut_list(
 
     if nationality == "American":
         astronaut_list = (
-            Astronaut.objects.only(
-                "name", "nationality", "twitter", "instagram", "wiki", "bio", "profile_image", "slug"
-            )
+            Astronaut.objects.only("name", "nationality", "twitter", "instagram", "wiki", "bio", "image", "slug")
             .filter(nationality="American")
             .filter(status=query)
             .order_by("name")
         )
     elif nationality == "Russian":
         astronaut_list = (
-            Astronaut.objects.only(
-                "name", "nationality", "twitter", "instagram", "wiki", "bio", "profile_image", "slug"
-            )
+            Astronaut.objects.only("name", "nationality", "twitter", "instagram", "wiki", "bio", "image", "slug")
             .filter(Q(nationality="Russian") | Q(nationality="Soviet"))
             .filter(status=query)
             .order_by("name")
         )
     elif nationality == "European":
         astronaut_list = (
-            Astronaut.objects.only(
-                "name", "nationality", "twitter", "instagram", "wiki", "bio", "profile_image", "slug"
-            )
+            Astronaut.objects.only("name", "nationality", "twitter", "instagram", "wiki", "bio", "image", "slug")
             .filter(
                 Q(nationality="Austrain")
                 | Q(nationality="Belarusian")
@@ -790,9 +784,7 @@ def astronaut_list(
         )
     elif nationality == "Other":
         astronaut_list = (
-            Astronaut.objects.only(
-                "name", "nationality", "twitter", "instagram", "wiki", "bio", "profile_image", "slug"
-            )
+            Astronaut.objects.only("name", "nationality", "twitter", "instagram", "wiki", "bio", "image", "slug")
             .exclude(nationality="Austrain")
             .exclude(nationality="Belarusian")
             .exclude(nationality="Belgian")
@@ -814,9 +806,7 @@ def astronaut_list(
         )
     else:
         astronaut_list = (
-            Astronaut.objects.only(
-                "name", "nationality", "twitter", "instagram", "wiki", "bio", "profile_image", "slug"
-            )
+            Astronaut.objects.only("name", "nationality", "twitter", "instagram", "wiki", "bio", "image", "slug")
             .filter(status=query)
             .order_by("name")
         )

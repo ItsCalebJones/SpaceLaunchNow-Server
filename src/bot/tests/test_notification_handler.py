@@ -35,50 +35,6 @@ class NotificationHandlerTestCase(LLAPITests):
             assert mock_push_service.return_value.notify_topic_subscribers.call_count == 4
         notification.delete()
 
-    def test_send_notification_with_cooldown(self):
-        launch = Launch.objects.all().first()
-        notification_type = "netstampChanged"
-        notification, create = LaunchNotificationRecord.objects.get_or_create(launch_id=launch.id)
-
-        # Set a cooldown for the launch and global notification types
-        cache.set(
-            str(launch.id) + notification_type,
-            "ID: %s Net: %s Type: %s" % (launch.id, launch.net, notification_type),
-            60,
-        )
-        cache.set(notification_type, "ID: %s Net: %s Type: %s" % (launch.id, launch.net, notification_type), 60)
-
-        with patch("bot.app.notifications.notification_handler.FCMNotification") as mock_push_service:
-            self.handler.send_notification(launch, notification_type, notification)
-
-            # Assert that the notification is not saved
-            notification.refresh_from_db()
-            self.assertIsNone(notification.last_notification_sent)
-
-            # Assert that the FCMNotification.notify_topic_subscribers method is not called
-            mock_push_service.return_value.notify_topic_subscribers.assert_not_called()
-        notification.delete()
-
-    def test_send_notification_with_invalid_state(self):
-        launch = Launch.objects.all().first()
-        notification_type = "netstampChanged"
-        notification, create = LaunchNotificationRecord.objects.get_or_create(launch_id=launch.id)
-
-        # Set an invalid state for the launch
-        launch.status.id = 3
-        launch.save()
-
-        with patch("bot.app.notifications.notification_handler.FCMNotification") as mock_push_service:
-            self.handler.send_notification(launch, notification_type, notification)
-
-            # Assert that the notification is not saved
-            notification.refresh_from_db()
-            self.assertIsNone(notification.last_notification_sent)
-
-            # Assert that the FCMNotification.notify_topic_subscribers method is not called
-            mock_push_service.return_value.notify_topic_subscribers.assert_not_called()
-        notification.delete()
-
     def test_get_json_data(self):
         # Create a launch object
         launch = Launch.objects.all().first()

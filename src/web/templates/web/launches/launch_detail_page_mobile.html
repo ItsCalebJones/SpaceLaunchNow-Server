@@ -624,8 +624,8 @@
                                             <div class="row">
                                                 <!-- Date/Time -->
                                                 <div class="col-lg-5 mx-auto my-auto mr-auto">
-                                                    {% if astronaut_flight.astronaut.profile_image %}
-                                                    {% thumbnail astronaut_flight.astronaut.profile_image "300x300" crop="80%" as im %}
+                                                    {% if astronaut_flight.astronaut.astronaut_image.image %}
+                                                    {% thumbnail astronaut_flight.astronaut.astronaut_image.image "300x300" crop="80%" as im %}
                                                         <a href="/astronaut/{{ astronaut_flight.astronaut.slug}}">
                                                             <img class="img-raised rounded-circle img-fluid text-center"
                                                                  src="{{ im.url }}"
