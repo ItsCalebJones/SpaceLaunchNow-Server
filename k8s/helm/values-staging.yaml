@@ -14,7 +14,7 @@ fullnameOverride: ""
 env:
   normal:
     DEBUG: "False"
-    DATABASE_ENGINE: "django.db.backends.postgresql_psycopg2"
+    DATABASE_ENGINE: "django.db.backends.postgresql"
     DATABASE_NAME: "LL2_staging_01"
     CACHE_BACKEND: "django.core.cache.backends.memcached.PyMemcacheCache"
     CACHE_LOCATION: "sln-staging-memcached-memcached.sln-dev.svc.cluster.local:11211"
