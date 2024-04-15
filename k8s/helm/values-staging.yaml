@@ -27,6 +27,7 @@ env:
     SLN_ENVIRONMENT: "staging"
     ENABLE_SILKY: "True"
     SILKY_INTERCEPT_PERCENT: "100"
+    SILKY_ANALYZE_QUERIES: "False"
 
   worker:
     IS_WEBSERVER: "False"
