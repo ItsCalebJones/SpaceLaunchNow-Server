@@ -2,6 +2,16 @@
 
 <!--next-version-placeholder-->
 
+## v4.2.0 (2024-04-15)
+
+### Feature
+
+* Migrate to ruff ([`be1b808`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/be1b80887cda42f488e29da9f01eeb77a485f853))
+
+### Fix
+
+* Include the rest of the commit ([`cb79bcf`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/cb79bcf9b37d2acdf9f33c6a50ecfafa14211bd7))
+
 ## v4.1.0 (2024-03-20)
 
 ### Feature
