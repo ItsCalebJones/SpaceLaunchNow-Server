@@ -25,6 +25,8 @@ env:
     EMAIL_PORT: "587"
     EMAIL_HOST_TLS: "True"
     SLN_ENVIRONMENT: "staging"
+    ENABLE_SILKY: "True"
+    SILKY_INTERCEPT_PERCENT: "100"
 
   worker:
     IS_WEBSERVER: "False"

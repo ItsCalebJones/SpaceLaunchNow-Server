@@ -176,6 +176,10 @@ if settings.DEBUG:
 
 urlpatterns = default_settings + api_settings + web_settings + admin_settings + debug_settings
 
+if settings.SILKY_ENABLED:
+    urlpatterns += [
+        path("silk/", include("silk.urls", namespace="silk")),
+    ]
 
 handler404 = web.views.handler404
 handler500 = web.views.handler500

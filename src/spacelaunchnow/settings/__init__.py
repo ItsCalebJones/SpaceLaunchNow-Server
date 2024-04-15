@@ -407,3 +407,19 @@ if SLN_SENTRY_KEY:
 SILENCED_SYSTEM_CHECKS = [
     "debug_toolbar.W006",  # See jazzband/django-debug-toolbar#1780
 ]
+
+# Django Silky Settings
+# ref: https://github.com/jazzband/django-silk
+SILKY_ENABLED = env.bool("ENABLE_SILKY", False)
+if SILKY_ENABLED:
+
+    def get_user_permissions(user):
+        return user.is_staff
+
+    INSTALLED_APPS.append("silk")
+    MIDDLEWARE.append("silk.middleware.SilkyMiddleware")
+    SILKY_AUTHENTICATION = True  # User must login
+    SILKY_AUTHORISATION = True  # User must have permissions
+    SILKY_PERMISSIONS = get_user_permissions
+    SILKY_INTERCEPT_PERCENT = env.int("SILKY_INTERCEPT_PERCENT", 50)
+    SILKY_ANALYZE_QUERIES = env.bool("SILKY_ANALYZE_QUERIES", True)
