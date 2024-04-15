@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v4.3.0 (2024-04-15)
+
+### Feature
+
+* Add django-silky ([`ec06795`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ec067957d5b5b2560f367def6779aa77b4072375))
+
 ## v4.2.0 (2024-04-15)
 
 ### Feature
