@@ -24,3 +24,5 @@ report/
 *secret*.yaml
 dist/**
 .vscode/**
+docker/*.backup
+*.log

@@ -1,0 +1,11 @@
+resources:
+  requests:
+    cpu: 10m
+    memory: 75Mi
+  limits:
+    cpu: 25m
+    memory: 500Mi
+
+args:
+  - /run.sh 
+  - -I 100m

@@ -12,7 +12,7 @@
 
 ### Restore Database
 **Example**
-`docker exec -i sln_db pg_restore -U spacelaunchnow_prod_user -v -d spacelaunchnow_local < spacelaunchnow_2024.01.11-16.42.44.backup &> restore.log`
+`docker exec -i sln_db pg_restore -U spacelaunchnow_prod_user -v -d sln_db < spacelaunchnow.backup &> restore.log`
 
 ## Run full stack locally
 Run `docker-compose -f docker-compose.stack.yml up -d --build`

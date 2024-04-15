@@ -97,7 +97,6 @@ jobs:
           else
             helm upgrade $RELEASE_NAME k8s/helm/ --namespace=$DEPLOYMENT_NAMESPACE --values $VALUES
             kubectl rollout restart deploy $WEB_DEPLOYMENT --namespace=$DEPLOYMENT_NAMESPACE
-            kubectl rollout restart deploy $SERVICE_DEPLOYMENT --namespace=$DEPLOYMENT_NAMESPACE
           fi
 
   release:
