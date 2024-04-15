@@ -42,19 +42,17 @@ class NotificationHandler:
         logger.info(f"Launch Cooldown: {launch_cooldown} Global Cooldown: {global_cooldown}")
         if launch_cooldown or global_cooldown:
             logger.error(
-                "Notification cooldown window for %s - Launch: %s Global: %s"
-                % (launch.id, launch_cooldown, global_cooldown)
+                f"Notification cooldown window for {launch.id} - Launch: {launch_cooldown} Global: {global_cooldown}"
             )
             return
-        logger.info("Creating %s notification for %s" % (notification_type, launch.name))
-        cache.set(cache_key, "ID: %s Net: %s Type: %s" % (launch.id, launch.net, notification_type), 60)
-        cache.set(notification_type, "ID: %s Net: %s Type: %s" % (launch.id, launch.net, notification_type), 60)
+        logger.info(f"Creating {notification_type} notification for {launch.name}")
+        cache.set(cache_key, f"ID: {launch.id} Net: {launch.net} Type: {notification_type}", 60)
+        cache.set(notification_type, f"ID: {launch.id} Net: {launch.net} Type: {notification_type}", 60)
         if notification_type == "netstampChanged":
             if launch.status.id == 1:
-                contents = "UPDATE: New launch attempt scheduled on %s at %s." % (
-                    launch.net.strftime("%A, %B %d"),
-                    launch.net.strftime("%H:%M UTC"),
-                )
+                launch_date = launch.net.strftime("%A, %B %d")
+                launch_time_utc = launch.net.strftime("%H:%M UTC")
+                contents = f"UPDATE: New launch attempt scheduled on {launch_date} at {launch_time_utc}."
             elif launch.status.id == 2 or launch.status.id == 5 or launch.status.id == 8:
                 contents = "UPDATE: Launch has slipped, new launch date is unconfirmed."
             else:
@@ -65,7 +63,7 @@ class NotificationHandler:
             if minutes == 0:
                 minutes = "less than one"
             if launch.status.id == 1:
-                contents = "Launch attempt from %s in %s minute(s)." % (launch.pad.location.name, minutes)
+                contents = f"Launch attempt from {launch.pad.location.name} in {minutes} minute(s)."
             else:
                 logger.warning("Invalid state for sending a notification - Launch: %s" % launch)
                 return
@@ -80,9 +78,9 @@ class NotificationHandler:
             if hours == 23:
                 hours = 24
             if launch.status.id == 1:
-                contents = "Launch attempt from %s in %s hours." % (launch.pad.location.name, hours)
+                contents = f"Launch attempt from {launch.pad.location.name} in {hours} hours."
             elif launch.status.id == 2 or launch.status.id == 5:
-                contents = "Might be launching from %s in %s hours." % (launch.pad.location.name, hours)
+                contents = f"Might be launching from {launch.pad.location.name} in {hours} hours."
             else:
                 logger.warning("Invalid state for sending a notification - Launch: %s" % launch)
                 return
@@ -100,10 +98,9 @@ class NotificationHandler:
                 and launch.mission.orbit is not None
                 and launch.mission.orbit.name is not None
             ):
-                contents = "Successful launch to %s by %s" % (
-                    launch.mission.orbit.name,
-                    launch.launch_service_provider.name,
-                )
+                orbit_name = launch.mission.orbit.name
+                launch_service_provider_name = launch.launch_service_provider.name
+                contents = f"Successful launch to {orbit_name} by {launch_service_provider_name}"
             else:
                 contents = "Successful launch by %s" % launch.launch_service_provider.name
 
@@ -114,39 +111,34 @@ class NotificationHandler:
             contents = "A partial launch failure has occurred."
 
         elif notification_type == "inFlight":
-
             if (
                 launch.mission is not None
                 and launch.mission.orbit is not None
                 and launch.mission.orbit.name is not None
             ):
                 if launch.mission.orbit.id == 15:
-                    contents = "Liftoff! %s is in a %s flight!" % (
-                        launch.rocket.configuration.name,
-                        launch.mission.orbit.name,
-                    )
+                    rocket_name = launch.rocket.configuration.name
+                    orbit_name = launch.mission.orbit.name
+                    contents = f"Liftoff! {rocket_name} is in a {orbit_name} flight!"
                 else:
-                    contents = "Liftoff! %s is in flight to %s!" % (
-                        launch.rocket.configuration.name,
-                        launch.mission.orbit.name,
-                    )
+                    rocket_name = launch.rocket.configuration.name
+                    orbit_name = launch.mission.orbit.name
+                    contents = f"Liftoff! {rocket_name} is in flight to {orbit_name}!"
             else:
                 contents = "Liftoff! %s is in flight!" % launch.rocket.configuration.name
 
         elif notification_type == "webcastLive":
-
             if launch.mission is not None and launch.mission.name is not None:
-                contents = "%s %s webcast is live!" % (launch.rocket.configuration.name, launch.mission.name)
+                contents = f"{launch.rocket.configuration.name} {launch.mission.name} webcast is live!"
             else:
                 contents = "%s webcast is live!" % launch.rocket.configuration.name
 
         else:
             launch_time = launch.net
-            contents = "Launch attempt from %s on %s at %s." % (
-                launch.pad.location.name,
-                launch_time.strftime("%A, %B %d"),
-                launch_time.strftime("%H:%M UTC"),
-            )
+            location_name = launch.pad.location.name
+            launch_date = launch_time.strftime("%A, %B %d")
+            launch_time_utc = launch_time.strftime("%H:%M UTC")
+            contents = f"Launch attempt from {location_name} on {launch_date} at {launch_time_utc}."
 
         time_since_last_notification = None
         if notification.last_notification_sent is not None:
@@ -170,10 +162,7 @@ class NotificationHandler:
     def send_v3_notification(
         self, launch: Launch, notification_type: str, push_service: FCMNotification, contents: str
     ):
-        if len(launch.vid_urls.all()) > 0:
-            webcast = True
-        else:
-            webcast = False
+        webcast = len(launch.vid_urls.all()) > 0
         image = ""
         if launch.image:
             image = launch.image.image.url
@@ -196,7 +185,7 @@ class NotificationHandler:
         self.send_notif_v3(push_service, data, all_topics)
         self.send_notif_v3(push_service, data, strict_topics)
         self.send_notif_v3(push_service, data, not_strict_topics)
-        logger.info("Topics:\n\nALL: %s\nStrict: %s\nNot Strict: %s" % (all_topics, strict_topics, not_strict_topics))
+        logger.info(f"Topics:\n\nALL: {all_topics}\nStrict: {strict_topics}\nNot Strict: {not_strict_topics}")
         # Reusing topics from v2 - not doing strict topics
         flutter_topics_v3 = get_flutter_topics_v3(
             launch, notification_type=notification_type, debug=self.DEBUG, flutter=True

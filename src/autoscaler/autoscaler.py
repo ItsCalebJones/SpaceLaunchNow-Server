@@ -21,7 +21,6 @@ def check_autoscaler():
 
     # If autoscaler is enabled and not using a custom count proceed.
     if autoscaler_settings.enabled and autoscaler_settings.custom_worker_count is None:
-
         # Get all launches and events that are +/- one hour and fifteen minutes
         # This is to ensure we have enough time to spin up resources before the T-Minus one hour notifs go out and
         # have enough workers online to handle the surge through the execution of the launch. One small scenario worth

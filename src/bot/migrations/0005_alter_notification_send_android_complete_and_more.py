@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('bot', '0004_articlenotification_sent_at'),
+        ("bot", "0004_articlenotification_sent_at"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='notification',
-            name='send_android_complete',
+            model_name="notification",
+            name="send_android_complete",
             field=models.BooleanField(default=False, null=True),
         ),
         migrations.AlterField(
-            model_name='notification',
-            name='send_ios_complete',
+            model_name="notification",
+            name="send_ios_complete",
             field=models.BooleanField(default=False, null=True),
         ),
     ]

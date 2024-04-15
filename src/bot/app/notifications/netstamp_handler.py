@@ -51,7 +51,6 @@ class NetstampHandler:
 
         notification.last_net_stamp = launch.net
         notification.last_net_stamp_timestamp = datetime.now(tz=pytz.utc)
-        logger.info(
-            f"Updating Notification {launch.id} to timestamp {notification.last_net_stamp_timestamp.strftime('%A %d. %B %Y')}"
-        )
+        timestamp = notification.last_net_stamp_timestamp.strftime("%A %d. %B %Y")
+        logger.info(f"Updating Notification {launch.id} to timestamp {timestamp}")
         notification.save()

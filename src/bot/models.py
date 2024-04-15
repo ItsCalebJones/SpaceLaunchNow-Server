@@ -88,7 +88,7 @@ class DiscordChannel(models.Model):
     name = models.CharField(max_length=4000)
 
     def __str__(self):
-        return "{} ({})".format(self.name, self.channel_id)
+        return f"{self.name} ({self.channel_id})"
 
     class Meta:
         verbose_name = "Channel"
@@ -103,7 +103,7 @@ class TwitterNotificationChannel(models.Model):
     default_subscribed = models.BooleanField(default=False)
 
     def __str__(self):
-        return "{} ({})".format(self.name, self.channel_id)
+        return f"{self.name} ({self.channel_id})"
 
     class Meta:
         verbose_name = "Twitter Notification Channel"
@@ -142,7 +142,7 @@ class SubredditNotificationChannel(models.Model):
     name = models.CharField(max_length=4000)
 
     def __str__(self):
-        return "{} ({})".format(self.name, self.channel_id)
+        return f"{self.name} ({self.channel_id})"
 
     class Meta:
         verbose_name = "Reddit Notification Channel"
@@ -186,7 +186,7 @@ class NewsNotificationChannel(models.Model):
     subscribed = models.BooleanField(default=False)
 
     def __str__(self):
-        return "{} ({})".format(self.name, self.channel_id)
+        return f"{self.name} ({self.channel_id})"
 
     class Meta:
         verbose_name = "News Notification Channel"

@@ -19,10 +19,7 @@ class EventNotificationHandler:
         self.send_notification(event, "event_webcast", webcast=True)
 
     def build_data(self, event, type):
-        if event.video_url:
-            webcast = True
-        else:
-            webcast = False
+        webcast = bool(event.video_url)
 
         feature_image = None
         if event.feature_image and hasattr(event.feature_image, "url"):
@@ -87,10 +84,7 @@ class EventNotificationHandler:
         logger.info("Notification Data: %s" % data)
         logger.info("Topics: %s" % topics)
         push_service = FCMNotification(api_key=self.api_key)
-        if webcast:
-            message_body = "Live webcast is available!"
-        else:
-            message_body = data["event"]["description"]
+        message_body = "Live webcast is available!" if webcast else data["event"]["description"]
         notification = push_service.notify_topic_subscribers(
             data_message=data,
             condition=topics,
