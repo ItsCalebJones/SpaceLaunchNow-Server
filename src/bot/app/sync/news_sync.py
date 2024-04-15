@@ -14,7 +14,7 @@ def get_news(limit=10):
     if response.status_code == 200:
         articles = response.json()
         logger.info("Found %s articles." % len(articles))
-        for item in articles['results']:
+        for item in articles["results"]:
             save_news_LL(item)
 
 
@@ -27,7 +27,7 @@ def get_related_news():
         if response.status_code == 200:
             data = response.json()
             logger.info(f"Found {data['count']} articles.")
-            for item in data['results']:
+            for item in data["results"]:
                 save_news_LL(item)
     events = Events.objects.all()
     for event in events:
@@ -37,7 +37,7 @@ def get_related_news():
         if response.status_code == 200:
             data = response.json()
             logger.info(f"Found {data['count']} articles.")
-            for item in data['results']:
+            for item in data["results"]:
                 save_news_LL(item)
 
 
@@ -66,7 +66,7 @@ def save_news_LL(item):
                 news.launches.add(launch)
             except Launch.DoesNotExist:
                 logger.error("No launch found with ID %s" % launch_id)
-        logger.info("Added Article (%s) - %s - %s" % (news.id, news.title, news.news_site))
+        logger.info(f"Added Article ({news.id}) - {news.title} - {news.news_site}")
 
         if item["featured"]:
             record.should_notify = True

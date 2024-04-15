@@ -17,24 +17,26 @@ from spacelaunchnow.base_models import SingletonModel
 
 def image_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
-    name = "%s%s" % ("navigation_drawer_default", file_extension)
+    name = f"navigation_drawer_default{file_extension}"
     return name
 
 
 def language_image_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
     clean_name = quote(quote(instance.name.encode("utf8")), "")
-    clean_name = "%s_language_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
-    name = "%s%s" % (str(clean_name), file_extension)
-    return name
+
+    clean_name = clean_name.lower()
+    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    return f"{clean_name}_language_{timestamp}{file_extension}"
 
 
 def profile_image_path(instance, filename):
     filename, file_extension = os.path.splitext(filename)
     clean_name = quote(quote(instance.name.encode("utf8")), "")
-    clean_name = "%s_profile_%s" % (clean_name.lower(), datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
-    name = "%s%s" % (str(clean_name), file_extension)
-    return name
+
+    clean_name = clean_name.lower()
+    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    return f"{clean_name}_profile_{timestamp}{file_extension}"
 
 
 def select_storage(model_storage: S3Boto3Storage) -> S3Boto3Storage | DefaultStorage:

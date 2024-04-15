@@ -28,27 +28,24 @@ class EventTracker:
         for event in events:
             logger.debug(f"Event: {event.name}")
             logger.debug(f"{event}")
-            if event.notifications_enabled:
-                if not event.was_notified_ten_minutes:
-                    event.was_notified_ten_minutes = True
-                    event.save()
-                    logger.info(f"Sending {event.name} notification!")
-                    self.notification_handler.send_ten_minute_notification(event)
+            if event.notifications_enabled and not event.was_notified_ten_minutes:
+                event.was_notified_ten_minutes = True
+                event.save()
+                logger.info(f"Sending {event.name} notification!")
+                self.notification_handler.send_ten_minute_notification(event)
 
         webcast_events = Events.objects.filter(
             date__lte=time_threshold_1_hour, date__gte=datetime.datetime.now(tz=pytz.utc), webcast_live=True
         )
 
         for event in webcast_events:
-
             logger.debug("Web-cast Live! Event: %s", event.name)
             logger.debug(f"{event}")
-            if event.notifications_enabled:
-                if not event.was_notified_webcast_live:
-                    event.was_notified_webcast_live = True
-                    event.save()
-                    logger.info(f"Sending {event.name} notification!")
-                    self.notification_handler.send_webcast_notification(event)
+            if event.notifications_enabled and not event.was_notified_webcast_live:
+                event.was_notified_webcast_live = True
+                event.save()
+                logger.info(f"Sending {event.name} notification!")
+                self.notification_handler.send_webcast_notification(event)
 
     def check_news_item(self):
         logger.info("Running check news...")
@@ -67,7 +64,8 @@ class EventTracker:
                 item = Article.objects.get(id=news_item.id)
                 # Log the news_item with its properties
                 logger.info(
-                    f"Checking record {news_item.id} was notified: {news_item.was_notified} sent at: {news_item.sent_at} should notify: {news_item.should_notify}"
+                    f"Checking record {news_item.id} was notified: {news_item.was_notified} "
+                    f"sent at: {news_item.sent_at} should notify: {news_item.should_notify}"
                 )
                 if self.check_if_news_notification_allowed:
                     news_item.was_notified = True

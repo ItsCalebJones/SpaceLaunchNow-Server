@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import datetime
 import json
 from datetime import timedelta
@@ -143,10 +140,7 @@ def index(request):
             second_launch_image = None
 
     user_agent = get_user_agent(request)
-    if user_agent.is_mobile:
-        template = "web/index_mobile.html"
-    else:
-        template = "web/index.html"
+    template = "web/index_mobile.html" if user_agent.is_mobile else "web/index.html"
 
     return render(
         request,
@@ -469,8 +463,8 @@ def launches_florida(
 def astronaut(request, id):
     try:
         return redirect("astronaut_by_slug", slug=Astronaut.objects.get(pk=id).slug)
-    except ObjectDoesNotExist:
-        raise Http404
+    except ObjectDoesNotExist as err:
+        raise Http404 from err
 
 
 @cache_page(600)
@@ -512,8 +506,8 @@ def event_by_slug(request, slug):
         event = Events.objects.get(slug=slug)
         previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by("-net")[:10]
         return render(request, "web/events/event_detail.html", {"previous_launches": previous_launches, "event": event})
-    except ObjectDoesNotExist:
-        raise Http404
+    except ObjectDoesNotExist as err:
+        raise Http404 from err
 
 
 @cache_page(600)
@@ -549,15 +543,15 @@ def starship_page(request):
                 "updates": updates,
             },
         )
-    except ObjectDoesNotExist:
-        raise redirect("events_list")
+    except ObjectDoesNotExist as err:
+        raise redirect("events_list") from err
 
 
 def event_by_id(request, id):
     try:
         return redirect("event_by_slug", slug=Events.objects.get(id=id).slug)
-    except ObjectDoesNotExist:
-        raise Http404
+    except ObjectDoesNotExist as err:
+        raise Http404 from err
 
 
 @cache_page(600)
@@ -695,28 +689,24 @@ def astronaut_by_slug(request, slug):
     try:
         _astronaut = Astronaut.objects.get(slug=slug)
         previous_list = list(
-            (
-                Launch.objects.filter(
-                    Q(rocket__spacecraftflight__launch_crew__astronaut__id=_astronaut.pk)
-                    | Q(rocket__spacecraftflight__onboard_crew__astronaut__id=_astronaut.pk)
-                    | Q(rocket__spacecraftflight__landing_crew__astronaut__id=_astronaut.pk)
-                )
-                .filter(net__lte=UTC_NOW)
-                .values_list("pk", flat=True)
-                .distinct()
+            Launch.objects.filter(
+                Q(rocket__spacecraftflight__launch_crew__astronaut__id=_astronaut.pk)
+                | Q(rocket__spacecraftflight__onboard_crew__astronaut__id=_astronaut.pk)
+                | Q(rocket__spacecraftflight__landing_crew__astronaut__id=_astronaut.pk)
             )
+            .filter(net__lte=UTC_NOW)
+            .values_list("pk", flat=True)
+            .distinct()
         )
         upcoming_list = list(
-            (
-                Launch.objects.filter(
-                    Q(rocket__spacecraftflight__launch_crew__astronaut__id=_astronaut.pk)
-                    | Q(rocket__spacecraftflight__onboard_crew__astronaut__id=_astronaut.pk)
-                    | Q(rocket__spacecraftflight__landing_crew__astronaut__id=_astronaut.pk)
-                )
-                .filter(net__gte=UTC_NOW)
-                .values_list("pk", flat=True)
-                .distinct()
+            Launch.objects.filter(
+                Q(rocket__spacecraftflight__launch_crew__astronaut__id=_astronaut.pk)
+                | Q(rocket__spacecraftflight__onboard_crew__astronaut__id=_astronaut.pk)
+                | Q(rocket__spacecraftflight__landing_crew__astronaut__id=_astronaut.pk)
             )
+            .filter(net__gte=UTC_NOW)
+            .values_list("pk", flat=True)
+            .distinct()
         )
         _launches = Launch.objects.filter(pk__in=previous_list).order_by("net")
         _upcoming_launches = Launch.objects.filter(pk__in=upcoming_list).order_by("net")
@@ -731,8 +721,8 @@ def astronaut_by_slug(request, slug):
                 "previous_launches": previous_launches,
             },
         )
-    except ObjectDoesNotExist:
-        raise Http404
+    except ObjectDoesNotExist as er:
+        raise Http404 from er
 
 
 @cache_page(600)
@@ -740,10 +730,7 @@ def astronaut_list(
     request,
 ):
     query = request.GET.get("status")
-    if query is None:
-        query = 1
-    else:
-        query = int(query)
+    query = 1 if query is None else int(query)
 
     nationality = request.GET.get("nationality")
 
@@ -851,7 +838,7 @@ class SignUpForm(UserCreationForm):
     email = forms.EmailField(max_length=254, help_text="Required. Inform a valid email address.")
 
     def __init__(self, *args, **kwargs):
-        super(SignUpForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         for fieldname in ["password1"]:
             self.fields[fieldname].help_text = None
@@ -929,7 +916,7 @@ class LaunchFeed(ICalFeed):
         return "{}{}".format(item.id, "@spacelaunchnow")
 
     def item_title(self, item):
-        return "{}".format(item.name)
+        return f"{item.name}"
 
     def item_description(self, item: Launch):
         description = ""
@@ -985,7 +972,7 @@ class EventFeed(ICalFeed):
         return "{}{}".format(item.id, "@spacelaunchnow")
 
     def item_title(self, item):
-        return "{}".format(item.name)
+        return f"{item.name}"
 
     def item_description(self, item: Events):
         description = ""

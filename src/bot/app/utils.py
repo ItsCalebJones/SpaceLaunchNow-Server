@@ -13,7 +13,7 @@ def update_notification_record(launch):
     notification = LaunchNotificationRecord.objects.get(launch_id=launch.id)
     notification.last_net_stamp = launch.net
     notification.last_net_stamp_timestamp = datetime.now(tz=utc)
-    logger.info("Updating Notification %s to timestamp %s" % (launch.name, launch.net.strftime("%A %d %B %Y")))
+    logger.info(f"Updating Notification {launch.name} to timestamp {launch.net.strftime('%A %d %B %Y')}")
     notification.save()
 
 

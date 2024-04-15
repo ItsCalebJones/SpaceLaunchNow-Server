@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """
 Django settings for spacelaunchnow project.
 
@@ -37,15 +38,9 @@ DEBUG = env.bool("DEBUG", False)
 DEBUG_LOGGING = env.str("DEBUG_LOGGING", None)
 LOGLEVEL = "DEBUG" if DEBUG_LOGGING else "INFO"
 
-if "test" in sys.argv:
-    TESTING = True
-else:
-    TESTING = False
+TESTING = "test" in sys.argv
 
-if DEBUG:
-    ALLOWED_HOSTS = ["*"]
-else:
-    ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["*"] if DEBUG else ["*"]
 
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "spacelaunchnow.pagination.SLNLimitOffsetPagination",
@@ -86,9 +81,9 @@ LOGIN_REDIRECT_URL = "/"
 if DEBUG:
     import logging
 
-    l = logging.getLogger(__name__)
-    l.setLevel(logging.DEBUG)
-    l.addHandler(logging.StreamHandler())
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(logging.StreamHandler())
 
 LOGGING = {
     "version": 1,

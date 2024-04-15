@@ -31,10 +31,12 @@ class LaunchEventTracker:
             if current_time <= launch_time:
                 diff = int((launch_time - current_time).total_seconds())
                 logger.debug("Time to launch %s", seconds_to_time(diff))
-                if notification.last_net_stamp is not None:
-                    if abs((notification.last_net_stamp - launch.net)).total_seconds() > 7200:
-                        logger.info("Netstamp changed from %s to %s" % (notification.last_net_stamp, launch.net))
-                        self.netstamp.netstamp_changed(launch, notification, diff)
+                if (
+                    notification.last_net_stamp is not None
+                    and abs(notification.last_net_stamp - launch.net).total_seconds() > 7200
+                ):
+                    logger.info(f"Netstamp changed from {notification.last_net_stamp} to {launch.net}")
+                    self.netstamp.netstamp_changed(launch, notification, diff)
 
     def check_success(self, time_threshold_past_two_days, time_threshold_24_hour):
         logger.debug("Running check_success...")

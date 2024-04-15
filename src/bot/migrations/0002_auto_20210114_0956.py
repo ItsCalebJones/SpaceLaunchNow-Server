@@ -14,7 +14,6 @@ def delete_linked_models(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("api", "0003_reset_fields"),
         ("bot", "0001_initial"),

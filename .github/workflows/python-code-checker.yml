@@ -13,42 +13,7 @@ permissions:
   contents: write
 
 jobs:
-# TODO: Add at some future time
-#  format:
-#    if: ${{ ! contains(github.repository, 'template') }}
-#    runs-on: ubuntu-latest
-#    concurrency: formatter
-#    steps:
-#      - name: Harden Runner
-#        uses: step-security/harden-runner@ebacdc22ef6c2cfb85ee5ded8f2e640f4c776dd5 # v2.0.0
-#        with:
-#          egress-policy: block
-#          allowed-endpoints: >
-#            api.github.com:443
-#            files.pythonhosted.org:443
-#            github.com:443
-#            pypi.org:443
-#      - name: Checkout repository
-#        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
-#      - name: Setup Dependencies
-#        uses: ./.github/actions/setup-poetry
-#      - name: Run formatters
-#        run: |
-#          poetry run autoflake --recursive --in-place .
-#          poetry run isort .
-#          poetry run tryceratops --autofix .
-#          poetry run docformatter --recursive --in-place .
-#          poetry run black .
-#      - name: Push changes
-#        uses: stefanzweifel/git-auto-commit-action@0b007fbd1180b8e3a3668b21c6517392fe8f26eb # tag=v4.15.4
-#        with:
-#          commit_user_name: github-actions[bot]
-#          commit_user_email: github-actions[bot]@users.noreply.github.com
-#          commit_message: 'fix: format Python code'
-#          add_options: --all
-#          push_options: --force
-  lint:
-#    needs: format
+  format:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
@@ -63,9 +28,25 @@ jobs:
           repo_password: ${{ secrets.PRIVATE_PASSWORD }}
       - name: Run linters
         run: |
-          poetry run flakeheaven lint src/
+          poetry run ruff format --check
+  lint:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
+        with:
+          fetch-depth: 0
+      - name: Setup Dependencies
+        uses: ./.github/actions/setup-poetry
+        with:
+          repo_username: ${{ secrets.PRIVATE_USERNAME }}
+          repo_password: ${{ secrets.PRIVATE_PASSWORD }}
+      - name: Run linters
+        run: |
+          poetry run ruff check
   report:
-#    needs: format
+    needs: [lint, format]
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:

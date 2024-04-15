@@ -9,13 +9,13 @@ logger = logging.getLogger(__name__)
 
 def log(tag, message):
     logger.debug(message)
-    log_message = "%s - %s: %s" % ("{:%H:%M:%S %m-%d-%Y}".format(datetime.datetime.now()), tag, message)
+    log_message = f"{datetime.datetime.now():%H:%M:%S %m-%d-%Y} - {tag}: {message}"
     print(log_message)
 
 
 def log_error(tag, message):
     logger.error(message)
-    log_message = "ERROR: %s - %s: %s" % ("{:%H:%M:%S %m-%d-%Y}".format(datetime.datetime.now()), tag, message)
+    log_message = f"ERROR: {datetime.datetime.now():%H:%M:%S %m-%d-%Y} - {tag}: {message}"
     print(log_message)
 
 
@@ -33,17 +33,17 @@ def seconds_to_time(seconds):
     minutes = seconds // seconds_in_minute
     seconds -= minutes * seconds_in_minute
     if days > 0:
-        return "{0:.0f} days, {1:.0f} hours".format(days, hours)
+        return f"{days:.0f} days, {hours:.0f} hours"
     elif hours == 23:
         return "24 hours"
     elif hours > 0:
-        return "{0:.0f} hours, {1:.0f} minutes".format(hours, minutes)
+        return f"{hours:.0f} hours, {minutes:.0f} minutes"
     elif minutes > 0:
         if minutes < 10:
             return "less than ten minutes"
         if minutes < 60:
             return "less than one hour"
-        return "{0:.0f} minutes".format(minutes)
+        return f"{minutes:.0f} minutes"
 
 
 def build_topics(topic_header, topics_set):
@@ -128,9 +128,9 @@ def get_fcm_strict_topics_v3(launch, debug=False, flutter=False, notification_ty
         other_topic = "china"
 
     if lsp_topic and location_topic:
-        topics = topic_header + " && ('{0}' in topics && '{1}' in topics)".format(lsp_topic, location_topic)
+        topics = topic_header + f" && ('{lsp_topic}' in topics && '{location_topic}' in topics)"
     elif other_topic:
-        topics = topic_header + " && '{0}' in topics".format(other_topic)
+        topics = topic_header + f" && '{other_topic}' in topics"
     else:
         return None
 
@@ -205,11 +205,11 @@ def get_fcm_not_strict_topics_v3(launch, debug=False, flutter=False, notificatio
         location_topic = "china"
 
     if lsp_topic and location_topic:
-        topics = topic_header + " && ('{0}' in topics || '{1}' in topics)".format(lsp_topic, location_topic)
+        topics = topic_header + f" && ('{lsp_topic}' in topics || '{location_topic}' in topics)"
     elif lsp_topic:
-        topics = topic_header + " && '{0}' in topics".format(lsp_topic)
+        topics = topic_header + f" && '{lsp_topic}' in topics"
     elif location_topic:
-        topics = topic_header + " && '{0}' in topics".format(location_topic)
+        topics = topic_header + f" && '{location_topic}' in topics"
     else:
         return None
 

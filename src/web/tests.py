@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from api.models import Launch
 from api.tests.test__base import LLAPITests
 
