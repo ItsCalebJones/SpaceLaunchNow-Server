@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v4.3.1 (2024-04-16)
+
+### Fix
+
+* Issue with silk not loading ([`0784941`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/0784941367fb9c1102ac8b413c9b79191a1f3974))
+
 ## v4.3.0 (2024-04-15)
 
 ### Feature
