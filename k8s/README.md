@@ -38,7 +38,7 @@ kubectl edit service/nginx-ingress-ingress-nginx-controller -n ingress-nginx
 
 ### 5) Install memcached for SLN
 ```
-helm install sln-prod bitnami/memcached
+helm install sln-prod bitnami/memcached -f values.yaml
 ```
 
 ### 6) Setup SLN

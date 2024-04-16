@@ -148,7 +148,6 @@ INSTALLED_APPS = [
     "django_extensions",
     "tz_detect",
     "corsheaders",
-    "cachalot",
     "drf_spectacular",
     "debug_toolbar",
     "django_cleanup.apps.CleanupConfig",
@@ -418,8 +417,16 @@ if SILKY_ENABLED:
 
     INSTALLED_APPS.append("silk")
     MIDDLEWARE.append("silk.middleware.SilkyMiddleware")
+
     SILKY_AUTHENTICATION = True  # User must login
     SILKY_AUTHORISATION = True  # User must have permissions
     SILKY_PERMISSIONS = get_user_permissions
     SILKY_INTERCEPT_PERCENT = env.int("SILKY_INTERCEPT_PERCENT", 50)
     SILKY_ANALYZE_QUERIES = env.bool("SILKY_ANALYZE_QUERIES", False)
+
+# Django Cachealot Settings
+# ref: https://django-cachalot.readthedocs.io/en/latest/
+CACHALOT_ENABLED = env.bool("CACHALOT_ENABLED", True)
+if CACHALOT_ENABLED:
+    INSTALLED_APPS.append("cachalot")
+    CACHALOT_ONLY_CACHABLE_APPS = ["api", "web", "bot", "configurations"]
