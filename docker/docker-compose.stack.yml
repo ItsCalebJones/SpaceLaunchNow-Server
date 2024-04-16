@@ -9,8 +9,6 @@ services:
   sln_cache:
     container_name: sln_cache
     image: memcached
-    args:
-      - MEMCACHED_ENABLE_SASL=1
     expose:
       - "11211"
   sln_web:
