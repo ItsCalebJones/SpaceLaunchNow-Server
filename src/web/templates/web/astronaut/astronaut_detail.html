@@ -66,8 +66,7 @@
                     {% endif %}
                 </div>
                 <h1 class="title text-center">{{ astronaut.name }} </h1>
-                <h2 class="text-center">{{ astronaut.nationality }} {% if astronaut.agency %} - (
-                    {{ astronaut.agency.abbrev }}) {% endif %}</h2>
+                <h2 class="text-center">{{ astronaut.nationality.first.nationality_name }} {% if astronaut.agency %} - ({{ astronaut.agency.abbrev }}) {% endif %}</h2>
                 <h3 class="text-center">{{ astronaut.status.name }} </h3>
                 <p class="figure-caption text-center">
                     Date of Birth: {{ astronaut.date_of_birth }}<br>
@@ -136,7 +135,7 @@
                                         <div class="col-md-8 text-md-left text-center">
                                             <h4 class="card-title">{{ launch.name }}</h4>
                                             {{ launch.rocket.configuration.manufacturer.name }}
-                                            | {{ launch.rocket.configuration.manufacturer.country_code }}<br>
+                                            | {{ launch.rocket.configuration.manufacturer.country.first.name }}<br>
                                             {{ launch.pad.location.name }}<br>
                                             <i>{{ launch.net }}</i><br>
                                         </div>
@@ -216,7 +215,7 @@
                                         <div class="col-md-8 text-md-left text-center">
                                             <h4 class="card-title">{{ launch.name }}</h4>
                                             {{ launch.rocket.configuration.manufacturer.name }}
-                                            | {{ launch.rocket.configuration.manufacturer.country_code }}<br>
+                                            | {{ launch.rocket.configuration.manufacturer.country.first.name }}<br>
                                             {{ launch.pad.location.name }}<br>
                                             <i>{{ launch.net }}</i><br>
                                         </div>

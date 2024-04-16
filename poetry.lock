@@ -68,18 +68,18 @@ tomli = {version = "*", markers = "python_version < \"3.11\""}
 
 [[package]]
 name = "backports-tarfile"
-version = "1.0.0"
+version = "1.1.0"
 description = "Backport of CPython tarfile module"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "backports.tarfile-1.0.0-py3-none-any.whl", hash = "sha256:bcd36290d9684beb524d3fe74f4a2db056824c47746583f090b8e55daf0776e4"},
-    {file = "backports.tarfile-1.0.0.tar.gz", hash = "sha256:2688f159c21afd56a07b75f01306f9f52c79aebcc5f4a117fb8fbb4445352c75"},
+    {file = "backports.tarfile-1.1.0-py3-none-any.whl", hash = "sha256:b2f4df351db942d094db94588bbf2c6938697a5f190f44c934acc697da56008b"},
+    {file = "backports_tarfile-1.1.0.tar.gz", hash = "sha256:91d59138ea401ee2a95e8b839c1e2f51f3e9ca76bdba8b6a29f8d773564686a8"},
 ]
 
 [package.extras]
 docs = ["furo", "jaraco.packaging (>=9.3)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-lint"]
-testing = ["pytest (>=6,!=8.1.1)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)"]
+testing = ["jaraco.test", "pytest (>=6,!=8.1.1)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)"]
 
 [[package]]
 name = "beautifulsoup4"
@@ -787,13 +787,13 @@ Django = "*"
 
 [[package]]
 name = "django-launch-library"
-version = "15.1.0"
+version = "16.1.0"
 description = "The Django lib for supporting Launch Library."
 optional = false
 python-versions = ">=3.10.4,<4.0.0"
 files = [
-    {file = "django_launch_library-15.1.0-py3-none-any.whl", hash = "sha256:ece583016d421371dd9ea803befc7e01d3e3a9dc7063bb47aa1120a9b5b5ccb5"},
-    {file = "django_launch_library-15.1.0.tar.gz", hash = "sha256:a95df0e3fbf4429c28ddbc302db837648b1faf9420b8e57b85cbabc697a28c03"},
+    {file = "django_launch_library-16.1.0-py3-none-any.whl", hash = "sha256:2c4a5fb8bdea3fa153642f2fc3be28b4106beba45c4f74575a538ead74691922"},
+    {file = "django_launch_library-16.1.0.tar.gz", hash = "sha256:e6183ab2694cb02c94db7a778e5a39505b9e66c19d1c9d42545cfe29e559c304"},
 ]
 
 [package.dependencies]
@@ -814,6 +814,7 @@ django-filter = "2.4.0"
 django-health-check = "3.16.7"
 django-ical = "1.8.3"
 django-jet-reboot = ">=1.3.3,<2.0.0"
+django-silk = ">=5.1.0,<6.0.0"
 django-storages = "1.12.3"
 djangorestframework = "3.14.0"
 djangorestframework-bulk = "0.2.1"
@@ -3463,4 +3464,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10.4,<4.0"
-content-hash = "276d53fa0b3f52c10c3d6afa2f1a41eb314dd2a43f5e6a1b4f2d72bf3058cca2"
+content-hash = "99587507aea4b4d9b0e10d2258fb8746ba2bd129e1481d7abcc14458def8f357"
