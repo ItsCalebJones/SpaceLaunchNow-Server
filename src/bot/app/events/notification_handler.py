@@ -22,8 +22,8 @@ class EventNotificationHandler:
         webcast = bool(event.video_url)
 
         feature_image = None
-        if event.feature_image and hasattr(event.feature_image, "url"):
-            feature_image = event.feature_image.url
+        if event.image.image and hasattr(event.image.image, "url"):
+            feature_image = event.image.image.url
 
         return {
             "notification_type": type,
