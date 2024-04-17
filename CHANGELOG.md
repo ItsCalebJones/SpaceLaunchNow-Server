@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v4.4.0 (2024-04-17)
+
+### Feature
+
+* Update for country code changes, add prefetches ([`05051b8`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/05051b8d8a14127434a0f31d01d9ecbca86e6375))
+
 ## v4.3.1 (2024-04-16)
 
 ### Fix
