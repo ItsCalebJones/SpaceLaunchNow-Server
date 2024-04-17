@@ -429,11 +429,11 @@
                             <div class="card card-plain card-blog">
                                 <div class="card-header card-header-image">
                                     <a href="/event/{{ event.slug }}">
-                                        {% if event.feature_image %}
+                                        {% if event.image.image %}
                                         <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
-                                             src="{{ event.feature_image.url }}">
+                                             src="{{ event.image.image.url }}">
                                         <div class="colored-shadow"
-                                             style="background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
+                                             style="background-image: url({{ event.image.image.url }}); opacity: 1;"></div>
                                         {% endif %}
                                     </a>
                                 </div>
@@ -464,14 +464,14 @@
                                         <div class="col-md-4">
                                             <div class="card card-plain card-blog">
                                                 <div class="card-header card-header-image">
-                                                    {% if event.feature_image %}
+                                                    {% if event.image.image %}
                                                     <a href="/event/{{ event.slug }}">
                                                         <img class="img img-raised"
                                                              style="height: 175px; object-fit: cover;"
-                                                             src="{{ event.feature_image.url }}">
+                                                             src="{{ event.image.image.url }}">
                                                         <div class="colored-shadow"
                                                              style="height: 175px; object-fit: cover;"
-                                                             style="background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
+                                                             style="background-image: url({{ event.image.image.url }}); opacity: 1;"></div>
                                                     </a>
                                                     {% endif %}
                                                 </div>

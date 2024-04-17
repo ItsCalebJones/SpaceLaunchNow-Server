@@ -14,8 +14,8 @@
     <meta property="og:description"
           content="{{ event.description|truncatechars:150 }}"/>
     <meta property="og:url" content="https://spacelaunchnow.me/event/{{ event.slug }}"/>
-    {% if event.feature_image %}
-        <meta property="og:image" content="{{ event.feature_image.url }}"/>
+    {% if event.image.image %}
+        <meta property="og:image" content="{{ event.image.image.url }}"/>
     {% else %}
         <meta name="twitter:image" content="{% static  'img/social.png' %}"/>
     {% endif %}
@@ -31,8 +31,8 @@
     <meta name="twitter:title" content="Space Launch Now - {{ event.name }}">
     <meta name="twitter:description" content="{{ event.description|truncatechars:150 }}">
     <meta name="twitter:image" content="{% static  'img/social.png' %}">
-    {% if event.feature_image %}
-        <meta name="twitter:image" content="{{ event.feature_image.url }}"/>
+    {% if event.image.image %}
+        <meta name="twitter:image" content="{{ event.image.image.url }}"/>
     {% else %}
         <meta name="twitter:image" content="{% static  'img/social.png' %}"/>
     {% endif %}
@@ -59,11 +59,11 @@
                 </nav>
                 <div class="card card-plain card-blog">
                     <div class="card-header card-header-image">
-                        {% if event.feature_image %}
+                        {% if event.image.image %}
                             <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
-                                 src="{{ event.feature_image.url }}">
+                                 src="{{ event.image.image.url }}">
                             <div class="colored-shadow"
-                                 style="background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
+                                 style="background-image: url({{ event.image.image.url }}); opacity: 1;"></div>
                         {% endif %}
                     </div>
                     <div class="card-body">

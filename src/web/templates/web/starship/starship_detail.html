@@ -17,8 +17,8 @@
     <meta property="og:description"
           content="Follow SpaceX's development of it's next generation heavy lift vehicle - providing live updates of the SpaceX Starship construction and testing site in Boca Chica, Texas."/>
     <meta property="og:url" content="https://spacelaunchnow.me/starship/"/>
-    {% if event.feature_image %}
-        <meta name="og:image" content="{{ event.feature_image.url }}"/>
+    {% if event.image.image %}
+        <meta name="og:image" content="{{ event.image.image.url }}"/>
 `    {% else %}
         <meta name="og:image" content="{% static  'img/social.png' %}"/>
     {% endif %}
@@ -35,8 +35,8 @@
     <meta name="twitter:description"
           content="Follow SpaceX's development of it's next generation heavy lift vehicle - providing live updates of the SpaceX Starship construction and testing site in Boca Chica, Texas.">
     <meta name="twitter:image" content="{% static  'img/social.png' %}">
-    {% if event.feature_image %}
-        <meta name="twitter:image" content="{{ event.feature_image.url }}"/>
+    {% if event.image.image %}
+        <meta name="twitter:image" content="{{ event.image.image.url }}"/>
     {% else %}
         <meta name="twitter:image" content="{% static  'img/social.png' %}"/>
     {% endif %}
@@ -285,8 +285,8 @@
                             {% if item|get_type == "event" %}
                                 <tr>
                                     <td>
-                                        {% if item.feature_image %}
-                                            {% thumbnail item.feature_image "100x100" as im %}
+                                        {% if item.image.image %}
+                                            {% thumbnail item.image.image "100x100" as im %}
                                                 <img class="img-raised rounded-circle img-fluid text-center"
                                                      src="{{ im.url }}"
                                                      style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">

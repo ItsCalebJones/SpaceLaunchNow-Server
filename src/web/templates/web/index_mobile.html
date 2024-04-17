@@ -344,9 +344,9 @@
                                 <div class="card-header card-header-image">
                                     <a href="/event/{{ event.slug }}">
                                         <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
-                                             src="{{ event.feature_image.url }}">
+                                             src="{{ event.image.image.url }}">
                                         <div class="colored-shadow"
-                                             style="background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
+                                             style="background-image: url({{ event.image.image.url }}); opacity: 1;"></div>
                                     </a>
                                 </div>
                                 <div class="card-body">
@@ -378,10 +378,10 @@
                                                     <a href="/event/{{ event.slug }}">
                                                         <img class="img img-raised"
                                                              style="height: 175px; object-fit: cover;"
-                                                             src="{{ event.feature_image.url }}">
+                                                             src="{{ event.image.image.url }}">
                                                         <div class="colored-shadow"
                                                              style="height: 175px; object-fit: cover;"
-                                                             style="background-image: url({{ event.feature_image.url }}); opacity: 1;"></div>
+                                                             style="background-image: url({{ event.image.image.url }}); opacity: 1;"></div>
                                                     </a>
                                                 </div>
                                                 <div class="card-body">
