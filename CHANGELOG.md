@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v4.4.1 (2024-04-17)
+
+### Fix
+
+* Misuse of a bunch of images for events ([`34b70a3`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/34b70a38d9b2fe4a488679d62e5e293865e8989f))
+
 ## v4.4.0 (2024-04-17)
 
 ### Feature
