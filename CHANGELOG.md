@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v4.4.2 (2024-04-18)
+
+### Fix
+
+* Events page load times and remove twitter widget ([`669e297`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/669e2975cf7cb70e3cf90a0bf7d455ad574fd34d))
+
 ## v4.4.1 (2024-04-17)
 
 ### Fix
