@@ -94,15 +94,6 @@
                                         {% if event.location %}
                                             <span class="badge badge-pill badge-primary">{{ event.location }}</span>
                                         {% endif %}
-                                        {% if event.spacestation %}
-                                            <span class="badge badge-pill badge-info">{{ event.spacestation.first.name }}</span>
-                                        {% endif %}
-                                        {% if event.launch %}
-                                            <span class="badge badge-pill badge-warning">{{ event.launch.first.name }}</span>
-                                        {% endif %}
-                                        {% if event.expedition %}
-                                            <span class="badge badge-pill badge-info">{{ event.expedition.first.name }}</span>
-                                        {% endif %}
                                         <br>
                                         <p class="card-description mt-1">
                                             {{ event.description|truncatewords:150 }}

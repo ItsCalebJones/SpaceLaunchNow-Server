@@ -546,7 +546,12 @@ def spacecraft_by_id(request, id):
 @cache_page(600)
 def events_list(request):
     last_six_hours = UTC_NOW - timedelta(hours=6)
-    events = Events.objects.all().filter(date__gte=last_six_hours).order_by("date")
+    events = (
+        Events.objects.filter(date__gte=last_six_hours)
+        .select_related("type")
+        .order_by("date")
+        .values("id", "name", "date", "type__name", "slug", "description", "image", "location")
+    )
     previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")[:6]
     return render(
         request,
