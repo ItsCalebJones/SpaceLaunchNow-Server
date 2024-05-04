@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v4.4.3 (2024-05-04)
+
+### Fix
+
+* Images in event list ([`1e1e94a`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/1e1e94a7add327205c50eeeff769513f1abbecb9))
+
 ## v4.4.2 (2024-04-18)
 
 ### Fix
