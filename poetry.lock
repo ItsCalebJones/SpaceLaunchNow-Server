@@ -787,13 +787,13 @@ Django = "*"
 
 [[package]]
 name = "django-launch-library"
-version = "17.2.0"
+version = "17.2.1"
 description = "The Django lib for supporting Launch Library."
 optional = false
 python-versions = ">=3.10.4,<4.0.0"
 files = [
-    {file = "django_launch_library-17.2.0-py3-none-any.whl", hash = "sha256:00646f91160003a7c5d0948e32d7b5eebb692dcd8e8b64bbd198d5c625fd722c"},
-    {file = "django_launch_library-17.2.0.tar.gz", hash = "sha256:cc06e810c6c8cb6103a9127960547719280fb4a97d058a12bdc20d4b11ae56cf"},
+    {file = "django_launch_library-17.2.1-py3-none-any.whl", hash = "sha256:60c933ccbaeb97323dea2b63d5411bda6fda4d9fa9ef194cadfbcfdcb9b458aa"},
+    {file = "django_launch_library-17.2.1.tar.gz", hash = "sha256:7ff8c05502e35af71d8fd13df3e4c5518a34714df28beeb9d0ebd6531b124af9"},
 ]
 
 [package.dependencies]
@@ -3466,4 +3466,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10.4,<4.0"
-content-hash = "c85dc11da0f52ffd6d20c4130548c4782946aab5b623f75447331c57baf48d26"
+content-hash = "425ebaf81077275e69b7d73df8be09e98ba287f95dfafb8510f5ae7a2163af00"
