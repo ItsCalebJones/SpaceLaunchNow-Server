@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v4.4.4 (2024-05-19)
+
+### Fix
+
+* Silly ([`ba76ac9`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ba76ac929f94bfecd4f1f7f96dfe590b41f7cd22))
+* Update to latest LL ([`b25c51d`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/b25c51d0bb83aac3dbcf8b790fdb86cb5e8a43b4))
+
 ## v4.4.3 (2024-05-04)
 
 ### Fix
