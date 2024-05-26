@@ -581,8 +581,8 @@
                                 </div>
                             </div>
                         {% endif %}
-                        {% if launch.rocket.spacecraftflight %}
-                            {% with spacecraft_flight=launch.rocket.spacecraftflight %}
+                        {% if launch.rocket.spacecraftflight.all|length > 0 %}
+                            {% for spacecraft_flight in launch.rocket.spacecraftflight.all %}
                                 <div class="col-lg-10 mx-auto">
                                     <h2 class="title">{{ spacecraft_flight.spacecraft.name }}</h2>
                                     <hr>
@@ -699,7 +699,7 @@
                                         </div>
                                     {% endif %}
                                 </div>
-                            {% endwith %}
+                            {% endfor %}
                         {% endif %}
 
                         </div>
