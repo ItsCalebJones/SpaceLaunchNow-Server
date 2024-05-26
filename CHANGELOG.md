@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v4.4.5 (2024-05-26)
+
+### Fix
+
+* Spacecraft not rendering ([`bfd9f63`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/bfd9f63a2f2db11e3a1c5262a847c979434189a5))
+
 ## v4.4.4 (2024-05-19)
 
 ### Fix
