@@ -913,13 +913,13 @@ Django = "*"
 
 [[package]]
 name = "django-launch-library"
-version = "17.44.0"
+version = "19.3.0"
 description = "The Django lib for supporting Launch Library."
 optional = false
 python-versions = ">=3.10.4,<4.0.0"
 files = [
-    {file = "django_launch_library-17.44.0-py3-none-any.whl", hash = "sha256:ea27254a26bd3e34d48d5bbb1dd6588ae4ee0004e2865f1e28ecf6066091ed22"},
-    {file = "django_launch_library-17.44.0.tar.gz", hash = "sha256:967912355967e6eab5117400b8cae03202684e51304e514a0f64fae0f355eb0a"},
+    {file = "django_launch_library-19.3.0-py3-none-any.whl", hash = "sha256:2e1de0a21515148d9b17d6d389d3131ac053323132025bfa173fc7040e4a738f"},
+    {file = "django_launch_library-19.3.0.tar.gz", hash = "sha256:46105349fecc40770c22c631df60141a5615a58e57ee1789d801fae4b9ffea4d"},
 ]
 
 [package.dependencies]
@@ -951,6 +951,7 @@ drf-toolbox = "0.1.7"
 environs = ">=9.5.0,<10.0.0"
 goose3 = "3.1.11"
 gunicorn = "22.0.0"
+Markdown = ">=3.6,<4.0"
 orjson = ">=3.10.3,<4.0.0"
 pandas = "2.2.2"
 pilkit = "2.0"
@@ -1829,16 +1830,17 @@ restructuredtext = ["rst2ansi"]
 
 [[package]]
 name = "markdown"
-version = "3.4.1"
-description = "Python implementation of Markdown."
+version = "3.6"
+description = "Python implementation of John Gruber's Markdown."
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "Markdown-3.4.1-py3-none-any.whl", hash = "sha256:08fb8465cffd03d10b9dd34a5c3fea908e20391a2a90b88d66362cb05beed186"},
-    {file = "Markdown-3.4.1.tar.gz", hash = "sha256:3b809086bb6efad416156e00a0da66fe47618a5d6918dd688f53f40c8e4cfeff"},
+    {file = "Markdown-3.6-py3-none-any.whl", hash = "sha256:48f276f4d8cfb8ce6527c8f79e2ee29708508bf4d40aa410fbc3b4ee832c850f"},
+    {file = "Markdown-3.6.tar.gz", hash = "sha256:ed4f41f6daecbeeb96e576ce414c41d2d876daa9a16cb35fa8ed8c2ddfad0224"},
 ]
 
 [package.extras]
+docs = ["mdx-gh-links (>=0.2)", "mkdocs (>=1.5)", "mkdocs-gen-files", "mkdocs-literate-nav", "mkdocs-nature (>=0.6)", "mkdocs-section-index", "mkdocstrings[python]"]
 testing = ["coverage", "pyyaml"]
 
 [[package]]
@@ -3862,4 +3864,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10.4,<4.0"
-content-hash = "52c3f0a49c5a15b7c0f297bfe6683d5357c58e20115667dd143205f04444c688"
+content-hash = "afd693954c6318db20ffa876a6f75c06f9c738029197a9fa3fca291fbdc85f42"
