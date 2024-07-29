@@ -99,7 +99,7 @@
                                                              src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
                                                     {% endif %}
                                                 </div>
-                                                <h4 class="card-title">{{ astronaut.name }} test
+                                                <h4 class="card-title">{{ astronaut.name }}
                                                     <br>
                                                     <small class="card-description text-muted">{{ astronaut.nationality.first.nationality_name }}
                                                     </small>
@@ -110,21 +110,29 @@
                                                 </div>
                                                 <div class="card-footer justify-content-center"
                                                      style="min-height: 66px">
-                                                    {% if astronaut.twitter %}
-                                                        <a href="{{ astronaut.twitter }}"
-                                                           class="btn btn-link btn-just-icon"><i
-                                                                class="fab fa-twitter"></i></a>
+                                                {% for social_media in astronaut.social_media_links.all %}
+                                                     {% if social_media.social_media.id == 1 %}
+                                                         <a href="{{ social_media.url }}"
+                                                             class="btn btn-link btn-just-icon"><i
+                                                             class="fab fa-twitter"></i></a>
+                                                    {% elif social_media.social_media.id == 2%}
+                                                         <a href="{{ social_media.url }}"
+                                                             class="btn btn-link btn-just-icon"><i
+                                                             class="fab fa-instagram"></i></a>
+                                                    {% elif social_media.social_media.id == 3%}
+                                                         <a href="{{ social_media.url }}"
+                                                             class="btn btn-link btn-just-icon"><i
+                                                             class="fa fa-link"></i></a>
+                                                    {% elif social_media.social_media.id == 4%}
+                                                         <a href="{{ social_media.url }}"
+                                                             class="btn btn-link btn-just-icon"><i
+                                                             class="fab fa-linkedin"></i></a>
+                                                    {% else %}
+                                                         <a href="{{ social_media.url }}"
+                                                             class="btn btn-link btn-just-icon"><i
+                                                             class="fa fa-link"></i></a>
                                                     {% endif %}
-                                                    {% if astronaut.instagram %}
-                                                        <a href="{{ astronaut.instagram }}"
-                                                           class="btn btn-link btn-just-icon"><i
-                                                                class="fab fa-instagram"></i></a>
-                                                    {% endif %}
-                                                    {% if astronaut.wiki %}
-                                                        <a href="{{ astronaut.wiki }}"
-                                                           class="btn btn-link btn-just-icon"><i
-                                                                class="fab fa-wikipedia-w"></i></a>
-                                                    {% endif %}
+                                                {% endfor %}
                                                 </div>
                                                 <a class="btn btn-primary"
                                                    href="/astronaut/{{ astronaut.slug }}">Explore</a>
