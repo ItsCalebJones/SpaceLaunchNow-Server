@@ -1,4 +1,4 @@
-FROM python:3.10.4-slim-buster AS builder
+FROM python:3.10.12-slim-buster AS builder
 
 ARG PRIVATE_USERNAME
 ARG PRIVATE_PASSWORD
@@ -26,11 +26,11 @@ RUN rm -rf /var/lib/apt/lists/*
 
 # Installing `poetry` package manager:
 # https://github.com/python-poetry/poetry
-RUN curl -sSL https://install.python-poetry.org | python3 - --version 1.8.2
+RUN curl -sSL https://install.python-poetry.org | python3 - --version 1.8.3
 RUN poetry config virtualenvs.in-project true
 RUN poetry install --no-interaction --no-root --no-ansi --with ci
 
-FROM python:3.10.4-slim-buster
+FROM python:3.10.12-slim-buster
 
 WORKDIR /code/
 COPY --from=builder /code /code
