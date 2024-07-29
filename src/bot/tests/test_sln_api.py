@@ -37,7 +37,15 @@ class SLNAPITest(LLAPITests):
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+        path = "/launch/upcoming/?mode=detailed"
+        response = self.client.get(path)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
         path = "/launch/previous/"
+        response = self.client.get(path)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        path = "/launch/previous/?mode=detailed"
         response = self.client.get(path)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
