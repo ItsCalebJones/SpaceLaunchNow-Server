@@ -80,7 +80,7 @@ spec:
                 secretKeyRef:
                   name: sln-auth-prod
                   key: aws-secret-access-key
-            - name: SLN_SECRET_KEY
+            - name: SLN_SENTRY_KEY
               valueFrom:
                 secretKeyRef:
                   name: sln-sentry-key

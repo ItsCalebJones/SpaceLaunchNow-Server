@@ -146,7 +146,7 @@ spec:
                 secretKeyRef:
                   name: sln-auth-prod
                   key: discord-webhook
-            - name: SLN_SECRET_KEY
+            - name: SLN_SENTRY_KEY
               valueFrom:
                 secretKeyRef:
                   name: sln-sentry-key

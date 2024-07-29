@@ -116,7 +116,7 @@ spec:
                 secretKeyRef:
                   name: sln-auth-prod
                   key: fcm-key
-            - name: SLN_SECRET_KEY
+            - name: SLN_SENTRY_KEY
               valueFrom:
                 secretKeyRef:
                   name: sln-sentry-key
