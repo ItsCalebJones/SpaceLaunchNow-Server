@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v4.4.6 (2024-07-29)
+
+### Fix
+
+* Issue with removed instagram and twitter links ([`9f8cf9f`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/9f8cf9f23518564042f603b9f896df51d52ade73))
+
 ## v4.4.5 (2024-05-26)
 
 ### Fix
