@@ -1,7 +1,7 @@
 import logging
 
+from api.tests.mock_data import load_data
 from django.core.management import BaseCommand
-from mock_data import load_data
 
 logger = logging.getLogger(__name__)
 

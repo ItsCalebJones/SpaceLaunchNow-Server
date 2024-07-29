@@ -4,7 +4,6 @@ from datetime import timedelta
 from itertools import chain
 from uuid import UUID
 
-from api.endpoints.library.v230.common.prefetches import get_prefetched_launch_queryset
 from api.models import (
     Agency,
     Article,
@@ -40,6 +39,7 @@ from django_tables2 import SingleTableMixin
 from django_user_agents.utils import get_user_agent
 
 from bot.utils.util import get_SLN_url
+from prefetches import get_prefetched_launch_queryset
 from web.filters.launch_filters import LaunchListFilter
 from web.filters.launch_vehicle_filters import LauncherConfigListFilter
 from web.tables.launch_table import LaunchTable
@@ -805,7 +805,7 @@ def astronaut_by_slug(request, slug):
         raise Http404 from er
 
 
-@cache_page(600)
+# @cache_page(600)
 def astronaut_list(
     request,
 ):
@@ -819,15 +819,14 @@ def astronaut_list(
             Astronaut.objects.only(
                 "name",
                 "nationality",
-                "twitter",
-                "instagram",
+                "social_media_links",
                 "wiki",
                 "bio",
                 "image",
                 "slug",
             )
             .filter(nationality__nationality_name__icontains="American")
-            .prefetch_related("nationality")
+            .prefetch_related("nationality", "social_media_links")
             .filter(status=query)
             .order_by("name")
         )
@@ -836,15 +835,14 @@ def astronaut_list(
             Astronaut.objects.only(
                 "name",
                 "nationality",
-                "twitter",
-                "instagram",
+                "social_media_links",
                 "wiki",
                 "bio",
                 "image",
                 "slug",
             )
             .filter(nationality__nationality_name__in=["Russian", "Soviet"])
-            .prefetch_related("nationality")
+            .prefetch_related("nationality", "social_media_links")
             .filter(status=query)
             .order_by("name")
         )
@@ -869,15 +867,14 @@ def astronaut_list(
             Astronaut.objects.only(
                 "name",
                 "nationality",
-                "twitter",
-                "instagram",
+                "social_media_links",
                 "wiki",
                 "bio",
                 "image",
                 "slug",
             )
             .exclude(nationality__nationality_name__icontains=excluded_nationalities)
-            .prefetch_related("nationality")
+            .prefetch_related("nationality", "social_media_links")
             .filter(status=query)
             .order_by("name")
         )
@@ -905,15 +902,14 @@ def astronaut_list(
             Astronaut.objects.only(
                 "name",
                 "nationality",
-                "twitter",
-                "instagram",
+                "social_media_links",
                 "wiki",
                 "bio",
                 "image",
                 "slug",
             )
             .exclude(nationality__name__in=excluded_nationalities)
-            .prefetch_related("nationality")
+            .prefetch_related("nationality", "social_media_links")
             .filter(status=query)
             .order_by("name")
         )
@@ -922,15 +918,14 @@ def astronaut_list(
             Astronaut.objects.only(
                 "name",
                 "nationality",
-                "twitter",
-                "instagram",
+                "social_media_links",
                 "wiki",
                 "bio",
                 "image",
                 "slug",
             )
             .filter(status=query)
-            .prefetch_related("nationality")
+            .prefetch_related("nationality", "social_media_links")
             .order_by("name")
         )
 
@@ -946,8 +941,6 @@ def astronaut_list(
         astronauts = paginator.page(1)
     except EmptyPage:
         astronauts = paginator.page(paginator.num_pages)
-
-    print(astronauts.count)
 
     return render(
         request,

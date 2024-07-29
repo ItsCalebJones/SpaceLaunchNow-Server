@@ -69,33 +69,43 @@
                 <h2 class="text-center">{{ astronaut.nationality.first.nationality_name }} {% if astronaut.agency %} - ({{ astronaut.agency.abbrev }}) {% endif %}</h2>
                 <h3 class="text-center">{{ astronaut.status.name }} </h3>
                 <p class="figure-caption text-center">
+                    {% if astronaut.date_of_birth %}
                     Date of Birth: {{ astronaut.date_of_birth }}<br>
                     {% if astronaut.date_of_death %}
                         Date of Death: {{ astronaut.date_of_death }}
                     {% else %}
                         Age: {{ astronaut.age }}
                     {% endif %}
+                    {% endif%}
                 </p>
                 <hr>
                 <div class="row">
                     <div class="col-md-12 ml-auto mx-auto mr-auto text-lg-center">
                         <div class="profile">
                             <div class="justify-content-center">
-                                {% if astronaut.twitter %}
-                                    <a href="{{ astronaut.twitter }}"
-                                       class="btn btn-link btn-just-icon"><i
-                                            class="fab fa-twitter"></i></a>
-                                {% endif %}
-                                {% if astronaut.instagram %}
-                                    <a href="{{ astronaut.instagram }}"
-                                       class="btn btn-link btn-just-icon"><i
-                                            class="fab fa-instagram"></i></a>
-                                {% endif %}
-                                {% if astronaut.wiki %}
-                                    <a href="{{ astronaut.wiki }}"
-                                       class="btn btn-link btn-just-icon"><i
-                                            class="fab fa-wikipedia-w"></i></a>
-                                {% endif %}
+                            {% for social_media in astronaut.social_media_links.all %}
+                                {% if social_media.social_media.id == 1 %}
+                                    <a href="{{ social_media.url }}"
+                                        class="btn btn-link btn-just-icon"><i
+                                        class="fab fa-twitter"></i></a>
+                               {% elif social_media.social_media.id == 2%}
+                                    <a href="{{ social_media.url }}"
+                                        class="btn btn-link btn-just-icon"><i
+                                        class="fab fa-instagram"></i></a>
+                               {% elif social_media.social_media.id == 3%}
+                                    <a href="{{ social_media.url }}"
+                                        class="btn btn-link btn-just-icon"><i
+                                        class="fa fa-link"></i></a>
+                               {% elif social_media.social_media.id == 4%}
+                                    <a href="{{ social_media.url }}"
+                                        class="btn btn-link btn-just-icon"><i
+                                        class="fab fa-linkedin"></i></a>
+                               {% else %}
+                                    <a href="{{ social_media.url }}"
+                                        class="btn btn-link btn-just-icon"><i
+                                        class="fa fa-link"></i></a>
+                               {% endif %}
+                           {% endfor %}
                             </div>
                         </div>
                     </div>

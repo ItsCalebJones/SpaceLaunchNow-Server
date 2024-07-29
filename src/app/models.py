@@ -11,7 +11,7 @@ from django.core.files.storage import DefaultStorage, default_storage
 from django.db import models
 from storages.backends.s3boto3 import S3Boto3Storage
 
-from custom_storages import AppImageStorage
+from sln_custom_storages import AppImageStorage
 from spacelaunchnow.base_models import SingletonModel
 
 

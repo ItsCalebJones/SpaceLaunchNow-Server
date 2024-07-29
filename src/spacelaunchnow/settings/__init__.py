@@ -22,7 +22,7 @@ from environs import Env
 env = Env()
 env.read_env(".env")
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
@@ -342,13 +342,12 @@ else:
     # Static URL always ends in /
     STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/"
     MEDIA_LOCATION = "media"
-    PROJECT_PATH = os.path.abspath(os.path.dirname(__name__))
-    STATICFILES_DIRS = [os.path.join(PROJECT_PATH, "static")]
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
     STATICFILES_LOCATION = "static/home"
-    STATICFILES_STORAGE = "custom_storages.StaticStorage"
+    STATICFILES_STORAGE = "api.custom_storages.StaticStorage"
     AWS_PRELOAD_METADATA = True
     APP_IMAGE_LOCATION = MEDIA_LOCATION + "/app_images"  # type: str
-    APP_IMAGE_STORAGE = "custom_storages.AppImageStorage"
+    APP_IMAGE_STORAGE = "sln_custom_storages.AppImageStorage"
 
 
 if env.str("CACHE_BACKEND", None) and env.str("CACHE_LOCATION", None):

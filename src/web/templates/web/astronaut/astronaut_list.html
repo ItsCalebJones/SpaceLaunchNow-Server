@@ -106,11 +106,11 @@
                     <input class="form-control" placeholder="Ex. Armstrong" type="text" id="search-input"
                            name="q">
                     <span class="input-group-append">
-                                                <button class="btn btn-primary btn-raised btn-round btn-fab"
-                                                        type="submit">
-                                                <i class="fa fa-search"></i>
-                                                </button>
-                                                </span>
+                    <button class="btn btn-primary btn-raised btn-round btn-fab"
+                            type="submit">
+                    <i class="fa fa-search"></i>
+                    </button>
+                    </span>
                 </div>
             </form>
         </div>
@@ -163,21 +163,29 @@
                                                 </div>
                                                 <div class="card-footer justify-content-center"
                                                      style="min-height: 48px">
-                                                    {% if astronaut.twitter %}
-                                                        <a href="{{ astronaut.twitter }}"
-                                                           class="btn btn-link btn-just-icon"><i
-                                                                class="fab fa-twitter"></i></a>
+                                                {% for social_media in astronaut.social_media_links.all %}
+                                                     {% if social_media.social_media.id == 1 %}
+                                                         <a href="{{ social_media.url }}"
+                                                             class="btn btn-link btn-just-icon"><i
+                                                             class="fab fa-twitter"></i></a>
+                                                     {% elif social_media.social_media.id == 2%}
+                                                         <a href="{{ social_media.url }}"
+                                                             class="btn btn-link btn-just-icon"><i
+                                                             class="fab fa-instagram"></i></a>
+                                                    {% elif social_media.social_media.id == 3%}
+                                                         <a href="{{ social_media.url }}"
+                                                             class="btn btn-link btn-just-icon"><i
+                                                             class="fa fa-link"></i></a>
+                                                    {% elif social_media.social_media.id == 4%}
+                                                         <a href="{{ social_media.url }}"
+                                                             class="btn btn-link btn-just-icon"><i
+                                                             class="fab fa-linkedin"></i></a>
+                                                    {% else %}
+                                                         <a href="{{ social_media.url }}"
+                                                             class="btn btn-link btn-just-icon"><i
+                                                             class="fa fa-link"></i></a>
                                                     {% endif %}
-                                                    {% if astronaut.instagram %}
-                                                        <a href="{{ astronaut.instagram }}"
-                                                           class="btn btn-link btn-just-icon"><i
-                                                                class="fab fa-instagram"></i></a>
-                                                    {% endif %}
-                                                    {% if astronaut.wiki %}
-                                                        <a href="{{ astronaut.wiki }}"
-                                                           class="btn btn-link btn-just-icon"><i
-                                                                class="fab fa-wikipedia-w"></i></a>
-                                                    {% endif %}
+                                                {% endfor %}
                                                 </div>
                                                 <a class="btn btn-primary"
                                                    href="/astronaut/{{ astronaut.slug }}">Explore</a>
