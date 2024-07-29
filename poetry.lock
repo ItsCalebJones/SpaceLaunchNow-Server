@@ -913,13 +913,13 @@ Django = "*"
 
 [[package]]
 name = "django-launch-library"
-version = "19.3.0"
+version = "19.3.1"
 description = "The Django lib for supporting Launch Library."
 optional = false
 python-versions = ">=3.10.4,<4.0.0"
 files = [
-    {file = "django_launch_library-19.3.0-py3-none-any.whl", hash = "sha256:2e1de0a21515148d9b17d6d389d3131ac053323132025bfa173fc7040e4a738f"},
-    {file = "django_launch_library-19.3.0.tar.gz", hash = "sha256:46105349fecc40770c22c631df60141a5615a58e57ee1789d801fae4b9ffea4d"},
+    {file = "django_launch_library-19.3.1-py3-none-any.whl", hash = "sha256:4807c976914412e579321252da103474611cc45f599a2177b4db60125abb6692"},
+    {file = "django_launch_library-19.3.1.tar.gz", hash = "sha256:818b9262cdbfcf0c382a33ab5a5e8c731ff5500f90f463075d088b4c399f6c4a"},
 ]
 
 [package.dependencies]
@@ -3311,13 +3311,13 @@ tornado = ["tornado (>=5)"]
 
 [[package]]
 name = "setuptools"
-version = "71.1.0"
+version = "72.1.0"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "setuptools-71.1.0-py3-none-any.whl", hash = "sha256:33874fdc59b3188304b2e7c80d9029097ea31627180896fb549c578ceb8a0855"},
-    {file = "setuptools-71.1.0.tar.gz", hash = "sha256:032d42ee9fb536e33087fb66cac5f840eb9391ed05637b3f2a76a7c8fb477936"},
+    {file = "setuptools-72.1.0-py3-none-any.whl", hash = "sha256:5a03e1860cf56bb6ef48ce186b0e557fdba433237481a9a625176c2831be15d1"},
+    {file = "setuptools-72.1.0.tar.gz", hash = "sha256:8d243eff56d095e5817f796ede6ae32941278f542e0f941867cc05ae52b162ec"},
 ]
 
 [package.extras]
@@ -3864,4 +3864,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10.12,<4.0"
-content-hash = "bd66cfc85c1f466a5de8deab60a867036fba820b9dcbcf0e1fb9b90b1d05c659"
+content-hash = "f79377b8c0cc708fa9b502440e60e0ccb2df0d97ced1126941bc147f85f24a1f"
