@@ -26,11 +26,17 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="nationality",
             name="flag",
-            field=models.FileField(storage=sln_custom_storages.AppImageStorage, upload_to=app.models.language_image_path),
+            field=models.FileField(
+                storage=sln_custom_storages.AppImageStorage,
+                upload_to=app.models.language_image_path
+            ),
         ),
         migrations.AlterField(
             model_name="staff",
             name="profile",
-            field=models.FileField(storage=sln_custom_storages.AppImageStorage, upload_to=app.models.profile_image_path),
+            field=models.FileField(
+                storage=sln_custom_storages.AppImageStorage,
+                upload_to=app.models.profile_image_path
+            ),
         ),
     ]
