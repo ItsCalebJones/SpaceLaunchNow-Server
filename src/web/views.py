@@ -4,7 +4,6 @@ from datetime import timedelta
 from itertools import chain
 from uuid import UUID
 
-from api.endpoints.library.v230.common.prefetches import get_prefetched_launch_queryset
 from api.models import (
     Agency,
     Article,
@@ -40,6 +39,7 @@ from django_tables2 import SingleTableMixin
 from django_user_agents.utils import get_user_agent
 
 from bot.utils.util import get_SLN_url
+from prefetches import get_prefetched_launch_queryset
 from web.filters.launch_filters import LaunchListFilter
 from web.filters.launch_vehicle_filters import LauncherConfigListFilter
 from web.tables.launch_table import LaunchTable
