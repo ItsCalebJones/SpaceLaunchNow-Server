@@ -1,4 +1,4 @@
-FROM python:3.10.12-slim-buster AS builder
+FROM python:3.12.4-slim-bookworm AS builder
 
 ARG PRIVATE_USERNAME
 ARG PRIVATE_PASSWORD
@@ -18,7 +18,7 @@ RUN apt-get update \
      git \
      gcc \
      curl \
-     python-dev \
+     python3-dev \
      libsqlite3-dev \
      libpng-dev \
      libjpeg-dev
@@ -30,7 +30,7 @@ RUN curl -sSL https://install.python-poetry.org | python3 - --version 1.8.3
 RUN poetry config virtualenvs.in-project true
 RUN poetry install --no-interaction --no-root --no-ansi --with ci
 
-FROM python:3.10.12-slim-buster
+FROM python:3.12.4-slim-bookworm
 
 WORKDIR /code/
 COPY --from=builder /code /code
