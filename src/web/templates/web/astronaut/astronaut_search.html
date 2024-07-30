@@ -88,8 +88,8 @@
                                         <div class="card-body ">
                                             <div class="team-player">
                                                 <div class="col-md-10 mx-auto">
-                                                    {% if astronaut.astronaut_image.image %}
-                                                        {% thumbnail astronaut.astronaut_image.image "300x300" crop="center" as im %}
+                                                    {% if astronaut.image.image %}
+                                                        {% thumbnail astronaut.image.image "300x300" crop="center" as im %}
                                                             <img class="img-raised rounded-circle img-fluid text-center"
                                                                  src="{{ im.url }}"
                                                                  style="padding:1px;border:1px solid #cccccc;">
