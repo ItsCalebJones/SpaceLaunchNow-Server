@@ -26,3 +26,4 @@ dist/**
 .vscode/**
 docker/*.backup
 *.log
+.history/
