@@ -406,6 +406,8 @@ SILENCED_SYSTEM_CHECKS = [
     "debug_toolbar.W006",  # See jazzband/django-debug-toolbar#1780
 ]
 
+HOST_NAME = env.str("HOST_NAME", "localhost")
+
 # Django Silky Settings
 # ref: https://github.com/jazzband/django-silk
 SILKY_ENABLED = env.bool("ENABLE_SILKY", False)
