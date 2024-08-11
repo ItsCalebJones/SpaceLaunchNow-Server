@@ -15,7 +15,6 @@ inputs:
     description: TSD pypi password
     required: true
 
-
 outputs:
   python-version:
     description: The installed python version. Useful when given a version range as input.
@@ -24,6 +23,10 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ inputs.python-version }}
     - name: Install poetry
       shell: bash
       run: curl -sSL https://install.python-poetry.org | python3 - --version 1.8.3
