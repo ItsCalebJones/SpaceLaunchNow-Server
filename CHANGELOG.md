@@ -2,6 +2,15 @@
 
 <!--next-version-placeholder-->
 
+## v4.4.7 (2024-08-11)
+
+### Fix
+
+* **build:** Use setup python to setup env ([`f232f44`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/f232f44591ecd62eec330cbd359a45a172ddb990))
+* **build:** Update build systems python and docker compose changes ([`c468afb`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/c468afbbb30b919040806a2a5ce33fb7b6a05e67))
+* **python:** Update python version 3.12.4 ([`8d45513`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/8d455138b87e19fc8bb0150d380735632f60cdb7))
+* **library:** Bump ll library ([`280bc55`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/280bc552b3c2538a92959d858e247dcbd96532d8))
+
 ## v4.4.6 (2024-07-29)
 
 ### Fix
