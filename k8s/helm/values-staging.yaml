@@ -28,6 +28,7 @@ env:
     ENABLE_SILKY: "True"
     SILKY_INTERCEPT_PERCENT: "100"
     SILKY_ANALYZE_QUERIES: "False"
+    HOST_NAME: "staging.spacelaunchnow.me"
 
   worker:
     IS_WEBSERVER: "False"
