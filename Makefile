@@ -17,12 +17,12 @@ shell: ## Run Django shell_plus
 .PHONY: build
 build: ## Run local tests using Docker
 	@echo "🚀 Building Docker container..."
-	@docker-compose -f docker/docker-compose.yml build
+	@docker compose -f docker/docker-compose.yml build
 
 .PHONY: test
 test: build ## Run local tests using Docker
 	@echo "🚀 Running local tests"
-	@docker-compose -f docker/docker-compose.test.yml run test
+	@docker compose -f docker/docker-compose.test.yml run test
 
 .PHONY: local-test
 local-test: ## Run Django tests locally
@@ -38,7 +38,7 @@ local-run: ## Run Django app locally
 .PHONY: docker-run
 docker-run: build ## Run local instance using Docker
 	@echo "🚀 Running local instance"
-	@docker-compose -f docker/docker-compose.stack.yml up -d
+	@docker compose -f docker/docker-compose.stack.yml up -d
 
 .PHONY: help
 help: ## Display available make commands

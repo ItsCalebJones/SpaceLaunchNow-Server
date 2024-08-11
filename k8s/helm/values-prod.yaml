@@ -25,6 +25,7 @@ env:
     EMAIL_PORT: "587"
     EMAIL_HOST_TLS: "True"
     SLN_ENVIRONMENT: "production"
+    HOST_NAME: "spacelaunchnow.me"
 
   worker:
     IS_WEBSERVER: "False"
