@@ -25,7 +25,7 @@ env:
     EMAIL_PORT: "587"
     EMAIL_HOST_TLS: "True"
     SLN_ENVIRONMENT: "staging"
-    ENABLE_SILKY: "True"
+    ENABLE_SILKY: "False"
     SILKY_INTERCEPT_PERCENT: "100"
     SILKY_ANALYZE_QUERIES: "False"
     HOST_NAME: "staging.spacelaunchnow.me"
