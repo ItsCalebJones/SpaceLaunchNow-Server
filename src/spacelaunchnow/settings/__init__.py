@@ -14,10 +14,11 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 import sys
 
-import pkg_resources
 import sentry_sdk
 from api.custom_storages import DEFAULT_STORAGE
 from environs import Env
+
+from bot.utils.version import read_package_name_from_pyproject, read_version_from_pyproject
 
 env = Env()
 env.read_env(".env")
@@ -387,8 +388,8 @@ SLN_ENVIRONMENT = env.str("SLN_ENVIRONMENT", "development")
 # SENTRY SETTINGS
 
 if SLN_SENTRY_KEY:
-    PACKAGE_NAME = "spacelaunchnow-server"
-    sln_version = pkg_resources.get_distribution(PACKAGE_NAME).version
+    package_name = read_package_name_from_pyproject()
+    sln_version = read_version_from_pyproject()
     sentry_sdk.init(
         dsn=SLN_SENTRY_KEY,
         # Set traces_sample_rate to 1.0 to capture 100%
@@ -398,7 +399,7 @@ if SLN_SENTRY_KEY:
         # of sampled transactions.
         # We recommend adjusting this value in production.
         profiles_sample_rate=1.0 if DEBUG else 0.2,
-        release=f"{PACKAGE_NAME}@{sln_version}",
+        release=f"{package_name}@{sln_version}",
         environment=SLN_ENVIRONMENT,
     )
 
