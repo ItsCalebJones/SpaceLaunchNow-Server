@@ -1,6 +1,5 @@
 {% extends "web/base.html" %}
 {% load static %}
-{% load thumbnail %}
 {% load humanize %}
 {% load static %}
 {% block extrahead %}
@@ -271,11 +270,9 @@
                             <hr>
                             <div class="col-lg-12 col-md-12 text-center mx-auto" style="margin-bottom: 20px">
                                 {% if vehicle.manufacturer.nation_url %}
-                                    {% thumbnail owner.nation_url "100x100" as im %}
-                                        <img class="img-raised rounded-circle img-fluid text-center"
-                                             src="{{ im.url }}"
-                                             style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                    {% endthumbnail %}
+                                    <img class="img-raised rounded-circle img-fluid text-center"
+                                            src="{{ vehicle.manufacturer.nation_url.url }}"
+                                            style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                                 {% endif %}
                                 <h4 class="info-title">{{ vehicle.manufacturer.name }}</h4>
                                 <h6 class="info-subtitle mb-2 text-muted">{{ vehicle.manufacturer.type }}</h6>

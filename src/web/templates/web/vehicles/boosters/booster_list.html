@@ -1,6 +1,5 @@
 {% extends "web/base.html" %}
 {% load static %}
-{% load thumbnail %}
 {% load mathfilters %}
 {% load static %}
 {% block extrahead %}
@@ -136,11 +135,9 @@
                                 <tr>
                                     <td>
                                         {% if vehicle.image %}
-                                            {% thumbnail vehicle.image.image.url "100x100" as im %}
-                                                <img class="img-raised rounded-circle img-fluid text-center"
-                                                     src="{{ im.url }}"
-                                                     style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                            {% endthumbnail %}
+                                            <img class="img-raised rounded-circle img-fluid text-center"
+                                                    src="{{ vehicle.image.image.url }}"
+                                                    style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                                         {% else %}
                                             <img class="img-raised rounded-circle img-fluid"
                                                  style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;"

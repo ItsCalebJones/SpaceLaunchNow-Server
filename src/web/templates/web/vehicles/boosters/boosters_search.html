@@ -1,6 +1,5 @@
 {% extends "web/base.html" %}
 {% load static %}
-{% load thumbnail %}
 {% load static %}
 {% block extrahead %}
     {% load mathfilters %}
@@ -98,11 +97,9 @@
                                             <div class="team-player">
                                                 <div class="col-md-10 mx-auto">
                                                     {% if vehicle.launcher_image.image %}
-                                                        {% thumbnail vehicle.launcher_image.image "300x300" crop="center" as im %}
-                                                            <img class="img-raised rounded-circle img-fluid text-center"
-                                                                 src="{{ im.url }}"
-                                                                 style="padding:1px;border:1px solid #cccccc;">
-                                                        {% endthumbnail %}
+                                                        <img class="img-raised rounded-circle img-fluid text-center"
+                                                                src="{{ vehicle.launcher_image.image.url }}"
+                                                                style="padding:1px;border:1px solid #cccccc;">
                                                     {% endif %}
                                                 </div>
                                                 <h4 class="card-title">{{ vehicle.serial_number }}

@@ -1,6 +1,5 @@
 {% extends "web/base.html" %}
 {% load static %}
-{% load thumbnail %}
 {% load humanize %}
 {% load static %}
 {% block extrahead %}
@@ -135,11 +134,9 @@
                                             <div class="card card-profile card-plain">
                                                 <div class="card-header card-avatar">
                                                     {% if crew.astronaut.astronaut_image.image %}
-                                                        {% thumbnail crew.astronaut.astronaut_image.image "300x300" crop="80% top" as im %}
-                                                            <img class="img-raised rounded-circle img-fluid text-center"
-                                                                 src="{{ im.url }}"
-                                                                 style="padding:1px;border:1px solid #cccccc;max-height: 200px;max-width: 200px">
-                                                        {% endthumbnail %}
+                                                        <img class="img-raised rounded-circle img-fluid text-center"
+                                                                src="{{ crew.astronaut.astronaut_image.image.url }}"
+                                                                style="padding:1px;border:1px solid #cccccc;max-height: 200px;max-width: 200px">
                                                     {% else %}
                                                         <img class="img-raised rounded-circle img-fluid"
                                                              src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
@@ -202,11 +199,9 @@
                                 {% for owner in vehicle.owners.all %}
                                     <div class="col-lg-8 col-md-12 text-center mx-auto" style="margin-bottom: 20px">
                                         {% if owner.nation_url %}
-                                            {% thumbnail owner.nation_url "100x100" as im %}
-                                                <img class="img-raised rounded-circle img-fluid text-center"
-                                                     src="{{ im.url }}"
-                                                     style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                            {% endthumbnail %}
+                                            <img class="img-raised rounded-circle img-fluid text-center"
+                                                    src="{{ owner.nation_url.url }}"
+                                                    style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                                         {% endif %}
                                         <h4 class="info-title">{{ owner.name }}</h4>
                                         <h6 class="info-subtitle mb-2 text-muted">{{ owner.type }}</h6>

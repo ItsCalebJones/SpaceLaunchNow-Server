@@ -3,7 +3,6 @@
 {% load user_agents %}
 {% load static %}
 {% load sln_utils %}
-{% load thumbnail %}
 {% block extrahead %}
 
     <link rel="canonical" href="https://spacelaunchnow.me/starship">
@@ -286,11 +285,9 @@
                                 <tr>
                                     <td>
                                         {% if item.image.image %}
-                                            {% thumbnail item.image.image "100x100" as im %}
-                                                <img class="img-raised rounded-circle img-fluid text-center"
-                                                     src="{{ im.url }}"
-                                                     style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                            {% endthumbnail %}
+                                            <img class="img-raised rounded-circle img-fluid text-center"
+                                                    src="{{ item.image.image.url }}"
+                                                    style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                                         {% else %}
                                             <img class="img-raised rounded-circle img-fluid"
                                                  style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;"
@@ -305,17 +302,13 @@
                                 <tr>
                                     <td>
                                         {% if item.image %}
-                                            {% thumbnail item.image.image.url "100x100" as im %}
-                                                <img class="img-raised rounded-circle img-fluid text-center"
-                                                     src="{{ im.url }}"
-                                                     style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                            {% endthumbnail %}
+                                            <img class="img-raised rounded-circle img-fluid text-center"
+                                                    src="{{ item.image.image.url }}"
+                                                    style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                                         {% elif item.rocket.configuration.image %}
-                                            {% thumbnail item.rocket.configuration.image.image.url "100x100" as im %}
-                                                <img class="img-raised rounded-circle img-fluid text-center"
-                                                     src="{{ im.url }}"
-                                                     style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                            {% endthumbnail %}
+                                            <img class="img-raised rounded-circle img-fluid text-center"
+                                                    src="{{ item.rocket.configuration.image.url }}"
+                                                    style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                                         {% else %}
                                             <img class="img-raised rounded-circle img-fluid"
                                                  style="overflow: hidden;width: 100px;height: 100px;object-fit: cover;padding:1px;border:1px solid #cccccc;"

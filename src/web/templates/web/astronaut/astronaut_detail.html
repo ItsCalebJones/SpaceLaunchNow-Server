@@ -1,6 +1,5 @@
 {% extends "web/base.html" %}
 {% load static %}
-{% load thumbnail %}
 {% load humanize %}
 {% block extrahead %}
     <link rel="canonical" href="https://spacelaunchnow.me/astronaut/{{ astronaut.slug }}">
@@ -125,17 +124,13 @@
                                     <div class="row">
                                         <div class="col-md-4 text-center" style="height: 150px">
                                             {% if launch.rocket.configuration.image %}
-                                                {% thumbnail launch.rocket.configuration.image.image.url "200" as im %}
-                                                    <img class="img-raised rounded-circle img-fluid text-center"
-                                                         src="{{ im.url }}"
-                                                         style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                                {% endthumbnail %}
+                                                <img class="img-raised rounded-circle img-fluid text-center"
+                                                        src="{{ aunch.rocket.configuration.image.image.url }}"
+                                                        style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                                             {% elif launch.rocket.configuration.manufacturer.image %}
-                                                {% thumbnail launch.rocket.configuration.manufacturer.image.image.url "200" as im %}
                                                     <img class="img-raised rounded-circle img-fluid text-center"
-                                                         src="{{ im.url }}"
+                                                         src="{{ launch.rocket.configuration.manufacturer.image.image.url }}"
                                                          style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                                {% endthumbnail %}
                                             {% else %}
                                                 <img class="img-raised rounded-circle img-fluid text-center"
                                                      src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png"
@@ -179,12 +174,6 @@
                                         {% endfor %}
                                     {% endif %}
                                     <hr/>
-                                    <!-- <row>
-                                        <a class="btn btn-primary" href="/launch/{{ launch.slug }}">Explore</a>
-                                        <a data-site class="btn btn-danger"
-                                           href="http://www.facebook.com/sharer.php?u={{ launch.get_full_absolute_url }}"
-                                           target="_blank">Share</a>
-                                    </row> -->
                                 </div>
                             </div>
                         {% endfor %}
@@ -205,17 +194,13 @@
                                     <div class="row">
                                         <div class="col-md-4 text-center" style="height: 150px">
                                             {% if launch.rocket.configuration.image %}
-                                                {% thumbnail launch.rocket.configuration.image.image.url "200" as im %}
                                                     <img class="img-raised rounded-circle img-fluid text-center"
-                                                         src="{{ im.url }}"
+                                                         src="{{ launch.rocket.configuration.image.image.url }}"
                                                          style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                                {% endthumbnail %}
                                             {% elif launch.rocket.configuration.manufacturer.image %}
-                                                {% thumbnail launch.rocket.configuration.manufacturer.image.image.url "200" as im %}
                                                     <img class="img-raised rounded-circle img-fluid text-center"
-                                                         src="{{ im.url }}"
+                                                         src="{{ launch.rocket.configuration.manufacturer.image.url }}"
                                                          style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
-                                                {% endthumbnail %}
                                             {% else %}
                                                 <img class="img-raised rounded-circle img-fluid text-center"
                                                      src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png"

@@ -3564,17 +3564,6 @@ tqdm = ">=4.14"
 urllib3 = ">=1.26.0"
 
 [[package]]
-name = "twitter"
-version = "1.18.0"
-description = "An API and command-line toolset for Twitter (twitter.com)"
-optional = false
-python-versions = "*"
-files = [
-    {file = "twitter-1.18.0-py2.py3-none-any.whl", hash = "sha256:52545fd3b70d3d3807d3ce62d1a256727856d784d1630d64dedcc643aaf0b908"},
-    {file = "twitter-1.18.0.tar.gz", hash = "sha256:acdc85e5beea752967bb64c63bde8b915c49a31a01db1b2fecccf9f2c1d5c44d"},
-]
-
-[[package]]
 name = "typing-extensions"
 version = "4.12.2"
 description = "Backported and Experimental Type Hints for Python 3.8+"
@@ -3917,4 +3906,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.12.0,<4.0"
-content-hash = "b563ab6e0927c68959b52d06e7c914317db3ce973fdbce4e6a42517a8151e78c"
+content-hash = "1f2be61f467fcce2fb3ef5a73d59d4657fc78518dbeecf5d2a48f17b16ded77e"
