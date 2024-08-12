@@ -140,8 +140,6 @@ INSTALLED_APPS = [
     "collectfast",
     "robots",
     "app",
-    "sorl.thumbnail",
-    "sorl_thumbnail_serializer",
     "mathfilters",
     "django_tables2",
     "bootstrap4",

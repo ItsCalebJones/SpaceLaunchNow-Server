@@ -1,6 +1,5 @@
 {% extends "web/base.html" %}
 {% load static %}
-{% load thumbnail %}
 {% load static %}
 {% block extrahead %}
     <link rel="canonical" href="https://spacelaunchnow.me/launch/">
@@ -49,11 +48,9 @@
                                 <div class="card card-profile card-plain">
                                     <div class="card-header card-avatar">
                                         <a href="{{ person.link }}">
-                                            {% thumbnail person.profile "200" as im %}
-                                                <img class="img"
-                                                     src="{{ im.url }}"
-                                                     style="width: 150px;height: 150px;object-fit: cover;">
-                                            {% endthumbnail %}
+                                            <img class="img"
+                                                    src="{{ person.profile.url }}"
+                                                    style="width: 150px;height: 150px;object-fit: cover;">
                                         </a>
                                     </div>
                                     <div class="card-body">

@@ -1,6 +1,5 @@
 {% extends "web/base.html" %}
 {% load static %}
-{% load thumbnail %}
 {% load mathfilters %}
 {% load static %}
 {% block extrahead %}
@@ -140,13 +139,10 @@
                                         <div class="card-body ">
                                             <div class="team-player">
                                                 <div class="col-md-12 col-sm-8 col-xs-8 mx-auto">
-                                                    {{ astronaut.image.image }}
                                                     {% if astronaut.image.image %}
-                                                        {% thumbnail astronaut.image.image "300x300" crop="80% top" as im %}
                                                             <img class="img-raised rounded-circle img-fluid text-center"
-                                                                 src="{{ im.url }}"
-                                                                 style="padding:1px;border:1px solid #cccccc;max-height: 200px;max-width: 200px">
-                                                        {% endthumbnail %}
+                                                                 src="{{ astronaut.image.thumbnail.url }}"
+                                                                 style="overflow: hidden;width: 150;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
                                                     {% else %}
                                                         <img class="img-raised rounded-circle img-fluid"
                                                              src="https://x.kinja-static.com/assets/images/logos/placeholders/default.png">
