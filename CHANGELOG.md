@@ -2,6 +2,12 @@
 
 <!--next-version-placeholder-->
 
+## v4.4.8 (2024-08-12)
+
+### Fix
+
+* Performance improvments main page ([`c3e337b`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/c3e337b1085467e4d9df9696f36c9fbb13b27578))
+
 ## v4.4.7 (2024-08-11)
 
 ### Fix
