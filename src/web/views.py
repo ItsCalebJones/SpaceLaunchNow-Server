@@ -2,7 +2,6 @@ import datetime
 import json
 from datetime import timedelta
 from itertools import chain
-from uuid import UUID
 
 from api.models import (
     Agency,
@@ -200,12 +199,13 @@ def app(request):
 @cache_page(60)
 # Create your views here.
 def next_launch(request):
-    in_flight_launch = get_prefetched_launch_queryset(Launch.objects.filter(status__id=6)).order_by("-net").first()
+    in_flight_launch = Launch.objects.filter(status__id=6).order_by("-net").fields("slug").first()
     if in_flight_launch:
         return redirect("launch_by_slug", slug=in_flight_launch.slug)
     recently_launched = (
-        get_prefetched_launch_queryset(Launch.objects.filter(net__gte=UTC_NOW - timedelta(hours=6), net__lte=UTC_NOW))
+        Launch.objects.filter(net__gte=UTC_NOW - timedelta(hours=6), net__lte=UTC_NOW)
         .order_by("-net")
+        .fields("slug")
         .first()
     )
     if recently_launched:
@@ -215,41 +215,51 @@ def next_launch(request):
         return redirect("launch_by_slug", slug=_next_launch.slug)
 
 
-@cache_page(120)
-# Create your views here.
+def launch_by_uuid(request, uuid):
+    try:
+        launch = (
+            Launch.objects.select_related("mission")
+            .select_related("image")
+            .select_related("status")
+            .select_related("changed_by")
+            .select_related("net_precision")
+            .select_related("rocket")
+            .prefetch_related("changed_by__tsdstaff")
+            .prefetch_related("rocket__firststage")
+            .prefetch_related("vid_urls")
+            .prefetch_related("info_urls")
+            .get(id=uuid)
+        )
+        return create_launch_view(request, launch)
+    except Launch.DoesNotExist as e:
+        raise Http404("Launch with the specified UUID does not exist.") from e
+
+
 def launch_by_slug(request, slug):
-    if slug == "schedule":
-        redirect("launch_schedule")
     try:
-        UUID(slug, version=4)
-        try:
-            launch = Launch.objects.get(id=slug)
-            if str(launch.id) == launch.slug:
-                return create_launch_view(request, Launch.objects.get(slug=slug))
-            return redirect("launch_by_slug", slug=launch.slug)
-        except ObjectDoesNotExist:
-            return redirect("launches")
-    except ValueError:
-        # If it's a value error, then the string
-        # is not a valid hex code for a UUID.
-        try:
-            return create_launch_view(request, Launch.objects.get(slug=slug))
-        except ObjectDoesNotExist:
-            return redirect("launches")
-
-
-# Create your views here.
-def launch_by_id(request, id):
-    try:
-        return redirect("launch_by_slug", slug=Launch.objects.get(launch_library_id=id).slug)
-    except ObjectDoesNotExist:
-        return redirect("launches")
+        launch = (
+            Launch.objects.select_related("mission")
+            .select_related("image")
+            .select_related("status")
+            .select_related("changed_by")
+            .select_related("net_precision")
+            .select_related("rocket")
+            .prefetch_related("changed_by__tsdstaff")
+            .prefetch_related("rocket__firststage")
+            .prefetch_related("vid_urls")
+            .prefetch_related("info_urls")
+            .get(slug=slug)
+        )
+        return create_launch_view(request, launch)
+    except Launch.DoesNotExist as e:
+        raise Http404("Launch with the specified UUID does not exist.") from e
 
 
 @cache_page(120)
 def create_launch_view(request, launch):
     youtube_urls = []
     vids = launch.vid_urls.all()
+    infos = launch.info_urls.all()
     status = launch.status.full_name
     agency = launch.rocket.configuration.manufacturer
     launches_good = get_prefetched_launch_queryset(
@@ -294,6 +304,8 @@ def create_launch_view(request, launch):
             "launches": launches,
             "previous_launches": previous_launches,
             "updates": launch.updates.all(),
+            "vids": vids,
+            "infos": infos,
         },
     )
 
@@ -1152,6 +1164,11 @@ def lazy_load_updates(request, id):
     launch = Launch.objects.get(id=id)
     page = request.POST.get("page")
     updates = launch.updates.all()
+    if page is None:
+        return HttpResponse(status=204)
+
+    if len(updates) == 0:
+        return HttpResponse(status=204)
 
     # use Django's pagination
     # https://docs.djangoproject.com/en/dev/topics/pagination/
@@ -1163,6 +1180,8 @@ def lazy_load_updates(request, id):
         updates = paginator.page(2)
     except EmptyPage:
         updates = paginator.page(paginator.num_pages)
+    except Exception:
+        return HttpResponse(status=204)
 
     # build a html posts list with the paginated posts
     updates_html = loader.render_to_string("web/views/small_update.html", {"list_updates": updates})

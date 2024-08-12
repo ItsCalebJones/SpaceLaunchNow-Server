@@ -21,7 +21,6 @@ from django.contrib import admin
 from django.contrib.sitemaps import views as sitemaps_views
 from django.http import HttpResponse
 from django.urls import include, path, re_path
-from django.views.decorators.cache import cache_page
 from django.views.generic import TemplateView
 
 import web
@@ -52,12 +51,12 @@ default_settings = [
     re_path(r"^robots\.txt", include("robots.urls")),
     path(
         "sitemap.xml/",
-        cache_page(86400)(sitemaps_views.index),
+        sitemaps_views.index,
         {"sitemaps": sitemaps, "sitemap_url_name": "sitemaps"},
     ),
     path(
         "sitemap-<section>.xml",
-        cache_page(86400)(sitemaps_views.sitemap),
+        sitemaps_views.sitemap,
         {"sitemaps": sitemaps},
         name="sitemaps",
     ),
@@ -121,7 +120,8 @@ if settings.IS_WEBSERVER:
         path("launch/upcoming/vandenberg", landing_views.launches_vandenberg, name="launches_vandenberg"),
         path("spacex/", landing_views.launches_spacex, name="direct_launches_spacex"),
         path("florida/", landing_views.launches_florida, name="direct_launches_florida"),
-        path("launch/<int:id>/", landing_views.launch_by_id, name="launch_by_id"),
+        path("launch/schedule/", LaunchListView.as_view()),
+        path("launch/<uuid:uuid>/", landing_views.launch_by_uuid, name="launch_by_uuid"),
         re_path(r"^launch/(?P<slug>[-\w]+)/$", landing_views.launch_by_slug, name="launch_by_slug"),
         path("starship/", landing_views.starship_page, name="starship_page"),
         path("event/", landing_views.events_list, name="events_list"),
