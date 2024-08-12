@@ -199,14 +199,11 @@ def app(request):
 @cache_page(60)
 # Create your views here.
 def next_launch(request):
-    in_flight_launch = Launch.objects.filter(status__id=6).order_by("-net").fields("slug").first()
+    in_flight_launch = Launch.objects.filter(status__id=6).order_by("-net").first()
     if in_flight_launch:
         return redirect("launch_by_slug", slug=in_flight_launch.slug)
     recently_launched = (
-        Launch.objects.filter(net__gte=UTC_NOW - timedelta(hours=6), net__lte=UTC_NOW)
-        .order_by("-net")
-        .fields("slug")
-        .first()
+        Launch.objects.filter(net__gte=UTC_NOW - timedelta(hours=6), net__lte=UTC_NOW).order_by("-net").first()
     )
     if recently_launched:
         return redirect("launch_by_slug", slug=recently_launched.slug)
@@ -236,6 +233,7 @@ def launch_by_uuid(request, uuid):
 
 
 def launch_by_slug(request, slug):
+    print(slug)
     try:
         launch = (
             Launch.objects.select_related("mission")
