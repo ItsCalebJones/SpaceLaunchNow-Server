@@ -1,17 +1,12 @@
+import json
 import logging
 
-from pyfcm import FCMNotification
-
-from spacelaunchnow import settings
+from bot.app.notification_service import NotificationService
 
 logger = logging.getLogger(__name__)
 
 
-class EventNotificationHandler:
-    def __init__(self, debug=settings.DEBUG):
-        self.DEBUG = debug
-        self.api_key = settings.FCM_KEY
-
+class EventNotificationHandler(NotificationService):
     def send_ten_minute_notification(self, event):
         self.send_notification(event, "event_notification")
 
@@ -19,13 +14,13 @@ class EventNotificationHandler:
         self.send_notification(event, "event_webcast", webcast=True)
 
     def build_data(self, event, type):
-        webcast = bool(event.video_url)
+        webcast = bool(event.vid_urls.first())
 
         feature_image = None
         if event.image.image and hasattr(event.image.image, "url"):
             feature_image = event.image.image.url
 
-        return {
+        data = {
             "notification_type": type,
             "click_action": "FLUTTER_NOTIFICATION_CLICK",
             "event": {
@@ -43,8 +38,12 @@ class EventNotificationHandler:
                 "webcast_live": event.webcast_live,
                 "feature_image": feature_image,
             },
-            "webcast": webcast,
+            "webcast": str(webcast),
         }
+
+        data["event"] = json.dumps(data["event"])
+
+        return data
 
     def build_v3_topics(self):
         if self.DEBUG:
@@ -73,8 +72,7 @@ class EventNotificationHandler:
         logger.info("----------------------------------------------------------")
         logger.info("Notification Data: %s" % data)
         logger.info("Topics: %s" % topics)
-        push_service = FCMNotification(api_key=self.api_key)
-        notification = push_service.notify_topic_subscribers(data_message=data, condition=topics, time_to_live=86400)
+        notification = self.fcm.notify(data_payload=data, topic_condition=topics)
         logger.info(notification)
         logger.info("----------------------------------------------------------")
 
@@ -83,14 +81,15 @@ class EventNotificationHandler:
         logger.info("Flutter Notification")
         logger.info("Notification Data: %s" % data)
         logger.info("Topics: %s" % topics)
-        push_service = FCMNotification(api_key=self.api_key)
-        message_body = "Live webcast is available!" if webcast else data["event"]["description"]
-        notification = push_service.notify_topic_subscribers(
-            data_message=data,
-            condition=topics,
-            time_to_live=86400,
-            message_title=data["event"]["name"],
-            message_body=message_body,
+
+        event_info = json.loads(data["event"])
+
+        message_body = "Live webcast is available!" if webcast else event_info["description"]
+        notification = self.fcm.notify(
+            data_payload=data,
+            topic_condition=topics,
+            notification_title=event_info["name"],
+            notification_body=message_body,
         )
         logger.info(notification)
         logger.info("----------------------------------------------------------")

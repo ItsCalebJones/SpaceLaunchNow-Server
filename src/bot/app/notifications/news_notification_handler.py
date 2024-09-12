@@ -1,17 +1,12 @@
+import json
 import logging
 
-from pyfcm import FCMNotification
-
-from spacelaunchnow import settings
+from bot.app.notification_service import NotificationService
 
 logger = logging.getLogger(__name__)
 
 
-class NewsNotificationHandler:
-    def __init__(self, debug=settings.DEBUG):
-        self.DEBUG = debug
-        self.api_key = settings.FCM_KEY
-
+class NewsNotificationHandler(NotificationService):
     def send_notification(self, article):
         data = {
             "notification_type": "featured_news",
@@ -27,6 +22,7 @@ class NewsNotificationHandler:
                 "imageUrl": article.featured_image,
             },
         }
+        data["item"] = json.dumps(data["item"])
         self.send_v3_notification(article, data)
 
     def send_v3_notification(self, article, data):
@@ -39,17 +35,14 @@ class NewsNotificationHandler:
         self.send_to_fcm(article, data, topics, flutter_topics)
 
     def send_to_fcm(self, article, data, topics, flutter_topics):
-        push_service = FCMNotification(api_key=self.api_key)
-
         logger.info("----------------------------------------------------------")
         logger.info("Sending News notification - %s" % article.title)
         try:
             logger.info("News Notification Data - %s" % data)
             logger.info("Topics - %s" % topics)
-            android_result = push_service.notify_topic_subscribers(
-                data_message=data,
-                condition=topics,
-                time_to_live=86400,
+            android_result = self.fcm.notify(
+                data_payload=data,
+                topic_condition=topics,
             )
             logger.info(android_result)
         except Exception as e:
@@ -62,12 +55,12 @@ class NewsNotificationHandler:
         try:
             logger.info("News Notification Data - %s" % data)
             logger.info("Topics - %s" % flutter_topics)
-            flutter_results = push_service.notify_topic_subscribers(
-                data_message=data,
-                condition=flutter_topics,
-                time_to_live=86400,
-                message_title="New article via " + data["item"]["news_site_long"],
-                message_body=data["item"]["title"],
+            news_info = json.loads(data["item"])
+            flutter_results = self.fcm.notify(
+                data_payload=data,
+                topic_condition=flutter_topics,
+                notification_title="New article via " + news_info["news_site_long"],
+                notification_body=news_info["title"],
             )
             logger.info(flutter_results)
         except Exception as e:

@@ -24,7 +24,13 @@ class Command(BaseCommand):
 
         now = datetime.now()
         dayago = now - timedelta(days=1)
-        launches = Launch.objects.all().filter(net__gte=dayago).order_by("net", "id").distinct()
+        launches = (
+            Launch.objects.all()
+            .filter(net__gte=dayago)
+            .exclude(launch_service_provider__id=63)
+            .order_by("net", "id")
+            .distinct()
+        )
         for launch in launches[:1]:
             notification_obj = LaunchNotificationRecord.objects.get(launch_id=launch.id)
             # TODO pass in parameter for setting the notification_type

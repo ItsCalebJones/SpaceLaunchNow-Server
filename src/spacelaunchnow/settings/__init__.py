@@ -11,6 +11,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
+import base64
 import os
 import sys
 
@@ -373,7 +374,8 @@ IS_LL = env.bool("IS_LL", False)
 
 
 # FCM SETTINGS
-FCM_KEY = env.str("FCM_KEY", None)
+FCM_CREDENTIALS = base64.b64decode(env.str("FCM_CREDENTIALS", None)) if env.str("FCM_CREDENTIALS", None) else None
+FCM_PROJECT_ID = env.str("FCM_PROJECT_ID", None)
 
 # DigitalOcean SETTINGS
 DO_CLUSTER_ID = env.str("DO_CLUSTER_ID", None)
