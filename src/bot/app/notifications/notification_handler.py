@@ -4,8 +4,8 @@ from datetime import datetime
 import pytz
 from api.models import Article, Events, Launch
 from django.core.cache import cache
-from pyfcm import FCMNotification
 
+from bot.app.notification_service import NotificationService
 from bot.models import LaunchNotificationRecord
 from bot.utils.util import (
     get_fcm_all_topics_v3,
@@ -13,7 +13,6 @@ from bot.utils.util import (
     get_fcm_strict_topics_v3,
     get_flutter_topics_v3,
 )
-from spacelaunchnow import settings
 
 logger = logging.getLogger(__name__)
 
@@ -21,17 +20,7 @@ logger = logging.getLogger(__name__)
 # TODO refactor to separate files/modules per version
 
 
-class NotificationHandler:
-    def __init__(self, debug=settings.DEBUG):
-        self.DEBUG = debug
-        self.api_key = settings.FCM_KEY
-
-        if self.api_key is None and not settings.DEBUG:
-            raise Exception("No FCM_KEY provided.")
-
-        if settings.DEBUG:
-            self.api_key = None
-
+class NotificationHandler(NotificationService):
     def send_notification(self, launch: Launch, notification_type: str, notification: LaunchNotificationRecord):
         current_time = datetime.now(tz=pytz.utc)
         launch_time = launch.net
@@ -154,15 +143,11 @@ class NotificationHandler:
             logger.info("Sending notification - %s" % contents)
             notification.last_notification_sent = datetime.now(tz=pytz.utc)
             notification.save()
-            push_service = FCMNotification(api_key=self.api_key)
-            self.send_v3_notification(launch, notification_type, push_service, contents)
+            self.send_v3_notification(launch, notification_type, contents)
 
             logger.info("----------------------------------------------------------")
 
-    def send_v3_notification(
-        self, launch: Launch, notification_type: str, push_service: FCMNotification, contents: str
-    ):
-        webcast = len(launch.vid_urls.all()) > 0
+    def send_v3_notification(self, launch: Launch, notification_type: str, contents: str):
         image = ""
         if launch.image:
             image = launch.image.image.url
@@ -177,33 +162,32 @@ class NotificationHandler:
             "launch_image": image,
             "launch_net": launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
             "launch_location": launch.pad.location.name,
-            "webcast": webcast,
         }
+
         all_topics = get_fcm_all_topics_v3(debug=self.DEBUG, notification_type=notification_type)
         strict_topics = get_fcm_strict_topics_v3(launch, debug=self.DEBUG, notification_type=notification_type)
         not_strict_topics = get_fcm_not_strict_topics_v3(launch, debug=self.DEBUG, notification_type=notification_type)
-        self.send_notif_v3(push_service, data, all_topics)
-        self.send_notif_v3(push_service, data, strict_topics)
-        self.send_notif_v3(push_service, data, not_strict_topics)
+        self.send_notif_v3(data, all_topics)
+        self.send_notif_v3(data, strict_topics)
+        self.send_notif_v3(data, not_strict_topics)
         logger.info(f"Topics:\n\nALL: {all_topics}\nStrict: {strict_topics}\nNot Strict: {not_strict_topics}")
         # Reusing topics from v2 - not doing strict topics
         flutter_topics_v3 = get_flutter_topics_v3(
             launch, notification_type=notification_type, debug=self.DEBUG, flutter=True
         )
-        self.send_notif_v3(push_service, data, flutter_topics_v3, message_title=launch.name, message_body=contents)
+        self.send_notif_v3(data, flutter_topics_v3, message_title=launch.name, message_body=contents)
 
-    def send_notif_v3(self, push_service, data, topics, message_title=None, message_body=None):
+    def send_notif_v3(self, data, topics, message_title=None, message_body=None):
         # Send notifications to SLN Android > v3.7.0
         # Catch any issue with sending notification.
         try:
             logger.info("Notification v3 Data - %s" % data)
             logger.info("Topic Data v3- %s" % topics)
-            results = push_service.notify_topic_subscribers(
-                data_message=data,
-                condition=topics,
-                time_to_live=86400,
-                message_title=message_title,
-                message_body=message_body,
+            results = self.fcm.notify(
+                data_payload=data,
+                topic_condition=topics,
+                notification_title=message_title,
+                notification_body=message_body,
             )
             logger.info(results)
         except Exception as e:
@@ -217,19 +201,16 @@ class NotificationHandler:
         else:
             flutter_topics = "'flutter_debug_v3' in topics && 'custom' in topics"
 
-        push_service = FCMNotification(api_key=self.api_key)
-
         logger.info("----------------------------------------------------------")
         logger.info("Sending iOS Custom Flutter notification - %s" % pending.title)
         try:
             logger.info("Custom Notification Data - %s" % data)
             logger.info("Topics - %s" % flutter_topics)
-            flutter_results = push_service.notify_topic_subscribers(
-                data_message=data,
-                condition=flutter_topics,
-                time_to_live=86400,
-                message_title=pending.title,
-                message_body=pending.message,
+            flutter_results = self.fcm.notify(
+                data_payload=data,
+                topic_condition=flutter_topics,
+                notification_title=pending.title,
+                notification_body=pending.message,
             )
             logger.info(flutter_results)
         except Exception as e:
@@ -245,17 +226,14 @@ class NotificationHandler:
         else:
             topics = "'debug_v3' in topics && 'custom' in topics"
 
-        push_service = FCMNotification(api_key=self.api_key)
-
         logger.info("----------------------------------------------------------")
         logger.info("Sending Android Custom notification - %s" % pending.title)
         try:
             logger.info("Custom Notification Data - %s" % data)
             logger.info("Topics - %s" % topics)
-            android_result = push_service.notify_topic_subscribers(
-                data_message=data,
-                condition=topics,
-                time_to_live=86400,
+            android_result = self.fcm.notify(
+                data_payload=data,
+                topic_condition=topics,
             )
             logger.info(android_result)
         except Exception as e:

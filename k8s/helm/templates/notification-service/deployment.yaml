@@ -116,6 +116,16 @@ spec:
                 secretKeyRef:
                   name: sln-auth-prod
                   key: fcm-key
+            - name: FCM_PROJECT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: sln-auth-prod
+                  key: fcm-project-id
+            - name: FCM_CREDENTIALS
+              valueFrom:
+                secretKeyRef:
+                  name: sln-auth-prod
+                  key: fcm-credentials
             - name: SLN_SENTRY_KEY
               valueFrom:
                 secretKeyRef:
