@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v4.4.10 (2024-09-19)
+
+### Fix
+
+* fix: update django-launch-library version to 21.0.0 launch cost ([`b517464`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/b5174642bf83cbb9d6fa87f0d0a18bdb45a14546))
+
+### Unknown
+
+* Merge pull request #265 from ItsCalebJones/bump_ll_21
+
+fix: update django-launch-library version to 21.0.0 launch cost ([`0bd4883`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/0bd488361c528fea5f0cbce09f82331d4ce0b52c))
+
 ## v4.4.9 (2024-09-19)
 
 ### Chore
