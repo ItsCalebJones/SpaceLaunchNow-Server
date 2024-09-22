@@ -63,6 +63,10 @@ pymemcache = "^4.0.0"
 sentry-sdk = {extras = ["django"], version = "^2.8.0"}
 django-silk = "^5.1.0"
 toml = "^0.10.2"
+google-api-python-client = "^2.146.0"
+google-auth = "^2.34.0"
+google-auth-httplib2 = "^0.2.0"
+google-auth-oauthlib = "^1.2.1"
 
 
 [tool.poetry.group.dev]

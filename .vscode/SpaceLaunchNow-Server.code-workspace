@@ -1,0 +1,13 @@
+{
+    "folders": [
+        {
+            "path": "../."
+        },
+        {
+            "path": "../../LaunchLibrary-API"
+        }
+    ],
+    "settings": {
+        "editor.defaultFormatter": "charliermarsh.ruff"
+    }
+}

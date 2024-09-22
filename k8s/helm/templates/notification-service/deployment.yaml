@@ -131,6 +131,11 @@ spec:
                 secretKeyRef:
                   name: sln-sentry-key
                   key: sln-sentry-key
+            - name: WEBHOOK_URL
+              valueFrom:
+                secretKeyRef:
+                  name: sln-auth-prod
+                  key: discord-webhook-notification
             - name: SERVER_ROLE
               value: "worker"
           envFrom:

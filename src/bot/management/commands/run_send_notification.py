@@ -32,6 +32,13 @@ class Command(BaseCommand):
             .distinct()
         )
         for launch in launches[:1]:
-            notification_obj = LaunchNotificationRecord.objects.get(launch_id=launch.id)
-            # TODO pass in parameter for setting the notification_type
+            notification_obj, created = LaunchNotificationRecord.objects.get_or_create(launch_id=launch.id)
             notification.send_notification(launch, "twentyFourHour", notification_obj)
+
+        # Test notification for a specific launch
+        # launch = Launch.objects.get(slug="electron-kineis-killed-the-radiot-star-kineis-6-10")
+        # notification_obj, created = LaunchNotificationRecord.objects.get_or_create(launch_id=launch.id)
+        # notification.send_notification(launch, "twentyFourHour", notification_obj)
+
+        # Test debug notification
+        # notification.send_debug_notif()
