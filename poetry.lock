@@ -1056,13 +1056,13 @@ Django = "*"
 
 [[package]]
 name = "django-launch-library"
-version = "20.10.0"
+version = "21.0.0"
 description = "The Django lib for supporting Launch Library."
 optional = false
 python-versions = ">=3.12.0,<4.0"
 files = [
-    {file = "django_launch_library-20.10.0-py3-none-any.whl", hash = "sha256:4ebf0b22813279650729b766b7885b4bee472319a0af836bcc5bf51cca7e34a1"},
-    {file = "django_launch_library-20.10.0.tar.gz", hash = "sha256:59c46232198f8556723e8b5ce61c1de45240e0946e731485edbacf550a509cd5"},
+    {file = "django_launch_library-21.0.0-py3-none-any.whl", hash = "sha256:6e0798ed9db27b91f43bc9d1b016f2f9b2285c4c1c2afa21413df2ff6db3f52a"},
+    {file = "django_launch_library-21.0.0.tar.gz", hash = "sha256:95c40f8d72b30ca4a0405f188e9e8382b068987f3c7fd690a89364ef32219f6c"},
 ]
 
 [package.dependencies]
@@ -4620,3 +4620,4 @@ type = ["pytest-mypy"]
 lock-version = "2.0"
 python-versions = ">=3.12.0,<4.0"
 content-hash = "63b489c6df414aeea1182e8f1425580fb2806fcb8b7d024aa09d22b57f905c63"
+
