@@ -1,10 +1,6 @@
 import datetime
 import os
-
-try:
-    from urllib import quote  # Python 2.X
-except ImportError:
-    from urllib.parse import quote  # Python 3+
+from urllib.parse import quote  # Python 3+
 
 from django.conf import settings
 from django.core.files.storage import DefaultStorage, default_storage
