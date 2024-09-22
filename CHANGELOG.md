@@ -1,6 +1,28 @@
 # CHANGELOG
 
+## v4.5.0 (2024-09-22)
+
+### Chore
+
+* chore: update django-launch-library version to 21.2.1 ([`36bd70f`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/36bd70fa20757feb5efccb3c7e7db32e0956319a))
+
+### Unknown
+
+* Merge pull request #266 from ItsCalebJones/notification_testing
+
+feat(bot): update notification service ([`987461f`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/987461f4020c52bda434aa6e61ffe1589ac04701))
+
+* Merge branch &#39;master&#39; into notification_testing ([`8d1b7ab`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/8d1b7abf02fb296fb493288bce10061330cfbba1))
+
 ## v4.4.10 (2024-09-19)
+
+### Feature
+
+* feat(bot): update notification service
+
+- add google oauth for notification debugging
+- add new command for debugging
+- refactor notification handler to post to discord ([`33f24ef`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/33f24eff6d74f60335e9ce46b15a82705a652204))
 
 ### Fix
 
