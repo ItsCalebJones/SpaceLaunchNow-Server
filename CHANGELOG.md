@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## v4.5.1 (2024-09-28)
+
+### Chore
+
+* chore(vscode): add vscode configs to git ([`91bbdae`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/91bbdaec822587a4cdcaf84b3b31c5419c4e5756))
+
+### Fix
+
+* fix(notifs): pass webcast as string ([`ff547b2`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ff547b2e4b573f5da422560c96d68623fa8dfb2a))
+
+### Refactor
+
+* refactor(notification): optimize webcast check in send_v3_notification ([`d3ea5a9`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/d3ea5a9baede43797893b2f0902f42bdc498b638))
+
 ## v4.5.0 (2024-09-22)
 
 ### Chore
