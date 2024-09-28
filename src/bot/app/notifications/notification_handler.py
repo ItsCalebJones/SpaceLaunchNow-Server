@@ -160,6 +160,8 @@ class NotificationHandler(NotificationService):
             logger.info("----------------------------------------------------------")
 
     def send_v3_notification(self, launch: Launch, notification_type: str, contents: str):
+        webcast = len(launch.vid_urls.all()) > 0
+
         image = ""
         if launch.image:
             image = launch.image.image.url
@@ -174,6 +176,7 @@ class NotificationHandler(NotificationService):
             "launch_image": image,
             "launch_net": launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
             "launch_location": launch.pad.location.name,
+            "webcast": webcast,
         }
 
         all_result = self.send_notif_v3(
