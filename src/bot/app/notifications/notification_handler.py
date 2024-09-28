@@ -176,7 +176,7 @@ class NotificationHandler(NotificationService):
             "launch_image": image,
             "launch_net": launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
             "launch_location": launch.pad.location.name,
-            "webcast": webcast,
+            "webcast": str(webcast),
         }
 
         all_result = self.send_notif_v3(
@@ -411,7 +411,7 @@ class NotificationHandler(NotificationService):
                         "location": event.location,
                         "news_url": event.info_urls.first(),
                         "video_url": event.vid_urls.first(),
-                        "webcast_live": event.webcast_live,
+                        "webcast_live": str(event.webcast_live),
                         "feature_image": feature_image,
                     },
                 }
