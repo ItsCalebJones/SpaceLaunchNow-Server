@@ -31,7 +31,7 @@ class Command(BaseCommand):
             .order_by("net", "id")
             .distinct()
         )
-        for launch in launches[:1]:
+        for launch in launches[:2]:
             notification_obj, created = LaunchNotificationRecord.objects.get_or_create(launch_id=launch.id)
             notification.send_notification(launch, "twentyFourHour", notification_obj)
 

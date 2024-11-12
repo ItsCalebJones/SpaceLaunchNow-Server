@@ -36,12 +36,14 @@ class NewsNotificationHandler(NotificationService):
 
     def send_to_fcm(self, article, data, topics, flutter_topics):
         logger.info("----------------------------------------------------------")
-        logger.info("Sending News notification - %s" % article.title)
+        logger.info(f"Sending News notification - {article.title}")
+        news_info = json.loads(data["item"])
         try:
-            logger.info("News Notification Data - %s" % data)
-            logger.info("Topics - %s" % topics)
+            logger.info(f"News Notification Data - {data}")
+            logger.info(f"Topics - {topics}")
             android_result = self.fcm.notify(
-                data_payload=data,
+                notification_title="New article via " + news_info["news_site_long"],
+                notification_body=news_info["title"],
                 topic_condition=topics,
             )
             logger.info(android_result)
@@ -51,11 +53,11 @@ class NewsNotificationHandler(NotificationService):
         logger.info("----------------------------------------------------------")
 
         logger.info("----------------------------------------------------------")
-        logger.info("Sending News Flutter notification - %s" % article.title)
+        logger.info(f"Sending News Flutter notification - {article.title}")
         try:
-            logger.info("News Notification Data - %s" % data)
-            logger.info("Topics - %s" % flutter_topics)
-            news_info = json.loads(data["item"])
+            logger.info(f"News Notification Data - {data}")
+            logger.info(f"Topics - {flutter_topics}")
+
             flutter_results = self.fcm.notify(
                 data_payload=data,
                 topic_condition=flutter_topics,

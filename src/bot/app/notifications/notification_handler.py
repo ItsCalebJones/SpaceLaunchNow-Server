@@ -179,13 +179,13 @@ class NotificationHandler(NotificationService):
             "webcast": str(webcast),
         }
 
-        all_result = self.send_notif_v3(
+        all_result = self.send_notif_v4(
             data=data,
             topics=get_fcm_all_topics_v3(debug=self.DEBUG, notification_type=notification_type),
             analytics_label=f"notification_all_{data['launch_uuid']}",
         )
 
-        strict_result = self.send_notif_v3(
+        strict_result = self.send_notif_v4(
             data=data,
             topics=get_fcm_strict_topics_v3(launch, debug=self.DEBUG, notification_type=notification_type),
             analytics_label=f"notification_strict_{data['launch_uuid']}",
@@ -242,6 +242,44 @@ class NotificationHandler(NotificationService):
                 topic_condition=topics,
                 notification_title=message_title,
                 notification_body=message_body,
+                fcm_options={"analytics_label": analytics_label},
+                android_config={"priority": "high", "collapse_key": data["launch_uuid"], "ttl": "86400s"},
+                timeout=240,
+            )
+            logger.info(results)
+            return NotificationResult(
+                notification_type=data["notification_type"],
+                topics=topics,
+                result=results,
+                analytics_label=analytics_label,
+                error=None,
+            )
+        except Exception as e:
+            logger.error(e)
+            return NotificationResult(
+                notification_type=data["notification_type"],
+                topics=topics,
+                result=results,
+                analytics_label=analytics_label,
+                error=e,
+            )
+
+    def send_notif_v4(
+        self, data, topics, message_title=None, message_body=None, analytics_label: str = None
+    ) -> NotificationResult:
+        try:
+            logger.info(f"Notification v4 Data - {data}")
+            logger.info(f"Topic Data v4- {topics}")
+
+            launch_image = None
+            if data.get("launch_image"):
+                launch_image = data.get("launch_image")
+
+            results = self.fcm.notify(
+                topic_condition=topics,
+                notification_title=message_title,
+                notification_body=message_body,
+                notification_image=launch_image,
                 fcm_options={"analytics_label": analytics_label},
                 android_config={"priority": "high", "collapse_key": data["launch_uuid"], "ttl": "86400s"},
                 timeout=240,

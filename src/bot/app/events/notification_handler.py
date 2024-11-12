@@ -63,24 +63,33 @@ class EventNotificationHandler(NotificationService):
         data = self.build_data(event, event_type)
 
         # Send Android notif
-        self.send_to_fcm(self.build_v3_topics(), data)
+        self.send_to_fcm(self.build_v3_topics(), data, webcast)
 
         # Send Flutter notif
         self.send_flutter_to_fcm(self.build_flutter_v3_topics(), data, webcast)
 
-    def send_to_fcm(self, topics, data):
+    def send_to_fcm(self, topics, data, webcast: bool = False):
         logger.info("----------------------------------------------------------")
-        logger.info("Notification Data: %s" % data)
-        logger.info("Topics: %s" % topics)
-        notification = self.fcm.notify(data_payload=data, topic_condition=topics)
+        logger.info(f"Notification Data: {data}")
+        logger.info(f"Topics: {topics}")
+
+        event_info = json.loads(data["event"])
+        message_body = "Live webcast is available!" if webcast else event_info["description"]
+
+        notification = self.fcm.notify(
+            topic_condition=topics,
+            notification_title=event_info["name"],
+            notification_body=message_body,
+        )
+
         logger.info(notification)
         logger.info("----------------------------------------------------------")
 
     def send_flutter_to_fcm(self, topics, data, webcast: bool = False):
         logger.info("----------------------------------------------------------")
         logger.info("Flutter Notification")
-        logger.info("Notification Data: %s" % data)
-        logger.info("Topics: %s" % topics)
+        logger.info(f"Notification Data: {data}")
+        logger.info(f"Topics: {topics}")
 
         event_info = json.loads(data["event"])
 
