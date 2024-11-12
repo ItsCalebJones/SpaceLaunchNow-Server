@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.5.2 (2024-11-12)
+
+### Fix
+
+* fix(notification): fix notification handling ([`49a936b`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/49a936bdcbe8c0ecc79bb80363dfa08993f66724))
+
 ## v4.5.1 (2024-09-28)
 
 ### Chore
