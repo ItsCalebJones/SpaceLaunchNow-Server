@@ -1,4 +1,4 @@
-FROM python:3.12.4-slim-bookworm AS builder
+FROM python:3.12.10-alpine AS builder
 
 ARG PRIVATE_USERNAME
 ARG PRIVATE_PASSWORD
@@ -13,26 +13,18 @@ ENV POETRY_HOME='/usr/local'
 WORKDIR /code/
 COPY pyproject.toml poetry.lock README.md /code/
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-     git \
-     gcc \
-     curl \
-     python3-dev \
-     libsqlite3-dev \
-     libpng-dev \
-     libjpeg-dev
-RUN rm -rf /var/lib/apt/lists/*
+# Install dependencies
+RUN apk add --no-cache \
+    curl bash && \
+    curl -sSL https://install.python-poetry.org | python3 - --version 2.1.2 && \
+    poetry config virtualenvs.in-project true && \
+    poetry install --no-interaction --no-root --no-ansi --with ci
 
-# Installing `poetry` package manager:
-# https://github.com/python-poetry/poetry
-RUN curl -sSL https://install.python-poetry.org | python3 - --version 1.8.3
-RUN poetry config virtualenvs.in-project true
-RUN poetry install --no-interaction --no-root --no-ansi --with ci
-
-FROM python:3.12.4-slim-bookworm
+FROM python:3.12.10-alpine
 
 WORKDIR /code/
+COPY --from=builder /usr/bin/curl /usr/bin/curl
+COPY --from=builder /bin/bash /bin/bash
 COPY --from=builder /code /code
 
 COPY src/ /code/

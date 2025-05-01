@@ -7,7 +7,7 @@ inputs:
     description: >
       Version range or exact version of a Python version to use, using SemVer's version range syntax.
     required: false
-    default: 3.12.4
+    default: 3.12.10
   repo_username:
     description: TSD pypi username
     required: true
@@ -29,7 +29,7 @@ runs:
         python-version: ${{ inputs.python-version }}
     - name: Install poetry
       shell: bash
-      run: curl -sSL https://install.python-poetry.org | python3 - --version 1.8.3
+      run: curl -sSL https://install.python-poetry.org | python3 - --version 2.1.2
     - name: Install poetry dependencies
       shell: bash
       run: |
