@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## v4.5.3 (2025-05-01)
+
+### Fix
+
+* fix(ci): fixed issue with upload artifcat ([`1a57476`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/1a57476b4079c39ebe6327b7fdb29803e5fe6e81))
+
+* fix: Update Python version constraint and dependencies in pyproject.toml
+
+- Changed Python version constraint from &#34;&gt;=3.12.0,&lt;4.0&#34; to &#34;&gt;=3.12.0,&lt;3.13.0&#34;
+- Updated goose3 dependency from &#34;==3.1.11&#34; to &#34;^3.1.19&#34;
+- Upgraded python-semantic-release from &#34;7.34.6&#34; to &#34;9.15.2&#34;
+- Updated django-launch-library from &#34;^21.0.0&#34; to &#34;^21.31.0&#34; ([`88182bc`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/88182bcfe26911b54eda5916b862aac64ba03c61))
+
+### Unknown
+
+* Merge pull request #268 from ItsCalebJones/update_deps
+
+fix: Update Python version constraint and dependencies in pyproject.toml ([`17f56c1`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/17f56c1955e44fda7fb5a2071c5ecd179586acf5))
+
 ## v4.5.2 (2024-11-12)
 
 ### Fix
