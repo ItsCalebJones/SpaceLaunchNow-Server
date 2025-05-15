@@ -232,11 +232,11 @@
 
             switch (netPrecisionID) {
                 case 0:
-                    return momentTZ.format("MMMM DD, YYYY - h:mm:ss z")
+                    return momentTZ.format("MMMM DD, YYYY - h:mm:ss A z")
                 case 1:
-                    return momentTZ.format("MMMM DD, YYYY - h:mm z")
+                    return momentTZ.format("MMMM DD, YYYY - h:mm A z")
                 case 2:
-                    return momentTZ.format("MMMM DD, YYYY - [NET] h:00 z")
+                    return momentTZ.format("MMMM DD, YYYY - [NET] h:00 A z")
                 case 3:
                     return momentVar.format("[Morning (local)] MMMM DD, YYYY")
                 case 4:
