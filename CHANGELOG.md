@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## v4.5.4 (2025-05-15)
+
+### Ci
+
+* ci: upgrade to actions/upload-artifact@v4.6.2
+
+actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 ([`d52922f`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/d52922f5076ba8a1ed5eef04f87cd38402230eac))
+
+### Fix
+
+* fix: add meridiem indicator to the 12-hour time format
+
+Or we need to replace &#34;h&#34; with &#34;H&#34; to use 24-hour time format. ([`6a2d11d`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/6a2d11d45a1a23f4fa95a0f49f512536e7b85c6c))
+
+### Unknown
+
+* Merge pull request #267 from pzhlkj6612/master
+
+fix: add meridiem indicator to the 12-hour time format ([`985b935`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/985b93553094b1b97854849605076068a7be78c5))
+
 ## v4.5.3 (2025-05-01)
 
 ### Fix
