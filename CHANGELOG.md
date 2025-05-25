@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v4.5.5 (2025-05-25)
+
+### Fix
+
+* fix: change notification handling, update ruff ([`b27c1c8`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/b27c1c89df04d05674fac4df31e29806bc1efd71))
+
+### Refactor
+
+* refactor: use f-strings for string formatting in multiple files ([`2907634`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/2907634b3ec514d16091abfc721dadf0a633a1c0))
+
+### Unknown
+
+* Merge pull request #269 from ItsCalebJones/revert_to_old_method
+
+fix: change notification handling, update ruff ([`eba4bbf`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/eba4bbf56ef0d3bf08cc32857317c8296a42b9ca))
+
 ## v4.5.4 (2025-05-15)
 
 ### Ci
