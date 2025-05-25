@@ -79,7 +79,7 @@ pre-commit = "^2.20.0"
 radon = "^5.1.0"
 vulture = "^2.6"
 cohesion = "^1.0.0"
-ruff = "^0.3.7"
+ruff = "^0.9.1"
 
 [tool.poetry.group.ci]
 optional = true

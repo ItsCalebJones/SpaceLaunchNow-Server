@@ -2,7 +2,6 @@ import logging
 import uuid
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Dict, List
 
 import pytz
 from api.models import Article, Events, Launch
@@ -70,7 +69,7 @@ class NotificationHandler(NotificationService):
                 return
         elif notification_type == "oneMinute":
             if launch.status.id == 1:
-                contents = "Launch attempt from %s in less than one minute." % launch.pad.location.name
+                contents = f"Launch attempt from {launch.pad.location.name} in less than one minute."
             else:
                 logger.warning(f"{notification_type} Invalid state for sending a notification - Launch: {launch}")
                 return
@@ -87,9 +86,9 @@ class NotificationHandler(NotificationService):
                 return
         elif notification_type == "oneHour":
             if launch.status.id == 1:
-                contents = "Launch attempt from %s in one hour." % launch.pad.location.name
+                contents = f"Launch attempt from {launch.pad.location.name} in one hour."
             elif launch.status.id == 2 or launch.status.id == 5:
-                contents = "Might be launching from %s in one hour." % launch.pad.location.name
+                contents = f"Might be launching from {launch.pad.location.name} in one hour."
             else:
                 logger.warning(f"{notification_type} Invalid state for sending a notification - Launch: {launch}")
                 return
@@ -103,7 +102,7 @@ class NotificationHandler(NotificationService):
                 launch_service_provider_name = launch.launch_service_provider.name
                 contents = f"Successful launch to {orbit_name} by {launch_service_provider_name}"
             else:
-                contents = "Successful launch by %s" % launch.launch_service_provider.name
+                contents = f"Successful launch by {launch.launch_service_provider.name}"
 
         elif notification_type == "failure":
             contents = "A launch failure has occurred."
@@ -126,13 +125,13 @@ class NotificationHandler(NotificationService):
                     orbit_name = launch.mission.orbit.name
                     contents = f"Liftoff! {rocket_name} is in flight to {orbit_name}!"
             else:
-                contents = "Liftoff! %s is in flight!" % launch.rocket.configuration.name
+                contents = f"Liftoff! {launch.rocket.configuration.name} is in flight!"
 
         elif notification_type == "webcastLive":
             if launch.mission is not None and launch.mission.name is not None:
                 contents = f"{launch.rocket.configuration.name} {launch.mission.name} webcast is live!"
             else:
-                contents = "%s webcast is live!" % launch.rocket.configuration.name
+                contents = f"{launch.rocket.configuration.name} webcast is live!"
 
         else:
             launch_time = launch.net
@@ -152,7 +151,7 @@ class NotificationHandler(NotificationService):
             logger.info("Cannot send notification - too soon since last notification!")
         else:
             logger.info("----------------------------------------------------------")
-            logger.info("Sending notification - %s" % contents)
+            logger.info(f"Sending notification - {contents}")
             notification.last_notification_sent = datetime.now(tz=pytz.utc)
             notification.save()
             self.send_v3_notification(launch, notification_type, contents)
@@ -179,13 +178,13 @@ class NotificationHandler(NotificationService):
             "webcast": str(webcast),
         }
 
-        all_result = self.send_notif_v4(
+        all_result = self.send_notif_v3(
             data=data,
             topics=get_fcm_all_topics_v3(debug=self.DEBUG, notification_type=notification_type),
             analytics_label=f"notification_all_{data['launch_uuid']}",
         )
 
-        strict_result = self.send_notif_v4(
+        strict_result = self.send_notif_v3(
             data=data,
             topics=get_fcm_strict_topics_v3(launch, debug=self.DEBUG, notification_type=notification_type),
             analytics_label=f"notification_strict_{data['launch_uuid']}",
@@ -235,8 +234,8 @@ class NotificationHandler(NotificationService):
         self, data, topics, message_title=None, message_body=None, analytics_label: str = None
     ) -> NotificationResult:
         try:
-            logger.info("Notification v3 Data - %s" % data)
-            logger.info("Topic Data v3- %s" % topics)
+            logger.info(f"Notification v3 Data - {data}")
+            logger.info(f"Topic Data v3- {topics}")
             results = self.fcm.notify(
                 data_payload=data,
                 topic_condition=topics,
@@ -271,15 +270,10 @@ class NotificationHandler(NotificationService):
             logger.info(f"Notification v4 Data - {data}")
             logger.info(f"Topic Data v4- {topics}")
 
-            launch_image = None
-            if data.get("launch_image"):
-                launch_image = data.get("launch_image")
-
             results = self.fcm.notify(
                 topic_condition=topics,
                 notification_title=message_title,
                 notification_body=message_body,
-                notification_image=launch_image,
                 fcm_options={"analytics_label": analytics_label},
                 android_config={"priority": "high", "collapse_key": data["launch_uuid"], "ttl": "86400s"},
                 timeout=240,
@@ -312,10 +306,10 @@ class NotificationHandler(NotificationService):
             flutter_topics = "'flutter_debug_v3' in topics && 'custom' in topics"
 
         logger.info("----------------------------------------------------------")
-        logger.info("Sending iOS Custom Flutter notification - %s" % pending.title)
+        logger.info(f"Sending iOS Custom Flutter notification - {pending.title}")
         try:
-            logger.info("Custom Notification Data - %s" % data)
-            logger.info("Topics - %s" % flutter_topics)
+            logger.info(f"Custom Notification Data - {data}")
+            logger.info(f"Topics - {flutter_topics}")
             flutter_results = self.fcm.notify(
                 data_payload=data,
                 topic_condition=flutter_topics,
@@ -354,10 +348,10 @@ class NotificationHandler(NotificationService):
             topics = "'debug_v3' in topics && 'custom' in topics"
 
         logger.info("----------------------------------------------------------")
-        logger.info("Sending Android Custom notification - %s" % pending.title)
+        logger.info(f"Sending Android Custom notification - {pending.title}")
         try:
-            logger.info("Custom Notification Data - %s" % data)
-            logger.info("Topics - %s" % topics)
+            logger.info(f"Custom Notification Data - {data}")
+            logger.info(f"Topics - {topics}")
             android_result = self.fcm.notify(
                 data_payload=data,
                 topic_condition=topics,
@@ -458,8 +452,8 @@ class NotificationHandler(NotificationService):
 
     def notify_discord(
         self,
-        notification_results: List[NotificationResult] = None,
-        data: Dict[str, str] = None,
+        notification_results: list[NotificationResult] = None,
+        data: dict[str, str] = None,
     ) -> None:
         launch_name = data.get("launch_name", "Unknown") if data else "Unknown"
         launch_uuid = data.get("launch_uuid", "Unknown") if data else "Unknown"
@@ -491,7 +485,7 @@ class NotificationHandler(NotificationService):
                 f"**Notification Type:** `{notification_result.notification_type}`\n"
                 f"**Analytics Label:** `{notification_result.analytics_label}`\n"
                 f"**Topics:** `{notification_result.topics}`\n"
-                f"**{fcm_result["title"]}:** {fcm_result["description"]}\n"
+                f"**{fcm_result['title']}:** {fcm_result['description']}\n"
                 f"{'-' * 50}\n"
             )
 

@@ -25,8 +25,8 @@ def check_autoscaler():
         # This is to ensure we have enough time to spin up resources before the T-Minus one hour notifs go out and
         # have enough workers online to handle the surge through the execution of the launch. One small scenario worth
         # considering is what happens if a launch has just scrubbed and had its date moved before the traffic dies down?
-        logger.info("Max Workers: %s" % autoscaler_settings.max_workers)
-        logger.info("Current Min: %s" % autoscaler_settings.current_min)
+        logger.info(f"Max Workers: {autoscaler_settings.max_workers}")
+        logger.info(f"Current Min: {autoscaler_settings.current_min}")
         threshold_plus_1_hour = dtime.datetime.now(tz=pytz.utc) + dtime.timedelta(hours=1) + dtime.timedelta(minutes=10)
         threshold_minus_1_hour = dtime.datetime.now(tz=pytz.utc) - dtime.timedelta(minutes=15)
 
