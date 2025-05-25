@@ -15,7 +15,7 @@ class NetstampHandler:
         self.notification_handler = NotificationHandler()
 
     def netstamp_changed(self, launch, notification, diff):
-        logger.info("Netstamp change detected for %s - now launching in %d seconds." % (launch.name, diff))
+        logger.info(f"Netstamp change detected for {launch.name} - now launching in {diff} seconds.")
         now = datetime.now(tz=pytz.utc)
         old = notification.last_net_stamp
         new = launch.net

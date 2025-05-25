@@ -154,7 +154,7 @@ class BoosterSitemap(Sitemap):
         return timezone.now()
 
     def location(self, obj):
-        return "/vehicle/launcher/%s" % obj.id
+        return f"/vehicle/launcher/{obj.id}"
 
     def priority(self, obj):
         return 0.5
@@ -170,7 +170,7 @@ class SpacestationSitemap(Sitemap):
         return timezone.now()
 
     def location(self, obj):
-        return "/vehicle/spacestation/%s" % obj.id
+        return f"/vehicle/spacestation/{obj.id}"
 
     def priority(self, obj):
         return 0.5

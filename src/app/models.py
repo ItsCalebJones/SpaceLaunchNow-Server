@@ -70,7 +70,7 @@ class Nationality(models.Model):
         return self.name
 
     def __unicode__(self):
-        return "%s" % self.name
+        return f"{self.name}"
 
     class Meta:
         verbose_name = "Nationality"
@@ -93,7 +93,7 @@ class Translator(models.Model):
         return self.name
 
     def __unicode__(self):
-        return "%s" % self.name
+        return f"{self.name}"
 
     class Meta:
         verbose_name = "Translator"
@@ -124,7 +124,7 @@ class Staff(models.Model):
         return self.name
 
     def __unicode__(self):
-        return "%s" % self.name
+        return f"{self.name}"
 
     class Meta:
         verbose_name = "Staff"

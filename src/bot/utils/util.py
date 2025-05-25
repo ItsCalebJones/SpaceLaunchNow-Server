@@ -68,16 +68,14 @@ def get_fcm_strict_topics_v3(launch, debug=False, flutter=False, notification_ty
 
     if flutter:
         if not debug:
-            topic_header = (
-                "'flutter_production_v3' in topics && '%s' in topics && 'strict' in topics" % notification_type
-            )
+            topic_header = f"'flutter_production_v3' in topics && '{notification_type}' in topics && 'strict' in topics"
         else:
-            topic_header = "'flutter_debug_v3' in topics && '%s' in topics && 'strict' in topics" % notification_type
+            topic_header = f"'flutter_debug_v3' in topics && '{notification_type}' in topics && 'strict' in topics"
     else:
         if not debug:
-            topic_header = "'prod_v3' in topics && '%s' in topics && 'strict' in topics" % notification_type
+            topic_header = f"'prod_v3' in topics && '{notification_type}' in topics && 'strict' in topics"
         else:
-            topic_header = "'debug_v3' in topics && '%s' in topics && 'strict' in topics" % notification_type
+            topic_header = f"'debug_v3' in topics && '{notification_type}' in topics && 'strict' in topics"
 
     if launch.pad.location is not None:
         location_id = launch.pad.location.id
@@ -146,17 +144,15 @@ def get_fcm_not_strict_topics_v3(launch, debug=False, flutter=False, notificatio
     if flutter:
         if not debug:
             topic_header = (
-                "'flutter_production_v3' in topics && '%s' in topics && 'not_strict' in topics" % notification_type
+                f"'flutter_production_v3' in topics && '{notification_type}' in topics && 'not_strict' in topics"
             )
         else:
-            topic_header = (
-                "'flutter_debug_v3' in topics && '%s' in topics && 'not_strict' in topics" % notification_type
-            )
+            topic_header = f"'flutter_debug_v3' in topics && '{notification_type}' in topics && 'not_strict' in topics"
     else:
         if not debug:
-            topic_header = "'prod_v3' in topics && '%s' in topics && 'not_strict' in topics" % notification_type
+            topic_header = f"'prod_v3' in topics && '{notification_type}' in topics && 'not_strict' in topics"
         else:
-            topic_header = "'debug_v3' in topics && '%s' in topics && 'not_strict' in topics" % notification_type
+            topic_header = f"'debug_v3' in topics && '{notification_type}' in topics && 'not_strict' in topics"
 
     if launch.pad.location is not None:
         location_id = launch.pad.location.id
@@ -220,14 +216,14 @@ def get_fcm_not_strict_topics_v3(launch, debug=False, flutter=False, notificatio
 def get_fcm_all_topics_v3(debug=False, flutter=False, notification_type=None):
     if flutter:
         if not debug:
-            topic_header = "'flutter_production_v3' in topics && '%s' in topics" % notification_type
+            topic_header = f"'flutter_production_v3' in topics && '{notification_type}' in topics"
         else:
-            topic_header = "'flutter_debug_v3' in topics && '%s' in topics" % notification_type
+            topic_header = f"'flutter_debug_v3' in topics && '{notification_type}' in topics"
     else:
         if not debug:
-            topic_header = "'prod_v3' in topics && '%s' in topics" % notification_type
+            topic_header = f"'prod_v3' in topics && '{notification_type}' in topics"
         else:
-            topic_header = "'debug_v3' in topics && '%s' in topics" % notification_type
+            topic_header = f"'debug_v3' in topics && '{notification_type}' in topics"
     topics = topic_header + " && 'all' in topics"
     logger.info(topics)
     return topics
@@ -238,14 +234,14 @@ def get_flutter_topics_v3(launch, debug=False, flutter=False, notification_type=
     topics_set = ["all"]
     if flutter:
         if not debug:
-            topic_header = "'flutter_production_v3' in topics && '%s' in topics" % notification_type
+            topic_header = f"'flutter_production_v3' in topics && '{notification_type}' in topics"
         else:
-            topic_header = "'flutter_debug_v3' in topics && '%s' in topics" % notification_type
+            topic_header = f"'flutter_debug_v3' in topics && '{notification_type}' in topics"
     else:
         if not debug:
-            topic_header = "'prod_v2' in topics && '%s' in topics" % notification_type
+            topic_header = f"'prod_v2' in topics && '{notification_type}' in topics"
         else:
-            topic_header = "'debug_v2' in topics && '%s' in topics" % notification_type
+            topic_header = f"'debug_v2' in topics && '{notification_type}' in topics"
 
     if launch.pad.location is not None:
         location_id = launch.pad.location.id

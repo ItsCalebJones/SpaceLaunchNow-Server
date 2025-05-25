@@ -13,7 +13,7 @@ def get_news(limit=10):
     response = requests.get(url=f"https://api.spaceflightnewsapi.net/v4/articles/?limit={limit}")
     if response.status_code == 200:
         articles = response.json()
-        logger.info("Found %s articles." % len(articles))
+        logger.info(f"Found {len(articles)} articles.")
         for item in articles["results"]:
             save_news_LL(item)
 
@@ -58,14 +58,14 @@ def save_news_LL(item):
                 event = Events.objects.get(id=event_id)
                 news.events.add(event)
             except Events.DoesNotExist:
-                logger.error("No event found with ID %s" % event_id)
+                logger.error(f"No event found with ID {event_id}")
         for _launch in item["launches"]:
             launch_id = _launch["launch_id"]
             try:
                 launch = Launch.objects.get(id=launch_id)
                 news.launches.add(launch)
             except Launch.DoesNotExist:
-                logger.error("No launch found with ID %s" % launch_id)
+                logger.error(f"No launch found with ID {launch_id}")
         logger.info(f"Added Article ({news.id}) - {news.title} - {news.news_site}")
 
         if item["featured"]:
@@ -105,7 +105,7 @@ def save_news_LL(item):
                     event = Events.objects.get(id=event_id)
                     news.events.add(event)
                 except Events.DoesNotExist:
-                    logger.error("No event found with ID %s" % event_id)
+                    logger.error(f"No event found with ID {event_id}")
 
         found = False
         for _launch in item["launches"]:
@@ -119,7 +119,7 @@ def save_news_LL(item):
                     launch = Launch.objects.get(id=launch_id)
                     news.launches.add(launch)
                 except Launch.DoesNotExist:
-                    logger.error("No launch found with ID %s" % launch_id)
+                    logger.error(f"No launch found with ID {launch_id}")
 
         news.news_site = item["news_site"]
         news.description = item["summary"]

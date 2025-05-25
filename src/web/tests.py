@@ -24,5 +24,5 @@ class WebTests(LLAPITests):
     def test_launch_by_id(self):
         # Test Normal endpoint
         launch = Launch.objects.first()
-        response = self.client.get("/launch/%d" % launch.id)
+        response = self.client.get(f"/launch/{launch.id}")
         self.assertEqual(response.status_code, status.HTTP_301_MOVED_PERMANENTLY)
