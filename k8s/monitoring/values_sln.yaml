@@ -1,5 +1,8 @@
 grafana:
-  adminPassword: VrO9QVQ8myDETf766pIYrZhZPHOlP7g1psZFiAAe
+  admin:
+    existingSecret: "grafana-admin-credentials"
+    userKey: admin-user
+    passwordKey: admin-password
   ingress:
     enabled: true
     annotations:

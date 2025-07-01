@@ -5,6 +5,7 @@ resources:
   - sln-external-secrets-dev.yaml
   - sln-external-secrets-prod.yaml
   - monitoring-basic-auth.yaml
+  - ../../k8s/secrets-management/grafana-external-secret.yaml
 
 commonLabels:
   app.kubernetes.io/name: spacelaunchnow

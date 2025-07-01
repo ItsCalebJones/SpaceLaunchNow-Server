@@ -137,6 +137,7 @@ sync_all_secrets() {
         create_sln_dev_secret
         create_sln_prod_secret  
         create_cloudflare_secret
+        create_grafana_secret
     fi
     
     log_success "✅ Secret synchronization complete!"
@@ -242,6 +243,19 @@ create_cloudflare_secret() {
     vault kv put secret/cloudflare \
         api_token="cloudflare-api-token-placeholder" >/dev/null
     log_success "Created cloudflare secret (1 key)"
+}
+
+create_grafana_secret() {
+    if vault kv get secret/grafana >/dev/null 2>&1; then
+        log_warning "grafana already exists, skipping..."
+        return 0
+    fi
+    
+    log_info "Creating grafana secret..."
+    vault kv put secret/grafana \
+        admin-user="admin" \
+        admin-password="grafana-admin-password-placeholder" >/dev/null
+    log_success "Created grafana secret (2 keys)"
 }
 
 # Main logic
