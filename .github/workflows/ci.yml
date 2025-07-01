@@ -81,6 +81,8 @@ jobs:
         
       - name: 🔍 Run Linting
         run: |
+          # Configure Poetry for private repository access
+          poetry config http-basic.tsd ${{ secrets.PRIVATE_USERNAME }} ${{ secrets.PRIVATE_PASSWORD }}
           poetry install --all-extras --with dev
           poetry run ruff check src/
           poetry run ruff format --check src/

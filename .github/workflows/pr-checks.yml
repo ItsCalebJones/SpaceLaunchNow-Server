@@ -57,7 +57,10 @@ jobs:
         
       - name: 📦 Install Dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --all-extras --with dev
+        run: |
+          # Configure Poetry for private repository access
+          poetry config http-basic.tsd ${{ secrets.PRIVATE_USERNAME }} ${{ secrets.PRIVATE_PASSWORD }}
+          poetry install --all-extras --with dev
         
       - name: 🔍 Run Ruff Linting
         run: |
@@ -136,6 +139,8 @@ jobs:
         
       - name: 🔒 Run Bandit Security Scan
         run: |
+          # Configure Poetry for private repository access
+          poetry config http-basic.tsd ${{ secrets.PRIVATE_USERNAME }} ${{ secrets.PRIVATE_PASSWORD }}
           poetry add bandit[toml] --group dev
           poetry run bandit -r src/ -f json -o bandit-report.json || true
           poetry run bandit -r src/ -f txt
