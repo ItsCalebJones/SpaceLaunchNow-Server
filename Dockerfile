@@ -18,6 +18,7 @@ RUN apk add --no-cache \
     curl bash && \
     curl -sSL https://install.python-poetry.org | python3 - --version 2.1.2 && \
     poetry config virtualenvs.in-project true && \
+    poetry config http-basic.tsd "$PRIVATE_USERNAME" "$PRIVATE_PASSWORD" && \
     poetry install --no-interaction --no-root --no-ansi --with ci
 
 FROM python:3.12.10-alpine

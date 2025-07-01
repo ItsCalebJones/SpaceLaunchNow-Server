@@ -34,7 +34,7 @@ jobs:
           # Fetch full history for better analysis
           fetch-depth: 0
         
-      - name: 🐍 Setup Python
+      - name: � Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -55,7 +55,7 @@ jobs:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
         
-      - name: 📦 Install Dependencies
+      - name: �📦 Install Dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: |
           # Configure Poetry for private repository access
