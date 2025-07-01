@@ -1,0 +1,374 @@
+name: 🔍 Pull Request Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+    types: [opened, synchronize, reopened, ready_for_review]
+
+# Cancel previous runs if a new commit is pushed
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  POETRY_HTTP_BASIC_TSD_USERNAME: ${{ secrets.PRIVATE_USERNAME }}
+  POETRY_HTTP_BASIC_TSD_PASSWORD: ${{ secrets.PRIVATE_PASSWORD }}
+
+jobs:
+  # ========================================
+  # 🔍 LINTING & CODE QUALITY
+  # ========================================
+  
+  lint:
+    name: 🔍 Code Linting
+    runs-on: ubuntu-latest
+    # Skip draft PRs unless they're marked as ready for review
+    if: github.event.pull_request.draft == false
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          # Fetch full history for better analysis
+          fetch-depth: 0
+        
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+        
+      - name: 📦 Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: '2.1.3'
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+        
+      - name: 🔧 Load Cached Virtual Environment
+        id: cached-poetry-dependencies
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+        
+      - name: 📦 Install Dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --all-extras --with dev
+        
+      - name: 🔍 Run Ruff Linting
+        run: |
+          echo "::group::🔍 Ruff Check"
+          poetry run ruff check src/ --output-format=github
+          echo "::endgroup::"
+          
+          echo "::group::🎨 Ruff Format Check"
+          poetry run ruff format --check src/
+          echo "::endgroup::"
+        
+      - name: 📊 Generate Lint Report
+        if: always()
+        run: |
+          echo "::group::📊 Lint Summary"
+          echo "Generating detailed lint report..."
+          poetry run ruff check src/ --output-format=json > lint-report.json || true
+          echo "::endgroup::"
+        
+      - name: 📤 Upload Lint Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-report
+          path: lint-report.json
+          retention-days: 7
+
+  # ========================================
+  # 🧪 PYTEST TESTING
+  # ========================================
+  
+  test:
+    name: 🧪 Unit Tests
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        # Test against multiple Python versions if needed
+        python-version: ['3.12']
+    
+    services:
+      postgres:
+        image: postgres:14-alpine
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: 🐍 Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+        
+      - name: 📦 Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: '2.1.3'
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+        
+      - name: 🔧 Load Cached Virtual Environment
+        id: cached-poetry-dependencies
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+        
+      - name: 📦 Install Dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --all-extras --with dev,ci
+        
+      - name: 🧪 Run Django Tests
+        env:
+          DEBUG: true
+          DJANGO_SECRET_KEY: ${{ secrets.PRIVATE_PASSWORD }}
+          DATABASE_NAME: postgres
+          DATABASE_USERNAME: postgres
+          DATABASE_PASSWORD: postgres
+          DATABASE_ENGINE: django.db.backends.postgresql
+          DATABASE_HOST: localhost
+          DATABASE_PORT: 5432
+          USE_LOCAL_STORAGE: true
+        run: |
+          echo "::group::🧪 Running Django Test Suite"
+          cd src
+          poetry run coverage run --source='.' manage.py test --settings=spacelaunchnow.settings.test --verbosity=2
+          echo "::endgroup::"
+          
+          echo "::group::📊 Coverage Report"
+          poetry run coverage report --show-missing
+          poetry run coverage html
+          poetry run coverage xml
+          echo "::endgroup::"
+        
+      - name: 📊 Upload Coverage Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ matrix.python-version }}
+          path: |
+            src/htmlcov/
+            src/coverage.xml
+          retention-days: 7
+        
+      - name: 📈 Upload Coverage to Codecov
+        if: matrix.python-version == '3.12'
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./src/coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
+  # ========================================
+  # 🔒 SECURITY SCANNING
+  # ========================================
+  
+  security:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+        
+      - name: 📦 Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: '2.1.3'
+        
+      - name: 🔒 Run Bandit Security Scan
+        run: |
+          poetry add bandit[toml] --group dev
+          poetry run bandit -r src/ -f json -o bandit-report.json || true
+          poetry run bandit -r src/ -f txt
+        continue-on-error: true
+        
+      - name: 📤 Upload Security Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-report
+          path: bandit-report.json
+          retention-days: 7
+
+  # ========================================
+  # 📦 BUILD TEST
+  # ========================================
+  
+  build-test:
+    name: 🐳 Build Test
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: 🐳 Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
+      - name: 🔨 Test Docker Build
+        run: |
+          echo "::group::🐳 Building Docker Image"
+          docker build \
+            --build-arg PRIVATE_USERNAME=${{ secrets.PRIVATE_USERNAME }} \
+            --build-arg PRIVATE_PASSWORD=${{ secrets.PRIVATE_PASSWORD }} \
+            --tag test-build:${{ github.sha }} \
+            .
+          echo "::endgroup::"
+          
+          echo "::group::🔍 Image Information"
+          docker images test-build:${{ github.sha }}
+          docker history test-build:${{ github.sha }}
+          echo "::endgroup::"
+
+  # ========================================
+  # 📋 QUALITY SUMMARY
+  # ========================================
+  
+  quality-gate:
+    name: 📋 Quality Gate
+    runs-on: ubuntu-latest
+    needs: [lint, test, security, build-test]
+    if: always() && github.event.pull_request.draft == false
+    
+    steps:
+      - name: 📊 Check Quality Gate
+        run: |
+          echo "::group::📋 Quality Gate Results"
+          
+          LINT_STATUS="${{ needs.lint.result }}"
+          TEST_STATUS="${{ needs.test.result }}"
+          SECURITY_STATUS="${{ needs.security.result }}"
+          BUILD_STATUS="${{ needs.build-test.result }}"
+          
+          echo "🔍 Linting: $LINT_STATUS"
+          echo "🧪 Testing: $TEST_STATUS"
+          echo "🔒 Security: $SECURITY_STATUS"
+          echo "🐳 Build: $BUILD_STATUS"
+          
+          # Determine overall status
+          if [[ "$LINT_STATUS" == "success" && "$TEST_STATUS" == "success" && "$BUILD_STATUS" == "success" ]]; then
+            echo "✅ Quality gate PASSED - All checks successful!"
+            echo "quality_gate=passed" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Quality gate FAILED - Some checks failed"
+            echo "quality_gate=failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+          
+          echo "::endgroup::"
+        
+      - name: 💬 Comment PR Results
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            // Find existing bot comment
+            const botComment = comments.find(comment => 
+              comment.user.login === 'github-actions[bot]' && 
+              comment.body.includes('🔍 Quality Check Results')
+            );
+            
+            const lintStatus = '${{ needs.lint.result }}';
+            const testStatus = '${{ needs.test.result }}';
+            const securityStatus = '${{ needs.security.result }}';
+            const buildStatus = '${{ needs.build-test.result }}';
+            
+            const getStatusIcon = (status) => {
+              switch(status) {
+                case 'success': return '✅';
+                case 'failure': return '❌';
+                case 'cancelled': return '⏸️';
+                case 'skipped': return '⏭️';
+                default: return '❓';
+              }
+            };
+            
+            const body = `## 🔍 Quality Check Results
+            
+            | Check | Status | Result |
+            |-------|--------|--------|
+            | 🔍 **Linting** | ${getStatusIcon(lintStatus)} | ${lintStatus} |
+            | 🧪 **Testing** | ${getStatusIcon(testStatus)} | ${testStatus} |
+            | 🔒 **Security** | ${getStatusIcon(securityStatus)} | ${securityStatus} |
+            | 🐳 **Build** | ${getStatusIcon(buildStatus)} | ${buildStatus} |
+            
+            ${lintStatus === 'success' && testStatus === 'success' && buildStatus === 'success' 
+              ? '🎉 **All quality checks passed!** This PR is ready for review.' 
+              : '⚠️ **Some quality checks failed.** Please review the failed checks above.'}
+            
+            ---
+            <sub>Triggered by commit ${context.sha.substring(0, 7)} • [View Details](${context.payload.pull_request.html_url}/checks)</sub>`;
+            
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+            }
+
+  # ========================================
+  # 🚫 BLOCK MERGE ON FAILURE
+  # ========================================
+  
+  block-merge:
+    name: 🚫 Block Merge on Failure
+    runs-on: ubuntu-latest
+    needs: [quality-gate]
+    if: failure()
+    
+    steps:
+      - name: 🚫 Block Merge
+        run: |
+          echo "::error::Quality gate failed - blocking merge"
+          echo "Please fix the failing checks before merging this PR"
+          exit 1
