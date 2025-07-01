@@ -1,0 +1,133 @@
+name: 🎯 Promote to Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      staging_tag:
+        description: 'Staging tag to promote (e.g., develop-abc123)'
+        required: true
+        type: string
+      release_version:
+        description: 'Release version (e.g., v2024.01.15)'
+        required: false
+        type: string
+
+env:
+  REGISTRY: registry.digitalocean.com/sln-prod-registry-01
+  IMAGE_NAME: space-launch-now-base
+
+jobs:
+  validate:
+    name: 🔍 Validate Staging Image
+    runs-on: ubuntu-latest
+    outputs:
+      staging-tag: ${{ github.event.inputs.staging_tag }}
+      release-version: ${{ steps.version.outputs.version }}
+      
+    steps:
+      - name: 🔧 Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_SLN }}
+          
+      - name: 🔐 Login to Registry
+        run: doctl registry login --expiry-seconds 3600
+        
+      - name: 🔍 Validate Staging Image
+        run: |
+          IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.staging_tag }}"
+          echo "🔍 Validating staging image: $IMAGE"
+          
+          if ! docker manifest inspect "$IMAGE" >/dev/null 2>&1; then
+            echo "❌ Staging image does not exist: $IMAGE"
+            exit 1
+          fi
+          
+          echo "✅ Staging image validated"
+          
+      - name: 🏷️ Generate Release Version
+        id: version
+        run: |
+          if [[ -n "${{ github.event.inputs.release_version }}" ]]; then
+            VERSION="${{ github.event.inputs.release_version }}"
+          else
+            # Generate version based on date
+            VERSION="v$(date +%Y.%m.%d)-$(date +%H%M)"
+          fi
+          
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "🏷️ Release version: $VERSION"
+
+  promote:
+    name: 🚀 Promote Image
+    runs-on: ubuntu-latest
+    needs: [validate]
+    environment: production
+    
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITOPS_TOKEN }}
+          
+      - name: 🔧 Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_SLN }}
+          
+      - name: 🔐 Login to Registry
+        run: doctl registry login --expiry-seconds 3600
+        
+      - name: 🏷️ Tag Production Image
+        run: |
+          STAGING_IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.validate.outputs.staging-tag }}"
+          PROD_IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.validate.outputs.release-version }}"
+          LATEST_IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:production"
+          
+          echo "📦 Pulling staging image: $STAGING_IMAGE"
+          docker pull "$STAGING_IMAGE"
+          
+          echo "🏷️ Tagging as: $PROD_IMAGE"
+          docker tag "$STAGING_IMAGE" "$PROD_IMAGE"
+          
+          echo "🏷️ Tagging as: $LATEST_IMAGE"
+          docker tag "$STAGING_IMAGE" "$LATEST_IMAGE"
+          
+          echo "📤 Pushing production tags..."
+          docker push "$PROD_IMAGE"
+          docker push "$LATEST_IMAGE"
+          
+      - name: 🔄 Update Production Manifests
+        run: |
+          cd manifests/apps/production
+          
+          # Update the image tag in kustomization
+          sed -i "s|newTag:.*|newTag: ${{ needs.validate.outputs.release-version }}|" kustomization.yaml
+          
+          # Commit changes
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add kustomization.yaml
+          git commit -m "🚀 Promote ${{ needs.validate.outputs.staging-tag }} to production as ${{ needs.validate.outputs.release-version }}"
+          git push
+
+  notify:
+    name: 📢 Notify Success
+    runs-on: ubuntu-latest
+    needs: [promote, validate]
+    if: success()
+    
+    steps:
+      - name: 📢 Discord Notification
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: |
+            🎉 **Production Promotion Successful!**
+            
+            **Staging Tag:** ${{ needs.validate.outputs.staging-tag }}
+            **Production Version:** ${{ needs.validate.outputs.release-version }}
+            **Promoted by:** ${{ github.actor }}
+            
+            🔗 **ArgoCD:** https://argo.spacelaunchnow.app

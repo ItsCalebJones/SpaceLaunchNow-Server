@@ -1,0 +1,97 @@
+# Default values for django.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image:
+  repository: registry.digitalocean.com/sln-prod-registry-01/space-launch-now-base
+  tag: master
+  pullPolicy: Always
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+env:
+  normal: {}
+  worker:
+    IS_WEBSERVER: "False"
+    IS_API: "False"
+    IS_ADMIN: "False"
+    CACHE_BACKEND: "django.core.cache.backends.memcached.PyMemcacheCache"
+    CACHE_LOCATION: "sln-prod-memcache-memcached.sln-prod.svc.cluster.local:11211"
+  web:
+    IS_WEBSERVER: "True"
+    IS_API: "True"
+    IS_ADMIN: "True"
+    CACHE_BACKEND: "django.core.cache.backends.memcached.PyMemcacheCache"
+    CACHE_LOCATION: "sln-prod-memcache-memcached.sln-prod.svc.cluster.local:11211"
+    DISABLE_THROTTLE: "False"
+  service:
+    IS_WEBSERVER: "False"
+    IS_API: "False"
+    IS_ADMIN: "False"
+    CACHE_BACKEND: "django.core.cache.backends.memcached.PyMemcacheCache"
+    CACHE_LOCATION: "sln-prod-memcache-memcached.sln-prod.svc.cluster.local:11211"
+  secret: {}
+
+web:
+  replicaCount: 1
+  port: 8080
+  autoscaling:
+    enabled: true
+    minReplicas: 6
+    maxReplicas: 40
+    targetCPUUtilizationPercentage: 80
+#    targetMemoryUtilizationPercentage: 80
+
+  budget:
+    minAvailable: 1 # Ignored when replicaCount is 1
+  resources:
+    limits:
+      cpu: 250m
+      memory: 500Mi
+    requests:
+      cpu: 100m
+      memory: 350Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+    # podAntiAffinity:
+    #   preferredDuringSchedulingIgnoredDuringExecution:
+    #   - weight: 100
+    #     podAffinityTerm:
+    #       labelSelector:
+    #         matchExpressions:
+    #         - key: app.kubernetes.io/instance
+    #           operator: In
+    #           values:
+    #           - glitchtip-prod-web
+    #       topologyKey: kubernetes.io/hostname
+  livenessProbe:
+    failureThreshold: 10
+    initialDelaySeconds: 5
+    timeoutSeconds: 2
+    path: "/_health/"
+  readinessProbe:
+    failureThreshold: 10
+    initialDelaySeconds: 5
+    timeoutSeconds: 2
+    path: "/_health/"
+  service:
+    type: ClusterIP
+    port: 8080
+
+  ingress:
+    enabled: false
+
+notification_service:
+  enabled: false
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
+
+jobs: []

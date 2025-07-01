@@ -1,0 +1,27 @@
+apiVersihelmCharts:
+  - name: spacelaunchnow
+    releaseName: sln-production-app
+    chartHome: ../../helm/spacelaunchnow
+    valuesFile: values-prod.yamlstomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: sln-prod
+
+resources:
+  - namespace.yaml
+
+helmCharts:
+  - name: spacelaunchnow
+    releaseName: sln-prod-app
+    version: 0.1.0
+    repo: ../../helm/spacelaunchnow
+    valuesFile: values-prod.yaml
+
+commonLabels:
+  environment: production
+  app.kubernetes.io/name: spacelaunchnow
+  app.kubernetes.io/instance: production
+
+images:
+  - name: registry.digitalocean.com/sln-prod-registry-01/space-launch-now-base
+    newTag: latest

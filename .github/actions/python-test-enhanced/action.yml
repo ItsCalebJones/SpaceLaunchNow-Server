@@ -1,0 +1,99 @@
+name: 'Enhanced Python Test Suite'
+description: 'Run comprehensive Django tests with coverage and quality checks'
+
+inputs:
+  upload-coverage:
+    description: 'Upload coverage reports'
+    default: 'true'
+  database-tests:
+    description: 'Run database integration tests'
+    default: 'true'
+  parallel:
+    description: 'Run tests in parallel'
+    default: 'true'
+
+outputs:
+  coverage-percentage:
+    description: 'Coverage percentage'
+    value: ${{ steps.coverage.outputs.percentage }}
+  test-count:
+    description: 'Number of tests run'
+    value: ${{ steps.tests.outputs.count }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: 🐳 Setup Test Environment
+      shell: bash
+      run: |
+        # Ensure test containers are clean
+        docker compose -f docker/docker-compose.test.yml down -v
+        docker compose -f docker/docker-compose.test.yml pull
+
+    - name: 🧪 Run Unit Tests
+      id: tests
+      shell: bash
+      run: |
+        if [[ "${{ inputs.parallel }}" == "true" ]]; then
+          PARALLEL_FLAGS="--parallel auto"
+        else
+          PARALLEL_FLAGS=""
+        fi
+        
+        docker compose -f docker/docker-compose.test.yml run --rm test \
+          python manage.py test --keepdb --verbosity=2 $PARALLEL_FLAGS
+        
+        # Extract test count from output
+        TEST_COUNT=$(docker compose -f docker/docker-compose.test.yml logs test | grep -o "Ran [0-9]* tests" | grep -o "[0-9]*" || echo "0")
+        echo "count=$TEST_COUNT" >> $GITHUB_OUTPUT
+
+    - name: 🗄️ Run Database Tests
+      if: inputs.database-tests == 'true'
+      shell: bash
+      run: |
+        echo "🗄️ Running database migration tests..."
+        docker compose -f docker/docker-compose.test.yml run --rm test \
+          python manage.py migrate --check
+        
+        echo "🗄️ Running model validation..."
+        docker compose -f docker/docker-compose.test.yml run --rm test \
+          python manage.py check
+
+    - name: 📊 Generate Coverage Report
+      id: coverage
+      shell: bash
+      run: |
+        docker compose -f docker/docker-compose.test.yml run --rm test \
+          coverage report --format=total > coverage.txt
+        
+        COVERAGE=$(cat coverage.txt)
+        echo "percentage=$COVERAGE" >> $GITHUB_OUTPUT
+        echo "📊 Coverage: $COVERAGE%"
+        
+        # Generate HTML report
+        docker compose -f docker/docker-compose.test.yml run --rm test \
+          coverage html
+
+    - name: 📈 Upload Coverage Reports
+      if: inputs.upload-coverage == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-reports-${{ github.run_number }}
+        path: |
+          report/htmlcov/
+          report/coverage/
+        retention-days: 30
+
+    - name: 📋 Upload Test Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-${{ github.run_number }}
+        path: report/xmlrunner/
+        retention-days: 30
+
+    - name: 🧹 Cleanup
+      if: always()
+      shell: bash
+      run: |
+        docker compose -f docker/docker-compose.test.yml down -v

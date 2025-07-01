@@ -1,0 +1,4 @@
+# Basic Auth Template for Monitoring
+# Replace YOUR_HTPASSWD_HASH_HERE with actual htpasswd hash
+# Generate with: htpasswd -n admin
+admin:YOUR_HTPASSWD_HASH_HERE

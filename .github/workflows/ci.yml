@@ -1,0 +1,484 @@
+name: 🚀 CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  release:
+    types: [published]
+
+env:
+  REGISTRY: registry.digitalocean.com/sln-prod-registry-01
+  IMAGE_NAME: space-launch-now-base
+  POETRY_HTTP_BASIC_TSD_USERNAME: ${{ secrets.PRIVATE_USERNAME }}
+  POETRY_HTTP_BASIC_TSD_PASSWORD: ${{ secrets.PRIVATE_PASSWORD }}
+
+jobs:
+  # ========================================
+  # 🧪 TESTING & QUALITY CHECKS
+  # ========================================
+  
+  test:
+    name: 🧪 Test Suite
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        
+      - name: 🐳 Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
+      - name: 🧪 Run Tests
+        run: |
+          docker compose -f docker/docker-compose.test.yml run --rm test
+          
+      - name: 📊 Upload Coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: report/
+
+  security-scan:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        
+      - name: 🔍 Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          
+      - name: 📋 Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  lint:
+    name: 🔍 Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          
+      - name: 📦 Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: '2.1.3'
+        
+      - name: 🔍 Run Linting
+        run: |
+          poetry install --all-extras --with dev
+          poetry run ruff check src/
+          poetry run ruff format --check src/
+
+  # ========================================
+  # 📦 SEMANTIC RELEASE (MAIN BRANCH ONLY)
+  # ========================================
+  
+  semantic-release:
+    name: 📦 Create Semantic Release
+    runs-on: ubuntu-latest
+    needs: [test, security-scan, lint]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip ci]')
+    outputs:
+      released: ${{ steps.release.outputs.released }}
+      version: ${{ steps.release.outputs.tag }}
+      clean-version: ${{ steps.clean-version.outputs.clean-version }}
+    
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          
+      - name: 📦 Install Poetry
+        uses: snok/install-poetry@v1
+        
+      - name: 📦 Python Semantic Release
+        uses: python-semantic-release/python-semantic-release@v9.8.6
+        id: release
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🧹 Extract Clean Version
+        id: clean-version
+        run: |
+          if [[ "${{ steps.release.outputs.released }}" == "true" ]]; then
+            CLEAN_VERSION="${{ steps.release.outputs.tag }}"
+            # Remove 'v' prefix if present
+            CLEAN_VERSION="${CLEAN_VERSION#v}"
+            echo "clean-version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
+            echo "Semantic release created version: $CLEAN_VERSION"
+          else
+            # No release, use current pyproject.toml version
+            POETRY_VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+            echo "clean-version=$POETRY_VERSION" >> $GITHUB_OUTPUT
+            echo "No release created, using current version: $POETRY_VERSION"
+          fi
+
+      - name: 📤 Publish package distributions to GitHub Releases
+        uses: python-semantic-release/upload-to-gh-release@v9.8.6
+        if: steps.release.outputs.released == 'true'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.release.outputs.tag }}
+          
+      - name: 📢 Notify Release Created
+        if: steps.release.outputs.released == 'true'
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: |
+            🎉 **New Release Created**
+            
+            **Version:** ${{ steps.release.outputs.tag }}
+            **Branch:** main
+            **Commit:** ${GITHUB_SHA::8}
+            
+            📝 **Changelog:** ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ steps.release.outputs.tag }}
+            ⏳ **Building container with updated version...**
+
+  # ========================================
+  # 📦 APP VERSION MANAGEMENT
+  # ========================================
+  
+  update-app-version:
+    name: 📦 Update App Version
+    runs-on: ubuntu-latest
+    needs: [test, security-scan, lint, semantic-release]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[skip ci]')
+    outputs:
+      app-version: ${{ steps.version.outputs.app-version }}
+      chart-changed: ${{ steps.changes.outputs.chart-changed }}
+      chart-version: ${{ steps.chart-version.outputs.chart-version }}
+      
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITOPS_TOKEN }}
+          
+      - name: 🔄 Check for Chart Changes
+        id: changes
+        run: |
+          # Check if k8s/helm directory has changes
+          if git diff --name-only HEAD~1 HEAD | grep -q "^k8s/helm/"; then
+            echo "chart-changed=true" >> $GITHUB_OUTPUT
+            echo "📦 Helm chart files have changed"
+          else
+            echo "chart-changed=false" >> $GITHUB_OUTPUT
+            echo "📦 No Helm chart changes detected"
+          fi
+          
+      - name: 📦 Generate App Version
+        id: version
+        run: |
+          # Use semantic release version if available, otherwise pyproject.toml
+          if [[ "${{ needs.semantic-release.outputs.released }}" == "true" ]]; then
+            SEMANTIC_VERSION="${{ needs.semantic-release.outputs.clean-version }}"
+            APP_VERSION="v${SEMANTIC_VERSION}.${GITHUB_RUN_NUMBER}"
+            echo "Using semantic release version: $SEMANTIC_VERSION"
+          else
+            # Fallback to pyproject.toml version
+            POETRY_VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+            APP_VERSION="v${POETRY_VERSION}.${GITHUB_RUN_NUMBER}"
+            echo "No semantic release, using pyproject.toml version: $POETRY_VERSION"
+          fi
+          
+          echo "Generated app version: $APP_VERSION"
+          echo "app-version=$APP_VERSION" >> $GITHUB_OUTPUT
+          
+      - name: 📦 Update Chart Version (if needed)
+        id: chart-version
+        run: |
+          CURRENT_CHART_VERSION=$(grep '^version:' k8s/helm/Chart.yaml | awk '{print $2}')
+          
+          if [[ "${{ steps.changes.outputs.chart-changed }}" == "true" ]]; then
+            # Chart changed, increment version
+            echo "📦 Chart files changed, incrementing chart version"
+            
+            # Simple semantic versioning: increment patch version
+            IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_CHART_VERSION"
+            MAJOR=${VERSION_PARTS[0]}
+            MINOR=${VERSION_PARTS[1]}
+            PATCH=${VERSION_PARTS[2]}
+            
+            # Increment patch version
+            NEW_PATCH=$((PATCH + 1))
+            NEW_CHART_VERSION="${MAJOR}.${MINOR}.${NEW_PATCH}"
+            
+            echo "New chart version: $NEW_CHART_VERSION"
+            
+            # Update Chart.yaml
+            sed -i "s/^version:.*/version: $NEW_CHART_VERSION/" k8s/helm/Chart.yaml
+            
+            echo "chart-version=$NEW_CHART_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "📦 No chart changes, keeping current version: $CURRENT_CHART_VERSION"
+            echo "chart-version=$CURRENT_CHART_VERSION" >> $GITHUB_OUTPUT
+          fi
+          
+          # Always update appVersion
+          sed -i "s/^appVersion:.*/appVersion: \"${{ steps.version.outputs.app-version }}\"/" k8s/helm/Chart.yaml
+          
+      - name: 📝 Commit Version Updates
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action (Version Update)"
+          
+          if git diff --quiet k8s/helm/Chart.yaml; then
+            echo "📦 No changes to commit"
+          else
+            git add k8s/helm/Chart.yaml
+            if [[ "${{ steps.changes.outputs.chart-changed }}" == "true" ]]; then
+              git commit -m "📦 Update chart to v${{ steps.chart-version.outputs.chart-version }} and app to ${{ steps.version.outputs.app-version }} [skip ci]"
+            else
+              git commit -m "📦 Update app version to ${{ steps.version.outputs.app-version }} [skip ci]"
+            fi
+            git push
+          fi
+
+  # ========================================
+  # 🏗️ BUILD & PUSH
+  # ========================================
+  
+  build:
+    name: 🏗️ Build & Push
+    runs-on: ubuntu-latest
+    needs: [test, security-scan, lint, update-app-version]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[skip ci]')
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+      image-digest: ${{ steps.build.outputs.digest }}
+      
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: 🔧 Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_SLN }}
+          
+      - name: 🔐 Login to Registry
+        run: doctl registry login --expiry-seconds 3600
+        
+      - name: 🐳 Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
+      - name: 🏷️ Generate Metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+            
+      - name: 🏗️ Build and Push
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            PRIVATE_USERNAME=${{ secrets.PRIVATE_USERNAME }}
+            PRIVATE_PASSWORD=${{ secrets.PRIVATE_PASSWORD }}
+
+  # ========================================
+  # 🚀 DEPLOYMENT
+  # ========================================
+  
+  deploy-staging:
+    name: 🚀 Auto-Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [build, update-app-version]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: staging
+    
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITOPS_TOKEN }}
+          
+      - name: 🔄 Update Image Tag
+        run: |
+          # Extract the sha-based tag
+          IMAGE_TAG=$(echo '${{ needs.build.outputs.image-tag }}' | grep 'main-' | head -1)
+          
+          # Update the kustomization file
+          cd manifests/apps/staging
+          sed -i "s|newTag:.*|newTag: ${IMAGE_TAG##*:}|" kustomization.yaml
+          
+      - name: 📤 Commit Changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add manifests/apps/staging/kustomization.yaml
+          git commit -m "🚀 Auto-deploy ${GITHUB_SHA::8} to staging" || exit 0
+          git push
+          
+      - name: 📢 Notify Staging Deployment
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: |
+            🚀 **Staging Deployment Complete**
+            
+            **Branch:** main
+            **Commit:** ${GITHUB_SHA::8}
+            **Image:** ${IMAGE_TAG##*:}
+            **App Version:** ${{ needs.update-app-version.outputs.app-version }}
+            **Chart Version:** ${{ needs.update-app-version.outputs.chart-version }}${{ needs.update-app-version.outputs.chart-changed == 'true' && ' (📦 Updated)' || '' }}
+            
+            🔗 **Staging URL:** https://staging.spacelaunchnow.app
+            🔗 **ArgoCD:** https://argo.spacelaunchnow.app
+
+  prepare-production:
+    name: 🎯 Prepare Production Release
+    runs-on: ubuntu-latest
+    needs: [deploy-staging, build, update-app-version]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: 📢 Notify Production Ready
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: |
+            🎯 **Production Release Ready for Approval**
+            
+            **Branch:** main
+            **Commit:** ${GITHUB_SHA::8}
+            **Author:** ${{ github.event.head_commit.author.name }}
+            **Message:** ${{ github.event.head_commit.message }}
+            **App Version:** ${{ needs.update-app-version.outputs.app-version }}
+            **Chart Version:** ${{ needs.update-app-version.outputs.chart-version }}${{ needs.update-app-version.outputs.chart-changed == 'true' && ' (📦 Updated)' || '' }}
+            
+            ✅ Tests passed
+            🔒 Security scan completed
+            🏗️ Image built and ready
+            🚀 Staging deployment successful
+            
+            � **Ready to deploy:** Go to GitHub Actions to approve production deployment
+            🔗 **Workflow:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+  deploy-production:
+    name: 🚀 Deploy to Production (Manual Approval)
+    runs-on: ubuntu-latest
+    needs: [build, update-app-version, prepare-production]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: 
+      name: production
+      url: https://api.spacelaunchnow.app
+    
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITOPS_TOKEN }}
+          
+      - name: 🔄 Update Image Tag
+        run: |
+          # Extract the sha-based tag
+          IMAGE_TAG=$(echo '${{ needs.build.outputs.image-tag }}' | grep 'main-' | head -1)
+          
+          echo "🚀 Deploying image: ${IMAGE_TAG##*:}"
+          
+          # Update the kustomization file
+          cd manifests/apps/production
+          sed -i "s|newTag:.*|newTag: ${IMAGE_TAG##*:}|" kustomization.yaml
+          
+      - name: 📤 Commit Changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add manifests/apps/production/kustomization.yaml
+          git commit -m "🚀 Deploy ${GITHUB_SHA::8} to production (approved by ${{ github.actor }})" || exit 0
+          git push
+          
+      - name: 📢 Notify Production Deployment
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: |
+            🎉 **Production Deployment Complete**
+            
+            **Branch:** main
+            **Commit:** ${GITHUB_SHA::8}
+            **Approved by:** ${{ github.actor }}
+            **Image:** ${IMAGE_TAG##*:}
+            **App Version:** ${{ needs.update-app-version.outputs.app-version }}
+            **Chart Version:** ${{ needs.update-app-version.outputs.chart-version }}${{ needs.update-app-version.outputs.chart-changed == 'true' && ' (📦 Updated)' || '' }}
+            
+            🔗 **Production URL:** https://api.spacelaunchnow.app
+            🔗 **ArgoCD:** https://argo.spacelaunchnow.app
+
+  # ========================================
+  # 📦 RELEASE PROCESSING
+  # ========================================
+  
+  release:
+    name: 📦 Process Release
+    runs-on: ubuntu-latest
+    needs: [test, security-scan, lint]
+    if: github.event_name == 'release'
+    
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          
+      - name: 📦 Install Poetry
+        uses: snok/install-poetry@v1
+        
+      - name: 🏷️ Tag Production Image
+        run: |
+          # Tag the latest main image with release version
+          RELEASE_TAG=${GITHUB_REF#refs/tags/}
+          
+          # Get the latest main image
+          MAIN_TAG=$(git rev-parse HEAD)
+          
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main-${MAIN_TAG}
+          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main-${MAIN_TAG} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${RELEASE_TAG}
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${RELEASE_TAG}

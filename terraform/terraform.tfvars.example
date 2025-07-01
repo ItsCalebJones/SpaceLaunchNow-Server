@@ -1,0 +1,15 @@
+# DigitalOcean API tokens
+do_token = "your_digitalocean_api_token"
+registry_do_token = "your_registry_digitalocean_api_token"
+
+# Cloudflare API token
+cloudflare_api_token = "your_cloudflare_api_token"
+
+# Cloudflare zone ID for spacelaunchnow.app (get from Cloudflare dashboard)
+cloudflare_zone_id = "your_cloudflare_zone_id"
+
+# Deployment region
+region = "nyc1"
+
+# Tags for resources
+tags = ["sln-k8s", "production"]

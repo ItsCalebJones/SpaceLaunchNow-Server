@@ -71,7 +71,7 @@ ingress:
         proxy_cache_bypass $http_upgrade;
       }
   hosts:
-    - host: "status.spacelaunchnow.me"
+    - host: "status.spacelaunchnow.app"
       paths:
         - path: /
           pathType: ImplementationSpecific
@@ -79,7 +79,7 @@ ingress:
   tls:
     - secretName: spacelaunchnow-tls
       hosts:
-        - status.spacelaunchnow.me
+        - status.spacelaunchnow.app
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

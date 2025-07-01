@@ -1,15 +1,18 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: spacelaunchnow.me
+  name: spacelaunchnow.app
+  namespace: default
 spec:
   secretName: spacelaunchnow-tls
   issuerRef:
     name: letsencrypt-production
     kind: ClusterIssuer
-  commonName: spacelaunchnow.me
+  commonName: spacelaunchnow.app
   dnsNames:
-  - k8-dev.spacelaunchnow.me
-  - spacelaunchnow.me
-  - pypi.spacelaunchnow.me
-  - grafana.spacelaunchnow.me
+  - status.spacelaunchnow.app
+  - grafana.spacelaunchnow.app
+  - dev.spacelaunchnow.app
+  - vault.spacelaunchnow.app
+  - argo.spacelaunchnow.app
+  - spacelaunchnow.app

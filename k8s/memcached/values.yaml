@@ -1,11 +1,49 @@
+# Resource configuration for memcached
 resources:
   requests:
-    cpu: 10m
-    memory: 75Mi
+    cpu: 50m      # Increased from 10m for better performance
+    memory: 128Mi # Increased from 75Mi for cache effectiveness
   limits:
-    cpu: 25m
-    memory: 500Mi
+    cpu: 200m     # Increased from 25m to handle traffic spikes
+    memory: 512Mi # Keep same limit but with better request/limit ratio
 
+# Memcached configuration
 args:
   - /run.sh 
-  - -I 100m
+  - -I 100m         # Max item size (100MB)
+  - -m 400          # Memory limit (400MB, leaving headroom)
+  - -c 1024         # Max simultaneous connections
+  - -t 4            # Number of threads
+  - -v              # Verbose logging for monitoring
+
+# Replica configuration for high availability
+replicaCount: 2
+
+# Pod disruption budget for zero-downtime deployments
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+# Service monitor for Prometheus metrics (if using monitoring)
+serviceMonitor:
+  enabled: true
+  
+# Security context
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 11211
+  fsGroup: 11211
+
+# Pod anti-affinity for better distribution
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: app.kubernetes.io/name
+            operator: In
+            values:
+            - memcached
+        topologyKey: kubernetes.io/hostname
