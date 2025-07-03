@@ -23,7 +23,7 @@ RUN apk add --no-cache curl bash && \
     echo "=== Configuring Poetry ===" && \
     poetry config virtualenvs.in-project true && \
     echo "=== Testing TSD Repository Connectivity ===" && \
-    if curl -f -s https://pypi.thespacedevs.com/simple/ > /dev/null; then \
+    if curl -f -s https://pypi.thespacedevs.com> /dev/null; then \
         echo "✅ TSD repository is reachable"; \
     else \
         echo "❌ Cannot reach TSD repository"; \
