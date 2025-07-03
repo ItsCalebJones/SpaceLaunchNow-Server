@@ -18,22 +18,113 @@ env:
 
 jobs:
   # ========================================
-  # 🧪 TESTING & QUALITY CHECKS
+  # 🔍 FAST LINTING (No Docker/Poetry overhead)
   # ========================================
   
-  test:
-    name: 🧪 Test Suite
+  lint:
+    name: 🔍 Fast Linting
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v4
         
-      - name: 🐳 Setup Docker Buildx
+      - name: � Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+        
+      - name: 📦 Install Ruff
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff
+        
+      - name: � Run Ruff Linting
+        run: |
+          echo "::group::🔍 Ruff Check"
+          ruff check src/ --output-format=github
+          echo "::endgroup::"
+          
+          echo "::group::🎨 Ruff Format Check"
+          ruff format --check src/
+          echo "::endgroup::"
+
+  # ========================================
+  # 🏗️ BUILD ONCE (Reuse for tests and security)
+  # ========================================
+  
+  build-base:
+    name: 🏗️ Build Base Image
+    runs-on: ubuntu-latest
+    outputs:
+      image-name: ${{ steps.image.outputs.image-name }}
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        
+      - name: � Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
+        
+      - name: 🏗️ Build Docker Image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: base-image:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          outputs: type=docker,dest=/tmp/base-image.tar
+          build-args: |
+            PRIVATE_USERNAME=${{ secrets.PRIVATE_USERNAME }}
+            PRIVATE_PASSWORD=${{ secrets.PRIVATE_PASSWORD }}
+            
+      - name: � Upload Docker Image
+        uses: actions/upload-artifact@v4
+        with:
+          name: base-image
+          path: /tmp/base-image.tar
+          retention-days: 1
+          
+      - name: 🏷️ Set Image Name
+        id: image
+        run: echo "image-name=base-image:${{ github.sha }}" >> $GITHUB_OUTPUT
+
+  test:
+    name: 🧪 Test Suite
+    runs-on: ubuntu-latest
+    needs: [build-base]
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        
+      - name: � Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
+      - name: 📥 Download Docker Image
+        uses: actions/download-artifact@v4
+        with:
+          name: base-image
+          path: /tmp
+          
+      - name: � Load Docker Image
+        run: |
+          docker load --input /tmp/base-image.tar
+          docker tag ${{ needs.build-base.outputs.image-name }} test-image:latest
         
       - name: 🧪 Run Tests
         run: |
-          docker compose -f docker/docker-compose.test.yml run --rm test
+          # Override the image in docker-compose to use our built image
+          COMPOSE_FILE="docker/docker-compose.test.yml"
+          
+          # Create a temporary compose file with our built image
+          cat > docker-compose.test.override.yml << EOF
+          version: '3.8'
+          services:
+            test:
+              image: test-image:latest
+          EOF
+          
+          docker compose -f $COMPOSE_FILE -f docker-compose.test.override.yml run --rm test
           
       - name: 📊 Upload Coverage
         uses: actions/upload-artifact@v4
@@ -45,47 +136,33 @@ jobs:
   security-scan:
     name: 🔒 Security Scan
     runs-on: ubuntu-latest
+    needs: [build-base]
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v4
         
-      - name: 🔍 Run Trivy vulnerability scanner
+      - name: 📥 Download Docker Image
+        uses: actions/download-artifact@v4
+        with:
+          name: base-image
+          path: /tmp
+          
+      - name: 🔄 Load Docker Image
+        run: |
+          docker load --input /tmp/base-image.tar
+        
+      - name: 🔍 Run Trivy Security Scan
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
+          image-ref: ${{ needs.build-base.outputs.image-name }}
           format: 'sarif'
           output: 'trivy-results.sarif'
           
-      - name: 📋 Upload Trivy scan results
+      - name: 📋 Upload Security Scan Results
         uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
           sarif_file: 'trivy-results.sarif'
-
-  lint:
-    name: 🔍 Code Quality
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@v4
-        
-      - name: 🐍 Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          
-      - name: 📦 Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: '2.1.3'
-        
-      - name: 🔍 Run Linting
-        run: |
-          # Configure Poetry for private repository access
-          poetry config http-basic.tsd ${{ secrets.PRIVATE_USERNAME }} ${{ secrets.PRIVATE_PASSWORD }}
-          poetry install --all-extras --with dev
-          poetry run ruff check src/
-          poetry run ruff format --check src/
 
   # ========================================
   # 📦 SEMANTIC RELEASE (MAIN BRANCH ONLY)
@@ -269,7 +346,7 @@ jobs:
   build:
     name: 🏗️ Build & Push
     runs-on: ubuntu-latest
-    needs: [test, security-scan, lint, update-app-version]
+    needs: [test, security-scan, lint, update-app-version, build-base]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[skip ci]')
     outputs:
       image-tag: ${{ steps.meta.outputs.tags }}
@@ -292,6 +369,16 @@ jobs:
       - name: 🐳 Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
         
+      - name: 📥 Download Base Image
+        uses: actions/download-artifact@v4
+        with:
+          name: base-image
+          path: /tmp
+          
+      - name: 🔄 Load Base Image
+        run: |
+          docker load --input /tmp/base-image.tar
+        
       - name: 🏷️ Generate Metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -302,19 +389,18 @@ jobs:
             type=sha,prefix={{branch}}-
             type=raw,value=latest,enable={{is_default_branch}}
             
-      - name: 🏗️ Build and Push
+      - name: 🏗️ Tag and Push
         id: build
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          build-args: |
-            PRIVATE_USERNAME=${{ secrets.PRIVATE_USERNAME }}
-            PRIVATE_PASSWORD=${{ secrets.PRIVATE_PASSWORD }}
+        run: |
+          # Tag the built image with registry tags
+          for tag in $(echo "${{ steps.meta.outputs.tags }}" | tr ',' ' '); do
+            docker tag ${{ needs.build-base.outputs.image-name }} $tag
+            docker push $tag
+          done
+          
+          # Get the digest of the pushed image
+          DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' $(echo "${{ steps.meta.outputs.tags }}" | cut -d',' -f1) | cut -d'@' -f2)
+          echo "digest=$DIGEST" >> $GITHUB_OUTPUT
 
   # ========================================
   # 🚀 DEPLOYMENT

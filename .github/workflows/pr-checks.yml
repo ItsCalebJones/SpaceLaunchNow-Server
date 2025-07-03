@@ -13,113 +13,16 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  POETRY_HTTP_BASIC_TSD_USERNAME: ${{ secrets.PRIVATE_USERNAME }}
-  POETRY_HTTP_BASIC_TSD_PASSWORD: ${{ secrets.PRIVATE_PASSWORD }}
+  REGISTRY: registry.digitalocean.com/sln-prod-registry-01
+  IMAGE_NAME: space-launch-now-base
 
 jobs:
   # ========================================
-  # 🔍 LINTING & CODE QUALITY
+  # 🔍 FAST LINTING (No Docker/Poetry overhead)
   # ========================================
   
   lint:
-    name: 🔍 Code Linting
-    runs-on: ubuntu-latest
-    # Skip draft PRs unless they're marked as ready for review
-    if: github.event.pull_request.draft == false
-    
-    steps:
-      - name: 📥 Checkout Code
-        uses: actions/checkout@v4
-        with:
-          # Fetch full history for better analysis
-          fetch-depth: 0
-        
-      - name: � Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          cache: 'pip'
-        
-      - name: 📦 Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: '2.1.3'
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-          installer-parallel: true
-        
-      - name: 🔧 Load Cached Virtual Environment
-        id: cached-poetry-dependencies
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-        
-      - name: �📦 Install Dependencies
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: |
-          # Configure Poetry for private repository access
-          poetry config http-basic.tsd ${{ secrets.PRIVATE_USERNAME }} ${{ secrets.PRIVATE_PASSWORD }}
-          poetry install --all-extras --with dev
-        
-      - name: 🔍 Run Ruff Linting
-        run: |
-          echo "::group::🔍 Ruff Check"
-          poetry run ruff check src/ --output-format=github
-          echo "::endgroup::"
-          
-          echo "::group::🎨 Ruff Format Check"
-          poetry run ruff format --check src/
-          echo "::endgroup::"
-        
-      - name: 📊 Generate Lint Report
-        if: always()
-        run: |
-          echo "::group::📊 Lint Summary"
-          echo "Generating detailed lint report..."
-          poetry run ruff check src/ --output-format=json > lint-report.json || true
-          echo "::endgroup::"
-        
-      - name: 📤 Upload Lint Report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: lint-report
-          path: lint-report.json
-          retention-days: 7
-
-  # ========================================
-  # 🧪 PYTEST TESTING
-  # ========================================
-  test:
-    name: 🧪 Test Suite
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false
-
-    steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@v4
-        
-      - name: 🐳 Setup Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        
-      - name: 🧪 Run Tests
-        run: |
-          docker compose -f docker/docker-compose.test.yml run --rm test
-          
-      - name: 📊 Upload Coverage
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: coverage-report
-          path: report/
-
-  # ========================================
-  # 🔒 SECURITY SCANNING
-  # ========================================
-  
-  security:
-    name: 🔒 Security Scan
+    name: 🔍 Fast Linting
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false
     
@@ -132,18 +35,173 @@ jobs:
         with:
           python-version: '3.12'
         
-      - name: 📦 Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: '2.1.3'
-        
-      - name: 🔒 Run Bandit Security Scan
+      - name: 📦 Install Ruff
         run: |
-          # Configure Poetry for private repository access
-          poetry config http-basic.tsd ${{ secrets.PRIVATE_USERNAME }} ${{ secrets.PRIVATE_PASSWORD }}
-          poetry add bandit[toml] --group dev
-          poetry run bandit -r src/ -f json -o bandit-report.json || true
-          poetry run bandit -r src/ -f txt
+          python -m pip install --upgrade pip
+            pip install ruff==0.9.1
+        
+      - name: 🔍 Run Ruff Linting
+        run: |
+          echo "::group::🔍 Ruff Check"
+          ruff check src/ --output-format=github
+          echo "::endgroup::"
+          
+          echo "::group::🎨 Ruff Format Check"
+          ruff format --check src/
+          echo "::endgroup::"
+        
+      - name: 📊 Generate Lint Report
+        if: always()
+        run: |
+          echo "::group::📊 Lint Summary"
+          echo "Generating detailed lint report..."
+          ruff check src/ --output-format=json > lint-report.json || true
+          echo "::endgroup::"
+        
+      - name: 📤 Upload Lint Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-report
+          path: lint-report.json
+          retention-days: 7
+
+  # ========================================
+  # 🏗️ BUILD ONCE (Reuse for tests and security)
+  # ========================================
+  
+  build:
+    name: 🏗️ Build Docker Image
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    outputs:
+      image-name: ${{ steps.image.outputs.image-name }}
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: 🐳 Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
+      - name: 🏗️ Build Docker Image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: test-image:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          outputs: type=docker,dest=/tmp/test-image.tar
+          build-args: |
+            PRIVATE_USERNAME=${{ secrets.PRIVATE_USERNAME }}
+            PRIVATE_PASSWORD=${{ secrets.PRIVATE_PASSWORD }}
+            
+      - name: 📤 Upload Docker Image
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-image
+          path: /tmp/test-image.tar
+          retention-days: 1
+          
+      - name: 🏷️ Set Image Name
+        id: image
+        run: echo "image-name=test-image:${{ github.sha }}" >> $GITHUB_OUTPUT
+
+  # ========================================
+  # 🧪 TESTS (Reuse built image)
+  # ========================================
+  
+  test:
+    name: 🧪 Test Suite
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.event.pull_request.draft == false
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: 🐳 Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
+      - name: 📥 Download Docker Image
+        uses: actions/download-artifact@v4
+        with:
+          name: test-image
+          path: /tmp
+          
+      - name: 🔄 Load Docker Image
+        run: |
+          docker load --input /tmp/test-image.tar
+          docker tag ${{ needs.build.outputs.image-name }} test-image:latest
+        
+      - name: 🧪 Run Tests
+        run: |
+          # Override the image in docker-compose to use our built image
+          COMPOSE_FILE="docker/docker-compose.test.yml"
+          
+          # Create a temporary compose file with our built image
+          cat > docker-compose.test.override.yml << EOF
+          version: '3.8'
+          services:
+            test:
+              image: test-image:latest
+          EOF
+          
+          docker compose -f $COMPOSE_FILE -f docker-compose.test.override.yml run --rm test
+          
+      - name: 📊 Upload Coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: report/
+
+  # ========================================
+  # 🔒 SECURITY SCAN (Reuse built image)
+  # ========================================
+  
+  security:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.event.pull_request.draft == false
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: 📥 Download Docker Image
+        uses: actions/download-artifact@v4
+        with:
+          name: test-image
+          path: /tmp
+          
+      - name: 🔄 Load Docker Image
+        run: |
+          docker load --input /tmp/test-image.tar
+        
+      - name: 🔍 Run Trivy Security Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ needs.build.outputs.image-name }}
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          
+      - name: 📋 Upload Security Scan Results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+          
+      - name: 🔒 Run Bandit Security Scan (Source Code)
+        run: |
+          # Quick source code security scan without Poetry overhead
+          pip install bandit[toml]
+          bandit -r src/ -f json -o bandit-report.json || true
+          bandit -r src/ -f txt
         continue-on-error: true
         
       - name: 📤 Upload Security Report
@@ -155,44 +213,13 @@ jobs:
           retention-days: 7
 
   # ========================================
-  # 📦 BUILD TEST
-  # ========================================
-  
-  build-test:
-    name: 🐳 Build Test
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false
-    
-    steps:
-      - name: 📥 Checkout Code
-        uses: actions/checkout@v4
-        
-      - name: 🐳 Setup Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        
-      - name: 🔨 Test Docker Build
-        run: |
-          echo "::group::🐳 Building Docker Image"
-          docker build \
-            --build-arg PRIVATE_USERNAME=${{ secrets.PRIVATE_USERNAME }} \
-            --build-arg PRIVATE_PASSWORD=${{ secrets.PRIVATE_PASSWORD }} \
-            --tag test-build:${{ github.sha }} \
-            .
-          echo "::endgroup::"
-          
-          echo "::group::🔍 Image Information"
-          docker images test-build:${{ github.sha }}
-          docker history test-build:${{ github.sha }}
-          echo "::endgroup::"
-
-  # ========================================
   # 📋 QUALITY SUMMARY
   # ========================================
   
   quality-gate:
     name: 📋 Quality Gate
     runs-on: ubuntu-latest
-    needs: [lint, test, security, build-test]
+    needs: [lint, test, security]
     if: always() && github.event.pull_request.draft == false
     
     steps:
@@ -203,15 +230,13 @@ jobs:
           LINT_STATUS="${{ needs.lint.result }}"
           TEST_STATUS="${{ needs.test.result }}"
           SECURITY_STATUS="${{ needs.security.result }}"
-          BUILD_STATUS="${{ needs.build-test.result }}"
           
           echo "🔍 Linting: $LINT_STATUS"
           echo "🧪 Testing: $TEST_STATUS"
           echo "🔒 Security: $SECURITY_STATUS"
-          echo "🐳 Build: $BUILD_STATUS"
           
           # Determine overall status
-          if [[ "$LINT_STATUS" == "success" && "$TEST_STATUS" == "success" && "$BUILD_STATUS" == "success" ]]; then
+          if [[ "$LINT_STATUS" == "success" && "$TEST_STATUS" == "success" && "$SECURITY_STATUS" == "success" ]]; then
             echo "✅ Quality gate PASSED - All checks successful!"
             echo "quality_gate=passed" >> $GITHUB_OUTPUT
           else
@@ -242,7 +267,6 @@ jobs:
             const lintStatus = '${{ needs.lint.result }}';
             const testStatus = '${{ needs.test.result }}';
             const securityStatus = '${{ needs.security.result }}';
-            const buildStatus = '${{ needs.build-test.result }}';
             
             const getStatusIcon = (status) => {
               switch(status) {
@@ -261,13 +285,13 @@ jobs:
             | 🔍 **Linting** | ${getStatusIcon(lintStatus)} | ${lintStatus} |
             | 🧪 **Testing** | ${getStatusIcon(testStatus)} | ${testStatus} |
             | 🔒 **Security** | ${getStatusIcon(securityStatus)} | ${securityStatus} |
-            | 🐳 **Build** | ${getStatusIcon(buildStatus)} | ${buildStatus} |
             
-            ${lintStatus === 'success' && testStatus === 'success' && buildStatus === 'success' 
+            ${lintStatus === 'success' && testStatus === 'success' && securityStatus === 'success'
               ? '🎉 **All quality checks passed!** This PR is ready for review.' 
               : '⚠️ **Some quality checks failed.** Please review the failed checks above.'}
             
             ---
+            <sub>⚡ Optimized pipeline: Fast linting + single Docker build reused for tests & security</sub>
             <sub>Triggered by commit ${context.sha.substring(0, 7)} • [View Details](${context.payload.pull_request.html_url}/checks)</sub>`;
             
             if (botComment) {
