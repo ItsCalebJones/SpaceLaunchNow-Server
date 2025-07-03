@@ -113,18 +113,36 @@ jobs:
         
       - name: 🧪 Run Tests
         run: |
-          # Copy the compose file and modify it to use our pre-built image
-          cp docker/docker-compose.test.yml docker-compose.test.tmp.yml
+          # Start database in background
+          docker run -d --name test-db \
+            -e POSTGRES_DB=postgres \
+            -e POSTGRES_USER=postgres \
+            -e POSTGRES_PASSWORD=postgres \
+            postgres:14-alpine
           
-          # Replace the build section with our pre-built image
-          sed -i '/build:/,+3d' docker-compose.test.tmp.yml
-          sed -i 's/image: space_launch_now_local/image: test-image:latest/' docker-compose.test.tmp.yml
+          # Wait for database to be ready
+          sleep 10
           
-          # Run tests with the modified compose file
-          docker compose -f docker-compose.test.tmp.yml run --rm test
+          # Run tests using our pre-built image
+          docker run --rm \
+            --link test-db:db \
+            -v "$(pwd)/report/coverage/:/code/coverage/" \
+            -v "$(pwd)/report/htmlcov/:/code/htmlcov/" \
+            -v "$(pwd)/report/xmlrunner/:/code/xmlrunner/" \
+            -e DEBUG=true \
+            -e DJANGO_SECRET_KEY=${{ secrets.PRIVATE_PASSWORD }} \
+            -e DATABASE_NAME=postgres \
+            -e DATABASE_USERNAME=postgres \
+            -e DATABASE_PASSWORD=postgres \
+            -e DATABASE_ENGINE=django.db.backends.postgresql \
+            -e DATABASE_HOST=db \
+            -e DATABASE_PORT=5432 \
+            -e USE_LOCAL_STORAGE=true \
+            test-image:latest \
+            bash -c "coverage run --data-file=/code/coverage/.coverage manage.py test --settings=spacelaunchnow.settings.test && coverage html --data-file=/code/coverage/.coverage && coverage report --data-file=/code/coverage/.coverage"
           
-          # Clean up
-          rm -f docker-compose.test.tmp.yml
+          # Clean up database
+          docker stop test-db && docker rm test-db
           
       - name: 📊 Upload Coverage
         uses: actions/upload-artifact@v4
