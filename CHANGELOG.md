@@ -1,5 +1,59 @@
 # CHANGELOG
 
+## v4.6.0 (2025-07-03)
+
+### Feature
+
+* feat: implement fast linting and Docker image build in CI workflows ([`c2e1d41`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/c2e1d4175af78b22fba34b17d8663fb6d9e25ab4))
+
+* feat: enhance Dockerfile with detailed debugging for TSD repository access ([`8a40057`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/8a40057eae1a68c509697fb2c32cbc495cd5d4d7))
+
+* feat: troubleshoot CI issues ([`9fa58e2`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/9fa58e2823ca84e61be14fc1ab1b284adca64f28))
+
+* feat: Add configuration for Poetry private repository access in CI workflows and documentation ([`af1d96a`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/af1d96addaacd915e2f11210c297cd81ac0fb828))
+
+* feat: Add pr tests ([`1221d3d`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/1221d3d0bcd114684c21903c56e9982d7a5357dc))
+
+* feat: Implement Grafana secret management and configuration updates ([`c3ec2ca`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/c3ec2ca68931bec96ddaf23c2cf61be3a3837b73))
+
+* feat: Complete GitOps infrastructure implementation
+
+- Add comprehensive ArgoCD setup with Helm deployment
+- Implement Terraform IaC for DigitalOcean infrastructure
+- Add Ansible playbooks for K8s cluster management
+- Create GitOps manifests for staging/production environments
+- Add Helm charts for SpaceLaunchNow application
+- Implement secrets management with Vault/External Secrets
+- Add monitoring stack integration
+
+This replaces manual Helm deployments with automated GitOps workflow. ([`613a0c4`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/613a0c40099845661cc523d16d542b5ddbd86151))
+
+### Fix
+
+* fix: support both main and master ([`d081258`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/d081258897d0827c34d91aa23dc2dbc5896ae6f7))
+
+* fix: test TSD repository connectivity ([`6d52d54`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/6d52d54e5b1bb6c2a0538ba46e49f39a419c147b))
+
+* fix: issue with poetry lock file ([`78ecee6`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/78ecee6d82ca7b022803634995e621829b0ed448))
+
+### Refactor
+
+* refactor: change test execution ([`bbc9a16`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/bbc9a16945a4fc0f79dce727d281d243925e471d))
+
+* refactor: fix docker compose ([`31d76ab`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/31d76ab16d7092916fd1d39f6990f149d270a050))
+
+* refactor: simplify Dockerfile back ([`168b8c4`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/168b8c409c73d764c4023d2fb6e66b748ec30870))
+
+### Unknown
+
+* Merge pull request #271 from ItsCalebJones/feature/gitops-infrastructure
+
+fix: support both main and master ([`c45ca01`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/c45ca01cbe94d68640d781912c6c6b324c840b39))
+
+* Merge pull request #270 from ItsCalebJones/feature/gitops-infrastructure
+
+feat: Complete GitOps infrastructure implementation ([`9a77c4a`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/9a77c4a9f995b1b75e7ca9d0bd455e0d4137106f))
+
 ## v4.5.5 (2025-05-25)
 
 ### Fix
