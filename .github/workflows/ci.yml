@@ -113,18 +113,18 @@ jobs:
         
       - name: 🧪 Run Tests
         run: |
-          # Override the image in docker-compose to use our built image
-          COMPOSE_FILE="docker/docker-compose.test.yml"
+          # Copy the compose file and modify it to use our pre-built image
+          cp docker/docker-compose.test.yml docker-compose.test.tmp.yml
           
-          # Create a temporary compose file with our built image
-          cat > docker-compose.test.override.yml << EOF
-          version: '3.8'
-          services:
-            test:
-              image: test-image:latest
-          EOF
+          # Replace the build section with our pre-built image
+          sed -i '/build:/,+3d' docker-compose.test.tmp.yml
+          sed -i 's/image: space_launch_now_local/image: test-image:latest/' docker-compose.test.tmp.yml
           
-          docker compose -f $COMPOSE_FILE -f docker-compose.test.override.yml run --rm test
+          # Run tests with the modified compose file
+          docker compose -f docker-compose.test.tmp.yml run --rm test
+          
+          # Clean up
+          rm -f docker-compose.test.tmp.yml
           
       - name: 📊 Upload Coverage
         uses: actions/upload-artifact@v4
