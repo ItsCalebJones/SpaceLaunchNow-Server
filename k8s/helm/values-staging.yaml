@@ -2,8 +2,12 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# Authentication secret configuration for staging environment
+auth:
+  secretName: sln-auth-dev  # Use development secrets for staging
+
 image:
-  repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
+  repository: registry.digitalocean.com/sln-prod-registry-01/space-launch-now-base
   tag: staging
   pullPolicy: Always
 
@@ -28,7 +32,7 @@ env:
     ENABLE_SILKY: "False"
     SILKY_INTERCEPT_PERCENT: "100"
     SILKY_ANALYZE_QUERIES: "False"
-    HOST_NAME: "staging.spacelaunchnow.me"
+    HOST_NAME: "staging.spacelaunchnow.app"
 
   worker:
     IS_WEBSERVER: "False"
@@ -99,14 +103,14 @@ web:
      cert-manager.io/cluster-issuer: letsencrypt-production
     # kubernetes.io/tls-acme: "true"
     hosts:
-      - host: staging.spacelaunchnow.me
+      - host: staging.spacelaunchnow.app
         paths:
           - path: /
             pathType: ImplementationSpecific
     tls:
       - secretName: spacelaunchnow-tls
         hosts:
-          - staging.spacelaunchnow.me
+          - staging.spacelaunchnow.app
 
 notification_service:
   enabled: false

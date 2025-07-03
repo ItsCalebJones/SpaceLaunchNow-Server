@@ -1,0 +1,98 @@
+grafana:
+  admin:
+    existingSecret: "grafana-admin-credentials"
+    userKey: admin-user
+    passwordKey: admin-password
+  ingress:
+    enabled: true
+    annotations:
+     kubernetes.io/ingress.class: nginx
+     cert-manager.io/cluster-issuer: letsencrypt-production
+    hosts: ["grafana.spacelaunchnow.app"]
+    tls:
+      - secretName: spacelaunchnow-tls
+        hosts:
+          - grafana.spacelaunchnow.app
+
+  persistence:
+    enabled: True
+    type: pvc
+    storageClassName: do-block-storage
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+    finalizers:
+      - kubernetes.io/pvc-protection
+
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Loki
+          type: loki
+          url: http://loki-stack-grafana-loki-querier.metrics.svc.cluster.local:3100
+          access: proxy
+          isDefault: false
+          jsonData:
+            maxLines: 1000
+          editable: true
+
+prometheus:
+  ingress:
+    enabled: true
+    annotations:
+     kubernetes.io/ingress.class: nginx
+     cert-manager.io/cluster-issuer: letsencrypt-production
+     nginx.ingress.kubernetes.io/auth-type: basic
+     nginx.ingress.kubernetes.io/auth-secret: basic-auth
+     nginx.ingress.kubernetes.io/auth-realm: Authentication Required - admin
+    hosts: ["prometheus.spacelaunchnow.app"]
+    tls:
+      - secretName: spacelaunchnow-tls-prometheus
+        hosts:
+          - prometheus.spacelaunchnow.app
+
+  prometheusSpec:
+    resources:
+      requests:
+        memory: 4Gi
+        cpu: 200m
+      limits:
+        memory: 6Gi
+        cpu: 300m
+    additionalScrapeConfigs:
+      - job_name: 'ingress-nginx-endpoints'
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names:
+                - default
+        relabel_configs:
+          - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_scrape ]
+            action: keep
+            regex: true
+          - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_scheme ]
+            action: replace
+            target_label: __scheme__
+            regex: (https?)
+          - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_path ]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels: [ __address__, __meta_kubernetes_pod_annotation_prometheus_io_port ]
+            action: replace
+            target_label: __address__
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+          - source_labels: [ __meta_kubernetes_service_name ]
+            regex: prometheus-server
+            action: drop
+
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: do-block-storage
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi

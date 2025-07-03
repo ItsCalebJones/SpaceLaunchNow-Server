@@ -1,0 +1,220 @@
+# ArgoCD Helm Chart Values for SpaceLaunchNow
+# This file contains the configuration for deploying ArgoCD via Helm
+
+global:
+  domain: argo.spacelaunchnow.app
+
+server:
+  # Server configuration
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-production
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    hosts:
+      - argo.spacelaunchnow.app
+    tls:
+      - secretName: argocd-server-tls
+        hosts:
+          - argo.spacelaunchnow.app
+    
+  # Server configuration
+  config:
+    url: https://argo.spacelaunchnow.app
+    application.instanceLabelKey: argocd.argoproj.io/instance
+    # OIDC configuration
+    oidc.config: |
+      name: Google
+      issuer: https://accounts.google.com
+      clientId: $oidc.google.clientId
+      clientSecret: $oidc.google.clientSecret
+      requestedScopes: ["openid", "profile", "email"]
+      requestedIDTokenClaims: {"groups": {"essential": true}}
+    # Admin users (replace with your Google email)
+    accounts.admin: apiKey
+
+  # Additional server configuration  
+  extraArgs:
+    - --insecure
+
+# Controller configuration
+controller:
+  # Resource limits for the controller
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  
+  # Metrics configuration
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      namespace: argocd
+
+# Application Set Controller
+applicationSet:
+  enabled: true
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+# Notifications controller
+notifications:
+  enabled: true
+  argocdUrl: https://argo.spacelaunchnow.app
+  
+  # Notification templates (optional - configure based on your needs)
+  templates:
+    template.app-deployed: |
+      email:
+        subject: Application {{.app.metadata.name}} is now running new version.
+      message: |
+        {{if eq .serviceType "slack"}}:white_check_mark:{{end}} Application {{.app.metadata.name}} is now running new version of {{.app.status.sync.revision}}.
+    template.app-health-degraded: |
+      email:
+        subject: Application {{.app.metadata.name}} has degraded.
+      message: |
+        {{if eq .serviceType "slack"}}:exclamation:{{end}} Application {{.app.metadata.name}} has degraded.
+        Application details: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}.
+    template.app-sync-failed: |
+      email:
+        subject: Application {{.app.metadata.name}} sync is failed.
+      message: |
+        {{if eq .serviceType "slack"}}:exclamation:{{end}} Application {{.app.metadata.name}} sync is failed.
+        Application details: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}.
+        {{if ne .serviceType "slack"}}
+        {{range $c := .app.status.conditions}}
+            * {{$c.message}}
+        {{end}}
+        {{end}}
+
+  # Triggers (configure based on your notification needs)
+  triggers:
+    trigger.on-deployed: |
+      - description: Application is synced and healthy. Triggered once per commit.
+        send:
+        - app-deployed
+        when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
+    trigger.on-health-degraded: |
+      - description: Application has degraded
+        send:
+        - app-health-degraded
+        when: app.status.health.status == 'Degraded'
+    trigger.on-sync-failed: |
+      - description: Application syncing has failed
+        send:
+        - app-sync-failed
+        when: app.status.operationState.phase in ['Error', 'Failed']
+
+# Redis configuration
+redis:
+  enabled: true
+  resources:
+    limits:
+      cpu: 200m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 64Mi
+
+# Redis HA (disable for single instance)
+redis-ha:
+  enabled: false
+
+# Dex (disable if not using SSO)
+dex:
+  enabled: false
+
+# Server parameters
+configs:
+  params:
+    server.insecure: true
+    server.grpc.web: true
+    controller.status.processors: 20
+    controller.operation.processors: 10
+    controller.self.heal.timeout.seconds: 5
+    controller.repo.server.timeout.seconds: 60
+    
+  # Repository credentials (configure if using private repositories)
+  repositories: {}
+  
+  # Cluster configuration
+  clusterCredentials: []
+  
+  # RBAC configuration for SpaceLaunchNow team with Google OAuth
+  rbac:
+    policy.default: role:readonly
+    policy.csv: |
+      # Admin role - full access to all SpaceLaunchNow applications
+      p, role:admin, applications, *, */*, allow
+      p, role:admin, clusters, *, *, allow
+      p, role:admin, repositories, *, *, allow
+      p, role:admin, certificates, *, *, allow
+      p, role:admin, projects, *, *, allow
+      
+      # Developer role - read and sync access to SpaceLaunchNow applications
+      p, role:developer, applications, get, spacelaunchnow/*, allow
+      p, role:developer, applications, sync, spacelaunchnow/*, allow
+      p, role:developer, applications, action/*, spacelaunchnow/*, allow
+      p, role:developer, repositories, get, *, allow
+      p, role:developer, projects, get, spacelaunchnow, allow
+      
+      # Staging role - full access to staging applications only
+      p, role:staging-admin, applications, *, spacelaunchnow/sln-staging, allow
+      p, role:staging-admin, applications, *, spacelaunchnow/sln-infrastructure, allow
+      
+      # User mappings for Google OAuth (replace with actual Google emails)
+      g, ca.jones9119@gmail.com, role:admin
+      # g, developer@yourdomain.com, role:developer
+      # g, staging@yourdomain.com, role:staging-admin
+      
+      # Example group mappings if using Google Workspace groups
+      # g, spacelaunchnow-admins@yourdomain.com, role:admin
+      # g, spacelaunchnow-developers@yourdomain.com, role:developer
+  
+  # Resource customizations for better health checks
+  resource.customizations.health.argoproj.io_Application: |
+    hs = {}
+    hs.status = "Progressing"
+    hs.message = ""
+    if obj.status ~= nil then
+      if obj.status.health ~= nil then
+        hs.status = obj.status.health.status
+        if obj.status.health.message ~= nil then
+          hs.message = obj.status.health.message
+        end
+      end
+    end
+    return hs
+
+# Default project settings
+createAggregateRoles: false
+
+# CRDs installation
+crds:
+  install: true
+  keep: true
+
+# Additional labels and annotations
+commonLabels:
+  app.kubernetes.io/name: argocd
+  app.kubernetes.io/instance: argocd
+  app.kubernetes.io/component: argocd
+  environment: production
+
+# Security context
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 999
+  fsGroup: 999

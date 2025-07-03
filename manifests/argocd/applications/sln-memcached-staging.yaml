@@ -1,0 +1,70 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sln-memcached-staging
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: spacelaunchnow
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: memcached
+    targetRevision: 7.8.6  # Use latest stable version
+    helm:
+      valueFiles: []
+      values: |
+        # Staging Memcached Values
+        resources:
+          requests:
+            cpu: 25m
+            memory: 64Mi
+          limits:
+            cpu: 100m
+            memory: 256Mi
+
+        args:
+          - /run.sh 
+          - -I 50m         # Max item size (50MB)
+          - -m 200         # Memory limit (200MB)
+          - -c 512         # Max simultaneous connections
+          - -t 2           # Number of threads
+          - -v             # Verbose logging
+
+        # Single replica for staging to save resources
+        replicaCount: 1
+
+        # Service monitor for Prometheus metrics
+        serviceMonitor:
+          enabled: true
+          
+        # Security context
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 11211
+          fsGroup: 11211
+
+        # Labels for staging environment
+        commonLabels:
+          environment: staging
+          app.kubernetes.io/instance: sln-staging-memcached
+
+        # Override name to match expected service name
+        fullnameOverride: sln-staging-memcached
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sln-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - PrunePropagationPolicy=foreground
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  revisionHistoryLimit: 10

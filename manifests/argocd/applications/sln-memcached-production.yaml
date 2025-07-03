@@ -1,0 +1,87 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sln-memcached-production
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: spacelaunchnow
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: memcached
+    targetRevision: 7.8.6  # Use latest stable version
+    helm:
+      valueFiles: []
+      values: |
+        # Production Memcached Values
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+
+        args:
+          - /run.sh 
+          - -I 100m         # Max item size (100MB)
+          - -m 800          # Memory limit (800MB, leaving headroom)
+          - -c 2048         # Max simultaneous connections
+          - -t 4            # Number of threads
+          - -v              # Verbose logging
+
+        # High availability with multiple replicas
+        replicaCount: 3
+
+        # Pod disruption budget for zero-downtime deployments
+        podDisruptionBudget:
+          enabled: true
+          minAvailable: 2
+
+        # Service monitor for Prometheus metrics
+        serviceMonitor:
+          enabled: true
+          
+        # Security context
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 11211
+          fsGroup: 11211
+
+        # Pod anti-affinity for better distribution
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                  - key: app.kubernetes.io/name
+                    operator: In
+                    values:
+                    - memcached
+                topologyKey: kubernetes.io/hostname
+
+        # Labels for production environment
+        commonLabels:
+          environment: production
+          app.kubernetes.io/instance: sln-production-memcached
+
+        # Override name to match expected service name
+        fullnameOverride: sln-prod-memcache
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sln-prod
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    - PrunePropagationPolicy=foreground
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  revisionHistoryLimit: 10
+  # Note: No automated sync for production - requires manual approval

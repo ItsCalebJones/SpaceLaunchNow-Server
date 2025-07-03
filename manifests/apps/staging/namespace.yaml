@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sln-dev
+  labels:
+    environment: staging
+    app.kubernetes.io/name: spacelaunchnow
+    app.kubernetes.io/component: namespace

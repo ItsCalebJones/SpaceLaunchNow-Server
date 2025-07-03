@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - sln-external-secrets-dev.yaml
+  - sln-external-secrets-prod.yaml
+  - monitoring-basic-auth.yaml
+  - ../../k8s/secrets-management/grafana-external-secret.yaml
+
+commonLabels:
+  app.kubernetes.io/name: spacelaunchnow
+  app.kubernetes.io/component: external-secrets

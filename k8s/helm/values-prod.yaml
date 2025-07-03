@@ -2,8 +2,12 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# Authentication secret configuration for production environment
+auth:
+  secretName: sln-auth-prod  # Use production secrets
+
 image:
-  repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
+  repository: registry.digitalocean.com/sln-prod-registry-01/space-launch-now-base
   tag: latest
   pullPolicy: Always
 
@@ -25,7 +29,7 @@ env:
     EMAIL_PORT: "587"
     EMAIL_HOST_TLS: "True"
     SLN_ENVIRONMENT: "production"
-    HOST_NAME: "spacelaunchnow.me"
+    HOST_NAME: "spacelaunchnow.app"
 
   worker:
     IS_WEBSERVER: "False"
@@ -107,19 +111,19 @@ web:
        add_header X-Cache-Status $upstream_cache_status;
     # kubernetes.io/tls-acme: "true"
     hosts:
-      - host: api.spacelaunchnow.me
+      - host: api.spacelaunchnow.app
         paths:
           - path: /
             pathType: ImplementationSpecific
-      - host: spacelaunchnow.me
+      - host: spacelaunchnow.app
         paths:
           - path: /
             pathType: ImplementationSpecific
     tls:
       - secretName: spacelaunchnow-tls
         hosts:
-          - api.spacelaunchnow.me
-          - spacelaunchnow.me
+          - api.spacelaunchnow.app
+          - spacelaunchnow.app
 
 notification_service:
   enabled: true
@@ -141,7 +145,7 @@ serviceAccount:
 jobs:
   - name: sln-news-sync
     image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
+      repository: registry.digitalocean.com/sln-prod-registry-01/space-launch-now-base
       tag: latest
       imagePullPolicy: Always
     schedule: "*/5 * * * *"
@@ -159,7 +163,7 @@ jobs:
         memory: 256Mi
   - name: sln-news-deep-sync
     image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
+      repository: registry.digitalocean.com/sln-prod-registry-01/space-launch-now-base
       tag: latest
       imagePullPolicy: Always
     schedule: "0 */12 * * *"
@@ -177,7 +181,7 @@ jobs:
         memory: 256Mi
   - name: sln-autoscaler
     image:
-      repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
+      repository: registry.digitalocean.com/sln-prod-registry-01/space-launch-now-base
       tag: latest
       imagePullPolicy: Always
     schedule: "*/7 * * * *"

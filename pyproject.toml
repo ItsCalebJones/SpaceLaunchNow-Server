@@ -41,7 +41,7 @@ djangorestframework-bulk = "0.2.1"
 djangorestframework-queryfields = "1.0.0"
 drf-spectacular = "^0.26.4"
 goose3 = "^3.1.19"
-gunicorn = "^22.0.0"
+gunicorn = "^23.0.0"
 num2word = "==1.0.1"
 pilkit = "==2.0"
 Pillow = "==10.3.0"
@@ -56,7 +56,7 @@ sorl-thumbnail = "==12.9.0"
 sorl-thumbnail-serializer-field = "==0.2.1"
 python-semantic-release = "9.15.2"
 tzlocal = "==4.2"
-django-launch-library = {version = "^21.31.0", source = "tsd"}
+django-launch-library = {version = "^21.34.2", source = "tsd"}
 environs = "^9.5.0"
 django-jet-reboot = "^1.3.3"
 pymemcache = "^4.0.0"
@@ -89,7 +89,7 @@ unittest-xml-reporting = "==3.2.0"
 
 [[tool.poetry.source]]
 name = "tsd"
-url = "https://pypi.spacelaunchnow.me/simple/"
+url = "https://pypi.thespacedevs.com/simple/"
 priority = "supplemental"
 
 [build-system]

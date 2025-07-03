@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Infrastructure components
+resources:
+  - external-secrets/
+
+commonLabels:
+  app.kubernetes.io/name: spacelaunchnow
+  app.kubernetes.io/component: infrastructure

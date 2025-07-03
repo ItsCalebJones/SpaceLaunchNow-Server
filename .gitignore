@@ -21,9 +21,21 @@ k8s/ingress/issuer/secret.yaml
 src/xmlrunner/**
 **.env
 report/
-*secret*.yaml
+*secrets.yaml
 dist/**
 docker/*.backup
 *.log
 .history/
 **.json
+**.tfvars
+**.tfstate
+**.tfstate.backup
+**.tfplan
+**.terraform**
+**kubeconfig**
+google-oauth-secret.yaml
+
+# Security - Auth files
+k8s/monitoring/auth
+**/auth
+*.htpasswd

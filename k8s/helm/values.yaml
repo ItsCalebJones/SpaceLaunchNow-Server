@@ -2,8 +2,12 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# Authentication secret configuration
+auth:
+  secretName: sln-auth-prod  # Default to production, override in environment-specific values
+
 image:
-  repository: registry.digitalocean.com/spacelaunchnow-registry/space-launch-now-base
+  repository: registry.digitalocean.com/sln-prod-registry-01/space-launch-now-base
   tag: master
   pullPolicy: Always
 

@@ -48,42 +48,42 @@ spec:
             - name: DJANGO_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: sln-auth-prod
+                  name: {{ .Values.auth.secretName }}
                   key: django-secret-key
             - name: DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: sln-auth-prod
+                  name: {{ .Values.auth.secretName }}
                   key: database-password
             - name: DATABASE_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: sln-auth-prod
+                  name: {{ .Values.auth.secretName }}
                   key: database-username
             - name: DATABASE_HOST
               valueFrom:
                 secretKeyRef:
-                  name: sln-auth-prod
+                  name: {{ .Values.auth.secretName }}
                   key: database-host
             - name: DATABASE_PORT
               valueFrom:
                 secretKeyRef:
-                  name: sln-auth-prod
+                  name: {{ .Values.auth.secretName }}
                   key: database-port
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
-                  name: sln-auth-prod
+                  name: {{ .Values.auth.secretName }}
                   key: aws-access-key-id
             - name: AWS_SECRET_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: sln-auth-prod
+                  name: {{ .Values.auth.secretName }}
                   key: aws-secret-access-key
             - name: SLN_SENTRY_KEY
               valueFrom:
                 secretKeyRef:
-                  name: sln-sentry-key
+                  name: {{ .Values.auth.secretName }}
                   key: sln-sentry-key
             {{- with $job.env }}
 {{ toYaml . | indent 12 }}

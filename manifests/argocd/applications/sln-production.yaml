@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sln-production
+  namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: spacelaunchnow
+  source:
+    repoURL: https://github.com/TheSpaceDevs/SpaceLaunchNow-Server
+    targetRevision: HEAD
+    path: manifests/helm/spacelaunchnow
+    helm:
+      valueFiles:
+        - ../../apps/production/values-prod.yaml
+      parameters:
+        - name: image.tag
+          value: production
+        - name: image.digest
+          value: ""
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sln-prod
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    - PrunePropagationPolicy=foreground
+    - PruneLast=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  revisionHistoryLimit: 10
+  # Note: No automated sync for production - requires manual approval

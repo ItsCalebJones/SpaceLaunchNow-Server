@@ -1,0 +1,18 @@
+{{- if or (and .Values.web.autoscaling.enabled (gt (.Values.web.autoscaling.minReplicas | int) 1)) (gt (.Values.web.replicaCount | int) 1) }}
+{{- if .Values.web.budget -}}
+{{- if .Values.web.budget.minAvailable -}}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "django.fullname" . }}-web
+  labels:
+    {{- include "django.labels" . | nindent 4 }}
+spec:
+  minAvailable: {{ .Values.web.budget.minAvailable }}
+  selector:
+    matchLabels:
+      {{- include "django.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: web
+{{- end -}}
+{{- end -}}
+{{- end -}}
