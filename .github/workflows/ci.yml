@@ -357,12 +357,8 @@ jobs:
             else
               git commit -m "📦 Update app version to ${{ steps.version.outputs.app-version }} [skip ci]"
             fi
-            
-            # Simple push with force - since we're the only one updating this file
-            git push || {
-              echo "⚠️ Push failed, trying with force..."
-              git push --force-with-lease
-            }
+          
+            git push
           fi
 
   # ========================================
