@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.6.6 (2025-07-04)
+
+### Fix
+
+* fix: update CI workflow configuration ([`c6f859b`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/c6f859b19ebdd9303ccbcad2bdbd42b2e2186a6f))
+
 ## v4.6.5 (2025-07-04)
 
 ### Chore
