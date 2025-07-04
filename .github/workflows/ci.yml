@@ -356,7 +356,17 @@ jobs:
             else
               git commit -m "📦 Update app version to ${{ steps.version.outputs.app-version }} [skip ci]"
             fi
-            git push
+            
+            # Pull latest changes and push with retry logic
+            for i in {1..3}; do
+              if git pull --rebase origin ${{ github.ref_name }} && git push; then
+                echo "✅ Successfully pushed on attempt $i"
+                break
+              else
+                echo "⚠️ Push failed on attempt $i, retrying..."
+                sleep 2
+              fi
+            done
           fi
 
   # ========================================
@@ -454,7 +464,17 @@ jobs:
           git config --local user.name "GitHub Action"
           git add manifests/apps/staging/kustomization.yaml
           git commit -m "🚀 Auto-deploy ${GITHUB_SHA::8} to staging" || exit 0
-          git push
+          
+          # Pull latest changes and push with retry logic
+          for i in {1..3}; do
+            if git pull --rebase origin ${{ github.ref_name }} && git push; then
+              echo "✅ Successfully pushed staging deployment on attempt $i"
+              break
+            else
+              echo "⚠️ Push failed on attempt $i, retrying..."
+              sleep 2
+            fi
+          done
           
       - name: 📢 Notify Staging Deployment
         uses: Ilshidur/action-discord@master
@@ -535,7 +555,17 @@ jobs:
           git config --local user.name "GitHub Action"
           git add manifests/apps/production/kustomization.yaml
           git commit -m "🚀 Deploy ${GITHUB_SHA::8} to production (approved by ${{ github.actor }})" || exit 0
-          git push
+          
+          # Pull latest changes and push with retry logic
+          for i in {1..3}; do
+            if git pull --rebase origin ${{ github.ref_name }} && git push; then
+              echo "✅ Successfully pushed production deployment on attempt $i"
+              break
+            else
+              echo "⚠️ Push failed on attempt $i, retrying..."
+              sleep 2
+            fi
+          done
           
       - name: 📢 Notify Production Deployment
         uses: Ilshidur/action-discord@master
