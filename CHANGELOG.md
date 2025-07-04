@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v4.6.4 (2025-07-04)
+
+### Fix
+
+* fix: update CI workflow configuration ([`6ed91cb`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/6ed91cbe70e09c701080f0128e60b682ca81af35))
+
+### Unknown
+
+* 📦 Update app version to v4.6.3.5 [skip ci] ([`e42908a`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/e42908a4fab423bab8d8ed77d0dc3897b281e010))
+
 ## v4.6.3 (2025-07-04)
 
 ### Unknown
