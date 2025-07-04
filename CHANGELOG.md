@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.6.1 (2025-07-04)
+
+### Fix
+
+* fix: update version extraction to use [tool.poetry] section in pyproject.toml ([`7d2adf4`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/7d2adf4188cea388c4bd48f8da3686adf29bb573))
+
 ## v4.6.0 (2025-07-03)
 
 ### Feature
