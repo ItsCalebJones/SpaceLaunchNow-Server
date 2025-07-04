@@ -427,11 +427,19 @@ jobs:
           
           # Get the digest from the pushed image using docker manifest
           if [ -n "$FIRST_TAG" ]; then
-            DIGEST=$(docker buildx imagetools inspect $FIRST_TAG --format '{{.Manifest.Digest}}' 2>/dev/null || echo "")
+            # Try to get digest using docker buildx imagetools (extract just the digest part)
+            DIGEST=$(docker buildx imagetools inspect $FIRST_TAG --format '{{.Manifest.Digest}}' 2>/dev/null | grep -o 'sha256:[a-f0-9]*' || echo "")
+            
             if [ -z "$DIGEST" ]; then
               # Fallback method: try to get digest from docker inspect
-              DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' $FIRST_TAG 2>/dev/null | cut -d'@' -f2 || echo "unknown")
+              REPO_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' $FIRST_TAG 2>/dev/null || echo "")
+              if [[ "$REPO_DIGEST" == *"@"* ]]; then
+                DIGEST=$(echo "$REPO_DIGEST" | cut -d'@' -f2)
+              else
+                DIGEST="unknown"
+              fi
             fi
+            
             echo "📦 Image digest: $DIGEST"
             echo "digest=$DIGEST" >> $GITHUB_OUTPUT
           else
