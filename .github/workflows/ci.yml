@@ -357,8 +357,17 @@ jobs:
             else
               git commit -m "📦 Update app version to ${{ steps.version.outputs.app-version }} [skip ci]"
             fi
-          
-            git push
+            
+            # Pull latest changes and push with retry logic
+            for i in {1..3}; do
+              if git pull --rebase origin ${{ github.ref_name }} && git push; then
+                echo "✅ Successfully pushed version update on attempt $i"
+                break
+              else
+                echo "⚠️ Push failed on attempt $i, retrying..."
+                sleep 2
+              fi
+            done
           fi
 
   # ========================================
