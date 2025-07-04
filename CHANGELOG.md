@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.6.2 (2025-07-04)
+
+### Fix
+
+* fix: replace secrets.GITHUB_TOKEN with github.token in CI workflow ([`0c8e681`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/0c8e68115b8a912a74d7530eb22c99a2ad77bd3d))
+
 ## v4.6.1 (2025-07-04)
 
 ### Fix
