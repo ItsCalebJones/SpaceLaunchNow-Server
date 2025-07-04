@@ -1,8 +1,16 @@
 # CHANGELOG
 
+## v4.6.3 (2025-07-04)
+
+### Unknown
+
+* Merge branch &#39;master&#39; of https://github.com/ItsCalebJones/SpaceLaunchNow-Server ([`b6e0a9f`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/b6e0a9f62742c825ff42d042fe48058dc5bf996a))
+
 ## v4.6.2 (2025-07-04)
 
 ### Fix
+
+* fix: ci process ([`dd752f3`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/dd752f3d8f2b7f2ddd9a8226939f6d17f3f2db42))
 
 * fix: replace secrets.GITHUB_TOKEN with github.token in CI workflow ([`0c8e681`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/0c8e68115b8a912a74d7530eb22c99a2ad77bd3d))
 
