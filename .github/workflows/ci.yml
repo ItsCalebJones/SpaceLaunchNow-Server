@@ -229,8 +229,8 @@ jobs:
             echo "clean-version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
             echo "Semantic release created version: $CLEAN_VERSION"
           else
-            # No release, use current pyproject.toml version
-            POETRY_VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+            # No release, use current pyproject.toml version (only from [tool.poetry] section)
+            POETRY_VERSION=$(awk '/^\[tool\.poetry\]/{flag=1} flag && /^version = /{print $3; exit}' pyproject.toml | tr -d '"')
             echo "clean-version=$POETRY_VERSION" >> $GITHUB_OUTPUT
             echo "No release created, using current version: $POETRY_VERSION"
           fi
@@ -300,8 +300,8 @@ jobs:
             APP_VERSION="v${SEMANTIC_VERSION}.${GITHUB_RUN_NUMBER}"
             echo "Using semantic release version: $SEMANTIC_VERSION"
           else
-            # Fallback to pyproject.toml version
-            POETRY_VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+            # Fallback to pyproject.toml version (only from [tool.poetry] section)
+            POETRY_VERSION=$(awk '/^\[tool\.poetry\]/{flag=1} flag && /^version = /{print $3; exit}' pyproject.toml | tr -d '"')
             APP_VERSION="v${POETRY_VERSION}.${GITHUB_RUN_NUMBER}"
             echo "No semantic release, using pyproject.toml version: $POETRY_VERSION"
           fi
