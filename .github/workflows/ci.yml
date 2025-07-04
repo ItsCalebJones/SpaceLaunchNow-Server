@@ -203,7 +203,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ github.token }}
           
       - name: 🐍 Setup Python
         uses: actions/setup-python@v5
@@ -217,7 +217,7 @@ jobs:
         uses: python-semantic-release/python-semantic-release@v9.8.6
         id: release
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ github.token }}
 
       - name: 🧹 Extract Clean Version
         id: clean-version
@@ -239,7 +239,7 @@ jobs:
         uses: python-semantic-release/upload-to-gh-release@v9.8.6
         if: steps.release.outputs.released == 'true'
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ github.token }}
           tag: ${{ steps.release.outputs.tag }}
           
       - name: 📢 Notify Release Created
@@ -253,7 +253,7 @@ jobs:
             
             **Version:** ${{ steps.release.outputs.tag }}
             **Branch:** main
-            **Commit:** ${GITHUB_SHA::8}
+            **Commit:** ${{github.sha}}
             
             📝 **Changelog:** ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ steps.release.outputs.tag }}
             ⏳ **Building container with updated version...**
@@ -277,7 +277,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITOPS_TOKEN }}
+          token: ${{ github.token }}
           
       - name: 🔄 Check for Chart Changes
         id: changes
