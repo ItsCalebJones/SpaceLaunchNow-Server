@@ -346,6 +346,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action (Version Update)"
+          git config --local pull.rebase true
           
           if git diff --quiet k8s/helm/Chart.yaml; then
             echo "📦 No changes to commit"
@@ -357,16 +358,11 @@ jobs:
               git commit -m "📦 Update app version to ${{ steps.version.outputs.app-version }} [skip ci]"
             fi
             
-            # Pull latest changes and push with retry logic
-            for i in {1..3}; do
-              if git pull --rebase origin ${{ github.ref_name }} && git push; then
-                echo "✅ Successfully pushed on attempt $i"
-                break
-              else
-                echo "⚠️ Push failed on attempt $i, retrying..."
-                sleep 2
-              fi
-            done
+            # Simple push with force - since we're the only one updating this file
+            git push || {
+              echo "⚠️ Push failed, trying with force..."
+              git push --force-with-lease
+            }
           fi
 
   # ========================================
@@ -423,14 +419,29 @@ jobs:
         id: build
         run: |
           # Tag the built image with registry tags
+          FIRST_TAG=""
           for tag in $(echo "${{ steps.meta.outputs.tags }}" | tr ',' ' '); do
+            echo "🏷️ Tagging: $tag"
             docker tag ${{ needs.build-base.outputs.image-name }} $tag
             docker push $tag
+            if [ -z "$FIRST_TAG" ]; then
+              FIRST_TAG=$tag
+            fi
           done
           
-          # Get the digest of the pushed image
-          DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' $(echo "${{ steps.meta.outputs.tags }}" | cut -d',' -f1) | cut -d'@' -f2)
-          echo "digest=$DIGEST" >> $GITHUB_OUTPUT
+          # Get the digest from the pushed image using docker manifest
+          if [ -n "$FIRST_TAG" ]; then
+            DIGEST=$(docker buildx imagetools inspect $FIRST_TAG --format '{{.Manifest.Digest}}' 2>/dev/null || echo "")
+            if [ -z "$DIGEST" ]; then
+              # Fallback method: try to get digest from docker inspect
+              DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' $FIRST_TAG 2>/dev/null | cut -d'@' -f2 || echo "unknown")
+            fi
+            echo "📦 Image digest: $DIGEST"
+            echo "digest=$DIGEST" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ No tags found, setting digest to unknown"
+            echo "digest=unknown" >> $GITHUB_OUTPUT
+          fi
 
   # ========================================
   # 🚀 DEPLOYMENT
@@ -462,6 +473,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          git config --local pull.rebase true  # Configure pull strategy
           git add manifests/apps/staging/kustomization.yaml
           git commit -m "🚀 Auto-deploy ${GITHUB_SHA::8} to staging" || exit 0
           
@@ -553,6 +565,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          git config --local pull.rebase true  # Configure pull strategy
           git add manifests/apps/production/kustomization.yaml
           git commit -m "🚀 Deploy ${GITHUB_SHA::8} to production (approved by ${{ github.actor }})" || exit 0
           
