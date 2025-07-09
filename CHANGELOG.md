@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v4.6.7 (2025-07-09)
+
+### Fix
+
+* fix: update GitOps repository checkout and deployment steps for staging and production ([`2b59b62`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/2b59b6200459a2c662adecb469f79ca5751e9849))
+
+### Unknown
+
+* 📦 Update app version to v4.6.6.9 [skip ci] ([`c64d5dc`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/c64d5dc0d5badd998aa816001cab0a9e1a4150d7))
+
 ## v4.6.6 (2025-07-04)
 
 ### Fix
