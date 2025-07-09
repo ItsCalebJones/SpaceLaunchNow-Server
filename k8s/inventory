@@ -1,2 +1,0 @@
-[local]
-localhost ansible_connection=local ansible_python_interpreter=/home/cjones/.local/share/pypoetry/venv/bin/python3

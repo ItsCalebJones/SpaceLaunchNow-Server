@@ -1,6 +1,0 @@
-apiVersion: v1
-data:
-        http-snippet: "proxy_cache_path /tmp/nginx_cache levels=1:2 keys_zone=static-cache:10m max_size=1g  inactive=1m use_temp_path=off;"
-kind: ConfigMap
-metadata:
-  name: nginx-ingress-ingress-nginx-controller
