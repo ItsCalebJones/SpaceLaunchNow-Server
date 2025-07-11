@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.6.8 (2025-07-11)
+
+### Fix
+
+* fix: update CI/CD pipeline configuration for improved deployment process ([`19fced2`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/19fced2054a80cd27d5f3bd53c210b3fb69254a0))
+
 ## v4.6.7 (2025-07-09)
 
 ### Fix
