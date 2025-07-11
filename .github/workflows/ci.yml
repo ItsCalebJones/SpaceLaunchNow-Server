@@ -257,118 +257,7 @@ jobs:
             
             📝 **Changelog:** ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ steps.release.outputs.tag }}
             ⏳ **Building container with updated version...**
-
-  # ========================================
-  # 📦 APP VERSION MANAGEMENT
-  # ========================================
-  
-  update-app-version:
-    name: 📦 Update App Version
-    runs-on: ubuntu-latest
-    needs: [test, security-scan, lint, semantic-release]
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && !contains(github.event.head_commit.message, '[skip ci]')
-    outputs:
-      app-version: ${{ steps.version.outputs.app-version }}
-      chart-changed: ${{ steps.changes.outputs.chart-changed }}
-      chart-version: ${{ steps.chart-version.outputs.chart-version }}
-      
-    steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ github.token }}
           
-      - name: 🔄 Check for Chart Changes
-        id: changes
-        run: |
-          # Check if k8s/helm directory has changes
-          if git diff --name-only HEAD~1 HEAD | grep -q "^k8s/helm/"; then
-            echo "chart-changed=true" >> $GITHUB_OUTPUT
-            echo "📦 Helm chart files have changed"
-          else
-            echo "chart-changed=false" >> $GITHUB_OUTPUT
-            echo "📦 No Helm chart changes detected"
-          fi
-          
-      - name: 📦 Generate App Version
-        id: version
-        run: |
-          # Use semantic release version if available, otherwise pyproject.toml
-          if [[ "${{ needs.semantic-release.outputs.released }}" == "true" ]]; then
-            SEMANTIC_VERSION="${{ needs.semantic-release.outputs.clean-version }}"
-            APP_VERSION="v${SEMANTIC_VERSION}.${GITHUB_RUN_NUMBER}"
-            echo "Using semantic release version: $SEMANTIC_VERSION"
-          else
-            # Fallback to pyproject.toml version (only from [tool.poetry] section)
-            POETRY_VERSION=$(awk '/^\[tool\.poetry\]/{flag=1} flag && /^version = /{print $3; exit}' pyproject.toml | tr -d '"')
-            APP_VERSION="v${POETRY_VERSION}.${GITHUB_RUN_NUMBER}"
-            echo "No semantic release, using pyproject.toml version: $POETRY_VERSION"
-          fi
-          
-          echo "Generated app version: $APP_VERSION"
-          echo "app-version=$APP_VERSION" >> $GITHUB_OUTPUT
-          
-      - name: 📦 Update Chart Version (if needed)
-        id: chart-version
-        run: |
-          CURRENT_CHART_VERSION=$(grep '^version:' k8s/helm/Chart.yaml | awk '{print $2}')
-          
-          if [[ "${{ steps.changes.outputs.chart-changed }}" == "true" ]]; then
-            # Chart changed, increment version
-            echo "📦 Chart files changed, incrementing chart version"
-            
-            # Simple semantic versioning: increment patch version
-            IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_CHART_VERSION"
-            MAJOR=${VERSION_PARTS[0]}
-            MINOR=${VERSION_PARTS[1]}
-            PATCH=${VERSION_PARTS[2]}
-            
-            # Increment patch version
-            NEW_PATCH=$((PATCH + 1))
-            NEW_CHART_VERSION="${MAJOR}.${MINOR}.${NEW_PATCH}"
-            
-            echo "New chart version: $NEW_CHART_VERSION"
-            
-            # Update Chart.yaml
-            sed -i "s/^version:.*/version: $NEW_CHART_VERSION/" k8s/helm/Chart.yaml
-            
-            echo "chart-version=$NEW_CHART_VERSION" >> $GITHUB_OUTPUT
-          else
-            echo "📦 No chart changes, keeping current version: $CURRENT_CHART_VERSION"
-            echo "chart-version=$CURRENT_CHART_VERSION" >> $GITHUB_OUTPUT
-          fi
-          
-          # Always update appVersion
-          sed -i "s/^appVersion:.*/appVersion: \"${{ steps.version.outputs.app-version }}\"/" k8s/helm/Chart.yaml
-          
-      - name: 📝 Commit Version Updates
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action (Version Update)"
-          git config --local pull.rebase true
-          
-          if git diff --quiet k8s/helm/Chart.yaml; then
-            echo "📦 No changes to commit"
-          else
-            git add k8s/helm/Chart.yaml
-            if [[ "${{ steps.changes.outputs.chart-changed }}" == "true" ]]; then
-              git commit -m "📦 Update chart to v${{ steps.chart-version.outputs.chart-version }} and app to ${{ steps.version.outputs.app-version }} [skip ci]"
-            else
-              git commit -m "📦 Update app version to ${{ steps.version.outputs.app-version }} [skip ci]"
-            fi
-            
-            # Pull latest changes and push with retry logic
-            for i in {1..3}; do
-              if git pull --rebase origin ${{ github.ref_name }} && git push; then
-                echo "✅ Successfully pushed version update on attempt $i"
-                break
-              else
-                echo "⚠️ Push failed on attempt $i, retrying..."
-                sleep 2
-              fi
-            done
-          fi
 
   # ========================================
   # 🏗️ BUILD & PUSH
@@ -377,7 +266,7 @@ jobs:
   build:
     name: 🏗️ Build & Push
     runs-on: ubuntu-latest
-    needs: [test, security-scan, lint, update-app-version, build-base]
+    needs: [test, security-scan, lint, build-base]
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && !contains(github.event.head_commit.message, '[skip ci]')
     outputs:
       image-tag: ${{ steps.meta.outputs.tags }}
@@ -463,7 +352,7 @@ jobs:
   deploy-staging:
     name: 🚀 Auto-Deploy to Staging
     runs-on: ubuntu-latest
-    needs: [build, update-app-version]
+    needs: [build]
     if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
     environment: staging
     
@@ -519,7 +408,6 @@ jobs:
             **Commit:** ${GITHUB_SHA::8}
             **Image:** ${IMAGE_TAG##*:}
             **App Version:** ${{ needs.update-app-version.outputs.app-version }}
-            **Chart Version:** ${{ needs.update-app-version.outputs.chart-version }}${{ needs.update-app-version.outputs.chart-changed == 'true' && ' (📦 Updated)' || '' }}
             
             🔗 **Staging URL:** https://staging.spacelaunchnow.app
             🔗 **ArgoCD:** https://argo.spacelaunchnow.app
@@ -527,7 +415,7 @@ jobs:
   prepare-production:
     name: 🎯 Prepare Production Release
     runs-on: ubuntu-latest
-    needs: [deploy-staging, build, update-app-version]
+    needs: [deploy-staging, build]
     if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
     
     steps:
@@ -544,7 +432,6 @@ jobs:
             **Author:** ${{ github.event.head_commit.author.name }}
             **Message:** ${{ github.event.head_commit.message }}
             **App Version:** ${{ needs.update-app-version.outputs.app-version }}
-            **Chart Version:** ${{ needs.update-app-version.outputs.chart-version }}${{ needs.update-app-version.outputs.chart-changed == 'true' && ' (📦 Updated)' || '' }}
             
             ✅ Tests passed
             🔒 Security scan completed
@@ -557,7 +444,7 @@ jobs:
   deploy-production:
     name: 🚀 Deploy to Production (Manual Approval)
     runs-on: ubuntu-latest
-    needs: [build, update-app-version, prepare-production]
+    needs: [build, prepare-production]
     if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
     environment: 
       name: production
@@ -580,7 +467,7 @@ jobs:
           
           # Update the Helm values file in GitOps repo
           cd gitops/manifests/apps/production
-          sed -i "s|tag:.*|tag: ${IMAGE_TAG##*:}|" values-production.yaml
+          sed -i "s|tag:.*|tag: ${IMAGE_TAG##*:}|" values-prod.yaml
           
       - name: 📤 Commit Changes to GitOps Repository
         run: |
@@ -589,7 +476,7 @@ jobs:
           git config --local user.name "GitHub Action (Production Deploy)"
           git config --local pull.rebase true
           
-          git add manifests/apps/production/values-production.yaml
+          git add manifests/apps/production/values-prod.yaml
           git commit -m "🚀 Deploy ${GITHUB_SHA::8} to production (approved by ${{ github.actor }})"
 
           # Pull latest changes and push with retry logic
@@ -616,7 +503,6 @@ jobs:
             **Approved by:** ${{ github.actor }}
             **Image:** ${IMAGE_TAG##*:}
             **App Version:** ${{ needs.update-app-version.outputs.app-version }}
-            **Chart Version:** ${{ needs.update-app-version.outputs.chart-version }}${{ needs.update-app-version.outputs.chart-changed == 'true' && ' (📦 Updated)' || '' }}
             
             🔗 **Production URL:** https://api.spacelaunchnow.app
             🔗 **ArgoCD:** https://argo.spacelaunchnow.app
