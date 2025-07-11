@@ -366,8 +366,8 @@ jobs:
           
       - name: 🔄 Update Image Tag
         run: |
-          # Extract the sha-based tag
-          IMAGE_TAG=$(echo '${{ needs.build.outputs.image-tag }}' | grep 'main-' | head -1)
+          # Extract the sha-based tag (works for both main and master branches)
+          IMAGE_TAG=$(echo '${{ needs.build.outputs.image-tag }}' | grep -E '(main-|master-)' | head -1)
           
           echo "🏷️ Updating staging to image: ${IMAGE_TAG##*:}"
           
@@ -460,14 +460,14 @@ jobs:
           
       - name: 🔄 Update Image Tag
         run: |
-          # Extract the sha-based tag
-          IMAGE_TAG=$(echo '${{ needs.build.outputs.image-tag }}' | grep 'main-' | head -1)
+          # Extract the sha-based tag (works for both main and master branches)
+          IMAGE_TAG=$(echo '${{ needs.build.outputs.image-tag }}' | grep -E '(main-|master-)' | head -1)
           
           echo "🚀 Deploying to production with image: ${IMAGE_TAG##*:}"
           
           # Update the Helm values file in GitOps repo
           cd gitops/manifests/apps/production
-          sed -i "s|tag:.*|tag: ${IMAGE_TAG##*:}|" values-prod.yaml
+          sed -i "s|tag:.*|tag: ${IMAGE_TAG##*:}|" values-production.yaml
           
       - name: 📤 Commit Changes to GitOps Repository
         run: |
@@ -476,7 +476,7 @@ jobs:
           git config --local user.name "GitHub Action (Production Deploy)"
           git config --local pull.rebase true
           
-          git add manifests/apps/production/values-prod.yaml
+          git add manifests/apps/production/values-production.yaml
           git commit -m "🚀 Deploy ${GITHUB_SHA::8} to production (approved by ${{ github.actor }})"
 
           # Pull latest changes and push with retry logic
