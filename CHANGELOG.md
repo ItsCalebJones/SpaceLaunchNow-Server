@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.7.0 (2025-07-12)
+
+### Feature
+
+* feat: add production deployment workflow with input validation and notifications ([`efdb60e`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/efdb60eb0bcdabca9fe5cb48b4db5e13bc312c9b))
+
 ## v4.6.9 (2025-07-11)
 
 ### Fix
