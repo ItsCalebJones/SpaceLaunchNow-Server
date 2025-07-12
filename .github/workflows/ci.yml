@@ -419,126 +419,44 @@ jobs:
     if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
     
     steps:
-      - name: 📢 Notify Production Ready
+      - name: � Extract Image Tag
+        id: image-info
+        run: |
+          # Extract the sha-based tag (works for both main and master branches)
+          IMAGE_TAG=$(echo '${{ needs.build.outputs.image-tag }}' | grep -E '(main-|master-)' | head -1)
+          IMAGE_TAG_CLEAN=${IMAGE_TAG##*:}
+          
+          echo "image-tag=$IMAGE_TAG_CLEAN" >> $GITHUB_OUTPUT
+          echo "🏷️ Production-ready image tag: $IMAGE_TAG_CLEAN"
+        
+      - name: �📢 Notify Production Ready
         uses: Ilshidur/action-discord@master
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
           args: |
-            🎯 **Production Release Ready for Approval**
+            🎯 **Production Release Ready for Manual Deployment**
             
             **Branch:** main
-            **Commit:** ${GITHUB_SHA::8}
+            **Commit:** ${{ github.sha }}
+            **Short Commit:** ${GITHUB_SHA::8}
             **Author:** ${{ github.event.head_commit.author.name }}
             **Message:** ${{ github.event.head_commit.message }}
-            **App Version:** ${{ needs.update-app-version.outputs.app-version }}
+            **Image Tag:** ${{ steps.image-info.outputs.image-tag }}
             
             ✅ Tests passed
             🔒 Security scan completed
             🏗️ Image built and ready
             🚀 Staging deployment successful
             
-            � **Ready to deploy:** Go to GitHub Actions to approve production deployment
-            🔗 **Workflow:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-  deploy-production:
-    name: 🚀 Deploy to Production (Manual Approval)
-    runs-on: ubuntu-latest
-    needs: [build, prepare-production]
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && github.event_name == 'push'
-    environment: 
-      name: production
-      url: https://api.spacelaunchnow.app
-    
-    steps:
-      - name: 📥 Checkout GitOps Repository
-        uses: actions/checkout@v4
-        with:
-          repository: ItsCalebJones/SpaceLaunchNow-GitOps
-          token: ${{ secrets.GITOPS_TOKEN }}
-          path: gitops
-          
-      - name: 🔄 Update Image Tag
-        run: |
-          # Extract the sha-based tag (works for both main and master branches)
-          IMAGE_TAG=$(echo '${{ needs.build.outputs.image-tag }}' | grep -E '(main-|master-)' | head -1)
-          
-          echo "🚀 Deploying to production with image: ${IMAGE_TAG##*:}"
-          
-          # Update the Helm values file in GitOps repo
-          cd gitops/manifests/apps/production
-          sed -i "s|tag:.*|tag: ${IMAGE_TAG##*:}|" values-production.yaml
-          
-      - name: 📤 Commit Changes to GitOps Repository
-        run: |
-          cd gitops
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action (Production Deploy)"
-          git config --local pull.rebase true
-          
-          git add manifests/apps/production/values-production.yaml
-          git commit -m "🚀 Deploy ${GITHUB_SHA::8} to production (approved by ${{ github.actor }})"
-
-          # Pull latest changes and push with retry logic
-          for i in {1..3}; do
-            if git pull --rebase origin main && git push; then
-              echo "✅ Successfully pushed production deployment to GitOps repo on attempt $i"
-              break
-            else
-              echo "⚠️ Push failed on attempt $i, retrying..."
-              sleep 2
-            fi
-          done
-          
-      - name: 📢 Notify Production Deployment
-        uses: Ilshidur/action-discord@master
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-        with:
-          args: |
-            🎉 **Production Deployment Complete**
+            🎯 **To deploy to production:**
+            1. Go to GitHub Actions → "🚀 Production Deployment" workflow
+            2. Click "Run workflow"
+            3. Enter image tag: `${{ steps.image-info.outputs.image-tag }}`
+            4. Enter commit SHA: `${{ github.sha }}`
+            5. Type "DEPLOY" to confirm
             
-            **Branch:** main
-            **Commit:** ${GITHUB_SHA::8}
-            **Approved by:** ${{ github.actor }}
-            **Image:** ${IMAGE_TAG##*:}
-            **App Version:** ${{ needs.update-app-version.outputs.app-version }}
-            
-            🔗 **Production URL:** https://api.spacelaunchnow.app
-            🔗 **ArgoCD:** https://argo.spacelaunchnow.app
+            🔗 **Deploy manually:** ${{ github.server_url }}/${{ github.repository }}/actions/workflows/deploy-production.yml
+            🔗 **This build:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
-  # ========================================
-  # 📦 RELEASE PROCESSING
-  # ========================================
-  
-  release:
-    name: 📦 Process Release
-    runs-on: ubuntu-latest
-    needs: [test, security-scan, lint]
-    if: github.event_name == 'release'
-    
-    steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          
-      - name: 🐍 Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          
-      - name: 📦 Install Poetry
-        uses: snok/install-poetry@v1
-        
-      - name: 🏷️ Tag Production Image
-        run: |
-          # Tag the latest main image with release version
-          RELEASE_TAG=${GITHUB_REF#refs/tags/}
-          
-          # Get the latest main image
-          MAIN_TAG=$(git rev-parse HEAD)
-          
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main-${MAIN_TAG}
-          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main-${MAIN_TAG} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${RELEASE_TAG}
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${RELEASE_TAG}
+
