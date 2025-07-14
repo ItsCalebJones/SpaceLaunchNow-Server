@@ -24,4 +24,4 @@ commonLabels:
 
 images:
   - name: registry.digitalocean.com/sln-prod-registry-01/space-launch-now-base
-    newTag: latest
+    newTag: v2025.07.14
