@@ -8,7 +8,7 @@ on:
         required: true
         type: string
       release_version:
-        description: 'Release version (e.g., v2024.01.15)'
+        description: 'Release version (e.g., v2024.01.15_abc123) - leave empty to auto-generate'
         required: false
         type: string
 
@@ -50,13 +50,24 @@ jobs:
         run: |
           if [[ -n "${{ github.event.inputs.release_version }}" ]]; then
             VERSION="${{ github.event.inputs.release_version }}"
+            echo "📝 Using provided release version: $VERSION"
           else
-            # Generate version based on date
-            VERSION="v$(date +%Y.%m.%d)-$(date +%H%M)"
+            # Extract SHA from staging tag (e.g., main-abc123 -> abc123)
+            STAGING_TAG="${{ github.event.inputs.staging_tag }}"
+            if [[ "$STAGING_TAG" =~ ^(main|master|develop)-(.+)$ ]]; then
+              SHA="${BASH_REMATCH[2]}"
+            else
+              # Fallback: use last 7 chars of staging tag
+              SHA="${STAGING_TAG: -7}"
+            fi
+            
+            # Generate version: vYear.Month.Day_sha
+            VERSION="v$(date +%Y.%m.%d)_${SHA}"
+            echo "🏗️ Auto-generated release version: $VERSION"
           fi
           
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "🏷️ Release version: $VERSION"
+          echo "🏷️ Final release version: $VERSION"
 
   promote:
     name: 🚀 Promote Image
@@ -79,18 +90,54 @@ jobs:
           PROD_IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.validate.outputs.release-version }}"
           LATEST_IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:production"
           
-          echo "📦 Pulling staging image: $STAGING_IMAGE"
-          docker pull "$STAGING_IMAGE"
+          # Validate all image names before proceeding
+          echo "� Validating image names..."
+          echo "  Staging: $STAGING_IMAGE"
+          echo "  Production: $PROD_IMAGE"
+          echo "  Latest: $LATEST_IMAGE"
+          
+          # Check if any image names contain invalid characters
+          for img in "$STAGING_IMAGE" "$PROD_IMAGE" "$LATEST_IMAGE"; do
+            if [[ ! "$img" =~ ^[a-zA-Z0-9._/-]+:[a-zA-Z0-9_][a-zA-Z0-9_.-]*$ ]]; then
+              echo "❌ Invalid image format: $img"
+              echo "Docker image names must follow the pattern: [registry/]repository:tag"
+              echo "Where tag must match: [a-zA-Z0-9_][a-zA-Z0-9_.-]*"
+              exit 1
+            fi
+          done
+          
+          echo "✅ All image names validated"
+          
+          echo "�📦 Pulling staging image: $STAGING_IMAGE"
+          if ! docker pull "$STAGING_IMAGE"; then
+            echo "❌ Failed to pull staging image: $STAGING_IMAGE"
+            exit 1
+          fi
           
           echo "🏷️ Tagging as: $PROD_IMAGE"
-          docker tag "$STAGING_IMAGE" "$PROD_IMAGE"
+          if ! docker tag "$STAGING_IMAGE" "$PROD_IMAGE"; then
+            echo "❌ Failed to tag image as: $PROD_IMAGE"
+            exit 1
+          fi
           
           echo "🏷️ Tagging as: $LATEST_IMAGE"
-          docker tag "$STAGING_IMAGE" "$LATEST_IMAGE"
+          if ! docker tag "$STAGING_IMAGE" "$LATEST_IMAGE"; then
+            echo "❌ Failed to tag image as: $LATEST_IMAGE"
+            exit 1
+          fi
           
           echo "📤 Pushing production tags..."
-          docker push "$PROD_IMAGE"
-          docker push "$LATEST_IMAGE"
+          if ! docker push "$PROD_IMAGE"; then
+            echo "❌ Failed to push: $PROD_IMAGE"
+            exit 1
+          fi
+          
+          if ! docker push "$LATEST_IMAGE"; then
+            echo "❌ Failed to push: $LATEST_IMAGE"
+            exit 1
+          fi
+          
+          echo "✅ Successfully tagged and pushed all images"
           
       - name: � Checkout GitOps Repository
         uses: actions/checkout@v4
