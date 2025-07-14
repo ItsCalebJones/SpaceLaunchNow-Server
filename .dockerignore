@@ -1,5 +1,63 @@
+# Version control
 .git
-.idea
 .gitignore
+.github
+
+# IDE and editor files
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
 *env*/
-Dockerfile
+venv/
+.venv/
+env/
+ENV/
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+*.egg-info/
+
+# Build artifacts
+build/
+dist/
+*.tar.gz
+*.whl
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Documentation (except README.md which is needed by Poetry)
+docs/
+*.md
+!README.md
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+Jenkinsfile
+
+# Reports and logs
+report/
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+.tmp/
