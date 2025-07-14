@@ -65,12 +65,7 @@ jobs:
     environment: production
     
     steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITOPS_TOKEN }}
-          
-      - name: 🔧 Install doctl
+      - name:  Install doctl
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_SLN }}
@@ -97,19 +92,62 @@ jobs:
           docker push "$PROD_IMAGE"
           docker push "$LATEST_IMAGE"
           
-      - name: 🔄 Update Production Manifests
+      - name: � Checkout GitOps Repository
+        uses: actions/checkout@v4
+        with:
+          repository: ItsCalebJones/SpaceLaunchNow-GitOps
+          token: ${{ secrets.GITOPS_TOKEN }}
+          path: gitops
+          
+      - name: �🔄 Update Production Manifests
         run: |
-          cd manifests/apps/production
+          echo "🚀 Promoting to production with image tag: ${{ needs.validate.outputs.release-version }}"
           
-          # Update the image tag in kustomization
-          sed -i "s|newTag:.*|newTag: ${{ needs.validate.outputs.release-version }}|" kustomization.yaml
+          # Update the Helm values file in GitOps repo
+          cd gitops/manifests/apps/production
           
-          # Commit changes
+          # Show current tag before update
+          echo "📋 Current image tag:"
+          grep "tag:" values-production.yaml
+          
+          # Update the tag to use the new release version
+          sed -i "s|tag:.*|tag: ${{ needs.validate.outputs.release-version }}|" values-production.yaml
+          
+          # Show updated tag
+          echo "📋 Updated image tag:"
+          grep "tag:" values-production.yaml
+          
+      - name: 📤 Commit Changes to GitOps Repository
+        run: |
+          cd gitops
           git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add kustomization.yaml
+          git config --local user.name "GitHub Action (Production Promote)"
+          git config --local pull.rebase true
+          
+          # Check if there are any changes to commit
+          if git diff --quiet; then
+            echo "ℹ️ No changes detected - image tag may already be current"
+            exit 0
+          fi
+          
+          git add manifests/apps/production/values-production.yaml
           git commit -m "🚀 Promote ${{ needs.validate.outputs.staging-tag }} to production as ${{ needs.validate.outputs.release-version }}"
-          git push
+
+          # Pull latest changes and push with retry logic
+          for i in {1..3}; do
+            if git pull --rebase origin main && git push; then
+              echo "✅ Successfully pushed production promotion to GitOps repo on attempt $i"
+              break
+            else
+              echo "⚠️ Push failed on attempt $i, retrying..."
+              sleep 2
+            fi
+            
+            if [[ $i -eq 3 ]]; then
+              echo "❌ Failed to push after 3 attempts"
+              exit 1
+            fi
+          done
 
   notify:
     name: 📢 Notify Success
