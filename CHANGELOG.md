@@ -1,10 +1,38 @@
 # CHANGELOG
 
+## v4.8.0 (2025-07-21)
+
+### Chore
+
+* chore: update promote workflow for improved deployment process ([`24b1aa8`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/24b1aa8d0b5466c24e9e18d45d5858f33ddc4875))
+
+* chore: update promote workflow for improved deployment process ([`4fa4ebd`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/4fa4ebda2078d9a60714a3357c7adad1906ae540))
+
+### Feature
+
+* feat: add node pools to cluster and remove helm chart ([`503c430`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/503c4305a82230ded5f61dfa1d8f94950ad209fe))
+
+### Unknown
+
+* Merge pull request #272 from ItsCalebJones/update_terraform
+
+feat: add node pools to cluster and remove helm chart ([`0432d32`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/0432d325f6cb7b4c780eca407d4588c8b35e4ba1))
+
+* Remove redundant action ([`e613cd7`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/e613cd7c85f1563f2bcf13a17aeef41b10e7d862))
+
+* 🚀 Promote master-1f9ee75 to production as v2025.07.14 ([`87975d8`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/87975d88218925276a0ed7684227afc0279c33d4))
+
+* Merge branches &#39;master&#39; and &#39;master&#39; of https://github.com/ItsCalebJones/SpaceLaunchNow-Server ([`1f9ee75`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/1f9ee7550c48bf849a3fd8129230ae800e966371))
+
 ## v4.7.0 (2025-07-12)
 
 ### Feature
 
 * feat: add production deployment workflow with input validation and notifications ([`efdb60e`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/efdb60eb0bcdabca9fe5cb48b4db5e13bc312c9b))
+
+### Refactor
+
+* refactor: update .dockerignore for improved file exclusions and remove unused dependencies from pyproject.toml ([`2f52076`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/2f5207658e48bde4f76760cffa69f0d6b6562279))
 
 ## v4.6.9 (2025-07-11)
 
