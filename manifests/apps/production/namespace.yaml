@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: sln-prod
-  labels:
-    environment: production
-    app.kubernetes.io/name: spacelaunchnow
-    app.kubernetes.io/component: namespace
