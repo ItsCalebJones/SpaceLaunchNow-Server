@@ -1,0 +1,51 @@
+{% extends "web/base.html" %}
+{% load static%}
+
+{% block extrahead %}
+<meta property="fb:app_id" content="746774215504127"/>
+<meta property="og:title" content="Space Launch Now"/>
+<meta property="og:type" content="website"/>
+<meta property="og:description" content="Meet Space Launch Now the best resource for keeping up to date on all of your favorite spaceflight missions from around the world."/>
+<meta property="og:url" content="https://spacelaunchnow.me/"/>
+<meta property="og:image" content="{% static  'img/header.jpg' %}"/>
+<meta property="og:image:width" content="3000" />
+<meta property="og:image:height" content="2000" />
+{% endblock %}
+
+{% block navigation %}
+    {% include "web/navigation.html" %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container" style="min-height: 250px; width: 100%;">
+
+    <!-- Simple status indicator -->
+    <div id="chatbot-status" style="padding: 10px; background: #e8f5e8; margin-bottom: 10px; text-align: center; border-radius: 5px;">
+        <strong>🤖 Space Launch Bot</strong> - Look for the chat button on this page!
+    </div>
+
+    <script>
+    // Clean chatbot initialization
+    (function() {
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://krvncryx2i2cp3rw5dqk6wbf.agents.do-ai.run/static/chatbot/widget.js';
+        
+        // Set all data attributes
+        script.setAttribute('data-agent-id', '5e635cdc-4e59-11f0-bf8f-4e013e2ddde4');
+        script.setAttribute('data-chatbot-id', 'TFdSjTMZLyqgZH8GFiouY65_f6GBhu5A');
+        script.setAttribute('data-name', 'Space Launch Bot');
+        script.setAttribute('data-primary-color', '#031B4E');
+        script.setAttribute('data-secondary-color', '#E5E8ED');
+        script.setAttribute('data-button-background-color', '#0061EB');
+        script.setAttribute('data-logo', '{% static "img/ic_launcher.png" %}');
+        script.setAttribute('data-starting-message', 'Hello! How can I help you today?');
+        
+        document.head.appendChild(script);
+    })();
+    </script>
+
+</div>
+
+{% endblock %}
