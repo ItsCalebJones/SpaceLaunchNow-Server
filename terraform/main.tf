@@ -86,28 +86,52 @@ resource "digitalocean_kubernetes_cluster" "sln_k8s_prod" {
 
   # first node-pool
   node_pool {
-    name       = "sln-prod-nodepool-01"
+    name       = "sln-prod-nodepool-main-01"
     size       = "s-4vcpu-8gb"
-    node_count = 1
-    tags       = concat(var.tags, ["prod-4cpu"])
+    node_count = 3
+    tags       = concat(var.tags, ["prod-4cpu", "scalable"])
     auto_scale = true
     min_nodes = 1
     max_nodes = 10
   }
 }
 
-resource "digitalocean_kubernetes_node_pool" "sln_k8s_prod_2cpu" {
+resource "digitalocean_kubernetes_node_pool" "sln_k8s_prod_memory" {
   cluster_id = digitalocean_kubernetes_cluster.sln_k8s_prod.id
-  name       = "sln-prod-nodepool-02"
-  size       = "s-2vcpu-4gb"
+  name       = "sln-prod-nodepool-memory-02"
+  size       = "m-2vcpu-16gb"
   node_count = 1
   tags       = concat(
     var.tags,
-    ["prod-2cpu"],
+    ["prod-memory"],
   )
   auto_scale = true
   min_nodes = 1
-  max_nodes = 10
+  max_nodes = 2
+  
+  # Add node labels for workload scheduling
+  labels = {
+    "workload-type" = "memory-intensive"
+  }
+}
+
+resource "digitalocean_kubernetes_node_pool" "sln_k8s_prod_cpu" {
+  cluster_id = digitalocean_kubernetes_cluster.sln_k8s_prod.id
+  name       = "sln-prod-nodepool-compute-03"
+  size       = "c-4"
+  node_count = 1
+  tags       = concat(
+    var.tags,
+    ["prod-cpu-optimized", "scalable"],
+  )
+  auto_scale = true
+  min_nodes = 0
+  max_nodes = 5
+  
+  # Add node labels for workload scheduling
+  labels = {
+    "workload-type" = "cpu-intensive"
+  }
 }
 
 # Save kubeconfig to file
