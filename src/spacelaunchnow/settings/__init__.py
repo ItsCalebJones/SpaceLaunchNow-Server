@@ -356,22 +356,18 @@ if env.str("CACHE_BACKEND", None) and env.str("CACHE_LOCATION", None):
     cache_location = env.str("CACHE_LOCATION", None)
 
     if "redis" in cache_backend.lower():
+        # Configuration for Django's built-in Redis backend
         CACHES = {
             "default": {
                 "BACKEND": cache_backend,
                 "LOCATION": cache_location,
                 "OPTIONS": {
-                    "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                    "IGNORE_EXCEPTIONS": True,  # Don't crash on Redis errors
-                    "CONNECTION_POOL_KWARGS": {
+                    "connection_pool_kwargs": {
                         "max_connections": 50,
                         "retry_on_timeout": True,
                         "socket_keepalive": True,
-                        "socket_keepalive_options": {},
                         "health_check_interval": 30,
                     },
-                    "SERIALIZER": "django_redis.serializers.json.JSONSerializer",  # Use JSON instead of pickle
-                    "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",  # Compress data
                 },
                 "KEY_PREFIX": "sln:",
                 "VERSION": 1,
