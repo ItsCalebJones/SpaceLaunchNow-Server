@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v4.10.0 (2025-07-22)
+
+### Feature
+
+* feat: add redis as supported cache ([`b206030`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/b206030f6787ad604522e9d218896be04d34f357))
+
+### Unknown
+
+* Merge pull request #274 from ItsCalebJones/add_redis
+
+feat: add redis as supported cache ([`a344421`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a34442123f43fae555a03cc4f5e89f3521f2184c))
+
 ## v4.9.0 (2025-07-22)
 
 ### Feature
