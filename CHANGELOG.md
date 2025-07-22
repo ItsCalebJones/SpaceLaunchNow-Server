@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.11.2 (2025-07-22)
+
+### Fix
+
+* fix: add json logging ([`8aa1f47`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/8aa1f47c0a276090fb45b75504cf4c6e1fee9fc9))
+
 ## v4.11.1 (2025-07-22)
 
 ### Fix
