@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v4.11.0 (2025-07-22)
+
+### Feature
+
+* feat: update Redis cache configuration for improved performance ([`a510340`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a51034086d11ae600e2e3e3686fe763138ef247b))
+
+### Unknown
+
+* Add safety package for dependency vulnerability checks ([`5660cce`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/5660cce2caed3d9edbf60bedbda0266f9a141b9b))
+
 ## v4.10.0 (2025-07-22)
 
 ### Feature
