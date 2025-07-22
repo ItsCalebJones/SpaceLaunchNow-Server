@@ -1,8 +1,16 @@
 # CHANGELOG
 
+## v4.11.3 (2025-07-22)
+
+### Unknown
+
+* Merge branch &#39;master&#39; of https://github.com/ItsCalebJones/SpaceLaunchNow-Server ([`1d25999`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/1d25999ebcca8a91efde81ae151051ab71ab7254))
+
 ## v4.11.2 (2025-07-22)
 
 ### Fix
+
+* fix: remove debug print statement from launch_by_slug function ([`a5e152f`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a5e152f548d2dd577a2906c00b0ac6c29320be6b))
 
 * fix: add json logging ([`8aa1f47`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/8aa1f47c0a276090fb45b75504cf4c6e1fee9fc9))
 
