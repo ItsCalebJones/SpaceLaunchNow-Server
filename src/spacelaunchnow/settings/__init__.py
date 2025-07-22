@@ -361,14 +361,6 @@ if env.str("CACHE_BACKEND", None) and env.str("CACHE_LOCATION", None):
             "default": {
                 "BACKEND": cache_backend,
                 "LOCATION": cache_location,
-                "OPTIONS": {
-                    "connection_pool_kwargs": {
-                        "max_connections": 50,
-                        "retry_on_timeout": True,
-                        "socket_keepalive": True,
-                        "health_check_interval": 30,
-                    },
-                },
                 "KEY_PREFIX": "sln:",
                 "VERSION": 1,
                 "TIMEOUT": 300,  # 5 minute default timeout
