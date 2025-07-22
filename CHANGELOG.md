@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.11.1 (2025-07-22)
+
+### Fix
+
+* fix: update project settings for improved configuration management ([`aa32a14`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/aa32a140f9f9474546cc69c338a77845c5a876eb))
+
 ## v4.11.0 (2025-07-22)
 
 ### Feature
