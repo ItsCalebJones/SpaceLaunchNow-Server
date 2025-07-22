@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v4.9.0 (2025-07-22)
+
+### Feature
+
+* feat: add chatbot page and update URL routing ([`f21f6e2`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/f21f6e2adec354c2acc618fe2c54dd8dc4748de7))
+
+### Unknown
+
+* Merge pull request #273 from ItsCalebJones/add_bot
+
+feat: add chatbot page and update URL routing ([`a652fee`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a652feee337ba6f7af09847cfc52de6445763c59))
+
 ## v4.8.0 (2025-07-21)
 
 ### Chore
