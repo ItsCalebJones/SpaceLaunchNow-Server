@@ -351,10 +351,65 @@ else:
 
 
 if env.str("CACHE_BACKEND", None) and env.str("CACHE_LOCATION", None):
+    # Check cache backend type and add appropriate options
+    cache_backend = env.str("CACHE_BACKEND", None)
+    cache_location = env.str("CACHE_LOCATION", None)
+
+    if "redis" in cache_backend.lower():
+        CACHES = {
+            "default": {
+                "BACKEND": cache_backend,
+                "LOCATION": cache_location,
+                "OPTIONS": {
+                    "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                    "IGNORE_EXCEPTIONS": True,  # Don't crash on Redis errors
+                    "CONNECTION_POOL_KWARGS": {
+                        "max_connections": 50,
+                        "retry_on_timeout": True,
+                        "socket_keepalive": True,
+                        "socket_keepalive_options": {},
+                        "health_check_interval": 30,
+                    },
+                    "SERIALIZER": "django_redis.serializers.json.JSONSerializer",  # Use JSON instead of pickle
+                    "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",  # Compress data
+                },
+                "KEY_PREFIX": "sln:",
+                "VERSION": 1,
+                "TIMEOUT": 300,  # 5 minute default timeout
+            }
+        }
+    elif "memcached" in cache_backend.lower():
+        CACHES = {
+            "default": {
+                "BACKEND": cache_backend,
+                "LOCATION": cache_location,
+                "OPTIONS": {
+                    "ignore_exc": True,  # Ignore memcache exceptions to prevent crashes
+                    "default_noreply": False,  # Ensure commands complete
+                    "allow_unicode_keys": True,  # Handle unicode properly
+                    "no_delay": True,  # Disable Nagle's algorithm for better performance
+                    "tcp_nodelay": True,  # Disable TCP delay
+                    "tcp_keepalive": True,  # Enable TCP keepalive
+                    "retry_attempts": 3,  # Retry failed operations
+                    "retry_timeout": 2,  # Timeout for retries
+                },
+                "KEY_PREFIX": "sln:",  # Namespace our keys
+                "VERSION": 1,
+                "TIMEOUT": 300,  # 5 minute default timeout
+            }
+        }
+    else:
+        CACHES = {
+            "default": {
+                "BACKEND": cache_backend,
+                "LOCATION": cache_location,
+            }
+        }
+elif env.str("CACHE_BACKEND", None):
+    # Handle cases where only backend is specified (like DummyCache)
     CACHES = {
         "default": {
             "BACKEND": env.str("CACHE_BACKEND", None),
-            "LOCATION": env.str("CACHE_LOCATION", None),
         }
     }
 else:
