@@ -93,21 +93,75 @@ LOGGING = {
     "formatters": {
         "standard": {
             "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-            "datefmt": "%m-%d-%Y %H:%M:%S",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+        "detailed": {
+            "format": "%(asctime)s - %(name)s - %(levelname)s - %(pathname)s:%(lineno)d - %(funcName)s() - %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+        "json": {
+            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
+            "format": "%(asctime)s %(name)s %(levelname)s %(pathname)s %(lineno)d %(funcName)s %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+        "multiline": {
+            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
         },
     },
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
-            "formatter": "standard",
+            "formatter": "json" if not DEBUG else "detailed",
+            "stream": "ext://sys.stdout",
+        },
+        "error_console": {
+            "class": "logging.StreamHandler",
+            "formatter": "detailed",
+            "level": "ERROR",
+            "stream": "ext://sys.stderr",
         },
     },
     "loggers": {
-        "": {"handlers": ["console"], "level": LOGLEVEL, "propogate": True},
-        "django": {
+        "": {
             "handlers": ["console"],
             "level": LOGLEVEL,
-            "propagate": True,
+            "propagate": False,
+        },
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "django.request": {
+            "handlers": ["error_console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "django.db.backends": {
+            "handlers": ["console"],
+            "level": "WARNING" if not DEBUG else "DEBUG",
+            "propagate": False,
+        },
+        "api": {
+            "handlers": ["console"],
+            "level": LOGLEVEL,
+            "propagate": False,
+        },
+        "bot": {
+            "handlers": ["console"],
+            "level": LOGLEVEL,
+            "propagate": False,
+        },
+        "cachalot": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+        "redis": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": False,
         },
     },
 }
