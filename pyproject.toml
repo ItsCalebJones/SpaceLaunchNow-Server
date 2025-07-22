@@ -73,6 +73,7 @@ optional = true
 commitizen = "^2.37.0"
 toml = "^0.10.2"
 pre-commit = "^2.20.0"
+safety = "^3.0.0"
 radon = "^5.1.0"
 vulture = "^2.6"
 cohesion = "^1.0.0"
