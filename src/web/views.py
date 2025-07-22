@@ -233,7 +233,6 @@ def launch_by_uuid(request, uuid):
 
 
 def launch_by_slug(request, slug):
-    print(slug)
     try:
         launch = (
             Launch.objects.select_related("mission")
