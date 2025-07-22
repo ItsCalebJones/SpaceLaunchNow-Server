@@ -144,6 +144,7 @@ if settings.IS_WEBSERVER:
         path("about/", about_view, name="staff"),
         path("about/staff/", staff_view, name="staff"),
         path("about/translators/", translator_view, name="translators"),
+        re_path(r"^app/bot", TemplateView.as_view(template_name="web/app/bot.html"), name="bot"),
         re_path(r"^app/privacy", TemplateView.as_view(template_name="web/app/privacy.html"), name="privacy"),
         re_path(r"^app/tos", TemplateView.as_view(template_name="web/app/tos.html"), name="tos"),
         re_path(r"^site/privacy", TemplateView.as_view(template_name="web/site/privacy.html"), name="privacy"),
