@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.11.4 (2025-07-24)
+
+### Fix
+
+* fix: handle additional response status code for node pool update ([`2b8756c`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/2b8756c9725b08fcced417f55d38e10e2dae34d3))
+
 ## v4.11.3 (2025-07-22)
 
 ### Unknown
