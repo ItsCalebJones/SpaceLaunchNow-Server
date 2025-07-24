@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.12.0 (2025-07-24)
+
+### Feature
+
+* feat: add v2.3.1 API endpoint and adjust node pool configuration for production ([`8e0fcdc`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/8e0fcdccb19aa9530a60d511013da73f4e5a9815))
+
 ## v4.11.4 (2025-07-24)
 
 ### Fix
