@@ -39,7 +39,7 @@ class DigitalOceanHelper:
 
                 url = f"{DIGITAL_OCEAN_URL}{path}"
                 response = requests.put(url, json=data, headers=self.header)
-                if response.status_code == 200:
+                if response.status_code == 200 or response.status_code == 202:
                     logger.info(f"{response.status_code} {response.content}")
                 else:
                     logger.error(f"{response.status_code} {response.content}")
