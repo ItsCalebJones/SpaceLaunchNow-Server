@@ -17,6 +17,7 @@ Including another URLconf
 from api.endpoints.library.v200.router import api_urlpatterns as ll_api_v200
 from api.endpoints.library.v210.router import api_urlpatterns as ll_api_v210
 from api.endpoints.library.v220.router import api_urlpatterns as ll_api_v220
+from api.endpoints.library.v231.router import api_urlpatterns as ll_api_v231
 from django.contrib import admin
 from django.contrib.sitemaps import views as sitemaps_views
 from django.http import HttpResponse
@@ -94,11 +95,18 @@ def get_v220():
     return v220_api
 
 
+def get_v231():
+    v231_api = [
+        re_path(r"^api/ll/2.3.1/", include((ll_api_v231, "v2.3.1"))),
+    ]
+    return v231_api
+
+
 if settings.IS_API:
     api_settings = [
         path("api-auth/", include("rest_framework.urls")),
     ]
-    api_settings = api_settings + get_v200() + get_v210() + get_v220()
+    api_settings = api_settings + get_v200() + get_v210() + get_v220() + get_v231()
 
 if settings.IS_WEBSERVER:
 

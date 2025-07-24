@@ -84,15 +84,15 @@ resource "digitalocean_kubernetes_cluster" "sln_k8s_prod" {
     start_time = "04:00"
   }
 
-  # first node-pool
+  # main node-pool - optimized for production scaling during launch events
   node_pool {
     name       = "sln-prod-nodepool-main-01"
     size       = "s-4vcpu-8gb"
-    node_count = 3
+    node_count = 2  # Reduced from 3 to 2 for normal operations
     tags       = concat(var.tags, ["prod-4cpu", "scalable"])
     auto_scale = true
-    min_nodes = 1
-    max_nodes = 10
+    min_nodes = 2   
+    max_nodes = 10  
   }
 }
 
@@ -112,25 +112,6 @@ resource "digitalocean_kubernetes_node_pool" "sln_k8s_prod_memory" {
   # Add node labels for workload scheduling
   labels = {
     "workload-type" = "memory-intensive"
-  }
-}
-
-resource "digitalocean_kubernetes_node_pool" "sln_k8s_prod_cpu" {
-  cluster_id = digitalocean_kubernetes_cluster.sln_k8s_prod.id
-  name       = "sln-prod-nodepool-compute-03"
-  size       = "c-4"
-  node_count = 1
-  tags       = concat(
-    var.tags,
-    ["prod-cpu-optimized", "scalable"],
-  )
-  auto_scale = true
-  min_nodes = 0
-  max_nodes = 5
-  
-  # Add node labels for workload scheduling
-  labels = {
-    "workload-type" = "cpu-intensive"
   }
 }
 
