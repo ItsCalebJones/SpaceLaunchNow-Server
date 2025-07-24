@@ -17,6 +17,11 @@ Including another URLconf
 from api.endpoints.library.v200.router import api_urlpatterns as ll_api_v200
 from api.endpoints.library.v210.router import api_urlpatterns as ll_api_v210
 from api.endpoints.library.v220.router import api_urlpatterns as ll_api_v220
+from api.endpoints.library.v231.docs_view import (
+    SpectacularAPIViewV231,
+    SpectacularJSONAPIViewV231,
+    SpectacularSwaggerViewV231,
+)
 from api.endpoints.library.v231.router import api_urlpatterns as ll_api_v231
 from django.contrib import admin
 from django.contrib.sitemaps import views as sitemaps_views
@@ -99,7 +104,25 @@ def get_v231():
     v231_api = [
         re_path(r"^api/ll/2.3.1/", include((ll_api_v231, "v2.3.1"))),
     ]
-    return v231_api
+    v231_api_docs = [
+        re_path(
+            r"^api/ll/2.3.1/schema/?$",
+            SpectacularAPIViewV231.as_view(api_version="v2.3.1"),
+            name="v2.3.1/schema",
+        ),
+        re_path(
+            r"^api/ll/2.3.1/json/?$",
+            SpectacularJSONAPIViewV231.as_view(api_version="v2.3.1"),
+            name="v2.3.1/schema",
+        ),
+        re_path(
+            r"^api/ll/2.3.1/docs/?$",
+            SpectacularSwaggerViewV231.as_view(url_name="v2.3.1/schema"),
+            name="v231_schema-swagger-ui",
+        ),
+    ]
+
+    return v231_api + v231_api_docs
 
 
 if settings.IS_API:
