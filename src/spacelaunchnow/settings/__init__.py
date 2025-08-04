@@ -60,18 +60,24 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Launch Library",
+    "TITLE": "Space Launch Now",
     "DESCRIPTION": "The Launch Library API is a product by The Space Devs with an up-to-date database of Spaceflight events. "
-    "\n\nWhile this API is free to use it is subject to rate limiting for non-authenticated requests."
-    "\n\nPlease use https://lldev.thespacedevs.com for development testing"
-    " - the development endpoint has stale data but is not subject to any rate limits."
-    "\n\nIf you are interested in a higher rate limit please consider supporting the project on Patreon for access to an API Key.",
+    "\n\n⚠️ Not For Public Use ⚠️"
+    "\n\nPlease do not use this API endpoint - it is self-hosted only for Space Launch Now apps."
+    "\nPlease use https://thespacedevs.com Official API.",
     "SERVE_INCLUDE_SCHEMA": False,
-    "SCHEMA_PATH_PREFIX": "/api/ll/[0-9].[0-9].[0.9]",
+    "SCHEMA_PATH_PREFIX": "/api/ll/[0-9].[0-9].[0-9]",
+    "SERVERS": [
+        {"url": "https://spacelaunchnow.me/api/ll/2.4.0", "description": "App Production server"},
+        {"url": "https://staging.spacelaunchnow.me/api/ll/2.4.0", "description": "Staging server"},
+    ],
     "CONTACT": {"name": "The Space Devs", "email": "support@thespacedevs.com"},
     "LICENSE": {"name": "Apache License 2.0"},
     "VERSION": None,
 }
+
+if DEBUG:
+    SPECTACULAR_SETTINGS["SERVERS"] = ["http://localhost:8080/"]
 
 DISABLE_THROTTLE = env.bool("DISABLE_THROTTLE", False)
 
