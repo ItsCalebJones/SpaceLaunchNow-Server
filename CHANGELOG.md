@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v4.13.0 (2025-08-04)
+
+### Chore
+
+* chore: update URL configuration for improved organization ([`496c5fc`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/496c5fcb4f569d961116cb976c86e454b011119e))
+
+### Feature
+
+* feat: update SPECTACULAR_SETTINGS for Space Launch Now ([`532b63c`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/532b63c7add89ff4e36d46df3598c547554b0072))
+
 ## v4.12.0 (2025-07-24)
 
 ### Feature
