@@ -34,16 +34,16 @@ def check_autoscaler():
 
     # Get current node pool minimum and update settings
     current_min_nodes = do.get_node_pool_min()
-    if current_min_nodes != autoscaler_settings.current_min:
-        logger.info(f"Updating current_min from {autoscaler_settings.current_min} to {current_min_nodes}")
-        autoscaler_settings.current_min = current_min_nodes
+    if current_min_nodes != autoscaler_settings.current_workers:
+        logger.info(f"Updating current_workers from {autoscaler_settings.current_workers} to {current_min_nodes}")
+        autoscaler_settings.current_workers = current_min_nodes
         autoscaler_settings.save()
     else:
         logger.debug(f"Current min nodes unchanged: {current_min_nodes}")
 
     logger.info(
         f"Autoscaler configuration - Enabled: {autoscaler_settings.enabled}, "
-        f"Current Min: {autoscaler_settings.current_min}, "
+        f"Current Workers: {autoscaler_settings.current_workers}, "
         f"Max Workers: {autoscaler_settings.max_workers}, "
         f"Custom Count: {autoscaler_settings.custom_worker_count}"
     )
@@ -69,7 +69,7 @@ def check_autoscaler():
         # have enough workers online to handle the surge through the execution of the launch. One small scenario worth
         # considering is what happens if a launch has just scrubbed and had its date moved before the traffic dies down?
         logger.info(f"Max Workers: {autoscaler_settings.max_workers}")
-        logger.info(f"Current Min: {autoscaler_settings.current_min}")
+        logger.info(f"Current Workers: {autoscaler_settings.current_workers}")
 
         # Calculate time thresholds
         now = dtime.datetime.now(tz=pytz.utc)
@@ -113,16 +113,25 @@ def check_autoscaler():
                 program_names = [p.name for p in launch.program.all()]
                 logger.debug(f"Launch {launch.id} ({launch.name}) has programs: {program_names}")
 
+                has_starship = False
+                program_weight = 0
+
                 for program in launch.program.all():
                     if "Starship" in program.name:
-                        launch_weight = autoscaler_settings.starship_launch_weight
-                        launch_type = "Starship"
-                        starship_launches += 1
-                        break
+                        program_weight += autoscaler_settings.starship_launch_weight
+                        has_starship = True
+                        logger.debug(f"Added Starship program weight: {autoscaler_settings.starship_launch_weight}")
                     else:
-                        launch_weight = autoscaler_settings.other_weight
-                        launch_type = "program-other"
-                        other_launches += 1
+                        program_weight += autoscaler_settings.other_weight
+                        logger.debug(f"Added other program weight: {autoscaler_settings.other_weight}")
+
+                launch_weight = program_weight
+                if has_starship:
+                    launch_type = "Starship"
+                    starship_launches += 1
+                else:
+                    launch_type = "program-other"
+                    other_launches += 1
             elif "SpaceX" in launch.launch_service_provider.name:
                 launch_weight = autoscaler_settings.spacex_weight
                 launch_type = "SpaceX"
@@ -202,10 +211,10 @@ def check_autoscaler():
         logger.debug(f"Expected workers calculated {expected_worker_count}")
 
         # Check to see if the expected worker count matches the current worker count and act.
-        if expected_worker_count != autoscaler_settings.current_min:
+        if expected_worker_count != autoscaler_settings.current_workers:
             logger.info(
                 f"Scaling required - Expected: {expected_worker_count}, "
-                f"Current: {autoscaler_settings.current_min}, "
+                f"Current: {autoscaler_settings.current_workers}, "
                 f"Max: {autoscaler_settings.max_workers} - triggering update..."
             )
 
@@ -220,7 +229,7 @@ def check_autoscaler():
             logger.info("Autoscaler updates completed successfully")
         else:
             logger.info(
-                f"No scaling required - current worker count ({autoscaler_settings.current_min}) "
+                f"No scaling required - current worker count ({autoscaler_settings.current_workers}) "
                 f"matches expected count ({expected_worker_count})"
             )
             logger.debug("No changes required...")
@@ -232,10 +241,10 @@ def check_autoscaler():
         logger.debug(f"Expected workers custom set to  {expected_worker_count}")
 
         # Check to see if the expected worker count matches the current worker count and act.
-        if expected_worker_count != autoscaler_settings.current_min:
+        if expected_worker_count != autoscaler_settings.current_workers:
             logger.info(
                 f"Custom scaling required - Expected: {expected_worker_count}, "
-                f"Current: {autoscaler_settings.current_min}, "
+                f"Current: {autoscaler_settings.current_workers}, "
                 f"Max: {autoscaler_settings.max_workers}"
             )
 
@@ -250,7 +259,7 @@ def check_autoscaler():
             logger.info("Custom autoscaler updates completed successfully")
         else:
             logger.info(
-                f"No custom scaling required - current worker count ({autoscaler_settings.current_min}) "
+                f"No custom scaling required - current worker count ({autoscaler_settings.current_workers}) "
                 f"matches custom count ({expected_worker_count})"
             )
             logger.debug("No changes required...")
