@@ -80,6 +80,8 @@ def check_autoscaler():
                 f"Expected {expected_worker_count} vs actual {autoscaler_settings.current_min} - triggering update..."
             )
             do.update_node_pools(expected_worker_count, autoscaler_settings.max_workers)
+            # Also adjust KEDA ScaledObject minimum pod count based on expected traffic
+            do.update_keda_min_replicas(expected_worker_count)
         else:
             logger.debug("No changes required...")
 
@@ -91,6 +93,8 @@ def check_autoscaler():
         if expected_worker_count != autoscaler_settings.current_min:
             logger.info(f"Custom - Expected {expected_worker_count} vs actual {autoscaler_settings.current_min}...")
             do.update_node_pools(expected_worker_count, autoscaler_settings.max_workers)
+            # Also adjust KEDA ScaledObject minimum pod count for custom worker count
+            do.update_keda_min_replicas(expected_worker_count)
         else:
             logger.debug("No changes required...")
 
