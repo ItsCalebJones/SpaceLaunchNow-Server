@@ -209,11 +209,30 @@ class DigitalOceanHelper:
 
             current_min = scaled_object["spec"].get("minReplicaCount", "unknown")
             current_max = scaled_object["spec"].get("maxReplicaCount", "unknown")
+            logger.info(f"Current KEDA ScaledObject '{name}' settings:")
+            logger.info(f"  - minReplicaCount: {current_min}")
+            logger.info(f"  - maxReplicaCount: {current_max}")
             logger.debug(f"Current KEDA settings: minReplicaCount={current_min}, maxReplicaCount={current_max}")
+
+            # Log additional KEDA configuration details
+            triggers = scaled_object["spec"].get("triggers", [])
+            logger.debug(f"KEDA triggers configured: {len(triggers)}")
+            for i, trigger in enumerate(triggers):
+                trigger_type = trigger.get("type", "unknown")
+                logger.debug(f"  Trigger {i + 1}: type={trigger_type}")
+
+            idle_replica_count = scaled_object["spec"].get("idleReplicaCount", "not set")
+            polling_interval = scaled_object["spec"].get("pollingInterval", "not set")
+            logger.debug(
+                f"Additional KEDA settings: idleReplicaCount={idle_replica_count}, pollingInterval={polling_interval}"
+            )
 
             # Update min/max replicas
             scaled_object["spec"]["minReplicaCount"] = min_pods
             scaled_object["spec"]["maxReplicaCount"] = max_pods
+            logger.info(f"Updating KEDA ScaledObject '{name}' replica settings:")
+            logger.info(f"  - New minReplicaCount: {min_pods} (was: {current_min})")
+            logger.info(f"  - New maxReplicaCount: {max_pods} (was: {current_max})")
             logger.debug(f"New KEDA settings: minReplicaCount={min_pods}, maxReplicaCount={max_pods}")
 
             # Apply the update
