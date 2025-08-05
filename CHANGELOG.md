@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.14.0 (2025-08-05)
+
+### Feature
+
+* feat: add method to update KEDA ScaledObject min/max replicas based on expected worker count ([`ad569d7`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ad569d790d52747a1ef79f88aabf079205aacf0d))
+
 ## v4.13.0 (2025-08-04)
 
 ### Chore
