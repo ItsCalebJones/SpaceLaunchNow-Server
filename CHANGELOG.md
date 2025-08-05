@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.16.0 (2025-08-05)
+
+### Feature
+
+* feat: enhance logging for KEDA ScaledObject updates with detailed configuration information ([`efacd9e`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/efacd9e89f32817bce834a230afc48cd1bc469e4))
+
 ## v4.15.0 (2025-08-05)
 
 ### Feature
