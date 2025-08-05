@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v4.15.0 (2025-08-05)
+
+### Feature
+
+* feat: enhance logging and error handling in DigitalOceanHelper and autoscaler ([`fa4c5da`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/fa4c5da361149285f582f05b9261c192e06d0a38))
+
+### Fix
+
+* fix: update autoscaler to use current_workers for scaling logic and improve logging ([`5a0676f`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/5a0676fc4049d92c99ef427a18dde3ee834d3242))
+
 ## v4.14.0 (2025-08-05)
 
 ### Feature
