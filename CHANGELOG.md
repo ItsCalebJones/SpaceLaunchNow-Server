@@ -1,5 +1,32 @@
 # CHANGELOG
 
+## v4.17.0 (2025-08-09)
+
+### Feature
+
+* feat: add copilot instructions ([`126370f`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/126370ff58918d933328af1fd9addd699cdb9963))
+
+* feat(ll): Update dependencies in pyproject.toml
+
+- Bump boto3 and botocore to version 1.39.12
+- Upgrade Django to version 4.2.23
+- Update pilkit to version 3.0 and Pillow to version 11.3.0
+- Upgrade sorl-thumbnail to version 12.11.0
+- Update python-semantic-release to version 10.2.0
+- Bump django-launch-library to version 21.39.0
+- Upgrade ruff to version 0.12.8
+- Ensure compatibility with Python 3.12.x ([`3d61eb3`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/3d61eb3ea4e9f36564ecb515b6ad7d1f79e98991))
+
+### Fix
+
+* fix: update API endpoints to version 2.4.0 with authentication ([`9e955c4`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/9e955c47e7ffd82abe503c1df6b9e6d6209f54d8))
+
+### Unknown
+
+* Merge pull request #275 from ItsCalebJones/bump_ll_version
+
+Bump ll version ([`85aed8e`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/85aed8ebf20f4934dd8e0cc3a9343d647086a621))
+
 ## v4.16.0 (2025-08-05)
 
 ### Feature
