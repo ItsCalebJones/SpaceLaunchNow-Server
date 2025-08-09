@@ -17,16 +17,18 @@ Including another URLconf
 from api.endpoints.library.v200.router import api_urlpatterns as ll_api_v200
 from api.endpoints.library.v210.router import api_urlpatterns as ll_api_v210
 from api.endpoints.library.v220.router import api_urlpatterns as ll_api_v220
-from api.endpoints.library.v231.docs_view import (
-    SpectacularAPIViewV231,
-    SpectacularJSONAPIViewV231,
-    SpectacularSwaggerViewV231,
+from api.endpoints.library.v240.docs_view import (
+    SpectacularAPIViewV240,
+    SpectacularJSONAPIViewV240,
+    SpectacularSwaggerViewV240,
 )
-from api.endpoints.library.v231.router import api_urlpatterns as ll_api_v231
+from api.endpoints.library.v240.router import api_urlpatterns as ll_api_v240
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
 from django.contrib.sitemaps import views as sitemaps_views
 from django.http import HttpResponse
 from django.urls import include, path, re_path
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 
 import web
@@ -100,36 +102,38 @@ def get_v220():
     return v220_api
 
 
-def get_v231():
-    v231_api = [
-        re_path(r"^api/ll/2.3.1/", include((ll_api_v231, "v2.3.1"))),
+def get_v240():
+    v240_api = [
+        re_path(r"^api/ll/2.4.0/", include((ll_api_v240, "v2.4.0"))),
     ]
-    v231_api_docs = [
+    v240_api_docs = [
         re_path(
-            r"^api/ll/2.3.1/schema/?$",
-            SpectacularAPIViewV231.as_view(api_version="v2.3.1"),
-            name="v2.3.1/schema",
+            r"^api/ll/2.4.0/schema/?$",
+            method_decorator(login_required, name="dispatch")(SpectacularAPIViewV240).as_view(api_version="v2.4.0"),
+            name="v2.4.0/schema",
         ),
         re_path(
-            r"^api/ll/2.3.1/json/?$",
-            SpectacularJSONAPIViewV231.as_view(api_version="v2.3.1"),
-            name="v2.3.1/schema",
+            r"^api/ll/2.4.0/json/?$",
+            method_decorator(login_required, name="dispatch")(SpectacularJSONAPIViewV240).as_view(api_version="v2.4.0"),
+            name="v2.4.0/schema",
         ),
         re_path(
-            r"^api/ll/2.3.1/docs/?$",
-            SpectacularSwaggerViewV231.as_view(url_name="v2.3.1/schema"),
-            name="v231_schema-swagger-ui",
+            r"^api/ll/2.4.0/docs/?$",
+            method_decorator(login_required, name="dispatch")(SpectacularSwaggerViewV240).as_view(
+                url_name="v2.4.0/schema"
+            ),
+            name="v240_schema-swagger-ui",
         ),
     ]
 
-    return v231_api + v231_api_docs
+    return v240_api + v240_api_docs
 
 
 if settings.IS_API:
     api_settings = [
         path("api-auth/", include("rest_framework.urls")),
     ]
-    api_settings = api_settings + get_v200() + get_v210() + get_v220() + get_v231()
+    api_settings = api_settings + get_v200() + get_v210() + get_v220() + get_v240()
 
 if settings.IS_WEBSERVER:
 
