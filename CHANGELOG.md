@@ -1,5 +1,31 @@
 # CHANGELOG
 
+## v4.18.0 (2025-08-10)
+
+### Chore
+
+* chore: clean up workflow files for better organization and readability ([`590b6c4`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/590b6c4fa32fe4ee7409020fee917a8fadf633aa))
+
+* chore: update PR checks workflow for improved efficiency and clarity ([`6e66241`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/6e66241aa2fbafdba78edaecd5228b2de5a0e01c))
+
+* chore: update workflows and Dockerfile for improved dependency management ([`914a17e`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/914a17eac00f50e39512b24275fad6b59c0cc4e4))
+
+### Feature
+
+* feat: move to using docker secrets and cleanup actions ([`504639b`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/504639b959585aa7716e05cd353d9e7dfafb5d96))
+
+* feat(ci): add safety package for dependency vulnerability scanning ([`b26ceff`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/b26ceff3696d127fe7fdbf4d841de58bf758ee5c))
+
+### Fix
+
+* fix(docker): fix docker build secrets issue ([`1c3c891`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/1c3c891de73ba7f097855f878870a9403ce2dd17))
+
+### Unknown
+
+* Merge pull request #276 from ItsCalebJones/bump_ll_version
+
+feat(ci): add safety package for dependency vulnerability scanning ([`1b6fc77`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/1b6fc77812fd34b909e0a9ed19aa053784b5147e))
+
 ## v4.17.0 (2025-08-09)
 
 ### Feature
