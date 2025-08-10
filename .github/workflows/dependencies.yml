@@ -6,6 +6,10 @@ on:
     - cron: '0 9 * * 1'
   workflow_dispatch:
 
+env:
+  POETRY_HTTP_BASIC_TSD_USERNAME: ${{ secrets.PRIVATE_USERNAME }}
+  POETRY_HTTP_BASIC_TSD_PASSWORD: ${{ secrets.PRIVATE_PASSWORD }}
+
 jobs:
   update-dependencies:
     name: 🔄 Update Python Dependencies
@@ -17,41 +21,68 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: 🐍 Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          
-      - name: 📦 Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          installer: pip
-          
-      - name: 🔐 Configure Poetry Authentication
-        run: |
-          # Configure authentication for private PyPI repository
-          poetry config repositories.tsd https://pypi.thespacedevs.com/simple/
-          # Use either username/password or token authentication
-          poetry config http-basic.tsd ${{ secrets.PRIVATE_USERNAME }} ${{ secrets.PRIVATE_PASSWORD }}
-
+      - name: 🐍 Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
           
       - name: 🔄 Update Dependencies
         run: |
-          # Install dev dependencies for security checking
-          poetry install --with dev
+          # Update poetry.lock file with latest compatible versions
+          docker run --rm \
+            -v "$(pwd):/workspace" \
+            -w /workspace \
+            -e POETRY_HTTP_BASIC_TSD_USERNAME=${{ secrets.PRIVATE_USERNAME }} \
+            -e POETRY_HTTP_BASIC_TSD_PASSWORD=${{ secrets.PRIVATE_PASSWORD }} \
+            python:3.12-slim bash -c "
+              pip install poetry &&
+              poetry config repositories.tsd https://pypi.thespacedevs.com/simple/ &&
+              poetry config http-basic.tsd \$POETRY_HTTP_BASIC_TSD_USERNAME \$POETRY_HTTP_BASIC_TSD_PASSWORD &&
+              poetry update
+            "
           
-          # Update all dependencies
-          poetry update
-          
-          # Check for security vulnerabilities (optional)
-          poetry run safety check --continue-on-error || echo "Security check completed with warnings"
-          
-      - name: 🧪 Test with Updated Dependencies
-        uses: ./.github/actions/python-test-enhanced
+      - name: 🏗️ Build Docker Image for Testing
+        uses: docker/build-push-action@v5
         with:
-          upload-coverage: 'false'  # Skip coverage upload for dependency updates
-          database-tests: 'true'
-          parallel: 'true'
+          context: .
+          push: false
+          tags: test-image:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            PRIVATE_USERNAME=${{ secrets.PRIVATE_USERNAME }}
+            PRIVATE_PASSWORD=${{ secrets.PRIVATE_PASSWORD }}
+        
+      - name: 🧪 Run Tests with Updated Dependencies
+        run: |
+          # Start database in background
+          docker run -d --name test-db \
+            -e POSTGRES_DB=postgres \
+            -e POSTGRES_USER=postgres \
+            -e POSTGRES_PASSWORD=postgres \
+            postgres:14-alpine
+          
+          # Wait for database to be ready
+          sleep 10
+          
+          # Run tests using our updated image
+          docker run --rm \
+            --link test-db:db \
+            -v "$(pwd)/report/coverage/:/code/coverage/" \
+            -v "$(pwd)/report/htmlcov/:/code/htmlcov/" \
+            -v "$(pwd)/report/xmlrunner/:/code/xmlrunner/" \
+            -e DEBUG=true \
+            -e DJANGO_SECRET_KEY=${{ secrets.PRIVATE_PASSWORD }} \
+            -e DATABASE_NAME=postgres \
+            -e DATABASE_USERNAME=postgres \
+            -e DATABASE_PASSWORD=postgres \
+            -e DATABASE_ENGINE=django.db.backends.postgresql \
+            -e DATABASE_HOST=db \
+            -e DATABASE_PORT=5432 \
+            -e USE_LOCAL_STORAGE=true \
+            test-image:latest \
+            bash -c "coverage run --data-file=/code/coverage/.coverage manage.py test --settings=spacelaunchnow.settings.test && coverage html --data-file=/code/coverage/.coverage && coverage report --data-file=/code/coverage/.coverage"
+          
+          # Clean up database
+          docker stop test-db && docker rm test-db
           
       - name: 📋 Generate Update Summary
         run: |
