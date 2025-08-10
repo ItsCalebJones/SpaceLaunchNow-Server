@@ -16,10 +16,18 @@ RUN --mount=type=secret,id=private_username \
     apk add --no-cache curl bash && \
     curl -sSL https://install.python-poetry.org | python3 - --version 2.1.2 && \
     poetry config virtualenvs.in-project true && \
-    poetry config http-basic.tsd "$(cat /run/secrets/private_username)" "$(cat /run/secrets/private_password)" && \
+    # Configure private repository access if secrets are available
+    USERNAME_SECRET=$(cat /run/secrets/private_username 2>/dev/null || echo "") && \
+    PASSWORD_SECRET=$(cat /run/secrets/private_password 2>/dev/null || echo "") && \
+    if [ -n "$USERNAME_SECRET" ] && [ -n "$PASSWORD_SECRET" ]; then \
+        echo "Configuring private repository access..."; \
+        poetry config http-basic.tsd "$USERNAME_SECRET" "$PASSWORD_SECRET"; \
+    else \
+        echo "Warning: Private repository secrets not available, skipping private repo configuration"; \
+    fi && \
     poetry install --no-interaction --no-root --no-ansi --with ci && \
     # Clear poetry credentials and secrets from memory
-    poetry config --unset http-basic.tsd
+    poetry config --unset http-basic.tsd || true
 
 FROM python:3.12.10-alpine
 

@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   db:
     image: postgres:14-alpine
@@ -8,6 +10,7 @@ services:
   test:
     build:
       context: ../
+      dockerfile: Dockerfile
       secrets:
         - private_username
         - private_password

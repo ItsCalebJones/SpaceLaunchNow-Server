@@ -75,8 +75,25 @@ jobs:
           cache-to: type=gha,mode=max
           outputs: type=docker,dest=/tmp/base-image.tar
           secrets: |
-            private_username=${{ secrets.PRIVATE_USERNAME }}
-            private_password=${{ secrets.PRIVATE_PASSWORD }}
+            type=env,id=private_username,env=PRIVATE_USERNAME
+            type=env,id=private_password,env=PRIVATE_PASSWORD
+        env:
+          PRIVATE_USERNAME: ${{ secrets.PRIVATE_USERNAME }}
+          PRIVATE_PASSWORD: ${{ secrets.PRIVATE_PASSWORD }}
+            
+      - name: 🔍 Debug Secrets (without exposing values)
+        run: |
+          echo "Checking if secrets are available..."
+          if [ -z "${{ secrets.PRIVATE_USERNAME }}" ]; then
+            echo "❌ PRIVATE_USERNAME secret is not set"
+          else
+            echo "✅ PRIVATE_USERNAME secret is available"
+          fi
+          if [ -z "${{ secrets.PRIVATE_PASSWORD }}" ]; then
+            echo "❌ PRIVATE_PASSWORD secret is not set"  
+          else
+            echo "✅ PRIVATE_PASSWORD secret is available"
+          fi
             
       - name: � Upload Docker Image
         uses: actions/upload-artifact@v4
