@@ -32,7 +32,7 @@ jobs:
             -w /workspace \
             -e POETRY_HTTP_BASIC_TSD_USERNAME=${{ secrets.PRIVATE_USERNAME }} \
             -e POETRY_HTTP_BASIC_TSD_PASSWORD=${{ secrets.PRIVATE_PASSWORD }} \
-            python:3.12-slim bash -c "
+            python:3.12-alpine bash -c "
               pip install poetry &&
               poetry config repositories.tsd https://pypi.thespacedevs.com/simple/ &&
               poetry config http-basic.tsd \$POETRY_HTTP_BASIC_TSD_USERNAME \$POETRY_HTTP_BASIC_TSD_PASSWORD &&
@@ -47,9 +47,9 @@ jobs:
           tags: test-image:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          build-args: |
-            PRIVATE_USERNAME=${{ secrets.PRIVATE_USERNAME }}
-            PRIVATE_PASSWORD=${{ secrets.PRIVATE_PASSWORD }}
+          secrets: |
+            private_username=${{ secrets.PRIVATE_USERNAME }}
+            private_password=${{ secrets.PRIVATE_PASSWORD }}
         
       - name: 🧪 Run Tests with Updated Dependencies
         run: |

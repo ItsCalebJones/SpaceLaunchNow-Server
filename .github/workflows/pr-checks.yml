@@ -309,7 +309,6 @@ jobs:
               : '⚠️ **Some quality checks failed.** Please review the failed checks above.'}
             
             ---
-            <sub>⚡ Optimized pipeline: Fast linting + single Docker build reused for tests & security</sub>
             <sub>Triggered by commit ${context.sha.substring(0, 7)} • [View Details](${context.payload.pull_request.html_url}/checks)</sub>`;
             
             if (botComment) {

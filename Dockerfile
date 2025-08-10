@@ -1,9 +1,5 @@
+# syntax=docker/dockerfile:1
 FROM python:3.12.10-alpine AS builder
-
-ARG PRIVATE_USERNAME
-ARG PRIVATE_PASSWORD
-ENV POETRY_HTTP_BASIC_TSD_USERNAME=$PRIVATE_USERNAME
-ENV POETRY_HTTP_BASIC_TSD_PASSWORD=$PRIVATE_PASSWORD
 
 ENV PYTHONUNBUFFERED=1
 ENV DOCKER_CONTAINER=1
@@ -14,12 +10,16 @@ ENV PATH="/usr/local/bin:$PATH"
 WORKDIR /code/
 COPY pyproject.toml poetry.lock README.md /code/
 
-# Install dependencies
-RUN apk add --no-cache curl bash && \
+# Install dependencies using BuildKit secrets (most secure approach)
+RUN --mount=type=secret,id=private_username \
+    --mount=type=secret,id=private_password \
+    apk add --no-cache curl bash && \
     curl -sSL https://install.python-poetry.org | python3 - --version 2.1.2 && \
     poetry config virtualenvs.in-project true && \
-    poetry config http-basic.tsd "$PRIVATE_USERNAME" "$PRIVATE_PASSWORD" && \
-    poetry install --no-interaction --no-root --no-ansi --with ci
+    poetry config http-basic.tsd "$(cat /run/secrets/private_username)" "$(cat /run/secrets/private_password)" && \
+    poetry install --no-interaction --no-root --no-ansi --with ci && \
+    # Clear poetry credentials and secrets from memory
+    poetry config --unset http-basic.tsd
 
 FROM python:3.12.10-alpine
 

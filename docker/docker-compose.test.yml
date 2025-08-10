@@ -8,9 +8,9 @@ services:
   test:
     build:
       context: ../
-      args:
-        - PRIVATE_USERNAME=${POETRY_HTTP_BASIC_TSD_USERNAME}
-        - PRIVATE_PASSWORD=${POETRY_HTTP_BASIC_TSD_PASSWORD}
+      secrets:
+        - private_username
+        - private_password
     image: space_launch_now_local
     command: >
       bash -c "coverage run --data-file=/code/coverage/.coverage manage.py test --settings=spacelaunchnow.settings.test
@@ -32,3 +32,9 @@ services:
       - USE_LOCAL_STORAGE=true
     depends_on:
       - db
+
+secrets:
+  private_username:
+    environment: POETRY_HTTP_BASIC_TSD_USERNAME
+  private_password:
+    environment: POETRY_HTTP_BASIC_TSD_PASSWORD

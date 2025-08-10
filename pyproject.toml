@@ -67,7 +67,6 @@ redis = "^6.2.0"
 hiredis = "^3.2.1"
 python-json-logger = "^3.3.0"
 kubernetes = "^33.1.0"
-safety = "^3.6.0"
 
 [tool.poetry.group.dev]
 optional = true
@@ -76,11 +75,11 @@ optional = true
 commitizen = "^2.37.0"
 toml = "^0.10.2"
 pre-commit = "^2.20.0"
-safety = "^3.0.0"
 radon = "^5.1.0"
 vulture = "^2.6"
 cohesion = "^1.0.0"
 ruff = "^0.12.8"
+safety = "^3.6.0"
 
 [tool.poetry.group.ci]
 optional = true

@@ -15,9 +15,9 @@ services:
     container_name: sln_web
     build:
       context: ../
-      args:
-        - PRIVATE_USERNAME=${POETRY_HTTP_BASIC_TSD_USERNAME}
-        - PRIVATE_PASSWORD=${POETRY_HTTP_BASIC_TSD_PASSWORD}
+      secrets:
+        - private_username
+        - private_password
     image: space_launch_now_local
     command: >
       bash -c "gunicorn --workers 1 --threads 2 --bind :8080 --log-level INFO spacelaunchnow.wsgi"
@@ -28,3 +28,9 @@ services:
     depends_on:
       - sln_db
       - sln_cache
+
+secrets:
+  private_username:
+    environment: POETRY_HTTP_BASIC_TSD_USERNAME
+  private_password:
+    environment: POETRY_HTTP_BASIC_TSD_PASSWORD

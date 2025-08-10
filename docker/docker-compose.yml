@@ -4,12 +4,18 @@ services:
   web:
     build:
       context: ../
-      args:
-        - PRIVATE_USERNAME=${POETRY_HTTP_BASIC_TSD_USERNAME}
-        - PRIVATE_PASSWORD=${POETRY_HTTP_BASIC_TSD_PASSWORD}
+      secrets:
+        - private_username
+        - private_password
     image: space_launch_now_local
     command: python manage.py runserver 0.0.0.0:8080
     ports:
       - "8080:8080"
     env_file:
       - .env
+
+secrets:
+  private_username:
+    environment: POETRY_HTTP_BASIC_TSD_USERNAME
+  private_password:
+    environment: POETRY_HTTP_BASIC_TSD_PASSWORD
