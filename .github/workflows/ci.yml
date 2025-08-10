@@ -64,6 +64,24 @@ jobs:
       - name: � Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
         
+      - name: 🔍 Verify Secrets
+        run: |
+          echo "Checking if secrets are available..."
+          if [ -z "${{ secrets.PRIVATE_USERNAME }}" ]; then
+            echo "❌ PRIVATE_USERNAME secret is not set"
+            echo "   This is REQUIRED for django-launch-library dependency"
+            exit 1
+          else
+            echo "✅ PRIVATE_USERNAME secret is available"
+          fi
+          if [ -z "${{ secrets.PRIVATE_PASSWORD }}" ]; then
+            echo "❌ PRIVATE_PASSWORD secret is not set"
+            echo "   This is REQUIRED for django-launch-library dependency" 
+            exit 1
+          else
+            echo "✅ PRIVATE_PASSWORD secret is available"
+          fi
+        
       - name: 🏗️ Build Docker Image
         id: build
         uses: docker/build-push-action@v5
@@ -80,20 +98,6 @@ jobs:
         env:
           PRIVATE_USERNAME: ${{ secrets.PRIVATE_USERNAME }}
           PRIVATE_PASSWORD: ${{ secrets.PRIVATE_PASSWORD }}
-            
-      - name: 🔍 Debug Secrets (without exposing values)
-        run: |
-          echo "Checking if secrets are available..."
-          if [ -z "${{ secrets.PRIVATE_USERNAME }}" ]; then
-            echo "❌ PRIVATE_USERNAME secret is not set"
-          else
-            echo "✅ PRIVATE_USERNAME secret is available"
-          fi
-          if [ -z "${{ secrets.PRIVATE_PASSWORD }}" ]; then
-            echo "❌ PRIVATE_PASSWORD secret is not set"  
-          else
-            echo "✅ PRIVATE_PASSWORD secret is available"
-          fi
             
       - name: � Upload Docker Image
         uses: actions/upload-artifact@v4
