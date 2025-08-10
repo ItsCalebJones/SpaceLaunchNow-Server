@@ -113,11 +113,8 @@ jobs:
           cache-to: type=gha,mode=max
           outputs: type=docker,dest=/tmp/test-image.tar
           secrets: |
-            type=env,id=private_username,env=PRIVATE_USERNAME
-            type=env,id=private_password,env=PRIVATE_PASSWORD
-        env:
-          PRIVATE_USERNAME: ${{ secrets.PRIVATE_USERNAME }}
-          PRIVATE_PASSWORD: ${{ secrets.PRIVATE_PASSWORD }}
+            "private_username=${{ secrets.PRIVATE_USERNAME }}"
+            "private_password=${{ secrets.PRIVATE_PASSWORD }}"
             
       - name: 📤 Upload Docker Image
         uses: actions/upload-artifact@v4
