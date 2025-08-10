@@ -15,8 +15,6 @@ on:
 env:
   REGISTRY: registry.digitalocean.com/sln-prod-registry-01
   IMAGE_NAME: space-launch-now-base
-  POETRY_HTTP_BASIC_TSD_USERNAME: ${{ secrets.PRIVATE_USERNAME }}
-  POETRY_HTTP_BASIC_TSD_PASSWORD: ${{ secrets.PRIVATE_PASSWORD }}
 
 jobs:
   # ========================================
@@ -66,6 +64,24 @@ jobs:
       - name: � Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
         
+      - name: 🔍 Verify Secrets
+        run: |
+          echo "Checking if secrets are available..."
+          if [ -z "${{ secrets.PRIVATE_USERNAME }}" ]; then
+            echo "❌ PRIVATE_USERNAME secret is not set"
+            echo "   This is REQUIRED for django-launch-library dependency"
+            exit 1
+          else
+            echo "✅ PRIVATE_USERNAME secret is available"
+          fi
+          if [ -z "${{ secrets.PRIVATE_PASSWORD }}" ]; then
+            echo "❌ PRIVATE_PASSWORD secret is not set"
+            echo "   This is REQUIRED for django-launch-library dependency" 
+            exit 1
+          else
+            echo "✅ PRIVATE_PASSWORD secret is available"
+          fi
+        
       - name: 🏗️ Build Docker Image
         id: build
         uses: docker/build-push-action@v5
@@ -76,9 +92,9 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           outputs: type=docker,dest=/tmp/base-image.tar
-          build-args: |
-            PRIVATE_USERNAME=${{ secrets.PRIVATE_USERNAME }}
-            PRIVATE_PASSWORD=${{ secrets.PRIVATE_PASSWORD }}
+          secrets: |
+            "private_username=${{ secrets.PRIVATE_USERNAME }}"
+            "private_password=${{ secrets.PRIVATE_PASSWORD }}"
             
       - name: � Upload Docker Image
         uses: actions/upload-artifact@v4
@@ -450,13 +466,13 @@ jobs:
             🚀 Staging deployment successful
             
             🎯 **To deploy to production:**
-            1. Go to GitHub Actions → "🚀 Production Deployment" workflow
+            1. Go to GitHub Actions → "🎯 Promote to Production" workflow
             2. Click "Run workflow"
             3. Enter image tag: `${{ steps.image-info.outputs.image-tag }}`
             4. Enter commit SHA: `${{ github.sha }}`
             5. Type "DEPLOY" to confirm
             
-            🔗 **Deploy manually:** ${{ github.server_url }}/${{ github.repository }}/actions/workflows/deploy-production.yml
-            🔗 **This build:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            🔗 **Deploy:** ${{ github.server_url }}/${{ github.repository }}/actions/workflows/promote.yml
+            🔗 **Build Log** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
 
