@@ -7,12 +7,13 @@ from django_tables2 import A
 class LaunchVehicleTable(tables.Table):
     name = tables.LinkColumn("launch_vehicle_id", args=[A("pk")])
     total_launch_count = tables.Column(verbose_name="Launch Count")
+    families = tables.Column(accessor="families", verbose_name="Family", orderable=False)
 
     class Meta:
         model = LauncherConfig
         fields = (
             "name",
-            "family",
+            "families",
             "manufacturer",
             "maiden_flight",
             "active",
@@ -25,6 +26,10 @@ class LaunchVehicleTable(tables.Table):
             "to_thrust",
         )
         template_name = "django_tables2/bootstrap4.html"
+
+    def render_families(self, record):
+        """Render families as a comma-separated list"""
+        return ", ".join([family.name for family in record.families.all()])
 
     def order_leo_capacity(self, QuerySet, is_descending):
         if is_descending:
@@ -71,12 +76,13 @@ class LaunchVehicleTable(tables.Table):
 
 class LauncherConfigTable(tables.Table):
     name = tables.LinkColumn("launch_vehicle_id", args=[A("pk")])
+    families = tables.Column(accessor="families", verbose_name="Family", orderable=False)
 
     class Meta:
         model = LauncherConfig
         fields = (
             "name",
-            "family",
+            "families",
             "manufacturer",
             "maiden_flight",
             "active",
@@ -88,3 +94,7 @@ class LauncherConfigTable(tables.Table):
             "to_thrust",
         )
         template_name = "django_tables2/bootstrap4.html"
+
+    def render_families(self, record):
+        """Render families as a comma-separated list"""
+        return ", ".join([family.name for family in record.families.all()])

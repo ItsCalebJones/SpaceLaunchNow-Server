@@ -731,6 +731,9 @@ class LauncherConfigListView(SingleTableMixin, FilterView):
 
     filterset_class = LauncherConfigListFilter
 
+    def get_queryset(self):
+        return LauncherConfig.objects.select_related("manufacturer", "image").prefetch_related("families")
+
 
 class LaunchListView(SingleTableMixin, FilterView):
     table_class = LaunchTable
