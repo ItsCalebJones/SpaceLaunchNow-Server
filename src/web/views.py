@@ -573,7 +573,13 @@ def events_list(request):
 # Create your views here.
 def event_by_slug(request, slug):
     try:
-        event = Events.objects.get(slug=slug)
+        event = (
+            Events.objects.select_related("type", "image")
+            .prefetch_related("updates__created_by__tsdstaff")
+            .prefetch_related("info_urls")
+            .prefetch_related("vid_urls")
+            .get(slug=slug)
+        )
         previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")[
             :10
         ]
