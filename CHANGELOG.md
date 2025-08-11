@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.19.1 (2025-08-11)
+
+### Fix
+
+* fix: n+1 query with events ([`2375baa`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/2375baa9499d8957347777e05be94c708039e599))
+
 ## v4.19.0 (2025-08-11)
 
 ### Feature
