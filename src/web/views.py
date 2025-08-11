@@ -746,25 +746,32 @@ class LaunchListView(SingleTableMixin, FilterView):
 @cache_page(600)
 def launch_vehicle_id(request, id):
     if id is not None:
-        vehicle = LauncherConfig.objects.get(pk=id)
-        previous_launches = Launch.objects.filter(net__lte=UTC_NOW).order_by("-net")[:5]
-        upcoming_vehicle_launches = get_prefetched_launch_queryset(
-            Launch.objects.filter(rocket__configuration=vehicle.id).filter(net__gte=UTC_NOW)
-        ).order_by("net")
-        previous_vehicle_launches = get_prefetched_launch_queryset(
-            Launch.objects.filter(rocket__configuration=vehicle.id).filter(net__lte=UTC_NOW)
-        ).order_by("-net")
+        try:
+            vehicle = (
+                LauncherConfig.objects.select_related("manufacturer", "image").prefetch_related("families").get(pk=id)
+            )
+            previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by(
+                "-net"
+            )[:5]
+            upcoming_vehicle_launches = get_prefetched_launch_queryset(
+                Launch.objects.filter(rocket__configuration=vehicle.id).filter(net__gte=UTC_NOW)
+            ).order_by("net")
+            previous_vehicle_launches = get_prefetched_launch_queryset(
+                Launch.objects.filter(rocket__configuration=vehicle.id).filter(net__lte=UTC_NOW)
+            ).order_by("-net")
 
-        return render(
-            request,
-            "web/vehicles/launch_vehicle/launch_vehicle_detail.html",
-            {
-                "vehicle": vehicle,
-                "previous_launches": previous_launches,
-                "upcoming_vehicle_launches": upcoming_vehicle_launches,
-                "previous_vehicle_launches": previous_vehicle_launches,
-            },
-        )
+            return render(
+                request,
+                "web/vehicles/launch_vehicle/launch_vehicle_detail.html",
+                {
+                    "vehicle": vehicle,
+                    "previous_launches": previous_launches,
+                    "upcoming_vehicle_launches": upcoming_vehicle_launches,
+                    "previous_vehicle_launches": previous_vehicle_launches,
+                },
+            )
+        except LauncherConfig.DoesNotExist as err:
+            raise Http404("Launch vehicle does not exist.") from err
     else:
         return redirect("booster_reuse")
 
