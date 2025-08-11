@@ -1,8 +1,26 @@
 # CHANGELOG
 
+## v4.19.0 (2025-08-11)
+
+### Feature
+
+* feat: handles families for launch vehicle ([`7b98c26`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/7b98c2603ff631c69c578c6913babf5d8362063b))
+
+### Fix
+
+* fix: enhance launch vehicle detail view with error handling and optimized queries ([`a0f745e`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a0f745ec7c533f5295aee1ec35269c1a51da931d))
+
+* fix: clean up views.py for improved organization and readability ([`de8e1a2`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/de8e1a246ef28038ee69b523a0689000006851ab))
+
+### Unknown
+
+* Merge branch &#39;master&#39; of https://github.com/ItsCalebJones/SpaceLaunchNow-Server ([`4c4dbc0`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/4c4dbc011d2ad1f2e4ba6e33385ff457879e773e))
+
 ## v4.18.0 (2025-08-10)
 
 ### Chore
+
+* chore: update CI/CD pipeline for improved organization and clarity ([`a20d87c`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a20d87cee67f8411ca4f826c86ae2e0ea4df7047))
 
 * chore: clean up workflow files for better organization and readability ([`590b6c4`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/590b6c4fa32fe4ee7409020fee917a8fadf633aa))
 
