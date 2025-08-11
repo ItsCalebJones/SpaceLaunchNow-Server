@@ -32,7 +32,7 @@ jobs:
             -w /workspace \
             -e POETRY_HTTP_BASIC_TSD_USERNAME=${{ secrets.PRIVATE_USERNAME }} \
             -e POETRY_HTTP_BASIC_TSD_PASSWORD=${{ secrets.PRIVATE_PASSWORD }} \
-            python:3.12-alpine bash -c "
+            python:3.12-alpine sh -c "
               pip install poetry &&
               poetry config repositories.tsd https://pypi.thespacedevs.com/simple/ &&
               poetry config http-basic.tsd \$POETRY_HTTP_BASIC_TSD_USERNAME \$POETRY_HTTP_BASIC_TSD_PASSWORD &&
