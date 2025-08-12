@@ -141,12 +141,66 @@ jobs:
             echo "## 📦 Package Updates" > package-summary.md
             echo "" >> package-summary.md
             
-            # Extract package updates from poetry.lock diff
-            git diff poetry.lock | grep -E "^\+.*name = |^\-.*name = " | sed 's/^[+-]//' | sort | uniq > temp-packages.txt
+            # Extract package updates from poetry.lock diff with version info
+            git diff poetry.lock > poetry-diff.txt
             
-            # Parse updated packages
+            # Parse updated packages with version changes
             echo "### Updated Packages:" >> package-summary.md
-            git diff poetry.lock | grep -E "^\+.*name = " | sed 's/^+.*name = "\(.*\)"/- \1/' | sort | uniq >> package-summary.md || echo "- No new packages added" >> package-summary.md
+            
+            # Create temporary files for processing
+            grep -E "^\-.*name = " poetry-diff.txt | sed 's/^-.*name = "\(.*\)"/\1/' | sort > removed-packages.txt
+            grep -E "^\+.*name = " poetry-diff.txt | sed 's/^+.*name = "\(.*\)"/\1/' | sort > added-packages.txt
+            
+            # Find packages that appear in both (updates) vs new/removed
+            comm -12 removed-packages.txt added-packages.txt > updated-packages.txt
+            comm -23 added-packages.txt removed-packages.txt > new-packages.txt
+            comm -23 removed-packages.txt added-packages.txt > removed-only-packages.txt
+            
+            # For each updated package, extract version info
+            if [ -s updated-packages.txt ]; then
+              while IFS= read -r package; do
+                old_version=$(grep -A 10 "^-.*name = \"$package\"" poetry-diff.txt | grep "^-version = " | head -1 | sed 's/^-version = "\(.*\)"/\1/')
+                new_version=$(grep -A 10 "^+.*name = \"$package\"" poetry-diff.txt | grep "^+version = " | head -1 | sed 's/^+version = "\(.*\)"/\1/')
+                if [ -n "$old_version" ] && [ -n "$new_version" ]; then
+                  echo "- **$package**: $old_version → $new_version" >> package-summary.md
+                else
+                  echo "- **$package**: version updated" >> package-summary.md
+                fi
+              done < updated-packages.txt
+            fi
+            
+            # List new packages
+            if [ -s new-packages.txt ]; then
+              echo "" >> package-summary.md
+              echo "### New Packages:" >> package-summary.md
+              while IFS= read -r package; do
+                new_version=$(grep -A 10 "^+.*name = \"$package\"" poetry-diff.txt | grep "^+version = " | head -1 | sed 's/^+version = "\(.*\)"/\1/')
+                if [ -n "$new_version" ]; then
+                  echo "- **$package**: $new_version" >> package-summary.md
+                else
+                  echo "- **$package**: added" >> package-summary.md
+                fi
+              done < new-packages.txt
+            fi
+            
+            # List removed packages
+            if [ -s removed-only-packages.txt ]; then
+              echo "" >> package-summary.md
+              echo "### Removed Packages:" >> package-summary.md
+              while IFS= read -r package; do
+                old_version=$(grep -A 10 "^-.*name = \"$package\"" poetry-diff.txt | grep "^-version = " | head -1 | sed 's/^-version = "\(.*\)"/\1/')
+                if [ -n "$old_version" ]; then
+                  echo "- **$package**: $old_version" >> package-summary.md
+                else
+                  echo "- **$package**: removed" >> package-summary.md
+                fi
+              done < removed-only-packages.txt
+            fi
+            
+            # If no packages were found, add fallback message
+            if [ ! -s updated-packages.txt ] && [ ! -s new-packages.txt ] && [ ! -s removed-only-packages.txt ]; then
+              echo "- No package changes detected" >> package-summary.md
+            fi
             
             echo "" >> package-summary.md
             echo "### Statistics:" >> package-summary.md
@@ -161,7 +215,7 @@ jobs:
             echo "EOF" >> $GITHUB_ENV
             
             # Clean up temporary files (don't commit them)
-            rm -f temp-packages.txt package-summary.md
+            rm -f poetry-diff.txt removed-packages.txt added-packages.txt updated-packages.txt new-packages.txt removed-only-packages.txt package-summary.md
           fi
           
       - name: 🧹 Clean Working Directory  
