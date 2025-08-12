@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## v4.20.0 (2025-08-12)
+
+### Chore
+
+* chore: improve depedency update summary ([`770e3f8`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/770e3f81a09003b41692c4f1ce7984dc56b43e9e))
+
+* chore: update GitHub Actions workflow for dependency management ([`f5a74a6`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/f5a74a6b0266bb9ea108454f2960ef2d69f5872f))
+
+* chore: update GitHub Actions workflow for dependency management ([`394c753`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/394c753bbd08828755d7d61a11d2198b59e78a48))
+
+### Feature
+
+* feat: enhance dependency update workflow with detailed package summary and cleanup ([`385da54`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/385da54cb47d4ebcc36c4f0af71b62991bd4c0bb))
+
 ## v4.19.1 (2025-08-11)
 
 ### Fix
