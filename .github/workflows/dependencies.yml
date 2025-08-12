@@ -110,7 +110,6 @@ jobs:
             -v "$(pwd)/report/coverage/:/code/coverage/" \
             -v "$(pwd)/report/htmlcov/:/code/htmlcov/" \
             -v "$(pwd)/report/xmlrunner/:/code/xmlrunner/" \
-            -e DEBUG=true \
             -e DJANGO_SECRET_KEY=${{ secrets.PRIVATE_PASSWORD }} \
             -e DATABASE_NAME=postgres \
             -e DATABASE_USERNAME=postgres \
@@ -138,11 +137,45 @@ jobs:
             echo "Dependencies updated"
             echo "UPDATES_AVAILABLE=true" >> $GITHUB_ENV
             
-            # Generate summary of changes
-            git diff poetry.lock > dependency-changes.diff
+            # Generate a readable summary of package changes
+            echo "## 📦 Package Updates" > package-summary.md
+            echo "" >> package-summary.md
+            
+            # Extract package updates from poetry.lock diff
+            git diff poetry.lock | grep -E "^\+.*name = |^\-.*name = " | sed 's/^[+-]//' | sort | uniq > temp-packages.txt
+            
+            # Parse updated packages
+            echo "### Updated Packages:" >> package-summary.md
+            git diff poetry.lock | grep -E "^\+.*name = " | sed 's/^+.*name = "\(.*\)"/- \1/' | sort | uniq >> package-summary.md || echo "- No new packages added" >> package-summary.md
+            
+            echo "" >> package-summary.md
+            echo "### Statistics:" >> package-summary.md
+            ADDED=$(git diff poetry.lock --numstat | awk '{print $1}')
+            REMOVED=$(git diff poetry.lock --numstat | awk '{print $2}')
+            echo "- Lines added: $ADDED" >> package-summary.md
+            echo "- Lines removed: $REMOVED" >> package-summary.md
+            
+            # Store summary for PR body
+            echo "PACKAGE_SUMMARY<<EOF" >> $GITHUB_ENV
+            cat package-summary.md >> $GITHUB_ENV
+            echo "EOF" >> $GITHUB_ENV
+            
+            # Clean up temporary files (don't commit them)
+            rm -f temp-packages.txt package-summary.md
           fi
           
+      - name: 🧹 Clean Working Directory  
+        if: env.UPDATES_AVAILABLE == 'true'
+        run: |
+          # Ensure only poetry.lock is staged for commit
+          git add poetry.lock
+          # Remove any other generated files from staging
+          git reset HEAD -- dependency-changes.diff 2>/dev/null || true
+          git rm --cached dependency-changes.diff 2>/dev/null || true
+          rm -f dependency-changes.diff
+          
       - name: 📤 Create Pull Request
+        id: create-pr
         if: env.UPDATES_AVAILABLE == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
@@ -156,6 +189,8 @@ jobs:
             ## 🔄 Automated Dependency Updates
             
             This PR contains automated updates to Python dependencies.
+            
+            ${{ env.PACKAGE_SUMMARY }}
             
             ### ✅ Automated Checks Passed:
             - Unit tests
@@ -173,7 +208,7 @@ jobs:
           delete-branch: true
           
       - name: 📢 Notify on Discord
-        if: env.UPDATES_AVAILABLE == 'true'
+        if: env.UPDATES_AVAILABLE == 'true' && steps.create-pr.outputs.pull-request-number
         uses: Ilshidur/action-discord@master
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
@@ -181,7 +216,8 @@ jobs:
           args: |
             🔄 **Dependency Updates Available**
             
-            New PR created with updated Python dependencies.
+            New PR #${{ steps.create-pr.outputs.pull-request-number }} created with updated Python dependencies.
             Please review and merge if tests pass.
             
-            🔗 **Link:** ${{ github.server_url }}/${{ github.repository }}/pulls
+            🔗 **Direct Link:** ${{ github.server_url }}/${{ github.repository }}/pull/${{ steps.create-pr.outputs.pull-request-number }}
+            📊 **All PRs:** ${{ github.server_url }}/${{ github.repository }}/pulls
