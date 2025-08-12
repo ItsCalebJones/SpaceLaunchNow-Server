@@ -62,12 +62,25 @@ jobs:
         with:
           context: .
           push: false
+          load: true
           tags: test-image:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
           secrets: |
             "private_username=${{ secrets.PRIVATE_USERNAME }}"
             "private_password=${{ secrets.PRIVATE_PASSWORD }}"
+      
+      - name: 🔍 Verify Docker Image Built Successfully
+        run: |
+          echo "Checking if test-image:latest was built successfully..."
+          docker images test-image:latest
+          if ! docker image inspect test-image:latest > /dev/null 2>&1; then
+            echo "❌ ERROR: test-image:latest was not built successfully"
+            echo "Available images:"
+            docker images
+            exit 1
+          fi
+          echo "✅ test-image:latest built successfully"
         
       - name: 🧪 Run Tests with Updated Dependencies
         run: |
@@ -79,9 +92,19 @@ jobs:
             postgres:14-alpine
           
           # Wait for database to be ready
+          echo "⏳ Waiting for database to be ready..."
           sleep 10
           
+          # Verify database is accessible
+          if ! docker exec test-db pg_isready -U postgres; then
+            echo "❌ Database is not ready"
+            docker logs test-db
+            exit 1
+          fi
+          echo "✅ Database is ready"
+          
           # Run tests using our updated image
+          echo "🧪 Running tests..."
           docker run --rm \
             --link test-db:db \
             -v "$(pwd)/report/coverage/:/code/coverage/" \
@@ -99,8 +122,9 @@ jobs:
             test-image:latest \
             bash -c "coverage run --data-file=/code/coverage/.coverage manage.py test --settings=spacelaunchnow.settings.test && coverage html --data-file=/code/coverage/.coverage && coverage report --data-file=/code/coverage/.coverage"
           
-          # Clean up database
-          docker stop test-db && docker rm test-db
+          # Clean up database (always run, even if tests fail)
+          echo "🧹 Cleaning up..."
+          docker stop test-db && docker rm test-db || true
           
       - name: 📋 Generate Update Summary
         run: |
