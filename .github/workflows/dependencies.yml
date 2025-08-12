@@ -144,70 +144,84 @@ jobs:
             # Extract package updates from poetry.lock diff with version info
             git diff poetry.lock > poetry-diff.txt
             
-            # Parse updated packages with version changes
-            echo "### Updated Packages:" >> package-summary.md
+            # Check if there are actual package/version changes vs just metadata updates
+            PACKAGE_CHANGES=$(grep -E "^\+.*name = |^\-.*name = |^\+version = |^\-version = " poetry-diff.txt | wc -l)
             
-            # Create temporary files for processing
-            grep -E "^\-.*name = " poetry-diff.txt | sed 's/^-.*name = "\(.*\)"/\1/' | sort > removed-packages.txt
-            grep -E "^\+.*name = " poetry-diff.txt | sed 's/^+.*name = "\(.*\)"/\1/' | sort > added-packages.txt
-            
-            # Find packages that appear in both (updates) vs new/removed
-            comm -12 removed-packages.txt added-packages.txt > updated-packages.txt
-            comm -23 added-packages.txt removed-packages.txt > new-packages.txt
-            comm -23 removed-packages.txt added-packages.txt > removed-only-packages.txt
-            
-            # For each updated package, extract version info
-            if [ -s updated-packages.txt ]; then
-              while IFS= read -r package; do
-                old_version=$(grep -A 10 "^-.*name = \"$package\"" poetry-diff.txt | grep "^-version = " | head -1 | sed 's/^-version = "\(.*\)"/\1/')
-                new_version=$(grep -A 10 "^+.*name = \"$package\"" poetry-diff.txt | grep "^+version = " | head -1 | sed 's/^+version = "\(.*\)"/\1/')
-                if [ -n "$old_version" ] && [ -n "$new_version" ]; then
-                  echo "- **$package**: $old_version → $new_version" >> package-summary.md
-                else
-                  echo "- **$package**: version updated" >> package-summary.md
-                fi
-              done < updated-packages.txt
-            fi
-            
-            # List new packages
-            if [ -s new-packages.txt ]; then
-              echo "" >> package-summary.md
-              echo "### New Packages:" >> package-summary.md
-              while IFS= read -r package; do
-                new_version=$(grep -A 10 "^+.*name = \"$package\"" poetry-diff.txt | grep "^+version = " | head -1 | sed 's/^+version = "\(.*\)"/\1/')
-                if [ -n "$new_version" ]; then
-                  echo "- **$package**: $new_version" >> package-summary.md
-                else
-                  echo "- **$package**: added" >> package-summary.md
-                fi
-              done < new-packages.txt
-            fi
-            
-            # List removed packages
-            if [ -s removed-only-packages.txt ]; then
-              echo "" >> package-summary.md
-              echo "### Removed Packages:" >> package-summary.md
-              while IFS= read -r package; do
-                old_version=$(grep -A 10 "^-.*name = \"$package\"" poetry-diff.txt | grep "^-version = " | head -1 | sed 's/^-version = "\(.*\)"/\1/')
-                if [ -n "$old_version" ]; then
-                  echo "- **$package**: $old_version" >> package-summary.md
-                else
-                  echo "- **$package**: removed" >> package-summary.md
-                fi
-              done < removed-only-packages.txt
-            fi
-            
-            # If no packages were found, add fallback message
-            if [ ! -s updated-packages.txt ] && [ ! -s new-packages.txt ] && [ ! -s removed-only-packages.txt ]; then
-              echo "- No package changes detected" >> package-summary.md
+            if [ "$PACKAGE_CHANGES" -eq 0 ]; then
+              echo "### Lock File Updates:" >> package-summary.md
+              echo "- Poetry lock file updated (dependency resolution or metadata changes)" >> package-summary.md
+              echo "- No package version changes detected" >> package-summary.md
+            else
+              # Parse updated packages with version changes
+              echo "### Updated Packages:" >> package-summary.md
+              
+              # Create temporary files for processing
+              grep -E "^\-.*name = " poetry-diff.txt | sed 's/^-.*name = "\(.*\)"/\1/' | sort > removed-packages.txt
+              grep -E "^\+.*name = " poetry-diff.txt | sed 's/^+.*name = "\(.*\)"/\1/' | sort > added-packages.txt
+              
+              # Find packages that appear in both (updates) vs new/removed
+              comm -12 removed-packages.txt added-packages.txt > updated-packages.txt
+              comm -23 added-packages.txt removed-packages.txt > new-packages.txt
+              comm -23 removed-packages.txt added-packages.txt > removed-only-packages.txt
+              
+              # For each updated package, extract version info
+              if [ -s updated-packages.txt ]; then
+                while IFS= read -r package; do
+                  old_version=$(grep -A 10 "^-.*name = \"$package\"" poetry-diff.txt | grep "^-version = " | head -1 | sed 's/^-version = "\(.*\)"/\1/')
+                  new_version=$(grep -A 10 "^+.*name = \"$package\"" poetry-diff.txt | grep "^+version = " | head -1 | sed 's/^+version = "\(.*\)"/\1/')
+                  if [ -n "$old_version" ] && [ -n "$new_version" ]; then
+                    echo "- **$package**: $old_version → $new_version" >> package-summary.md
+                  else
+                    echo "- **$package**: version updated" >> package-summary.md
+                  fi
+                done < updated-packages.txt
+              fi
+              
+              # List new packages
+              if [ -s new-packages.txt ]; then
+                echo "" >> package-summary.md
+                echo "### New Packages:" >> package-summary.md
+                while IFS= read -r package; do
+                  new_version=$(grep -A 10 "^+.*name = \"$package\"" poetry-diff.txt | grep "^+version = " | head -1 | sed 's/^+version = "\(.*\)"/\1/')
+                  if [ -n "$new_version" ]; then
+                    echo "- **$package**: $new_version" >> package-summary.md
+                  else
+                    echo "- **$package**: added" >> package-summary.md
+                  fi
+                done < new-packages.txt
+              fi
+              
+              # List removed packages
+              if [ -s removed-only-packages.txt ]; then
+                echo "" >> package-summary.md
+                echo "### Removed Packages:" >> package-summary.md
+                while IFS= read -r package; do
+                  old_version=$(grep -A 10 "^-.*name = \"$package\"" poetry-diff.txt | grep "^-version = " | head -1 | sed 's/^-version = "\(.*\)"/\1/')
+                  if [ -n "$old_version" ]; then
+                    echo "- **$package**: $old_version" >> package-summary.md
+                  else
+                    echo "- **$package**: removed" >> package-summary.md
+                  fi
+                done < removed-only-packages.txt
+              fi
+              
+              # If no packages were found in the detailed analysis, but we detected some changes
+              if [ ! -s updated-packages.txt ] && [ ! -s new-packages.txt ] && [ ! -s removed-only-packages.txt ]; then
+                echo "- Package metadata or constraints updated" >> package-summary.md
+              fi
             fi
             
             echo "" >> package-summary.md
             echo "### Statistics:" >> package-summary.md
-            ADDED=$(git diff poetry.lock --numstat | awk '{print $1}')
-            REMOVED=$(git diff poetry.lock --numstat | awk '{print $2}')
-            echo "- Lines added: $ADDED" >> package-summary.md
-            echo "- Lines removed: $REMOVED" >> package-summary.md
+            STATS=$(git diff poetry.lock --numstat)
+            if [ -n "$STATS" ]; then
+              ADDED=$(echo "$STATS" | awk '{print $1}')
+              REMOVED=$(echo "$STATS" | awk '{print $2}')
+              echo "- Lines added: $ADDED" >> package-summary.md
+              echo "- Lines removed: $REMOVED" >> package-summary.md
+            else
+              echo "- No changes to poetry.lock file" >> package-summary.md
+            fi
             
             # Store summary for PR body
             echo "PACKAGE_SUMMARY<<EOF" >> $GITHUB_ENV
