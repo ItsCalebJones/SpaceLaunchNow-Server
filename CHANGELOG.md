@@ -1,8 +1,20 @@
 # CHANGELOG
 
+## v4.20.1 (2025-08-14)
+
+### Fix
+
+* fix: update notification v3 to not send data ([`ce86ab8`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ce86ab8adf8c390bab867b6033152ed269ccf91a))
+
+### Unknown
+
+* Merge branch &#39;master&#39; of https://github.com/ItsCalebJones/SpaceLaunchNow-Server ([`3226de9`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/3226de93a197ed49e28cfcbf5aadc5cbed6969c6))
+
 ## v4.20.0 (2025-08-12)
 
 ### Chore
+
+* chore: enhance package summary generation in dependency update workflow ([`dc8bed2`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/dc8bed2f695f227a6dcea5cab665188463fbb521))
 
 * chore: improve depedency update summary ([`770e3f8`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/770e3f81a09003b41692c4f1ce7984dc56b43e9e))
 
