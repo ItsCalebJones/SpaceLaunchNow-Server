@@ -213,7 +213,7 @@ jobs:
             
             echo "" >> package-summary.md
             echo "### Statistics:" >> package-summary.md
-            STATS=$(git diff poetry.lock --numstat)
+            STATS=$(git diff --numstat poetry.lock)
             if [ -n "$STATS" ]; then
               ADDED=$(echo "$STATS" | awk '{print $1}')
               REMOVED=$(echo "$STATS" | awk '{print $2}')
