@@ -234,10 +234,9 @@ class NotificationHandler(NotificationService):
         self, data, topics, message_title=None, message_body=None, analytics_label: str = None
     ) -> NotificationResult:
         try:
-            logger.info(f"Notification v3 Data - {data}")
+            logger.info(f"Notification v3 Data - {data} - No longer sending as data.")
             logger.info(f"Topic Data v3- {topics}")
             results = self.fcm.notify(
-                data_payload=data,
                 topic_condition=topics,
                 notification_title=message_title,
                 notification_body=message_body,
