@@ -174,7 +174,7 @@ class AutoscalerTests(TestCase):
             mock_do_instance.update_keda_min_replicas.assert_called_once_with(7)
 
     def test_no_changes_required(self):
-        """Test when no scaling changes are needed"""
+        """Test when no node scaling changes are needed (but KEDA still updates)"""
         # Current workers matches expected (1 base worker, no launches)
         self.autoscaler_settings.current_workers = 1
         self.autoscaler_settings.save()
@@ -186,9 +186,10 @@ class AutoscalerTests(TestCase):
 
             check_autoscaler()
 
-            # Should not call update methods when no changes needed
+            # Node pools should not be updated when no scaling changes needed
             mock_do_instance.update_node_pools.assert_not_called()
-            mock_do_instance.update_keda_min_replicas.assert_not_called()
+            # But KEDA should always be updated with current expected worker count
+            mock_do_instance.update_keda_min_replicas.assert_called_once_with(1)
 
     def test_events_scaling(self):
         """Test scaling for events"""
