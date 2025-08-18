@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v4.20.2 (2025-08-18)
+
+### Chore
+
+* chore: update dependencies workflow for improved efficiency ([`e1eeeef`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/e1eeeef4b849417cd8623e3ee25e4d5092aecb50))
+
+### Fix
+
+* fix: try notification fix ([`79d4760`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/79d4760afaeb30dd983960015366cada83bb2544))
+
 ## v4.20.1 (2025-08-14)
 
 ### Fix
