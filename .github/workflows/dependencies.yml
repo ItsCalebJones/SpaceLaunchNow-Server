@@ -26,7 +26,7 @@ jobs:
           
       - name: 🔄 Update Dependencies
         run: |
-          # Update poetry.lock file with latest compatible versions
+          # Capture current package versions before update
           docker run --rm \
             -v "$(pwd):/workspace" \
             -w /workspace \
@@ -36,8 +36,15 @@ jobs:
               pip install poetry &&
               poetry config repositories.tsd https://pypi.thespacedevs.com/simple/ &&
               poetry config http-basic.tsd \$POETRY_HTTP_BASIC_TSD_USERNAME \$POETRY_HTTP_BASIC_TSD_PASSWORD &&
-              poetry update
+              poetry show --outdated > before-update.txt 2>/dev/null || echo 'No outdated packages' > before-update.txt &&
+              poetry show > before-all-packages.txt &&
+              poetry update &&
+              poetry show > after-update.txt &&
+              poetry show --outdated > after-outdated.txt 2>/dev/null || echo 'No outdated packages' > after-outdated.txt
             "
+          
+          # Keep the text files for package comparison later
+          echo "📊 Package update files generated"
           
       - name: 🔍 Debug Secrets (without exposing values)
         run: |
@@ -141,74 +148,27 @@ jobs:
             echo "## 📦 Package Updates" > package-summary.md
             echo "" >> package-summary.md
             
-            # Extract package updates from poetry.lock diff with version info
-            git diff poetry.lock > poetry-diff.txt
-            
-            # Check if there are actual package/version changes vs just metadata updates
-            PACKAGE_CHANGES=$(grep -E "^\+.*name = |^\-.*name = |^\+version = |^\-version = " poetry-diff.txt | wc -l)
-            
-            if [ "$PACKAGE_CHANGES" -eq 0 ]; then
-              echo "### Lock File Updates:" >> package-summary.md
-              echo "- Poetry lock file updated (dependency resolution or metadata changes)" >> package-summary.md
-              echo "- No package version changes detected" >> package-summary.md
+            # Check if we have text files from poetry show commands
+            if [ -f "before-all-packages.txt" ] && [ -f "after-update.txt" ] && [ -f "before-update.txt" ]; then
+              echo "🔍 Using poetry show data to detect specific package changes..."
+              
+              # Use our Python script to parse package differences
+              if [ -f ".github/scripts/parse-package-updates.py" ]; then
+                python3 .github/scripts/parse-package-updates.py before-all-packages.txt after-update.txt before-update.txt >> package-summary.md
+              else
+                echo "### Updated Packages:" >> package-summary.md
+                BEFORE_COUNT=$(wc -l < before-all-packages.txt)
+                AFTER_COUNT=$(wc -l < after-update.txt)
+                echo "- $AFTER_COUNT packages checked for updates" >> package-summary.md
+                echo "- Poetry dependency resolution completed successfully" >> package-summary.md
+              fi
+              
+              # Clean up text files
+              rm -f before-all-packages.txt after-update.txt before-update.txt after-outdated.txt
             else
-              # Parse updated packages with version changes
+              echo "🔍 Using git diff to detect changes (text files not available)..."
               echo "### Updated Packages:" >> package-summary.md
-              
-              # Create temporary files for processing
-              grep -E "^\-.*name = " poetry-diff.txt | sed 's/^-.*name = "\(.*\)"/\1/' | sort > removed-packages.txt
-              grep -E "^\+.*name = " poetry-diff.txt | sed 's/^+.*name = "\(.*\)"/\1/' | sort > added-packages.txt
-              
-              # Find packages that appear in both (updates) vs new/removed
-              comm -12 removed-packages.txt added-packages.txt > updated-packages.txt
-              comm -23 added-packages.txt removed-packages.txt > new-packages.txt
-              comm -23 removed-packages.txt added-packages.txt > removed-only-packages.txt
-              
-              # For each updated package, extract version info
-              if [ -s updated-packages.txt ]; then
-                while IFS= read -r package; do
-                  old_version=$(grep -A 10 "^-.*name = \"$package\"" poetry-diff.txt | grep "^-version = " | head -1 | sed 's/^-version = "\(.*\)"/\1/')
-                  new_version=$(grep -A 10 "^+.*name = \"$package\"" poetry-diff.txt | grep "^+version = " | head -1 | sed 's/^+version = "\(.*\)"/\1/')
-                  if [ -n "$old_version" ] && [ -n "$new_version" ]; then
-                    echo "- **$package**: $old_version → $new_version" >> package-summary.md
-                  else
-                    echo "- **$package**: version updated" >> package-summary.md
-                  fi
-                done < updated-packages.txt
-              fi
-              
-              # List new packages
-              if [ -s new-packages.txt ]; then
-                echo "" >> package-summary.md
-                echo "### New Packages:" >> package-summary.md
-                while IFS= read -r package; do
-                  new_version=$(grep -A 10 "^+.*name = \"$package\"" poetry-diff.txt | grep "^+version = " | head -1 | sed 's/^+version = "\(.*\)"/\1/')
-                  if [ -n "$new_version" ]; then
-                    echo "- **$package**: $new_version" >> package-summary.md
-                  else
-                    echo "- **$package**: added" >> package-summary.md
-                  fi
-                done < new-packages.txt
-              fi
-              
-              # List removed packages
-              if [ -s removed-only-packages.txt ]; then
-                echo "" >> package-summary.md
-                echo "### Removed Packages:" >> package-summary.md
-                while IFS= read -r package; do
-                  old_version=$(grep -A 10 "^-.*name = \"$package\"" poetry-diff.txt | grep "^-version = " | head -1 | sed 's/^-version = "\(.*\)"/\1/')
-                  if [ -n "$old_version" ]; then
-                    echo "- **$package**: $old_version" >> package-summary.md
-                  else
-                    echo "- **$package**: removed" >> package-summary.md
-                  fi
-                done < removed-only-packages.txt
-              fi
-              
-              # If no packages were found in the detailed analysis, but we detected some changes
-              if [ ! -s updated-packages.txt ] && [ ! -s new-packages.txt ] && [ ! -s removed-only-packages.txt ]; then
-                echo "- Package metadata or constraints updated" >> package-summary.md
-              fi
+              echo "- Package metadata or constraints updated" >> package-summary.md
             fi
             
             echo "" >> package-summary.md
@@ -229,7 +189,7 @@ jobs:
             echo "EOF" >> $GITHUB_ENV
             
             # Clean up temporary files (don't commit them)
-            rm -f poetry-diff.txt removed-packages.txt added-packages.txt updated-packages.txt new-packages.txt removed-only-packages.txt package-summary.md
+            rm -f package-summary.md
           fi
           
       - name: 🧹 Clean Working Directory  
@@ -237,10 +197,10 @@ jobs:
         run: |
           # Ensure only poetry.lock is staged for commit
           git add poetry.lock
-          # Remove any other generated files from staging
-          git reset HEAD -- dependency-changes.diff 2>/dev/null || true
-          git rm --cached dependency-changes.diff 2>/dev/null || true
-          rm -f dependency-changes.diff
+          # Remove any other generated files from staging and working directory
+          rm -f before-all-packages.txt after-update.txt before-update.txt after-outdated.txt package-summary.md
+          git reset HEAD -- dependency-changes.diff package-changes.txt old-poetry.lock before-all-packages.txt after-update.txt before-update.txt after-outdated.txt 2>/dev/null || true
+          git clean -f -d
           
       - name: 📤 Create Pull Request
         id: create-pr

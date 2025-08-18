@@ -1,0 +1,4 @@
+asgiref (3.7.2) (3.7.3) ASGI specs, helper code, and adapters
+boto3 (1.28.85) (1.29.0) The AWS SDK for Python  
+botocore (1.31.85) (1.32.0) Low-level, data-driven core of boto3.
+certifi (2023.11.17) (2024.2.1) Python package for providing Mozilla's CA Bundle.
