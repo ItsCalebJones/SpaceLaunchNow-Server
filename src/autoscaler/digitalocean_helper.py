@@ -159,7 +159,9 @@ class DigitalOceanHelper:
         - Memory constrained: 7GB / 350MB per pod = 20 pods/node
         - Effective: 10 pods per node (CPU is the constraint)
 
-        Conservative scaling: 8 pods per node to leave headroom
+        Scaling strategy:
+        - Single node: 5 pods max (conservative for single point of failure)
+        - Multiple nodes: 8 pods per node (conservative estimate with headroom)
         """
         logger.info(f"Updating KEDA min replicas for expected_worker_count={expected_worker_count}")
 
@@ -177,10 +179,13 @@ class DigitalOceanHelper:
 
             custom_api = client.CustomObjectsApi()
 
-            # Calculate pods based on node capacity
-            # Conservative estimate: 8 pods per node (CPU limited at 350m request)
-            pods_per_node = 8
-            logger.debug(f"Using conservative estimate of {pods_per_node} pods per node")
+            # Calculate pods based on node capacity - different strategy for single vs multiple nodes
+            if expected_worker_count == 1:
+                pods_per_node = 5  # Conservative for single node scenario
+                logger.debug(f"Single node deployment: using {pods_per_node} pods per node")
+            else:
+                pods_per_node = 8  # Conservative estimate for multi-node (CPU limited at 350m request)
+                logger.debug(f"Multi-node deployment: using {pods_per_node} pods per node")
 
             # Calculate minimum pods based on worker count
             min_pods = max(3, expected_worker_count * pods_per_node)

@@ -210,6 +210,10 @@ def check_autoscaler():
         logger.info(f"Final calculated expected worker count: {expected_worker_count}")
         logger.debug(f"Expected workers calculated {expected_worker_count}")
 
+        # Always update KEDA ScaledObject replicas based on expected traffic
+        logger.info("Updating KEDA ScaledObject replicas (always runs)")
+        do.update_keda_min_replicas(expected_worker_count)
+
         # Check to see if the expected worker count matches the current worker count and act.
         if expected_worker_count != autoscaler_settings.current_workers:
             logger.info(
@@ -222,23 +226,23 @@ def check_autoscaler():
             logger.info("Updating DigitalOcean node pools")
             do.update_node_pools(expected_worker_count, autoscaler_settings.max_workers)
 
-            # Also adjust KEDA ScaledObject minimum pod count based on expected traffic
-            logger.info("Updating KEDA ScaledObject replicas")
-            do.update_keda_min_replicas(expected_worker_count)
-
             logger.info("Autoscaler updates completed successfully")
         else:
             logger.info(
-                f"No scaling required - current worker count ({autoscaler_settings.current_workers}) "
+                f"No node scaling required - current worker count ({autoscaler_settings.current_workers}) "
                 f"matches expected count ({expected_worker_count})"
             )
-            logger.debug("No changes required...")
+            logger.debug("No node pool changes required, but KEDA values updated...")
 
     # If autoscaler is enabled and a customer worker count is set use that value instead of calculating.
     elif autoscaler_settings.enabled and autoscaler_settings.custom_worker_count is not None:
         expected_worker_count = autoscaler_settings.custom_worker_count
         logger.info(f"Autoscaler enabled with custom worker count: {expected_worker_count}")
         logger.debug(f"Expected workers custom set to  {expected_worker_count}")
+
+        # Always update KEDA ScaledObject replicas for custom worker count
+        logger.info("Updating KEDA ScaledObject replicas (custom count - always runs)")
+        do.update_keda_min_replicas(expected_worker_count)
 
         # Check to see if the expected worker count matches the current worker count and act.
         if expected_worker_count != autoscaler_settings.current_workers:
@@ -252,17 +256,13 @@ def check_autoscaler():
             logger.info("Updating DigitalOcean node pools (custom count)")
             do.update_node_pools(expected_worker_count, autoscaler_settings.max_workers)
 
-            # Also adjust KEDA ScaledObject minimum pod count for custom worker count
-            logger.info("Updating KEDA ScaledObject replicas (custom count)")
-            do.update_keda_min_replicas(expected_worker_count)
-
             logger.info("Custom autoscaler updates completed successfully")
         else:
             logger.info(
-                f"No custom scaling required - current worker count ({autoscaler_settings.current_workers}) "
+                f"No custom node scaling required - current worker count ({autoscaler_settings.current_workers}) "
                 f"matches custom count ({expected_worker_count})"
             )
-            logger.debug("No changes required...")
+            logger.debug("No node pool changes required, but KEDA values updated...")
 
     else:
         logger.info("Autoscaler is disabled or no configuration set - no scaling actions will be taken")
@@ -272,4 +272,4 @@ def check_autoscaler():
         )
         logger.debug("Autoscaler is not enabled and no custom count set - doing nothing.")
 
-    logger.info("Autoscaler check completed")
+    logger.debug("Autoscaler check completed")
