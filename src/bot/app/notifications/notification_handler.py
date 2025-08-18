@@ -178,19 +178,19 @@ class NotificationHandler(NotificationService):
             "webcast": str(webcast),
         }
 
-        all_result = self.send_notif_v3(
+        all_result = self.send_notif_v3_5(
             data=data,
             topics=get_fcm_all_topics_v3(debug=self.DEBUG, notification_type=notification_type),
             analytics_label=f"notification_all_{data['launch_uuid']}",
         )
 
-        strict_result = self.send_notif_v3(
+        strict_result = self.send_notif_v3_5(
             data=data,
             topics=get_fcm_strict_topics_v3(launch, debug=self.DEBUG, notification_type=notification_type),
             analytics_label=f"notification_strict_{data['launch_uuid']}",
         )
 
-        not_strict_result = self.send_notif_v3(
+        not_strict_result = self.send_notif_v3_5(
             data=data,
             topics=get_fcm_not_strict_topics_v3(launch, debug=self.DEBUG, notification_type=notification_type),
             analytics_label=f"notification_not_strict_{data['launch_uuid']}",
@@ -234,12 +234,54 @@ class NotificationHandler(NotificationService):
         self, data, topics, message_title=None, message_body=None, analytics_label: str = None
     ) -> NotificationResult:
         try:
-            logger.info(f"Notification v3 Data - {data} - No longer sending as data.")
+            logger.info(f"Notification v3 Data - {data}")
             logger.info(f"Topic Data v3- {topics}")
             results = self.fcm.notify(
+                data_payload=data,
                 topic_condition=topics,
                 notification_title=message_title,
                 notification_body=message_body,
+                fcm_options={"analytics_label": analytics_label},
+                android_config={"priority": "high", "collapse_key": data["launch_uuid"], "ttl": "86400s"},
+                timeout=240,
+            )
+            logger.info(results)
+            return NotificationResult(
+                notification_type=data["notification_type"],
+                topics=topics,
+                result=results,
+                analytics_label=analytics_label,
+                error=None,
+            )
+        except Exception as e:
+            logger.error(e)
+            return NotificationResult(
+                notification_type=data["notification_type"],
+                topics=topics,
+                result=results,
+                analytics_label=analytics_label,
+                error=e,
+            )
+
+    def send_notif_v3_5(
+        self, data, topics, message_title=None, message_body=None, analytics_label: str = None
+    ) -> NotificationResult:
+        try:
+            # Transform data payload for Android custom notification handling
+            # Use the simple path - just title and message (no launch/event/news objects)
+            # Send ONLY data payload to ensure onMessageReceived is called
+            custom_data = {
+                "notification_type": "custom",
+                "title": message_title,
+                "message": message_body,
+            }
+
+            logger.info(f"Notification v3.5 Custom Data - {custom_data}")
+            logger.info(f"Topic Data v3.5- {topics}")
+            results = self.fcm.notify(
+                data_payload=custom_data,
+                topic_condition=topics,
+                # Remove notification_title and notification_body to ensure custom handling
                 fcm_options={"analytics_label": analytics_label},
                 android_config={"priority": "high", "collapse_key": data["launch_uuid"], "ttl": "86400s"},
                 timeout=240,
