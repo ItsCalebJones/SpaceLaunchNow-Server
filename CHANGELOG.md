@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v4.20.3 (2025-08-18)
+
+### Fix
+
+* fix: adjust autoscaler ([`a2e68e5`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a2e68e56671a531fccf56a5bd4598a8b49e408fd))
+
+### Test
+
+* test: fix unit tests for autoscaler functionality ([`eac7280`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/eac7280b53d95637ec2ca39cce34ba9b4b8af17e))
+
 ## v4.20.2 (2025-08-18)
 
 ### Chore
