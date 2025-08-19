@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v4.20.4 (2025-08-19)
+
+### Ci
+
+* ci: update dependency update script ([`4a884e7`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/4a884e759097563037db7b0c385e8b961af3f542))
+
+* ci: add script to parse package updates and manage dependencies ([`6b30213`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/6b30213e849f6236175c6d5461892d14b94505b3))
+
+### Fix
+
+* fix: document pods per node and adjust minimum pod count ([`ba11363`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ba11363c22aa993d56428bfa73c59ba4733c5ce2))
+
+### Test
+
+* test: add unit tests for DigitalOceanHelper functionality ([`76100d9`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/76100d947a21d570a6e46d25cd52d35d4f027403))
+
 ## v4.20.3 (2025-08-18)
 
 ### Fix
