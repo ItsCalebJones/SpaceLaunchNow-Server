@@ -23,6 +23,10 @@ DO_TOKEN = settings.DO_TOKEN
 
 logger = logging.getLogger(__name__)
 
+MINIMUM_POD_COUNT_SINGLE_NODE = 2  # Conservative for single node scenario
+MINIMUM_POD_COUNT_MULTI_NODE = 6  # Conservative estimate for multi-node
+MAX_PODS_PER_NODE = 12  # Allow up to 12 pods per node during peak scaling
+
 
 class DigitalOceanHelper:
     def __init__(self):
@@ -181,10 +185,12 @@ class DigitalOceanHelper:
 
             # Calculate pods based on node capacity - different strategy for single vs multiple nodes
             if expected_worker_count == 1:
-                pods_per_node = 5  # Conservative for single node scenario
+                pods_per_node = MINIMUM_POD_COUNT_SINGLE_NODE  # Conservative for single node scenario
                 logger.debug(f"Single node deployment: using {pods_per_node} pods per node")
             else:
-                pods_per_node = 8  # Conservative estimate for multi-node (CPU limited at 350m request)
+                pods_per_node = (
+                    MINIMUM_POD_COUNT_MULTI_NODE  # Conservative estimate for multi-node (CPU limited at 350m request)
+                )
                 logger.debug(f"Multi-node deployment: using {pods_per_node} pods per node")
 
             # Calculate minimum pods based on worker count
@@ -193,7 +199,7 @@ class DigitalOceanHelper:
 
             # Calculate maximum pods with scaling headroom
             # Allow up to 12 pods per node during peak scaling
-            max_pods_per_node = 12
+            max_pods_per_node = MAX_PODS_PER_NODE
             max_pods = min(100, expected_worker_count * max_pods_per_node)
             logger.debug(f"Calculated max_pods: min(100, {expected_worker_count} * {max_pods_per_node}) = {max_pods}")
 
