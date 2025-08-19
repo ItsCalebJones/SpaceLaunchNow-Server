@@ -26,7 +26,7 @@ jobs:
           
       - name: 🔄 Update Dependencies
         run: |
-          # Capture current package versions before update
+          # Simple approach: just update and let git diff show us what changed
           docker run --rm \
             -v "$(pwd):/workspace" \
             -w /workspace \
@@ -36,15 +36,8 @@ jobs:
               pip install poetry &&
               poetry config repositories.tsd https://pypi.thespacedevs.com/simple/ &&
               poetry config http-basic.tsd \$POETRY_HTTP_BASIC_TSD_USERNAME \$POETRY_HTTP_BASIC_TSD_PASSWORD &&
-              poetry show --outdated > before-update.txt 2>/dev/null || echo 'No outdated packages' > before-update.txt &&
-              poetry show > before-all-packages.txt &&
-              poetry update &&
-              poetry show > after-update.txt &&
-              poetry show --outdated > after-outdated.txt 2>/dev/null || echo 'No outdated packages' > after-outdated.txt
+              poetry update
             "
-          
-          # Keep the text files for package comparison later
-          echo "📊 Package update files generated"
           
       - name: 🔍 Debug Secrets (without exposing values)
         run: |
@@ -148,29 +141,43 @@ jobs:
             echo "## 📦 Package Updates" > package-summary.md
             echo "" >> package-summary.md
             
-            # Check if we have text files from poetry show commands
-            if [ -f "before-all-packages.txt" ] && [ -f "after-update.txt" ] && [ -f "before-update.txt" ]; then
-              echo "🔍 Using poetry show data to detect specific package changes..."
-              
-              # Use our Python script to parse package differences
-              if [ -f ".github/scripts/parse-package-updates.py" ]; then
-                python3 .github/scripts/parse-package-updates.py before-all-packages.txt after-update.txt before-update.txt >> package-summary.md
-              else
-                echo "### Updated Packages:" >> package-summary.md
-                BEFORE_COUNT=$(wc -l < before-all-packages.txt)
-                AFTER_COUNT=$(wc -l < after-update.txt)
-                echo "- $AFTER_COUNT packages checked for updates" >> package-summary.md
-                echo "- Poetry dependency resolution completed successfully" >> package-summary.md
-              fi
-              
-              # Clean up text files
-              rm -f before-all-packages.txt after-update.txt before-update.txt after-outdated.txt
-            else
-              echo "🔍 Using git diff to detect changes (text files not available)..."
-              echo "### Updated Packages:" >> package-summary.md
-              echo "- Package metadata or constraints updated" >> package-summary.md
+            # Extract version changes and separate Launch Library updates
+            ALL_CHANGES=$(git diff poetry.lock | awk '/name = "/ {match($0, /name = "([^"]+)"/, arr); pkg = arr[1]} /^-version = "/ {match($0, /version = "([^"]+)"/, arr); oldv = arr[1]} /^\+version = "/ {match($0, /version = "([^"]+)"/, arr); newv = arr[1]; if (pkg && oldv && newv) printf "%s|%s|%s\n", pkg, oldv, newv}')
+            
+            # Separate Launch Library updates from regular updates
+            LAUNCH_LIBRARY_CHANGES=""
+            REGULAR_CHANGES=""
+            
+            if [ -n "$ALL_CHANGES" ]; then
+              while IFS='|' read -r pkg oldv newv; do
+                if echo "$pkg" | grep -q "launch-library"; then
+                  LAUNCH_LIBRARY_CHANGES="${LAUNCH_LIBRARY_CHANGES}- **🚀 $pkg**: $oldv → $newv\n"
+                else
+                  REGULAR_CHANGES="${REGULAR_CHANGES}- **$pkg**: $oldv → $newv\n"
+                fi
+              done <<< "$ALL_CHANGES"
             fi
             
+            # Add Launch Library section if there are updates
+            if [ -n "$LAUNCH_LIBRARY_CHANGES" ]; then
+              echo "### 🚀 Launch Library Core Updates" >> package-summary.md
+              echo "" >> package-summary.md
+              echo -e "$LAUNCH_LIBRARY_CHANGES" >> package-summary.md
+              echo "" >> package-summary.md
+            fi
+            
+            # Add regular package updates section
+            if [ -n "$REGULAR_CHANGES" ]; then
+              echo "### 📦 Other Package Updates" >> package-summary.md
+              echo "" >> package-summary.md
+              echo -e "$REGULAR_CHANGES" >> package-summary.md
+            elif [ -z "$LAUNCH_LIBRARY_CHANGES" ]; then
+              echo "### Updated Packages:" >> package-summary.md
+              echo "- Poetry lock file updated with dependency resolution changes" >> package-summary.md
+              echo "- Package metadata or indirect dependencies may have changed" >> package-summary.md
+            fi
+            
+            # Add statistics
             echo "" >> package-summary.md
             echo "### Statistics:" >> package-summary.md
             STATS=$(git diff --numstat poetry.lock)
@@ -197,9 +204,7 @@ jobs:
         run: |
           # Ensure only poetry.lock is staged for commit
           git add poetry.lock
-          # Remove any other generated files from staging and working directory
-          rm -f before-all-packages.txt after-update.txt before-update.txt after-outdated.txt package-summary.md
-          git reset HEAD -- dependency-changes.diff package-changes.txt old-poetry.lock before-all-packages.txt after-update.txt before-update.txt after-outdated.txt 2>/dev/null || true
+          # Clean up any temporary files
           git clean -f -d
           
       - name: 📤 Create Pull Request
