@@ -9,7 +9,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 from autoscaler.autoscaler import check_autoscaler
-from autoscaler.digitalocean_helper import DigitalOceanHelper
+from autoscaler.digitalocean_helper import MAX_PODS_PER_NODE, MINIMUM_POD_COUNT_MULTI_NODE, DigitalOceanHelper
 from autoscaler.models import AutoscalerSettings
 
 
@@ -288,7 +288,8 @@ class DigitalOceanHelperTests(TestCase):
         mock_scaled_object = {"spec": {"minReplicaCount": 3, "maxReplicaCount": 100}}
         mock_api.get_namespaced_custom_object.return_value = mock_scaled_object
 
-        self.helper.update_keda_min_replicas(4)
+        expected_worker_count = 4
+        self.helper.update_keda_min_replicas(expected_worker_count)
 
         # Verify API calls
         mock_api.get_namespaced_custom_object.assert_called_once_with(
@@ -301,13 +302,16 @@ class DigitalOceanHelperTests(TestCase):
 
         mock_api.patch_namespaced_custom_object.assert_called_once()
 
-        # Check pod calculations based on realistic capacity:
-        # 4 worker nodes * 8 pods per node = 32 min pods
-        # 4 worker nodes * 12 pods per node = 48 max pods
+        # Check pod calculations based on actual constants:
+        # expected_worker_count * MINIMUM_POD_COUNT_MULTI_NODE = min pods
+        # expected_worker_count * MAX_PODS_PER_NODE = max pods
+        expected_min_pods = max(3, expected_worker_count * MINIMUM_POD_COUNT_MULTI_NODE)
+        expected_max_pods = min(100, expected_worker_count * MAX_PODS_PER_NODE)
+
         call_args = mock_api.patch_namespaced_custom_object.call_args
         updated_object = call_args[1]["body"]
-        self.assertEqual(updated_object["spec"]["minReplicaCount"], 32)  # max(3, 4*8)
-        self.assertEqual(updated_object["spec"]["maxReplicaCount"], 48)  # min(100, 4*12)
+        self.assertEqual(updated_object["spec"]["minReplicaCount"], expected_min_pods)
+        self.assertEqual(updated_object["spec"]["maxReplicaCount"], expected_max_pods)
 
     @patch("kubernetes.config.load_kube_config")
     @patch("kubernetes.config.load_incluster_config")
