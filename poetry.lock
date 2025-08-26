@@ -1037,14 +1037,14 @@ Django = "*"
 
 [[package]]
 name = "django-launch-library"
-version = "21.40.2"
-description = "The Django lib for supporting Launch Library."
+version = "21.40.3"
+description = "The Django library for supporting Launch Library."
 optional = false
 python-versions = ">=3.12.0,<3.13.0"
 groups = ["main"]
 files = [
-    {file = "django_launch_library-21.40.2-py3-none-any.whl", hash = "sha256:0afdb5c6fc25df173ba34be56f8b12fff6b3245f1a44bf2050224501390c6974"},
-    {file = "django_launch_library-21.40.2.tar.gz", hash = "sha256:b3687321167792a5ef8908bbb94330d071c4f88f8048b657bdc58fa626da0041"},
+    {file = "django_launch_library-21.40.3-py3-none-any.whl", hash = "sha256:b50337c8ecca931a7ab54ce12bdf3a5ee9ca71273f1acabbcac73787dbbd102d"},
+    {file = "django_launch_library-21.40.3.tar.gz", hash = "sha256:e03a957dc4713489ee7dcfbc67d33950a9b21c35bf2d766b00d0a537ce4a7d77"},
 ]
 
 [package.dependencies]
@@ -4721,14 +4721,14 @@ typing-extensions = ">=3.7.4.3"
 
 [[package]]
 name = "typing-extensions"
-version = "4.14.1"
+version = "4.15.0"
 description = "Backported and Experimental Type Hints for Python 3.9+"
 optional = false
 python-versions = ">=3.9"
 groups = ["main", "dev"]
 files = [
-    {file = "typing_extensions-4.14.1-py3-none-any.whl", hash = "sha256:d1e1e3b58374dc93031d6eda2420a48ea44a36c2b4766a4fdeb3710755731d76"},
-    {file = "typing_extensions-4.14.1.tar.gz", hash = "sha256:38b39f4aeeab64884ce9f74c94263ef78f3c22467c8724005483154c26648d36"},
+    {file = "typing_extensions-4.15.0-py3-none-any.whl", hash = "sha256:f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548"},
+    {file = "typing_extensions-4.15.0.tar.gz", hash = "sha256:0cea48d173cc12fa28ecabc3b837ea3cf6f38c6d1136f85cbaaf598984861466"},
 ]
 
 [[package]]
