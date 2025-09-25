@@ -1071,14 +1071,14 @@ Django = "*"
 
 [[package]]
 name = "django-launch-library"
-version = "21.44.0"
+version = "21.44.1"
 description = "The Django library for supporting Launch Library."
 optional = false
 python-versions = ">=3.12.0,<3.13.0"
 groups = ["main"]
 files = [
-    {file = "django_launch_library-21.44.0-py3-none-any.whl", hash = "sha256:c4ac46fc3ff40ad1f2e325f193474c6533508293ba1faef467b5b92751ee9cad"},
-    {file = "django_launch_library-21.44.0.tar.gz", hash = "sha256:25ea5120d35147e98879de690722e8f28083c40e4bcb4ac57e33391d042d1ff0"},
+    {file = "django_launch_library-21.44.1-py3-none-any.whl", hash = "sha256:a380640ed0b4d0379f5eb52c896bf08cf1e531ec528ba2eeaa49ee69d99ba670"},
+    {file = "django_launch_library-21.44.1.tar.gz", hash = "sha256:e5ef32187e0f2d7349d8d3222c81737ae121ac9429bb233ec2b5d4872a903f6e"},
 ]
 
 [package.dependencies]
