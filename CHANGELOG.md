@@ -1,5 +1,95 @@
 # CHANGELOG
 
+## v4.20.5 (2025-09-26)
+
+### Fix
+
+* fix: notification handling with message title and body for v3.5 ([`ba04312`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ba0431267004e55b2990b5bfe51cbabf9e1e1949))
+
+### Unknown
+
+* Merge branch &#39;master&#39; of https://github.com/ItsCalebJones/SpaceLaunchNow-Server ([`0727172`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/072717250c9d9748c8494c73bd62b226f6b6ed44))
+
+* Merge pull request #292 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`73c4637`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/73c463728e2a9a50f8f8c7a8b94e6898d1c639a8))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`a512152`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a512152ab1769777f65f224b915599b2cfb1e314))
+
+* Merge pull request #291 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`68ab29f`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/68ab29fbff12f33f14524a6b9108d22e65286ab9))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`1de6517`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/1de651759e4a181704e1c7a7831a18d4db56d054))
+
+* Merge pull request #290 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`3b13c79`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/3b13c795008e61e3c133ec49add3e5a0db993424))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`a6e236c`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a6e236c911d285ab5a4857503a544d05ef8c65d0))
+
+* Merge pull request #289 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`72c765c`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/72c765c3e38a8ee15aa6cd357a819edf303a9ac0))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`7287251`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/7287251699453b1480905dedaa0a35e4b2851c68))
+
+* Merge pull request #288 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`c7c6fa4`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/c7c6fa42cfbf03fcc3c4cf1e1d5f4fe7c514662a))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`b94135f`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/b94135f3fafae47ded7463b2f9259b449bdafcae))
+
+* Merge pull request #287 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`916f8c0`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/916f8c07e2bd505d2e377e946f15da99f6a6a23f))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`a3bce6b`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a3bce6b3a8848a661cac73a6a668995ea00734dc))
+
+* Merge pull request #285 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`32b2666`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/32b26668fa3fcc16668019f49efcc6218bfae2f5))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`7d465cd`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/7d465cd14d4643784b7559475da5b61f2a8abcf4))
+
+* Merge pull request #283 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`a1ad574`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a1ad574b46ae56ab82a29faa487e3752320b2faf))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`4e8a4c1`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/4e8a4c1b70fdad98494632e5a7e132f8a72e7d88))
+
+* Merge pull request #282 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`e1ef368`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/e1ef368af5faa047010f6462dbfe68d5379ff074))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`b4d5fff`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/b4d5fff2bd4a8293908a5033afc3f6f48af8e468))
+
+* Merge pull request #281 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`d490196`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/d490196e78f09ad3c85801a31e3251c6639ece80))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`6fca568`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/6fca568c719b4d69bde92a3a2e1c2340b1f259fe))
+
 ## v4.20.4 (2025-08-19)
 
 ### Ci
