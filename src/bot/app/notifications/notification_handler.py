@@ -181,18 +181,24 @@ class NotificationHandler(NotificationService):
         all_result = self.send_notif_v3_5(
             data=data,
             topics=get_fcm_all_topics_v3(debug=self.DEBUG, notification_type=notification_type),
+            message_title=launch.name,
+            message_body=contents,
             analytics_label=f"notification_all_{data['launch_uuid']}",
         )
 
         strict_result = self.send_notif_v3_5(
             data=data,
             topics=get_fcm_strict_topics_v3(launch, debug=self.DEBUG, notification_type=notification_type),
+            message_title=launch.name,
+            message_body=contents,
             analytics_label=f"notification_strict_{data['launch_uuid']}",
         )
 
         not_strict_result = self.send_notif_v3_5(
             data=data,
             topics=get_fcm_not_strict_topics_v3(launch, debug=self.DEBUG, notification_type=notification_type),
+            message_title=launch.name,
+            message_body=contents,
             analytics_label=f"notification_not_strict_{data['launch_uuid']}",
         )
 
@@ -267,19 +273,13 @@ class NotificationHandler(NotificationService):
         self, data, topics, message_title=None, message_body=None, analytics_label: str = None
     ) -> NotificationResult:
         try:
-            # Transform data payload for Android custom notification handling
-            # Use the simple path - just title and message (no launch/event/news objects)
-            # Send ONLY data payload to ensure onMessageReceived is called
-            custom_data = {
-                "notification_type": "custom",
-                "title": message_title,
-                "message": message_body,
-            }
-
-            logger.info(f"Notification v3.5 Custom Data - {custom_data}")
+            logger.info(f"Notification v3.5 Custom Data - {data}")
             logger.info(f"Topic Data v3.5- {topics}")
             results = self.fcm.notify(
-                data_payload=custom_data,
+                notification_title=message_title,
+                notification_body=f"{message_body}{topics if self.DEBUG else ''}",
+                notification_image=data["launch_image"],
+                data_payload=data,
                 topic_condition=topics,
                 # Remove notification_title and notification_body to ensure custom handling
                 fcm_options={"analytics_label": analytics_label},
