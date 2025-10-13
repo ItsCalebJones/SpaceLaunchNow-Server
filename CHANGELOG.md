@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.21.0 (2025-10-13)
+
+### Feature
+
+* feat: enhance notification handling with v4 support for kmp ([`c80692b`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/c80692b133388a8d63c37a8bc1252cec07936ea0))
+
 ## v4.20.5 (2025-09-26)
 
 ### Fix
