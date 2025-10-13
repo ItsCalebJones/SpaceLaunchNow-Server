@@ -340,3 +340,22 @@ def drop_shadow(image, offset=(5, 5), background=0xFFFFFF, shadow=0x444444, bord
 
 def get_SLN_url(path: str = None, object: Launch | Events | Astronaut = None):
     return f"https://spacelaunchnow.me/{path}/{object.get_absolute_url()}"
+
+
+def get_agency_topic(launch: Launch) -> int:
+    """Get the agency ID (LSP ID) for a launch."""
+    return launch.launch_service_provider.id
+
+
+def get_location_topic(launch: Launch) -> int:
+    """Get the location ID for a launch."""
+    if launch.pad.location is not None:
+        return launch.pad.location.id
+    return 0
+
+
+def get_fcm_v4_topic(debug: bool = False) -> str:
+    """Get the simplified v4 topic condition."""
+    if debug:
+        return "'k_debug_v4' in topics"
+    return "'k_prod_v4' in topics"

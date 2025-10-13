@@ -11,10 +11,13 @@ from django.core.cache import cache
 from bot.app.notification_service import NotificationService
 from bot.models import LaunchNotificationRecord
 from bot.utils.util import (
+    get_agency_topic,
     get_fcm_all_topics_v3,
     get_fcm_not_strict_topics_v3,
     get_fcm_strict_topics_v3,
+    get_fcm_v4_topic,
     get_flutter_topics_v3,
+    get_location_topic,
 )
 from spacelaunchnow import settings
 
@@ -210,7 +213,29 @@ class NotificationHandler(NotificationService):
             analytics_label=f"notification_flutter_{data['launch_uuid']}",
         )
 
-        self.notify_discord([all_result, strict_result, not_strict_result, flutter_result], data)
+        # Send v4 notification with client-side filtering
+        v4_data = {
+            "notification_type": notification_type,
+            "launch_id": str(launch.launch_library_id),
+            "launch_uuid": str(launch.id),
+            "launch_name": launch.name,
+            "launch_image": image,
+            "launch_net": launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
+            "launch_location": launch.pad.location.name,
+            "webcast": str(webcast),
+            "agency_id": str(get_agency_topic(launch)),
+            "location_id": str(get_location_topic(launch)),
+        }
+
+        v4_result = self.send_notif_v4(
+            data=v4_data,
+            topics=get_fcm_v4_topic(debug=self.DEBUG),
+            message_title=launch.name,
+            message_body=contents,
+            analytics_label=f"notification_v4_{data['launch_uuid']}",
+        )
+
+        self.notify_discord([all_result, strict_result, not_strict_result, flutter_result, v4_result], data)
 
     def send_debug_notif(self):
         if self.DEBUG:
@@ -277,7 +302,7 @@ class NotificationHandler(NotificationService):
             logger.info(f"Topic Data v3.5- {topics}")
             results = self.fcm.notify(
                 notification_title=message_title,
-                notification_body=f"{message_body}{topics if self.DEBUG else ''}",
+                notification_body=f"{message_body} {topics if self.DEBUG else ''}",
                 notification_image=data["launch_image"],
                 data_payload=data,
                 topic_condition=topics,
@@ -309,15 +334,15 @@ class NotificationHandler(NotificationService):
     ) -> NotificationResult:
         try:
             logger.info(f"Notification v4 Data - {data}")
-            logger.info(f"Topic Data v4- {topics}")
+            logger.info(f"Topic Data v4 - {topics}")
 
             results = self.fcm.notify(
+                data_payload=data,
                 topic_condition=topics,
                 notification_title=message_title,
                 notification_body=message_body,
                 fcm_options={"analytics_label": analytics_label},
                 android_config={"priority": "high", "collapse_key": data["launch_uuid"], "ttl": "86400s"},
-                timeout=240,
             )
             logger.info(results)
             return NotificationResult(
@@ -332,7 +357,7 @@ class NotificationHandler(NotificationService):
             return NotificationResult(
                 notification_type=data["notification_type"],
                 topics=topics,
-                result=results,
+                result=None,
                 analytics_label=analytics_label,
                 error=e,
             )
@@ -424,6 +449,7 @@ class NotificationHandler(NotificationService):
             "click_action": "FLUTTER_NOTIFICATION_CLICK",
             "title": pending.title,
             "message": pending.message,
+            "notification_id": str(pending.id),
         }
 
         if pending.launch_id is not None:
