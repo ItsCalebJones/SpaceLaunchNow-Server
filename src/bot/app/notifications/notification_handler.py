@@ -172,7 +172,7 @@ class NotificationHandler(NotificationService):
 
         data = {
             "notification_type": notification_type,
-            "launch_id": launch.launch_library_id,
+            "launch_id": str(launch.id),
             "launch_uuid": str(launch.id),
             "launch_name": launch.name,
             "launch_image": image,
@@ -216,13 +216,14 @@ class NotificationHandler(NotificationService):
         # Send v4 notification with client-side filtering
         v4_data = {
             "notification_type": notification_type,
-            "launch_id": str(launch.launch_library_id),
+            "launch_id": str(launch.id),
             "launch_uuid": str(launch.id),
             "launch_name": launch.name,
             "launch_image": image,
             "launch_net": launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
             "launch_location": launch.pad.location.name,
             "webcast": str(webcast),
+            "webcast_live": str(launch.webcast_live),
             "agency_id": str(get_agency_topic(launch)),
             "location_id": str(get_location_topic(launch)),
         }
@@ -464,7 +465,7 @@ class NotificationHandler(NotificationService):
             data.update(
                 {
                     "launch": {
-                        "launch_id": launch.launch_library_id,
+                        "launch_id": str(launch.id),
                         "launch_uuid": str(launch.id),
                         "launch_name": launch.name,
                         "launch_image": image,
