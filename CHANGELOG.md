@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.22.0 (2025-10-17)
+
+### Feature
+
+* feat: update notification handling and throttle logic for improved user experience ([`f891dac`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/f891dac419865b77d7b6f7e63f5454b31c7b181a))
+
 ## v4.21.0 (2025-10-13)
 
 ### Feature
