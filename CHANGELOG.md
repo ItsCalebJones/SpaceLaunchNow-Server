@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v4.23.0 (2025-10-24)
+
+### Feature
+
+* feat: add contact information section to About Us page ([`4943a8d`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/4943a8d9e514672c133929c56d94a84f8bf438dc))
+
+### Unknown
+
+* Merge pull request #293 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`bad1c1a`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/bad1c1a87ad2b4356b5fc6ec7cc6118fbc1b18fc))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`0a18831`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/0a188311c3de085808bcd160c9f4fa1b720f80d0))
+
 ## v4.22.0 (2025-10-17)
 
 ### Feature
