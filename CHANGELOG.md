@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.24.0 (2025-10-29)
+
+### Feature
+
+* feat: update SLN URL and enhance LaunchFeed description with additional details ([`8e225f1`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/8e225f16fc7b7ca56ef9c5921974b3021abebec0))
+
 ## v4.23.0 (2025-10-24)
 
 ### Feature
