@@ -1097,6 +1097,11 @@ class LaunchFeed(ICalFeed):
     product_id = "-//spacelaunchnow.me//launch//calendar//EN"
     timezone = "UTC"
     file_name = "launches.ics"
+    title = "Space Launch Now Launches"
+    description = (
+        "Rocket launch calendar feed generated for Space Launch Now.\n"
+        "For more information, check https://spacelaunchnow.app."
+    )
 
     def items(self):
         return Launch.objects.filter(net__gte=UTC_NOW).order_by("net")[:10]
@@ -1111,27 +1116,22 @@ class LaunchFeed(ICalFeed):
         description = ""
         if item.mission is not None and item.mission.description is not None:
             description = item.mission.description
-        urls = "\n\nWatch Live: " + get_SLN_url(path="launch", object=item)
-        description = (
-            description + urls + "\n\n===============\nSpace Launch Now\nID: " + str(item.id) + "\n==============="
-        )
+        if item.info_urls.count() > 0:
+            description += "INFO URLS\n"
+            description += "\n".join([f"• {iURL.type}\n  {iURL.info_url}" for iURL in item.info_urls.all()]) + "\n\n"
+        description += "\n\nWatch Live: " + get_SLN_url(path="launch", object=item)
+        description += "\n\n===============\nSpace Launch Now\n==============="
         return description
 
     def item_start_datetime(self, item):
-        if item.window_start is not None:
-            return item.window_start
-        else:
-            return item.net
+        if item.net_precision is not None and item.net_precision.id >= 5:  # Day-long event
+            return item.net.date()
+        return item.net
 
     def item_end_datetime(self, item):
-        if (
-            item.window_end is not None
-            and item.window_start is not None
-            and item.window_start.date() != item.window_end.date()
-        ):
-            return item.window_end
-        else:
-            return None
+        if item.net_precision is not None and item.net_precision.id >= 5:  # Day-long event
+            return item.net.date()
+        return item.window_end
 
     def item_updateddate(self, item):
         if item.last_updated is not None:
@@ -1139,7 +1139,16 @@ class LaunchFeed(ICalFeed):
 
     def item_location(self, item):
         if item.pad is not None and item.pad.location is not None:
-            return item.pad.location.name
+            return item.pad.name + " | " + item.pad.location.name
+
+    def item_geolocation(self, item):
+        if item.pad is not None and item.pad.latitude is not None and item.pad.longitude is not None:
+            return float(item.pad.latitude), float(item.pad.longitude)
+
+    def item_status(self, item):
+        if item.status is not None and item.status.id == 1:  # GO
+            return "CONFIRMED"
+        return "TENTATIVE"
 
     def item_link(self, item):
         return get_SLN_url(path="launch", object=item)

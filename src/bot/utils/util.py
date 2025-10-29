@@ -339,7 +339,7 @@ def drop_shadow(image, offset=(5, 5), background=0xFFFFFF, shadow=0x444444, bord
 
 
 def get_SLN_url(path: str = None, object: Launch | Events | Astronaut = None):
-    return f"https://spacelaunchnow.me/{path}/{object.get_absolute_url()}"
+    return f"https://spacelaunchnow.app/{path}/{object.get_absolute_url()}"
 
 
 def get_agency_topic(launch: Launch) -> int:
