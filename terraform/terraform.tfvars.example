@@ -8,6 +8,9 @@ cloudflare_api_token = "your_cloudflare_api_token"
 # Cloudflare zone ID for spacelaunchnow.app (get from Cloudflare dashboard)
 cloudflare_zone_id = "your_cloudflare_zone_id"
 
+# Cloudflare zone ID for spacelaunchnow.me (get from Cloudflare dashboard)
+cloudflare_zone_id_me = "your_cloudflare_zone_id_me"
+
 # Deployment region
 region = "nyc1"
 

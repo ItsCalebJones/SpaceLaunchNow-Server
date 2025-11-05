@@ -15,6 +15,11 @@ variable "cloudflare_zone_id" {
   description = "Cloudflare zone ID for spacelaunchnow.app"
 }
 
+variable "cloudflare_zone_id_me" {
+  type        = string
+  description = "Cloudflare zone ID for spacelaunchnow.me"
+}
+
 variable "region" {
   type        = string
   default     = "nyc1"

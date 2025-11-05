@@ -102,11 +102,28 @@ print_status "Step 5: Creating DNS record..."
 cd ../terraform
 
 # Apply DNS configuration
-terraform plan -target=cloudflare_record.spacelaunchnow_app -target=cloudflare_record.wildcard_spacelaunchnow_app
+print_status "Creating DNS records for spacelaunchnow.app and spacelaunchnow.me..."
+echo ""
+print_warning "This will create/update the following DNS records:"
+echo "  - spacelaunchnow.app → Load Balancer IP"
+echo "  - *.spacelaunchnow.app → Load Balancer IP"
+echo "  - spacelaunchnow.me → Load Balancer IP"
+echo "  - *.spacelaunchnow.me → Load Balancer IP"
+echo ""
+terraform plan \
+  -target=cloudflare_record.spacelaunchnow_app \
+  -target=cloudflare_record.wildcard_spacelaunchnow_app \
+  -target=cloudflare_record.spacelaunchnow_me \
+  -target=cloudflare_record.wildcard_spacelaunchnow_me
 read -p "Create DNS records? (y/N): " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    terraform apply -target=cloudflare_record.spacelaunchnow_app -target=cloudflare_record.wildcard_spacelaunchnow_app -auto-approve
+    terraform apply \
+      -target=cloudflare_record.spacelaunchnow_app \
+      -target=cloudflare_record.wildcard_spacelaunchnow_app \
+      -target=cloudflare_record.spacelaunchnow_me \
+      -target=cloudflare_record.wildcard_spacelaunchnow_me \
+      -auto-approve
 else
     print_warning "DNS record creation skipped"
 fi
@@ -117,11 +134,11 @@ echo "Resources created:"
 echo "- Kubernetes cluster: sln-prod-k8s-01"
 echo "- Container registry: sln-prod-registry-01"
 echo "- VPC: sln-prod-vpc-01"
-echo "- DNS record: spacelaunchnow.app"
-echo "- Wildcard DNS record: *.spacelaunchnow.app"
+echo "- DNS records: spacelaunchnow.app, spacelaunchnow.me"
+echo "- Wildcard DNS records: *.spacelaunchnow.app, *.spacelaunchnow.me"
 echo ""
 echo "Next steps:"
 echo "1. Configure your applications to use the new cluster"
 echo "2. Push container images to: registry.digitalocean.com/sln-prod-registry-01"
-echo "3. Access your services at: https://spacelaunchnow.app"
-echo "4. All subdomains under *.spacelaunchnow.app will resolve to the cluster"
+echo "3. Access your services at: https://spacelaunchnow.app or https://spacelaunchnow.me"
+echo "4. All subdomains under both domains will resolve to the cluster"

@@ -33,6 +33,30 @@ resource "cloudflare_record" "wildcard_spacelaunchnow_app" {
   depends_on = [data.kubernetes_service.nginx_ingress]
 }
 
+# DNS record for spacelaunchnow.me pointing to load balancer
+resource "cloudflare_record" "spacelaunchnow_me" {
+  zone_id = var.cloudflare_zone_id_me
+  name    = "@"
+  content = data.kubernetes_service.nginx_ingress.status.0.load_balancer.0.ingress.0.ip
+  type    = "A"
+  ttl     = 1
+  proxied = true
+   
+  depends_on = [data.kubernetes_service.nginx_ingress]
+}
+
+# Wildcard DNS record for *.spacelaunchnow.me pointing to load balancer
+resource "cloudflare_record" "wildcard_spacelaunchnow_me" {
+  zone_id = var.cloudflare_zone_id_me
+  name    = "*"
+  content = data.kubernetes_service.nginx_ingress.status.0.load_balancer.0.ingress.0.ip
+  type    = "A"
+  ttl     = 1
+  proxied = true
+   
+  depends_on = [data.kubernetes_service.nginx_ingress]
+}
+
 # Outputs
 output "load_balancer_ip" {
   description = "IP address of the Kubernetes load balancer"
@@ -57,4 +81,24 @@ output "wildcard_dns_record_fqdn" {
 output "wildcard_dns_record_ip" {
   description = "IP address the wildcard DNS record points to"
   value       = cloudflare_record.wildcard_spacelaunchnow_app.content
+}
+
+output "dns_record_me_fqdn" {
+  description = "FQDN of the spacelaunchnow.me DNS record"
+  value       = cloudflare_record.spacelaunchnow_me.hostname
+}
+
+output "dns_record_me_ip" {
+  description = "IP address the spacelaunchnow.me DNS record points to"
+  value       = cloudflare_record.spacelaunchnow_me.content
+}
+
+output "wildcard_dns_record_me_fqdn" {
+  description = "FQDN of the *.spacelaunchnow.me DNS record"
+  value       = cloudflare_record.wildcard_spacelaunchnow_me.hostname
+}
+
+output "wildcard_dns_record_me_ip" {
+  description = "IP address the *.spacelaunchnow.me DNS record points to"
+  value       = cloudflare_record.wildcard_spacelaunchnow_me.content
 }
