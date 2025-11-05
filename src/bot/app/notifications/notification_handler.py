@@ -231,8 +231,8 @@ class NotificationHandler(NotificationService):
         v4_result = self.send_notif_v4(
             data=v4_data,
             topics=get_fcm_v4_topic(debug=self.DEBUG),
-            message_title=launch.name,
-            message_body=contents,
+            message_title=None,
+            message_body=None,
             analytics_label=f"notification_v4_{data['launch_uuid']}",
         )
 
