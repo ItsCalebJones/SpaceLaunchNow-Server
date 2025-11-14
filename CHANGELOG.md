@@ -1,8 +1,16 @@
 # CHANGELOG
 
+## v4.26.0 (2025-11-14)
+
+### Unknown
+
+* Merge branch &#39;master&#39; of https://github.com/ItsCalebJones/SpaceLaunchNow-Server ([`0c898f0`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/0c898f0cab20527236068633972c7f5036bc5f5a))
+
 ## v4.25.0 (2025-11-05)
 
 ### Feature
+
+* feat: improve notification handling structure ([`783f39d`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/783f39d3c41a047467bf0e5f186b85333f6a5dc1))
 
 * feat: send data message only ([`6e16792`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/6e167928caf097f27ebbbb94b10f9b3e5826439b))
 
