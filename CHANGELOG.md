@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v4.25.0 (2025-11-05)
+
+### Feature
+
+* feat: send data message only ([`6e16792`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/6e167928caf097f27ebbbb94b10f9b3e5826439b))
+
+* feat: dns for .me domain ([`46ee808`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/46ee8085d7ae3aba518576d6da13178ec679394e))
+
 ## v4.24.0 (2025-10-29)
 
 ### Feature
