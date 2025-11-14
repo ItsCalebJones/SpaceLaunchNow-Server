@@ -220,7 +220,7 @@ class NotificationHandler(NotificationService):
             "launch_uuid": str(launch.id),
             "launch_name": launch.name,
             "launch_image": image,
-            "launch_net": launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
+            "launch_net": launch.net.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "launch_location": launch.pad.location.name,
             "webcast": str(webcast),
             "webcast_live": str(launch.webcast_live),
