@@ -1,5 +1,29 @@
 # CHANGELOG
 
+## v4.27.0 (2025-12-03)
+
+### Feature
+
+* feat: update tsd dependencies in pyproject.toml ([`20eecfe`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/20eecfe32d636eaf239f6fbb4878d5e027c12ca2))
+
+### Unknown
+
+* Merge pull request #295 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`2b06951`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/2b069513184feba3c3e8cc665a21f2ce0309fea2))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`6dea6ae`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/6dea6ae02b8018d5e4e4c87d895554a9e479e01b))
+
+* Merge pull request #294 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`8e64097`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/8e64097aefb68638bfb98c2064dc4ec305507485))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`03431de`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/03431de764e421d84f4df17d899826b3479dd33c))
+
 ## v4.26.0 (2025-11-14)
 
 ### Unknown
