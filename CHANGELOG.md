@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.28.0 (2025-12-03)
+
+### Feature
+
+* feat: just a commit to bump and create a new release with new LL ([`00fd919`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/00fd919f5d5229dcd4821fdc71c107bcf884098b))
+
 ## v4.27.0 (2025-12-03)
 
 ### Feature
