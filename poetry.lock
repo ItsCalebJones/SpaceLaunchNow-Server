@@ -1096,14 +1096,14 @@ Django = "*"
 
 [[package]]
 name = "django-launch-library"
-version = "21.49.1"
+version = "21.50.0"
 description = "The Django library for supporting Launch Library."
 optional = false
 python-versions = ">=3.12.0,<3.13.0"
 groups = ["main"]
 files = [
-    {file = "django_launch_library-21.49.1-py3-none-any.whl", hash = "sha256:b435470a0f51076408d7a3c4aa1db8502355eb7aece6c87d30ced7010e1500df"},
-    {file = "django_launch_library-21.49.1.tar.gz", hash = "sha256:bb8699c72b668cdf32192d2a504d1a600aef5be514a10a93d308184ec07d4740"},
+    {file = "django_launch_library-21.50.0-py3-none-any.whl", hash = "sha256:d278287de8933d012bc1cba20116d8ad11470ff0b22bbab3a796fbec0d261401"},
+    {file = "django_launch_library-21.50.0.tar.gz", hash = "sha256:0e9a679bbc1d34181ff75bedb779a1e82cef3f4a470c7fec61f34c2ff586264d"},
 ]
 
 [package.dependencies]
@@ -5449,4 +5449,4 @@ test = ["pytest (>=8.1,<9.0)", "pytest-rerunfailures (>=14.0,<15.0)"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12.0,<3.13.0"
-content-hash = "2695547e7a4d7d210da0691d2c9449ce97be047199557bf5ac94a281271c73b7"
+content-hash = "9f2bc0c8810940f58e3c770c7ea46be422a7ef540fbfbd81be1b6d02b7877e39"
