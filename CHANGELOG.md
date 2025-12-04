@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.28.1 (2025-12-04)
+
+### Fix
+
+* fix: update dependencies in pyproject.toml and poetry.lock ([`9f22d6f`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/9f22d6f59571db66eaa5953e60c0af4698bc6815))
+
 ## v4.28.0 (2025-12-03)
 
 ### Feature
