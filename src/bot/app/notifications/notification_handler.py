@@ -167,9 +167,11 @@ class NotificationHandler(NotificationService):
         image = ""
         if launch.image:
             image = launch.image.image.url
+        elif launch.rocket.configuration.image.image:
+            image = launch.rocket.configuration.image.image.url
         elif launch.launch_service_provider and launch.launch_service_provider.image:
             image = launch.launch_service_provider.image.image.url
-
+        # .
         data = {
             "notification_type": notification_type,
             "launch_id": str(launch.id),
