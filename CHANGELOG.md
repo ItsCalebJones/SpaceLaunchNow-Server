@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.29.0 (2025-12-09)
+
+### Feature
+
+* feat: improve notification handling structure and organization ([`90cab0a`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/90cab0a3d05a05575bfe3bd6df3ac6abf613f0f1))
+
 ## v4.28.1 (2025-12-04)
 
 ### Fix
