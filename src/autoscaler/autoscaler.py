@@ -84,9 +84,11 @@ def check_autoscaler():
 
         # Query launches and events
         launches_1 = Launch.objects.filter(net__range=[threshold_minus_1_hour, threshold_plus_1_hour])
-        events = Events.objects.filter(date__range=[threshold_minus_1_hour, threshold_plus_1_hour])
         launches_24 = Launch.objects.filter(net__range=[threshold_minus_24_hour, threshold_plus_24_hour])
-        launches = launches_1.union(launches_24)
+        in_flight = Launch.objects.filter(status__id=6)
+        launches = launches_1.union(launches_24).union(in_flight)
+
+        events = Events.objects.filter(date__range=[threshold_minus_1_hour, threshold_plus_1_hour])
 
         logger.info(f"Found {launches_1.count()} launches in 1-hour window")
         logger.info(f"Found {launches_24.count()} launches in 24-hour window")
@@ -94,9 +96,11 @@ def check_autoscaler():
         logger.info(f"Total unique launches to process: {launches.count()}")
 
         # Some providers have a heavier weight.
-        expected_worker_count = 1
+        expected_worker_count = 2
         logger.debug("Starting launch processing - initial worker count: 1")
 
+        florida_launches = 0
+        blue_origin_launches = 0
         processed_launches = 0
         starship_launches = 0
         spacex_launches = 0
@@ -136,6 +140,14 @@ def check_autoscaler():
                 launch_weight = autoscaler_settings.spacex_weight
                 launch_type = "SpaceX"
                 spacex_launches += 1
+            elif "Blue Origin" in launch.launch_service_provider.name:
+                launch_weight = autoscaler_settings.spacex_weight
+                launch_type = "Blue Origin"
+                blue_origin_launches += 1
+            elif (launch.pad.location.id == 12) or (launch.pad.location.id == 27):
+                launch_weight = autoscaler_settings.spacex_weight
+                launch_type = "Florida"
+                florida_launches += 1
             elif "United Launch Alliance" in launch.launch_service_provider.name:
                 launch_weight = autoscaler_settings.ula_weight
                 launch_type = "ULA"
@@ -159,7 +171,8 @@ def check_autoscaler():
         logger.info(f"Launch processing complete - Processed: {processed_launches} launches")
         logger.info(
             f"Launch breakdown - Starship: {starship_launches}, SpaceX: {spacex_launches}, "
-            f"ULA: {ula_launches}, Rocket Lab: {rocket_lab_launches}, Other: {other_launches}"
+            f"ULA: {ula_launches}, Rocket Lab: {rocket_lab_launches}, Other: {other_launches}, "
+            f"Florida: {florida_launches}, Blue Origin: {blue_origin_launches}"
         )
         logger.debug(f"Worker count after launches: {expected_worker_count}")
 
