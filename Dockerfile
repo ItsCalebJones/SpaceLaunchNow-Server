@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM python:3.12.10-alpine AS builder
+FROM python:3.12.12-alpine AS builder
 
 ENV PYTHONUNBUFFERED=1
 ENV DOCKER_CONTAINER=1
@@ -35,7 +35,7 @@ RUN --mount=type=secret,id=private_username \
     # Clear poetry credentials and secrets from memory
     poetry config --unset http-basic.tsd
 
-FROM python:3.12.10-alpine
+FROM python:3.12.12-alpine
 
 WORKDIR /code/
 COPY --from=builder /usr/bin/curl /usr/bin/curl
