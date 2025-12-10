@@ -1,7 +1,7 @@
 import datetime as dtime
 from unittest.mock import Mock, patch
 
-from api.models import Agency, Events, Launch, Program
+from api.models import Agency, Events, Launch, Location, Pad, Program
 from api.models.launcher_config import LauncherConfig
 from api.models.rocket import Rocket
 from configurations.models import LaunchStatus, ProgramType
@@ -54,11 +54,15 @@ class AutoscalerTests(TestCase):
         # Create launcher config and rocket for launches
         self.launcher_config = LauncherConfig.objects.create(name="Test Rocket", manufacturer=self.spacex)
 
+        # Create location and pad for launches
+        self.location = Location.objects.create(name="Test Location")
+        self.pad = Pad.objects.create(name="Test Pad", location=self.location)
+
     def create_test_launch(self, name, launch_time, launch_service_provider, programs=None):
-        """Helper method to create a test launch with required rocket"""
+        """Helper method to create a test launch with required rocket and pad"""
         rocket = Rocket.objects.create(configuration=self.launcher_config)
         launch = Launch.objects.create(
-            name=name, net=launch_time, launch_service_provider=launch_service_provider, rocket=rocket
+            name=name, net=launch_time, launch_service_provider=launch_service_provider, rocket=rocket, pad=self.pad
         )
         if programs:
             for program in programs:
@@ -94,9 +98,9 @@ class AutoscalerTests(TestCase):
 
             check_autoscaler()
 
-            # Should scale to 1 (base) + 3 (SpaceX weight) = 4 workers
-            mock_do_instance.update_node_pools.assert_called_once_with(4, 10)
-            mock_do_instance.update_keda_min_replicas.assert_called_once_with(4)
+            # Should scale to 2 (base) + 3 (SpaceX weight) = 5 workers
+            mock_do_instance.update_node_pools.assert_called_once_with(5, 10)
+            mock_do_instance.update_keda_min_replicas.assert_called_once_with(5)
 
     def test_starship_launch_scaling(self):
         """Test scaling for Starship launches"""
@@ -113,9 +117,9 @@ class AutoscalerTests(TestCase):
 
             check_autoscaler()
 
-            # Should scale to 1 (base) + 5 (Starship) + 1 (other program) = 7 workers
-            mock_do_instance.update_node_pools.assert_called_once_with(7, 10)
-            mock_do_instance.update_keda_min_replicas.assert_called_once_with(7)
+            # Should scale to 2 (base) + 5 (Starship) + 1 (other program) = 8 workers
+            mock_do_instance.update_node_pools.assert_called_once_with(8, 10)
+            mock_do_instance.update_keda_min_replicas.assert_called_once_with(8)
 
     def test_multiple_launches_scaling(self):
         """Test scaling with multiple launches"""
@@ -134,9 +138,9 @@ class AutoscalerTests(TestCase):
 
             check_autoscaler()
 
-            # Should scale to 1 + 3 (SpaceX) + 2 (ULA) = 6 workers
-            mock_do_instance.update_node_pools.assert_called_once_with(6, 10)
-            mock_do_instance.update_keda_min_replicas.assert_called_once_with(6)
+            # Should scale to 2 (base) + 3 (SpaceX) + 2 (ULA) = 7 workers
+            mock_do_instance.update_node_pools.assert_called_once_with(7, 10)
+            mock_do_instance.update_keda_min_replicas.assert_called_once_with(7)
 
     def test_max_workers_limit(self):
         """Test that max workers limit is respected"""
@@ -175,21 +179,21 @@ class AutoscalerTests(TestCase):
 
     def test_no_changes_required(self):
         """Test when no node scaling changes are needed (but KEDA still updates)"""
-        # Current workers matches expected (1 base worker, no launches)
-        self.autoscaler_settings.current_workers = 1
+        # Current workers matches expected (2 base workers, no launches)
+        self.autoscaler_settings.current_workers = 2
         self.autoscaler_settings.save()
 
         with patch("autoscaler.autoscaler.DigitalOceanHelper") as mock_do:
             mock_do_instance = Mock()
             mock_do.return_value = mock_do_instance
-            mock_do_instance.get_node_pool_min.return_value = 1
+            mock_do_instance.get_node_pool_min.return_value = 2
 
             check_autoscaler()
 
             # Node pools should not be updated when no scaling changes needed
             mock_do_instance.update_node_pools.assert_not_called()
             # But KEDA should always be updated with current expected worker count
-            mock_do_instance.update_keda_min_replicas.assert_called_once_with(1)
+            mock_do_instance.update_keda_min_replicas.assert_called_once_with(2)
 
     def test_events_scaling(self):
         """Test scaling for events"""
@@ -204,9 +208,9 @@ class AutoscalerTests(TestCase):
 
             check_autoscaler()
 
-            # Should scale to 1 (base) + 1 (other_weight for event) + 3 (starship_event_weight) = 5 workers
-            mock_do_instance.update_node_pools.assert_called_once_with(5, 10)
-            mock_do_instance.update_keda_min_replicas.assert_called_once_with(5)
+            # Should scale to 2 (base) + 1 (other_weight for event) + 3 (starship_event_weight) = 6 workers
+            mock_do_instance.update_node_pools.assert_called_once_with(6, 10)
+            mock_do_instance.update_keda_min_replicas.assert_called_once_with(6)
 
     def test_24_hour_window_launches(self):
         """Test that launches outside the 24-hour window don't trigger scaling"""
@@ -221,10 +225,11 @@ class AutoscalerTests(TestCase):
 
             check_autoscaler()
 
-            # Should scale to 1 (base) only since 23 hours doesn't fall in the 24-hour window
+            # Should scale to 2 (base) only since 23 hours doesn't fall in the 24-hour window
             # The 24-hour window is actually: now+24h-5min to now+24h+15min
-            mock_do_instance.update_node_pools.assert_called_once_with(1, 10)
-            mock_do_instance.update_keda_min_replicas.assert_called_once_with(1)
+            # No scaling needed since current_workers (2) equals expected (2)
+            mock_do_instance.update_node_pools.assert_not_called()
+            mock_do_instance.update_keda_min_replicas.assert_called_once_with(2)
 
 
 class DigitalOceanHelperTests(TestCase):
