@@ -86,16 +86,22 @@ def check_autoscaler():
         launches_1 = Launch.objects.filter(net__range=[threshold_minus_1_hour, threshold_plus_1_hour])
         events = Events.objects.filter(date__range=[threshold_minus_1_hour, threshold_plus_1_hour])
         launches_24 = Launch.objects.filter(net__range=[threshold_minus_24_hour, threshold_plus_24_hour])
-        launches = launches_1.union(launches_24)
+        
+        # Check for SpaceX launches that are currently "In Flight" (status__id=6)
+        # These should keep the autoscaler up regardless of time window
+        spacex_in_flight = Launch.objects.filter(status__id=6, launch_service_provider__name__icontains="SpaceX")
+        
+        launches = launches_1.union(launches_24).union(spacex_in_flight)
 
         logger.info(f"Found {launches_1.count()} launches in 1-hour window")
         logger.info(f"Found {launches_24.count()} launches in 24-hour window")
+        logger.info(f"Found {spacex_in_flight.count()} SpaceX launches currently in flight")
         logger.info(f"Found {events.count()} events in 1-hour window")
         logger.info(f"Total unique launches to process: {launches.count()}")
 
         # Some providers have a heavier weight.
-        expected_worker_count = 1
-        logger.debug("Starting launch processing - initial worker count: 1")
+        expected_worker_count = 2  # Minimum 2 nodes
+        logger.debug("Starting launch processing - initial worker count: 2")
 
         processed_launches = 0
         starship_launches = 0
