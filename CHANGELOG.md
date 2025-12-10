@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.30.1 (2025-12-10)
+
+### Fix
+
+* fix: update Python base image to 3.12.12-alpine in Dockerfile ([`ac78c09`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ac78c0978035eaadc1b3278d14f271bdc45bb326))
+
 ## v4.30.0 (2025-12-10)
 
 ### Feature
