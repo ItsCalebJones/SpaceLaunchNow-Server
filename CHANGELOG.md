@@ -1,5 +1,29 @@
 # CHANGELOG
 
+## v4.30.0 (2025-12-10)
+
+### Feature
+
+* feat: enhance launch processing in autoscaler with additional provider tracking ([`7183e5c`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/7183e5cf4d9d32118c10e95f0f600cb69a0898f8))
+
+### Fix
+
+* fix: tests for autoscaler ([`74a1da5`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/74a1da502baa134e63f4ba2af3a022ae493967c8))
+
+### Unknown
+
+* Merge pull request #298 from ItsCalebJones/update_autoscaler
+
+feat: enhance launch processing in autoscaler with additional provider tracking ([`1ae30db`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/1ae30db2648b96ee5e40f53347e5e7aa4506d261))
+
+* Merge pull request #296 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`ef0cd45`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ef0cd45f5fe2c259cd67e33c18ea95e0e6eb4e99))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`3b3936f`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/3b3936f4b398c9b3d7c5b47029e1752d510bdf40))
+
 ## v4.29.0 (2025-12-09)
 
 ### Feature
