@@ -346,6 +346,18 @@ class NotificationHandler(NotificationService):
                 notification_body=message_body,
                 fcm_options={"analytics_label": analytics_label},
                 android_config={"priority": "high", "collapse_key": data["launch_uuid"], "ttl": "86400s"},
+                apns_config={
+                    "headers": {
+                        "apns-priority": "5",
+                        "apns-push-type": "background",
+                        "apns-topic": "me.spacelaunchnow.spacelaunchnow",
+                    },
+                    "payload": {
+                        "aps": {
+                            "content-available": 1,
+                        }
+                    },
+                },
             )
             logger.info(results)
             return NotificationResult(
