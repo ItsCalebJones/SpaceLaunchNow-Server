@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## v4.30.2 (2025-12-22)
+
+### Fix
+
+* fix: add apns for background iOS notifications ([`e62eb47`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/e62eb470957ca683c8fcd8812c6572f75d166865))
+
+* fix: update django-launch-library version to 21.57.0 in dependencies ([`ccd3cf7`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ccd3cf7ac06349047ec06926a74e632880d6e5d3))
+
+### Unknown
+
+* Merge pull request #301 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`cd718ca`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/cd718cadc0a1fee0b2201e0c2904e3233d16ba7b))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`bba1043`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/bba1043080848c89427cf0f95199216e4e4af878))
+
 ## v4.30.1 (2025-12-10)
 
 ### Fix
