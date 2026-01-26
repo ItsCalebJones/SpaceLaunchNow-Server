@@ -1,14 +1,20 @@
+"""Main notification handler combining all version mixins."""
+
 import logging
-import uuid
-from dataclasses import dataclass
 from datetime import datetime
 
 import pytz
-from api.models import Article, Events, Launch
-from discord_webhook import DiscordEmbed, DiscordWebhook
+from api.models import Launch
 from django.core.cache import cache
 
 from bot.app.notification_service import NotificationService
+from bot.app.notifications.base import NotificationResult
+from bot.app.notifications.custom import CustomNotificationMixin
+from bot.app.notifications.debug import DebugNotificationMixin
+from bot.app.notifications.discord import DiscordNotificationMixin
+from bot.app.notifications.v3 import V3NotificationMixin
+from bot.app.notifications.v4 import V4NotificationMixin
+from bot.app.notifications.v5 import V5NotificationMixin
 from bot.models import LaunchNotificationRecord
 from bot.utils.util import (
     get_agency_topic,
@@ -19,22 +25,22 @@ from bot.utils.util import (
     get_flutter_topics_v3,
     get_location_topic,
 )
-from spacelaunchnow import settings
 
 logger = logging.getLogger(__name__)
 
-
-@dataclass
-class NotificationResult:
-    notification_type: str
-    topics: str
-    result: str | None
-    analytics_label: str
-    error: Exception | None
+# Re-export NotificationResult for backward compatibility
+__all__ = ["NotificationHandler", "NotificationResult"]
 
 
-# TODO refactor to separate files/modules per version
-class NotificationHandler(NotificationService):
+class NotificationHandler(
+    V3NotificationMixin,
+    V4NotificationMixin,
+    V5NotificationMixin,
+    CustomNotificationMixin,
+    DiscordNotificationMixin,
+    DebugNotificationMixin,
+    NotificationService,
+):
     def send_notification(self, launch: Launch, notification_type: str, notification: LaunchNotificationRecord):
         current_time = datetime.now(tz=pytz.utc)
         launch_time = launch.net
@@ -238,363 +244,12 @@ class NotificationHandler(NotificationService):
             analytics_label=f"notification_v4_{data['launch_uuid']}",
         )
 
-        self.notify_discord([all_result, strict_result, not_strict_result, flutter_result, v4_result], data)
-
-    def send_debug_notif(self):
-        if self.DEBUG:
-            topics = "'debug_v3' in topics && 'newZealand' in topics"  # noqa: E501
-            generated = str(uuid.uuid4())
-            analytics_label = "debug_test_topics_{generated}"
-
-            results = self.fcm.notify(
-                topic_condition=topics,
-                notification_title="Test Notification",
-                notification_body=f"{generated}\n{topics}",
-                android_config={"priority": "high", "collapse_key": generated, "ttl": "86400s"},
-                fcm_options={"analytics_label": analytics_label},
-            )
-
-            logger.info(f"NOTIF: {results} - {generated}")
-            self.notify_discord(
-                [
-                    NotificationResult(
-                        notification_type="Debug", topics=topics, analytics_label=analytics_label, result=results
-                    )
-                ],
-                data=None,
-            )
-
-    def send_notif_v3(
-        self, data, topics, message_title=None, message_body=None, analytics_label: str = None
-    ) -> NotificationResult:
-        try:
-            logger.info(f"Notification v3 Data - {data}")
-            logger.info(f"Topic Data v3- {topics}")
-            results = self.fcm.notify(
-                data_payload=data,
-                topic_condition=topics,
-                notification_title=message_title,
-                notification_body=message_body,
-                fcm_options={"analytics_label": analytics_label},
-                android_config={"priority": "high", "collapse_key": data["launch_uuid"], "ttl": "86400s"},
-                timeout=240,
-            )
-            logger.info(results)
-            return NotificationResult(
-                notification_type=data["notification_type"],
-                topics=topics,
-                result=results,
-                analytics_label=analytics_label,
-                error=None,
-            )
-        except Exception as e:
-            logger.error(e)
-            return NotificationResult(
-                notification_type=data["notification_type"],
-                topics=topics,
-                result=results,
-                analytics_label=analytics_label,
-                error=e,
-            )
-
-    def send_notif_v3_5(
-        self, data, topics, message_title=None, message_body=None, analytics_label: str = None
-    ) -> NotificationResult:
-        try:
-            logger.info(f"Notification v3.5 Custom Data - {data}")
-            logger.info(f"Topic Data v3.5- {topics}")
-            results = self.fcm.notify(
-                notification_title=message_title,
-                notification_body=f"{message_body} {topics if self.DEBUG else ''}",
-                notification_image=data["launch_image"],
-                data_payload=data,
-                topic_condition=topics,
-                # Remove notification_title and notification_body to ensure custom handling
-                fcm_options={"analytics_label": analytics_label},
-                android_config={"priority": "high", "collapse_key": data["launch_uuid"], "ttl": "86400s"},
-                timeout=240,
-            )
-            logger.info(results)
-            return NotificationResult(
-                notification_type=data["notification_type"],
-                topics=topics,
-                result=results,
-                analytics_label=analytics_label,
-                error=None,
-            )
-        except Exception as e:
-            logger.error(e)
-            return NotificationResult(
-                notification_type=data["notification_type"],
-                topics=topics,
-                result=results,
-                analytics_label=analytics_label,
-                error=e,
-            )
-
-    def send_notif_v4(
-        self, data, topics, message_title=None, message_body=None, analytics_label: str = None
-    ) -> NotificationResult:
-        try:
-            logger.info(f"Notification v4 Data - {data}")
-            logger.info(f"Topic Data v4 - {topics}")
-
-            results = self.fcm.notify(
-                data_payload=data,
-                topic_condition=topics,
-                notification_title=message_title,
-                notification_body=message_body,
-                fcm_options={"analytics_label": analytics_label},
-                android_config={"priority": "high", "collapse_key": data["launch_uuid"], "ttl": "86400s"},
-                apns_config={
-                    "headers": {
-                        "apns-priority": "5",
-                        "apns-push-type": "background",
-                        "apns-topic": "me.spacelaunchnow.spacelaunchnow",
-                    },
-                    "payload": {
-                        "aps": {
-                            "content-available": 1,
-                        }
-                    },
-                },
-            )
-            logger.info(results)
-            return NotificationResult(
-                notification_type=data["notification_type"],
-                topics=topics,
-                result=results,
-                analytics_label=analytics_label,
-                error=None,
-            )
-        except Exception as e:
-            logger.error(e)
-            return NotificationResult(
-                notification_type=data["notification_type"],
-                topics=topics,
-                result=None,
-                analytics_label=analytics_label,
-                error=e,
-            )
-
-    def send_custom_ios_v3(self, pending) -> NotificationResult:
-        data = self.get_json_data(pending)
-        label = "notification_custom_ios"
-
-        if not self.DEBUG:
-            flutter_topics = "'flutter_production_v3' in topics && 'custom' in topics"
-        else:
-            flutter_topics = "'flutter_debug_v3' in topics && 'custom' in topics"
-
-        logger.info("----------------------------------------------------------")
-        logger.info(f"Sending iOS Custom Flutter notification - {pending.title}")
-        try:
-            logger.info(f"Custom Notification Data - {data}")
-            logger.info(f"Topics - {flutter_topics}")
-            flutter_results = self.fcm.notify(
-                data_payload=data,
-                topic_condition=flutter_topics,
-                notification_title=pending.title,
-                notification_body=pending.message,
-                fcm_options={"analytics_label": label},
-                android_config={"priority": "high", "collapse_key": data["launch_uuid"], "ttl": "86400s"},
-                timeout=240,
-            )
-            logger.info(flutter_results)
-            return NotificationResult(
-                notification_type=data["notification_type"],
-                topics=flutter_topics,
-                result=flutter_results,
-                analytics_label=label,
-                error=None,
-            )
-        except Exception as e:
-            logger.error(e)
-            self.notify_discord(data=data, topics=flutter_topics, analytics_label=label, error=e)
-            return NotificationResult(
-                notification_type=data["notification_type"],
-                topics=flutter_topics,
-                result=None,
-                analytics_label=label,
-                error=e,
-            )
-
-    def send_custom_android_v3(self, pending) -> NotificationResult:
-        data = self.get_json_data(pending)
-        label = "notification_custom_android"
-
-        if not self.DEBUG:
-            topics = "'prod_v3' in topics && 'custom' in topics"
-        else:
-            topics = "'debug_v3' in topics && 'custom' in topics"
-
-        logger.info("----------------------------------------------------------")
-        logger.info(f"Sending Android Custom notification - {pending.title}")
-        try:
-            logger.info(f"Custom Notification Data - {data}")
-            logger.info(f"Topics - {topics}")
-            android_result = self.fcm.notify(
-                data_payload=data,
-                topic_condition=topics,
-                fcm_options={"analytics_label": label},
-                android_config={"priority": "high", "collapse_key": data["launch_uuid"], "ttl": "86400s"},
-                timeout=240,
-            )
-            logger.info(android_result)
-            return NotificationResult(
-                notification_type=data["notification_type"],
-                topics=topics,
-                result=android_result,
-                analytics_label=label,
-                error=None,
-            )
-        except Exception as e:
-            logger.error(e)
-            return NotificationResult(
-                notification_type=data["notification_type"],
-                topics=topics,
-                result=None,
-                analytics_label=label,
-                error=e,
-            )
-
-    def get_json_data(self, pending):
-        data = {
-            "notification_type": "custom",
-            "click_action": "FLUTTER_NOTIFICATION_CLICK",
-            "title": pending.title,
-            "message": pending.message,
-            "notification_id": str(pending.id),
-        }
-
-        if pending.launch_id is not None:
-            launch = Launch.objects.get(id=pending.launch_id)
-
-            image = ""
-            if launch.image:
-                image = launch.image.image.url
-            elif launch.launch_service_provider and launch.launch_service_provider.image:
-                image = launch.launch_service_provider.image.image.url
-
-            data.update(
-                {
-                    "launch": {
-                        "launch_id": str(launch.id),
-                        "launch_uuid": str(launch.id),
-                        "launch_name": launch.name,
-                        "launch_image": image,
-                        "launch_net": launch.net.strftime("%B %d, %Y %H:%M:%S %Z"),
-                        "launch_location": launch.pad.location.name,
-                        "webcast": launch.webcast_live,
-                    }
-                }
-            )
-
-        if pending.news_id is not None:
-            news = Article.objects.get(id=pending.news_id)
-
-            data.update(
-                {
-                    "news": {
-                        "id": news.id,
-                        "news_site_long": news.news_site,
-                        "title": news.title,
-                        "url": news.link,
-                        "featured_image": news.featured_image,
-                    }
-                }
-            )
-
-        if pending.event_id is not None:
-            event = Events.objects.get(id=pending.event_id)
-
-            feature_image = None
-            if event.image and hasattr(event.image.image, "url"):
-                feature_image = event.image.image.url
-            data.update(
-                {
-                    "event": {
-                        "id": event.id,
-                        "name": event.name,
-                        "description": event.description,
-                        "type": {
-                            "id": event.type.id,
-                            "name": event.type.name,
-                        },
-                        "date": event.date.strftime("%B %d, %Y %H:%M:%S %Z"),
-                        "location": event.location,
-                        "news_url": event.info_urls.first(),
-                        "video_url": event.vid_urls.first(),
-                        "webcast_live": str(event.webcast_live),
-                        "feature_image": feature_image,
-                    },
-                }
-            )
-        return data
-
-    def notify_discord(
-        self,
-        notification_results: list[NotificationResult] = None,
-        data: dict[str, str] = None,
-    ) -> None:
-        launch_name = data.get("launch_name", "Unknown") if data else "Unknown"
-        launch_uuid = data.get("launch_uuid", "Unknown") if data else "Unknown"
-        launch_net = data.get("launch_net", "Unknown") if data else "Unknown"
-        launch_location = data.get("launch_location", "Unknown") if data else "Unknown"
-        launch_image = data.get("launch_image") if data else None
-
-        # Set up the webhook
-        webhook = DiscordWebhook(
-            url=settings.DISCORD_WEBHOOK,
-            username="Notification Tracker",
-            avatar_url="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/static/home/img/launcher.png",
+        # Send v5 notifications with platform-specific messaging
+        v5_results = self.send_v5_notification(
+            launch=launch,
+            notification_type=notification_type,
+            contents=contents,
         )
 
-        description = ""
-        for notification_result in notification_results:
-            fcm_result = {"title": None, "description": None}
-            if notification_result.error:
-                fcm_result["title"] = "Error"
-                fcm_result["description"] = f"`{notification_result.error}`"
-            if notification_result.result:
-                fcm_result["title"] = "Result"
-                fcm_result["description"] = f"`{notification_result.result}`"
-            if notification_result.result and notification_result.error:
-                fcm_result["title"] = "Result w/ Error"
-                fcm_result["description"] = f"`{notification_result.result}`\n`{notification_result.error}`"
-
-            description += (
-                f"**Notification Type:** `{notification_result.notification_type}`\n"
-                f"**Analytics Label:** `{notification_result.analytics_label}`\n"
-                f"**Topics:** `{notification_result.topics}`\n"
-                f"**{fcm_result['title']}:** {fcm_result['description']}\n"
-                f"{'-' * 50}\n"
-            )
-
-        # Create the Embed
-        embed = DiscordEmbed(
-            title=f"🚀 {launch_name} 🚀",
-            description=description,
-            color="03b2f8",
-        )
-
-        # Add fields for relevant data
-        embed.add_embed_field(name="Launch Name", value=launch_name, inline=False)
-        embed.add_embed_field(name="Launch UUID", value=launch_uuid, inline=False)
-        embed.add_embed_field(name="Launch NET", value=launch_net, inline=False)
-        embed.add_embed_field(name="Launch Location", value=launch_location, inline=False)
-
-        # Add an image for the launch if available
-        if launch_image is not None:
-            embed.set_thumbnail(url=launch_image)
-
-        # Add footer with timestamp
-        embed.set_footer(text="Space Launch Now - Notification Tracker")
-        embed.set_timestamp()
-
-        # Add the embed to the webhook
-        webhook.add_embed(embed)
-
-        # Execute the webhook (send the notification)
-        response = webhook.execute()
-        logger.info(f"Discord Notification Response: {response}")
+        all_results = [all_result, strict_result, not_strict_result, flutter_result, v4_result] + v5_results
+        self.notify_discord(all_results, data)

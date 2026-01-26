@@ -359,3 +359,41 @@ def get_fcm_v4_topic(debug: bool = False) -> str:
     if debug:
         return "'k_debug_v4' in topics"
     return "'k_prod_v4' in topics"
+
+
+def get_fcm_v5_android_topic(debug: bool = False) -> str:
+    """Get FCM topic condition for v5 Android notifications.
+
+    Returns a topic condition string for data-only Android notifications.
+    Filtering is handled client-side, so only the base topic is included.
+
+    Args:
+        debug: Whether to use debug or production topic
+        notification_type: The notification type (e.g., 'tenMinutes', 'oneHour')
+
+    Returns:
+        FCM topic condition string
+    """
+    topic_base = "debug_v5_android" if debug else "prod_v5_android"
+    topics = f"'{topic_base}' in topics"
+    logger.info(topics)
+    return topics
+
+
+def get_fcm_v5_ios_topic(debug: bool = False) -> str:
+    """Get FCM topic condition for v5 iOS notifications.
+
+    Returns a topic condition string for iOS notifications with mutable-content
+    for Notification Service Extension processing. Filtering is handled client-side.
+
+    Args:
+        debug: Whether to use debug or production topic
+        notification_type: The notification type (e.g., 'tenMinutes', 'oneHour')
+
+    Returns:
+        FCM topic condition string
+    """
+    topic_base = "debug_v5_ios" if debug else "prod_v5_ios"
+    topics = f"'{topic_base}' in topics"
+    logger.info(topics)
+    return topics
