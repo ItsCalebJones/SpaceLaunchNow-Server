@@ -1,5 +1,37 @@
 # CHANGELOG
 
+## v4.31.0 (2026-01-26)
+
+### Feature
+
+* feat(notifs): add notification mixins and handlers for v3, v4, and v5 FCM notifications ([`8359413`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/8359413f159a3319b9a2224e3e82e9eaf6c7d924))
+
+### Unknown
+
+* Merge pull request #305 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`e81c28e`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/e81c28e6337f9c50a8a33e27724a17ea293081dc))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`e07f033`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/e07f033aeb13b5aa170ddf32541949cbe9889906))
+
+* Merge pull request #303 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`a212bbc`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a212bbc64884cd9e62033ed49d70ee71e4f72c05))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`0d480c2`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/0d480c2125a8a721b39d6971a68b83e955834249))
+
+* Merge pull request #302 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`ccf4391`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ccf4391629691351e3e5adc826892cc6424d2c63))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`0ed29e1`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/0ed29e1968fb8216da9b0ed8ad44081991ef0025))
+
 ## v4.30.2 (2025-12-22)
 
 ### Fix
