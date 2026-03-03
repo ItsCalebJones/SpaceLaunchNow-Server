@@ -1200,10 +1200,14 @@ class EventFeed(ICalFeed):
 
 
 class AdsView(View):
-    line = "google.com, pub-9824528399164059, DIRECT, f08c47fec0942fa0"
+    lines = (
+        "google.com, pub-9824528399164059, DIRECT, f08c47fec0942fa0",
+        "facebook.com, 2087919544822246, DIRECT, c3e20eee3f780d68",
+    )
 
     def get(self, request, *args, **kwargs):
-        return HttpResponse(self.line)
+        _ = (args, kwargs)
+        return HttpResponse("\n".join(self.lines), content_type="text/plain")
 
 
 def lazy_load_updates(request, id):
