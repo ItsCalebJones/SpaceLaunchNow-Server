@@ -1,5 +1,35 @@
 # CHANGELOG
 
+## v4.32.0 (2026-03-03)
+
+### Feature
+
+* feat(ads): update AdsView to return multiple ad lines ([`1df7d68`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/1df7d68f496e09358269b3009227f8974c9b3e99))
+
+### Fix
+
+* fix: update dependencies in pyproject.toml ([`ceb63e3`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ceb63e30a3ff871db48863fd26adaf73967e62e7))
+
+* fix: update Ruff version to 0.12.12 in CI workflows ([`cbdd135`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/cbdd135e5b68094b2aff066eb9ff7be984b09773))
+
+### Unknown
+
+* Merge pull request #307 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`f43fde0`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/f43fde09d904d3d822bc2199845b7161aa859b2d))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`480f371`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/480f371e26768495a5149852f0f4982f6cbb1ec3))
+
+* Merge pull request #306 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`e2b2f56`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/e2b2f56aefba949b468dd4b2623eaa398b13f590))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`ee29d35`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ee29d353069cb04e1083c2a65cde4ae8144cd8a6))
+
 ## v4.31.0 (2026-01-26)
 
 ### Feature
