@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.32.1 (2026-03-12)
+
+### Fix
+
+* fix: update Privacy Policy and Terms of Service for Space Launch Now ([`d2cc15a`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/d2cc15adb60d47242de14fca77137a97ecdb596e))
+
 ## v4.32.0 (2026-03-03)
 
 ### Feature
