@@ -196,7 +196,7 @@ def app(request):
         )
 
 
-@cache_page(60)
+@cache_page(120)
 # Create your views here.
 def next_launch(request):
     in_flight_launch = Launch.objects.select_related("status").filter(status__id=6).order_by("-net").first()

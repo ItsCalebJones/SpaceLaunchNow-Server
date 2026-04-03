@@ -312,6 +312,7 @@ DATABASES = {
         "PASSWORD": env.str("DATABASE_PASSWORD"),
         "HOST": env.str("DATABASE_HOST"),
         "PORT": env.str("DATABASE_PORT"),
+        "DISABLE_SERVER_SIDE_CURSORS": env.bool("DISABLE_SERVER_SIDE_CURSORS", default=False),
     }
 }
 CACHALOT_DATABASES = ["default"]
