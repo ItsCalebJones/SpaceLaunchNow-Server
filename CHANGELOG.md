@@ -1,5 +1,34 @@
 # CHANGELOG
 
+## v4.32.2 (2026-04-03)
+
+### Fix
+
+* fix: Add DISABLE_SERVER_SIDE_CURSORS for PgBouncer compatibility
+
+PgBouncer in transaction pooling mode requires this setting to prevent
+&#39;cursor does not exist&#39; errors when connections are returned to pool.
+
+Refs: psycopg.errors.InvalidCursorName with transaction pooling ([`29a7997`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/29a79970225e9eb5857aafe5d4af0d9d64ea7a28))
+
+### Unknown
+
+* Merge pull request #309 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`ed1dfe5`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ed1dfe532c1ffcc6cd3b8e747ff32babfdd5f5c5))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`6e61d3a`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/6e61d3ac21c7470704bae59bb04c99903e328404))
+
+* Merge pull request #308 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`2755207`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/2755207b724339d8df0f85cbdbb51e8075fd0b1b))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`2109662`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/21096627c5e5672db4b51ffef6eb5add468aa6f6))
+
 ## v4.32.1 (2026-03-12)
 
 ### Fix
