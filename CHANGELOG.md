@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.33.0 (2026-04-10)
+
+### Feature
+
+* feat: Implement V5 event notification handling for Android and iOS ([`9433e44`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/9433e440fa0bb0b0b406e3d4f7b55bb83fc024da))
+
 ## v4.32.2 (2026-04-03)
 
 ### Fix
