@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v4.34.0 (2026-04-13)
+
+### Feature
+
+* feat: update dependencies ([`1f2797f`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/1f2797f6105d2241dd85450a709ab97256feb8a3))
+
+### Unknown
+
+* Merge pull request #310 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`f22a23d`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/f22a23d0b9bce19c8b6af41ee8ef76fa47161693))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`4110b6c`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/4110b6c303f093b6ac5910a3ae4c62806a076f3c))
+
 ## v4.33.0 (2026-04-10)
 
 ### Feature
