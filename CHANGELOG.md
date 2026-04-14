@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.34.1 (2026-04-14)
+
+### Fix
+
+* fix: remove unused AWS S3 settings from configuration ([`20065a5`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/20065a5d0c85379c9c0f163b24fe4df20a275793))
+
 ## v4.34.0 (2026-04-13)
 
 ### Feature
