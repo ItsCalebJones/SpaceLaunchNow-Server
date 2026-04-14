@@ -23,9 +23,9 @@ DO_TOKEN = settings.DO_TOKEN
 
 logger = logging.getLogger(__name__)
 
-MINIMUM_POD_COUNT_SINGLE_NODE = 2  # Conservative for single node scenario
-MINIMUM_POD_COUNT_MULTI_NODE = 6  # Conservative estimate for multi-node
-MAX_PODS_PER_NODE = 12  # Allow up to 12 pods per node during peak scaling
+MINIMUM_POD_COUNT_SINGLE_NODE = 5  # Conservative for single node scenario
+MINIMUM_POD_COUNT_MULTI_NODE = 10  # Conservative estimate for multi-node
+MAX_PODS_PER_NODE = 20  # Safe burst capacity per node during peak scaling
 
 
 class DigitalOceanHelper:
@@ -148,24 +148,30 @@ class DigitalOceanHelper:
         Scale pods proportionally to node count.
 
         Pod resource requirements (from values-production.yaml):
-        - CPU request: 350m (0.35 cores)
-        - Memory request: 350M
+        - CPU request: 100m (0.1 cores)
+        - Memory request: 200M
         - CPU limit: 500m (0.5 cores)
-        - Memory limit: 350M
+        - Memory limit: 750M
 
         Typical DigitalOcean node capacity (assuming s-4vcpu-8gb instances):
         - 4 vCPUs, 8GB RAM
-        - ~3.5 vCPUs allocatable (after system overhead)
-        - ~7GB RAM allocatable (after system overhead)
+        - ~3.0 vCPUs allocatable (after system + daemonset overhead)
+        - ~6GB RAM allocatable (after system + daemonset overhead)
 
-        Pod capacity per node:
-        - CPU constrained: 3.5 cores / 0.35 cores per pod = 10 pods/node
-        - Memory constrained: 7GB / 350MB per pod = 20 pods/node
-        - Effective: 10 pods per node (CPU is the constraint)
+        Pod capacity per node (by requests / scheduling):
+        - CPU: 3000m / 100m = 30 pods/node
+        - Memory: 6000M / 200M = 30 pods/node
+
+        Pod capacity per node (by limits / burst ceiling):
+        - CPU: 3000m / 500m = 6 pods/node
+        - Memory: 6000M / 750M = 8 pods/node
+
+        Safe capacity at ~70% of request-based scheduling: ~21 pods/node
 
         Scaling strategy:
-        - Single node: 5 pods max (conservative for single point of failure)
-        - Multiple nodes: 8 pods per node (conservative estimate with headroom)
+        - Single node: 5 pods min (MINIMUM_POD_COUNT_SINGLE_NODE)
+        - Multiple nodes: 10 pods per node min (MINIMUM_POD_COUNT_MULTI_NODE)
+        - Peak scaling: 20 pods per node max (MAX_PODS_PER_NODE)
         """
         logger.info(f"Updating KEDA min replicas for expected_worker_count={expected_worker_count}")
 
@@ -189,7 +195,7 @@ class DigitalOceanHelper:
                 logger.debug(f"Single node deployment: using {pods_per_node} pods per node")
             else:
                 pods_per_node = (
-                    MINIMUM_POD_COUNT_MULTI_NODE  # Conservative estimate for multi-node (CPU limited at 350m request)
+                    MINIMUM_POD_COUNT_MULTI_NODE  # Conservative estimate for multi-node (CPU limited at 100m request)
                 )
                 logger.debug(f"Multi-node deployment: using {pods_per_node} pods per node")
 
@@ -198,7 +204,7 @@ class DigitalOceanHelper:
             logger.debug(f"Calculated min_pods: max(3, {expected_worker_count} * {pods_per_node}) = {min_pods}")
 
             # Calculate maximum pods with scaling headroom
-            # Allow up to 12 pods per node during peak scaling
+            # Allow up to 20 pods per node during peak scaling
             max_pods_per_node = MAX_PODS_PER_NODE
             max_pods = min(100, expected_worker_count * max_pods_per_node)
             logger.debug(f"Calculated max_pods: min(100, {expected_worker_count} * {max_pods_per_node}) = {max_pods}")
