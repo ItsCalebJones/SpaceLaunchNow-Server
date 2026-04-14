@@ -393,7 +393,6 @@ else:
     AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY", None)
     AWS_S3_ENDPOINT_URL = env.str("AWS_S3_ENDPOINT_URL", None)
     AWS_DEFAULT_ACL = "public-read"
-    AWS_S3_URL_PROTOCOL = "https"
     AWS_LOCATION = "static/home"
     AWS_S3_OBJECT_PARAMETERS = {
         "CacheControl": "max-age=86400",
@@ -406,7 +405,6 @@ else:
     STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
     STATICFILES_LOCATION = "static/home"
     STATICFILES_STORAGE = "api.custom_storages.StaticStorage"
-    AWS_PRELOAD_METADATA = True
     APP_IMAGE_LOCATION = MEDIA_LOCATION + "/app_images"  # type: str
     APP_IMAGE_STORAGE = "sln_custom_storages.AppImageStorage"
 
