@@ -4,40 +4,61 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('api', '0136_alter_launch_pad'),
-        ('app', '0002_alter_appconfig_navigation_drawer_image_and_more'),
+        ("api", "0136_alter_launch_pad"),
+        ("app", "0002_alter_appconfig_navigation_drawer_image_and_more"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='PinnedContent',
+            name="PinnedContent",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('content_type', models.CharField(choices=[('LAUNCH', 'Launch'), ('EVENT', 'Event')], default='LAUNCH', max_length=10)),
-                ('content_id', models.CharField(help_text='UUID for launches, integer ID (as string) for events.', max_length=255)),
-                ('enabled', models.BooleanField(default=True)),
-                ('expires_at', models.DateTimeField(blank=True, help_text='ISO-8601 datetime after which content auto-hides. Leave blank for no expiration.', null=True)),
-                ('custom_message', models.CharField(blank=True, default='', help_text='Custom text shown on the card instead of mission name.', max_length=200)),
-                ('last_synced_at', models.DateTimeField(blank=True, editable=False, null=True)),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "content_type",
+                    models.CharField(
+                        choices=[("LAUNCH", "Launch"), ("EVENT", "Event")], default="LAUNCH", max_length=10
+                    ),
+                ),
+                (
+                    "content_id",
+                    models.CharField(help_text="UUID for launches, integer ID (as string) for events.", max_length=255),
+                ),
+                ("enabled", models.BooleanField(default=True)),
+                (
+                    "expires_at",
+                    models.DateTimeField(
+                        blank=True,
+                        help_text="ISO-8601 datetime after which content auto-hides. Leave blank for no expiration.",
+                        null=True,
+                    ),
+                ),
+                (
+                    "custom_message",
+                    models.CharField(
+                        blank=True,
+                        default="",
+                        help_text="Custom text shown on the card instead of mission name.",
+                        max_length=200,
+                    ),
+                ),
+                ("last_synced_at", models.DateTimeField(blank=True, editable=False, null=True)),
             ],
             options={
-                'verbose_name': 'Pinned Content',
-                'verbose_name_plural': 'Pinned Content',
+                "verbose_name": "Pinned Content",
+                "verbose_name_plural": "Pinned Content",
             },
         ),
         migrations.CreateModel(
-            name='EventNotificationProxy',
-            fields=[
-            ],
+            name="EventNotificationProxy",
+            fields=[],
             options={
-                'verbose_name': 'Event Notification',
-                'verbose_name_plural': 'Event Notifications',
-                'proxy': True,
-                'indexes': [],
-                'constraints': [],
+                "verbose_name": "Event Notification",
+                "verbose_name_plural": "Event Notifications",
+                "proxy": True,
+                "indexes": [],
+                "constraints": [],
             },
-            bases=('api.events',),
+            bases=("api.events",),
         ),
     ]
