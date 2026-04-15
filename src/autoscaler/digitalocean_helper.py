@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 MINIMUM_POD_COUNT_SINGLE_NODE = 5  # Conservative for single node scenario
 MINIMUM_POD_COUNT_MULTI_NODE = 10  # Conservative estimate for multi-node
-MAX_PODS_PER_NODE = 20  # Safe burst capacity per node during peak scaling
+MAX_PODS_PER_NODE = 12  # Actual memory ~390Mi/pod vs 200M request; 6445Mi allocatable × 75% / 390Mi ≈ 12
 MAX_POD_COUNT = 135  # Absolute ceiling for KEDA maxReplicaCount
 
 
@@ -163,16 +163,21 @@ class DigitalOceanHelper:
         - CPU: 3000m / 100m = 30 pods/node
         - Memory: 6000M / 200M = 30 pods/node
 
+        Actual observed memory per pod (production, s-4vcpu-8gb nodes):
+        - ~390Mi actual vs 200M requested (~2x overcommit due to Django/Gunicorn static overhead)
+        - Node allocatable memory: ~6445Mi
+        - Safe capacity at 75% of allocatable: floor(6445 * 0.75 / 390) ≈ 12 pods/node
+
         Pod capacity per node (by limits / burst ceiling):
         - CPU: 3000m / 500m = 6 pods/node
         - Memory: 6000M / 750M = 8 pods/node
 
-        Safe capacity at ~70% of request-based scheduling: ~21 pods/node
+        Safe capacity at ~75% of actual-usage-based scheduling: ~12 pods/node
 
         Scaling strategy:
         - Single node: 5 pods min (MINIMUM_POD_COUNT_SINGLE_NODE)
         - Multiple nodes: 10 pods per node min (MINIMUM_POD_COUNT_MULTI_NODE)
-        - Peak scaling: 20 pods per node max (MAX_PODS_PER_NODE)
+        - Peak scaling: 12 pods per node max (MAX_PODS_PER_NODE)
         """
         logger.info(f"Updating KEDA min replicas for expected_worker_count={expected_worker_count}")
 
@@ -208,7 +213,9 @@ class DigitalOceanHelper:
             # Allow up to 20 pods per node during peak scaling
             max_pods_per_node = MAX_PODS_PER_NODE
             max_pods = min(MAX_POD_COUNT, expected_worker_count * max_pods_per_node)
-            logger.debug(f"Calculated max_pods: min({MAX_POD_COUNT}, {expected_worker_count} * {max_pods_per_node}) = {max_pods}")
+            logger.debug(
+                f"Calculated max_pods: min({MAX_POD_COUNT}, {expected_worker_count} * {max_pods_per_node}) = {max_pods}"
+            )
 
             # KEDA ScaledObject details
             namespace = "sln-prod"

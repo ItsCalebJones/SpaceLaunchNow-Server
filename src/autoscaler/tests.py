@@ -9,7 +9,12 @@ from django.test import TestCase
 from django.utils import timezone
 
 from autoscaler.autoscaler import check_autoscaler
-from autoscaler.digitalocean_helper import MAX_PODS_PER_NODE, MAX_POD_COUNT, MINIMUM_POD_COUNT_MULTI_NODE, DigitalOceanHelper
+from autoscaler.digitalocean_helper import (
+    MAX_POD_COUNT,
+    MAX_PODS_PER_NODE,
+    MINIMUM_POD_COUNT_MULTI_NODE,
+    DigitalOceanHelper,
+)
 from autoscaler.models import AutoscalerSettings
 
 
