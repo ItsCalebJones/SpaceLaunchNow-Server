@@ -1,4 +1,5 @@
 import datetime
+import json
 import os
 from urllib.parse import quote  # Python 3+
 
@@ -7,6 +8,7 @@ from django.core.files.storage import DefaultStorage, default_storage
 from django.db import models
 from storages.backends.s3boto3 import S3Boto3Storage
 
+from api.models import Events
 from sln_custom_storages import AppImageStorage
 from spacelaunchnow.base_models import SingletonModel
 
@@ -129,3 +131,50 @@ class Staff(models.Model):
     class Meta:
         verbose_name = "Staff"
         verbose_name_plural = "Staff"
+
+
+class PinnedContent(SingletonModel):
+    CONTENT_TYPE_CHOICES = [
+        ("LAUNCH", "Launch"),
+        ("EVENT", "Event"),
+    ]
+
+    content_type = models.CharField(max_length=10, choices=CONTENT_TYPE_CHOICES, default="LAUNCH")
+    content_id = models.CharField(max_length=255, help_text="UUID for launches, integer ID (as string) for events.")
+    enabled = models.BooleanField(default=True)
+    expires_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="ISO-8601 datetime after which content auto-hides. Leave blank for no expiration.",
+    )
+    custom_message = models.CharField(
+        max_length=200, blank=True, default="", help_text="Custom text shown on the card instead of mission name."
+    )
+    last_synced_at = models.DateTimeField(null=True, blank=True, editable=False)
+
+    def to_remote_config_json(self):
+        data = {
+            "type": self.content_type,
+            "id": self.content_id,
+            "enabled": self.enabled,
+        }
+        if self.expires_at:
+            data["expiresAt"] = self.expires_at.isoformat()
+        if self.custom_message:
+            data["customMessage"] = self.custom_message
+        return json.dumps(data)
+
+    def __str__(self):
+        status = "Enabled" if self.enabled else "Disabled"
+        return f"Pinned Content ({self.content_type} {self.content_id}) - {status}"
+
+    class Meta:
+        verbose_name = "Pinned Content"
+        verbose_name_plural = "Pinned Content"
+
+
+class EventNotificationProxy(Events):
+    class Meta:
+        proxy = True
+        verbose_name = "Event Notification"
+        verbose_name_plural = "Event Notifications"

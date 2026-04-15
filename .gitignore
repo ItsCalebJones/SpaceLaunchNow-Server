@@ -16,6 +16,7 @@ bot/.DS_Store
 *.sqlite3
 *.bak
 **config.py
+!**/firebase_rc_service.py
 .pypirc
 k8s/ingress/issuer/secret.yaml
 src/xmlrunner/**
