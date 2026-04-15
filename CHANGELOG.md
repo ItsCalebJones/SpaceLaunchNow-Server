@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.34.5 (2026-04-15)
+
+### Fix
+
+* fix: add access log configuration to gunicorn command in docker-compose ([`defc4e0`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/defc4e09e96fa6fcf3de2be711033760b8417f76))
+
 ## v4.34.4 (2026-04-15)
 
 ### Fix
