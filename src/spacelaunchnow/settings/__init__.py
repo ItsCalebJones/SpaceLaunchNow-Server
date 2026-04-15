@@ -37,7 +37,7 @@ SECRET_KEY = env.str("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", False)
-DEBUG_LOGGING = env.str("DEBUG_LOGGING", None)
+DEBUG_LOGGING = env.bool("DEBUG_LOGGING", False)
 LOGLEVEL = "DEBUG" if DEBUG_LOGGING else "INFO"
 
 TESTING = "test" in sys.argv
@@ -160,6 +160,21 @@ LOGGING = {
             "propagate": False,
         },
         "cachalot": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+        "botocore": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+        "boto3": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+        "urllib3": {
             "handlers": ["console"],
             "level": "WARNING",
             "propagate": False,
