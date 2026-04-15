@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v4.34.3 (2026-04-15)
+
+### Fix
+
+* fix: adjust MAX_PODS_PER_NODE to reflect actual memory usage and update import formatting ([`074e3a1`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/074e3a104f6aee502b49ffd649327ef898cbc2a1))
+
+* fix: update max pod count logic for DigitalOcean autoscaling ([`0d07a8b`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/0d07a8b2af699879efe2a205eabc15b04d136cbf))
+
 ## v4.34.2 (2026-04-14)
 
 ### Fix
