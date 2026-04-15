@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 MINIMUM_POD_COUNT_SINGLE_NODE = 5  # Conservative for single node scenario
 MINIMUM_POD_COUNT_MULTI_NODE = 10  # Conservative estimate for multi-node
 MAX_PODS_PER_NODE = 20  # Safe burst capacity per node during peak scaling
+MAX_POD_COUNT = 135  # Absolute ceiling for KEDA maxReplicaCount
 
 
 class DigitalOceanHelper:
@@ -206,8 +207,8 @@ class DigitalOceanHelper:
             # Calculate maximum pods with scaling headroom
             # Allow up to 20 pods per node during peak scaling
             max_pods_per_node = MAX_PODS_PER_NODE
-            max_pods = min(100, expected_worker_count * max_pods_per_node)
-            logger.debug(f"Calculated max_pods: min(100, {expected_worker_count} * {max_pods_per_node}) = {max_pods}")
+            max_pods = min(MAX_POD_COUNT, expected_worker_count * max_pods_per_node)
+            logger.debug(f"Calculated max_pods: min({MAX_POD_COUNT}, {expected_worker_count} * {max_pods_per_node}) = {max_pods}")
 
             # KEDA ScaledObject details
             namespace = "sln-prod"
