@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.34.4 (2026-04-15)
+
+### Fix
+
+* fix: change DEBUG_LOGGING to boolean and add logging configuration for boto3 and botocore ([`5b7b824`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/5b7b824307eb8ba5ec5e92e34e7d019fbde9915c))
+
 ## v4.34.3 (2026-04-15)
 
 ### Fix
