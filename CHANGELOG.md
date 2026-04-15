@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v4.35.0 (2026-04-15)
+
+### Feature
+
+* feat: add PinnedContent model and Firebase sync functionality ([`e0ef02f`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/e0ef02f697aa6a92676946959e2b0a2995f4c365))
+
+### Fix
+
+* fix: update model imports and improve migration structure for PinnedContent and EventNotificationProxy ([`a65d3ad`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a65d3ad642b435435957324b3ca3f2e37bb335cd))
+
 ## v4.34.5 (2026-04-15)
 
 ### Fix
