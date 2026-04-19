@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 MINIMUM_POD_COUNT_SINGLE_NODE = 5  # Conservative for single node scenario
 MINIMUM_POD_COUNT_MULTI_NODE = 10  # Conservative estimate for multi-node
-MAX_PODS_PER_NODE = 12  # Actual memory ~390Mi/pod vs 200M request; 6445Mi allocatable × 75% / 390Mi ≈ 12
+MAX_PODS_PER_NODE = 24  # Actual memory ~390Mi/pod vs 200M request; 6445Mi allocatable × 75% / 390Mi ≈ 12
 MAX_POD_COUNT = 135  # Absolute ceiling for KEDA maxReplicaCount
 
 
