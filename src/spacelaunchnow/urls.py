@@ -109,6 +109,7 @@ def get_v240():
     v240_api_docs = [
         re_path(
             r"^api/ll/2.4.0/schema/?$",
+            SpectacularAPIViewV240.as_view(api_version="v2.4.0"),
             name="v2.4.0/schema",
         ),
         re_path(
