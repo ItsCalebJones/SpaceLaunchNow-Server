@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v4.35.1 (2026-04-20)
+
+### Fix
+
+* fix: update API schema view for version 2.4.0 ([`41503fa`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/41503fa9a90c9e4bbe20fecbfc381367d913d655))
+
+* fix: update MAX_PODS_PER_NODE value for accurate resource allocation ([`632e9f3`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/632e9f315bbff5f9fe328508fd899d6c6944d82b))
+
 ## v4.35.0 (2026-04-15)
 
 ### Feature
