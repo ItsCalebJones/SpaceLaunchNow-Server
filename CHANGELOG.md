@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.36.0 (2026-04-22)
+
+### Feature
+
+* feat(admin): add IS_ADMIN_ONLY mode with dynamic sln_api DB routing ([`e55142a`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/e55142a92c692a8441f0a8d6ad9a723bf475eda2))
+
 ## v4.35.1 (2026-04-20)
 
 ### Fix
