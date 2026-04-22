@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.36.1 (2026-04-22)
+
+### Fix
+
+* fix: bump to rebuild image ([`e2838e5`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/e2838e5bebf229dde6985bf1ecac4d31f257912e))
+
 ## v4.36.0 (2026-04-22)
 
 ### Feature
