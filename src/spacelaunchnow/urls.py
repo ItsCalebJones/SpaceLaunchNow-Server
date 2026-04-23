@@ -55,6 +55,10 @@ sitemaps = {
     "boosters": BoosterSitemap,
     "spacestations": SpacestationSitemap,
 }
+def health(request):
+    return HttpResponse("ok", content_type="text/plain")
+
+
 default_settings = [
     re_path(r"^robots\.txt", include("robots.urls")),
     path(
@@ -69,6 +73,7 @@ default_settings = [
         name="sitemaps",
     ),
     path("health_check/", include("health_check.urls")),
+    re_path("_health/", health),
 ]
 api_settings = []
 web_settings = []
@@ -137,11 +142,7 @@ if settings.IS_API:
 
 if settings.IS_WEBSERVER:
 
-    def health(request):
-        return HttpResponse("ok", content_type="text/plain")
-
     web_settings = [
-        re_path("_health/", health),
         re_path(r"^\.well-known/assetlinks\.json", landing_views.asset_file),
         re_path(r"^app-ads\.txt", AdsView.as_view()),
         re_path(r"^ads\.txt", AdsView.as_view()),
