@@ -1,5 +1,8 @@
+from datetime import timedelta
+
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
+from django.utils import timezone
 from django.utils.html import format_html
 
 from .models import (
@@ -40,6 +43,63 @@ class SyncJobConfigAdmin(admin.ModelAdmin):
 
 
 # ─── Launches ─────────────────────────────────────────────────────────────────
+
+
+class _DateRangeFilter(SimpleListFilter):
+    """Recent / Upcoming / Previous / All filter, defaulting to 'upcoming'.
+
+    Subclasses must set ``date_field`` to the model datetime field to filter on.
+    Mirrors the behavior of LL API's ``LaunchDateListFilter`` but with
+    'upcoming' as the default selection.
+    """
+
+    title = "date"
+    parameter_name = "date"
+    default_value = "upcoming"
+    date_field = ""
+
+    def lookups(self, request, model_admin):
+        return (
+            ("recent", "Recent"),
+            ("upcoming", "Upcoming"),
+            ("previous", "Previous"),
+            ("all", "All"),
+        )
+
+    def choices(self, changelist):
+        # Skip the default Django "All" entry (None) so the explicit 'all'
+        # lookup is the only way to see everything, and so the chosen default
+        # shows as selected when no query param is set.
+        current = self.value() if self.value() is not None else self.default_value
+        for lookup, title in self.lookup_choices:
+            yield {
+                "selected": current == lookup,
+                "query_string": changelist.get_query_string({self.parameter_name: lookup}),
+                "display": title,
+            }
+
+    def queryset(self, request, queryset):
+        field = self.date_field
+        if not field:
+            return queryset
+        now = timezone.now()
+        dayago = now - timedelta(days=1)
+        value = self.value() or self.default_value
+        if value == "recent":
+            return queryset.filter(**{f"{field}__gte": dayago}).order_by(field, "name")
+        if value == "upcoming":
+            return queryset.filter(**{f"{field}__gte": now}).order_by(field, "name")
+        if value == "previous":
+            return queryset.filter(**{f"{field}__lte": now}).order_by(f"-{field}", "name")
+        return queryset.order_by(f"-{field}", "name")
+
+
+class LaunchDateListFilter(_DateRangeFilter):
+    date_field = "net"
+
+
+class EventDateListFilter(_DateRangeFilter):
+    date_field = "date"
 
 
 class LaunchNetYearFilter(SimpleListFilter):
@@ -120,7 +180,15 @@ class LaunchAdmin(admin.ModelAdmin):
         "is_crewed",
         "webcast_live",
     )
-    list_filter = (LaunchNetYearFilter, "status_id", "is_crewed", "webcast_live", "location_region", "orbit_abbrev")
+    list_filter = (
+        LaunchDateListFilter,
+        LaunchNetYearFilter,
+        "status_id",
+        "is_crewed",
+        "webcast_live",
+        "location_region",
+        "orbit_abbrev",
+    )
     search_fields = ("name", "provider_name", "rocket_full_name", "location_name", "mission_name")
     readonly_fields = LAUNCH_READONLY
     ordering = ("-net",)
@@ -295,7 +363,7 @@ class LaunchAdmin(admin.ModelAdmin):
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = ("name", "type_name", "date", "location")
-    list_filter = ("type_id",)
+    list_filter = (EventDateListFilter, "type_id")
     search_fields = ("name", "description", "location")
     readonly_fields = (
         "id",
@@ -308,7 +376,6 @@ class EventAdmin(admin.ModelAdmin):
         "updated_at",
     )
     ordering = ("-date",)
-    date_hierarchy = "date"
 
 
 # ─── Agencies ─────────────────────────────────────────────────────────────────
