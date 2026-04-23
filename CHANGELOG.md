@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.37.1 (2026-04-23)
+
+### Fix
+
+* fix: add timezone detection endpoint to default URLs ([`a7e58be`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a7e58bec7635189bbae8ce858cdd0a0c861d0a27))
+
 ## v4.37.0 (2026-04-23)
 
 ### Feature
