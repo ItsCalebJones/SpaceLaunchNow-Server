@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v4.37.0 (2026-04-23)
+
+### Feature
+
+* feat: add health check endpoint to URL configuration ([`11f357e`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/11f357e815297fb7ee6be6429b488e26619e1ecb))
+
+### Fix
+
+* fix: format and lint ([`65b942e`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/65b942e72d697bafc7dd1a65a0f23210e89440fe))
+
 ## v4.36.1 (2026-04-22)
 
 ### Fix
