@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.39.0 (2026-04-23)
+
+### Feature
+
+* feat(admin): add date range filters for launches and events ([`8d189c7`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/8d189c74c11cfa42d34a39514a2c631a0c38833f))
+
 ## v4.38.1 (2026-04-23)
 
 ### Fix
