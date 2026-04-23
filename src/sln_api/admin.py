@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 
 from .models import (
     Agency,
@@ -80,19 +81,124 @@ LAUNCH_READONLY = (
 class LaunchAdmin(admin.ModelAdmin):
     list_display = (
         "name",
-        "status_abbrev",
-        "net",
+        "net_formatted",
+        "net_precision_name",
+        "status_formatted",
         "provider_name",
         "rocket_full_name",
+        "orbit_formatted",
+        "has_img",
+        "has_vid",
+        "has_info",
+        "has_patch",
+        "program_formatted",
         "location_name",
         "is_crewed",
         "webcast_live",
     )
-    list_filter = ("status_id", "is_crewed", "webcast_live", "location_region")
+    list_filter = ("status_id", "is_crewed", "webcast_live", "location_region", "orbit_abbrev")
     search_fields = ("name", "provider_name", "rocket_full_name", "location_name", "mission_name")
     readonly_fields = LAUNCH_READONLY
     ordering = ("-net",)
     date_hierarchy = "net"
+    list_per_page = 50
+
+    def net_formatted(self, launch):
+        if not launch.net:
+            return "—"
+        if launch.net.second == 0 and launch.net.minute == 0 and launch.net.hour == 0:
+            net_str = launch.net.strftime("%b %d, %Y – midnight")
+        elif launch.net.second == 0:
+            net_str = launch.net.strftime("%b %d, %Y – %H:%M")
+        else:
+            net_str = launch.net.strftime("%b %d, %Y – %H:%M:%S")
+        precision = launch.net_precision_name or "unknown"
+        return format_html('<div title="Precision: {}">{}</div>', precision, net_str)
+
+    net_formatted.short_description = "NET (UTC)"
+    net_formatted.admin_order_field = "net"
+
+    def status_formatted(self, launch):
+        colors = {
+            1: "LawnGreen",     # Go
+            2: "Salmon",        # TBD
+            3: "YellowGreen",   # Success
+            4: "Tomato",        # Failure
+            5: "SkyBlue",       # Hold
+            6: "PaleTurquoise", # In Flight
+            7: "Pink",          # Partial Failure
+            8: "PeachPuff",     # TBC
+            9: "#3385D6",       # Payload Deployed
+        }
+        color = colors.get(launch.status_id, "#ccc")
+        return format_html(
+            '<div title="{}" style="padding:5px;border-radius:5px;text-align:center;'
+            'background:{};color:black">{}</div>',
+            launch.status_name,
+            color,
+            launch.status_abbrev,
+        )
+
+    status_formatted.short_description = "Status"
+    status_formatted.admin_order_field = "status_id"
+
+    def has_info(self, launch):
+        return bool(launch.info_urls)
+
+    has_info.short_description = format_html('<div title="Has at least one InfoURL">Info</div>')
+    has_info.boolean = True
+
+    def has_vid(self, launch):
+        return bool(launch.vid_urls)
+
+    has_vid.short_description = format_html('<div title="Has at least one VideoURL">Vid</div>')
+    has_vid.boolean = True
+
+    def has_patch(self, launch):
+        if not launch.mission_patches:
+            return "None"
+        first = launch.mission_patches[0]
+        image_url = first.get("image_url", "") if isinstance(first, dict) else ""
+        if image_url:
+            return format_html(
+                '<img loading="lazy" src="{}" height=25 style="border-radius:3px"/>',
+                image_url,
+            )
+        return "—"
+
+    has_patch.short_description = format_html('<div title="Has a mission patch">Patch</div>')
+
+    def has_img(self, launch):
+        return bool(launch.image_url)
+
+    has_img.short_description = format_html('<div title="Has a custom image">IMG</div>')
+    has_img.boolean = True
+
+    def program_formatted(self, launch):
+        if not launch.programs:
+            return "—"
+        names = ", ".join(p.get("name", "?") for p in launch.programs if isinstance(p, dict))
+        return format_html(
+            '<div title="{}" style="text-align:center">{}</div>',
+            names,
+            len(launch.programs),
+        )
+
+    program_formatted.short_description = format_html('<div title="Programs">PGM</div>')
+
+    def orbit_formatted(self, launch):
+        if not launch.orbit_abbrev:
+            return format_html(
+                '<div style="padding:5px;border-radius:5px;background:Salmon;color:black">—</div>'
+            )
+        return format_html(
+            '<div title="{}">{}</div>',
+            launch.orbit_name or launch.orbit_abbrev,
+            launch.orbit_abbrev,
+        )
+
+    orbit_formatted.short_description = "Orbit"
+    orbit_formatted.admin_order_field = "orbit_abbrev"
 
     fieldsets = (
         ("Identity", {"fields": ("id", "slug", "name", "url")}),
