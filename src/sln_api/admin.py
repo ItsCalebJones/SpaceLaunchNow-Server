@@ -120,15 +120,15 @@ class LaunchAdmin(admin.ModelAdmin):
 
     def status_formatted(self, launch):
         colors = {
-            1: "LawnGreen",     # Go
-            2: "Salmon",        # TBD
-            3: "YellowGreen",   # Success
-            4: "Tomato",        # Failure
-            5: "SkyBlue",       # Hold
-            6: "PaleTurquoise", # In Flight
-            7: "Pink",          # Partial Failure
-            8: "PeachPuff",     # TBC
-            9: "#3385D6",       # Payload Deployed
+            1: "LawnGreen",  # Go
+            2: "Salmon",  # TBD
+            3: "YellowGreen",  # Success
+            4: "Tomato",  # Failure
+            5: "SkyBlue",  # Hold
+            6: "PaleTurquoise",  # In Flight
+            7: "Pink",  # Partial Failure
+            8: "PeachPuff",  # TBC
+            9: "#3385D6",  # Payload Deployed
         }
         color = colors.get(launch.status_id, "#ccc")
         return format_html(
@@ -188,9 +188,7 @@ class LaunchAdmin(admin.ModelAdmin):
 
     def orbit_formatted(self, launch):
         if not launch.orbit_abbrev:
-            return format_html(
-                '<div style="padding:5px;border-radius:5px;background:Salmon;color:black">—</div>'
-            )
+            return format_html('<div style="padding:5px;border-radius:5px;background:Salmon;color:black">—</div>')
         return format_html(
             '<div title="{}">{}</div>',
             launch.orbit_name or launch.orbit_abbrev,
