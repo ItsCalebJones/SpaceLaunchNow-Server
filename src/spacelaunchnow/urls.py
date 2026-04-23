@@ -76,6 +76,7 @@ default_settings = [
     ),
     path("health_check/", include("health_check.urls")),
     re_path("_health/", health),
+    path("tz_detect/", include("tz_detect.urls")),
 ]
 api_settings = []
 web_settings = []
@@ -190,7 +191,6 @@ if settings.IS_WEBSERVER:
         path("app", landing_views.app, name="app"),
         re_path(r"^launches/latest/feed.ics$", LaunchFeed()),
         re_path(r"^events/latest/feed.ics$", EventFeed()),
-        path("tz_detect/", include("tz_detect.urls")),
         re_path(r"^lazy_load_updates/(?P<id>[-\w]+)/$", landing_views.lazy_load_updates, name="lazy_load_updates"),
     ]
 
