@@ -63,6 +63,7 @@ class LaunchNetYearFilter(SimpleListFilter):
             return queryset.filter(net__year=self.value())
         return queryset
 
+
 LAUNCH_READONLY = (
     "id",
     "slug",
