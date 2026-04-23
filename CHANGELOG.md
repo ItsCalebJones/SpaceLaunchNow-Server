@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## v4.38.0 (2026-04-23)
+
+### Feature
+
+* feat(admin): add rich display methods to SLN LaunchAdmin
+
+Port display improvements from LL admin to the SLN API admin:
+- status_formatted: colored status badge keyed by status_id
+- net_formatted: human-readable NET with net_precision_name tooltip
+- has_vid/has_info/has_img: boolean indicators for JSONB URL lists and image_url
+- has_patch: shows mission patch thumbnail from first JSONB entry
+- program_formatted: program count with names tooltip from JSONB
+- orbit_formatted: orbit abbrev with full name tooltip, red when missing
+- orbit_abbrev filter added to list_filter
+- list_per_page = 50 ([`82d9eda`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/82d9eda1620221e796aee41a98aa006863f46b8f))
+
+### Fix
+
+* fix: improve formatting in LaunchAdmin for status and orbit display ([`4a0d3b6`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/4a0d3b6764bf1233c7e4fb319d61f7bff0e9c526))
+
 ## v4.37.1 (2026-04-23)
 
 ### Fix
