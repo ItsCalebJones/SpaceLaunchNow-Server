@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v4.38.1 (2026-04-23)
+
+### Fix
+
+* fix(admin): add a blank line for improved readability in LaunchNetYearFilter ([`ba8e1e7`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ba8e1e788550982a8e503eeb66fef460e2f3c2c4))
+
+* fix(admin): replace date_hierarchy bar with year dropdown filter on launches ([`b7c0344`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/b7c0344f448168e6bfa2f3c0dfeda40046f40dc7))
+
 ## v4.38.0 (2026-04-23)
 
 ### Feature
