@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.admin import SimpleListFilter
 from django.utils.html import format_html
 
 from .models import (
@@ -39,6 +40,28 @@ class SyncJobConfigAdmin(admin.ModelAdmin):
 
 
 # ─── Launches ─────────────────────────────────────────────────────────────────
+
+
+class LaunchNetYearFilter(SimpleListFilter):
+    title = "year"
+    parameter_name = "year"
+
+    def lookups(self, request, model_admin):
+        from django.db.models.functions import ExtractYear
+
+        years = (
+            model_admin.get_queryset(request)
+            .annotate(year=ExtractYear("net"))
+            .values_list("year", flat=True)
+            .distinct()
+            .order_by("-year")
+        )
+        return [(y, str(y)) for y in years if y is not None]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(net__year=self.value())
+        return queryset
 
 LAUNCH_READONLY = (
     "id",
@@ -96,11 +119,10 @@ class LaunchAdmin(admin.ModelAdmin):
         "is_crewed",
         "webcast_live",
     )
-    list_filter = ("status_id", "is_crewed", "webcast_live", "location_region", "orbit_abbrev")
+    list_filter = (LaunchNetYearFilter, "status_id", "is_crewed", "webcast_live", "location_region", "orbit_abbrev")
     search_fields = ("name", "provider_name", "rocket_full_name", "location_name", "mission_name")
     readonly_fields = LAUNCH_READONLY
     ordering = ("-net",)
-    date_hierarchy = "net"
     list_per_page = 50
 
     def net_formatted(self, launch):
