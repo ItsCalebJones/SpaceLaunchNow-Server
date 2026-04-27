@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.39.1 (2026-04-27)
+
+### Fix
+
+* fix(autoscaler): update minimum and maximum pod counts for DigitalOcean autoscaling ([`3a06749`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/3a06749d4d79f42a02f80a565a6aa98c3ae74adf))
+
 ## v4.39.0 (2026-04-23)
 
 ### Feature
