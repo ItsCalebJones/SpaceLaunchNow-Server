@@ -521,7 +521,11 @@ else:
         }
     }
 
-CACHALOT_TIMEOUT = 60
+# Cachalot is invalidate-on-write; a short TTL throws away valid cached query
+# results every minute and tanks the hit ratio. Let entries live until
+# cachalot's own write-based invalidation evicts them. Override via env if
+# memory pressure ever becomes an issue.
+CACHALOT_TIMEOUT = env.int("CACHALOT_TIMEOUT", 86400)
 
 IS_API = env.bool("IS_API", True)
 IS_WEBSERVER = env.bool("IS_WEBSERVER", True)
