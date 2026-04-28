@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v4.39.2 (2026-04-28)
+
+### Fix
+
+* fix(settings): update CACHALOT_TIMEOUT to improve cache efficiency and adjust MAX_POD_COUNT for KEDA maxReplicaCount
+
+Co-authored-by: Copilot &lt;copilot@github.com&gt; ([`b69e4fa`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/b69e4fa77a49af278be7c3d429971c33ce8cabe0))
+
 ## v4.39.1 (2026-04-27)
 
 ### Fix
