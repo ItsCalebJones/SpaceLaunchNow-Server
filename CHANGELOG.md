@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.39.3 (2026-04-29)
+
+### Fix
+
+* fix(autoscaler): adjust minimum pod count for multi-node and set max pod count ceiling for KEDA ([`a708d8a`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a708d8a190c1bca23940c57ca98d1b26203af5fe))
+
 ## v4.39.2 (2026-04-28)
 
 ### Fix
