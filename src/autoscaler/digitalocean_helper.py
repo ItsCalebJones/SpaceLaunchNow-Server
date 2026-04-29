@@ -24,9 +24,9 @@ DO_TOKEN = settings.DO_TOKEN
 logger = logging.getLogger(__name__)
 
 MINIMUM_POD_COUNT_SINGLE_NODE = 5  # Conservative for single node scenario
-MINIMUM_POD_COUNT_MULTI_NODE = 12  # Conservative estimate for multi-node
+MINIMUM_POD_COUNT_MULTI_NODE = 15  # Conservative estimate for multi-node
 MAX_PODS_PER_NODE = 22  # Actual memory ~390Mi/pod vs 200M request; 6445Mi allocatable × 75% / 390Mi ≈ 12
-MAX_POD_COUNT = 150  # Absolute ceiling for KEDA maxReplicaCount
+MAX_POD_COUNT = 100  # Absolute ceiling for KEDA maxReplicaCount
 
 
 class DigitalOceanHelper:
