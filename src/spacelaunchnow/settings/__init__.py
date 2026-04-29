@@ -521,11 +521,11 @@ else:
         }
     }
 
-# Cachalot is invalidate-on-write; a short TTL throws away valid cached query
-# results every minute and tanks the hit ratio. Let entries live until
-# cachalot's own write-based invalidation evicts them. Override via env if
-# memory pressure ever becomes an issue.
-CACHALOT_TIMEOUT = env.int("CACHALOT_TIMEOUT", 86400)
+# Cachalot's invalidate-on-write only fires for Django ORM .save()/.delete()
+# in a process sharing this Redis. Bulk .update(), bulk_create(signals=False),
+# raw SQL, and writes from any non-Django service silently skip invalidation,
+# so the TTL is the real worst-case staleness window.
+CACHALOT_TIMEOUT = env.int("CACHALOT_TIMEOUT", 180)
 
 IS_API = env.bool("IS_API", True)
 IS_WEBSERVER = env.bool("IS_WEBSERVER", True)
