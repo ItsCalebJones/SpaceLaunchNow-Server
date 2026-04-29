@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.39.4 (2026-04-29)
+
+### Fix
+
+* fix(settings): update CACHALOT_TIMEOUT to reduce cache staleness window ([`5a03528`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/5a035289bd6e6ca2e542b7333d51291833d34b24))
+
 ## v4.39.3 (2026-04-29)
 
 ### Fix
