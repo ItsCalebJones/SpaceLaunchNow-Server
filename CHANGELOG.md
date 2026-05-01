@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.39.5 (2026-05-01)
+
+### Fix
+
+* fix(autoscaler): adjust minimum pod count for multi-node to improve scaling efficiency ([`4f432ea`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/4f432ea082d0f9c2daae8ed6ab18dc5ee1f5fcdf))
+
 ## v4.39.4 (2026-04-29)
 
 ### Fix
