@@ -211,7 +211,6 @@ INSTALLED_APPS = [
     "django.contrib.admin",
     "django_user_agents",
     "django_filters",
-    "django_jenkins",
     "rest_framework.authtoken",
     "storages",
     "collectfast",
@@ -225,13 +224,11 @@ INSTALLED_APPS = [
     "corsheaders",
     "drf_spectacular",
     "debug_toolbar",
-    "django_cleanup.apps.CleanupConfig",
     "health_check",  # required
     "health_check.db",  # stock Django health checkers
     "health_check.cache",
     "health_check.storage",
     "health_check.contrib.migrations",
-    "sln_api",
 ]
 
 if not TESTING:
@@ -266,12 +263,13 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "tz_detect.middleware.TimezoneMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django_user_agents.middleware.UserAgentMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     # 'silk.middleware.SilkyMiddleware',
 ]
+
+if DEBUG:
+    MIDDLEWARE.insert(MIDDLEWARE.index("tz_detect.middleware.TimezoneMiddleware") + 1, "debug_toolbar.middleware.DebugToolbarMiddleware")
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
 
@@ -320,55 +318,17 @@ WSGI_APPLICATION = "spacelaunchnow.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-IS_ADMIN_ONLY = env.bool("IS_ADMIN_ONLY", False)
-
-if IS_ADMIN_ONLY:
-    # Admin-only mode: no dependency on the main SLN/LaunchLibrary database.
-    # 'default' IS the sln_api (Go API) database. Django auth/session/admin-log
-    # tables are created here via `migrate`. Go API tables remain managed=False
-    # and are never touched by Django migrations (router enforces this).
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": env.str("SLN_API_DATABASE_NAME", "sln_api_prod"),
-            "USER": env.str("SLN_API_DATABASE_USERNAME", ""),
-            "PASSWORD": env.str("SLN_API_DATABASE_PASSWORD", ""),
-            "HOST": env.str("SLN_API_DATABASE_HOST", ""),
-            "PORT": env.str("SLN_API_DATABASE_PORT", "5432"),
-            # PgBouncer transaction pooling does not support server-side cursors.
-            "DISABLE_SERVER_SIDE_CURSORS": True,
-        }
+DATABASES = {
+    "default": {
+        "ENGINE": env.str("DATABASE_ENGINE"),
+        "NAME": env.str("DATABASE_NAME"),
+        "USER": env.str("DATABASE_USERNAME"),
+        "PASSWORD": env.str("DATABASE_PASSWORD"),
+        "HOST": env.str("DATABASE_HOST"),
+        "PORT": env.str("DATABASE_PORT"),
+        "DISABLE_SERVER_SIDE_CURSORS": env.bool("DISABLE_SERVER_SIDE_CURSORS", default=False),
     }
-    DATABASE_ROUTERS = ["sln_api.routers.SLNApiRouter"]
-else:
-    # Normal mode: main SLN/LaunchLibrary database is required.
-    DATABASES = {
-        "default": {
-            "ENGINE": env.str("DATABASE_ENGINE"),
-            "NAME": env.str("DATABASE_NAME"),
-            "USER": env.str("DATABASE_USERNAME"),
-            "PASSWORD": env.str("DATABASE_PASSWORD"),
-            "HOST": env.str("DATABASE_HOST"),
-            "PORT": env.str("DATABASE_PORT"),
-            "DISABLE_SERVER_SIDE_CURSORS": env.bool("DISABLE_SERVER_SIDE_CURSORS", default=False),
-        }
-    }
-    # SLN API database — the Go API's Postgres database, accessed read/write via the
-    # sln_api Django app for admin CRUD and sync_config management.
-    # Set SLN_API_DATABASE_HOST to enable; omit to disable gracefully (e.g., local dev).
-    _sln_api_db_host = env.str("SLN_API_DATABASE_HOST", "")
-    if _sln_api_db_host:
-        DATABASES["sln_api"] = {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": env.str("SLN_API_DATABASE_NAME", "sln_api_prod"),
-            "USER": env.str("SLN_API_DATABASE_USERNAME", ""),
-            "PASSWORD": env.str("SLN_API_DATABASE_PASSWORD", ""),
-            "HOST": _sln_api_db_host,
-            "PORT": env.str("SLN_API_DATABASE_PORT", "5432"),
-            # PgBouncer transaction pooling does not support server-side cursors.
-            "DISABLE_SERVER_SIDE_CURSORS": True,
-        }
-        DATABASE_ROUTERS = ["sln_api.routers.SLNApiRouter"]
+}
 
 CACHALOT_DATABASES = ["default"]
 

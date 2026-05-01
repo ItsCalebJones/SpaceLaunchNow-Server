@@ -889,18 +889,6 @@ files = [
 Django = ">=4.2,<6.1"
 
 [[package]]
-name = "django-cleanup"
-version = "6.0.0"
-description = "Deletes old files."
-optional = false
-python-versions = "*"
-groups = ["main"]
-files = [
-    {file = "django-cleanup-6.0.0.tar.gz", hash = "sha256:922e06ef8839c92bd3ab37a84db6058b8764f3fe44dbb4487bbca941d288280a"},
-    {file = "django_cleanup-6.0.0-py2.py3-none-any.whl", hash = "sha256:997feab3b1f7a2e84f71c29e83b1d664459ec0d4b1924977b1fa25b5babb8703"},
-]
-
-[[package]]
 name = "django-compat"
 version = "1.0.15"
 description = "For- and backwards compatibility layer for Django 1.4, 1.7, 1.8, 1.9, 1.10, and 1.11"
@@ -1060,21 +1048,6 @@ files = [
 django = ">=3.2"
 django-recurrence = ">=1.11.1"
 icalendar = ">=4.0.3"
-
-[[package]]
-name = "django-jenkins"
-version = "0.110.0"
-description = "Plug and play continuous integration with django and jenkins"
-optional = false
-python-versions = "*"
-groups = ["main"]
-files = [
-    {file = "django-jenkins-0.110.0.tar.gz", hash = "sha256:a8a11487323c90dc77e781fce584341c8f40b50e93c846550167ea71e2b41956"},
-    {file = "django_jenkins-0.110.0-py2.py3-none-any.whl", hash = "sha256:2dda72ffc85311612cadf400b90900be4972867e074daf1f1602c607a9899ba8"},
-]
-
-[package.dependencies]
-Django = ">=1.8"
 
 [[package]]
 name = "django-jet-reboot"
@@ -5237,4 +5210,4 @@ test = ["pytest (>=8.1,<9.0)", "pytest-rerunfailures (>=14.0,<15.0)"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12.0,<3.13.0"
-content-hash = "777e338b7932a54bc3ad82bf6ace8444b83185d30a7ef1473a36e4782bca0d93"
+content-hash = "dc4226fff920bae272247564d5a0c2890d79738e83ca48b0f9bf97d245257efd"
