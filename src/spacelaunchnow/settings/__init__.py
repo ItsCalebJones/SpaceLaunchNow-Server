@@ -269,7 +269,10 @@ MIDDLEWARE = [
 ]
 
 if DEBUG:
-    MIDDLEWARE.insert(MIDDLEWARE.index("tz_detect.middleware.TimezoneMiddleware") + 1, "debug_toolbar.middleware.DebugToolbarMiddleware")
+    MIDDLEWARE.insert(
+        MIDDLEWARE.index("tz_detect.middleware.TimezoneMiddleware") + 1,
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+    )
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
 
