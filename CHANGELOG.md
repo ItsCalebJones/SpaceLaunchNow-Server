@@ -1,5 +1,31 @@
 # CHANGELOG
 
+## v4.39.6 (2026-05-04)
+
+### Chore
+
+* chore(settings): format middleware insertion for better readability ([`0e7bbe4`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/0e7bbe404e7aa3e65c1e5877f69764ad8dc360c8))
+
+### Fix
+
+* fix(autoscaler): update minimum worker calculations and related test assertions ([`a75a4bc`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a75a4bc9a6266e7d013fc2cd6754411b7f988108))
+
+* fix(autoscaler): adjust expected worker count and scaling strategy for idle conditions ([`e2158ab`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/e2158ab48638addb60ca4f188d08933416760f36))
+
+### Unknown
+
+* Merge branch &#39;master&#39; of https://github.com/ItsCalebJones/SpaceLaunchNow-Server ([`f21d8a8`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/f21d8a8b5cbd9d1d27539bf3254c3f51d17dc00c))
+
+* Merge pull request #312 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`fe38614`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/fe38614c28a95e1426ef028717a618bad5046dc8))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`54a4b29`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/54a4b294ba6b45c01ac94447de4d029d5d4d2c06))
+
+* Remove sln_api app and related models, admin, and router configurations ([`6205eb6`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/6205eb671372c39f0a752cc1d30fcf740fbc1c6f))
+
 ## v4.39.5 (2026-05-01)
 
 ### Fix
