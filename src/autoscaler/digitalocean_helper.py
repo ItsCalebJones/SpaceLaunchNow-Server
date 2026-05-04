@@ -175,9 +175,9 @@ class DigitalOceanHelper:
         Safe capacity at ~75% of actual-usage-based scheduling: ~12 pods/node
 
         Scaling strategy:
-        - Single node: 5 pods min (MINIMUM_POD_COUNT_SINGLE_NODE)
-        - Multiple nodes: 10 pods per node min (MINIMUM_POD_COUNT_MULTI_NODE)
-        - Peak scaling: 12 pods per node max (MAX_PODS_PER_NODE)
+        - <=2 nodes: flat 5 pods min (MINIMUM_POD_COUNT_SINGLE_NODE) — small-pool idle floor
+        - 3+ nodes: MINIMUM_POD_COUNT_MULTI_NODE pods per node min
+        - Peak scaling: MAX_PODS_PER_NODE pods per node max
         """
         logger.info(f"Updating KEDA min replicas for expected_worker_count={expected_worker_count}")
 
@@ -195,19 +195,21 @@ class DigitalOceanHelper:
 
             custom_api = client.CustomObjectsApi()
 
-            # Calculate pods based on node capacity - different strategy for single vs multiple nodes
-            if expected_worker_count == 1:
-                pods_per_node = MINIMUM_POD_COUNT_SINGLE_NODE  # Conservative for single node scenario
-                logger.debug(f"Single node deployment: using {pods_per_node} pods per node")
-            else:
-                pods_per_node = (
-                    MINIMUM_POD_COUNT_MULTI_NODE  # Conservative estimate for multi-node (CPU limited at 100m request)
+            # Small-pool floor: at <=2 nodes (cluster sitting at the DO minimum during quiet
+            # hours) keep a flat 5-pod baseline rather than scaling pods per-node. Otherwise
+            # the 2-node case would mint 16 pods of headroom we don't need at idle.
+            # 3+ nodes means real traffic — scale pods proportionally.
+            if expected_worker_count <= 2:
+                min_pods = MINIMUM_POD_COUNT_SINGLE_NODE
+                logger.debug(
+                    f"Small pool ({expected_worker_count} nodes): flat floor of {min_pods} pods"
                 )
-                logger.debug(f"Multi-node deployment: using {pods_per_node} pods per node")
-
-            # Calculate minimum pods based on worker count
-            min_pods = max(3, expected_worker_count * pods_per_node)
-            logger.debug(f"Calculated min_pods: max(3, {expected_worker_count} * {pods_per_node}) = {min_pods}")
+            else:
+                pods_per_node = MINIMUM_POD_COUNT_MULTI_NODE
+                min_pods = max(3, expected_worker_count * pods_per_node)
+                logger.debug(
+                    f"Multi-node deployment: max(3, {expected_worker_count} * {pods_per_node}) = {min_pods}"
+                )
 
             # Calculate maximum pods with scaling headroom
             # Allow up to 20 pods per node during peak scaling

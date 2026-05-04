@@ -96,7 +96,11 @@ def check_autoscaler():
         logger.info(f"Total unique launches to process: {launches.count()}")
 
         # Some providers have a heavier weight.
-        expected_worker_count = 2
+        # Baseline of 1: on truly idle nights (no launches/events in the 24h window) the
+        # node pool can scale to a single node. Pairs with the KEDA <=2 nodes -> 5 pods
+        # floor in DigitalOceanHelper.update_keda_min_replicas so the 2nd node has the
+        # chance to evict.
+        expected_worker_count = 1
         logger.debug("Starting launch processing - initial worker count: 1")
 
         florida_launches = 0
