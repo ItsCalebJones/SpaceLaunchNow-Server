@@ -201,15 +201,11 @@ class DigitalOceanHelper:
             # 3+ nodes means real traffic — scale pods proportionally.
             if expected_worker_count <= 2:
                 min_pods = MINIMUM_POD_COUNT_SINGLE_NODE
-                logger.debug(
-                    f"Small pool ({expected_worker_count} nodes): flat floor of {min_pods} pods"
-                )
+                logger.debug(f"Small pool ({expected_worker_count} nodes): flat floor of {min_pods} pods")
             else:
                 pods_per_node = MINIMUM_POD_COUNT_MULTI_NODE
                 min_pods = max(3, expected_worker_count * pods_per_node)
-                logger.debug(
-                    f"Multi-node deployment: max(3, {expected_worker_count} * {pods_per_node}) = {min_pods}"
-                )
+                logger.debug(f"Multi-node deployment: max(3, {expected_worker_count} * {pods_per_node}) = {min_pods}")
 
             # Calculate maximum pods with scaling headroom
             # Allow up to 20 pods per node during peak scaling
