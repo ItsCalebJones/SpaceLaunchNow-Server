@@ -26,8 +26,29 @@ class NetstampHandler:
             self.notification_handler.send_notification(launch, "netstampChanged", notification)
 
     def update_notification_record(self, diff, launch, notification):
-        # If launch is within 24 hours...
-        if 86400 >= diff > 3600:
+        if diff > 43200:
+            # New NET is more than 12 hours out — treat as a significant reschedule.
+            # Reset all per-milestone countdown flags so the rescheduled attempt
+            # gets a full notification cycle. InFlight/Success are intentionally
+            # preserved to avoid duplicate end-of-flight pushes.
+            logger.info("Launch rescheduled >12h out — resetting all countdown notification flags.")
+            notification.wasNotifiedTwentyFourHour = False
+            notification.wasNotifiedOneHour = False
+            notification.wasNotifiedTenMinutes = False
+            notification.wasNotifiedOneMinute = False
+            notification.wasNotifiedWebcastLive = False
+            notification.wasNotifiedTwentyFourHourTwitter = False
+            notification.wasNotifiedOneHourTwitter = False
+            notification.wasNotifiedTenMinutesTwitter = False
+            notification.wasNotifiedOneMinuteTwitter = False
+            notification.wasNotifiedWebcastLiveTwitter = False
+            notification.wasNotifiedTwentyFourHourDiscord = False
+            notification.wasNotifiedOneHourDiscord = False
+            notification.wasNotifiedTenMinutesDiscord = False
+            notification.wasNotifiedOneMinutesDiscord = False
+            notification.wasNotifiedWebcastDiscord = False
+
+        elif 86400 >= diff > 3600:
             logger.info("Launch is within 24 hours, resetting notifications.")
             notification.wasNotifiedTwentyFourHour = True
             notification.wasNotifiedOneHour = False
@@ -43,11 +64,6 @@ class NetstampHandler:
             notification.wasNotifiedOneHour = True
             notification.wasNotifiedTwentyFourHour = True
             notification.wasNotifiedTenMinutes = True
-
-        elif diff >= 86400:
-            notification.wasNotifiedTwentyFourHour = False
-            notification.wasNotifiedOneHour = False
-            notification.wasNotifiedTenMinutes = False
 
         notification.last_net_stamp = launch.net
         notification.last_net_stamp_timestamp = datetime.now(tz=pytz.utc)
