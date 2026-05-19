@@ -11,9 +11,9 @@ from django.utils import timezone
 from autoscaler.autoscaler import check_autoscaler
 from autoscaler.digitalocean_helper import (
     MAX_POD_COUNT,
-    MAX_PODS_PER_NODE,
     MINIMUM_POD_COUNT_MULTI_NODE,
     DigitalOceanHelper,
+    max_pods_per_node,
 )
 from autoscaler.models import AutoscalerSettings
 
@@ -314,9 +314,9 @@ class DigitalOceanHelperTests(TestCase):
 
         # Check pod calculations based on actual constants:
         # expected_worker_count * MINIMUM_POD_COUNT_MULTI_NODE = min pods
-        # expected_worker_count * MAX_PODS_PER_NODE = max pods
+        # max_pods_per_node(expected_worker_count) * expected_worker_count = max pods
         expected_min_pods = max(3, expected_worker_count * MINIMUM_POD_COUNT_MULTI_NODE)
-        expected_max_pods = min(MAX_POD_COUNT, expected_worker_count * MAX_PODS_PER_NODE)
+        expected_max_pods = min(MAX_POD_COUNT, expected_worker_count * max_pods_per_node(expected_worker_count))
 
         call_args = mock_api.patch_namespaced_custom_object.call_args
         updated_object = call_args[1]["body"]

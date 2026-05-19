@@ -25,8 +25,24 @@ logger = logging.getLogger(__name__)
 
 MINIMUM_POD_COUNT_SINGLE_NODE = 5  # Conservative for single node scenario
 MINIMUM_POD_COUNT_MULTI_NODE = 8  # Conservative estimate for multi-node
-MAX_PODS_PER_NODE = 22  # Actual memory ~390Mi/pod vs 200M request; 6445Mi allocatable × 75% / 390Mi ≈ 12
 MAX_POD_COUNT = 100  # Absolute ceiling for KEDA maxReplicaCount
+
+
+def max_pods_per_node(node_count: int) -> int:
+    """Return the per-node pod ceiling, decreasing as pool size grows.
+
+    Larger pools run during peak traffic — nodes already carry more existing
+    pods, so schedulable headroom per node is lower.  The 3-4 node tier (12)
+    aligns with the documented safe value: floor(6445Mi * 0.75 / 390Mi) ≈ 12.
+    """
+    if node_count <= 2:
+        return 18  # idle/small pool — nodes relatively empty
+    elif node_count <= 4:
+        return 12  # matches 75%-allocatable safe ceiling
+    elif node_count <= 6:
+        return 10  # larger peak pool, more baseline load
+    else:
+        return 8   # very large pool — conservative ceiling
 
 
 class DigitalOceanHelper:
@@ -177,7 +193,7 @@ class DigitalOceanHelper:
         Scaling strategy:
         - <=2 nodes: flat 5 pods min (MINIMUM_POD_COUNT_SINGLE_NODE) — small-pool idle floor
         - 3+ nodes: MINIMUM_POD_COUNT_MULTI_NODE pods per node min
-        - Peak scaling: MAX_PODS_PER_NODE pods per node max
+        - Peak scaling: max_pods_per_node(node_count) pods per node max (decreases as pool grows)
         """
         logger.info(f"Updating KEDA min replicas for expected_worker_count={expected_worker_count}")
 
@@ -207,12 +223,11 @@ class DigitalOceanHelper:
                 min_pods = max(3, expected_worker_count * pods_per_node)
                 logger.debug(f"Multi-node deployment: max(3, {expected_worker_count} * {pods_per_node}) = {min_pods}")
 
-            # Calculate maximum pods with scaling headroom
-            # Allow up to 20 pods per node during peak scaling
-            max_pods_per_node = MAX_PODS_PER_NODE
-            max_pods = min(MAX_POD_COUNT, expected_worker_count * max_pods_per_node)
+            # Calculate maximum pods — ceiling shrinks as pool grows
+            pods_ceiling = max_pods_per_node(expected_worker_count)
+            max_pods = min(MAX_POD_COUNT, expected_worker_count * pods_ceiling)
             logger.debug(
-                f"Calculated max_pods: min({MAX_POD_COUNT}, {expected_worker_count} * {max_pods_per_node}) = {max_pods}"
+                f"Calculated max_pods: min({MAX_POD_COUNT}, {expected_worker_count} * {pods_ceiling}) = {max_pods}"
             )
 
             # KEDA ScaledObject details

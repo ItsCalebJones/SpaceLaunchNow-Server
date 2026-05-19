@@ -146,7 +146,7 @@ LOGGING = {
         },
         "django.db.backends": {
             "handlers": ["console"],
-            "level": "WARNING" if not DEBUG else "DEBUG",
+            "level": "WARNING",
             "propagate": False,
         },
         "api": {
