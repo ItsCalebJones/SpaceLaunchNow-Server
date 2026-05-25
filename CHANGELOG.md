@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v4.39.8 (2026-05-25)
+
+### Fix
+
+* fix(digitalocean_helper): adjust minimum pod count for single node scenario ([`06cb3eb`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/06cb3ebc46c9f2236c540bfdecae84c305ea595f))
+
+### Unknown
+
+* Merge pull request #313 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`b50c975`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/b50c9757b70e13cdc67e34553fbd7094bdf09f10))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`0e75203`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/0e752030ab5ec98f579963850662e1758c9a39c3))
+
 ## v4.39.7 (2026-05-25)
 
 ### Documentation

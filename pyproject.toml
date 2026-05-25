@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "spacelaunchnow-server"
-version = "4.39.7"
+version = "4.39.8"
 description = "The Backend and Web server for Space Launch Now"
 authors = ["Caleb Jones <ca.jones9119@gmail.com>"]
 readme = "README.md"
@@ -134,6 +134,7 @@ select = [
     # isort
     "I",
 ]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
