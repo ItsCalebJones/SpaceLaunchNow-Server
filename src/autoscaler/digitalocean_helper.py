@@ -23,7 +23,7 @@ DO_TOKEN = settings.DO_TOKEN
 
 logger = logging.getLogger(__name__)
 
-MINIMUM_POD_COUNT_SINGLE_NODE = 5  # Conservative for single node scenario
+MINIMUM_POD_COUNT_SINGLE_NODE = 3  # Conservative for single node scenario
 MINIMUM_POD_COUNT_MULTI_NODE = 8  # Conservative estimate for multi-node
 MAX_POD_COUNT = 100  # Absolute ceiling for KEDA maxReplicaCount
 
