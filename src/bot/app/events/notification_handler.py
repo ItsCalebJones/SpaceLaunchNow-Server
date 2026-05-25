@@ -95,13 +95,9 @@ class EventNotificationHandler(NotificationService):
         return topic
 
     def send_notification(self, event, event_type, webcast: bool = False):
-        data = self.build_data(event, event_type)
-
-        # Send V3 Android notif
-        self.send_to_fcm(self.build_v3_topics(), data, webcast)
-
-        # Send V3 Flutter notif
-        self.send_flutter_to_fcm(self.build_flutter_v3_topics(), data, webcast)
+        # NOTE: V3 Android/Flutter dispatch is intentionally disabled — only V5 (KMP)
+        # is sent. build_data/send_to_fcm/send_flutter_to_fcm are retained for future
+        # re-enablement.
 
         # Send V5 notifications (KMP app)
         self._send_v5_event_notification(event, event_type, webcast)

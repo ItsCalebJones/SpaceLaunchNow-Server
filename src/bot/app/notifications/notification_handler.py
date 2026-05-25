@@ -16,15 +16,6 @@ from bot.app.notifications.v3 import V3NotificationMixin
 from bot.app.notifications.v4 import V4NotificationMixin
 from bot.app.notifications.v5 import V5NotificationMixin
 from bot.models import LaunchNotificationRecord
-from bot.utils.util import (
-    get_agency_topic,
-    get_fcm_all_topics_v3,
-    get_fcm_not_strict_topics_v3,
-    get_fcm_strict_topics_v3,
-    get_fcm_v4_topic,
-    get_flutter_topics_v3,
-    get_location_topic,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -189,60 +180,9 @@ class NotificationHandler(
             "webcast": str(webcast),
         }
 
-        all_result = self.send_notif_v3_5(
-            data=data,
-            topics=get_fcm_all_topics_v3(debug=self.DEBUG, notification_type=notification_type),
-            message_title=launch.name,
-            message_body=contents,
-            analytics_label=f"notification_all_{data['launch_uuid']}",
-        )
-
-        strict_result = self.send_notif_v3_5(
-            data=data,
-            topics=get_fcm_strict_topics_v3(launch, debug=self.DEBUG, notification_type=notification_type),
-            message_title=launch.name,
-            message_body=contents,
-            analytics_label=f"notification_strict_{data['launch_uuid']}",
-        )
-
-        not_strict_result = self.send_notif_v3_5(
-            data=data,
-            topics=get_fcm_not_strict_topics_v3(launch, debug=self.DEBUG, notification_type=notification_type),
-            message_title=launch.name,
-            message_body=contents,
-            analytics_label=f"notification_not_strict_{data['launch_uuid']}",
-        )
-
-        flutter_result = self.send_notif_v3(
-            data=data,
-            topics=get_flutter_topics_v3(launch, notification_type=notification_type, debug=self.DEBUG, flutter=True),
-            message_title=launch.name,
-            message_body=contents,
-            analytics_label=f"notification_flutter_{data['launch_uuid']}",
-        )
-
-        # Send v4 notification with client-side filtering
-        v4_data = {
-            "notification_type": notification_type,
-            "launch_id": str(launch.id),
-            "launch_uuid": str(launch.id),
-            "launch_name": launch.name,
-            "launch_image": image,
-            "launch_net": launch.net.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "launch_location": launch.pad.location.name,
-            "webcast": str(webcast),
-            "webcast_live": str(launch.webcast_live),
-            "agency_id": str(get_agency_topic(launch)),
-            "location_id": str(get_location_topic(launch)),
-        }
-
-        v4_result = self.send_notif_v4(
-            data=v4_data,
-            topics=get_fcm_v4_topic(debug=self.DEBUG),
-            message_title=None,
-            message_body=None,
-            analytics_label=f"notification_v4_{data['launch_uuid']}",
-        )
+        # NOTE: V3 (all/strict/not-strict/flutter) and V4 dispatch are intentionally
+        # disabled — only V5 notifications are sent. The send_notif_v3_5/send_notif_v3/
+        # send_notif_v4 mixin methods are retained for future re-enablement.
 
         # Send v5 notifications with platform-specific messaging
         v5_results = self.send_v5_notification(
@@ -251,5 +191,4 @@ class NotificationHandler(
             contents=contents,
         )
 
-        all_results = [all_result, strict_result, not_strict_result, flutter_result, v4_result] + v5_results
-        self.notify_discord(all_results, data)
+        self.notify_discord(v5_results, data)

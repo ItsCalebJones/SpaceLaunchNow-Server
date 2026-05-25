@@ -90,7 +90,13 @@ class LaunchEventTracker:
                 logger.error(e)
 
     def check_custom(self):
-        logger.debug("Running check_in_flight...")
+        logger.debug("Running check_custom...")
+        # Custom admin pushes are V3-only and have no V5 path yet (spec pending).
+        # Only V5 notifications are sent, so skip dispatch entirely. We return before
+        # touching pending records so they are NOT marked complete — they stay queued
+        # to send once a custom V5 path exists. The send_custom_ios_v3/send_custom_android_v3
+        # mixin methods are retained for re-enablement.
+        return
         pending_ios = Notification.objects.filter(Q(send_ios=True) & Q(send_ios_complete=False))
         pending_android = Notification.objects.filter(Q(send_android=True) & Q(send_android_complete=False))
         for pending in pending_ios:
