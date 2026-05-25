@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "spacelaunchnow-server"
-version = "4.39.6"
+version = "4.39.7"
 description = "The Backend and Web server for Space Launch Now"
 authors = ["Caleb Jones <ca.jones9119@gmail.com>"]
 readme = "README.md"
@@ -81,17 +81,6 @@ name = "tsd"
 url = "https://pypi.thespacedevs.com/simple/"
 priority = "supplemental"
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
-
-
-###############################################################################
-#
-#                             SEMANTIC RELEASE
-#
-###############################################################################
 
 [tool.semantic_release]
 version_variable = [
@@ -125,6 +114,7 @@ tag_format = "v$version"
 #                               RUFF SETTINGS
 #
 ###############################################################################
+
 [tool.ruff]
 line-length = 120
 src = ["src"]
@@ -144,3 +134,15 @@ select = [
     # isort
     "I",
 ]
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+
+###############################################################################
+#
+#                             SEMANTIC RELEASE
+#
+###############################################################################
+

@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v4.39.7 (2026-05-25)
+
+### Documentation
+
+* docs: add V5 news notifications design spec ([`2846095`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/284609546129a306ce0d66546cdca89c95fc8de2))
+
+### Fix
+
+* fix(digitalocean_helper): standardize spacing in max_pods_per_node function ([`5ef82c5`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/5ef82c58b72de86667ca119d6c909f8289afc635))
+
+* fix(notification): disable V3 and V4 notification dispatch, retain methods for future re-enablement ([`c3db45b`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/c3db45b7637b5847af24c7a568c55c7b66395f50))
+
+* fix(autoscaler): refine pod scaling logic and update tests for max pods calculation ([`1cdf231`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/1cdf2315544cc4f6de202dc5c0be9eabbbc44b44))
+
+* fix(netstamp_handler): reset notification flags for significant reschedules ([`c4f61a7`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/c4f61a7f95f7a2c988beb4e09371a3ae7eab64e8))
+
 ## v4.39.6 (2026-05-04)
 
 ### Chore
