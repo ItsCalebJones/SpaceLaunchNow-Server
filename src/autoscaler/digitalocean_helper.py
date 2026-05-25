@@ -42,7 +42,7 @@ def max_pods_per_node(node_count: int) -> int:
     elif node_count <= 6:
         return 10  # larger peak pool, more baseline load
     else:
-        return 8   # very large pool — conservative ceiling
+        return 8  # very large pool — conservative ceiling
 
 
 class DigitalOceanHelper:
