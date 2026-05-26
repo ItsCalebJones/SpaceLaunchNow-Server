@@ -1,7 +1,7 @@
 import logging
+from datetime import datetime
 
 from django.core import serializers
-from django.utils.datetime_safe import datetime
 from pytz import utc
 
 from bot.models import DailyDigestRecord, LaunchNotificationRecord

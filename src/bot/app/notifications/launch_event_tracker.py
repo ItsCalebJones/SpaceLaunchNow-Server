@@ -1,10 +1,10 @@
 import datetime as dtime
 import logging
+from datetime import datetime
 
 import pytz
 from api.models import Launch
 from django.db.models import Q
-from django.utils.datetime_safe import datetime
 
 from bot.app.notifications.netstamp_handler import NetstampHandler
 from bot.app.notifications.notification_handler import NotificationHandler
@@ -91,22 +91,20 @@ class LaunchEventTracker:
 
     def check_custom(self):
         logger.debug("Running check_custom...")
-        # Custom admin pushes are V3-only and have no V5 path yet (spec pending).
-        # Only V5 notifications are sent, so skip dispatch entirely. We return before
-        # touching pending records so they are NOT marked complete — they stay queued
-        # to send once a custom V5 path exists. The send_custom_ios_v3/send_custom_android_v3
-        # mixin methods are retained for re-enablement.
-        return
+        # V5-only dispatch (KMP app). The send_custom_ios_v3/send_custom_android_v3 mixin
+        # methods are retained but no longer invoked. Mark _complete AFTER the send so a
+        # send failure leaves the record re-queued rather than silently consumed. A record
+        # flagged for both platforms appears in both querysets and is sent once per platform.
         pending_ios = Notification.objects.filter(Q(send_ios=True) & Q(send_ios_complete=False))
         pending_android = Notification.objects.filter(Q(send_android=True) & Q(send_android_complete=False))
         for pending in pending_ios:
+            self.notification_handler._send_v5_custom_ios(pending)
             pending.send_ios_complete = True
             pending.save()
-            self.notification_handler.send_custom_ios_v3(pending)
         for pending in pending_android:
+            self.notification_handler._send_v5_custom_android(pending)
             pending.send_android_complete = True
             pending.save()
-            self.notification_handler.send_custom_android_v3(pending)
 
     def check_one_minute(self, time_threshold_1_minute):
         logger.debug("Running check_one_minute...")

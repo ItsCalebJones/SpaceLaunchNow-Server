@@ -224,15 +224,11 @@ INSTALLED_APPS = [
     "corsheaders",
     "drf_spectacular",
     "debug_toolbar",
-    "health_check",  # required
-    "health_check.db",  # stock Django health checkers
-    "health_check.cache",
-    "health_check.storage",
-    "health_check.contrib.migrations",
+    # django-health-check 4.x: a single app; individual checks (Database/Cache/Storage)
+    # are configured on HealthCheckView in urls.py instead of the old db/cache/storage
+    # /contrib.* sub-apps, which no longer exist in 4.x.
+    "health_check",
 ]
-
-if not TESTING:
-    INSTALLED_APPS.append("health_check.contrib.s3boto3_storage")
 
 if DEBUG:
     # INSTALLED_APPS.append('debug_toolbar')

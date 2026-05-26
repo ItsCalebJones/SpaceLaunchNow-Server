@@ -2,28 +2,92 @@ import json
 import logging
 
 from bot.app.notification_service import NotificationService
+from bot.utils.util import get_fcm_v5_android_topic, get_fcm_v5_ios_topic
 
 logger = logging.getLogger(__name__)
 
 
 class NewsNotificationHandler(NotificationService):
     def send_notification(self, article):
-        data = {
+        # V5-only. send_v3_notification is retained but no longer invoked.
+        self._send_v5_notification(article)
+
+    def _build_v5_news_data(self, article):
+        """Build V5-compatible flat data payload for featured-news notifications.
+
+        V5 payloads use flat key-value strings (FCM requirement) with an
+        'article_id' field so the KMP app can detect this is a news notification
+        (it carries no lsp_id and no event_id) and open the article.
+        """
+        return {
             "notification_type": "featured_news",
-            "click_action": "FLUTTER_NOTIFICATION_CLICK",
-            "item": {
-                "id": None,
-                "article_id": article.id,
-                "news_site_long": article.news_site,
-                "newsSite": article.news_site,
-                "title": article.title,
-                "url": article.link,
-                "featured_image": article.featured_image,
-                "imageUrl": article.featured_image,
-            },
+            "title": f"New article via {article.news_site}",
+            "body": article.title,
+            "article_id": str(article.id),
+            "article_title": article.title,
+            "article_news_site": article.news_site,
+            "article_url": article.link,
+            "article_image": article.featured_image or "",
         }
-        data["item"] = json.dumps(data["item"])
-        self.send_v3_notification(article, data)
+
+    def _send_v5_notification(self, article):
+        """Send featured-news notifications to V5 Android and iOS topics."""
+        v5_data = self._build_v5_news_data(article)
+
+        # V5 Android (data-only)
+        android_topics = get_fcm_v5_android_topic(debug=self.DEBUG)
+        logger.info("----------------------------------------------------------")
+        logger.info("V5 Android News Notification")
+        logger.info(f"Notification Data: {v5_data}")
+        logger.info(f"Topics: {android_topics}")
+        try:
+            android_result = self.fcm.notify(
+                data_payload=v5_data,
+                topic_condition=android_topics,
+                notification_title=None,
+                notification_body=None,
+                fcm_options={"analytics_label": f"v5_android_news_{v5_data['article_id']}"},
+                android_config={
+                    "priority": "high",
+                    "collapse_key": f"news_{v5_data['article_id']}",
+                    "ttl": "86400s",
+                },
+                timeout=240,
+            )
+            logger.info(f"V5 Android News Result: {android_result}")
+        except Exception as e:
+            logger.error(f"V5 Android News Notification Error: {e}")
+        logger.info("----------------------------------------------------------")
+
+        # V5 iOS (alert with mutable-content)
+        ios_topics = get_fcm_v5_ios_topic(debug=self.DEBUG)
+        logger.info("----------------------------------------------------------")
+        logger.info("V5 iOS News Notification")
+        logger.info(f"Notification Data: {v5_data}")
+        logger.info(f"Topics: {ios_topics}")
+        try:
+            ios_result = self.fcm.notify(
+                data_payload=v5_data,
+                topic_condition=ios_topics,
+                notification_title=v5_data["title"],
+                notification_body=v5_data["body"],
+                fcm_options={"analytics_label": f"v5_ios_news_{v5_data['article_id']}"},
+                apns_config={
+                    "headers": {
+                        "apns-priority": "10",
+                    },
+                    "payload": {
+                        "aps": {
+                            "mutable-content": 1,
+                        },
+                    },
+                },
+                timeout=240,
+            )
+            logger.info(f"V5 iOS News Result: {ios_result}")
+        except Exception as e:
+            logger.error(f"V5 iOS News Notification Error: {e}")
+        logger.info("----------------------------------------------------------")
 
     def send_v3_notification(self, article, data):
         if not self.DEBUG:

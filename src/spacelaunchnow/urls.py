@@ -30,6 +30,7 @@ from django.http import HttpResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
+from health_check.views import HealthCheckView
 
 import web
 from app.sitemaps import (
@@ -61,6 +62,19 @@ def health(request):
     return HttpResponse("ok", content_type="text/plain")
 
 
+# django-health-check 4.x: mount the view directly with the checks we want.
+# 3.x's health_check.urls and the db/cache/storage/contrib.* sub-apps no longer exist;
+# checks are now classes wired onto the view. NOTE: 4.x has no migrations check
+# (the old health_check.contrib.migrations capability is gone).
+health_checks = [
+    "health_check.checks.Database",
+    "health_check.checks.Cache",
+]
+if not settings.TESTING:
+    # Storage check writes/reads a probe file; previously gated behind
+    # contrib.s3boto3_storage and skipped during tests.
+    health_checks.append("health_check.checks.Storage")
+
 default_settings = [
     re_path(r"^robots\.txt", include("robots.urls")),
     path(
@@ -74,7 +88,7 @@ default_settings = [
         {"sitemaps": sitemaps},
         name="sitemaps",
     ),
-    path("health_check/", include("health_check.urls")),
+    path("health_check/", HealthCheckView.as_view(checks=health_checks)),
     re_path("_health/", health),
     path("tz_detect/", include("tz_detect.urls")),
 ]

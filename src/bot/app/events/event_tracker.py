@@ -72,10 +72,9 @@ class EventTracker:
                     news_item.sent_at = datetime.datetime.now()
                     news_item.save()
                     logger.info(f"Posting {item.id} {item.title} to social!")
-                    # V3 push notifications disabled — only V5 notifications are sent, and
-                    # news has no V5 path yet (see V5 news notifications design spec).
-                    # send_notification() is retained for re-enablement once V5 news lands.
                     self.news_notification_handler.send_to_social(item)
+                    # V5 featured-news push (KMP app). V3 dispatch remains disabled.
+                    self.news_notification_handler.send_notification(item)
 
     @property
     def check_if_news_notification_allowed(self):
