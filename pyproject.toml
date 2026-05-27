@@ -77,9 +77,13 @@ version_toml = [
 branch = "master"
 
 upload_to_repository = false
-upload_to_release = true
+upload_to_release = false
 
-build_command = "pip install poetry && poetry build"
+# This is a Django server, not a published package — the deployable artifact is
+# the Docker image, and nothing pip-installs a built wheel/sdist. Skip the build
+# (empty command = no-op) so the release job no longer needs a project-compatible
+# Python interpreter inside the semantic-release action container.
+build_command = ""
 
 
 ###############################################################################

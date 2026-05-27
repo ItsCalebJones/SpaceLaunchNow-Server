@@ -247,13 +247,6 @@ jobs:
             echo "No release created, using current version: $POETRY_VERSION"
           fi
 
-      - name: 📤 Publish package distributions to GitHub Releases
-        uses: python-semantic-release/upload-to-gh-release@v9.8.6
-        if: steps.release.outputs.released == 'true'
-        with:
-          github_token: ${{ github.token }}
-          tag: ${{ steps.release.outputs.tag }}
-          
       - name: 📢 Notify Release Created
         if: steps.release.outputs.released == 'true'
         uses: Ilshidur/action-discord@master
