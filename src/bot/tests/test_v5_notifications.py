@@ -171,8 +171,9 @@ class BuildV5CustomDataTests(SimpleTestCase):
 class CheckNewsItemTests(SimpleTestCase):
     def _build_tracker(self):
         # Avoid constructing real handlers (FCM creds) inside EventTracker.__init__.
-        with mock.patch("bot.app.events.event_tracker.EventNotificationHandler"), mock.patch(
-            "bot.app.events.event_tracker.NewsNotificationHandler"
+        with (
+            mock.patch("bot.app.events.event_tracker.EventNotificationHandler"),
+            mock.patch("bot.app.events.event_tracker.NewsNotificationHandler"),
         ):
             tracker = EventTracker(debug=True)
         tracker.news_notification_handler = mock.MagicMock()
@@ -183,11 +184,13 @@ class CheckNewsItemTests(SimpleTestCase):
         record = _attr(id=42, was_notified=False, sent_at=None, should_notify=True, save=mock.MagicMock())
         article = _attr(id=42, title="An article")
 
-        with mock.patch("bot.app.events.event_tracker.ArticleNotification") as AN, mock.patch(
-            "bot.app.events.event_tracker.Article"
-        ) as Article, mock.patch.object(
-            EventTracker, "check_if_news_notification_allowed", new_callable=mock.PropertyMock
-        ) as allowed:
+        with (
+            mock.patch("bot.app.events.event_tracker.ArticleNotification") as AN,
+            mock.patch("bot.app.events.event_tracker.Article") as Article,
+            mock.patch.object(
+                EventTracker, "check_if_news_notification_allowed", new_callable=mock.PropertyMock
+            ) as allowed,
+        ):
             AN.objects.filter.return_value = [record]
             Article.objects.get.return_value = article
             allowed.return_value = True
@@ -203,11 +206,13 @@ class CheckNewsItemTests(SimpleTestCase):
         record = _attr(id=42, was_notified=False, sent_at=None, should_notify=True, save=mock.MagicMock())
         article = _attr(id=42, title="An article")
 
-        with mock.patch("bot.app.events.event_tracker.ArticleNotification") as AN, mock.patch(
-            "bot.app.events.event_tracker.Article"
-        ) as Article, mock.patch.object(
-            EventTracker, "check_if_news_notification_allowed", new_callable=mock.PropertyMock
-        ) as allowed:
+        with (
+            mock.patch("bot.app.events.event_tracker.ArticleNotification") as AN,
+            mock.patch("bot.app.events.event_tracker.Article") as Article,
+            mock.patch.object(
+                EventTracker, "check_if_news_notification_allowed", new_callable=mock.PropertyMock
+            ) as allowed,
+        ):
             AN.objects.filter.return_value = [record]
             Article.objects.get.return_value = article
             allowed.return_value = False
@@ -223,8 +228,9 @@ class CheckNewsItemTests(SimpleTestCase):
 # --------------------------------------------------------------------------- #
 class CheckCustomTests(SimpleTestCase):
     def _build_tracker(self):
-        with mock.patch("bot.app.notifications.launch_event_tracker.NotificationHandler"), mock.patch(
-            "bot.app.notifications.launch_event_tracker.NetstampHandler"
+        with (
+            mock.patch("bot.app.notifications.launch_event_tracker.NotificationHandler"),
+            mock.patch("bot.app.notifications.launch_event_tracker.NetstampHandler"),
         ):
             tracker = LaunchEventTracker(debug=True)
         tracker.notification_handler = mock.MagicMock()
