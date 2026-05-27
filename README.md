@@ -1,5 +1,5 @@
 # SpaceLaunchNow Server
-Backend services and current web front end for Space Launch Now.
+Backend services and current web front end for Space Launch Now and API.
 
 ## Main Features
 
