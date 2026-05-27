@@ -1,5 +1,48 @@
 # CHANGELOG
 
+## v4.40.0 (2026-05-27)
+
+### Chore
+
+* chore: disable package upload and adjust build command in CI configuration ([`5fc4006`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/5fc40064e1e31e46b562bb0aeb6bc42f2fafa74b))
+
+### Feature
+
+* feat: update Python version and dependencies in pyproject.toml
+
+- Bump Python version requirement to &gt;=3.14.0,&lt;3.15.0
+- Replace specific dependencies with django-launch-library as the source of truth
+- Remove redundant dependencies and update server-only dependencies ([`aa38293`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/aa3829307fba6a454ec016730608b2d8880b3f5f))
+
+### Fix
+
+* fix: update README to include API in project description ([`1850fc9`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/1850fc9309f4f7bfa0283137a9bb5a5f1d477137))
+
+### Refactor
+
+* refactor: simplify mock patching in CheckNewsItemTests and CheckCustomTests ([`3a2daa3`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/3a2daa31392e9946149a8e6eedb12492241fee41))
+
+### Unknown
+
+* Implement V5 Custom Notifications and Update Notification Delivery Matrix
+
+- Added a new specification for V5 custom admin notifications, detailing the architecture, payload structure, and dispatch methods for both iOS and Android platforms.
+- Updated the notification delivery matrix to reflect the current state of V5-only notifications, including server dispatch, KMP receipt, and display logic.
+- Modified the `EventTracker` to send V5 notifications for news articles, while retaining the structure for potential future V3 re-enablement.
+- Enhanced the `CustomNotificationMixin` to build and send V5 custom notifications, ensuring compatibility with the KMP app&#39;s deep-linking requirements.
+- Updated the `LaunchEventTracker` to implement V5 dispatch for custom notifications, marking records as complete only after successful sends.
+- Refactored the `NewsNotificationHandler` to support V5 notifications, including building the appropriate payload and sending to both Android and iOS topics.
+- Added unit tests for V5 news and custom notification payload builders and dispatch methods, ensuring correct functionality and adherence to specifications.
+- Updated health check configurations to align with the new django-health-check 4.x standards. ([`3c5378d`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/3c5378dcf6ca143279a3615ed0a1db55d2446f97))
+
+* Merge pull request #314 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`a3674e5`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a3674e55f63e62b0c7f63540895d25b515287ba0))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`20a7177`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/20a71770f6bd5447396bfd77a6798acdb470186e))
+
 ## v4.39.8 (2026-05-25)
 
 ### Fix
