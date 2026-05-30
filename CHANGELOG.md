@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.41.0 (2026-05-30)
+
+### Feature
+
+* feat: enhance ArticleNotificationAdmin with detailed fields and methods for article retrieval ([`65b83d7`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/65b83d7436055fdc5150c1838d66ad9c2a290adb))
+
 ## v4.40.0 (2026-05-27)
 
 ### Chore
