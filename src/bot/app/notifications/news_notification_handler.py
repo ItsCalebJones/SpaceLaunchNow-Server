@@ -12,6 +12,13 @@ class NewsNotificationHandler(NotificationService):
         # V5-only. send_v3_notification is retained but no longer invoked.
         self._send_v5_notification(article)
 
+    def send_to_social(self, article):
+        # No-op placeholder. The original social-posting implementation (and its
+        # SocialHandler) were removed in the LL-images rework. Kept as a stub so the
+        # caller in EventTracker.check_news_item still resolves; reinstate posting
+        # here if/when we return to publishing articles to social platforms.
+        return None
+
     def _build_v5_news_data(self, article):
         """Build V5-compatible flat data payload for featured-news notifications.
 

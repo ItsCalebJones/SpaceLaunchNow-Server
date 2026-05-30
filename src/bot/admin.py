@@ -1,4 +1,6 @@
+from api.models import Article
 from django.contrib import admin
+from django.utils.html import format_html
 
 from . import models
 
@@ -69,8 +71,44 @@ class RedditSubmissionAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.ArticleNotification)
-class ArticleNotification(admin.ModelAdmin):
-    list_display = ("id", "created_at")
+class ArticleNotificationAdmin(admin.ModelAdmin):
+    list_display = (
+        "article_title",
+        "article_news_site",
+        "id",
+        "created_at",
+        "should_notify",
+        "was_notified",
+        "read",
+        "sent_at",
+    )
+    list_filter = ("should_notify", "was_notified", "read")
+    search_fields = ("id",)
+    ordering = ("-created_at",)
+    readonly_fields = ("article_title", "article_news_site", "article_link")
+
+    def _article(self, obj):
+        # ArticleNotification has no FK to Article; its id mirrors Article.id.
+        if not hasattr(obj, "_cached_article"):
+            obj._cached_article = Article.objects.filter(id=obj.id).first()
+        return obj._cached_article
+
+    @admin.display(description="Article")
+    def article_title(self, obj):
+        article = self._article(obj)
+        return article.title if article else "(article not found)"
+
+    @admin.display(description="News Site")
+    def article_news_site(self, obj):
+        article = self._article(obj)
+        return article.news_site if article else "—"
+
+    @admin.display(description="Link")
+    def article_link(self, obj):
+        article = self._article(obj)
+        if article and article.link:
+            return format_html('<a href="{}" target="_blank" rel="noopener">{}</a>', article.link, article.link)
+        return "—"
 
 
 @admin.register(models.NewsNotificationChannel)
