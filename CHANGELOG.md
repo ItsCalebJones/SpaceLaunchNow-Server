@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## v4.42.0 (2026-07-03)
+
+### Chore
+
+* chore: update .gitignore to track the Terraform provider lock file ([`517299f`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/517299f61c63c6d5e43148af5cf8d52b6acfaefd))
+
+* chore: add Terraform configuration files for DigitalOcean and Cloudflare integration ([`642257f`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/642257f7a9c67bb19d92fa751a4a7c825fcb798e))
+
+### Feature
+
+* feat(notifications): implement apns-collapse-id for V5 iOS notifications to enable notification collapse ([`95ed9f9`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/95ed9f9fbc84dc61e45752322c492afa8e873f06))
+
+### Unknown
+
+* Merge pull request #315 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`8c23756`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/8c237568377aa7c9b4a66ed186e37d59fcab296e))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`10b311c`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/10b311c887d310329659128a4aa5ee17028b2ce9))
+
 ## v4.41.0 (2026-05-30)
 
 ### Feature
