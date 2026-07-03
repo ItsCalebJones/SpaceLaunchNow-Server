@@ -82,6 +82,7 @@ class NewsNotificationHandler(NotificationService):
                 apns_config={
                     "headers": {
                         "apns-priority": "10",
+                        "apns-collapse-id": f"news_{v5_data['article_id']}",
                     },
                     "payload": {
                         "aps": {

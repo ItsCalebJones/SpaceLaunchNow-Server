@@ -108,6 +108,7 @@ class CustomNotificationMixin:
                 apns_config={
                     "headers": {
                         "apns-priority": "10",
+                        "apns-collapse-id": f"custom_{v5_data['custom_id']}",
                     },
                     "payload": {
                         "aps": {

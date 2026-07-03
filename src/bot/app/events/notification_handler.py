@@ -147,6 +147,7 @@ class EventNotificationHandler(NotificationService):
                 apns_config={
                     "headers": {
                         "apns-priority": "10",
+                        "apns-collapse-id": f"event_{v5_data['event_id']}",
                     },
                     "payload": {
                         "aps": {

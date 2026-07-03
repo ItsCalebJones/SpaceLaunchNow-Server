@@ -62,6 +62,7 @@ class V5NotificationMixin:
                 apns_config={
                     "headers": {
                         "apns-priority": "10",
+                        "apns-collapse-id": data["launch_uuid"],
                     },
                     "payload": {
                         "aps": {
