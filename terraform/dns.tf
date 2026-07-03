@@ -17,7 +17,7 @@ resource "cloudflare_record" "spacelaunchnow_app" {
   type    = "A"
   ttl     = 1
   proxied = true
-   
+
   depends_on = [data.kubernetes_service.nginx_ingress]
 }
 
@@ -29,19 +29,22 @@ resource "cloudflare_record" "wildcard_spacelaunchnow_app" {
   type    = "A"
   ttl     = 1
   proxied = true
-  
+
   depends_on = [data.kubernetes_service.nginx_ingress]
 }
 
 # DNS record for spacelaunchnow.me pointing to load balancer
 resource "cloudflare_record" "spacelaunchnow_me" {
   zone_id = var.cloudflare_zone_id_me
-  name    = "@"
+  # Use the apex FQDN, not "@": this record was imported, and the Cloudflare
+  # provider does not normalize "@" to the zone apex on import (it does for the
+  # "*" wildcard), so "@" would force a needless destroy/recreate of the record.
+  name = "spacelaunchnow.me"
   content = data.kubernetes_service.nginx_ingress.status.0.load_balancer.0.ingress.0.ip
   type    = "A"
   ttl     = 1
   proxied = true
-   
+
   depends_on = [data.kubernetes_service.nginx_ingress]
 }
 
@@ -53,7 +56,7 @@ resource "cloudflare_record" "wildcard_spacelaunchnow_me" {
   type    = "A"
   ttl     = 1
   proxied = true
-   
+
   depends_on = [data.kubernetes_service.nginx_ingress]
 }
 

@@ -30,16 +30,16 @@ provider "cloudflare" {
 }
 
 provider "kubernetes" {
-  host                   = digitalocean_kubernetes_cluster.sln_k8s_prod.endpoint
-  token                  = digitalocean_kubernetes_cluster.sln_k8s_prod.kube_config[0].token
+  host  = digitalocean_kubernetes_cluster.sln_k8s_prod.endpoint
+  token = digitalocean_kubernetes_cluster.sln_k8s_prod.kube_config[0].token
   cluster_ca_certificate = base64decode(
     digitalocean_kubernetes_cluster.sln_k8s_prod.kube_config[0].cluster_ca_certificate
   )
 }
 
 resource "digitalocean_container_registry" "sln_registry" {
-  name     = "sln-prod-registry-01"
-  region   = "nyc3"
+  name                   = "sln-prod-registry-01"
+  region                 = "nyc3"
   subscription_tier_slug = "basic"
 }
 
@@ -57,27 +57,31 @@ resource "kubernetes_secret" "registry_pull" {
   data = {
     ".dockerconfigjson" = digitalocean_container_registry_docker_credentials.sln_registry_pull.docker_credentials
   }
-  
+
   type = "kubernetes.io/dockerconfigjson"
 
   depends_on = [digitalocean_kubernetes_cluster.sln_k8s_prod]
 }
 
 resource "digitalocean_vpc" "sln_vpc" {
-  name     = "sln-prod-vpc-01"
-  region   = var.region
+  name   = "sln-prod-vpc-01"
+  region = var.region
 }
 
 resource "digitalocean_kubernetes_cluster" "sln_k8s_prod" {
-  name    = "sln-prod-k8s-01"
-  region  = var.region
-  version = "1.33.1-do.0"
+  name   = "sln-prod-k8s-01"
+  region = var.region
+  # Floor version at create time. DO's auto_upgrade (below) moves the live
+  # patch forward during the Sunday maintenance window, so this string goes
+  # stale by design — ignore_changes (lifecycle) stops Terraform from trying
+  # to "downgrade" back to it, which forces a full cluster replacement.
+  version = "1.33.12-do.1"
 
   # assign to the created VPC
   vpc_uuid = digitalocean_vpc.sln_vpc.id
 
   # tag the cluster itself (and propagates to each node pool)
-  tags = var.tags
+  tags         = var.tags
   auto_upgrade = true
   maintenance_policy {
     day        = "sunday"
@@ -88,30 +92,49 @@ resource "digitalocean_kubernetes_cluster" "sln_k8s_prod" {
   node_pool {
     name       = "sln-prod-nodepool-main-01"
     size       = "s-4vcpu-8gb"
-    node_count = 2  # Reduced from 3 to 2 for normal operations
+    node_count = 2 # Reduced from 3 to 2 for normal operations
     tags       = concat(var.tags, ["prod-4cpu", "scalable"])
     auto_scale = true
-    min_nodes = 2   
-    max_nodes = 10  
+    min_nodes  = 2
+    max_nodes  = 10
+  }
+
+  lifecycle {
+    # These are all managed out-of-band; don't let Terraform fight them:
+    #  - version: DO auto_upgrade bumps the patch during the maintenance window.
+    #  - node_pool count/min/max: src/autoscaler/autoscaler.py PATCHes the
+    #    "scalable"-tagged pool (this one) around launch/event windows.
+    ignore_changes = [
+      version,
+      node_pool[0].node_count,
+      node_pool[0].min_nodes,
+      node_pool[0].max_nodes,
+    ]
   }
 }
 
-resource "digitalocean_kubernetes_node_pool" "sln_k8s_prod_memory" {
+# Consolidated platform pool — replaces the separate memory-02 (m-2vcpu-16gb)
+# and system-03 (c-4) pools. Both were mis-typed for their actual workloads
+# (memory pool ran CPU-bound at 27% mem; system pool ran at 6% CPU), so this
+# folds them into two balanced s-4vcpu-8gb nodes (~65% mem each, HA spread).
+# NOTE: deliberately NOT tagged "scalable" — src/autoscaler/autoscaler.py only
+# manages the scalable-tagged pool (main-01); this pool uses DOKS native
+# autoscaling within min/max instead.
+resource "digitalocean_kubernetes_node_pool" "sln_k8s_prod_shared" {
   cluster_id = digitalocean_kubernetes_cluster.sln_k8s_prod.id
-  name       = "sln-prod-nodepool-memory-02"
-  size       = "m-2vcpu-16gb"
-  node_count = 1
-  tags       = concat(
+  name       = "sln-prod-nodepool-shared-04"
+  size       = "s-4vcpu-8gb"
+  node_count = 2
+  tags = concat(
     var.tags,
-    ["prod-memory"],
+    ["prod-shared"],
   )
   auto_scale = true
-  min_nodes = 1
-  max_nodes = 2
-  
-  # Add node labels for workload scheduling
+  min_nodes  = 1
+  max_nodes  = 3
+
   labels = {
-    "workload-type" = "memory-intensive"
+    "workload-type" = "shared-infrastructure"
   }
 }
 
@@ -119,7 +142,7 @@ resource "digitalocean_kubernetes_node_pool" "sln_k8s_prod_memory" {
 resource "local_file" "kubeconfig" {
   content  = digitalocean_kubernetes_cluster.sln_k8s_prod.kube_config[0].raw_config
   filename = "${path.module}/sln-prod-kubeconfig-01"
-  
+
   depends_on = [digitalocean_kubernetes_cluster.sln_k8s_prod]
 }
 
