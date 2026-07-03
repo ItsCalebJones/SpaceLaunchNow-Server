@@ -28,13 +28,6 @@ docker/*.backup
 *.log
 .history/
 **.json
-**.tfvars
-**.tfstate
-**.tfstate.backup
-**.tfplan
-**.terraform**
-# ...but DO track the provider lock file so provider versions are pinned in git.
-!.terraform.lock.hcl
 **kubeconfig**
 google-oauth-secret.yaml
 
