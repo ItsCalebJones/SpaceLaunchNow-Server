@@ -1,8 +1,32 @@
 # CHANGELOG
 
+## v4.43.0 (2026-07-06)
+
+### Feature
+
+* feat(notifications): add Prometheus send/recipient counters and metrics endpoint ([`41ff9c8`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/41ff9c81c75153c657a8b048a2d6866ef00249b3))
+
+### Unknown
+
+* Merge pull request #317 from ItsCalebJones/feat/notification-metrics
+
+feat(notifications): add Prometheus send/recipient counters and metrics endpoint ([`a2abde5`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a2abde5f79dbc7831cdc655edd2ca6ad17a7c11b))
+
+* Merge pull request #316 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`35160c6`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/35160c602ce66b717b6216469c631d69a2f44327))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`9ca539c`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/9ca539cd8d2d1a0606f936708181f0bdf5e2c313))
+
+* Merge branch &#39;master&#39; of https://github.com/ItsCalebJones/SpaceLaunchNow-Server ([`2deb935`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/2deb935a0b0b9149fb499b11e49241a50c4598c4))
+
 ## v4.42.0 (2026-07-03)
 
 ### Chore
+
+* chore: remove deprecated Terraform configuration and scripts ([`f4eafa8`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/f4eafa8f59c54f4967c34b76d25b54a5177b9546))
 
 * chore: update .gitignore to track the Terraform provider lock file ([`517299f`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/517299f61c63c6d5e43148af5cf8d52b6acfaefd))
 
