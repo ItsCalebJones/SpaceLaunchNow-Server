@@ -15,6 +15,7 @@ import logging
 from api.models import Launch
 
 from bot.app.notifications.base import NotificationResult
+from bot.app.notifications.metrics import record_send
 from bot.utils.util import get_fcm_v5_android_topic, get_fcm_v5_ios_topic
 
 logger = logging.getLogger(__name__)
@@ -73,6 +74,7 @@ class V5NotificationMixin:
                 timeout=240,
             )
             logger.info(f"V5 iOS Result: {results}")
+            record_send(platform="ios", category="launch", success=True, result=results)
             return NotificationResult(
                 notification_type=data["notification_type"],
                 topics=topics,
@@ -82,6 +84,7 @@ class V5NotificationMixin:
             )
         except Exception as e:
             logger.error(f"V5 iOS Notification Error: {e}")
+            record_send(platform="ios", category="launch", success=False)
             return NotificationResult(
                 notification_type=data["notification_type"],
                 topics=topics,
@@ -126,6 +129,7 @@ class V5NotificationMixin:
                 timeout=240,
             )
             logger.info(f"V5 Android Result: {results}")
+            record_send(platform="android", category="launch", success=True, result=results)
             return NotificationResult(
                 notification_type=data["notification_type"],
                 topics=topics,
@@ -135,6 +139,7 @@ class V5NotificationMixin:
             )
         except Exception as e:
             logger.error(f"V5 Android Notification Error: {e}")
+            record_send(platform="android", category="launch", success=False)
             return NotificationResult(
                 notification_type=data["notification_type"],
                 topics=topics,

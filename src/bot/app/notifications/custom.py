@@ -5,6 +5,7 @@ import logging
 from api.models import Article, Events, Launch
 
 from bot.app.notifications.base import NotificationResult
+from bot.app.notifications.metrics import record_send
 from bot.utils.util import get_fcm_v5_android_topic, get_fcm_v5_ios_topic
 
 logger = logging.getLogger(__name__)
@@ -86,8 +87,10 @@ class CustomNotificationMixin:
                 timeout=240,
             )
             logger.info(f"V5 Android Custom Result: {android_result}")
+            record_send(platform="android", category="custom", success=True, result=android_result)
         except Exception as e:
             logger.error(f"V5 Android Custom Notification Error: {e}")
+            record_send(platform="android", category="custom", success=False)
         logger.info("----------------------------------------------------------")
 
     def _send_v5_custom_ios(self, pending) -> None:
@@ -119,8 +122,10 @@ class CustomNotificationMixin:
                 timeout=240,
             )
             logger.info(f"V5 iOS Custom Result: {ios_result}")
+            record_send(platform="ios", category="custom", success=True, result=ios_result)
         except Exception as e:
             logger.error(f"V5 iOS Custom Notification Error: {e}")
+            record_send(platform="ios", category="custom", success=False)
         logger.info("----------------------------------------------------------")
 
     def send_custom_ios_v3(self, pending) -> NotificationResult:
