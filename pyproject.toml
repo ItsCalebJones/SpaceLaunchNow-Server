@@ -41,6 +41,9 @@ redis = "^6.2.0"
 hiredis = "^3.2.1"
 python-json-logger = "^3.3.0"
 kubernetes = "^33.1.0"
+# Verified absent from django-launch-library's dependency tree (poetry.lock
+# has no prometheus-client entry) — safe to declare here.
+prometheus-client = "^0.23.1"
 
 [tool.poetry.group.dev]
 optional = true

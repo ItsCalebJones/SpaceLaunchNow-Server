@@ -2,6 +2,7 @@ import json
 import logging
 
 from bot.app.notification_service import NotificationService
+from bot.app.notifications.metrics import record_send
 from bot.utils.util import get_fcm_v5_android_topic, get_fcm_v5_ios_topic
 
 logger = logging.getLogger(__name__)
@@ -127,8 +128,10 @@ class EventNotificationHandler(NotificationService):
                 timeout=240,
             )
             logger.info(f"V5 Android Event Result: {android_result}")
+            record_send(platform="android", category="event", success=True, result=android_result)
         except Exception as e:
             logger.error(f"V5 Android Event Notification Error: {e}")
+            record_send(platform="android", category="event", success=False)
         logger.info("----------------------------------------------------------")
 
         # V5 iOS (alert with mutable-content)
@@ -158,8 +161,10 @@ class EventNotificationHandler(NotificationService):
                 timeout=240,
             )
             logger.info(f"V5 iOS Event Result: {ios_result}")
+            record_send(platform="ios", category="event", success=True, result=ios_result)
         except Exception as e:
             logger.error(f"V5 iOS Event Notification Error: {e}")
+            record_send(platform="ios", category="event", success=False)
         logger.info("----------------------------------------------------------")
 
     def send_to_fcm(self, topics, data, webcast: bool = False):

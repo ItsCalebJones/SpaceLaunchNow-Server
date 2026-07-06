@@ -2,6 +2,7 @@ import json
 import logging
 
 from bot.app.notification_service import NotificationService
+from bot.app.notifications.metrics import record_send
 from bot.utils.util import get_fcm_v5_android_topic, get_fcm_v5_ios_topic
 
 logger = logging.getLogger(__name__)
@@ -62,8 +63,10 @@ class NewsNotificationHandler(NotificationService):
                 timeout=240,
             )
             logger.info(f"V5 Android News Result: {android_result}")
+            record_send(platform="android", category="news", success=True, result=android_result)
         except Exception as e:
             logger.error(f"V5 Android News Notification Error: {e}")
+            record_send(platform="android", category="news", success=False)
         logger.info("----------------------------------------------------------")
 
         # V5 iOS (alert with mutable-content)
@@ -93,8 +96,10 @@ class NewsNotificationHandler(NotificationService):
                 timeout=240,
             )
             logger.info(f"V5 iOS News Result: {ios_result}")
+            record_send(platform="ios", category="news", success=True, result=ios_result)
         except Exception as e:
             logger.error(f"V5 iOS News Notification Error: {e}")
+            record_send(platform="ios", category="news", success=False)
         logger.info("----------------------------------------------------------")
 
     def send_v3_notification(self, article, data):
