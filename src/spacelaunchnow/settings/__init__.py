@@ -223,7 +223,6 @@ INSTALLED_APPS = [
     "tz_detect",
     "corsheaders",
     "drf_spectacular",
-    "debug_toolbar",
     # django-health-check 4.x: a single app; individual checks (Database/Cache/Storage)
     # are configured on HealthCheckView in urls.py instead of the old db/cache/storage
     # /contrib.* sub-apps, which no longer exist in 4.x.
@@ -231,8 +230,13 @@ INSTALLED_APPS = [
 ]
 
 if DEBUG:
-    # INSTALLED_APPS.append('debug_toolbar')
-    pass
+    # Keep debug_toolbar out of INSTALLED_APPS unless DEBUG is on. Its
+    # middleware (below) and its URLs (urls.py) are already DEBUG-only, so
+    # installing the app unconditionally left the three inconsistent and made
+    # Django's system checks emit debug_toolbar.W001 — "middleware is missing
+    # from MIDDLEWARE" — on every management command run in production.
+    # Must be appended after django.contrib.staticfiles, which this satisfies.
+    INSTALLED_APPS.append("debug_toolbar")
 
 JET_THEMES = [
     {

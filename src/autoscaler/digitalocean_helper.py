@@ -24,25 +24,41 @@ DO_TOKEN = settings.DO_TOKEN
 logger = logging.getLogger(__name__)
 
 MINIMUM_POD_COUNT_SINGLE_NODE = 3  # Conservative for single node scenario
-MINIMUM_POD_COUNT_MULTI_NODE = 8  # Conservative estimate for multi-node
+# Lowered 8 -> 3 on 2026-08-01. Measured peak traffic over 7 days (launches
+# included) was 21.1 RPS = ~11 pods at the 2 RPS/pod trigger, against a floor
+# that was demanding 40. The floor only needs to cover baseline plus scale-up
+# headroom; KEDA still grows on the CPU/RPS/latency triggers from there.
+MINIMUM_POD_COUNT_MULTI_NODE = 3  # Idle floor per node
 MAX_POD_COUNT = 100  # Absolute ceiling for KEDA maxReplicaCount
 
 
 def max_pods_per_node(node_count: int) -> int:
-    """Return the per-node pod ceiling, decreasing as pool size grows.
+    """Return the per-node pod ceiling for the given pool size.
 
-    Larger pools run during peak traffic — nodes already carry more existing
-    pods, so schedulable headroom per node is lower.  The 3-4 node tier (12)
-    aligns with the documented safe value: floor(6445Mi * 0.75 / 390Mi) ≈ 12.
+    Recalibrated 2026-08-01 against production reality. The previous tiers
+    (18/12/10/8) were derived from an assumed ~390Mi per pod, but the web pods
+    request 700M (≈668Mi) and genuinely use it — measured p95 600Mi, peak
+    690Mi — so the request is honest and the old model over-committed by ~1.75x.
+    That is what left pods Pending on "Insufficient memory" while the scaler
+    believed the pool had room.
+
+    Node allocatable is 6561468Ki ≈ 6408Mi, so at 75% for web workloads:
+    floor(6408 * 0.75 / 668) ≈ 7 pods/node.
+
+    The curve peaks in the middle rather than decreasing throughout. A 1-2 node
+    pool concentrates the fixed overhead — per-node daemonsets plus singletons
+    like valkey and pgbouncer — onto very few nodes, so headroom for web pods is
+    tighter there, not looser. Mid-size pools spread that overhead best; large
+    pools give it back to baseline traffic load.
     """
     if node_count <= 2:
-        return 18  # idle/small pool — nodes relatively empty
+        return 6  # tiny pool — fixed overhead concentrated on few nodes
     elif node_count <= 4:
-        return 12  # matches 75%-allocatable safe ceiling
+        return 7  # best case: matches the 75%-allocatable ceiling at 668Mi/pod
     elif node_count <= 6:
-        return 10  # larger peak pool, more baseline load
+        return 6  # larger peak pool, more baseline load
     else:
-        return 8  # very large pool — conservative ceiling
+        return 5  # very large pool — conservative ceiling
 
 
 class DigitalOceanHelper:
@@ -179,19 +195,18 @@ class DigitalOceanHelper:
         - CPU: 3000m / 100m = 30 pods/node
         - Memory: 6000M / 200M = 30 pods/node
 
-        Actual observed memory per pod (production, s-4vcpu-8gb nodes):
-        - ~390Mi actual vs 200M requested (~2x overcommit due to Django/Gunicorn static overhead)
-        - Node allocatable memory: ~6445Mi
-        - Safe capacity at 75% of allocatable: floor(6445 * 0.75 / 390) ≈ 12 pods/node
+        Actual observed memory per pod (production, measured 2026-08-01):
+        - Request 700M (≈668Mi); working set p95 600Mi, peak 690Mi — the request
+          is honest, so schedule against it rather than against a lower estimate.
+        - Node allocatable memory: 6561468Ki ≈ 6408Mi
+        - Safe capacity at 75% of allocatable: floor(6408 * 0.75 / 668) ≈ 7 pods/node
 
         Pod capacity per node (by limits / burst ceiling):
-        - CPU: 3000m / 500m = 6 pods/node
-        - Memory: 6000M / 750M = 8 pods/node
-
-        Safe capacity at ~75% of actual-usage-based scheduling: ~12 pods/node
+        - CPU: 3000m / 1000m = 3 pods/node (limits are burst headroom, not binding)
+        - Memory: 6000M / 896M = 6 pods/node
 
         Scaling strategy:
-        - <=2 nodes: flat 5 pods min (MINIMUM_POD_COUNT_SINGLE_NODE) — small-pool idle floor
+        - <=2 nodes: flat MINIMUM_POD_COUNT_SINGLE_NODE pods min — small-pool idle floor
         - 3+ nodes: MINIMUM_POD_COUNT_MULTI_NODE pods per node min
         - Peak scaling: max_pods_per_node(node_count) pods per node max (decreases as pool grows)
         """

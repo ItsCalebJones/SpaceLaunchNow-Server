@@ -107,6 +107,50 @@ class AutoscalerTests(TestCase):
             mock_do_instance.update_node_pools.assert_called_once_with(4, 10)
             mock_do_instance.update_keda_min_replicas.assert_called_once_with(4)
 
+    def test_recent_in_flight_launch_counts(self):
+        """A launch still in flight counts toward demand even outside the time windows"""
+        LaunchStatus.objects.create(id=6, full_name="In Flight", abbrev="In Flight")
+
+        # 1 hour ago: outside the -15min/+1h10m window, so it can only be picked
+        # up by the in-flight query.
+        launch = self.create_test_launch("Starlink In Flight", timezone.now() - dtime.timedelta(hours=1), self.spacex)
+        launch.status = LaunchStatus.objects.get(id=6)
+        launch.save()
+
+        with patch("autoscaler.autoscaler.DigitalOceanHelper") as mock_do:
+            mock_do_instance = Mock()
+            mock_do.return_value = mock_do_instance
+            mock_do_instance.get_node_pool_min.return_value = 2
+
+            check_autoscaler()
+
+            # 1 (base) + 3 (SpaceX weight) = 4 workers
+            mock_do_instance.update_keda_min_replicas.assert_called_once_with(4)
+
+    def test_stale_in_flight_launch_ignored(self):
+        """A launch left In Flight long after landing must not pin the cluster
+
+        Regression test: the in-flight query had no time bound, so a single
+        launch whose status never advanced held the pool at max_workers
+        indefinitely while both time windows reported zero launches.
+        """
+        LaunchStatus.objects.create(id=6, full_name="In Flight", abbrev="In Flight")
+
+        launch = self.create_test_launch("Stale In Flight", timezone.now() - dtime.timedelta(hours=12), self.spacex)
+        launch.status = LaunchStatus.objects.get(id=6)
+        launch.save()
+
+        with patch("autoscaler.autoscaler.DigitalOceanHelper") as mock_do:
+            mock_do_instance = Mock()
+            mock_do.return_value = mock_do_instance
+            mock_do_instance.get_node_pool_min.return_value = 2
+
+            check_autoscaler()
+
+            # Baseline only — the stale launch contributes no weight
+            mock_do_instance.update_keda_min_replicas.assert_called_once_with(1)
+            mock_do_instance.update_node_pools.assert_not_called()
+
     def test_starship_launch_scaling(self):
         """Test scaling for Starship launches"""
         # Create Starship launch with multiple programs to trigger Starship logic

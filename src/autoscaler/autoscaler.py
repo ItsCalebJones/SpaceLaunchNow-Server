@@ -74,8 +74,8 @@ def check_autoscaler():
         # Calculate time thresholds
         now = dtime.datetime.now(tz=pytz.utc)
         threshold_plus_1_hour = now + dtime.timedelta(hours=1) + dtime.timedelta(minutes=10)
-        threshold_minus_1_hour = now - dtime.timedelta(minutes=15)
-        threshold_plus_24_hour = now + dtime.timedelta(hours=24) + dtime.timedelta(minutes=15)
+        threshold_minus_1_hour = now - dtime.timedelta(minutes=5)
+        threshold_plus_24_hour = now + dtime.timedelta(hours=24) + dtime.timedelta(minutes=5)
         threshold_minus_24_hour = now + dtime.timedelta(hours=24) - dtime.timedelta(minutes=5)
 
         logger.debug(f"Current time: {now}")
@@ -85,7 +85,13 @@ def check_autoscaler():
         # Query launches and events
         launches_1 = Launch.objects.filter(net__range=[threshold_minus_1_hour, threshold_plus_1_hour])
         launches_24 = Launch.objects.filter(net__range=[threshold_minus_24_hour, threshold_plus_24_hour])
-        in_flight = Launch.objects.filter(status__id=6)
+        # In-flight launches (status 6) count toward demand, but bound the query by
+        # net so a launch whose status never advances cannot pin the cluster at
+        # max_workers forever. Seen 2026-08-01: a Starlink mission sat In Flight
+        # long after landing, and on its own held the pool at 5 nodes / 40 pods
+        # while both time windows reported zero launches.
+        threshold_in_flight = now - dtime.timedelta(hours=1)
+        in_flight = Launch.objects.filter(status__id=6, net__gte=threshold_in_flight)
         launches = launches_1.union(launches_24).union(in_flight)
 
         events = Events.objects.filter(date__range=[threshold_minus_1_hour, threshold_plus_1_hour])
