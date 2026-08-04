@@ -1,5 +1,51 @@
 # CHANGELOG
 
+## v4.43.1 (2026-08-04)
+
+### Documentation
+
+* docs(observability): add remote diagnostics control runbook ([`05d7889`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/05d7889b1fbef27c4993ed9a1338afd0cad60967))
+
+### Fix
+
+* fix(autoscaler): adjust in-flight launch handling and time thresholds
+
+- Updated time thresholds for in-flight launch queries to improve demand calculations.
+- Added tests to ensure in-flight launches are correctly counted and stale launches do not affect scaling decisions.
+- Adjusted minimum pod counts for multi-node scenarios based on recent traffic analysis. ([`3a2576d`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/3a2576d638b4272cf642f14d57d64023b21144f0))
+
+### Test
+
+* test(autoscaler): fix in-flight test boundary and no-op scaling mock
+
+Both in-flight tests added in 3a2576d6 failed in CI, blocking the release
+and image build on master. Production behaviour is unchanged.
+
+test_recent_in_flight_launch_counts created its launch at exactly -1h while
+check_autoscaler() computes its own `now` milliseconds later, so net__gte
+excluded the launch by a hair and it failed on every run. Moved to -30min,
+clearly inside the 1-hour in-flight bound.
+
+test_stale_in_flight_launch_ignored mocked get_node_pool_min at 2, which
+check_autoscaler copies into current_workers. With a baseline target of 1
+that is a real 2-&gt;1 scale-down, so update_node_pools was correctly called
+and assert_not_called failed. Mock now returns 1, matching the no-op the
+test describes. ([`9bcfaab`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/9bcfaaba263294307d23743fabffd8561cc86aa3))
+
+### Unknown
+
+* Merge pull request #320 from ItsCalebJones/fix/autoscaler-test-boundaries
+
+fix(autoscaler): adjust in-flight launch handling and time thresholds ([`7799e23`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/7799e2324446eccfd82467ace3177958807ebb8b))
+
+* Merge pull request #318 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`4d6bb30`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/4d6bb30ff4f3c0dfb29335bb8c773c537722f179))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`43e9b99`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/43e9b998934b911f235bc12af5805e28ac7305a7))
+
 ## v4.43.0 (2026-07-06)
 
 ### Feature
