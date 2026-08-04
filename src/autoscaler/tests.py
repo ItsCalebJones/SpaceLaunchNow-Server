@@ -111,9 +111,14 @@ class AutoscalerTests(TestCase):
         """A launch still in flight counts toward demand even outside the time windows"""
         LaunchStatus.objects.create(id=6, full_name="In Flight", abbrev="In Flight")
 
-        # 1 hour ago: outside the -15min/+1h10m window, so it can only be picked
-        # up by the in-flight query.
-        launch = self.create_test_launch("Starlink In Flight", timezone.now() - dtime.timedelta(hours=1), self.spacex)
+        # 30 minutes ago: outside the -5min/+1h10m window, so it can only be picked
+        # up by the in-flight query. Deliberately well inside the 1-hour in-flight
+        # bound rather than exactly on it — check_autoscaler() computes its own `now`
+        # a few milliseconds later, so a launch created at exactly -1h lands just
+        # outside net__gte and the test fails every run.
+        launch = self.create_test_launch(
+            "Starlink In Flight", timezone.now() - dtime.timedelta(minutes=30), self.spacex
+        )
         launch.status = LaunchStatus.objects.get(id=6)
         launch.save()
 
@@ -143,7 +148,11 @@ class AutoscalerTests(TestCase):
         with patch("autoscaler.autoscaler.DigitalOceanHelper") as mock_do:
             mock_do_instance = Mock()
             mock_do.return_value = mock_do_instance
-            mock_do_instance.get_node_pool_min.return_value = 2
+            # Report the pool already at 1 node. check_autoscaler() copies this into
+            # current_workers, so a baseline result of 1 means no scaling is needed.
+            # Returning 2 here (as the other tests do) would make the no-op assertion
+            # below wrong: 2 -> 1 is a legitimate scale-down call.
+            mock_do_instance.get_node_pool_min.return_value = 1
 
             check_autoscaler()
 
