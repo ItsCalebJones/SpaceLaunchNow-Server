@@ -115,22 +115,39 @@ and it means the page is never wrong — only less personalized — when JS does
 
 | Unit | Responsibility |
 |---|---|
-| `web/templatetags/sln_utils.py` | `{% launch_time <datetime> <precision> %}` inclusion tag |
-| `web/templates/web/includes/launch_time.html` | the `<time>` element and UTC fallback text |
-| `static/js/launch-time.js` | **sole** owner of precision → format mapping |
+| `web/templatetags/sln_utils.py` | `{% launch_time <datetime> <precision> %}` tag — **owns the precision → display-shape mapping** |
+| `web/templates/web/includes/launch_time.html` | the `<time>` element and rendered UTC fallback text |
+| `static/js/launch-time.js` | UTC → local conversion only; no branching |
 | `web/tables/launch_table.py` | custom `net` column emitting the same markup |
 
 Consuming templates call the tag and know nothing about formatting. The precision mapping exists
 in exactly one place, so a format change is a one-file change.
 
+### Why the mapping lives in Python
+
+This repo is Python-only: no `package.json`, no `node_modules`, no jest/vitest/karma config, no
+`*.test.js`, and no Node step in any of the six workflows under `.github/workflows/` (`ci.yml` is
+Ruff → Docker build → pytest). Browser JavaScript here is hand-written files under `src/static/`
+plus vendored libraries, with no runner.
+
+Putting a 17-way branch in JavaScript would therefore place the single most decision-dense part of
+this change — the thing that decides whether a launch reads `7:32 PM EDT` or `Q3 2026` — behind
+zero automated coverage, in the very file introduced to prevent that class of bug.
+
+So the branch goes in Python, where `web/tests.py` already runs in CI, and the JavaScript is
+reduced to a single unconditional code path.
+
 ### Precision handling
 
 `net_precision` has 17 values. They split into two display classes:
 
-| Precision IDs | Meaning | Display |
-|---|---|---|
-| 0, 1, 2 | Real time-of-day (second / minute / hour) | Local line **+ tz abbreviation**, UTC line beneath |
-| 3–16 | Coarse (morning, date, week, quarter, half, year, decade) | **Single date line, no timezone, no UTC line** |
+| Precision IDs | Meaning | `data-shape` | Display |
+|---|---|---|---|
+| 0, 1, 2 | Real time-of-day (second / minute / hour) | `datetime` | Local line **+ tz abbreviation**, UTC line beneath |
+| 3–16 | Coarse (morning, date, week, quarter, half, year, decade) | `date` | **Single date line, no timezone, no UTC line** |
+
+The tag resolves the precision to a `data-shape` and renders the fallback text; JavaScript acts
+only on `data-shape="datetime"` and leaves `date` elements untouched.
 
 Attaching "UTC" to "Q3 2026" or "During the 2030s" would assert a precision the data does not
 have. The current card template approximates this distinction with a `status.id == 8` /
@@ -196,10 +213,14 @@ Added coverage:
 - Regression test — the **mobile** launch detail response contains a rendered launch date, pinning
   the empty-`#date` bug described above.
 
-**Known gap:** this repo has no JavaScript test harness, so the `Intl` precision mapping in
-`launch-time.js` is not unit-tested. The 17 cases will be verified manually against the current
-moment output. Adding a JS harness is out of scope for this change; if that gap matters it should
-be its own piece of work.
+- Precision-mapping test — all 17 `net_precision` values resolve to the expected `data-shape` and
+  fallback string. This is the dense part of the change and it is fully covered in pytest,
+  because the mapping is Python.
+
+**Remaining gap:** the one thing still untested is the JavaScript UTC → local conversion itself.
+That is now a single unconditional path — parse `datetime`, format with `Intl`, prepend a line —
+so it is verified manually in a browser rather than by adding a Node toolchain to a Python repo.
+No JS harness is introduced; see "Why the mapping lives in Python" above.
 
 ## Out of scope
 
@@ -207,4 +228,6 @@ be its own piece of work.
 - A user-selectable timezone preference (the browser's own timezone is the default, and UTC is
   always shown alongside, so there is no ambiguity left to resolve).
 - Migrating other `dateFormat.js` / moment usages not on the launch-time path.
+- Introducing a JavaScript test harness. This repo is deliberately Python-only, and the design
+  removes the need for one by keeping branching logic server-side.
 - Replying to the reporting customer — a product decision, tracked separately.
