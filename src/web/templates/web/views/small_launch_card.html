@@ -1,4 +1,5 @@
 {% load static %}
+{% load sln_utils %}
 
 <div class="card text-left" style="margin-top: 75px">
     <div class="card-header {% if 'GO' in launch.status.full_name %} card-header-success {% elif 'TBD' in launch.status.full_name %} card-header-danger {% else %} card-header-info {% endif %} p-2">
@@ -23,13 +24,7 @@
                 {{ launch.rocket.configuration.manufacturer.name }}
                 | {{ launch.rocket.configuration.manufacturer.country.first.name }}<br>
                 {{ launch.pad.location.name }}<br>
-                {% if launch.status.id == 8 %}
-                    <i>{{ launch.net|date:"F d, Y"}}</i><br>
-                {% elif launch.status.id == 2 %}
-                    <i>TBD {{ launch.net|date:"F, Y"}}</i><br>
-                {% else %}
-                    <i>{{ launch.net}}</i><br>
-                {% endif %}
+                <i>{% launch_time launch.net launch.net_precision %}</i>
             </div>
         </div>
     </div>

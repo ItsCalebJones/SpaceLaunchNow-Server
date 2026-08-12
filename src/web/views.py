@@ -748,6 +748,19 @@ class LaunchListView(SingleTableMixin, FilterView):
     ordering = ["net"]
     filterset_class = LaunchListFilter
 
+    def get_queryset(self):
+        # Every column below is a FK; without this the table issues a query per
+        # row per column. net_precision is required by the NET column's
+        # launch_time markup.
+        return Launch.objects.select_related(
+            "status",
+            "launch_service_provider",
+            "mission",
+            "pad",
+            "net_precision",
+            "rocket__configuration",
+        )
+
 
 @cache_page(600)
 def launch_vehicle_id(request, id):

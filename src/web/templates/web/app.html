@@ -1,6 +1,7 @@
 {% extends "web/base.html" %}
 {% load static %}
 {% load embed_video_tags %}
+{% load sln_utils %}
 {% load user_agents %}
 {% load static %}
 {% block extrahead %}
@@ -156,13 +157,13 @@
 
                         {% if launch.status.id == 8 %}
                             <h2 class="title" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h2>
-                            <h3 style="margin: -5px;" id="date">{{ launch.net|date:"F d, Y"}}</h3>
+                            <h3 style="margin: -5px;" id="date">{% launch_time launch.net launch.net_precision %}</h3>
                         {% elif launch.status.id == 2 %}
                             <h2 class="title" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h2>
-                            <h3 style="margin: -5px;" id="date">{{ launch.net|date:"F, Y"}}</h3>
+                            <h3 style="margin: -5px;" id="date">{% launch_time launch.net launch.net_precision %}</h3>
                         {% else %}
                             <h2 class="title" style="margin: 5px;" id="countdown">L - -- : -- : -- : --</h2>
-                            <h3 style="margin: -5px;" id="date">{{ launch.net }}</h3>
+                            <h3 style="margin: -5px;" id="date">{% launch_time launch.net launch.net_precision %}</h3>
                         {% endif %}
 
                         <h3 style="margin: 5px;"><b>Status:</b> {{ launch.status }}</h3>
@@ -405,11 +406,9 @@
             </div>
         </div>
     </div>
-    <script src="{% static 'material_kit/js/dateFormat.js' %}" type="text/javascript"></script>
     <script>
         var countDownDate = new Date("{{launch.net.isoformat}}");
 
-        document.getElementById("date").innerHTML = dateFormat(countDownDate, "mmmm dS, yyyy - h:MM TT Z");
         // Set the date we're counting down to
 
         var now = new Date().getTime();

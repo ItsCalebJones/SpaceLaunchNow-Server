@@ -1255,22 +1255,6 @@ Django = ">=1.11"
 tablib = ["tablib"]
 
 [[package]]
-name = "django-tz-detect"
-version = "0.4.0"
-description = "Automatic user timezone detection for django"
-optional = false
-python-versions = "*"
-groups = ["main"]
-files = [
-    {file = "django-tz-detect-0.4.0.tar.gz", hash = "sha256:ff3ceb2062a2dffaf7d5c20216761c7c4fbbee894c14906bdc93ec6e03e10ffa"},
-    {file = "django_tz_detect-0.4.0-py3-none-any.whl", hash = "sha256:ca3842b9d92ed3aff3c783430d79fd66785c722ca942fabeaf5f9008f35c8124"},
-]
-
-[package.dependencies]
-django = ">=2.2"
-pytz = "*"
-
-[[package]]
 name = "django-user-agents"
 version = "0.4.0"
 description = "A django package that allows easy identification of visitors' browser, operating system and device information (mobile phone, tablet or has touch capabilities)."
@@ -5240,4 +5224,4 @@ secretstorage = ["secretstorage"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.14.0,<3.15.0"
-content-hash = "953121eef5019355c298b1e78ded44a704394a75112587081fd3724d354e7ce4"
+content-hash = "e6ee97e2185eb8a75fa46f7e6a4f90465fc2ba772c8c386aa7c9cf8571770808"

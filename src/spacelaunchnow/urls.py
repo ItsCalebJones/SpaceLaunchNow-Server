@@ -90,7 +90,6 @@ default_settings = [
     ),
     path("health_check/", HealthCheckView.as_view(checks=health_checks)),
     re_path("_health/", health),
-    path("tz_detect/", include("tz_detect.urls")),
 ]
 api_settings = []
 web_settings = []

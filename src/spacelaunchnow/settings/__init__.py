@@ -220,7 +220,6 @@ INSTALLED_APPS = [
     "django_tables2",
     "bootstrap4",
     "django_extensions",
-    "tz_detect",
     "corsheaders",
     "drf_spectacular",
     # django-health-check 4.x: a single app; individual checks (Database/Cache/Storage)
@@ -262,7 +261,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "tz_detect.middleware.TimezoneMiddleware",
     "django_user_agents.middleware.UserAgentMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # 'silk.middleware.SilkyMiddleware',
@@ -270,7 +268,7 @@ MIDDLEWARE = [
 
 if DEBUG:
     MIDDLEWARE.insert(
-        MIDDLEWARE.index("tz_detect.middleware.TimezoneMiddleware") + 1,
+        MIDDLEWARE.index("django_user_agents.middleware.UserAgentMiddleware") + 1,
         "debug_toolbar.middleware.DebugToolbarMiddleware",
     )
 
