@@ -1,5 +1,33 @@
 # CHANGELOG
 
+## v4.43.3 (2026-08-12)
+
+### Chore
+
+* chore(lint): pin ruff 0.16.2 across CI, pre-commit and poetry ([`2bc8a69`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/2bc8a691e6e1715d96da39a1a50bbeafd29406d5))
+
+### Fix
+
+* fix(settings): configure STORAGES so collectstatic uploads to Spaces ([`4fa9e18`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/4fa9e1863379c3ef43e4cb42fbf9421197e89da7))
+
+### Unknown
+
+* Merge pull request #324 from ItsCalebJones/fix/storages-django5
+
+fix(settings): configure STORAGES so collectstatic uploads to Spaces ([`978ea79`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/978ea79da45172e54923c05f404ceea696839795))
+
+* Merge pull request #321 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`cc3b77e`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/cc3b77e5a8946bb388b3881ca8652b36fd2fb245))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`63001a7`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/63001a7e8d3f60009f2b8d3ddad138f6985495d1))
+
+* Merge pull request #323 from ItsCalebJones/chore/ruff-0-16-2
+
+chore(lint): pin ruff 0.16.2 across CI, pre-commit and poetry ([`329d007`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/329d007ac6349098e3f178057b2451c4ba804ae6))
+
 ## v4.43.2 (2026-08-12)
 
 ### Documentation
