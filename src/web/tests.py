@@ -43,8 +43,10 @@ class WebTests(LLAPITests):
         launch = Launch.objects.first()
         response = self.client.get(
             f"/launch/{launch.slug}",
-            HTTP_USER_AGENT=("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 "
-                             "(KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"),
+            HTTP_USER_AGENT=(
+                "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 "
+                "(KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+            ),
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         html = response.content.decode()
