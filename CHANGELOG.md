@@ -1,5 +1,39 @@
 # CHANGELOG
 
+## v4.43.2 (2026-08-12)
+
+### Documentation
+
+* docs(web): move launch-time precision mapping server-side ([`5469d07`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/5469d07f0cb02a038d2dcc05c75c6a3de988bb41))
+
+* docs(web): spec consistent, labeled launch times ([`99e2548`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/99e254816f14a65b10b4d150b6aa2ef77d9a57e1))
+
+### Fix
+
+* fix(web): show launch times in local and UTC with explicit labels ([`4d57157`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/4d57157a3dbfb68e69cfa405a9c6dfc9942ed5c2))
+
+### Style
+
+* style(web): apply ruff format to launch time tests ([`ea34df1`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ea34df141e41b18e755c6a74548e70180f72cf59))
+
+### Test
+
+* test(web): use trailing-slash launch URL in mobile date test ([`3d700c2`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/3d700c2a87d2c59acfcd8cf955c3f4f1afc65b8d))
+
+### Unknown
+
+* Merge pull request #322 from ItsCalebJones/feat/launch-time-display
+
+fix(web): show launch times in local and UTC with explicit labels ([`ebc7602`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ebc7602d2ebd692f814578f9830d13f726765b47))
+
+* Merge pull request #319 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`3589e2e`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/3589e2e7ef5a237dea5829db07061905a42848aa))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`d5c37f4`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/d5c37f48b344713a4c6f84c36a277fbeb8648097))
+
 ## v4.43.1 (2026-08-04)
 
 ### Documentation
