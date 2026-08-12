@@ -783,7 +783,8 @@
                                         width="100%"
                                         height="400"
                                         frameborder="0" style="border:0"
-                                        src="https://www.google.com/maps/embed/v1/place?key=AIzaSyACbuVGTVzHToUb7vCwwQlJthvyEQL8RW4&q={{ launch.pad.location.name }}&zoom=10"
+                                        referrerpolicy="strict-origin-when-cross-origin"
+                                        src="https://www.google.com/maps/embed/v1/place?key=AIzaSyACbuVGTVzHToUb7vCwwQlJthvyEQL8RW4&q={{ launch.pad.location.name|urlencode:'' }}&zoom=10"
                                         allowfullscreen>
                                 </iframe>
                             </div>
