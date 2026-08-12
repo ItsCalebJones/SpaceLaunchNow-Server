@@ -611,7 +611,7 @@ def starship_page(request):
             .order_by("status", "serial_number")
         )
         combined = list(chain(events, launches))
-        combined = sorted(combined, key=lambda x: (x.date if isinstance(x, Events) else x.net))
+        combined = sorted(combined, key=lambda x: x.date if isinstance(x, Events) else x.net)
         next_up = None
         if len(combined) > 0:
             next_up = combined[0]
