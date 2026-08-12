@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v4.43.4 (2026-08-12)
+
+### Fix
+
+* fix(web): point canonicals at spacelaunchnow.app and de-duplicate page metadata ([`e3f30c1`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/e3f30c123b3f30d1712a9bc0e00987c83eb81149))
+
+### Unknown
+
+* Merge pull request #325 from ItsCalebJones/fix/seo-canonical-domain
+
+fix(web): point canonicals at spacelaunchnow.app and de-duplicate page metadata ([`96abf29`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/96abf2922c000c9f8f12faeebe805fb64ab72d34))
+
 ## v4.43.3 (2026-08-12)
 
 ### Chore
