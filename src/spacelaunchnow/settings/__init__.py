@@ -396,11 +396,14 @@ USE_LOCAL_STORAGE = env.bool("USE_LOCAL_STORAGE", False)
 if USE_LOCAL_STORAGE:
     # Local storage settings
     DOMAIN = f"{LOCAL_IP}:8000"
-    DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
     STATIC_URL = "static/"
-    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+    STORAGES = {
+        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    }
     MEDIA_ROOT = os.path.join(BASE_DIR, "media")
     STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
     MEDIA_URL = os.path.join(BASE_DIR, "media/")
 else:
     AWS_QUERYSTRING_AUTH = False
@@ -414,13 +417,19 @@ else:
         "CacheControl": "max-age=86400",
     }
     AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.nyc3.digitaloceanspaces.com"
-    DEFAULT_FILE_STORAGE = DEFAULT_STORAGE
     # Static URL always ends in /
     STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/"
     MEDIA_LOCATION = "media"
     STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
     STATICFILES_LOCATION = "static/home"
-    STATICFILES_STORAGE = "api.custom_storages.StaticStorage"
+    # Django 5.1 removed DEFAULT_FILE_STORAGE / STATICFILES_STORAGE in favour of
+    # STORAGES. Setting the old names is silently ignored, which left collectstatic
+    # writing to the local filesystem while STATIC_URL still pointed at Spaces --
+    # so new static files were never uploaded and 404'd forever.
+    STORAGES = {
+        "default": {"BACKEND": DEFAULT_STORAGE},
+        "staticfiles": {"BACKEND": "api.custom_storages.StaticStorage"},
+    }
     APP_IMAGE_LOCATION = MEDIA_LOCATION + "/app_images"  # type: str
     APP_IMAGE_STORAGE = "sln_custom_storages.AppImageStorage"
 

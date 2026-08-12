@@ -13,6 +13,11 @@ Backend services and current web front end for Space Launch Now and API.
 3. Setup pre-commit - `poetry run pre-commit install`
 4. Run locally via `docker compose` in `/docker`
 
+## Runbooks
+
+* [Static assets](docs/runbooks/static-assets.md) — publishing CSS/JS to DigitalOcean Spaces; read this if a new static file 404s
+* [Remote diagnostics control](docs/runbooks/remote-diagnostics-control.md) — per-user Datadog logging
+
 ## Authors
 
 * **Caleb Jones**           - *Initial work*    - [ItsCalebJones](https://github.com/ItsCalebJones)
