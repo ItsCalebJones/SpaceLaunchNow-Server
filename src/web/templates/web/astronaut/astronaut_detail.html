@@ -1,6 +1,7 @@
 {% extends "web/base.html" %}
 {% load static %}
 {% load humanize %}
+{% load sln_utils %}
 {% block extrahead %}
     <link rel="canonical" href="https://spacelaunchnow.me/astronaut/{{ astronaut.slug }}">
     <title>Space Launch Now - {{ astronaut.name }}</title>
@@ -142,7 +143,7 @@
                                             {{ launch.rocket.configuration.manufacturer.name }}
                                             | {{ launch.rocket.configuration.manufacturer.country.first.name }}<br>
                                             {{ launch.pad.location.name }}<br>
-                                            <i>{{ launch.net }}</i><br>
+                                            <i>{% launch_time launch.net launch.net_precision %}</i>
                                         </div>
                                     </div>
                                 </div>
@@ -212,7 +213,7 @@
                                             {{ launch.rocket.configuration.manufacturer.name }}
                                             | {{ launch.rocket.configuration.manufacturer.country.first.name }}<br>
                                             {{ launch.pad.location.name }}<br>
-                                            <i>{{ launch.net }}</i><br>
+                                            <i>{% launch_time launch.net launch.net_precision %}</i>
                                         </div>
                                     </div>
                                 </div>

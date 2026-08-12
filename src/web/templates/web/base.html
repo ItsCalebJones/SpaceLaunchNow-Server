@@ -44,7 +44,19 @@
     <script src="{% static 'material_kit/js/plugins/nouislider.min.js' %}" type="text/javascript"></script>
     <!-- Control Center for Now Ui Kit: parallax effects, scripts for the example pages etc -->
     <script src="{% static 'material_kit/js/material-kit.min.js' %}" type="text/javascript"></script>
-    <script src="{% static 'material_kit/js/moment-timezone.min.js' %}" type="text/javascript"></script>
+    <!-- Converts server-rendered UTC launch times to the viewer's local timezone -->
+    <script src="{% static 'material_kit/js/launch-time.js' %}" type="text/javascript" defer></script>
+    <style>
+        .sln-time-local,
+        .sln-time-base {
+            display: block;
+        }
+
+        .sln-time-secondary {
+            font-size: 0.85em;
+            opacity: 0.7;
+        }
+    </style>
     {% block extrahead %}
     {% endblock %}
 
@@ -122,8 +134,6 @@
 
 
 </script>
-{% load tz_detect %}
-{% tz_detect %}
 </body>
 </html>
 

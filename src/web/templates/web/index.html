@@ -2,6 +2,7 @@
 {% load static %}
 {% load static %}
 {% load embed_video_tags %}
+{% load sln_utils %}
 {% load user_agents %}
 {% block extrahead %}
     <title>Space Launch Now</title>
@@ -144,7 +145,7 @@
                                 <h2 class="card-title">{{ launch.name }}</h2>
                                 <h2 class="title text-white" style="margin: 5px;" id="countdown">L - -- : -- : -- :
                                     --</h2>
-                                <h3 class="text-white" style="margin: -5px;" id="date">{{ launch.net }}</h3>
+                                <h3 class="text-white" style="margin: -5px;" id="date">{% launch_time launch.net launch.net_precision %}</h3>
                                 <hr style="background-color: white">
                                 <h6 class="card-category text-info">{{ launch.mission.mission_type.name }}</h6>
                                 <p class="card-description">
@@ -576,11 +577,9 @@
             {% include "web/horizontal_news.html" %}
         </div>
     </div>
-    <script src="{% static 'material_kit/js/dateFormat.js' %}" type="text/javascript"></script>
     <script>
         var countDownDate = new Date("{{launch.net.isoformat}}");
 
-        document.getElementById("date").innerHTML = dateFormat(countDownDate, "mmmm dS, yyyy - h:MM TT Z");
         // Set the date we're counting down to
 
         var now = new Date().getTime();
