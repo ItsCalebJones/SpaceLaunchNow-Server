@@ -1,5 +1,49 @@
 # CHANGELOG
 
+## v4.44.0 (2026-08-13)
+
+### Chore
+
+* chore(web): drop unused tz load and duplicate static load from base template ([`2dc660e`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/2dc660eb0f8a2a59220d7d121f75da381c8b6ced))
+
+* chore(web): drop unused user_agents template load and import ([`00e4059`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/00e4059c1519263f239a7f35a45542ea4b8a662f))
+
+### Documentation
+
+* docs(plan): implementation plan for responsive templates and app funnel ([`84ba6a3`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/84ba6a3fe6513a5c63158c2e6e0d2f111d8d573b))
+
+* docs(spec): design for responsive template merge and iOS app funnel ([`5456775`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/5456775cc0c6b8037ebbd3662b3ab58d47781e67))
+
+### Feature
+
+* feat(web): add click-to-play video facade partial ([`62ddbed`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/62ddbed0b9504cd19da6f46968a281a7e2a156a3))
+
+* feat(web): add iOS smart app banner ([`aef5114`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/aef511469bf94705458c282e4011a155323f1c48))
+
+* feat(web): serve apple-app-site-association for iOS universal links ([`18dc87c`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/18dc87c49f749fc092cefd1e33146cb1cdcc8f7b))
+
+### Fix
+
+* fix(web): url-encode maps query and set referrer policy on pad embeds ([`ea82000`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ea82000b84922f4dea671ee4fb1c1e620b439ca9))
+
+### Refactor
+
+* refactor(web): merge mobile launch detail into one responsive template ([`ba7ca8e`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ba7ca8eedabc9c25b01a1d67cb03dfedc4ecf484))
+
+* refactor(web): merge mobile homepage into one responsive template ([`0c703bc`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/0c703bc5489862567f9541a5be24294d16d16854))
+
+* refactor(web): use video facade in starship, event and app pages ([`4a28a5f`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/4a28a5f178762a4334734cee815b3619f4a8ee3e))
+
+### Style
+
+* style(web): apply ruff format to web tests ([`ac2ea1d`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ac2ea1dece62cdb29f98fbe802830aba1027bb02))
+
+### Unknown
+
+* Merge pull request #326 from ItsCalebJones/feat/responsive-templates-app-funnel
+
+refactor(web): serve one responsive template per URL and add iOS app funnel ([`7711653`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/7711653e16d1158a9ed27436eb12a0a18a94198a))
+
 ## v4.43.4 (2026-08-12)
 
 ### Fix
