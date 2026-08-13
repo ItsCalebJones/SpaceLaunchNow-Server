@@ -1,4 +1,5 @@
 import json
+import pathlib
 
 from api.models import Launch
 from api.tests.test__base import LLAPITests
@@ -55,6 +56,27 @@ class WebTests(LLAPITests):
         html = response.content.decode()
         self.assertIn('id="date"', html)
         self.assertIn('class="sln-time"', html)
+
+    def test_pages_using_the_video_facade_still_render(self):
+        """Smoke cover for the three templates whose {% video %} blocks were replaced
+        by the facade include. Without this, a broken tag there fails silently."""
+        for path_ in ("/starship/", "/event/", "/app"):
+            with self.subTest(path=path_):
+                self.assertEqual(
+                    self.client.get(path_).status_code, status.HTTP_200_OK
+                )
+
+    def test_no_user_agent_branching_in_templates(self):
+        """Any surviving is_mobile branch makes the HTML User-Agent dependent. The
+        nginx cache key has no User-Agent, so such a page is served to the wrong
+        device -- which is how the mobile <h1> went missing from Google's index."""
+        root = pathlib.Path(__file__).resolve().parent / "templates" / "web"
+        offenders = sorted(
+            str(path.relative_to(root))
+            for path in root.rglob("*.html")
+            if "is_mobile" in path.read_text(encoding="utf-8", errors="replace")
+        )
+        self.assertEqual(offenders, [])
 
     def test_video_facade_defers_the_iframe(self):
         """The facade must ship a thumbnail and no iframe. A hidden or unwatched
