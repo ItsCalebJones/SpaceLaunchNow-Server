@@ -35,7 +35,6 @@ from django.views.decorators.cache import cache_page
 from django_filters.views import FilterView
 from django_ical.views import ICalFeed
 from django_tables2 import SingleTableMixin
-from django_user_agents.utils import get_user_agent
 
 from bot.utils.util import get_SLN_url
 from prefetches import get_prefetched_launch_queryset
