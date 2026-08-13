@@ -36,9 +36,15 @@ export POETRY_HTTP_BASIC_TSD_PASSWORD=$(python -c "import keyring; print(keyring
 **Targeted run (use this for the inner TDD loop — seconds, not minutes):**
 
 ```bash
+docker compose -f docker/docker-compose.test.yml build test && \
 docker compose -f docker/docker-compose.test.yml run --rm test \
   python manage.py test bot.tests.test_v6_topic_conditions --settings=spacelaunchnow.settings.test
 ```
+
+**The `build test` step is required, not optional.** This repo bakes `src/` into the image and
+mounts no source volume, so a bare `run` executes whatever code was in the image at its last build
+— giving stale, misleading RED/GREEN evidence. Dependency layers cache, so the rebuild is quick
+after the first one.
 
 **Full suite (run at the end of each task before committing):**
 
