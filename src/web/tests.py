@@ -2,6 +2,7 @@ import json
 
 from api.models import Launch
 from api.tests.test__base import LLAPITests
+from django.template.loader import render_to_string
 
 # Create your tests here.
 from rest_framework import status
@@ -54,6 +55,24 @@ class WebTests(LLAPITests):
         html = response.content.decode()
         self.assertIn('id="date"', html)
         self.assertIn('class="sln-time"', html)
+
+    def test_video_facade_defers_the_iframe(self):
+        """The facade must ship a thumbnail and no iframe. A hidden or unwatched
+        iframe still downloads the whole YouTube embed."""
+        html = render_to_string(
+            "web/partials/video_embed.html",
+            {"video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "title": "Watch Live"},
+        )
+        self.assertIn("sln-video-facade", html)
+        self.assertIn('data-video-code="dQw4w9WgXcQ"', html)
+        self.assertIn('aria-label="Play Watch Live"', html)
+        self.assertNotIn("<iframe", html)
+        self.assertNotIn("youtube.com/embed", html)
+
+    def test_video_facade_renders_nothing_without_a_url(self):
+        """Callers previously guarded with {% if %}; the partial keeps that contract."""
+        html = render_to_string("web/partials/video_embed.html", {"video_url": None})
+        self.assertEqual(html.strip(), "")
 
     def test_smart_app_banner_present(self):
         """iOS Safari renders this natively and every other browser ignores it, so it
