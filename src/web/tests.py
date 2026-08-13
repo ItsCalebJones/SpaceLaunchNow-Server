@@ -1,3 +1,5 @@
+import json
+
 from api.models import Launch
 from api.tests.test__base import LLAPITests
 
@@ -52,3 +54,14 @@ class WebTests(LLAPITests):
         html = response.content.decode()
         self.assertIn('id="date"', html)
         self.assertIn('class="sln-time"', html)
+
+    def test_apple_app_site_association(self):
+        """Universal Links require this served as JSON, at this exact path, with no
+        redirect and no file extension. Inert until the iOS app ships the
+        associated-domains entitlement, but the contract still has to be right."""
+        response = self.client.get("/.well-known/apple-app-site-association")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response["Content-Type"], "application/json")
+        details = json.loads(response.content.decode())["applinks"]["details"]
+        self.assertEqual(details[0]["appIDs"], ["4T4QRN2U5X.me.spacelaunchnow.spacelaunchnow"])
+        self.assertIn("/launch/*", [component["/"] for component in details[0]["components"]])

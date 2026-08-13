@@ -80,6 +80,35 @@ def asset_file(request):
     return response
 
 
+def apple_app_site_association(request):
+    """Apple's counterpart to assetlinks.json, for iOS Universal Links.
+
+    Inert until the iOS app ships the `com.apple.developer.associated-domains`
+    entitlement (`applinks:spacelaunchnow.app`) -- serving it now means that change
+    is a one-line entitlement edit rather than a coordinated release. Apple requires
+    HTTPS, application/json, no redirect and no file extension, so this is routed
+    with an anchored pattern and returned directly rather than via a static file.
+
+    Paths are scoped to the routes the app has screens for; a blanket "*" would make
+    every marketing and legal page open the app.
+    """
+    json_data = {
+        "applinks": {
+            "details": [
+                {
+                    "appIDs": ["4T4QRN2U5X.me.spacelaunchnow.spacelaunchnow"],
+                    "components": [
+                        {"/": "/launch/*"},
+                        {"/": "/event/*"},
+                        {"/": "/astronaut/*"},
+                    ],
+                }
+            ]
+        }
+    }
+    return HttpResponse(json.dumps(json_data), content_type="application/json")
+
+
 def index(request):
     news = Article.objects.all().order_by("-created_at")[:6]
     last_six_hours = UTC_NOW - timedelta(hours=6)
