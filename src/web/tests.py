@@ -10,6 +10,34 @@ from rest_framework import status
 
 
 class WebTests(LLAPITests):
+    DESKTOP_UA = (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    )
+    IPHONE_UA = (
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 "
+        "(KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+    )
+
+    def test_home_is_user_agent_invariant(self):
+        """The nginx cache key is "$scheme$host$request_uri" -- no User-Agent -- and
+        no Vary: User-Agent is sent, so any per-device difference is served to the
+        wrong device. Verified in production before this change: /launch/upcoming/
+        returned byte-identical desktop HTML to an iPhone UA on a cache HIT."""
+        desktop = self.client.get("/", HTTP_USER_AGENT=self.DESKTOP_UA)
+        mobile = self.client.get("/", HTTP_USER_AGENT=self.IPHONE_UA)
+        self.assertEqual(desktop.status_code, status.HTTP_200_OK)
+        self.assertEqual(mobile.status_code, status.HTTP_200_OK)
+        self.assertEqual(desktop.content, mobile.content)
+
+    def test_home_has_exactly_one_h1(self):
+        """Google indexes mobile-first. Pre-fix, Googlebot-smartphone received zero
+        <h1> here while Googlebot-desktop received one."""
+        for ua in (self.DESKTOP_UA, self.IPHONE_UA):
+            with self.subTest(ua=ua):
+                html = self.client.get("/", HTTP_USER_AGENT=ua).content.decode()
+                self.assertEqual(html.count("<h1"), 1)
+
     def test_home(self):
         # Test Normal endpoint
         response = self.client.get("/")

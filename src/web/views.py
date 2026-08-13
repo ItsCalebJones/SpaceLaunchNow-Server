@@ -168,12 +168,9 @@ def index(request):
         else:
             second_launch_image = None
 
-    user_agent = get_user_agent(request)
-    template = "web/index_mobile.html" if user_agent.is_mobile else "web/index.html"
-
     return render(
         request,
-        template,
+        "web/index.html",
         {
             "launch": launch,
             "launch_image": launch_image,

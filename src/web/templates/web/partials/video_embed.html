@@ -32,8 +32,10 @@ nothing, matching the {% if %} guards this replaced.
                 <i class="material-icons" aria-hidden="true">play_arrow</i>
             </button>
             <noscript>
-                {# sln_video.url is the *embed* URL -- a bare player page. Link to the
-                   normal watch page so the no-JS fallback lands somewhere usable. #}
+                {% comment %}
+                sln_video.url is the embed URL, which is a bare player page. Link to
+                the normal watch page so the no-JS fallback lands somewhere usable.
+                {% endcomment %}
                 <a class="sln-video-fallback"
                    href="https://www.youtube.com/watch?v={{ sln_video.code }}">Watch on YouTube</a>
             </noscript>

@@ -1,10 +1,22 @@
 {% extends "web/base.html" %}
 {% load static %}
 {% load static %}
-{% load embed_video_tags %}
 {% load sln_utils %}
-{% load user_agents %}
 {% block extrahead %}
+    {% comment %}
+    Hero art differs by viewport. It lives here rather than in a static .css file
+    because the URLs are resolved by the static tag, and it is a media query rather
+    than a User-Agent branch so the markup stays identical for every device.
+    {% endcomment %}
+    <style>
+        .sln-hero {
+            background-image: url('{% static 'img/header_starship.jpg' %}');
+            min-height: 65vh;
+        }
+        @media (max-width: 767px) {
+            .sln-hero { background-image: url('{% static 'img/header_alt.jpg' %}'); }
+        }
+    </style>
     <title>Space Launch Now</title>
     <meta name="title" content="Space Launch Now - A Spaceflight Tracker">
     <link rel="canonical" href="https://spacelaunchnow.app/">
@@ -101,8 +113,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="page-header header-small header-filter" data-parallax="true"
-         style="background-image: url('{% static 'img/header_starship.jpg' %}'); min-height: 65vh;">
+    <div class="page-header header-small header-filter sln-hero" data-parallax="true">
         <div class="container">
             <div class="card-testimonial text-center">
                 <div class="card-avatar" style="margin: 25px auto 0;max-width: 200px; max-height: 200px;">
@@ -161,19 +172,12 @@
                     {% if launch.webcast_live and youtube_urls|length > 0 %}
                         <div class="card text-center mt-5">
                             <div class="card-header card-header-danger text-center">
-                                <h1 class="title ">Watch Live</h1>
+                                {# h2 semantically (the h1 is the hero); .h1 keeps the size #}
+                                <h2 class="title h1">Watch Live</h2>
                             </div>
                             <div class="card-body">
                                 <!-- Title -->
-                                {% video youtube_urls|first as my_video %}
-                                    <div class="videoWrapper">
-                                        {% if request|is_mobile %}
-                                            {% video my_video '85% x 25%' %}
-                                        {% else %}
-                                            {% video my_video '100% x 450' %}
-                                        {% endif %}
-                                    </div>
-                                {% endvideo %}
+                                {% include "web/partials/video_embed.html" with video_url=youtube_urls|first title="Watch Live" %}
                                 {% if launch.vid_urls.all|length > 1 or launch.info_urls.all|length > 0 %}
                                 <h2 class="title">Additional Media</h2>
                                     {% for item in launch.vid_urls.all|slice:"1:" %}
