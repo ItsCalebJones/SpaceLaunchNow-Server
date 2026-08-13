@@ -22,11 +22,26 @@ def _attr(**kw):
     return type("Obj", (), kw)
 
 
-def _sent(platform, category, result):
+def _sent(platform, category, result, audience_class="none"):
     return (
         REGISTRY.get_sample_value(
             "sln_notifications_sent_total",
-            {"platform": platform, "category": category, "result": result},
+            {
+                "platform": platform,
+                "category": category,
+                "result": result,
+                "audience_class": audience_class,
+            },
+        )
+        or 0.0
+    )
+
+
+def _skipped(platform, audience_class, reason):
+    return (
+        REGISTRY.get_sample_value(
+            "sln_notification_sends_skipped_total",
+            {"platform": platform, "audience_class": audience_class, "reason": reason},
         )
         or 0.0
     )
@@ -243,3 +258,30 @@ class CustomSendCounterTests(SimpleTestCase):
             before_err = _sent("ios", "custom", "error")
             self.handler._send_v5_custom_ios(_attr())
             self.assertEqual(_sent("ios", "custom", "error"), before_err + 1)
+
+
+# --------------------------------------------------------------------------- #
+# 6. audience class and skip counter (V6)
+# --------------------------------------------------------------------------- #
+class AudienceClassMetricTests(SimpleTestCase):
+    def test_existing_callers_land_on_the_default_audience_class(self):
+        before = _sent("ios", "launch", "success")
+        metrics.record_send(platform="ios", category="launch", success=True)
+        self.assertEqual(_sent("ios", "launch", "success"), before + 1)
+
+    def test_audience_class_is_labelled_when_given(self):
+        before = _sent("ios", "launch", "success", "strict")
+        metrics.record_send(platform="ios", category="launch", success=True, audience_class="strict")
+        self.assertEqual(_sent("ios", "launch", "success", "strict"), before + 1)
+
+    def test_classes_are_counted_separately(self):
+        before_flex = _sent("android", "launch", "success", "flex")
+        before_strict = _sent("android", "launch", "success", "strict")
+        metrics.record_send(platform="android", category="launch", success=True, audience_class="flex")
+        self.assertEqual(_sent("android", "launch", "success", "flex"), before_flex + 1)
+        self.assertEqual(_sent("android", "launch", "success", "strict"), before_strict)
+
+    def test_record_skip_increments_the_skip_counter(self):
+        before = _skipped("ios", "strict", "unmapped_agency")
+        metrics.record_skip(platform="ios", audience_class="strict", reason="unmapped_agency")
+        self.assertEqual(_skipped("ios", "strict", "unmapped_agency"), before + 1)
