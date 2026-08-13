@@ -314,15 +314,9 @@ def create_launch_view(request, launch):
     else:
         launch_image = None
 
-    user_agent = get_user_agent(request)
-    if user_agent.is_mobile:
-        template = "web/launches/launch_detail_page_mobile.html"
-    else:
-        template = "web/launches/launch_detail_page.html"
-
     return render(
         request,
-        template,
+        "web/launches/launch_detail_page.html",
         {
             "launch": launch,
             "launch_image": launch_image,

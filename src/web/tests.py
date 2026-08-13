@@ -1,15 +1,30 @@
 import json
 import pathlib
+import re
 
 from api.models import Launch
 from api.tests.test__base import LLAPITests
 from django.template.loader import render_to_string
+from django.test import override_settings
 
 # Create your tests here.
 from rest_framework import status
 
 
+@override_settings(
+    CACHES={"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
+)
 class WebTests(LLAPITests):
+    """Cache disabled deliberately.
+
+    Several views carry @cache_page (create_launch_view, launches, previous, ...),
+    and cache_page keys on the URL plus whatever is in Vary -- which does not include
+    User-Agent. With the cache on, the second request in a User-Agent comparison is a
+    cache hit on the first request's render, so the two are trivially identical and
+    the test proves nothing. That UA-blind cache is itself part of the bug this
+    module guards against; the tests need to exercise the view.
+    """
+
     DESKTOP_UA = (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
         "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
@@ -37,6 +52,36 @@ class WebTests(LLAPITests):
             with self.subTest(ua=ua):
                 html = self.client.get("/", HTTP_USER_AGENT=ua).content.decode()
                 self.assertEqual(html.count("<h1"), 1)
+
+    def _launch_detail_html(self, ua):
+        """Fetch a launch detail page with the CSRF token masked.
+
+        The template emits window.CSRF_TOKEN = "<random>", so a raw byte comparison
+        would fail for reasons unrelated to User-Agent. Add any future per-request
+        value to this normaliser rather than weakening the assertion.
+        """
+        launch = Launch.objects.first()
+        html = self.client.get(
+            f"/launch/{launch.slug}/", HTTP_USER_AGENT=ua
+        ).content.decode()
+        return re.sub(r'window\.CSRF_TOKEN = "[^"]*"', 'window.CSRF_TOKEN = "X"', html)
+
+    def test_launch_detail_is_user_agent_invariant(self):
+        launch = Launch.objects.first()
+        for ua in (self.DESKTOP_UA, self.IPHONE_UA):
+            with self.subTest(ua=ua):
+                response = self.client.get(f"/launch/{launch.slug}/", HTTP_USER_AGENT=ua)
+                self.assertTemplateUsed(response, "web/launches/launch_detail_page.html")
+        self.assertEqual(
+            self._launch_detail_html(self.DESKTOP_UA),
+            self._launch_detail_html(self.IPHONE_UA),
+        )
+
+    def test_launch_detail_has_exactly_one_h1(self):
+        """The desktop template carried 12 <h1> tags; the merge forces a single one."""
+        for ua in (self.DESKTOP_UA, self.IPHONE_UA):
+            with self.subTest(ua=ua):
+                self.assertEqual(self._launch_detail_html(ua).count("<h1"), 1)
 
     def test_home(self):
         # Test Normal endpoint
