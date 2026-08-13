@@ -55,6 +55,14 @@ class WebTests(LLAPITests):
         self.assertIn('id="date"', html)
         self.assertIn('class="sln-time"', html)
 
+    def test_smart_app_banner_present(self):
+        """iOS Safari renders this natively and every other browser ignores it, so it
+        ships to everyone unconditionally -- making it UA-conditional would put the
+        page back in the uncacheable state this work exists to fix."""
+        html = self.client.get("/").content.decode()
+        self.assertIn('name="apple-itunes-app"', html)
+        self.assertIn("app-id=1399715731", html)
+
     def test_apple_app_site_association(self):
         """Universal Links require this served as JSON, at this exact path, with no
         redirect and no file extension. Inert until the iOS app ships the
