@@ -35,3 +35,5 @@ google-oauth-secret.yaml
 k8s/monitoring/auth
 **/auth
 *.htpasswd
+# Subagent-driven-development scratch (ledgers, briefs, review packages)
+.superpowers/
