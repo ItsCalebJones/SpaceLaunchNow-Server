@@ -193,6 +193,7 @@ def _agency_source():
 
 Run:
 ```bash
+docker compose -f docker/docker-compose.test.yml build test && \
 docker compose -f docker/docker-compose.test.yml run --rm test \
   python manage.py test bot.tests.test_notification_groups --settings=spacelaunchnow.settings.test
 ```
@@ -558,6 +559,7 @@ class ConditionBudgetTests(SimpleTestCase):
 
 Run:
 ```bash
+docker compose -f docker/docker-compose.test.yml build test && \
 docker compose -f docker/docker-compose.test.yml run --rm test \
   python manage.py test bot.tests.test_v6_topic_conditions --settings=spacelaunchnow.settings.test
 ```
@@ -772,6 +774,7 @@ class AudienceClassMetricTests(SimpleTestCase):
 
 Run:
 ```bash
+docker compose -f docker/docker-compose.test.yml build test && \
 docker compose -f docker/docker-compose.test.yml run --rm test \
   python manage.py test bot.tests.test_notification_metrics --settings=spacelaunchnow.settings.test
 ```
@@ -996,6 +999,7 @@ class BroadcastDispatchTests(SimpleTestCase):
 
 Run:
 ```bash
+docker compose -f docker/docker-compose.test.yml build test && \
 docker compose -f docker/docker-compose.test.yml run --rm test \
   python manage.py test bot.tests.test_v6_dispatch --settings=spacelaunchnow.settings.test
 ```
@@ -1249,6 +1253,7 @@ If `send_v3_notification` builds its own `data` dict from `launch` attributes th
 
 Run:
 ```bash
+docker compose -f docker/docker-compose.test.yml build test && \
 docker compose -f docker/docker-compose.test.yml run --rm test \
   python manage.py test bot.tests.test_v6_dispatch.DualSendTests --settings=spacelaunchnow.settings.test
 ```
@@ -1394,6 +1399,7 @@ class BroadcastWiringTests(SimpleTestCase):
 
 Run:
 ```bash
+docker compose -f docker/docker-compose.test.yml build test && \
 docker compose -f docker/docker-compose.test.yml run --rm test \
   python manage.py test bot.tests.test_v6_dispatch.BroadcastWiringTests --settings=spacelaunchnow.settings.test
 ```
