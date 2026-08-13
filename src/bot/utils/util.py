@@ -397,3 +397,109 @@ def get_fcm_v5_ios_topic(debug: bool = False) -> str:
     topics = f"'{topic_base}' in topics"
     logger.info(topics)
     return topics
+
+
+# --------------------------------------------------------------------------
+# V6 topic-targeted delivery
+#
+# The condition names the *launch's* attributes; the device's subscription set
+# performs the match. Every condition below contains at most 3 topics against
+# FCM's ceiling of 5 -- see test_v6_topic_conditions.ConditionBudgetTests.
+# --------------------------------------------------------------------------
+
+V6_AUDIENCE_CLASSES: tuple[str, ...] = (
+    "all",
+    "flex",
+    "strict",
+    "all_w",
+    "flex_w",
+    "strict_w",
+)
+
+V6_NOTIFICATION_TYPES: tuple[str, ...] = (
+    "twentyFourHour",
+    "oneHour",
+    "tenMinutes",
+    "oneMinute",
+    "netstampChanged",
+    "webcastLive",
+    "inFlight",
+    "success",
+    "failure",
+    "partial_failure",
+)
+
+_V6_WEBCAST_SUFFIX = "_w"
+
+
+def v6_class_shape(audience_class: str) -> str:
+    """Return the matching shape of a class: 'all', 'flex', or 'strict'."""
+    if audience_class.endswith(_V6_WEBCAST_SUFFIX):
+        return audience_class[: -len(_V6_WEBCAST_SUFFIX)]
+    return audience_class
+
+
+def v6_class_is_webcast_only(audience_class: str) -> bool:
+    """Whether this class only wants launches that have a webcast."""
+    return audience_class.endswith(_V6_WEBCAST_SUFFIX)
+
+
+def get_v6_attribute_topic(env: str, group: str) -> str:
+    """Attribute topic. Shared across platforms: the type topic carries platform."""
+    return f"v6_{env}_{group}"
+
+
+def get_v6_type_topic(env: str, platform: str, audience_class: str, notification_type: str) -> str:
+    """Type topic. The audience class lives here, which is what keeps the
+    classes disjoint and makes duplicate delivery structurally impossible."""
+    return f"v6_{env}_{platform}_{audience_class}_{notification_type}"
+
+
+def get_v6_broadcast_topic(env: str, platform: str, kind: str) -> str:
+    """Broadcast topic for events / news / announce."""
+    return f"v6_{env}_{platform}_{kind}"
+
+
+def _v6_term(topic: str) -> str:
+    return f"'{topic}' in topics"
+
+
+def build_v6_condition(
+    *,
+    env: str,
+    platform: str,
+    audience_class: str,
+    notification_type: str,
+    agency_group: str | None,
+    location_group: str | None,
+) -> str | None:
+    """Build the FCM condition for one audience class, or None to skip.
+
+    None means the condition would be unsatisfiable and must not be sent:
+    a strict class needs both attributes, a flexible class needs at least one.
+    """
+    type_term = _v6_term(get_v6_type_topic(env, platform, audience_class, notification_type))
+    shape = v6_class_shape(audience_class)
+
+    if shape == "all":
+        return type_term
+
+    agency_term = _v6_term(get_v6_attribute_topic(env, agency_group)) if agency_group else None
+    location_term = _v6_term(get_v6_attribute_topic(env, location_group)) if location_group else None
+
+    if shape == "strict":
+        if not (agency_term and location_term):
+            return None
+        return f"{type_term} && {agency_term} && {location_term}"
+
+    attribute_terms = [term for term in (agency_term, location_term) if term]
+    if not attribute_terms:
+        return None
+    if len(attribute_terms) == 1:
+        return f"{type_term} && {attribute_terms[0]}"
+    return f"{type_term} && ({attribute_terms[0]} || {attribute_terms[1]})"
+
+
+def build_v6_broadcast_condition(env: str, platform: str, kind: str) -> str:
+    """Broadcast types are gated by their own toggle only -- a single topic."""
+    return _v6_term(get_v6_broadcast_topic(env, platform, kind))
