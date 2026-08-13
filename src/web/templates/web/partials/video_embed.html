@@ -1,0 +1,44 @@
+{% load embed_video_tags %}
+{% comment %}
+Click-to-play video facade.
+
+Renders a thumbnail and a play button; the real YouTube iframe is injected by
+static/js/video-facade.js only when the user activates it. Two reasons this
+exists:
+
+  1. The markup is identical for every viewport and every User-Agent. The nginx
+     ingress caches with key "$scheme$host$request_uri" -- no User-Agent -- so any
+     per-device difference gets served to the wrong device.
+  2. A hidden or unwatched iframe still downloads the whole YouTube embed. Deferring
+     it keeps that cost off every page load.
+
+Usage:
+    {% include "web/partials/video_embed.html" with video_url=youtube_urls|first title="Watch Live" %}
+
+`video_url` is a URL *string*, not an embed_video backend object. Falsy -> renders
+nothing, matching the {% if %} guards this replaced.
+{% endcomment %}
+{% if video_url %}
+    {% video video_url as sln_video %}
+        <div class="videoWrapper sln-video-facade"
+             data-video-code="{{ sln_video.code }}"
+             data-video-title="{{ title|default:'Video player' }}">
+            <img class="sln-video-thumb"
+                 src="{{ sln_video.thumbnail }}"
+                 alt="{{ title|default:'Video thumbnail' }}"
+                 loading="lazy">
+            <button type="button" class="sln-video-play"
+                    aria-label="Play {{ title|default:'video' }}">
+                <i class="material-icons" aria-hidden="true">play_arrow</i>
+            </button>
+            <noscript>
+                {% comment %}
+                sln_video.url is the embed URL, which is a bare player page. Link to
+                the normal watch page so the no-JS fallback lands somewhere usable.
+                {% endcomment %}
+                <a class="sln-video-fallback"
+                   href="https://www.youtube.com/watch?v={{ sln_video.code }}">Watch on YouTube</a>
+            </noscript>
+        </div>
+    {% endvideo %}
+{% endif %}

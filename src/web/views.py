@@ -35,7 +35,6 @@ from django.views.decorators.cache import cache_page
 from django_filters.views import FilterView
 from django_ical.views import ICalFeed
 from django_tables2 import SingleTableMixin
-from django_user_agents.utils import get_user_agent
 
 from bot.utils.util import get_SLN_url
 from prefetches import get_prefetched_launch_queryset
@@ -78,6 +77,35 @@ def asset_file(request):
     json_file = json.dumps(json_data)
     response = HttpResponse(json_file, content_type="application/json")
     return response
+
+
+def apple_app_site_association(request):
+    """Apple's counterpart to assetlinks.json, for iOS Universal Links.
+
+    Inert until the iOS app ships the `com.apple.developer.associated-domains`
+    entitlement (`applinks:spacelaunchnow.app`) -- serving it now means that change
+    is a one-line entitlement edit rather than a coordinated release. Apple requires
+    HTTPS, application/json, no redirect and no file extension, so this is routed
+    with an anchored pattern and returned directly rather than via a static file.
+
+    Paths are scoped to the routes the app has screens for; a blanket "*" would make
+    every marketing and legal page open the app.
+    """
+    json_data = {
+        "applinks": {
+            "details": [
+                {
+                    "appIDs": ["4T4QRN2U5X.me.spacelaunchnow.spacelaunchnow"],
+                    "components": [
+                        {"/": "/launch/*"},
+                        {"/": "/event/*"},
+                        {"/": "/astronaut/*"},
+                    ],
+                }
+            ]
+        }
+    }
+    return HttpResponse(json.dumps(json_data), content_type="application/json")
 
 
 def index(request):
@@ -139,12 +167,9 @@ def index(request):
         else:
             second_launch_image = None
 
-    user_agent = get_user_agent(request)
-    template = "web/index_mobile.html" if user_agent.is_mobile else "web/index.html"
-
     return render(
         request,
-        template,
+        "web/index.html",
         {
             "launch": launch,
             "launch_image": launch_image,
@@ -288,15 +313,9 @@ def create_launch_view(request, launch):
     else:
         launch_image = None
 
-    user_agent = get_user_agent(request)
-    if user_agent.is_mobile:
-        template = "web/launches/launch_detail_page_mobile.html"
-    else:
-        template = "web/launches/launch_detail_page.html"
-
     return render(
         request,
-        template,
+        "web/launches/launch_detail_page.html",
         {
             "launch": launch,
             "launch_image": launch_image,

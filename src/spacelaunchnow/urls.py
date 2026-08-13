@@ -159,6 +159,12 @@ if settings.IS_API:
 if settings.IS_WEBSERVER:
     web_settings = [
         re_path(r"^\.well-known/assetlinks\.json", landing_views.asset_file),
+        # Anchored: Apple rejects the association file if the path carries an
+        # extension, so this must not also match apple-app-site-association.json.
+        re_path(
+            r"^\.well-known/apple-app-site-association$",
+            landing_views.apple_app_site_association,
+        ),
         re_path(r"^app-ads\.txt", AdsView.as_view()),
         re_path(r"^ads\.txt", AdsView.as_view()),
         path("", landing_views.index, name="index"),

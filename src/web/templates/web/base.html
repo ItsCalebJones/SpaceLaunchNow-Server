@@ -1,7 +1,4 @@
 {% load static %}
-{% load user_agents %}
-{% load tz %}
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,6 +11,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="author" content="Caleb Jones">
+    <!-- iOS Smart App Banner. Safari renders it natively; other browsers ignore it,
+         so it is sent unconditionally and stays cache-safe. -->
+    <meta name="apple-itunes-app" content="app-id=1399715731">
     <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
     <!--     Fonts and icons     -->
     <link rel="stylesheet" type="text/css"
@@ -23,6 +23,8 @@
     <!-- CSS Files -->
     <link rel="stylesheet" href="{% static  'material_kit/css/material-kit.min.css' %}"  >
     <link rel="preload" as="style" onload="this.rel='stylesheet'" href="{% static  'material_kit/css/spacelaunchnow.min.css' %}" >
+    <link rel="stylesheet" href="{% static 'css/video-facade.css' %}">
+    <script src="{% static 'js/video-facade.js' %}" defer></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <!-- Global site tag (gtag.js) - Google Ads: 960961949 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-960961949"></script>

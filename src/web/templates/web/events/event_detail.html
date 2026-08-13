@@ -1,7 +1,5 @@
 {% extends "web/base.html" %}
-{% load embed_video_tags %}
 {% load sln_utils %}
-{% load user_agents %}
 {% load static %}
 {% block extrahead %}
     <link rel="canonical" href="https://spacelaunchnow.app/event/{{ event.slug }}">
@@ -97,21 +95,13 @@
                         {% endif %}
 
                         {% if event.video_url %}
-                            {% video event.video_url as my_video %}
-                                <div class="row">
-                                    <div class="col-md-12 ml-auto mr-auto">
-                                        <h2 class="title text-center">Watch Here</h2>
-                                        <hr>
-                                        <div class="videoWrapper">
-                                            {% if request|is_mobile %}
-                                                {% video my_video '85% x 25%' %}
-                                            {% else %}
-                                                {% video my_video '100% x 100%' %}
-                                            {% endif %}
-                                        </div>
-                                    </div>
+                            <div class="row">
+                                <div class="col-md-12 ml-auto mr-auto">
+                                    <h2 class="title text-center">Watch Here</h2>
+                                    <hr>
+                                    {% include "web/partials/video_embed.html" with video_url=event.video_url title="Watch Here" %}
                                 </div>
-                            {% endvideo %}
+                            </div>
                         {% endif %}
 
                         {% if event.updates.all|length > 0 %}

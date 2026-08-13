@@ -1,6 +1,4 @@
 {% extends "web/base.html" %}
-{% load embed_video_tags %}
-{% load user_agents %}
 {% load static %}
 {% load sln_utils %}
 {% block extrahead %}
@@ -65,20 +63,12 @@
                                     <h2 class="title">{{ live_streams.0.title }}</h2>
                                 </div>
                                 <!-- Title -->
-                                {% video live_streams|first query="autoplay=1&mute=1" as my_video %}
-                                    <div class="videoWrapper">
-                                        {% if request|is_mobile %}
-                                            {% video my_video '85% x 25%' %}
-                                        {% else %}
-                                            {% video my_video '100% x 100%' %}
-                                        {% endif %}
+                                {% include "web/partials/video_embed.html" with video_url=live_streams|first title=live_streams.0.title %}
+                                <div class="card-body">
+                                    <div class="col-md-10 mx-auto">
+                                        <p class="card-description">{{ live_streams.0.description }}</p>
                                     </div>
-                                    <div class="card-body">
-                                        <div class="col-md-10 mx-auto">
-                                            <p class="card-description">{{ live_streams.0.description }}</p>
-                                        </div>
-                                    </div>
-                                {% endvideo %}
+                                </div>
                                 {% if next_up|get_type == "event" %}
                 <div class="col-md-12 mx-auto">
                     <div class="card card-plain card-blog">
