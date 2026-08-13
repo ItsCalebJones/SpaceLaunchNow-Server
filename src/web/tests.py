@@ -11,9 +11,7 @@ from django.test import override_settings
 from rest_framework import status
 
 
-@override_settings(
-    CACHES={"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
-)
+@override_settings(CACHES={"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}})
 class WebTests(LLAPITests):
     """Cache disabled deliberately.
 
@@ -61,9 +59,7 @@ class WebTests(LLAPITests):
         value to this normaliser rather than weakening the assertion.
         """
         launch = Launch.objects.first()
-        html = self.client.get(
-            f"/launch/{launch.slug}/", HTTP_USER_AGENT=ua
-        ).content.decode()
+        html = self.client.get(f"/launch/{launch.slug}/", HTTP_USER_AGENT=ua).content.decode()
         return re.sub(r'window\.CSRF_TOKEN = "[^"]*"', 'window.CSRF_TOKEN = "X"', html)
 
     def test_launch_detail_is_user_agent_invariant(self):
@@ -135,9 +131,7 @@ class WebTests(LLAPITests):
         by the facade include. Without this, a broken tag there fails silently."""
         for path_ in ("/starship/", "/event/", "/app"):
             with self.subTest(path=path_):
-                self.assertEqual(
-                    self.client.get(path_).status_code, status.HTTP_200_OK
-                )
+                self.assertEqual(self.client.get(path_).status_code, status.HTTP_200_OK)
 
     def test_no_user_agent_branching_in_templates(self):
         """Any surviving is_mobile branch makes the HTML User-Agent dependent. The
