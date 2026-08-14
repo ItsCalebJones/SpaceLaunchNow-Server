@@ -3,12 +3,13 @@ import logging
 
 from bot.app.notification_service import NotificationService
 from bot.app.notifications.metrics import record_send
+from bot.app.notifications.v6 import V6NotificationMixin
 from bot.utils.util import get_fcm_v5_android_topic, get_fcm_v5_ios_topic
 
 logger = logging.getLogger(__name__)
 
 
-class NewsNotificationHandler(NotificationService):
+class NewsNotificationHandler(V6NotificationMixin, NotificationService):
     def send_notification(self, article):
         # V5-only. send_v3_notification is retained but no longer invoked.
         self._send_v5_notification(article)
@@ -101,6 +102,16 @@ class NewsNotificationHandler(NotificationService):
             logger.error(f"V5 iOS News Notification Error: {e}")
             record_send(platform="ios", category="news", success=False)
         logger.info("----------------------------------------------------------")
+
+        # V6 topic-targeted broadcast (dual-send window)
+        self.send_v6_broadcast(
+            kind="news",
+            v5_data=v5_data,
+            title=v5_data["title"],
+            body=v5_data["body"],
+            collapse_id=f"news_{v5_data['article_id']}",
+            category="news",
+        )
 
     def send_v3_notification(self, article, data):
         if not self.DEBUG:

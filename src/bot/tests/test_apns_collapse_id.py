@@ -12,6 +12,7 @@ from bot.app.events.notification_handler import EventNotificationHandler
 from bot.app.notifications.custom import CustomNotificationMixin
 from bot.app.notifications.news_notification_handler import NewsNotificationHandler
 from bot.app.notifications.v5 import V5NotificationMixin
+from bot.app.notifications.v6 import V6NotificationMixin
 
 
 def _ios_apns_headers(fcm_mock) -> dict:
@@ -75,9 +76,15 @@ class NewsCollapseIdTests(SimpleTestCase):
         self.assertEqual(headers["apns-collapse-id"], "news_777")
 
 
+class _Custom(CustomNotificationMixin, V6NotificationMixin):
+    """Production composes CustomNotificationMixin with V6NotificationMixin via
+    NotificationHandler; mirror that here since _send_v5_custom_ios now also
+    dispatches a V6 broadcast."""
+
+
 class CustomCollapseIdTests(SimpleTestCase):
     def setUp(self):
-        self.mixin = CustomNotificationMixin()
+        self.mixin = _Custom()
         self.mixin.fcm = mock.MagicMock()
         self.mixin.DEBUG = True
 

@@ -128,6 +128,18 @@ class CustomNotificationMixin:
             record_send(platform="ios", category="custom", success=False)
         logger.info("----------------------------------------------------------")
 
+        # V6 topic-targeted broadcast (dual-send window). Sent from the iOS
+        # method only: send_v6_broadcast covers both platforms, and check_custom
+        # invokes the iOS and Android methods separately.
+        self.send_v6_broadcast(
+            kind="announce",
+            v5_data=v5_data,
+            title=v5_data["title"],
+            body=v5_data["body"],
+            collapse_id=f"custom_{v5_data['custom_id']}",
+            category="custom",
+        )
+
     def send_custom_ios_v3(self, pending) -> NotificationResult:
         """Send custom iOS Flutter notification."""
         data = self.get_json_data(pending)

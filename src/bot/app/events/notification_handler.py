@@ -3,12 +3,13 @@ import logging
 
 from bot.app.notification_service import NotificationService
 from bot.app.notifications.metrics import record_send
+from bot.app.notifications.v6 import V6NotificationMixin
 from bot.utils.util import get_fcm_v5_android_topic, get_fcm_v5_ios_topic
 
 logger = logging.getLogger(__name__)
 
 
-class EventNotificationHandler(NotificationService):
+class EventNotificationHandler(V6NotificationMixin, NotificationService):
     def send_ten_minute_notification(self, event):
         self.send_notification(event, "event_notification")
 
@@ -166,6 +167,16 @@ class EventNotificationHandler(NotificationService):
             logger.error(f"V5 iOS Event Notification Error: {e}")
             record_send(platform="ios", category="event", success=False)
         logger.info("----------------------------------------------------------")
+
+        # V6 topic-targeted broadcast (dual-send window)
+        self.send_v6_broadcast(
+            kind="events",
+            v5_data=v5_data,
+            title=v5_data["title"],
+            body=v5_data["body"],
+            collapse_id=f"event_{v5_data['event_id']}",
+            category="event",
+        )
 
     def send_to_fcm(self, topics, data, webcast: bool = False):
         logger.info("----------------------------------------------------------")

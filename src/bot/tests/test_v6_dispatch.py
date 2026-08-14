@@ -189,3 +189,54 @@ class DualSendTests(SimpleTestCase):
         v6 = [c for c in conditions if "v6_prod_" in c]
         self.assertEqual(len(v5), 2, "V5 android + ios broadcast must still fire")
         self.assertEqual(len(v6), 12, "V6 must emit 6 classes x 2 platforms for a webcast launch")
+
+
+class BroadcastWiringTests(SimpleTestCase):
+    def _v6_conditions(self, fcm_mock):
+        return [c for c in _conditions(fcm_mock) if "v6_prod_" in c]
+
+    def test_event_send_also_targets_the_v6_event_topics(self):
+        from bot.app.events.notification_handler import EventNotificationHandler
+
+        handler = EventNotificationHandler.__new__(EventNotificationHandler)
+        handler.fcm = mock.MagicMock()
+        handler.DEBUG = False
+        v5 = {"notification_type": "event_notification", "title": "t", "body": "b", "event_id": "999"}
+        with mock.patch.object(handler, "_build_v5_event_data", return_value=v5):
+            handler._send_v5_event_notification(event=object(), event_type="event")
+        self.assertEqual(
+            sorted(self._v6_conditions(handler.fcm)),
+            ["'v6_prod_android_events' in topics", "'v6_prod_ios_events' in topics"],
+        )
+
+    def test_news_send_also_targets_the_v6_news_topics(self):
+        from bot.app.notifications.news_notification_handler import NewsNotificationHandler
+
+        handler = NewsNotificationHandler.__new__(NewsNotificationHandler)
+        handler.fcm = mock.MagicMock()
+        handler.DEBUG = False
+        v5 = {"notification_type": "featured_news", "title": "t", "body": "b", "article_id": "777"}
+        with mock.patch.object(handler, "_build_v5_news_data", return_value=v5):
+            handler._send_v5_notification(article=object())
+        self.assertEqual(
+            sorted(self._v6_conditions(handler.fcm)),
+            ["'v6_prod_android_news' in topics", "'v6_prod_ios_news' in topics"],
+        )
+
+    def test_custom_send_also_targets_the_v6_announce_topics(self):
+        from bot.app.notifications.custom import CustomNotificationMixin
+        from bot.app.notifications.v6 import V6NotificationMixin
+
+        class _Custom(CustomNotificationMixin, V6NotificationMixin):
+            pass
+
+        handler = _Custom()
+        handler.fcm = mock.MagicMock()
+        handler.DEBUG = False
+        v5 = {"notification_type": "custom", "title": "t", "body": "b", "custom_id": "cust-1"}
+        with mock.patch.object(handler, "_build_v5_custom_data", return_value=v5):
+            handler._send_v5_custom_ios(pending=object())
+        self.assertEqual(
+            sorted(self._v6_conditions(handler.fcm)),
+            ["'v6_prod_android_announce' in topics", "'v6_prod_ios_announce' in topics"],
+        )
