@@ -34,20 +34,35 @@ per type, per platform.
 > filtering happens on the device** — agency, location, matching mode, per-type toggles, webcast-only
 > and the broadcast toggles are all resolved server-side at send time. The client-side filtering
 > documented below therefore describes the V5 path only. See
-> `2026-08-13-v6-topic-targeted-notifications-design.md`. The "Remaining gaps" section at the
-> bottom is resolved on the V6 path: per-type filtering is enforced by the type topic, and the
-> foreground/NSE divergence cannot occur because neither path filters.
+> `2026-08-13-v6-topic-targeted-notifications-design.md`.
+>
+> **The V6 path is currently a production no-op.** No shipped client subscribes to any `v6_*`
+> topic, so every V6 condition today matches zero devices and every user is served entirely by the
+> V5 broadcast and its client-side filtering. Everything this document describes about *delivery*
+> remains the live behaviour until the KMP client ships its subscription changes.
+>
+> Effect on the "Remaining gaps" section at the bottom, once clients do subscribe:
+> - **Gap 2 (V5 per-type filtering / foreground-vs-NSE divergence) is resolved on the V6 path** —
+>   per-type filtering is enforced by the type topic, and the divergence cannot occur because
+>   neither path filters.
+> - **Gap 1 (`failure` / `partial_failure` have no user toggle) is unchanged.** V6 gives those
+>   types their own topics, but no user-facing toggle exists to drive a subscription.
+> - **Gap 3 (iOS code-review-verified, never compiled or device-tested) is unchanged and in fact
+>   enlarged** — the V6 design's own acceptance gate is an on-device delivery matrix on both
+>   platforms, which is strictly more than gap 3 already asked for.
 
 ## Server dispatch state
 
-| Handler | V3 | V4 | V5 | Net effect |
-|---|---|---|---|---|
-| Launch (`notification_handler.py`) | disabled | disabled | **sent** | V5 only |
-| Event (`events/notification_handler.py`) | disabled | n/a | **sent** | V5 only |
-| News (`news_notification_handler.py`) | disabled | n/a | **sent** | V5 only (`send_notification` → `_send_v5_notification`; re-enabled in `event_tracker.check_news_item`) |
-| Custom admin (`custom.py` via `check_custom`) | disabled | n/a | **sent** | V5 only (`_send_v5_custom_ios` / `_send_v5_custom_android`; `check_custom` two-loop dispatch) |
+| Handler | V3 | V4 | V5 | V6 | Net effect |
+|---|---|---|---|---|---|
+| Launch (`notification_handler.py`) | disabled | disabled | **sent** | **sent** | V5 + V6 dual-send (V6 = up to 6 audience classes × 2 platforms) |
+| Event (`events/notification_handler.py`) | disabled | n/a | **sent** | **sent** | V5 + V6 dual-send (`v6_<env>_<platform>_events`) |
+| News (`news_notification_handler.py`) | disabled | n/a | **sent** | **sent** | V5 + V6 dual-send (`send_notification` → `_send_v5_notification`; re-enabled in `event_tracker.check_news_item`) |
+| Custom admin (`custom.py` via `check_custom`) | disabled | n/a | **sent** | **sent** | V5 + V6 dual-send, per platform (`_send_v5_custom_ios` / `_send_v5_custom_android` each emit their own platform only; `check_custom` two-loop dispatch) |
 
-All four types now dispatch on V5. Non-V5 methods are retained, uninvoked.
+All four types dispatch on **both** V5 and V6. Non-V5/V6 methods are retained, uninvoked. The V6
+sends currently reach zero devices (see the 2026-08-13 revision note above); V5 remains the path
+every shipped client is actually served by.
 
 ## KMP subscription
 
