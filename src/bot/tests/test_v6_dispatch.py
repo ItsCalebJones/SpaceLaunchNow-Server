@@ -3,6 +3,7 @@
 Test-only. self.fcm is mocked and every payload is stubbed; no DB, no FCM.
 """
 
+import re
 from unittest import mock
 
 from django.test import SimpleTestCase
@@ -10,13 +11,23 @@ from django.test import SimpleTestCase
 from bot.app.notifications.v5 import V5NotificationMixin
 from bot.app.notifications.v6 import V6NotificationMixin
 
+# A real launch UUID, not a short placeholder: launch_uuid is the longest
+# component of the launch analytics label and 36 chars is what production sends.
+LAUNCH_UUID = "b2a0e2a4-4d1e-4e6b-9a1f-3c7d5e8f0a12"
+
 PAYLOAD = {
     "notification_type": "oneHour",
-    "launch_uuid": "uuid-123",
+    "launch_uuid": LAUNCH_UUID,
     "title": "Falcon 9",
     "body": "Launch attempt in one hour.",
     "webcast": "True",
 }
+
+# FcmOptions.analytics_label, per the FCM v1 API: 1-50 chars from this set.
+# Violations are rejected with 400 INVALID_ARGUMENT; pyfcm does not validate,
+# and _send_v6 swallows the error into a counter -- so nothing but this test
+# stands between an over-long label and a silent, total delivery failure.
+ANALYTICS_LABEL_RE = re.compile(r"^[a-zA-Z0-9\-_.~%]{1,50}$")
 
 
 class _Handler(V6NotificationMixin, V5NotificationMixin):
@@ -25,6 +36,10 @@ class _Handler(V6NotificationMixin, V5NotificationMixin):
 
 def _conditions(fcm_mock) -> list[str]:
     return [call.kwargs["topic_condition"] for call in fcm_mock.notify.call_args_list]
+
+
+def _analytics_labels(fcm_mock) -> list[str]:
+    return [call.kwargs["fcm_options"]["analytics_label"] for call in fcm_mock.notify.call_args_list]
 
 
 class LaunchDispatchTests(SimpleTestCase):
@@ -108,7 +123,7 @@ class LaunchDispatchTests(SimpleTestCase):
         for call in ios_calls:
             headers = call.kwargs["apns_config"]["headers"]
             self.assertEqual(headers["apns-priority"], "10")
-            self.assertEqual(headers["apns-collapse-id"], "uuid-123")
+            self.assertEqual(headers["apns-collapse-id"], LAUNCH_UUID)
             self.assertEqual(call.kwargs["apns_config"]["payload"]["aps"]["mutable-content"], 1)
             self.assertEqual(call.kwargs["notification_title"], PAYLOAD["title"])
             self.assertEqual(call.kwargs["notification_body"], PAYLOAD["body"])
@@ -120,7 +135,7 @@ class LaunchDispatchTests(SimpleTestCase):
         for call in android_calls:
             self.assertIsNone(call.kwargs["notification_title"])
             self.assertIsNone(call.kwargs["notification_body"])
-            self.assertEqual(call.kwargs["android_config"]["collapse_key"], "uuid-123")
+            self.assertEqual(call.kwargs["android_config"]["collapse_key"], LAUNCH_UUID)
             self.assertEqual(call.kwargs["android_config"]["priority"], "high")
             self.assertEqual(call.kwargs["android_config"]["ttl"], "86400s")
 
@@ -140,6 +155,84 @@ class LaunchDispatchTests(SimpleTestCase):
         results = self._dispatch()
         self.assertEqual(len(results), 12)
         self.assertEqual(len([r for r in results if r.error is not None]), 1)
+
+    def test_an_unknown_notification_type_skips_every_class(self):
+        with mock.patch("bot.app.notifications.v6.record_skip") as record_skip:
+            payload = dict(PAYLOAD, notification_type="definitely_not_a_type")
+            with (
+                mock.patch.object(self.handler, "_build_v5_data_payload", return_value=payload),
+                mock.patch("bot.app.notifications.v6.agency_group", return_value="spacex"),
+                mock.patch("bot.app.notifications.v6.location_group", return_value="florida"),
+            ):
+                results = self.handler.send_v6_launch_notification(
+                    launch=mock.MagicMock(),
+                    notification_type="definitely_not_a_type",
+                    contents="c",
+                )
+        self.assertEqual(results, [])
+        self.handler.fcm.notify.assert_not_called()
+        reasons = {call.kwargs["reason"] for call in record_skip.call_args_list}
+        self.assertEqual(reasons, {"unknown_type"})
+        self.assertEqual(len(record_skip.call_args_list), 12)
+
+
+class AnalyticsLabelTests(SimpleTestCase):
+    """FCM rejects an analytics_label over 50 chars with 400 INVALID_ARGUMENT,
+    and _send_v6 catches that into an error counter -- so an over-long label is
+    a silent, total delivery failure for every class it applies to. Same class
+    of latent failure as an over-budget condition; same permanence of guard."""
+
+    def setUp(self):
+        self.handler = _Handler()
+        self.handler.fcm = mock.MagicMock()
+        self.handler.DEBUG = False
+
+    def _assert_labels_valid(self, labels, expected_count):
+        self.assertEqual(len(labels), expected_count)
+        for label in labels:
+            self.assertRegex(label, ANALYTICS_LABEL_RE, msg=f"{label!r} is {len(label)} chars")
+
+    def test_every_launch_class_label_is_within_the_fcm_limit(self):
+        with (
+            mock.patch.object(self.handler, "_build_v5_data_payload", return_value=PAYLOAD),
+            mock.patch("bot.app.notifications.v6.agency_group", return_value="spacex"),
+            mock.patch("bot.app.notifications.v6.location_group", return_value="florida"),
+        ):
+            self.handler.send_v6_launch_notification(launch=mock.MagicMock(), notification_type="oneHour", contents="c")
+        # 6 classes x 2 platforms, the full matrix for a webcast launch.
+        self._assert_labels_valid(_analytics_labels(self.handler.fcm), 12)
+
+    def test_launch_labels_are_unique_per_class(self):
+        # Dropping the platform segment must not collapse two sends onto one
+        # label: the class still distinguishes them, and platform is carried by
+        # the condition, the topic names, and the `platform` metric label.
+        with (
+            mock.patch.object(self.handler, "_build_v5_data_payload", return_value=PAYLOAD),
+            mock.patch("bot.app.notifications.v6.agency_group", return_value="spacex"),
+            mock.patch("bot.app.notifications.v6.location_group", return_value="florida"),
+        ):
+            self.handler.send_v6_launch_notification(launch=mock.MagicMock(), notification_type="oneHour", contents="c")
+        labels = _analytics_labels(self.handler.fcm)
+        self.assertEqual(len(set(labels)), 6)
+
+    def test_every_broadcast_label_is_within_the_fcm_limit(self):
+        # Realistic collapse ids: event/article/notification PKs are integers.
+        for kind, collapse_id in (
+            ("events", "event_4294967295"),
+            ("news", "news_4294967295"),
+            ("announce", "custom_4294967295"),
+        ):
+            with self.subTest(kind=kind):
+                self.handler.fcm.reset_mock()
+                self.handler.send_v6_broadcast(
+                    kind=kind,
+                    v5_data={"notification_type": "custom"},
+                    title="t",
+                    body="b",
+                    collapse_id=collapse_id,
+                    category="custom",
+                )
+                self._assert_labels_valid(_analytics_labels(self.handler.fcm), 2)
 
 
 class BroadcastDispatchTests(SimpleTestCase):
@@ -162,6 +255,18 @@ class BroadcastDispatchTests(SimpleTestCase):
             sorted(conditions),
             ["'v6_prod_android_events' in topics", "'v6_prod_ios_events' in topics"],
         )
+
+    def test_broadcast_can_be_narrowed_to_one_platform(self):
+        self.handler.send_v6_broadcast(
+            kind="announce",
+            v5_data={"notification_type": "custom", "custom_id": "1"},
+            title="t",
+            body="b",
+            collapse_id="custom_1",
+            category="custom",
+            platforms=("ios",),
+        )
+        self.assertEqual(_conditions(self.handler.fcm), ["'v6_prod_ios_announce' in topics"])
 
 
 class DualSendTests(SimpleTestCase):
@@ -223,7 +328,7 @@ class BroadcastWiringTests(SimpleTestCase):
             ["'v6_prod_android_news' in topics", "'v6_prod_ios_news' in topics"],
         )
 
-    def test_custom_send_also_targets_the_v6_announce_topics(self):
+    def _custom_handler(self):
         from bot.app.notifications.custom import CustomNotificationMixin
         from bot.app.notifications.v6 import V6NotificationMixin
 
@@ -233,10 +338,47 @@ class BroadcastWiringTests(SimpleTestCase):
         handler = _Custom()
         handler.fcm = mock.MagicMock()
         handler.DEBUG = False
+        return handler
+
+    def test_custom_ios_send_targets_only_the_ios_announce_topic(self):
+        # Notification.send_ios / send_android are independent, and check_custom
+        # drives a separate queryset from each. Emitting both platforms from the
+        # iOS method would push announcements to Android users an admin
+        # deliberately excluded.
+        handler = self._custom_handler()
         v5 = {"notification_type": "custom", "title": "t", "body": "b", "custom_id": "cust-1"}
         with mock.patch.object(handler, "_build_v5_custom_data", return_value=v5):
             handler._send_v5_custom_ios(pending=object())
+        self.assertEqual(self._v6_conditions(handler.fcm), ["'v6_prod_ios_announce' in topics"])
+
+    def test_custom_android_send_targets_only_the_android_announce_topic(self):
+        # Without this call an admin sending Android-only reaches nobody on V6.
+        handler = self._custom_handler()
+        v5 = {"notification_type": "custom", "title": "t", "body": "b", "custom_id": "cust-1"}
+        with mock.patch.object(handler, "_build_v5_custom_data", return_value=v5):
+            handler._send_v5_custom_android(pending=object())
+        self.assertEqual(self._v6_conditions(handler.fcm), ["'v6_prod_android_announce' in topics"])
+
+    def test_a_custom_send_for_both_platforms_emits_each_topic_once(self):
+        handler = self._custom_handler()
+        v5 = {"notification_type": "custom", "title": "t", "body": "b", "custom_id": "cust-1"}
+        with mock.patch.object(handler, "_build_v5_custom_data", return_value=v5):
+            handler._send_v5_custom_ios(pending=object())
+            handler._send_v5_custom_android(pending=object())
         self.assertEqual(
             sorted(self._v6_conditions(handler.fcm)),
             ["'v6_prod_android_announce' in topics", "'v6_prod_ios_announce' in topics"],
         )
+
+    def test_a_failing_v6_broadcast_does_not_propagate_into_the_v5_flow(self):
+        # check_custom marks send_ios_complete immediately after this call with
+        # no try/except of its own; a raising V6 send would leave the record
+        # queued and the V5 custom notification would be sent again next cycle.
+        handler = self._custom_handler()
+        v5 = {"notification_type": "custom", "title": "t", "body": "b", "custom_id": "cust-1"}
+        with (
+            mock.patch.object(handler, "_build_v5_custom_data", return_value=v5),
+            mock.patch.object(handler, "send_v6_broadcast", side_effect=Exception("boom")),
+        ):
+            handler._send_v5_custom_ios(pending=object())
+            handler._send_v5_custom_android(pending=object())

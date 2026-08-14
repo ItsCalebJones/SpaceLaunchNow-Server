@@ -130,6 +130,38 @@ class SkipRuleTests(SimpleTestCase):
     def test_all_class_is_unaffected_by_missing_attributes(self):
         self.assertEqual(self._build("all", None, None), "'v6_prod_ios_all_oneHour' in topics")
 
+    def test_an_unknown_notification_type_is_skipped_for_every_class(self):
+        # Third skip rule from the design: no device can subscribe to a type
+        # topic that is not a real notification type, so the condition is
+        # unsatisfiable even for the attribute-free "all" class.
+        for audience_class in V6_AUDIENCE_CLASSES:
+            self.assertIsNone(
+                build_v6_condition(
+                    env="prod",
+                    platform="ios",
+                    audience_class=audience_class,
+                    notification_type="definitely_not_a_type",
+                    agency_group="spacex",
+                    location_group="florida",
+                ),
+                msg=audience_class,
+            )
+
+    def test_every_declared_notification_type_still_builds(self):
+        # The guard above must not reject the real types it is protecting.
+        for notification_type in V6_NOTIFICATION_TYPES:
+            self.assertIsNotNone(
+                build_v6_condition(
+                    env="prod",
+                    platform="ios",
+                    audience_class="all",
+                    notification_type=notification_type,
+                    agency_group="spacex",
+                    location_group="florida",
+                ),
+                msg=notification_type,
+            )
+
 
 class ClassDisjointnessTests(SimpleTestCase):
     """A device subscribes to the type topics of exactly one class, and every

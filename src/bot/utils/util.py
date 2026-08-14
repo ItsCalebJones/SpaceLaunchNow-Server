@@ -476,8 +476,13 @@ def build_v6_condition(
     """Build the FCM condition for one audience class, or None to skip.
 
     None means the condition would be unsatisfiable and must not be sent:
-    a strict class needs both attributes, a flexible class needs at least one.
+    the type is not a real notification type (so no device can be subscribed to
+    its topic), a strict class needs both attributes, or a flexible class needs
+    at least one.
     """
+    if notification_type not in V6_NOTIFICATION_TYPES:
+        return None
+
     type_term = _v6_term(get_v6_type_topic(env, platform, audience_class, notification_type))
     shape = v6_class_shape(audience_class)
 

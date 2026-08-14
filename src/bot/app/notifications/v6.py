@@ -19,6 +19,7 @@ from bot.app.notifications.metrics import record_send, record_skip
 from bot.utils.notification_groups import agency_group, location_group
 from bot.utils.util import (
     V6_AUDIENCE_CLASSES,
+    V6_NOTIFICATION_TYPES,
     build_v6_broadcast_condition,
     build_v6_condition,
     v6_class_is_webcast_only,
@@ -37,6 +38,9 @@ class V6NotificationMixin:
         self, launch: Launch, notification_type: str, contents: str
     ) -> list[NotificationResult]:
         """Send one message per satisfiable audience class, per platform."""
+        # Deliberately rebuilds the payload V5 just built: threading the dict
+        # through would mean modifying send_v5_notification, which the dual-send
+        # window forbids. The extra queries are the price of V5 being untouched.
         data = self._build_v5_data_payload(launch, notification_type, contents)
         env = "debug" if self.DEBUG else "prod"
         has_webcast = data["webcast"] == "True"
@@ -60,10 +64,16 @@ class V6NotificationMixin:
                     location_group=location,
                 )
                 if condition is None:
-                    reason = "unmapped_agency" if not agency else "unmapped_location"
+                    if notification_type not in V6_NOTIFICATION_TYPES:
+                        reason = "unknown_type"
+                    elif not agency:
+                        reason = "unmapped_agency"
+                    else:
+                        reason = "unmapped_location"
                     logger.warning(
                         f"V6 skip - class={audience_class} platform={platform} reason={reason} "
-                        f"lsp_id={lsp_id} location_id={location_id} launch={launch.id}"
+                        f"type={notification_type} lsp_id={lsp_id} location_id={location_id} "
+                        f"launch={launch.id}"
                     )
                     record_skip(platform=platform, audience_class=audience_class, reason=reason)
                     continue
@@ -77,22 +87,38 @@ class V6NotificationMixin:
                         body=data["body"],
                         collapse_id=data["launch_uuid"],
                         category="launch",
-                        analytics_label=f"v6_{platform}_{audience_class}_{data['launch_uuid']}",
+                        # No platform segment: FCM caps analytics_label at 50
+                        # chars and a 36-char UUID leaves no room for it. The
+                        # platform is already carried by the condition, the
+                        # topic names, and the `platform` metric label.
+                        analytics_label=f"v6_{audience_class}_{data['launch_uuid']}",
                     )
                 )
         return results
 
     def send_v6_broadcast(
-        self, kind: str, v5_data: dict, title: str, body: str, collapse_id: str, category: str
+        self,
+        kind: str,
+        v5_data: dict,
+        title: str,
+        body: str,
+        collapse_id: str,
+        category: str,
+        platforms: tuple[str, ...] = _PLATFORMS,
     ) -> list[NotificationResult]:
         """Send a broadcast type (events / news / announce) to both platforms.
 
         Broadcasts are not agency/location filtered -- one topic per platform,
         gated by the user's own per-type toggle via their subscription.
+
+        ``platforms`` narrows the send. Events and news keep the default because
+        both of their platform sends live in one method; custom admin
+        notifications carry independent ``send_ios`` / ``send_android`` flags and
+        must pass the single platform they are dispatching for.
         """
         env = "debug" if self.DEBUG else "prod"
         results: list[NotificationResult] = []
-        for platform in _PLATFORMS:
+        for platform in platforms:
             results.append(
                 self._send_v6(
                     platform=platform,
@@ -127,7 +153,12 @@ class V6NotificationMixin:
             "data_payload": data,
             "topic_condition": condition,
             "fcm_options": {"analytics_label": analytics_label},
-            "timeout": 240,
+            # 30s, not V5's 240s. "Identical to V5" covers the payload and the
+            # APNs/Android config, not the transport timeout: V6 adds up to 12
+            # sequential blocking calls per launch on the single-threaded
+            # tracker loop, and oneMinute/tenMinutes are notifications where
+            # lateness equals uselessness. V5 runs first and keeps its 240s.
+            "timeout": 30,
         }
         if platform == "android":
             kwargs["notification_title"] = None
