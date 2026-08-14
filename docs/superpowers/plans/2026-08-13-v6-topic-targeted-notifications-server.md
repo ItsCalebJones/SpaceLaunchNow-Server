@@ -23,6 +23,12 @@
 - **Group tables are total** — every agency/location ID resolves to a group, with `other` / `otherAgency` absorbing the tail.
 - **Attribute topics use group names, never raw IDs.** No group-name→IDs inverse map is built server-side; nothing needs it.
 - **Commit messages are one line, subject only, and carry no `Co-Authored-By` trailer.**
+- **Every committed Python file must pass `ruff format --check src/`** — CI enforces this at
+  `.github/workflows/ci.yml` and `.github/workflows/pr-checks.yml`, and one unformatted file fails
+  the whole gate. The code blocks in this plan are **not** pre-formatted: transcribing them
+  verbatim produces files that fail. Run `uvx ruff format <the files you touched>` before the
+  full-suite run in every task, and re-run the tests after formatting. `ruff check` (lint) is a
+  separate gate and currently passes.
 
 ## Running Tests
 
