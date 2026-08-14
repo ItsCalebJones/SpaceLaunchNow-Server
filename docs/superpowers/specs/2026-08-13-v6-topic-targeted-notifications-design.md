@@ -1,7 +1,7 @@
 # V6 Topic-Targeted Notification Delivery — Server
 
 **Date:** 2026-08-13
-**Status:** Draft — awaiting review
+**Status:** Server implemented (dual-send live, no clients subscribed yet) — client pending
 **Repo:** SpaceLaunchNow-Server
 **Companion spec (client):** `SpaceLaunchNow-KMP-Main/docs/superpowers/specs/2026-08-13-v6-topic-targeted-notifications-kmp-design.md`
 

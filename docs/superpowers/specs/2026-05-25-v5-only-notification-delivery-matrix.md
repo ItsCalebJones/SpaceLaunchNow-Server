@@ -28,6 +28,16 @@ per type, per platform.
 > Verification note: Android/server changes are compiled + runner-tested; **iOS (Swift) is
 > code-review-verified only** (no Xcode/Windows) and awaits a Mac/Xcode compile + device pass.
 
+> **Revision 2026-08-13 — V6 topic targeting.** The server now **dual-sends**: the V5 broadcast
+> described below still goes to `prod_v5_ios` / `prod_v5_android` for already-shipped builds, and
+> a parallel V6 path targets upgraded clients by FCM topic condition. On the V6 path **no
+> filtering happens on the device** — agency, location, matching mode, per-type toggles, webcast-only
+> and the broadcast toggles are all resolved server-side at send time. The client-side filtering
+> documented below therefore describes the V5 path only. See
+> `2026-08-13-v6-topic-targeted-notifications-design.md`. The "Remaining gaps" section at the
+> bottom is resolved on the V6 path: per-type filtering is enforced by the type topic, and the
+> foreground/NSE divergence cannot occur because neither path filters.
+
 ## Server dispatch state
 
 | Handler | V3 | V4 | V5 | Net effect |
