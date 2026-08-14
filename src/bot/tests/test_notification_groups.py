@@ -83,7 +83,10 @@ class AgencyGroupTests(SimpleTestCase):
 
 class GroupTableIntegrityTests(SimpleTestCase):
     def test_location_group_names_match_the_spec(self):
-        self.assertEqual(set(LOCATION_GROUPS.values()), EXPECTED_LOCATION_GROUP_NAMES)
+        # Union the catch-all like the agency check does: it happens to carry
+        # explicit IDs today, but the set must not depend on that.
+        names = set(LOCATION_GROUPS.values()) | {DEFAULT_LOCATION_GROUP}
+        self.assertEqual(names, EXPECTED_LOCATION_GROUP_NAMES)
 
     def test_agency_group_names_match_the_spec(self):
         names = set(AGENCY_GROUPS.values()) | {DEFAULT_AGENCY_GROUP}
