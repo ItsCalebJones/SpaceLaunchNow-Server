@@ -15,6 +15,7 @@ from bot.app.notifications.discord import DiscordNotificationMixin
 from bot.app.notifications.v3 import V3NotificationMixin
 from bot.app.notifications.v4 import V4NotificationMixin
 from bot.app.notifications.v5 import V5NotificationMixin
+from bot.app.notifications.v6 import V6NotificationMixin
 from bot.models import LaunchNotificationRecord
 
 logger = logging.getLogger(__name__)
@@ -27,6 +28,7 @@ class NotificationHandler(
     V3NotificationMixin,
     V4NotificationMixin,
     V5NotificationMixin,
+    V6NotificationMixin,
     CustomNotificationMixin,
     DiscordNotificationMixin,
     DebugNotificationMixin,
@@ -186,6 +188,15 @@ class NotificationHandler(
 
         # Send v5 notifications with platform-specific messaging
         v5_results = self.send_v5_notification(
+            launch=launch,
+            notification_type=notification_type,
+            contents=contents,
+        )
+
+        # Send v6 topic-targeted notifications alongside v5 (dual-send window).
+        # v5 serves already-shipped builds; v6 serves upgraded ones, which
+        # unsubscribe from the v5 topics. See the V6 design spec.
+        self.send_v6_launch_notification(
             launch=launch,
             notification_type=notification_type,
             contents=contents,

@@ -162,3 +162,30 @@ class BroadcastDispatchTests(SimpleTestCase):
             sorted(conditions),
             ["'v6_prod_android_events' in topics", "'v6_prod_ios_events' in topics"],
         )
+
+
+class DualSendTests(SimpleTestCase):
+    """The V5 broadcast must keep firing alongside V6 for shipped clients."""
+
+    def setUp(self):
+        from bot.app.notifications.notification_handler import NotificationHandler
+
+        self.handler = NotificationHandler.__new__(NotificationHandler)
+        self.handler.fcm = mock.MagicMock()
+        self.handler.DEBUG = False
+
+    def test_v5_broadcast_and_v6_conditions_both_fire(self):
+        launch = mock.MagicMock()
+        with (
+            mock.patch.object(self.handler, "_build_v5_data_payload", return_value=PAYLOAD),
+            mock.patch.object(self.handler, "notify_discord"),
+            mock.patch("bot.app.notifications.v6.agency_group", return_value="spacex"),
+            mock.patch("bot.app.notifications.v6.location_group", return_value="florida"),
+        ):
+            self.handler.send_v3_notification(launch, "oneHour", "Launch attempt in one hour.")
+
+        conditions = _conditions(self.handler.fcm)
+        v5 = [c for c in conditions if "prod_v5_" in c]
+        v6 = [c for c in conditions if "v6_prod_" in c]
+        self.assertEqual(len(v5), 2, "V5 android + ios broadcast must still fire")
+        self.assertEqual(len(v6), 12, "V6 must emit 6 classes x 2 platforms for a webcast launch")
