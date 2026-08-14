@@ -196,10 +196,14 @@ class NotificationHandler(
         # Send v6 topic-targeted notifications alongside v5 (dual-send window).
         # v5 serves already-shipped builds; v6 serves upgraded ones, which
         # unsubscribe from the v5 topics. See the V6 design spec.
-        self.send_v6_launch_notification(
-            launch=launch,
-            notification_type=notification_type,
-            contents=contents,
-        )
+        # Contained so a v6 failure can never reach v5's control flow.
+        try:
+            self.send_v6_launch_notification(
+                launch=launch,
+                notification_type=notification_type,
+                contents=contents,
+            )
+        except Exception:
+            logger.exception("V6 launch dispatch failed; V5 send is unaffected")
 
         self.notify_discord(v5_results, data)

@@ -168,15 +168,19 @@ class EventNotificationHandler(V6NotificationMixin, NotificationService):
             record_send(platform="ios", category="event", success=False)
         logger.info("----------------------------------------------------------")
 
-        # V6 topic-targeted broadcast (dual-send window)
-        self.send_v6_broadcast(
-            kind="events",
-            v5_data=v5_data,
-            title=v5_data["title"],
-            body=v5_data["body"],
-            collapse_id=f"event_{v5_data['event_id']}",
-            category="event",
-        )
+        # V6 topic-targeted broadcast (dual-send window). Contained so a V6
+        # failure can never reach V5's control flow.
+        try:
+            self.send_v6_broadcast(
+                kind="events",
+                v5_data=v5_data,
+                title=v5_data["title"],
+                body=v5_data["body"],
+                collapse_id=f"event_{v5_data['event_id']}",
+                category="event",
+            )
+        except Exception:
+            logger.exception("V6 events broadcast failed; V5 event send is unaffected")
 
     def send_to_fcm(self, topics, data, webcast: bool = False):
         logger.info("----------------------------------------------------------")
