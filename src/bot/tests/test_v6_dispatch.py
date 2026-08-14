@@ -34,9 +34,11 @@ class LaunchDispatchTests(SimpleTestCase):
         self.handler.DEBUG = False
 
     def _dispatch(self, payload=None, agency="spacex", location="florida"):
-        with mock.patch.object(self.handler, "_build_v5_data_payload", return_value=payload or PAYLOAD), \
-             mock.patch("bot.app.notifications.v6.agency_group", return_value=agency), \
-             mock.patch("bot.app.notifications.v6.location_group", return_value=location):
+        with (
+            mock.patch.object(self.handler, "_build_v5_data_payload", return_value=payload or PAYLOAD),
+            mock.patch("bot.app.notifications.v6.agency_group", return_value=agency),
+            mock.patch("bot.app.notifications.v6.location_group", return_value=location),
+        ):
             return self.handler.send_v6_launch_notification(
                 launch=mock.MagicMock(), notification_type="oneHour", contents="Launch attempt in one hour."
             )
@@ -57,6 +59,17 @@ class LaunchDispatchTests(SimpleTestCase):
         conditions = _conditions(self.handler.fcm)
         self.assertEqual(len(conditions), len(set(conditions)))
 
+    def test_strict_condition_is_exactly_pinned(self):
+        # A substring check alone tolerates a swapped agency/location argument
+        # or a hardcoded notification_type; only the full, ordered string rules
+        # those out.
+        self._dispatch()
+        conditions = _conditions(self.handler.fcm)
+        self.assertIn(
+            "'v6_prod_ios_strict_oneHour' in topics && 'v6_prod_spacex' in topics && 'v6_prod_florida' in topics",
+            conditions,
+        )
+
     def test_unmapped_agency_skips_strict_but_keeps_flexible(self):
         self._dispatch(agency=None)
         conditions = _conditions(self.handler.fcm)
@@ -64,23 +77,52 @@ class LaunchDispatchTests(SimpleTestCase):
         self.assertTrue([c for c in conditions if "_flex_" in c])
         self.assertTrue([c for c in conditions if "_all_" in c])
 
+    def test_unmapped_agency_records_skip_with_the_agency_reason(self):
+        with mock.patch("bot.app.notifications.v6.record_skip") as record_skip:
+            self._dispatch(agency=None, location="china")
+        skip_calls = {
+            (call.kwargs["platform"], call.kwargs["audience_class"], call.kwargs["reason"])
+            for call in record_skip.call_args_list
+        }
+        self.assertIn(("android", "strict", "unmapped_agency"), skip_calls)
+        self.assertIn(("ios", "strict", "unmapped_agency"), skip_calls)
+        self.assertIn(("android", "strict_w", "unmapped_agency"), skip_calls)
+        self.assertIn(("ios", "strict_w", "unmapped_agency"), skip_calls)
+
+    def test_unmapped_location_records_skip_with_the_location_reason(self):
+        with mock.patch("bot.app.notifications.v6.record_skip") as record_skip:
+            self._dispatch(agency="spacex", location=None)
+        skip_calls = {
+            (call.kwargs["platform"], call.kwargs["audience_class"], call.kwargs["reason"])
+            for call in record_skip.call_args_list
+        }
+        self.assertIn(("android", "strict", "unmapped_location"), skip_calls)
+        self.assertIn(("ios", "strict", "unmapped_location"), skip_calls)
+        self.assertIn(("android", "strict_w", "unmapped_location"), skip_calls)
+        self.assertIn(("ios", "strict_w", "unmapped_location"), skip_calls)
+
     def test_ios_sends_carry_the_unchanged_apns_config(self):
         self._dispatch()
         ios_calls = [c for c in self.handler.fcm.notify.call_args_list if c.kwargs.get("apns_config")]
-        self.assertTrue(ios_calls)
+        self.assertEqual(len(ios_calls), 6)
         for call in ios_calls:
             headers = call.kwargs["apns_config"]["headers"]
             self.assertEqual(headers["apns-priority"], "10")
             self.assertEqual(headers["apns-collapse-id"], "uuid-123")
             self.assertEqual(call.kwargs["apns_config"]["payload"]["aps"]["mutable-content"], 1)
+            self.assertEqual(call.kwargs["notification_title"], PAYLOAD["title"])
+            self.assertEqual(call.kwargs["notification_body"], PAYLOAD["body"])
 
     def test_android_sends_are_data_only_with_collapse_key(self):
         self._dispatch()
         android_calls = [c for c in self.handler.fcm.notify.call_args_list if c.kwargs.get("android_config")]
-        self.assertTrue(android_calls)
+        self.assertEqual(len(android_calls), 6)
         for call in android_calls:
             self.assertIsNone(call.kwargs["notification_title"])
+            self.assertIsNone(call.kwargs["notification_body"])
             self.assertEqual(call.kwargs["android_config"]["collapse_key"], "uuid-123")
+            self.assertEqual(call.kwargs["android_config"]["priority"], "high")
+            self.assertEqual(call.kwargs["android_config"]["ttl"], "86400s")
 
     def test_prod_env_appears_in_topic_names_when_debug_is_false(self):
         self._dispatch()

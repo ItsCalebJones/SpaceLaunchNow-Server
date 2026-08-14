@@ -15,13 +15,32 @@ from bot.utils.notification_groups import (
 )
 
 EXPECTED_LOCATION_GROUP_NAMES = {
-    "van", "florida", "wallops", "texas", "russia", "frenchGuiana",
-    "newZealand", "japan", "isro", "china", "other",
+    "van",
+    "florida",
+    "wallops",
+    "texas",
+    "russia",
+    "frenchGuiana",
+    "newZealand",
+    "japan",
+    "isro",
+    "china",
+    "other",
 }
 
 EXPECTED_AGENCY_GROUP_NAMES = {
-    "spacex", "nasa", "blueOrigin", "rocketLab", "virginGalactic", "ula",
-    "arianespace", "roscosmos", "northrop", "casc", "isroAgency", "otherAgency",
+    "spacex",
+    "nasa",
+    "blueOrigin",
+    "rocketLab",
+    "virginGalactic",
+    "ula",
+    "arianespace",
+    "roscosmos",
+    "northrop",
+    "casc",
+    "isroAgency",
+    "otherAgency",
 }
 
 

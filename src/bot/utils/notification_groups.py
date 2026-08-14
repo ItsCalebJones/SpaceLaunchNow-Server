@@ -49,9 +49,7 @@ LOCATION_GROUPS: dict[int, str] = {
     location_id: group for group, ids in _LOCATION_GROUP_IDS.items() for location_id in ids
 }
 
-AGENCY_GROUPS: dict[int, str] = {
-    agency_id: group for group, ids in _AGENCY_GROUP_IDS.items() for agency_id in ids
-}
+AGENCY_GROUPS: dict[int, str] = {agency_id: group for group, ids in _AGENCY_GROUP_IDS.items() for agency_id in ids}
 
 DEFAULT_LOCATION_GROUP = "other"
 DEFAULT_AGENCY_GROUP = "otherAgency"

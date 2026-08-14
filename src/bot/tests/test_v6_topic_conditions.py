@@ -79,15 +79,13 @@ class ConditionShapeTests(SimpleTestCase):
     def test_flex_class_ors_the_two_attributes(self):
         self.assertEqual(
             self._build("flex"),
-            "'v6_prod_ios_flex_oneHour' in topics "
-            "&& ('v6_prod_spacex' in topics || 'v6_prod_florida' in topics)",
+            "'v6_prod_ios_flex_oneHour' in topics && ('v6_prod_spacex' in topics || 'v6_prod_florida' in topics)",
         )
 
     def test_strict_class_ands_the_two_attributes(self):
         self.assertEqual(
             self._build("strict"),
-            "'v6_prod_ios_strict_oneHour' in topics "
-            "&& 'v6_prod_spacex' in topics && 'v6_prod_florida' in topics",
+            "'v6_prod_ios_strict_oneHour' in topics && 'v6_prod_spacex' in topics && 'v6_prod_florida' in topics",
         )
 
     def test_webcast_class_uses_its_own_type_topic(self):
@@ -141,10 +139,7 @@ class ClassDisjointnessTests(SimpleTestCase):
     could match two conditions and get two pushes for one launch."""
 
     def test_every_class_anchors_on_a_distinct_type_topic(self):
-        topics = [
-            get_v6_type_topic("prod", "ios", audience_class, "oneHour")
-            for audience_class in V6_AUDIENCE_CLASSES
-        ]
+        topics = [get_v6_type_topic("prod", "ios", audience_class, "oneHour") for audience_class in V6_AUDIENCE_CLASSES]
         self.assertEqual(len(topics), len(set(topics)))
 
     def test_platforms_do_not_share_type_topics(self):
@@ -199,15 +194,11 @@ class ConditionBudgetTests(SimpleTestCase):
 
     def test_no_condition_exceeds_three_topics(self):
         for condition, params in self._all_conditions():
-            self.assertLessEqual(
-                condition.count("in topics"), 3, msg=f"{params} produced {condition}"
-            )
+            self.assertLessEqual(condition.count("in topics"), 3, msg=f"{params} produced {condition}")
 
     def test_every_condition_has_balanced_parentheses(self):
         for condition, params in self._all_conditions():
-            self.assertEqual(
-                condition.count("("), condition.count(")"), msg=f"{params} produced {condition}"
-            )
+            self.assertEqual(condition.count("("), condition.count(")"), msg=f"{params} produced {condition}")
 
     def test_every_term_is_a_topic_membership_test(self):
         for condition, params in self._all_conditions():

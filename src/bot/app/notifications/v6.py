@@ -60,7 +60,7 @@ class V6NotificationMixin:
                     location_group=location,
                 )
                 if condition is None:
-                    reason = "unmapped_agency" if agency is None else "unmapped_location"
+                    reason = "unmapped_agency" if not agency else "unmapped_location"
                     logger.warning(
                         f"V6 skip - class={audience_class} platform={platform} reason={reason} "
                         f"lsp_id={lsp_id} location_id={location_id} launch={launch.id}"
@@ -145,15 +145,20 @@ class V6NotificationMixin:
                 "payload": {"aps": {"mutable-content": 1}},
             }
 
+        notification_type = data.get("notification_type")
+
         try:
             result = self.fcm.notify(**kwargs)
             logger.info(f"V6 {platform} [{audience_class}] result: {result}")
             record_send(
-                platform=platform, category=category, success=True, result=result,
+                platform=platform,
+                category=category,
+                success=True,
+                result=result,
                 audience_class=audience_class,
             )
             return NotificationResult(
-                notification_type=data["notification_type"],
+                notification_type=notification_type,
                 topics=condition,
                 result=result,
                 analytics_label=analytics_label,
@@ -161,11 +166,9 @@ class V6NotificationMixin:
             )
         except Exception as e:
             logger.error(f"V6 {platform} [{audience_class}] error: {e}")
-            record_send(
-                platform=platform, category=category, success=False, audience_class=audience_class
-            )
+            record_send(platform=platform, category=category, success=False, audience_class=audience_class)
             return NotificationResult(
-                notification_type=data["notification_type"],
+                notification_type=notification_type,
                 topics=condition,
                 result=None,
                 analytics_label=analytics_label,
