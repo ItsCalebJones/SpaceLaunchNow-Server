@@ -3,13 +3,13 @@ import logging
 
 from bot.app.notification_service import NotificationService
 from bot.app.notifications.metrics import record_send
-from bot.app.notifications.v6 import V6NotificationMixin
+from bot.app.notifications.v6 import dual_send_v6_broadcast
 from bot.utils.util import get_fcm_v5_android_topic, get_fcm_v5_ios_topic
 
 logger = logging.getLogger(__name__)
 
 
-class NewsNotificationHandler(V6NotificationMixin, NotificationService):
+class NewsNotificationHandler(NotificationService):
     def send_notification(self, article):
         # V5-only. send_v3_notification is retained but no longer invoked.
         self._send_v5_notification(article)
@@ -103,19 +103,15 @@ class NewsNotificationHandler(V6NotificationMixin, NotificationService):
             record_send(platform="ios", category="news", success=False)
         logger.info("----------------------------------------------------------")
 
-        # V6 topic-targeted broadcast (dual-send window). Contained so a V6
-        # failure can never reach V5's control flow.
-        try:
-            self.send_v6_broadcast(
-                kind="news",
-                v5_data=v5_data,
-                title=v5_data["title"],
-                body=v5_data["body"],
-                collapse_id=f"news_{v5_data['article_id']}",
-                category="news",
-            )
-        except Exception:
-            logger.exception("V6 news broadcast failed; V5 news send is unaffected")
+        # V6 topic-targeted broadcast (dual-send window).
+        dual_send_v6_broadcast(
+            self.fcm,
+            debug=self.DEBUG,
+            kind="news",
+            data=v5_data,
+            collapse_id=f"news_{v5_data['article_id']}",
+            category="news",
+        )
 
     def send_v3_notification(self, article, data):
         if not self.DEBUG:

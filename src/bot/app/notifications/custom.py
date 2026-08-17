@@ -6,20 +6,14 @@ from api.models import Article, Events, Launch
 
 from bot.app.notifications.base import NotificationResult
 from bot.app.notifications.metrics import record_send
+from bot.app.notifications.v6 import dual_send_v6_broadcast
 from bot.utils.util import get_fcm_v5_android_topic, get_fcm_v5_ios_topic
 
 logger = logging.getLogger(__name__)
 
 
 class CustomNotificationMixin:
-    """Mixin for custom notification methods (iOS/Android).
-
-    Requires ``V6NotificationMixin`` in the MRO for ``send_v6_broadcast``. That
-    dependency is resolved by ``NotificationHandler``'s base list, not by
-    inheritance here: making this mixin inherit ``V6NotificationMixin`` fails C3
-    linearization at class-creation time, because ``NotificationHandler`` already
-    lists ``V6NotificationMixin`` *before* ``CustomNotificationMixin``.
-    """
+    """Mixin for custom notification methods (iOS/Android)."""
 
     def _build_v5_custom_data(self, pending) -> dict:
         """Build V5-compatible flat data payload for custom admin notifications.
@@ -104,18 +98,15 @@ class CustomNotificationMixin:
         # check_custom drives the iOS and Android methods from independent
         # send_ios / send_android flags, so each method must emit exactly the
         # platform it was invoked for.
-        try:
-            self.send_v6_broadcast(
-                kind="announce",
-                v5_data=v5_data,
-                title=v5_data["title"],
-                body=v5_data["body"],
-                collapse_id=f"custom_{v5_data['custom_id']}",
-                category="custom",
-                platforms=("android",),
-            )
-        except Exception:
-            logger.exception("V6 announce broadcast (android) failed; V5 custom send is unaffected")
+        dual_send_v6_broadcast(
+            self.fcm,
+            debug=self.DEBUG,
+            kind="announce",
+            data=v5_data,
+            collapse_id=f"custom_{v5_data['custom_id']}",
+            category="custom",
+            platforms=("android",),
+        )
 
     def _send_v5_custom_ios(self, pending) -> None:
         """Send a custom admin notification to the V5 iOS topic (alert + mutable-content)."""
@@ -157,18 +148,15 @@ class CustomNotificationMixin:
         # send_android flags, so each method must emit exactly the platform it
         # was invoked for. Sending both from here would push announcements to
         # Android users an admin deliberately excluded.
-        try:
-            self.send_v6_broadcast(
-                kind="announce",
-                v5_data=v5_data,
-                title=v5_data["title"],
-                body=v5_data["body"],
-                collapse_id=f"custom_{v5_data['custom_id']}",
-                category="custom",
-                platforms=("ios",),
-            )
-        except Exception:
-            logger.exception("V6 announce broadcast (ios) failed; V5 custom send is unaffected")
+        dual_send_v6_broadcast(
+            self.fcm,
+            debug=self.DEBUG,
+            kind="announce",
+            data=v5_data,
+            collapse_id=f"custom_{v5_data['custom_id']}",
+            category="custom",
+            platforms=("ios",),
+        )
 
     def send_custom_ios_v3(self, pending) -> NotificationResult:
         """Send custom iOS Flutter notification."""

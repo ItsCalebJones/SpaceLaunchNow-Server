@@ -8,18 +8,25 @@ impossible by construction rather than by deduplication.
 
 Payloads and APNs/Android config are identical to V5 on purpose: during the
 dual-send window one payload shape ships to two topic schemes.
+
+Broadcasts (events / news / announce) are plain module functions rather than
+mixin methods. They need nothing from ``self`` but the FCM client and the debug
+flag, and keeping them free of the class hierarchy means the four handlers that
+send them share one implementation instead of four copies.
 """
 
 import logging
 
-from api.models import Launch
-
 from bot.app.notifications.base import NotificationResult
-from bot.app.notifications.metrics import record_send, record_skip
-from bot.utils.notification_groups import agency_group, location_group
+from bot.app.notifications.metrics import record_group_fallback, record_skip, record_v6_send
+from bot.utils.notification_groups import (
+    DEFAULT_AGENCY_GROUP,
+    DEFAULT_LOCATION_GROUP,
+    agency_group,
+    location_group,
+)
 from bot.utils.util import (
     V6_AUDIENCE_CLASSES,
-    V6_NOTIFICATION_TYPES,
     build_v6_broadcast_condition,
     build_v6_condition,
     v6_class_is_webcast_only,
@@ -27,21 +34,155 @@ from bot.utils.util import (
 
 logger = logging.getLogger(__name__)
 
-_PLATFORMS = ("android", "ios")
+PLATFORMS = ("android", "ios")
+
+# 30s, not V5's 240s. "Identical to V5" covers the payload and the APNs/Android
+# config, not the transport timeout: V6 adds up to 12 sequential blocking calls
+# per launch on the single-threaded tracker loop, and oneMinute/tenMinutes are
+# notifications where lateness equals uselessness. V5 runs first and keeps 240s.
+SEND_TIMEOUT_SECONDS = 30
+
+
+def send_v6(
+    fcm,
+    *,
+    platform: str,
+    data: dict,
+    condition: str,
+    audience_class: str,
+    category: str,
+    collapse_id: str,
+    analytics_label: str,
+) -> NotificationResult:
+    """One FCM call. Android is data-only; iOS carries the alert.
+
+    Title and body are read from ``data``, which every V5 payload builder
+    populates -- passing them separately only creates a way for them to disagree.
+    """
+    logger.info(f"V6 {platform} [{audience_class}] condition: {condition}")
+    kwargs = {
+        "data_payload": data,
+        "topic_condition": condition,
+        "fcm_options": {"analytics_label": analytics_label},
+        "timeout": SEND_TIMEOUT_SECONDS,
+    }
+    if platform == "android":
+        kwargs["notification_title"] = None
+        kwargs["notification_body"] = None
+        kwargs["android_config"] = {
+            "priority": "high",
+            "collapse_key": collapse_id,
+            "ttl": "86400s",
+        }
+    else:
+        kwargs["notification_title"] = data["title"]
+        kwargs["notification_body"] = data["body"]
+        kwargs["apns_config"] = {
+            "headers": {"apns-priority": "10", "apns-collapse-id": collapse_id},
+            "payload": {"aps": {"mutable-content": 1}},
+        }
+
+    notification_type = data.get("notification_type")
+
+    try:
+        result = fcm.notify(**kwargs)
+        logger.info(f"V6 {platform} [{audience_class}] result: {result}")
+        record_v6_send(platform=platform, category=category, success=True, audience_class=audience_class)
+        return NotificationResult(
+            notification_type=notification_type,
+            topics=condition,
+            result=result,
+            analytics_label=analytics_label,
+            error=None,
+        )
+    except Exception as e:
+        logger.error(f"V6 {platform} [{audience_class}] error: {e}")
+        record_v6_send(platform=platform, category=category, success=False, audience_class=audience_class)
+        return NotificationResult(
+            notification_type=notification_type,
+            topics=condition,
+            result=None,
+            analytics_label=analytics_label,
+            error=e,
+        )
+
+
+def send_v6_broadcast(
+    fcm,
+    *,
+    debug: bool,
+    kind: str,
+    data: dict,
+    collapse_id: str,
+    category: str,
+    platforms: tuple[str, ...] = PLATFORMS,
+) -> list[NotificationResult]:
+    """Send a broadcast type (events / news / announce) to ``platforms``.
+
+    Broadcasts are not agency/location filtered -- one topic per platform,
+    gated by the user's own per-type toggle via their subscription.
+
+    ``platforms`` narrows the send. Events and news keep the default because
+    both of their platform sends live in one method; custom admin notifications
+    carry independent ``send_ios`` / ``send_android`` flags and must pass the
+    single platform they are dispatching for.
+    """
+    env = "debug" if debug else "prod"
+    return [
+        send_v6(
+            fcm,
+            platform=platform,
+            data=data,
+            condition=build_v6_broadcast_condition(env, platform, kind),
+            audience_class="broadcast",
+            category=category,
+            collapse_id=collapse_id,
+            analytics_label=f"v6_{platform}_{kind}_{collapse_id}",
+        )
+        for platform in platforms
+    ]
+
+
+def dual_send_v6_broadcast(
+    fcm,
+    *,
+    debug: bool,
+    kind: str,
+    data: dict,
+    collapse_id: str,
+    category: str,
+    platforms: tuple[str, ...] = PLATFORMS,
+) -> None:
+    """Send the V6 broadcast alongside a V5 one, containing any failure.
+
+    Every V5 broadcast path calls this immediately after its own send. The
+    containment is here rather than at each call site so there is one place to
+    change it, and so no caller can forget it and let a V6 error abort a V5 flow.
+    """
+    try:
+        send_v6_broadcast(
+            fcm,
+            debug=debug,
+            kind=kind,
+            data=data,
+            collapse_id=collapse_id,
+            category=category,
+            platforms=platforms,
+        )
+    except Exception:
+        logger.exception(f"V6 {kind} broadcast failed; the V5 send is unaffected")
 
 
 class V6NotificationMixin:
-    """Per-audience-class dispatch. Requires V5NotificationMixin in the MRO for
-    ``_build_v5_data_payload`` -- see the module docstring in v5.py."""
+    """Per-audience-class launch dispatch."""
 
-    def send_v6_launch_notification(
-        self, launch: Launch, notification_type: str, contents: str
-    ) -> list[NotificationResult]:
-        """Send one message per satisfiable audience class, per platform."""
-        # Deliberately rebuilds the payload V5 just built: threading the dict
-        # through would mean modifying send_v5_notification, which the dual-send
-        # window forbids. The extra queries are the price of V5 being untouched.
-        data = self._build_v5_data_payload(launch, notification_type, contents)
+    def send_v6_launch_notification(self, launch, notification_type: str, data: dict) -> list[NotificationResult]:
+        """Send one message per satisfiable audience class, per platform.
+
+        ``data`` is the V5 payload the caller already built; V6 ships the same
+        payload shape, so rebuilding it here would double the ORM work on the
+        latency-critical tracker loop for an identical dict.
+        """
         env = "debug" if self.DEBUG else "prod"
         has_webcast = data["webcast"] == "True"
 
@@ -50,26 +191,31 @@ class V6NotificationMixin:
         agency = agency_group(lsp_id)
         location = location_group(location_id)
 
+        # A curated table missing an ID is invisible in delivery -- the send
+        # still happens, just to a group almost nobody subscribes to. Count it.
+        if agency == DEFAULT_AGENCY_GROUP:
+            record_group_fallback("agency")
+        if location == DEFAULT_LOCATION_GROUP:
+            record_group_fallback("location")
+
         results: list[NotificationResult] = []
-        for platform in _PLATFORMS:
+        for platform in PLATFORMS:
             for audience_class in V6_AUDIENCE_CLASSES:
                 if v6_class_is_webcast_only(audience_class) and not has_webcast:
+                    # The expected, high-volume skip: this is why V6 sends per
+                    # launch swing between 6 and 12. Recorded so that swing is
+                    # explainable from metrics alone.
+                    record_skip(platform=platform, audience_class=audience_class, reason="no_webcast")
                     continue
-                condition = build_v6_condition(
+                condition, reason = build_v6_condition(
                     env=env,
                     platform=platform,
                     audience_class=audience_class,
                     notification_type=notification_type,
-                    agency_group=agency,
-                    location_group=location,
+                    agency=agency,
+                    location=location,
                 )
                 if condition is None:
-                    if notification_type not in V6_NOTIFICATION_TYPES:
-                        reason = "unknown_type"
-                    elif not agency:
-                        reason = "unmapped_agency"
-                    else:
-                        reason = "unmapped_location"
                     logger.warning(
                         f"V6 skip - class={audience_class} platform={platform} reason={reason} "
                         f"type={notification_type} lsp_id={lsp_id} location_id={location_id} "
@@ -78,15 +224,14 @@ class V6NotificationMixin:
                     record_skip(platform=platform, audience_class=audience_class, reason=reason)
                     continue
                 results.append(
-                    self._send_v6(
+                    send_v6(
+                        self.fcm,
                         platform=platform,
                         data=data,
                         condition=condition,
                         audience_class=audience_class,
-                        title=data["title"],
-                        body=data["body"],
-                        collapse_id=data["launch_uuid"],
                         category="launch",
+                        collapse_id=data["launch_uuid"],
                         # No platform segment: FCM caps analytics_label at 50
                         # chars and a 36-char UUID leaves no room for it. The
                         # platform is already carried by the condition, the
@@ -95,113 +240,3 @@ class V6NotificationMixin:
                     )
                 )
         return results
-
-    def send_v6_broadcast(
-        self,
-        kind: str,
-        v5_data: dict,
-        title: str,
-        body: str,
-        collapse_id: str,
-        category: str,
-        platforms: tuple[str, ...] = _PLATFORMS,
-    ) -> list[NotificationResult]:
-        """Send a broadcast type (events / news / announce) to both platforms.
-
-        Broadcasts are not agency/location filtered -- one topic per platform,
-        gated by the user's own per-type toggle via their subscription.
-
-        ``platforms`` narrows the send. Events and news keep the default because
-        both of their platform sends live in one method; custom admin
-        notifications carry independent ``send_ios`` / ``send_android`` flags and
-        must pass the single platform they are dispatching for.
-        """
-        env = "debug" if self.DEBUG else "prod"
-        results: list[NotificationResult] = []
-        for platform in platforms:
-            results.append(
-                self._send_v6(
-                    platform=platform,
-                    data=v5_data,
-                    condition=build_v6_broadcast_condition(env, platform, kind),
-                    audience_class="broadcast",
-                    title=title,
-                    body=body,
-                    collapse_id=collapse_id,
-                    category=category,
-                    analytics_label=f"v6_{platform}_{kind}_{collapse_id}",
-                )
-            )
-        return results
-
-    def _send_v6(
-        self,
-        *,
-        platform: str,
-        data: dict,
-        condition: str,
-        audience_class: str,
-        title: str,
-        body: str,
-        collapse_id: str,
-        category: str,
-        analytics_label: str,
-    ) -> NotificationResult:
-        """One FCM call. Android is data-only; iOS carries the alert."""
-        logger.info(f"V6 {platform} [{audience_class}] condition: {condition}")
-        kwargs = {
-            "data_payload": data,
-            "topic_condition": condition,
-            "fcm_options": {"analytics_label": analytics_label},
-            # 30s, not V5's 240s. "Identical to V5" covers the payload and the
-            # APNs/Android config, not the transport timeout: V6 adds up to 12
-            # sequential blocking calls per launch on the single-threaded
-            # tracker loop, and oneMinute/tenMinutes are notifications where
-            # lateness equals uselessness. V5 runs first and keeps its 240s.
-            "timeout": 30,
-        }
-        if platform == "android":
-            kwargs["notification_title"] = None
-            kwargs["notification_body"] = None
-            kwargs["android_config"] = {
-                "priority": "high",
-                "collapse_key": collapse_id,
-                "ttl": "86400s",
-            }
-        else:
-            kwargs["notification_title"] = title
-            kwargs["notification_body"] = body
-            kwargs["apns_config"] = {
-                "headers": {"apns-priority": "10", "apns-collapse-id": collapse_id},
-                "payload": {"aps": {"mutable-content": 1}},
-            }
-
-        notification_type = data.get("notification_type")
-
-        try:
-            result = self.fcm.notify(**kwargs)
-            logger.info(f"V6 {platform} [{audience_class}] result: {result}")
-            record_send(
-                platform=platform,
-                category=category,
-                success=True,
-                result=result,
-                audience_class=audience_class,
-            )
-            return NotificationResult(
-                notification_type=notification_type,
-                topics=condition,
-                result=result,
-                analytics_label=analytics_label,
-                error=None,
-            )
-        except Exception as e:
-            logger.error(f"V6 {platform} [{audience_class}] error: {e}")
-            record_send(platform=platform, category=category, success=False, audience_class=audience_class)
-            return NotificationResult(
-                notification_type=notification_type,
-                topics=condition,
-                result=None,
-                analytics_label=analytics_label,
-                error=e,
-            )

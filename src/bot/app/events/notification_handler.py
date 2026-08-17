@@ -3,13 +3,13 @@ import logging
 
 from bot.app.notification_service import NotificationService
 from bot.app.notifications.metrics import record_send
-from bot.app.notifications.v6 import V6NotificationMixin
+from bot.app.notifications.v6 import dual_send_v6_broadcast
 from bot.utils.util import get_fcm_v5_android_topic, get_fcm_v5_ios_topic
 
 logger = logging.getLogger(__name__)
 
 
-class EventNotificationHandler(V6NotificationMixin, NotificationService):
+class EventNotificationHandler(NotificationService):
     def send_ten_minute_notification(self, event):
         self.send_notification(event, "event_notification")
 
@@ -168,19 +168,15 @@ class EventNotificationHandler(V6NotificationMixin, NotificationService):
             record_send(platform="ios", category="event", success=False)
         logger.info("----------------------------------------------------------")
 
-        # V6 topic-targeted broadcast (dual-send window). Contained so a V6
-        # failure can never reach V5's control flow.
-        try:
-            self.send_v6_broadcast(
-                kind="events",
-                v5_data=v5_data,
-                title=v5_data["title"],
-                body=v5_data["body"],
-                collapse_id=f"event_{v5_data['event_id']}",
-                category="event",
-            )
-        except Exception:
-            logger.exception("V6 events broadcast failed; V5 event send is unaffected")
+        # V6 topic-targeted broadcast (dual-send window).
+        dual_send_v6_broadcast(
+            self.fcm,
+            debug=self.DEBUG,
+            kind="events",
+            data=v5_data,
+            collapse_id=f"event_{v5_data['event_id']}",
+            category="event",
+        )
 
     def send_to_fcm(self, topics, data, webcast: bool = False):
         logger.info("----------------------------------------------------------")

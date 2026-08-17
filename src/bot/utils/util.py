@@ -429,6 +429,12 @@ V6_NOTIFICATION_TYPES: tuple[str, ...] = (
     "partial_failure",
 )
 
+V6_BROADCAST_KINDS: tuple[str, ...] = (
+    "events",
+    "news",
+    "announce",
+)
+
 _V6_WEBCAST_SUFFIX = "_w"
 
 
@@ -470,41 +476,60 @@ def build_v6_condition(
     platform: str,
     audience_class: str,
     notification_type: str,
-    agency_group: str | None,
-    location_group: str | None,
-) -> str | None:
-    """Build the FCM condition for one audience class, or None to skip.
+    agency: str | None,
+    location: str | None,
+) -> tuple[str | None, str | None]:
+    """Build the FCM condition for one audience class.
 
-    None means the condition would be unsatisfiable and must not be sent:
-    the type is not a real notification type (so no device can be subscribed to
-    its topic), a strict class needs both attributes, or a flexible class needs
-    at least one.
+    Returns ``(condition, None)`` when the send should happen, or
+    ``(None, reason)`` when it must be skipped. The reason is returned rather
+    than left for the caller to re-derive: this function is the only place that
+    knows which check failed, and a caller reconstructing it drifts.
+
+    Skip reasons:
+        unknown_type / unknown_class: no device can be subscribed to the
+            resulting topic, so the condition is unsatisfiable by construction.
+        unmapped_agency / unmapped_location / unmapped_attributes: the launch is
+            missing an attribute this class matches on.
     """
     if notification_type not in V6_NOTIFICATION_TYPES:
-        return None
+        return None, "unknown_type"
+    if audience_class not in V6_AUDIENCE_CLASSES:
+        return None, "unknown_class"
 
     type_term = _v6_term(get_v6_type_topic(env, platform, audience_class, notification_type))
     shape = v6_class_shape(audience_class)
 
     if shape == "all":
-        return type_term
+        return type_term, None
 
-    agency_term = _v6_term(get_v6_attribute_topic(env, agency_group)) if agency_group else None
-    location_term = _v6_term(get_v6_attribute_topic(env, location_group)) if location_group else None
+    agency_term = _v6_term(get_v6_attribute_topic(env, agency)) if agency else None
+    location_term = _v6_term(get_v6_attribute_topic(env, location)) if location else None
 
     if shape == "strict":
-        if not (agency_term and location_term):
-            return None
-        return f"{type_term} && {agency_term} && {location_term}"
+        if not agency_term and not location_term:
+            return None, "unmapped_attributes"
+        if not agency_term:
+            return None, "unmapped_agency"
+        if not location_term:
+            return None, "unmapped_location"
+        return f"{type_term} && {agency_term} && {location_term}", None
 
     attribute_terms = [term for term in (agency_term, location_term) if term]
     if not attribute_terms:
-        return None
+        return None, "unmapped_attributes"
     if len(attribute_terms) == 1:
-        return f"{type_term} && {attribute_terms[0]}"
-    return f"{type_term} && ({attribute_terms[0]} || {attribute_terms[1]})"
+        return f"{type_term} && {attribute_terms[0]}", None
+    return f"{type_term} && ({attribute_terms[0]} || {attribute_terms[1]})", None
 
 
 def build_v6_broadcast_condition(env: str, platform: str, kind: str) -> str:
-    """Broadcast types are gated by their own toggle only -- a single topic."""
+    """Broadcast types are gated by their own toggle only -- a single topic.
+
+    Raises ValueError on an unknown kind. A typo here would otherwise produce a
+    well-formed condition naming a topic nothing subscribes to: FCM accepts it,
+    the send is recorded as a success, and the notification reaches nobody.
+    """
+    if kind not in V6_BROADCAST_KINDS:
+        raise ValueError(f"Unknown V6 broadcast kind {kind!r}; expected one of {V6_BROADCAST_KINDS}")
     return _v6_term(get_v6_broadcast_topic(env, platform, kind))

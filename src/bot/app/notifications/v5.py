@@ -153,6 +153,7 @@ class V5NotificationMixin:
         launch: Launch,
         notification_type: str,
         contents: str,
+        data: dict | None = None,
     ) -> list[NotificationResult]:
         """Send v5 notifications to both Android and iOS platforms.
 
@@ -160,11 +161,15 @@ class V5NotificationMixin:
             launch: The Launch object to send notification for
             notification_type: Type of notification (e.g., 'tenMinutes', 'oneHour')
             contents: The notification message body
+            data: A prebuilt V5 payload. Callers that also dispatch V6 pass the
+                dict they already built so the ORM work is not repeated; omit it
+                and this builds its own.
 
         Returns:
             List of NotificationResult objects for Android and iOS
         """
-        data = self._build_v5_data_payload(launch, notification_type, contents)
+        if data is None:
+            data = self._build_v5_data_payload(launch, notification_type, contents)
 
         # Android notification (data-only)
         android_topics = get_fcm_v5_android_topic(debug=self.DEBUG)

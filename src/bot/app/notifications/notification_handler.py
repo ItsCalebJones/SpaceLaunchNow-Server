@@ -186,24 +186,34 @@ class NotificationHandler(
         # disabled — only V5 notifications are sent. The send_notif_v3_5/send_notif_v3/
         # send_notif_v4 mixin methods are retained for future re-enablement.
 
+        # One V5 payload for both dispatch paths. V6 ships the same shape, and
+        # building it twice repeats every ORM traversal it performs (vid_urls,
+        # program, rocket families, image FKs) on the latency-critical loop.
+        v5_data = self._build_v5_data_payload(launch, notification_type, contents)
+
         # Send v5 notifications with platform-specific messaging
         v5_results = self.send_v5_notification(
             launch=launch,
             notification_type=notification_type,
             contents=contents,
+            data=v5_data,
         )
+
+        self.notify_discord(v5_results, data)
 
         # Send v6 topic-targeted notifications alongside v5 (dual-send window).
         # v5 serves already-shipped builds; v6 serves upgraded ones, which
         # unsubscribe from the v5 topics. See the V6 design spec.
-        # Contained so a v6 failure can never reach v5's control flow.
+        #
+        # Runs last, and contained: V6 fans out to up to 12 sequential blocking
+        # sends on the single-threaded tracker loop, so anything sequenced after
+        # it inherits that latency -- and a v6 failure must never reach v5's
+        # control flow or suppress the Discord post above.
         try:
             self.send_v6_launch_notification(
                 launch=launch,
                 notification_type=notification_type,
-                contents=contents,
+                data=v5_data,
             )
         except Exception:
             logger.exception("V6 launch dispatch failed; V5 send is unaffected")
-
-        self.notify_discord(v5_results, data)
