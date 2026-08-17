@@ -45,8 +45,17 @@ per type, per platform.
 > - **Gap 2 (V5 per-type filtering / foreground-vs-NSE divergence) is resolved on the V6 path** —
 >   per-type filtering is enforced by the type topic, and the divergence cannot occur because
 >   neither path filters.
-> - **Gap 1 (`failure` / `partial_failure` have no user toggle) is unchanged.** V6 gives those
->   types their own topics, but no user-facing toggle exists to drive a subscription.
+> - **Gap 1 (`failure` / `partial_failure`) — the gap statement below is out of date.** Both types
+>   do have user toggles: `NotificationTopic.FAILURE` and `PARTIAL_FAILURE` are in
+>   `getUserConfigurableTopics()` with `defaultEnabled = true`, and their ids already match the
+>   server's type names. Under V6 they therefore have something to drive a subscription, and no
+>   V6-specific regression applies. What *is* required is the general V6 subscription work below,
+>   not anything particular to these two types.
+>
+>   **Owed before cutover (KMP):** V6 subscription reconciliation does not exist at all yet — no
+>   shipped client subscribes to any `v6_*` topic. Until it ships, every V6 send reaches zero
+>   devices and V5 serves everyone. The topic names it must target are pinned in
+>   `src/bot/contracts/notification-topics.v6.json`, enforced on both sides by conformance tests.
 > - **Gap 3 (iOS code-review-verified, never compiled or device-tested) is unchanged and in fact
 >   enlarged** — the V6 design's own acceptance gate is an on-device delivery matrix on both
 >   platforms, which is strictly more than gap 3 already asked for.

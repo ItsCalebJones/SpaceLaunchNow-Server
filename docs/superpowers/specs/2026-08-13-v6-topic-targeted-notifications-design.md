@@ -195,9 +195,10 @@ Initial contents mirror `NotificationLocation` in the KMP app exactly:
 | `frenchGuiana` | 13 |
 | `newZealand` | 10 |
 | `japan` | 24, 26, 32, 166 |
-| `isro` | 14 |
+| `india` | 14 |
 | `china` | 17, 8, 16, 19 |
-| `other` | 20, 3, 144 — **and every location ID not listed above** |
+| `other` | 20, 3, 144 |
+| `unmappedLocation` | **every location ID not listed above** |
 
 ### Agency
 
@@ -218,21 +219,44 @@ Initial contents mirror `NotificationLocation` in the KMP app exactly:
 
 ### Totality, and the one product decision this requires
 
-Both tables are **total**: every ID maps to exactly one group, with `other` / `otherAgency`
-absorbing the long tail. Totality is what removes the strict-skip case and guarantees every launch
-is reachable by some filtered user rather than only by follow-all subscribers.
+Both tables are **total**: every ID maps to exactly one group, with `unmappedLocation` /
+`otherAgency` absorbing the long tail. Totality is what removes the strict-skip case and keeps
+every launch's condition well-formed.
 
-`other` already exists as a user-facing location ("Misc. (Sea, Air, etc)"). **`otherAgency` does
-not exist today and requires a new settings row** ("Other Agencies") in the KMP app. Recommended,
-because without it a LandSpace or Firefly launch remains unreachable for strict users no matter
-what they select. **This needs sign-off** — it is the only user-visible product change in the
-design. If declined, the strict skip rule stays live for ungrouped agencies and this spec is
-otherwise unaffected.
+The two catch-alls are deliberately **not** symmetric, and this is a correction to an earlier
+revision of this spec that made `other` serve both roles:
 
-`isro` appears as both a location group (ID 14) and an agency group (ID 31) in the current app
-model, under the same `topicName`. Since attribute topics are a single flat namespace, the agency
-group is renamed `isroAgency` to disambiguate. Location `isro` is left alone to avoid churning a
-name users are already subscribed to under V5's sibling scheme.
+- **`otherAgency` is subscribable.** It does not exist today and requires a new settings row
+  ("Other Agencies") in the KMP app. Recommended, because without it a LandSpace or Firefly launch
+  remains unreachable for strict users no matter what they select. **This needs sign-off** — it is
+  the only user-visible product change in the design. If declined, the strict skip rule stays live
+  for ungrouped agencies and this spec is otherwise unaffected.
+- **`unmappedLocation` is not subscribable.** `other` is already a shipped user-facing location row
+  ("Misc. (Sea, Air, etc)") meaning exactly IDs 20/3/144. Letting it double as the catch-all would
+  silently widen a toggle users already set under V5: a user who ticked that one row would begin
+  receiving every newly catalogued launch site on Earth, with no app change and no notice. Unlisted
+  IDs therefore resolve to a group nothing subscribes to, which reproduces V5 exactly — under V5
+  the device compared the launch's location ID against that same curated list and did not match.
+
+The consequence is that a strict/flex user cannot currently reach a launch from an uncatalogued
+location, which is the V5 status quo. Adding a subscribable "Other Locations" row is a separate
+product decision; `sln_notification_group_fallbacks_total{kind="location"}` measures how often it
+would matter.
+
+`isro` appeared as both a location group (ID 14) and an agency group (ID 31) in the app model, under
+the same `topicName`. Since attribute topics are a single flat namespace, **both** are renamed: the
+agency to `isroAgency`, and the location to `india`. An earlier revision of this spec renamed only
+the agency and left the location as `isro`, reasoning that users were already subscribed to that
+name under V5's sibling scheme. That reasoning does not hold — V6 attribute topics are namespaced
+`v6_<env>_<group>`, so `v6_prod_india` cannot collide with or inherit from any legacy bare `isro`
+topic, and neither side persists selections by `topicName` (both use numeric IDs).
+
+Renaming the location is also what removes the root cause rather than the symptom: naming a *place*
+after an agency acronym is what let the two tables reach for one name. `isroAgency` keeps its suffix
+anyway, so a bare `isro` never becomes ambiguous again.
+
+Both renames are free only until cutover. Once clients subscribe to `v6_*` topics, changing a group
+name costs a full app-adoption window during which the server must emit both.
 
 ### Implementation
 
@@ -242,7 +266,7 @@ A module-level constant in `src/bot/utils/notification_groups.py`:
 LOCATION_GROUPS: dict[int, str] = {11: "van", 27: "florida", 12: "florida", ...}
 AGENCY_GROUPS: dict[int, str] = {121: "spacex", 44: "nasa", ...}
 
-DEFAULT_LOCATION_GROUP = "other"
+DEFAULT_LOCATION_GROUP = "unmappedLocation"  # not a user-facing row; see above
 DEFAULT_AGENCY_GROUP = "otherAgency"
 
 def location_group(location_id: int | None) -> str | None: ...
@@ -263,12 +287,17 @@ never sends IDs to the server.
 |---|---|
 | `src/bot/utils/notification_groups.py` | **New.** Group tables + lookup helpers. |
 | `src/bot/utils/util.py` | Add `build_v6_condition(...)`, `get_v6_type_topic(...)`, `get_v6_broadcast_topic(...)`. V3 helpers left untouched and uninvoked. |
-| `src/bot/app/notifications/v6.py` | **New.** `V6NotificationMixin` — class table, per-class dispatch, skip rules. |
-| `src/bot/app/notifications/notification_handler.py` | Compose `V6NotificationMixin`; launch sends go through V6 plus the V5 dual-send. |
+| `src/bot/app/notifications/v6.py` | **New.** `V6NotificationMixin` for per-class launch dispatch; `send_v6_broadcast` / `dual_send_v6_broadcast` as module functions. |
+| `src/bot/app/notifications/notification_handler.py` | Compose `V6NotificationMixin`; build the V5 payload once and pass it to both schemes. |
 | `src/bot/app/events/notification_handler.py` | Broadcast event sends target `v6_<env>_<platform>_events` alongside the V5 topic. |
 | `src/bot/app/notifications/news_notification_handler.py` | Same, `…_news`. |
-| `src/bot/app/notifications/custom.py` | Same, `…_announce`. |
-| `src/bot/app/notifications/metrics.py` | Add an `audience_class` label to `NOTIFICATIONS_SENT`. |
+| `src/bot/app/notifications/custom.py` | Same, `…_announce`, per platform. |
+| `src/bot/app/notifications/metrics.py` | Add `V6_NOTIFICATIONS_SENT`, the skip counter, and the group-fallback counter. |
+
+Broadcasts are module-level functions rather than mixin methods. They need nothing from `self` but
+the FCM client and the debug flag, and a mixin would have to be composed into four separate class
+hierarchies — one of which (`CustomNotificationMixin`) cannot inherit it without breaking C3
+linearization, leaving an `AttributeError`-at-send-time contract expressible only in a docstring.
 
 `v5.py` is retained and still invoked for the dual-send window; it is deleted at retirement, not
 now.
@@ -278,10 +307,17 @@ now.
 ```python
 def build_v6_condition(
     *, env: str, platform: str, audience_class: str, notification_type: str,
-    agency_group: str | None, location_group: str | None,
-) -> str | None:
-    """Return an FCM condition, or None when the class cannot be satisfied."""
+    agency: str | None, location: str | None,
+) -> tuple[str | None, str | None]:
+    """Return (condition, None), or (None, skip_reason) when unsatisfiable."""
 ```
+
+The reason is returned rather than re-derived by the caller. The builder is the only place that
+knows which check failed, so a caller reconstructing it duplicates the decision and drifts from it.
+Reasons: `unknown_type`, `unknown_class`, `unmapped_agency`, `unmapped_location`,
+`unmapped_attributes`. `audience_class` is validated for the same reason `notification_type` is —
+an unrecognised class would otherwise fall through to the flexible branch and silently ship
+flex-shaped targeting for a class meant to be something else.
 
 Returns `None` for the skip cases above. Every return value contains ≤3 topics — asserted by test,
 not by convention.
@@ -337,10 +373,21 @@ messaging rather than to this scheme.
 
 What is gained:
 
-- `sln_notifications_sent_total` gains an `audience_class` label, so per-class send volume, skip
-  rates, and per-class failures are visible.
-- Skipped sends are logged with the reason and the unmapped ID, which surfaces gaps in the group
-  table as data rather than as user reports.
+- `sln_v6_notifications_sent_total{platform, category, result, audience_class}` — a **separate**
+  counter from V5's `sln_notifications_sent_total`, so per-class volume and failures are visible
+  without distorting the V5 series. Sharing one counter would be actively harmful during dual-send:
+  one launch produces 2 V5 sends and up to 12 V6 sends, and the dashboard's error ratio
+  (`sum(...{result="error"}) / sum(...)`, unfiltered) would read a total V5 outage as ~14% errors
+  instead of 100%, disabling the panel that exists to detect it.
+- `sln_notification_sends_skipped_total{platform, audience_class, reason}` — skipped sends, logged
+  with the reason and the unmapped ID. In practice `no_webcast` dominates; it is recorded precisely
+  because it is what makes V6 volume per launch swing between 6 and 12, which is otherwise
+  indistinguishable from a dispatch bug.
+- `sln_notification_group_fallbacks_total{kind}` — launches whose agency or location fell through
+  to a catch-all. This, not the skip counter, is what surfaces gaps in the group tables: both
+  tables are total, so an uncatalogued ID produces a *send*, not a skip. A rising count means the
+  table needs an entry, and for `kind="location"` it also means the launch reached only follow-all
+  subscribers.
 
 What is still not answerable: "did *this specific device* receive it?" A per-device token registry
 with `send_each` (July's Option C) is the only thing that answers that. This design does not
