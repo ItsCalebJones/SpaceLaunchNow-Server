@@ -11,6 +11,7 @@ from django.test import SimpleTestCase
 
 from bot.utils.util import (
     V6_AUDIENCE_CLASSES,
+    V6_BROADCAST_KINDS,
     V6_NOTIFICATION_TYPES,
     build_v6_broadcast_condition,
     build_v6_condition,
@@ -20,6 +21,34 @@ from bot.utils.util import (
     v6_class_is_webcast_only,
     v6_class_shape,
 )
+
+
+def _build(
+    audience_class,
+    agency="spacex",
+    location="florida",
+    notification_type="oneHour",
+    platform="ios",
+    env="prod",
+):
+    return build_v6_condition(
+        env=env,
+        platform=platform,
+        audience_class=audience_class,
+        notification_type=notification_type,
+        agency=agency,
+        location=location,
+    )
+
+
+def _condition(*args, **kwargs):
+    condition, _ = _build(*args, **kwargs)
+    return condition
+
+
+def _reason(*args, **kwargs):
+    _, reason = _build(*args, **kwargs)
+    return reason
 
 
 class TopicNameTests(SimpleTestCase):
@@ -63,104 +92,93 @@ class ClassHelperTests(SimpleTestCase):
 
 
 class ConditionShapeTests(SimpleTestCase):
-    def _build(self, audience_class, agency="spacex", location="florida"):
-        return build_v6_condition(
-            env="prod",
-            platform="ios",
-            audience_class=audience_class,
-            notification_type="oneHour",
-            agency_group=agency,
-            location_group=location,
-        )
-
     def test_all_class_is_a_single_topic(self):
-        self.assertEqual(self._build("all"), "'v6_prod_ios_all_oneHour' in topics")
+        self.assertEqual(_condition("all"), "'v6_prod_ios_all_oneHour' in topics")
 
     def test_flex_class_ors_the_two_attributes(self):
         self.assertEqual(
-            self._build("flex"),
+            _condition("flex"),
             "'v6_prod_ios_flex_oneHour' in topics && ('v6_prod_spacex' in topics || 'v6_prod_florida' in topics)",
         )
 
     def test_strict_class_ands_the_two_attributes(self):
         self.assertEqual(
-            self._build("strict"),
+            _condition("strict"),
             "'v6_prod_ios_strict_oneHour' in topics && 'v6_prod_spacex' in topics && 'v6_prod_florida' in topics",
         )
 
     def test_webcast_class_uses_its_own_type_topic(self):
-        self.assertIn("v6_prod_ios_flex_w_oneHour", self._build("flex_w"))
+        self.assertIn("v6_prod_ios_flex_w_oneHour", _condition("flex_w"))
+
+    def test_a_built_condition_reports_no_skip_reason(self):
+        for audience_class in V6_AUDIENCE_CLASSES:
+            condition, reason = _build(audience_class)
+            self.assertIsNotNone(condition, msg=audience_class)
+            self.assertIsNone(reason, msg=audience_class)
 
 
 class SkipRuleTests(SimpleTestCase):
-    def _build(self, audience_class, agency, location):
-        return build_v6_condition(
-            env="prod",
-            platform="ios",
-            audience_class=audience_class,
-            notification_type="oneHour",
-            agency_group=agency,
-            location_group=location,
-        )
-
     def test_flex_with_only_a_location_uses_a_single_term(self):
         # A LandSpace launch from Jiuquan has no agency group but does map to
         # china; a China-following user must still receive it.
         self.assertEqual(
-            self._build("flex", None, "china"),
+            _condition("flex", agency=None, location="china"),
             "'v6_prod_ios_flex_oneHour' in topics && 'v6_prod_china' in topics",
         )
 
     def test_flex_with_only_an_agency_uses_a_single_term(self):
         self.assertEqual(
-            self._build("flex", "spacex", None),
+            _condition("flex", agency="spacex", location=None),
             "'v6_prod_ios_flex_oneHour' in topics && 'v6_prod_spacex' in topics",
         )
 
     def test_strict_without_an_agency_is_skipped(self):
         # Unsatisfiable: no user's agency selection can match an ungrouped agency.
-        self.assertIsNone(self._build("strict", None, "china"))
+        self.assertIsNone(_condition("strict", agency=None, location="china"))
+        self.assertEqual(_reason("strict", agency=None, location="china"), "unmapped_agency")
 
     def test_strict_without_a_location_is_skipped(self):
-        self.assertIsNone(self._build("strict", "spacex", None))
+        self.assertIsNone(_condition("strict", agency="spacex", location=None))
+        self.assertEqual(_reason("strict", agency="spacex", location=None), "unmapped_location")
+
+    def test_strict_without_either_attribute_names_both(self):
+        # Reporting "unmapped_agency" here would send an operator to the wrong
+        # table; the launch is missing both.
+        self.assertIsNone(_condition("strict", agency=None, location=None))
+        self.assertEqual(_reason("strict", agency=None, location=None), "unmapped_attributes")
 
     def test_flex_with_neither_attribute_is_skipped(self):
-        self.assertIsNone(self._build("flex", None, None))
+        self.assertIsNone(_condition("flex", agency=None, location=None))
+        self.assertEqual(_reason("flex", agency=None, location=None), "unmapped_attributes")
 
     def test_all_class_is_unaffected_by_missing_attributes(self):
-        self.assertEqual(self._build("all", None, None), "'v6_prod_ios_all_oneHour' in topics")
+        self.assertEqual(_condition("all", agency=None, location=None), "'v6_prod_ios_all_oneHour' in topics")
 
     def test_an_unknown_notification_type_is_skipped_for_every_class(self):
         # Third skip rule from the design: no device can subscribe to a type
         # topic that is not a real notification type, so the condition is
         # unsatisfiable even for the attribute-free "all" class.
         for audience_class in V6_AUDIENCE_CLASSES:
-            self.assertIsNone(
-                build_v6_condition(
-                    env="prod",
-                    platform="ios",
-                    audience_class=audience_class,
-                    notification_type="definitely_not_a_type",
-                    agency_group="spacex",
-                    location_group="florida",
-                ),
-                msg=audience_class,
-            )
+            condition, reason = _build(audience_class, notification_type="definitely_not_a_type")
+            self.assertIsNone(condition, msg=audience_class)
+            self.assertEqual(reason, "unknown_type", msg=audience_class)
+
+    def test_an_unknown_audience_class_is_skipped(self):
+        # Without this guard an unrecognised class falls through to the flex
+        # branch and silently ships flex-shaped targeting for a class that was
+        # meant to be something else -- a typo becomes wrong delivery, not an
+        # error. Mirrors the notification_type guard.
+        for audience_class in ("followAll", "strct", "all_W", ""):
+            condition, reason = _build(audience_class)
+            self.assertIsNone(condition, msg=audience_class)
+            self.assertEqual(reason, "unknown_class", msg=audience_class)
 
     def test_every_declared_notification_type_still_builds(self):
         # The guard above must not reject the real types it is protecting.
         for notification_type in V6_NOTIFICATION_TYPES:
-            self.assertIsNotNone(
-                build_v6_condition(
-                    env="prod",
-                    platform="ios",
-                    audience_class="all",
-                    notification_type=notification_type,
-                    agency_group="spacex",
-                    location_group="florida",
-                ),
-                msg=notification_type,
-            )
+            condition, reason = _build("all", notification_type=notification_type)
+            self.assertIsNotNone(condition, msg=notification_type)
+            self.assertIsNone(reason, msg=notification_type)
 
 
 class ClassDisjointnessTests(SimpleTestCase):
@@ -186,14 +204,7 @@ class ClassDisjointnessTests(SimpleTestCase):
 
     def test_a_condition_never_references_another_class_type_topic(self):
         for audience_class in V6_AUDIENCE_CLASSES:
-            condition = build_v6_condition(
-                env="prod",
-                platform="ios",
-                audience_class=audience_class,
-                notification_type="oneHour",
-                agency_group="spacex",
-                location_group="florida",
-            )
+            condition = _condition(audience_class)
             for other in V6_AUDIENCE_CLASSES:
                 if other == audience_class:
                     continue
@@ -213,13 +224,12 @@ class ConditionBudgetTests(SimpleTestCase):
                 for notification_type in V6_NOTIFICATION_TYPES:
                     for agency in ("spacex", None):
                         for location in ("florida", None):
-                            condition = build_v6_condition(
-                                env="prod",
-                                platform=platform,
-                                audience_class=audience_class,
+                            condition, _ = _build(
+                                audience_class,
+                                agency=agency,
+                                location=location,
                                 notification_type=notification_type,
-                                agency_group=agency,
-                                location_group=location,
+                                platform=platform,
                             )
                             if condition is not None:
                                 yield condition, (platform, audience_class, notification_type, agency, location)
@@ -240,8 +250,21 @@ class ConditionBudgetTests(SimpleTestCase):
                 msg=f"{params} produced {condition}",
             )
 
+
+class BroadcastConditionTests(SimpleTestCase):
     def test_broadcast_conditions_are_a_single_topic(self):
         for platform in ("ios", "android"):
-            for kind in ("events", "news", "announce"):
+            for kind in V6_BROADCAST_KINDS:
                 condition = build_v6_broadcast_condition("prod", platform, kind)
                 self.assertEqual(condition.count("in topics"), 1)
+
+    def test_the_declared_kinds_are_the_three_broadcast_types(self):
+        self.assertEqual(set(V6_BROADCAST_KINDS), {"events", "news", "announce"})
+
+    def test_an_unknown_kind_raises_rather_than_targeting_nobody(self):
+        # A typo would otherwise build a well-formed condition naming a topic
+        # nothing subscribes to: FCM accepts it, the send is counted a success,
+        # and the notification reaches zero devices with a green dashboard.
+        for kind in ("announcements", "event", "New", ""):
+            with self.subTest(kind=kind), self.assertRaises(ValueError):
+                build_v6_broadcast_condition("prod", "ios", kind)
