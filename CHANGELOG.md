@@ -1,5 +1,79 @@
 # CHANGELOG
 
+## v4.45.0 (2026-08-18)
+
+### Chore
+
+* chore: ignore subagent-driven-development scratch directory ([`a6987a6`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a6987a6349ad73b682c90e2634b3b027149d27c9))
+
+### Documentation
+
+* docs(notifications): record the review outcomes, catch-all asymmetry, and india rename in the V6 spec and delivery matrix ([`b6beae5`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/b6beae5873dce9aef2474a7e0b3617ebbc073c96))
+
+* docs(notifications): correct the V6 revision note and dispatch table in the delivery matrix ([`11f3bcc`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/11f3bccb59e800fbfd46035eb217465cd5e348c8))
+
+* docs(notifications): record V6 dual-send in the delivery matrix ([`cef3ba2`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/cef3ba2e573f2ad0bc5e49fac6e8cea512b1616f))
+
+* docs(notifications): require ruff format before committing task work ([`e186e78`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/e186e7892764e363d8f667f1176385ef8def2a7a))
+
+* docs(notifications): add image rebuild to every targeted test command ([`6ee4ab2`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/6ee4ab2eaaf50cfd656a6eed9dd3e540ba6de6c9))
+
+* docs(notifications): require docker image rebuild before targeted test runs ([`e808fad`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/e808fad5f9014af749b6e59959203d611d62021d))
+
+* docs(notifications): add V6 topic-targeted delivery spec and server plan ([`05d95de`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/05d95de6517da4fa259739938eeed2ad73a4d329))
+
+### Feature
+
+* feat(notifications): fan V6 launch sends out on a bounded thread pool ([`33921d4`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/33921d4074038bdf57d36865e0d167767c6d3ac9))
+
+* feat(notifications): add the shared V6 topic contract with server conformance tests ([`f5bc7bb`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/f5bc7bb38495dbae5a722b4ae311c1f4f412eba0))
+
+* feat(notifications): dual-send V6 broadcasts for events news and custom ([`ef8bce1`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ef8bce15c42d62f26a917a3e56c9c5784d45f395))
+
+* feat(notifications): dual-send V6 launch notifications alongside V5 ([`b3123f9`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/b3123f9a30989cd327b3ce27152105ddd36b40dc))
+
+* feat(notifications): add V6 per-audience-class launch dispatch ([`7cd2769`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/7cd276967d231476a7a9d82b1ab79584291df7bc))
+
+* feat(notifications): label sends by audience class and count skips ([`9b3b9ef`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/9b3b9efb0a789c3716bf6e909c8526fa23468aa1))
+
+* feat(notifications): add V6 topic names and condition builder ([`6ba5814`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/6ba58147ebcf0bcdf1ec79e49853389e7c456ae5))
+
+* feat(notifications): add V6 agency and location group tables ([`b47e80b`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/b47e80bb2bd965abe4e483300e4ef6b20fa90531))
+
+### Fix
+
+* fix(notifications): split V6 onto its own send counter, dedupe broadcast dispatch, return skip reasons, and separate the location catch-all from the user-facing groups ([`1754940`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/175494094a7671930598f88d58379d80efd6378f))
+
+* fix(notifications): cap V6 analytics labels, target announce per platform, bound the send timeout, skip unknown types ([`8c0eb5c`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/8c0eb5cfe60f3d7df58e06788d374c31b3ae5c94))
+
+* fix(notifications): contain V6 dispatch failures so they cannot reach V5 control flow ([`b313d37`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/b313d37bb9b87ed1f6b1f575b176892465364c80))
+
+* fix(notifications): pin V6 conditions, cover skip reasons, ruff format ([`5892184`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/58921842ec17677f00106a0fd1102fdcc79aa5ba))
+
+### Test
+
+* test(notifications): pin the ID-to-group tables, counter separation, and V6 failure containment ([`f60d498`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/f60d4988d3688447d09b50d1f21054dcb55649c8))
+
+* test(notifications): make the location group-name assertion symmetric with the agency one ([`b61dfca`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/b61dfca93df5064206b7678aef8725871ace938c))
+
+### Unknown
+
+* Merge pull request #327 from ItsCalebJones/feat/v6-topic-targeted-notifications
+
+feat(notifications): V6 topic-targeted delivery — server dual-send ([`4789629`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/47896290e5d41957a19ee82f9b9c81ee9ffc7d35))
+
+* Merge pull request #328 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`e3d7755`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/e3d7755b3485551999a3be477e6bb5b837569b67))
+
+* Sync ruff version to 0.16.3 in CI/CD and pre-commit config
+
+Co-authored-by: ItsCalebJones &lt;4519230+ItsCalebJones@users.noreply.github.com&gt; ([`90ea3a5`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/90ea3a5eaf72b93e65bed4ccb00c0ed82d7b48b2))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`11c60df`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/11c60df751127a1732ee475b2c9b1d2dafc0fb5a))
+
 ## v4.44.0 (2026-08-13)
 
 ### Chore
