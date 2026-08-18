@@ -6,6 +6,7 @@ from api.models import Article, Events, Launch
 
 from bot.app.notifications.base import NotificationResult
 from bot.app.notifications.metrics import record_send
+from bot.app.notifications.v6 import dual_send_v6_broadcast
 from bot.utils.util import get_fcm_v5_android_topic, get_fcm_v5_ios_topic
 
 logger = logging.getLogger(__name__)
@@ -93,6 +94,20 @@ class CustomNotificationMixin:
             record_send(platform="android", category="custom", success=False)
         logger.info("----------------------------------------------------------")
 
+        # V6 topic-targeted broadcast (dual-send window). Android only:
+        # check_custom drives the iOS and Android methods from independent
+        # send_ios / send_android flags, so each method must emit exactly the
+        # platform it was invoked for.
+        dual_send_v6_broadcast(
+            self.fcm,
+            debug=self.DEBUG,
+            kind="announce",
+            data=v5_data,
+            collapse_id=f"custom_{v5_data['custom_id']}",
+            category="custom",
+            platforms=("android",),
+        )
+
     def _send_v5_custom_ios(self, pending) -> None:
         """Send a custom admin notification to the V5 iOS topic (alert + mutable-content)."""
         v5_data = self._build_v5_custom_data(pending)
@@ -127,6 +142,21 @@ class CustomNotificationMixin:
             logger.error(f"V5 iOS Custom Notification Error: {e}")
             record_send(platform="ios", category="custom", success=False)
         logger.info("----------------------------------------------------------")
+
+        # V6 topic-targeted broadcast (dual-send window). iOS only: check_custom
+        # drives the iOS and Android methods from independent send_ios /
+        # send_android flags, so each method must emit exactly the platform it
+        # was invoked for. Sending both from here would push announcements to
+        # Android users an admin deliberately excluded.
+        dual_send_v6_broadcast(
+            self.fcm,
+            debug=self.DEBUG,
+            kind="announce",
+            data=v5_data,
+            collapse_id=f"custom_{v5_data['custom_id']}",
+            category="custom",
+            platforms=("ios",),
+        )
 
     def send_custom_ios_v3(self, pending) -> NotificationResult:
         """Send custom iOS Flutter notification."""

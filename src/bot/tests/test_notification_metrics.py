@@ -32,6 +32,35 @@ def _sent(platform, category, result):
     )
 
 
+def _v6_sent(platform, category, result, audience_class):
+    return (
+        REGISTRY.get_sample_value(
+            "sln_v6_notifications_sent_total",
+            {
+                "platform": platform,
+                "category": category,
+                "result": result,
+                "audience_class": audience_class,
+            },
+        )
+        or 0.0
+    )
+
+
+def _fallbacks(kind):
+    return REGISTRY.get_sample_value("sln_notification_group_fallbacks_total", {"kind": kind}) or 0.0
+
+
+def _skipped(platform, audience_class, reason):
+    return (
+        REGISTRY.get_sample_value(
+            "sln_notification_sends_skipped_total",
+            {"platform": platform, "audience_class": audience_class, "reason": reason},
+        )
+        or 0.0
+    )
+
+
 def _recipients(platform, category):
     return (
         REGISTRY.get_sample_value(
@@ -243,3 +272,61 @@ class CustomSendCounterTests(SimpleTestCase):
             before_err = _sent("ios", "custom", "error")
             self.handler._send_v5_custom_ios(_attr())
             self.assertEqual(_sent("ios", "custom", "error"), before_err + 1)
+
+
+# --------------------------------------------------------------------------- #
+# 6. audience class and skip counter (V6)
+# --------------------------------------------------------------------------- #
+class V6CounterSeparationTests(SimpleTestCase):
+    """V6 must never touch the V5 send counter.
+
+    The SLN / Notifications dashboard aggregates sln_notifications_sent_total
+    without filtering, including the error ratio
+    sum(...{result="error"}) / sum(...). One launch produces 2 V5 sends and up
+    to 12 V6 sends, so sharing the series would inflate volume ~7x and dilute
+    the ratio: a total V5 outage during dual-send would read as ~14% errors
+    instead of 100%, and the SLO panel would stop detecting the outage it
+    exists to detect.
+    """
+
+    def test_a_v6_send_does_not_move_the_v5_counter(self):
+        before = _sent("ios", "launch", "success")
+        metrics.record_v6_send(platform="ios", category="launch", success=True, audience_class="strict")
+        self.assertEqual(_sent("ios", "launch", "success"), before)
+
+    def test_a_v5_send_does_not_move_the_v6_counter(self):
+        before = _v6_sent("ios", "launch", "success", "strict")
+        metrics.record_send(platform="ios", category="launch", success=True)
+        self.assertEqual(_v6_sent("ios", "launch", "success", "strict"), before)
+
+    def test_v6_success_and_error_are_labelled_by_class(self):
+        before = _v6_sent("android", "launch", "success", "flex")
+        before_err = _v6_sent("android", "launch", "error", "flex")
+        metrics.record_v6_send(platform="android", category="launch", success=True, audience_class="flex")
+        metrics.record_v6_send(platform="android", category="launch", success=False, audience_class="flex")
+        self.assertEqual(_v6_sent("android", "launch", "success", "flex"), before + 1)
+        self.assertEqual(_v6_sent("android", "launch", "error", "flex"), before_err + 1)
+
+    def test_classes_are_counted_separately(self):
+        before_strict = _v6_sent("android", "launch", "success", "strict")
+        metrics.record_v6_send(platform="android", category="launch", success=True, audience_class="flex")
+        self.assertEqual(_v6_sent("android", "launch", "success", "strict"), before_strict)
+
+    def test_v6_sends_do_not_move_the_recipients_panel(self):
+        # Topic-condition responses carry no count; leaving this counter to V5
+        # keeps the panel meaning one thing across the dual-send window.
+        before = _recipients("ios", "launch")
+        metrics.record_v6_send(platform="ios", category="launch", success=True, audience_class="all")
+        self.assertEqual(_recipients("ios", "launch"), before)
+
+    def test_record_skip_increments_the_skip_counter(self):
+        before = _skipped("ios", "strict", "unmapped_agency")
+        metrics.record_skip(platform="ios", audience_class="strict", reason="unmapped_agency")
+        self.assertEqual(_skipped("ios", "strict", "unmapped_agency"), before + 1)
+
+    def test_record_group_fallback_increments_per_kind(self):
+        before_agency = _fallbacks("agency")
+        before_location = _fallbacks("location")
+        metrics.record_group_fallback("agency")
+        self.assertEqual(_fallbacks("agency"), before_agency + 1)
+        self.assertEqual(_fallbacks("location"), before_location)

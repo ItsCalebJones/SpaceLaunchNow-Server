@@ -28,6 +28,10 @@ docker/*.backup
 *.log
 .history/
 **.json
+# Narrow exception to the blanket credential guard above: shared contracts are
+# normative artifacts that must be committed and reviewed. Keep this specific --
+# the **.json rule exists to stop service-account keys being committed.
+!src/bot/contracts/*.json
 **kubeconfig**
 google-oauth-secret.yaml
 
@@ -35,3 +39,5 @@ google-oauth-secret.yaml
 k8s/monitoring/auth
 **/auth
 *.htpasswd
+# Subagent-driven-development scratch (ledgers, briefs, review packages)
+.superpowers/

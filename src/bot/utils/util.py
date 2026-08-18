@@ -397,3 +397,139 @@ def get_fcm_v5_ios_topic(debug: bool = False) -> str:
     topics = f"'{topic_base}' in topics"
     logger.info(topics)
     return topics
+
+
+# --------------------------------------------------------------------------
+# V6 topic-targeted delivery
+#
+# The condition names the *launch's* attributes; the device's subscription set
+# performs the match. Every condition below contains at most 3 topics against
+# FCM's ceiling of 5 -- see test_v6_topic_conditions.ConditionBudgetTests.
+# --------------------------------------------------------------------------
+
+V6_AUDIENCE_CLASSES: tuple[str, ...] = (
+    "all",
+    "flex",
+    "strict",
+    "all_w",
+    "flex_w",
+    "strict_w",
+)
+
+V6_NOTIFICATION_TYPES: tuple[str, ...] = (
+    "twentyFourHour",
+    "oneHour",
+    "tenMinutes",
+    "oneMinute",
+    "netstampChanged",
+    "webcastLive",
+    "inFlight",
+    "success",
+    "failure",
+    "partial_failure",
+)
+
+V6_BROADCAST_KINDS: tuple[str, ...] = (
+    "events",
+    "news",
+    "announce",
+)
+
+_V6_WEBCAST_SUFFIX = "_w"
+
+
+def v6_class_shape(audience_class: str) -> str:
+    """Return the matching shape of a class: 'all', 'flex', or 'strict'."""
+    if audience_class.endswith(_V6_WEBCAST_SUFFIX):
+        return audience_class[: -len(_V6_WEBCAST_SUFFIX)]
+    return audience_class
+
+
+def v6_class_is_webcast_only(audience_class: str) -> bool:
+    """Whether this class only wants launches that have a webcast."""
+    return audience_class.endswith(_V6_WEBCAST_SUFFIX)
+
+
+def get_v6_attribute_topic(env: str, group: str) -> str:
+    """Attribute topic. Shared across platforms: the type topic carries platform."""
+    return f"v6_{env}_{group}"
+
+
+def get_v6_type_topic(env: str, platform: str, audience_class: str, notification_type: str) -> str:
+    """Type topic. The audience class lives here, which is what keeps the
+    classes disjoint and makes duplicate delivery structurally impossible."""
+    return f"v6_{env}_{platform}_{audience_class}_{notification_type}"
+
+
+def get_v6_broadcast_topic(env: str, platform: str, kind: str) -> str:
+    """Broadcast topic for events / news / announce."""
+    return f"v6_{env}_{platform}_{kind}"
+
+
+def _v6_term(topic: str) -> str:
+    return f"'{topic}' in topics"
+
+
+def build_v6_condition(
+    *,
+    env: str,
+    platform: str,
+    audience_class: str,
+    notification_type: str,
+    agency: str | None,
+    location: str | None,
+) -> tuple[str | None, str | None]:
+    """Build the FCM condition for one audience class.
+
+    Returns ``(condition, None)`` when the send should happen, or
+    ``(None, reason)`` when it must be skipped. The reason is returned rather
+    than left for the caller to re-derive: this function is the only place that
+    knows which check failed, and a caller reconstructing it drifts.
+
+    Skip reasons:
+        unknown_type / unknown_class: no device can be subscribed to the
+            resulting topic, so the condition is unsatisfiable by construction.
+        unmapped_agency / unmapped_location / unmapped_attributes: the launch is
+            missing an attribute this class matches on.
+    """
+    if notification_type not in V6_NOTIFICATION_TYPES:
+        return None, "unknown_type"
+    if audience_class not in V6_AUDIENCE_CLASSES:
+        return None, "unknown_class"
+
+    type_term = _v6_term(get_v6_type_topic(env, platform, audience_class, notification_type))
+    shape = v6_class_shape(audience_class)
+
+    if shape == "all":
+        return type_term, None
+
+    agency_term = _v6_term(get_v6_attribute_topic(env, agency)) if agency else None
+    location_term = _v6_term(get_v6_attribute_topic(env, location)) if location else None
+
+    if shape == "strict":
+        if not agency_term and not location_term:
+            return None, "unmapped_attributes"
+        if not agency_term:
+            return None, "unmapped_agency"
+        if not location_term:
+            return None, "unmapped_location"
+        return f"{type_term} && {agency_term} && {location_term}", None
+
+    attribute_terms = [term for term in (agency_term, location_term) if term]
+    if not attribute_terms:
+        return None, "unmapped_attributes"
+    if len(attribute_terms) == 1:
+        return f"{type_term} && {attribute_terms[0]}", None
+    return f"{type_term} && ({attribute_terms[0]} || {attribute_terms[1]})", None
+
+
+def build_v6_broadcast_condition(env: str, platform: str, kind: str) -> str:
+    """Broadcast types are gated by their own toggle only -- a single topic.
+
+    Raises ValueError on an unknown kind. A typo here would otherwise produce a
+    well-formed condition naming a topic nothing subscribes to: FCM accepts it,
+    the send is recorded as a success, and the notification reaches nobody.
+    """
+    if kind not in V6_BROADCAST_KINDS:
+        raise ValueError(f"Unknown V6 broadcast kind {kind!r}; expected one of {V6_BROADCAST_KINDS}")
+    return _v6_term(get_v6_broadcast_topic(env, platform, kind))

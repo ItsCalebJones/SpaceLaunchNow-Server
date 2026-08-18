@@ -1,0 +1,157 @@
+{
+  "contract": "spacelaunchnow-notification-topics",
+  "scheme": "v6",
+  "version": 1,
+  "updated": "2026-08-15",
+
+  "about": {
+    "purpose": "The names and grammar the server uses to address FCM topics, and the client uses to subscribe to them. Both sides must agree on every value here or notifications are silently undeliverable: the server sends to a topic nobody subscribed to, or the client subscribes to a topic nothing sends to. Neither failure raises an error.",
+    "canonicalCopy": "SpaceLaunchNow-Server: src/bot/contracts/notification-topics.v6.json",
+    "vendoredCopies": [
+      "SpaceLaunchNow-KMP-Main: contracts/notification-topics.v6.json"
+    ],
+    "changeProcess": "Edit the canonical copy, bump `version`, copy verbatim to every vendored path, then change both codebases to match. A value removed here must stay live on the server for at least one full app-adoption window, because already-installed clients keep subscribing to it.",
+    "enforcement": "Conformance tests on both sides, each reading its own copy of this file: server `src/bot/tests/test_topic_contract.py`, client `composeApp/src/jvmTest/.../V6TopicContractTest.kt`. Either codebase drifting from these values fails its own build. What is NOT enforced automatically is that the two copies of this file are identical — that is still a review responsibility, so copy verbatim."
+  },
+
+  "topicGrammar": {
+    "attribute": "v6_{env}_{group}",
+    "type": "v6_{env}_{platform}_{audienceClass}_{notificationType}",
+    "broadcast": "v6_{env}_{platform}_{broadcastKind}",
+    "tokens": {
+      "env": ["prod", "debug"],
+      "platform": ["android", "ios"]
+    },
+    "notes": [
+      "Attribute topics are NOT platform-scoped. The platform is carried by the type topic, so one attribute subscription serves both.",
+      "The audience class lives in the type topic. That is what makes the classes disjoint and duplicate delivery structurally impossible: a device subscribes to the type topics of exactly one class, so at most one server condition can match it.",
+      "Separator is `_`, but tokens are NOT required to be `_`-free: the audience classes carry a `_w` suffix and `partial_failure` contains one. Topic names are therefore constructed, never parsed — do not split a topic name on `_` to recover its parts."
+    ]
+  },
+
+  "audienceClasses": {
+    "values": ["all", "flex", "strict", "all_w", "flex_w", "strict_w"],
+    "webcastOnlySuffix": "_w",
+    "shapes": {
+      "all": "Matches every launch. The condition is the type topic alone; no attribute topic is involved.",
+      "flex": "Matches if the launch's agency OR location is one the user follows.",
+      "strict": "Matches only if the launch's agency AND location are both followed."
+    },
+    "notes": [
+      "A class name is its shape plus an optional `_w`. `flex_w` is the `flex` shape restricted to launches that have a webcast.",
+      "A device subscribes to exactly one class. Subscribing to two would produce duplicate notifications for a single launch."
+    ]
+  },
+
+  "notificationTypes": [
+    "twentyFourHour",
+    "oneHour",
+    "tenMinutes",
+    "oneMinute",
+    "netstampChanged",
+    "webcastLive",
+    "inFlight",
+    "success",
+    "failure",
+    "partial_failure"
+  ],
+
+  "broadcastKinds": {
+    "note": "`token` is the wire value — the segment the server puts in the topic name and the client must subscribe to. `clientSettingId` is the pre-existing key the KMP app persists that toggle under in `topicSettings`. They differ for two of the three, and the client's V6 subscription code MUST translate rather than using the setting id as the token: subscribing to `v6_prod_ios_featured_news` reaches nothing, because the server only ever sends to `v6_prod_ios_news`. The ids are not being renamed to match, because they are persisted map keys and renaming them would silently reset every user's toggle to its default.",
+    "values": [
+      { "token": "events", "clientSettingId": "events" },
+      { "token": "news", "clientSettingId": "featured_news" },
+      { "token": "announce", "clientSettingId": "announcements" }
+    ]
+  },
+
+  "locationGroups": [
+    { "group": "van", "label": "California", "subscribable": true },
+    { "group": "florida", "label": "Florida", "subscribable": true },
+    { "group": "wallops", "label": "Misc. USA", "subscribable": true },
+    { "group": "texas", "label": "Texas", "subscribable": true },
+    { "group": "russia", "label": "Russia & Kazakhstan", "subscribable": true },
+    { "group": "frenchGuiana", "label": "French Guiana", "subscribable": true },
+    { "group": "newZealand", "label": "New Zealand", "subscribable": true },
+    { "group": "japan", "label": "Japan", "subscribable": true },
+    { "group": "india", "label": "India", "subscribable": true },
+    { "group": "china", "label": "China", "subscribable": true },
+    { "group": "other", "label": "Misc. (Sea, Air, etc)", "subscribable": true },
+    {
+      "group": "unmappedLocation",
+      "label": null,
+      "subscribable": false,
+      "note": "Catch-all for locations absent from the server's ID table. Deliberately NOT the `other` group and deliberately not offered to users: `other` is a shipped settings row meaning three specific launch sites, and letting it absorb the long tail would silently widen a toggle users already set. Unlisted locations therefore reach follow-all subscribers only, which is exactly what V5 did."
+    }
+  ],
+
+  "agencyGroups": [
+    { "group": "spacex", "label": "SpaceX", "subscribable": true },
+    { "group": "nasa", "label": "NASA", "subscribable": true },
+    { "group": "blueOrigin", "label": "Blue Origin", "subscribable": true },
+    { "group": "rocketLab", "label": "Rocket Lab", "subscribable": true },
+    { "group": "virginGalactic", "label": "Virgin Galactic", "subscribable": true },
+    { "group": "ula", "label": "United Launch Alliance", "subscribable": true },
+    { "group": "arianespace", "label": "Arianespace", "subscribable": true },
+    { "group": "roscosmos", "label": "Russian Space Agencies", "subscribable": true },
+    { "group": "northrop", "label": "Northrop Grumman", "subscribable": true },
+    { "group": "casc", "label": "Chinese Space Agencies", "subscribable": true },
+    {
+      "group": "isroAgency",
+      "label": "Indian Space Research Organisation",
+      "subscribable": true,
+      "note": "Keeps the `Agency` suffix even though the India location group is now `india` and nothing collides any more. Agency and location groups share one flat attribute-topic namespace and a bare `isro` reads as either, so the suffix is what makes it unmistakable. Do not simplify it back: the original defect was exactly this pair reaching for the same name, which would have made anyone following India-the-location also match ISRO launches worldwide."
+    },
+    {
+      "group": "otherAgency",
+      "label": "Other Agencies",
+      "subscribable": true,
+      "note": "Catch-all for agencies absent from the server's ID table. Unlike unmappedLocation this is intended to be offered to users, because without it a LandSpace or Firefly launch is unreachable for strict-matching users no matter what they select. Requires a new settings row in the app; pending product sign-off."
+    }
+  ],
+
+  "serverOwned": {
+    "idToGroup": "The mapping from Launch Library agency/location IDs to the group names above lives ONLY on the server (src/bot/utils/notification_groups.py) and is deliberately absent from this contract. Keeping it server-side is what lets a newly catalogued launch site start matching for already-installed clients on the next deploy, with no app release. The client never sends IDs to the server and must not maintain its own copy for V6.",
+    "conditionConstruction": "Assembling topics into an FCM condition, and deciding which classes are satisfiable for a given launch, is server-side only. The client's sole obligation is to subscribe to the correct topic names."
+  },
+
+  "clientOwned": {
+    "labels": "The `label` fields here are informative, for identifying a group during review. The client owns user-facing copy and localization.",
+    "audienceClassChoice": "Which single audience class a device subscribes to, derived from the user's matching-mode setting.",
+    "subscriptionReconciliation": "Subscribing and unsubscribing as settings change, including unsubscribing from the V5 topics on upgrade."
+  },
+
+  "resolvedAtV1": [
+    {
+      "where": "The isro / India pair, server and client",
+      "was": "The agency group and the India *location* group both wanted the name `isro` in one flat attribute-topic namespace.",
+      "wouldHaveCaused": "ISRO-following users subscribing to the India location topic — matching any Indian launch regardless of agency, and missing ISRO launches from elsewhere.",
+      "fix": "Both sides renamed: the agency to `isroAgency`, and the location to `india` (it is a place, and naming it after an agency acronym is what allowed the clash). Safe without a migration on either side — agency and location selections persist by numeric ID, not by topicName — and free to do now because no shipped client subscribes to any v6_* topic yet. After cutover the same rename would cost a full app-adoption window."
+    },
+    {
+      "where": "KMP NotificationTopicConfig.NOTIFICATION_TYPE_TOPICS",
+      "was": "A second, stale list of 8 notification types with zero consumers in the codebase — the live list is NotificationTopic.getUserConfigurableTopics(), which already carries all 10 and agrees with this contract.",
+      "wouldHaveCaused": "Nothing at runtime, but it read as authoritative and was the source of a false 'the client is missing two types' finding during review.",
+      "fix": "Deleted. One list, not two."
+    },
+    {
+      "where": "KMP NotificationLocation.OTHER",
+      "was": "id=20 with additionalIds=[3, 20, 144], so getAllIds() returned 20 twice.",
+      "wouldHaveCaused": "Nothing — V5 filtering is a membership test. Cosmetic.",
+      "fix": "Duplicate removed. The whole client-side ID table is V5-only and should be deleted at V5 retirement, since this contract makes ID mapping server-owned."
+    }
+  ],
+
+  "openItems": [
+    {
+      "where": "KMP V6 subscription (not yet implemented)",
+      "issue": "No shipped client subscribes to any v6_* topic, so every V6 send currently reaches zero devices and all users are served by the V5 broadcast.",
+      "required": "Subscription reconciliation against this contract: one audience class, the type topics for the user's enabled types, the attribute topics for followed agencies/locations, and the broadcast topics — translating clientSettingId to token for the broadcast kinds."
+    },
+    {
+      "where": "otherAgency",
+      "issue": "Listed as subscribable here but has no settings row in the app, so nothing subscribes to it.",
+      "required": "Product sign-off plus an 'Other Agencies' row. Until then, strict-matching users cannot reach launches by uncatalogued agencies — the V5 status quo."
+    }
+  ]
+}
