@@ -16,6 +16,7 @@ send them share one implementation instead of four copies.
 """
 
 import logging
+from concurrent.futures import ThreadPoolExecutor
 
 from bot.app.notifications.base import NotificationResult
 from bot.app.notifications.metrics import record_group_fallback, record_skip, record_v6_send
@@ -37,10 +38,18 @@ logger = logging.getLogger(__name__)
 PLATFORMS = ("android", "ios")
 
 # 30s, not V5's 240s. "Identical to V5" covers the payload and the APNs/Android
-# config, not the transport timeout: V6 adds up to 12 sequential blocking calls
-# per launch on the single-threaded tracker loop, and oneMinute/tenMinutes are
-# notifications where lateness equals uselessness. V5 runs first and keeps 240s.
+# config, not the transport timeout: V6 adds up to 12 blocking calls per launch
+# on the tracker loop (fanned out MAX_CONCURRENT_SENDS at a time), and
+# oneMinute/tenMinutes are notifications where lateness equals uselessness.
+# V5 runs first and keeps 240s.
 SEND_TIMEOUT_SECONDS = 30
+
+# Bounded fan-out for the per-class launch sends. pyfcm is built for this --
+# each pool thread lazily gets its own requests session via threading.local --
+# and 6 workers caps a full 12-send webcast launch at ~2 network round-trip
+# rounds instead of 12, while keeping the worst case (every send stalling to
+# its 30s timeout) at ~60s rather than 6 minutes on the tracker loop.
+MAX_CONCURRENT_SENDS = 6
 
 
 def send_v6(
@@ -198,7 +207,7 @@ class V6NotificationMixin:
         if location == DEFAULT_LOCATION_GROUP:
             record_group_fallback("location")
 
-        results: list[NotificationResult] = []
+        sends: list[dict] = []
         for platform in PLATFORMS:
             for audience_class in V6_AUDIENCE_CLASSES:
                 if v6_class_is_webcast_only(audience_class) and not has_webcast:
@@ -223,9 +232,8 @@ class V6NotificationMixin:
                     )
                     record_skip(platform=platform, audience_class=audience_class, reason=reason)
                     continue
-                results.append(
-                    send_v6(
-                        self.fcm,
+                sends.append(
+                    dict(
                         platform=platform,
                         data=data,
                         condition=condition,
@@ -239,4 +247,12 @@ class V6NotificationMixin:
                         analytics_label=f"v6_{audience_class}_{data['launch_uuid']}",
                     )
                 )
-        return results
+        if not sends:
+            return []
+        # Fan out concurrently: send_v6 never raises (every FCM outcome is
+        # caught into a NotificationResult and a counter), so pool.map cannot
+        # blow up mid-flight, and result order matches spec order. Sequential
+        # dispatch here made one stalled send delay every later class and the
+        # next launch behind it.
+        with ThreadPoolExecutor(max_workers=MAX_CONCURRENT_SENDS) as pool:
+            return list(pool.map(lambda kwargs: send_v6(self.fcm, **kwargs), sends))

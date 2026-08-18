@@ -205,10 +205,11 @@ class NotificationHandler(
         # v5 serves already-shipped builds; v6 serves upgraded ones, which
         # unsubscribe from the v5 topics. See the V6 design spec.
         #
-        # Runs last, and contained: V6 fans out to up to 12 sequential blocking
-        # sends on the single-threaded tracker loop, so anything sequenced after
-        # it inherits that latency -- and a v6 failure must never reach v5's
-        # control flow or suppress the Discord post above.
+        # Runs last, and contained: V6 fans out up to 12 sends (bounded
+        # thread pool, see v6.MAX_CONCURRENT_SENDS) and still blocks the
+        # tracker loop until the slowest completes, so anything sequenced
+        # after it inherits that latency -- and a v6 failure must never reach
+        # v5's control flow or suppress the Discord post above.
         try:
             self.send_v6_launch_notification(
                 launch=launch,

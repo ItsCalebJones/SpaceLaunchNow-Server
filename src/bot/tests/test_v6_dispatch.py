@@ -4,6 +4,8 @@ Test-only. The FCM client is mocked and every payload is stubbed; no DB, no FCM.
 """
 
 import re
+import threading
+import time
 from unittest import mock
 
 from django.test import SimpleTestCase
@@ -205,6 +207,29 @@ class LaunchDispatchTests(SimpleTestCase):
         results = self._dispatch()
         self.assertEqual(len(results), 12)
         self.assertEqual(len([r for r in results if r.error is not None]), 1)
+
+    def test_sends_fan_out_concurrently_rather_than_serially(self):
+        # Up to 12 sends run per launch on the latency-critical tracker loop.
+        # Issued serially, one slow FCM round-trip delays every later class --
+        # and the next launch's notification behind it. This pins the fan-out:
+        # at least two sends must be in flight at the same time, and every
+        # result must still come back.
+        lock = threading.Lock()
+        state = {"in_flight": 0, "max_in_flight": 0}
+
+        def slow_notify(**kwargs):
+            with lock:
+                state["in_flight"] += 1
+                state["max_in_flight"] = max(state["max_in_flight"], state["in_flight"])
+            time.sleep(0.05)
+            with lock:
+                state["in_flight"] -= 1
+            return {"name": "projects/x/messages/y"}
+
+        self.handler.fcm.notify.side_effect = slow_notify
+        results = self._dispatch()
+        self.assertEqual(len(results), 12)
+        self.assertGreater(state["max_in_flight"], 1)
 
     def test_an_unknown_notification_type_skips_every_class(self):
         with mock.patch("bot.app.notifications.v6.record_skip") as record_skip:
