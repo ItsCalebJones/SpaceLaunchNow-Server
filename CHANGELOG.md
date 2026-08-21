@@ -1,5 +1,32 @@
 # CHANGELOG
 
+## v4.46.0 (2026-08-21)
+
+### Feature
+
+* feat(v6): exclude starlinkMuted subscribers from Starlink launch sends except failures
+
+Opt-out by subscription: devices that mute Starlink subscribe to the
+v6_&lt;env&gt;_starlinkMuted attribute topic, and build_v6_condition appends
+&#39;&amp;&amp; !(&lt;topic&gt; in topics)&#39; on every audience class — follow-all included,
+since it receives all launches — except failure/partial_failure, which
+deliver to everyone (the client copy promises this). Starlink detection
+reads the program_id payload field the V5 builder already computes
+(LL2 program 25), so no new ORM work on the tracker loop. Condition
+budget grows from at most 3 topics to at most 4 against FCM&#39;s cap of 5.
+Topic contract bumped to v2 with the muteGroups section; the KMP repo
+carries the verbatim copy. ([`8ab1c84`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/8ab1c846e76f37eb0fec34e010b2a1f1064f1d3f))
+
+### Style
+
+* style(v6): apply ruff formatting to the mute tests ([`6c54fa5`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/6c54fa58f3fec083d943ac85e0f1dfd946844788))
+
+### Unknown
+
+* Merge pull request #329 from ItsCalebJones/feat/starlink-mute-optout
+
+feat(v6): Starlink mute via starlinkMuted opt-out topic (except failures) ([`6cf3062`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/6cf306204e02092308b610f045e59333b363034d))
+
 ## v4.45.0 (2026-08-18)
 
 ### Chore
