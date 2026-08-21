@@ -1,8 +1,8 @@
 {
   "contract": "spacelaunchnow-notification-topics",
   "scheme": "v6",
-  "version": 1,
-  "updated": "2026-08-15",
+  "version": 2,
+  "updated": "2026-08-21",
 
   "about": {
     "purpose": "The names and grammar the server uses to address FCM topics, and the client uses to subscribe to them. Both sides must agree on every value here or notifications are silently undeliverable: the server sends to a topic nobody subscribed to, or the client subscribes to a topic nothing sends to. Neither failure raises an error.",
@@ -109,6 +109,19 @@
       "note": "Catch-all for agencies absent from the server's ID table. Unlike unmappedLocation this is intended to be offered to users, because without it a LandSpace or Firefly launch is unreachable for strict-matching users no matter what they select. Requires a new settings row in the app; pending product sign-off."
     }
   ],
+
+  "muteGroups": {
+    "note": "Opt-OUT attribute topics: a device subscribes to one to STOP receiving matching sends. The server appends `&& !('v6_{env}_{group}' in topics)` to every audience class's condition when a launch matches the group — including `all`, which otherwise receives everything — except for the sends listed in `exemptTypes`, which deliver to muted devices regardless. Existing subscribers need no migration: only devices that opt out ever touch these topics. Which launches match a group (Starlink = LL2 program id 25, read from the payload's program_id field) is server-owned, like idToGroup.",
+    "values": [
+      {
+        "group": "starlinkMuted",
+        "label": "Mute Starlink launches",
+        "subscribable": true,
+        "exemptTypes": ["failure", "partial_failure"],
+        "note": "Added at v2. The client copy promises the exemption ('You'll still be notified if a Starlink launch fails'), so narrowing exemptTypes is a product decision that must ship with new client copy, not a refactor."
+      }
+    ]
+  },
 
   "serverOwned": {
     "idToGroup": "The mapping from Launch Library agency/location IDs to the group names above lives ONLY on the server (src/bot/utils/notification_groups.py) and is deliberately absent from this contract. Keeping it server-side is what lets a newly catalogued launch site start matching for already-installed clients on the next deploy, with no app release. The client never sends IDs to the server and must not maintain its own copy for V6.",
