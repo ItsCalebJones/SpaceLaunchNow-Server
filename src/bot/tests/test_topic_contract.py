@@ -104,9 +104,7 @@ class MuteGroupContractTests(SimpleTestCase):
         self.assertIn(V6_STARLINK_MUTED_GROUP, groups)
 
     def test_the_exempt_types_match_the_contract_exactly(self):
-        (starlink,) = [
-            group for group in CONTRACT["muteGroups"]["values"] if group["group"] == V6_STARLINK_MUTED_GROUP
-        ]
+        (starlink,) = [group for group in CONTRACT["muteGroups"]["values"] if group["group"] == V6_STARLINK_MUTED_GROUP]
         self.assertEqual(list(V6_MUTE_EXEMPT_TYPES), starlink["exemptTypes"])
 
     def test_every_exempt_type_is_a_real_notification_type(self):

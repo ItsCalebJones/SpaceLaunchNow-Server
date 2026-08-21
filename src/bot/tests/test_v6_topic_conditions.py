@@ -262,9 +262,7 @@ class StarlinkMuteTests(SimpleTestCase):
     def test_failure_types_ignore_the_mute(self):
         for notification_type in ("failure", "partial_failure"):
             for audience_class in V6_AUDIENCE_CLASSES:
-                condition, _ = _build(
-                    audience_class, notification_type=notification_type, mute_starlink=True
-                )
+                condition, _ = _build(audience_class, notification_type=notification_type, mute_starlink=True)
                 self.assertIsNotNone(condition)
                 self.assertNotIn(
                     "starlinkMuted",
@@ -301,13 +299,16 @@ class ConditionBudgetTests(SimpleTestCase):
                                     mute_starlink=mute_starlink,
                                 )
                                 if condition is not None:
-                                    yield condition, (
-                                        platform,
-                                        audience_class,
-                                        notification_type,
-                                        agency,
-                                        location,
-                                        mute_starlink,
+                                    yield (
+                                        condition,
+                                        (
+                                            platform,
+                                            audience_class,
+                                            notification_type,
+                                            agency,
+                                            location,
+                                            mute_starlink,
+                                        ),
                                     )
 
     def test_no_condition_exceeds_four_topics(self):
