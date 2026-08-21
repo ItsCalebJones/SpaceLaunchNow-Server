@@ -67,6 +67,43 @@ class LaunchDispatchTests(SimpleTestCase):
                 data=payload or PAYLOAD,
             )
 
+    def test_a_starlink_launch_excludes_muted_subscribers_on_every_condition(self):
+        payload = dict(PAYLOAD, program_id="25")
+        self._dispatch(payload=payload)
+        conditions = _conditions(self.handler.fcm)
+        self.assertTrue(conditions)
+        for condition in conditions:
+            self.assertIn("!('v6_prod_starlinkMuted' in topics)", condition)
+
+    def test_a_starlink_failure_send_reaches_muted_subscribers(self):
+        payload = dict(PAYLOAD, program_id="25", notification_type="failure")
+        self._dispatch(payload=payload, notification_type="failure")
+        conditions = _conditions(self.handler.fcm)
+        self.assertTrue(conditions)
+        for condition in conditions:
+            self.assertNotIn("starlinkMuted", condition)
+
+    def test_starlink_detection_matches_within_a_multi_program_launch(self):
+        payload = dict(PAYLOAD, program_id="15,25")
+        self._dispatch(payload=payload)
+        for condition in _conditions(self.handler.fcm):
+            self.assertIn("starlinkMuted", condition)
+
+    def test_a_non_starlink_program_does_not_trip_the_mute(self):
+        # "125" contains "25" as a substring; the split-on-comma detection must
+        # not treat it as Starlink.
+        payload = dict(PAYLOAD, program_id="125")
+        self._dispatch(payload=payload)
+        conditions = _conditions(self.handler.fcm)
+        self.assertTrue(conditions)
+        for condition in conditions:
+            self.assertNotIn("starlinkMuted", condition)
+
+    def test_a_launch_without_program_data_does_not_trip_the_mute(self):
+        self._dispatch()  # PAYLOAD has no program_id key at all
+        for condition in _conditions(self.handler.fcm):
+            self.assertNotIn("starlinkMuted", condition)
+
     def test_webcast_launch_targets_all_six_classes_on_both_platforms(self):
         self._dispatch()
         self.assertEqual(len(_conditions(self.handler.fcm)), 12)

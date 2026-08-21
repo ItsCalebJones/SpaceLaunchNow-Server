@@ -403,8 +403,9 @@ def get_fcm_v5_ios_topic(debug: bool = False) -> str:
 # V6 topic-targeted delivery
 #
 # The condition names the *launch's* attributes; the device's subscription set
-# performs the match. Every condition below contains at most 3 topics against
-# FCM's ceiling of 5 -- see test_v6_topic_conditions.ConditionBudgetTests.
+# performs the match. Every condition below contains at most 4 topics against
+# FCM's ceiling of 5 (3 for the class shape, plus the starlinkMuted exclusion
+# on Starlink sends) -- see test_v6_topic_conditions.ConditionBudgetTests.
 # --------------------------------------------------------------------------
 
 V6_AUDIENCE_CLASSES: tuple[str, ...] = (
@@ -434,6 +435,21 @@ V6_BROADCAST_KINDS: tuple[str, ...] = (
     "news",
     "announce",
 )
+
+# LL2 program id for Starlink, as it appears in the payload's comma-separated
+# ``program_id`` field. Verified against the live LL2 API (launch.program[].id).
+STARLINK_PROGRAM_ID = "25"
+
+# Attribute-topic group a device subscribes to when the user mutes Starlink
+# launches. Opt-out by subscription: the send condition NEGATES this topic, so
+# existing subscribers need no migration -- only muted devices touch it.
+V6_STARLINK_MUTED_GROUP = "starlinkMuted"
+
+# Types that ignore the mute. Failures are rare and high-signal -- the mute
+# exists to kill cadence fatigue, not news. The client copy promises this
+# ("You'll still be notified if a Starlink launch fails"), so changing it is a
+# product decision, not a refactor.
+V6_MUTE_EXEMPT_TYPES: tuple[str, ...] = ("failure", "partial_failure")
 
 _V6_WEBCAST_SUFFIX = "_w"
 
@@ -478,6 +494,7 @@ def build_v6_condition(
     notification_type: str,
     agency: str | None,
     location: str | None,
+    mute_starlink: bool = False,
 ) -> tuple[str | None, str | None]:
     """Build the FCM condition for one audience class.
 
@@ -485,6 +502,11 @@ def build_v6_condition(
     ``(None, reason)`` when it must be skipped. The reason is returned rather
     than left for the caller to re-derive: this function is the only place that
     knows which check failed, and a caller reconstructing it drifts.
+
+    ``mute_starlink``: the launch belongs to the Starlink program, so devices
+    subscribed to the ``starlinkMuted`` opt-out topic are excluded -- on every
+    audience class (follow-all receives all launches, so it needs the exclusion
+    most), EXCEPT the ``V6_MUTE_EXEMPT_TYPES`` sends, which go to everyone.
 
     Skip reasons:
         unknown_type / unknown_class: no device can be subscribed to the
@@ -500,8 +522,13 @@ def build_v6_condition(
     type_term = _v6_term(get_v6_type_topic(env, platform, audience_class, notification_type))
     shape = v6_class_shape(audience_class)
 
+    muted_suffix = ""
+    if mute_starlink and notification_type not in V6_MUTE_EXEMPT_TYPES:
+        muted_term = _v6_term(get_v6_attribute_topic(env, V6_STARLINK_MUTED_GROUP))
+        muted_suffix = f" && !({muted_term})"
+
     if shape == "all":
-        return type_term, None
+        return f"{type_term}{muted_suffix}", None
 
     agency_term = _v6_term(get_v6_attribute_topic(env, agency)) if agency else None
     location_term = _v6_term(get_v6_attribute_topic(env, location)) if location else None
@@ -513,14 +540,14 @@ def build_v6_condition(
             return None, "unmapped_agency"
         if not location_term:
             return None, "unmapped_location"
-        return f"{type_term} && {agency_term} && {location_term}", None
+        return f"{type_term} && {agency_term} && {location_term}{muted_suffix}", None
 
     attribute_terms = [term for term in (agency_term, location_term) if term]
     if not attribute_terms:
         return None, "unmapped_attributes"
     if len(attribute_terms) == 1:
-        return f"{type_term} && {attribute_terms[0]}", None
-    return f"{type_term} && ({attribute_terms[0]} || {attribute_terms[1]})", None
+        return f"{type_term} && {attribute_terms[0]}{muted_suffix}", None
+    return f"{type_term} && ({attribute_terms[0]} || {attribute_terms[1]}){muted_suffix}", None
 
 
 def build_v6_broadcast_condition(env: str, platform: str, kind: str) -> str:

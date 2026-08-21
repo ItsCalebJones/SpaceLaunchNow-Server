@@ -30,6 +30,7 @@ def _build(
     notification_type="oneHour",
     platform="ios",
     env="prod",
+    mute_starlink=False,
 ):
     return build_v6_condition(
         env=env,
@@ -38,6 +39,7 @@ def _build(
         notification_type=notification_type,
         agency=agency,
         location=location,
+        mute_starlink=mute_starlink,
     )
 
 
@@ -215,6 +217,69 @@ class ClassDisjointnessTests(SimpleTestCase):
                 )
 
 
+class StarlinkMuteTests(SimpleTestCase):
+    """Muted Starlink sends exclude starlinkMuted subscribers -- except failures.
+
+    Opt-out by subscription: only devices that muted subscribe to the topic, so
+    the exclusion term must appear on EVERY class (follow-all receives all
+    launches and needs it most) and must be absent from the failure types the
+    client copy promises to deliver regardless.
+    """
+
+    MUTED_TERM = "!('v6_prod_starlinkMuted' in topics)"
+
+    def test_flex_condition_appends_the_negated_mute_term(self):
+        self.assertEqual(
+            _condition("flex", mute_starlink=True),
+            "'v6_prod_ios_flex_oneHour' in topics && "
+            "('v6_prod_spacex' in topics || 'v6_prod_florida' in topics) && "
+            "!('v6_prod_starlinkMuted' in topics)",
+        )
+
+    def test_strict_condition_appends_the_negated_mute_term(self):
+        self.assertEqual(
+            _condition("strict", mute_starlink=True),
+            "'v6_prod_ios_strict_oneHour' in topics && "
+            "'v6_prod_spacex' in topics && 'v6_prod_florida' in topics && "
+            "!('v6_prod_starlinkMuted' in topics)",
+        )
+
+    def test_all_class_gets_the_mute_term_too(self):
+        # Follow-all receives every launch on a bare type topic; without the
+        # exclusion here, follow-all users could never mute Starlink.
+        self.assertEqual(
+            _condition("all", agency=None, location=None, mute_starlink=True),
+            "'v6_prod_ios_all_oneHour' in topics && !('v6_prod_starlinkMuted' in topics)",
+        )
+
+    def test_single_attribute_flex_gets_the_mute_term(self):
+        self.assertEqual(
+            _condition("flex", agency=None, mute_starlink=True),
+            "'v6_prod_ios_flex_oneHour' in topics && 'v6_prod_florida' in topics && "
+            "!('v6_prod_starlinkMuted' in topics)",
+        )
+
+    def test_failure_types_ignore_the_mute(self):
+        for notification_type in ("failure", "partial_failure"):
+            for audience_class in V6_AUDIENCE_CLASSES:
+                condition, _ = _build(audience_class, notification_type=notification_type, mute_starlink=True)
+                self.assertIsNotNone(condition)
+                self.assertNotIn(
+                    "starlinkMuted",
+                    condition,
+                    msg=f"{audience_class}/{notification_type} must deliver to muted devices",
+                )
+
+    def test_unmuted_conditions_are_unchanged(self):
+        for audience_class in V6_AUDIENCE_CLASSES:
+            condition, _ = _build(audience_class, mute_starlink=False)
+            self.assertNotIn("starlinkMuted", condition)
+
+    def test_mute_term_is_env_scoped(self):
+        condition = _condition("all", agency=None, location=None, env="debug", mute_starlink=True)
+        self.assertIn("!('v6_debug_starlinkMuted' in topics)", condition)
+
+
 class ConditionBudgetTests(SimpleTestCase):
     """Every emitted condition must stay within the FCM topic ceiling."""
 
@@ -224,19 +289,32 @@ class ConditionBudgetTests(SimpleTestCase):
                 for notification_type in V6_NOTIFICATION_TYPES:
                     for agency in ("spacex", None):
                         for location in ("florida", None):
-                            condition, _ = _build(
-                                audience_class,
-                                agency=agency,
-                                location=location,
-                                notification_type=notification_type,
-                                platform=platform,
-                            )
-                            if condition is not None:
-                                yield condition, (platform, audience_class, notification_type, agency, location)
+                            for mute_starlink in (False, True):
+                                condition, _ = _build(
+                                    audience_class,
+                                    agency=agency,
+                                    location=location,
+                                    notification_type=notification_type,
+                                    platform=platform,
+                                    mute_starlink=mute_starlink,
+                                )
+                                if condition is not None:
+                                    yield (
+                                        condition,
+                                        (
+                                            platform,
+                                            audience_class,
+                                            notification_type,
+                                            agency,
+                                            location,
+                                            mute_starlink,
+                                        ),
+                                    )
 
-    def test_no_condition_exceeds_three_topics(self):
+    def test_no_condition_exceeds_four_topics(self):
+        # 3 for the widest class shape, +1 for the starlinkMuted exclusion.
         for condition, params in self._all_conditions():
-            self.assertLessEqual(condition.count("in topics"), 3, msg=f"{params} produced {condition}")
+            self.assertLessEqual(condition.count("in topics"), 4, msg=f"{params} produced {condition}")
 
     def test_every_condition_has_balanced_parentheses(self):
         for condition, params in self._all_conditions():

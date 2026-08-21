@@ -26,7 +26,9 @@ from bot.utils.notification_groups import (
 from bot.utils.util import (
     V6_AUDIENCE_CLASSES,
     V6_BROADCAST_KINDS,
+    V6_MUTE_EXEMPT_TYPES,
     V6_NOTIFICATION_TYPES,
+    V6_STARLINK_MUTED_GROUP,
     build_v6_broadcast_condition,
     build_v6_condition,
     get_v6_attribute_topic,
@@ -94,6 +96,26 @@ class BroadcastKindContractTests(SimpleTestCase):
         for setting_id in setting_ids - set(V6_BROADCAST_KINDS):
             with self.subTest(setting_id=setting_id), self.assertRaises(ValueError):
                 build_v6_broadcast_condition("prod", "ios", setting_id)
+
+
+class MuteGroupContractTests(SimpleTestCase):
+    def test_the_starlink_mute_group_matches_the_contract(self):
+        groups = [group["group"] for group in CONTRACT["muteGroups"]["values"]]
+        self.assertIn(V6_STARLINK_MUTED_GROUP, groups)
+
+    def test_the_exempt_types_match_the_contract_exactly(self):
+        (starlink,) = [group for group in CONTRACT["muteGroups"]["values"] if group["group"] == V6_STARLINK_MUTED_GROUP]
+        self.assertEqual(list(V6_MUTE_EXEMPT_TYPES), starlink["exemptTypes"])
+
+    def test_every_exempt_type_is_a_real_notification_type(self):
+        for notification_type in V6_MUTE_EXEMPT_TYPES:
+            self.assertIn(notification_type, V6_NOTIFICATION_TYPES)
+
+    def test_the_mute_topic_follows_the_attribute_grammar(self):
+        self.assertEqual(
+            get_v6_attribute_topic("prod", V6_STARLINK_MUTED_GROUP),
+            "v6_prod_starlinkMuted",
+        )
 
 
 class GroupContractTests(SimpleTestCase):

@@ -27,6 +27,7 @@ from bot.utils.notification_groups import (
     location_group,
 )
 from bot.utils.util import (
+    STARLINK_PROGRAM_ID,
     V6_AUDIENCE_CLASSES,
     build_v6_broadcast_condition,
     build_v6_condition,
@@ -200,6 +201,12 @@ class V6NotificationMixin:
         agency = agency_group(lsp_id)
         location = location_group(location_id)
 
+        # Read the program from the payload the V5 builder already traversed the
+        # ORM for -- no extra query on the latency-critical tracker loop.
+        mute_starlink = STARLINK_PROGRAM_ID in data.get("program_id", "").split(",")
+        if mute_starlink:
+            logger.info(f"V6 launch {launch.id} is Starlink; conditions exclude starlinkMuted subscribers")
+
         # A curated table missing an ID is invisible in delivery -- the send
         # still happens, just to a group almost nobody subscribes to. Count it.
         if agency == DEFAULT_AGENCY_GROUP:
@@ -223,6 +230,7 @@ class V6NotificationMixin:
                     notification_type=notification_type,
                     agency=agency,
                     location=location,
+                    mute_starlink=mute_starlink,
                 )
                 if condition is None:
                     logger.warning(
