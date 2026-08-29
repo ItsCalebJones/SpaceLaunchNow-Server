@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.46.1 (2026-08-29)
+
+### Fix
+
+* fix: update canonical and Open Graph URLs for upcoming launches ([`9bda279`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/9bda2794272166ab1707ccdff88a016b9ebe15ce))
+
 ## v4.46.0 (2026-08-21)
 
 ### Feature
