@@ -1,11 +1,14 @@
 import json
 import pathlib
 import re
+from datetime import timedelta
+from unittest import mock
 
 from api.models import Launch
 from api.tests.test__base import LLAPITests
 from django.template.loader import render_to_string
 from django.test import override_settings
+from django.utils import timezone
 
 # Create your tests here.
 from rest_framework import status
@@ -83,6 +86,25 @@ class WebTests(LLAPITests):
         # Test Normal endpoint
         response = self.client.get("/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_home_reads_the_clock_per_request(self):
+        """Regression: "now" was a module-level constant evaluated once at import,
+        so a web pod that stayed up for ten days kept the launch that was "next"
+        at boot on the front page long after it had flown. The view must read the
+        clock on every request; the fixture's status-6 launch is neutralised
+        because in_flight_launch short-circuits the time-based selection."""
+        Launch.objects.filter(status__id=6).update(status=3)
+        flown = Launch.objects.filter(net__gt=timezone.now()).order_by("net").first()
+        # Two hours after `flown` lifts off: outside the one-hour "recently launched"
+        # window, so the headline must move on to whatever launches next.
+        later = flown.net + timedelta(hours=2)
+
+        with mock.patch("django.utils.timezone.now", return_value=later):
+            response = self.client.get("/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertGreater(response.context["launch"].net, later)
+        self.assertEqual(response.context["previous_launches"][0].id, flown.id)
 
     def test_next(self):
         # Test Normal endpoint

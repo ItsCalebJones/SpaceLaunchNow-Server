@@ -1,4 +1,3 @@
-import datetime
 import json
 from datetime import timedelta
 from itertools import chain
@@ -28,6 +27,7 @@ from django.db.models import Q
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.template import loader
+from django.utils import timezone
 from django.views import View
 from django.views.decorators.cache import cache_page
 
@@ -43,7 +43,16 @@ from web.filters.launch_vehicle_filters import LauncherConfigListFilter
 from web.tables.launch_table import LaunchTable
 from web.tables.launch_vehicle_table import LaunchVehicleTable
 
-UTC_NOW = datetime.datetime.now(datetime.timezone.utc)
+
+def utc_now():
+    """Read the clock on every call.
+
+    This was a module-level constant, which froze "now" at worker boot: a prod web
+    pod that stayed up for ten days kept serving the launch that was "next" when it
+    started, long after it had flown. Every upcoming/previous split in this module
+    goes through here so none of them can drift with pod age again.
+    """
+    return timezone.now()
 
 
 def get_youtube_url(launch):
@@ -110,21 +119,23 @@ def apple_app_site_association(request):
 
 def index(request):
     news = Article.objects.all().order_by("-created_at")[:6]
-    last_six_hours = UTC_NOW - timedelta(hours=6)
+    last_six_hours = utc_now() - timedelta(hours=6)
     event = Events.objects.all().filter(date__gte=last_six_hours).order_by("date").first()
     events = Events.objects.all().filter(date__gte=last_six_hours).order_by("date")[1:4]
-    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")[:10]
+    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")[:10]
     _launches = get_prefetched_launch_queryset(
-        Launch.objects.filter(net__gte=UTC_NOW).filter(Q(status__id=1) | Q(status__id=2) | Q(status__id=8))
+        Launch.objects.filter(net__gte=utc_now()).filter(Q(status__id=1) | Q(status__id=2) | Q(status__id=8))
     ).order_by("net")[:3]
 
     in_flight_launch = get_prefetched_launch_queryset(Launch.objects.filter(status__id=6)).order_by("-net").first()
     recently_launched = (
-        get_prefetched_launch_queryset(Launch.objects.filter(net__gte=UTC_NOW - timedelta(hours=1), net__lte=UTC_NOW))
+        get_prefetched_launch_queryset(
+            Launch.objects.filter(net__gte=utc_now() - timedelta(hours=1), net__lte=utc_now())
+        )
         .order_by("-net")
         .first()
     )
-    _next_launch = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=UTC_NOW)).order_by("net").first()
+    _next_launch = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=utc_now())).order_by("net").first()
 
     if in_flight_launch:
         launch = in_flight_launch
@@ -199,7 +210,9 @@ def app(request):
         )
 
     recently_launched = (
-        get_prefetched_launch_queryset(Launch.objects.filter(net__gte=UTC_NOW - timedelta(hours=2), net__lte=UTC_NOW))
+        get_prefetched_launch_queryset(
+            Launch.objects.filter(net__gte=utc_now() - timedelta(hours=2), net__lte=utc_now())
+        )
         .order_by("-net")
         .first()
     )
@@ -213,7 +226,7 @@ def app(request):
             },
         )
     else:
-        _next_launch = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=UTC_NOW)).order_by("net").first()
+        _next_launch = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=utc_now())).order_by("net").first()
         return render(
             request,
             "web/app.html",
@@ -229,14 +242,14 @@ def next_launch(request):
         return redirect("launch_by_slug", slug=in_flight_launch.slug)
     recently_launched = (
         Launch.objects.select_related("status")
-        .filter(net__gte=UTC_NOW - timedelta(hours=6), net__lte=UTC_NOW)
+        .filter(net__gte=utc_now() - timedelta(hours=6), net__lte=utc_now())
         .order_by("-net")
         .first()
     )
     if recently_launched:
         return redirect("launch_by_slug", slug=recently_launched.slug)
     else:
-        _next_launch = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=UTC_NOW)).order_by("net").first()
+        _next_launch = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=utc_now())).order_by("net").first()
         return redirect("launch_by_slug", slug=_next_launch.slug)
 
 
@@ -304,7 +317,7 @@ def create_launch_view(request, launch):
     for url in vids:
         if "youtube" in url.vid_url:
             youtube_urls.append(url.vid_url)
-    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")[:10]
+    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")[:10]
 
     if launch.image:
         launch_image = launch.image.image.url
@@ -339,7 +352,7 @@ def launches(
     query = request.GET.get("q")
 
     if query is not None and query != "None":
-        _launches = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=UTC_NOW)).order_by("net")
+        _launches = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=utc_now())).order_by("net")
         _launches = _launches.filter(
             Q(rocket__configuration__manufacturer__abbrev__contains=query)
             | Q(rocket__configuration__manufacturer__name__contains=query)
@@ -347,7 +360,7 @@ def launches(
             | Q(rocket__configuration__name__contains=query)
         )
     else:
-        _launches = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=UTC_NOW)).order_by("net")
+        _launches = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=utc_now())).order_by("net")
 
     page = request.GET.get("page", 1)
     paginator = Paginator(_launches, 10)
@@ -359,7 +372,7 @@ def launches(
     except EmptyPage:
         launches = paginator.page(paginator.num_pages)
 
-    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")[:10]
+    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")[:10]
 
     return render(
         request,
@@ -380,7 +393,7 @@ def previous(
     query = request.GET.get("q")
 
     if query is not None and query != "None":
-        _launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")
+        _launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")
         _launches = _launches.filter(
             Q(rocket__configuration__manufacturer__abbrev__contains=query)
             | Q(rocket__configuration__manufacturer__name__contains=query)
@@ -388,7 +401,7 @@ def previous(
             | Q(rocket__configuration__name__contains=query)
         )
     else:
-        _launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")
+        _launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")
 
     page = request.GET.get("page", 1)
     paginator = Paginator(_launches, 10)
@@ -415,7 +428,7 @@ def launches_vandenberg(
     query = "Vandenberg"
 
     if query is not None and query != "None":
-        _launches = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=UTC_NOW)).order_by("net")
+        _launches = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=utc_now())).order_by("net")
         _launches = _launches.filter(
             Q(rocket__configuration__manufacturer__abbrev__contains=query)
             | Q(rocket__configuration__manufacturer__name__contains=query)
@@ -423,7 +436,7 @@ def launches_vandenberg(
             | Q(rocket__configuration__name__contains=query)
         )
     else:
-        _launches = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=UTC_NOW)).order_by("net")
+        _launches = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=utc_now())).order_by("net")
 
     page = request.GET.get("page", 1)
     paginator = Paginator(_launches, 10)
@@ -435,7 +448,7 @@ def launches_vandenberg(
     except EmptyPage:
         launches = paginator.page(paginator.num_pages)
 
-    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")[:10]
+    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")[:10]
 
     return render(
         request,
@@ -457,7 +470,7 @@ def launches_spacex(
     query = "SpaceX"
 
     if query is not None and query != "None":
-        _launches = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=UTC_NOW)).order_by("net")
+        _launches = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=utc_now())).order_by("net")
         _launches = _launches.filter(
             Q(rocket__configuration__manufacturer__abbrev__contains=query)
             | Q(rocket__configuration__manufacturer__name__contains=query)
@@ -465,7 +478,7 @@ def launches_spacex(
             | Q(rocket__configuration__name__contains=query)
         )
     else:
-        _launches = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=UTC_NOW)).order_by("net")
+        _launches = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=utc_now())).order_by("net")
 
     page = request.GET.get("page", 1)
     paginator = Paginator(_launches, 10)
@@ -477,7 +490,7 @@ def launches_spacex(
     except EmptyPage:
         launches = paginator.page(paginator.num_pages)
 
-    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")[:10]
+    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")[:10]
 
     spacex = Agency.objects.only("id", "name", "image", "description").get(name="SpaceX")
 
@@ -502,7 +515,7 @@ def launches_florida(
     query = "FL"
 
     if query is not None and query != "None":
-        _launches = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=UTC_NOW)).order_by("net")
+        _launches = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=utc_now())).order_by("net")
         _launches = _launches.filter(
             Q(rocket__configuration__manufacturer__abbrev__contains=query)
             | Q(rocket__configuration__manufacturer__name__contains=query)
@@ -510,7 +523,7 @@ def launches_florida(
             | Q(rocket__configuration__name__contains=query)
         )
     else:
-        _launches = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=UTC_NOW)).order_by("net")
+        _launches = get_prefetched_launch_queryset(Launch.objects.filter(net__gte=utc_now())).order_by("net")
 
     page = request.GET.get("page", 1)
     paginator = Paginator(_launches, 10)
@@ -522,7 +535,7 @@ def launches_florida(
     except EmptyPage:
         launches = paginator.page(paginator.num_pages)
 
-    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")[:10]
+    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")[:10]
 
     return render(
         request,
@@ -547,7 +560,7 @@ def astronaut(request, id):
 @cache_page(600)
 def vehicle_root(request):
     news = Article.objects.all().order_by("created_at")[:6]
-    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")[:15]
+    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")[:15]
     return render(
         request,
         "web/vehicles/index.html",
@@ -568,7 +581,7 @@ def spacecraft_list(request):
 @cache_page(600)
 def spacecraft_by_id(request, id):
     spacecraft = SpacecraftConfiguration.objects.get(pk=id)
-    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")[:10]
+    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")[:10]
     return render(
         request,
         "web/vehicles/spacecraft/spacecraft_detail.html",
@@ -578,9 +591,9 @@ def spacecraft_by_id(request, id):
 
 @cache_page(600)
 def events_list(request):
-    last_six_hours = UTC_NOW - timedelta(hours=6)
+    last_six_hours = utc_now() - timedelta(hours=6)
     events = Events.objects.filter(date__gte=last_six_hours).select_related("type", "image").order_by("date")
-    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")[:6]
+    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")[:6]
     return render(
         request,
         "web/events/event_list.html",
@@ -599,7 +612,7 @@ def event_by_slug(request, slug):
             .prefetch_related("vid_urls")
             .get(slug=slug)
         )
-        previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")[
+        previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")[
             :10
         ]
         return render(
@@ -618,10 +631,10 @@ def starship_page(request):
         events = (
             Events.objects.select_related("type", "image")
             .filter(program=1)
-            .filter(date__gte=UTC_NOW)
+            .filter(date__gte=utc_now())
             .order_by("date")[:10]
         )
-        launches = get_prefetched_launch_queryset(Launch.objects.filter(program=1).filter(net__gte=UTC_NOW)).order_by(
+        launches = get_prefetched_launch_queryset(Launch.objects.filter(program=1).filter(net__gte=utc_now())).order_by(
             "net"
         )[:10]
         vehicles = (
@@ -641,9 +654,9 @@ def starship_page(request):
             .order_by("-created_on")[:5]
         )
         live_streams = VidURLs.objects.select_related("type", "language").filter(program=1)[:5]
-        road_closures = RoadClosure.objects.filter(window_end__gte=UTC_NOW).order_by("window_end")[:10]
-        notices = Notice.objects.filter(date__gte=UTC_NOW).order_by("date")[:10]
-        previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")[
+        road_closures = RoadClosure.objects.filter(window_end__gte=utc_now()).order_by("window_end")[:10]
+        notices = Notice.objects.filter(date__gte=utc_now()).order_by("date")[:10]
+        previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")[
             :10
         ]
         return render(
@@ -690,7 +703,7 @@ def booster_reuse(request):
     except EmptyPage:
         vehicles = paginator.page(paginator.num_pages)
 
-    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")[:10]
+    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")[:10]
     return render(
         request,
         "web/vehicles/boosters/booster_list.html",
@@ -710,7 +723,9 @@ def booster_reuse_search(request):
         _vehicles = Launcher.objects.select_related("launcher_config", "status").filter(
             Q(launcher_config__name__icontains=query) | Q(serial_number__icontains=query)
         )
-        previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")[:5]
+        previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")[
+            :5
+        ]
         return render(
             request,
             "web/vehicles/boosters/boosters_search.html",
@@ -729,12 +744,14 @@ def booster_reuse_id(request, id):
     if id is not None:
         vehicle = Launcher.objects.get(pk=id)
         upcoming_vehicle_launches = get_prefetched_launch_queryset(
-            Launch.objects.filter(rocket__firststage__launcher_id=vehicle.id).filter(net__gte=UTC_NOW)
+            Launch.objects.filter(rocket__firststage__launcher_id=vehicle.id).filter(net__gte=utc_now())
         ).order_by("net")
         previous_vehicle_launches = get_prefetched_launch_queryset(
-            Launch.objects.filter(rocket__firststage__launcher_id=vehicle.id).filter(net__lte=UTC_NOW)
+            Launch.objects.filter(rocket__firststage__launcher_id=vehicle.id).filter(net__lte=utc_now())
         ).order_by("-net")
-        previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")[:5]
+        previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")[
+            :5
+        ]
         return render(
             request,
             "web/vehicles/boosters/booster_detail.html",
@@ -788,14 +805,14 @@ def launch_vehicle_id(request, id):
             vehicle = (
                 LauncherConfig.objects.select_related("manufacturer", "image").prefetch_related("families").get(pk=id)
             )
-            previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by(
+            previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by(
                 "-net"
             )[:5]
             upcoming_vehicle_launches = get_prefetched_launch_queryset(
-                Launch.objects.filter(rocket__configuration=vehicle.id).filter(net__gte=UTC_NOW)
+                Launch.objects.filter(rocket__configuration=vehicle.id).filter(net__gte=utc_now())
             ).order_by("net")
             previous_vehicle_launches = get_prefetched_launch_queryset(
-                Launch.objects.filter(rocket__configuration=vehicle.id).filter(net__lte=UTC_NOW)
+                Launch.objects.filter(rocket__configuration=vehicle.id).filter(net__lte=utc_now())
             ).order_by("-net")
 
             return render(
@@ -828,7 +845,9 @@ def spacestation_list(request):
 def spacestation_by_id(request, id):
     if id is not None:
         spacestation = SpaceStation.objects.get(pk=id)
-        previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")[:5]
+        previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")[
+            :5
+        ]
         return render(
             request,
             "web/vehicles/spacestations/spacestations_details.html",
@@ -848,7 +867,7 @@ def astronaut_by_slug(request, slug):
                     Q(rocket__spacecraftflight__launch_crew__astronaut__id=_astronaut.pk)
                     | Q(rocket__spacecraftflight__onboard_crew__astronaut__id=_astronaut.pk)
                     | Q(rocket__spacecraftflight__landing_crew__astronaut__id=_astronaut.pk)
-                ).filter(net__lte=UTC_NOW)
+                ).filter(net__lte=utc_now())
             )
             .values_list("pk", flat=True)
             .distinct()
@@ -859,14 +878,16 @@ def astronaut_by_slug(request, slug):
                     Q(rocket__spacecraftflight__launch_crew__astronaut__id=_astronaut.pk)
                     | Q(rocket__spacecraftflight__onboard_crew__astronaut__id=_astronaut.pk)
                     | Q(rocket__spacecraftflight__landing_crew__astronaut__id=_astronaut.pk)
-                ).filter(net__gte=UTC_NOW)
+                ).filter(net__gte=utc_now())
             )
             .values_list("pk", flat=True)
             .distinct()
         )
         _launches = get_prefetched_launch_queryset(Launch.objects.filter(pk__in=previous_list)).order_by("net")
         _upcoming_launches = get_prefetched_launch_queryset(Launch.objects.filter(pk__in=upcoming_list)).order_by("net")
-        previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")[:5]
+        previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")[
+            :5
+        ]
         return render(
             request,
             "web/astronaut/astronaut_detail.html",
@@ -1005,7 +1026,7 @@ def astronaut_list(
             .order_by("name")
         )
 
-    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")[:10]
+    previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")[:10]
 
     page = request.GET.get("page", 1)
 
@@ -1095,7 +1116,9 @@ def astronaut_search(request):
             .filter(name__icontains=query)
             .order_by("name")
         )
-        previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=UTC_NOW)).order_by("-net")[:5]
+        previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")[
+            :5
+        ]
         return render(
             request,
             "web/astronaut/astronaut_search.html",
@@ -1136,7 +1159,7 @@ class LaunchFeed(ICalFeed):
     )
 
     def items(self):
-        return Launch.objects.filter(net__gte=UTC_NOW).order_by("net")[:10]
+        return Launch.objects.filter(net__gte=utc_now()).order_by("net")[:10]
 
     def item_guid(self, item):
         return "{}{}".format(item.id, "@spacelaunchnow")
@@ -1196,7 +1219,7 @@ class EventFeed(ICalFeed):
     file_name = "events.ics"
 
     def items(self):
-        return Events.objects.filter(date__gte=UTC_NOW).order_by("date")[:10]
+        return Events.objects.filter(date__gte=utc_now()).order_by("date")[:10]
 
     def item_guid(self, item):
         return "{}{}".format(item.id, "@spacelaunchnow")
