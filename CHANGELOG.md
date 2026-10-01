@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v4.46.3 (2026-10-01)
+
+### Fix
+
+* fix(web): add missing trailing slashes to internal links, canonicals and sitemaps ([`3277d7e`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/3277d7ecc79ff24ea295dd4eccb73476ea3e3f02))
+
+### Unknown
+
+* Merge pull request #332 from ItsCalebJones/fix/web-trailing-slash-links
+
+fix(web): add missing trailing slashes to internal links, canonicals and sitemaps ([`de3bf91`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/de3bf9163883e601de1a98150918e176a0e221b4))
+
 ## v4.46.2 (2026-10-01)
 
 ### Performance
