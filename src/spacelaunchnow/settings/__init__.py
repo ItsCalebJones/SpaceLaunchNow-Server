@@ -263,8 +263,12 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_user_agents.middleware.UserAgentMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "spacelaunchnow.middleware.RoundTimeFiltersMiddleware",
     # 'silk.middleware.SilkyMiddleware',
 ]
+
+# Bucket size for RoundTimeFiltersMiddleware; 0 turns rounding off.
+TIME_FILTER_BUCKET_SECONDS = env.int("TIME_FILTER_BUCKET_SECONDS", 60)
 
 if DEBUG:
     MIDDLEWARE.insert(
