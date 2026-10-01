@@ -25,9 +25,9 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item {% if request.path == '/launch/upcoming/' %} active {% endif %}"
-                           href="/launch/upcoming">Upcoming Launches</a>
+                           href="/launch/upcoming/">Upcoming Launches</a>
                         <a class="dropdown-item {% if request.path == '/launch/previous/' %} active {% endif %}"
-                           href="/launch/previous">Previous Launches</a>
+                           href="/launch/previous/">Previous Launches</a>
 
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item {% if '/launch/upcoming/spacex' in request.path %} active {% endif %}"
@@ -37,7 +37,7 @@
                         <a class="dropdown-item {% if '/launch/upcoming/vandenberg' in request.path %} active {% endif %}"
                            href="/launch/upcoming/vandenberg">Vandenberg</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item {% if request.path == '/launch/' %} active {% endif %}" href="/launch">Launch
+                        <a class="dropdown-item {% if request.path == '/launch/' %} active {% endif %}" href="/launch/">Launch
                             Database</a>
                     </div>
                 </li>

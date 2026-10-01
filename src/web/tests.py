@@ -8,10 +8,33 @@ from api.models import Launch
 from api.tests.test__base import LLAPITests
 from django.template.loader import render_to_string
 from django.test import override_settings
+from django.urls import Resolver404, resolve
 from django.utils import timezone
 
 # Create your tests here.
 from rest_framework import status
+
+from spacelaunchnow.urls import sitemaps
+
+# A literal internal URL in a template: href, canonical/og:url content, or a share link's u=.
+INTERNAL_URL = re.compile(
+    r'(?:href|content|u)="?(?:https?://(?:www\.)?spacelaunchnow\.(?:app|me))?'
+    r"(/(?:launch|event|astronaut|starship|vehicle|about|spacex|florida|next|spacestation)"
+    r'(?:\{\{.*?\}\}|[^"?#\s{])*)'
+)
+
+
+def _with_sample_values(path):
+    """Swap template variables for values the URL converters accept."""
+    return re.sub(r"\{\{\s*(.*?)\s*\}\}", lambda m: "some-slug" if "slug" in m.group(1) else "1", path)
+
+
+def _resolves(path):
+    try:
+        resolve(path)
+    except Resolver404:
+        return False
+    return True
 
 
 @override_settings(CACHES={"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}})
@@ -166,6 +189,33 @@ class WebTests(LLAPITests):
             if "is_mobile" in path.read_text(encoding="utf-8", errors="replace")
         )
         self.assertEqual(offenders, [])
+
+    def test_internal_links_resolve_without_a_redirect(self):
+        """Regression: links, canonical tags and og:url values omitted the trailing
+        slash, so every click and crawl cost a 301 from APPEND_SLASH -- 632 upstream
+        redirects an hour in production on 2026-10-01. A few pointed at routes that
+        do not exist at all (/spacestation/), which is a 404 rather than a 301."""
+        src = pathlib.Path(__file__).resolve().parent.parent
+        offenders = []
+        for root in (src / "web" / "templates", src / "templates"):
+            for template in root.rglob("*.html"):
+                lines = template.read_text(encoding="utf-8", errors="replace").splitlines()
+                for lineno, line in enumerate(lines, 1):
+                    for match in INTERNAL_URL.finditer(line):
+                        if not _resolves(_with_sample_values(match.group(1))):
+                            offenders.append(f"{template.relative_to(src)}:{lineno} {match.group(1)}")
+        self.assertEqual(offenders, [])
+
+    def test_sitemap_locations_resolve_without_a_redirect(self):
+        """Crawlers fetch sitemap entries verbatim; 565 of the 632 redirects above
+        carried no referer, which is what sitemap and canonical crawling looks like."""
+        self.assertTrue(Launch.objects.exists())
+        for name, sitemap_class in sitemaps.items():
+            sitemap = sitemap_class()
+            for item in list(sitemap.items())[:5]:
+                location = sitemap.location(item)
+                with self.subTest(sitemap=name, location=location):
+                    self.assertTrue(_resolves(location), f"{location} does not resolve")
 
     def test_video_facade_defers_the_iframe(self):
         """The facade must ship a thumbnail and no iframe. A hidden or unwatched

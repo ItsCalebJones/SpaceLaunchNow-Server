@@ -9,7 +9,7 @@
         gtag('event', 'conversion', {'send_to': 'AW-960961949/pw8uCP-klNEBEJ27nMoD'});
     </script>
     <title>{{ launch.name }}</title>
-    <link rel="canonical" href="https://spacelaunchnow.app/launch/{{ launch.slug }}">
+    <link rel="canonical" href="https://spacelaunchnow.app/launch/{{ launch.slug }}/">
     <meta name="title" content="{{ launch.name }}">
     <meta property="fb:app_id" content="746774215504127"/>
     <meta property="og:title" content="{{ launch.name }}"/>
@@ -291,7 +291,7 @@
                                     <p> {{ vehicle.description }}</p>
                                     {% if vehicle.info_url %}
                                         <a class="btn btn-primary btn-lg"
-                                           href="/vehicle/launch_vehicle/{{ vehicle.id }}">See {{ vehicle.family }}
+                                           href="/vehicle/launch_vehicle/{{ vehicle.id }}/">See {{ vehicle.family }}
                                             Details</a>
                                     {% endif %}
                                     <div class="row">
@@ -511,7 +511,7 @@
                                                     </div>
                                                     {% if stage.previous_flight %}
                                                         <a class="btn btn-primary btn-lg"
-                                                           href="/vehicle/launcher/{{ stage.launcher.id }}">Previous {{ stage.launcher.serial_number }}
+                                                           href="/vehicle/launcher/{{ stage.launcher.id }}/">Previous {{ stage.launcher.serial_number }}
                                                             Flights</a>
                                                     {% endif %}
 
@@ -626,7 +626,7 @@
                                                     </h6>
                                                     <p>{{ spacecraft_flight.spacecraft.description }}</p>
                                                     <a class="btn btn-primary btn-lg"
-                                                       href="/vehicle/spacecraft/{{ spacecraft_flight.spacecraft.spacecraft_config.id }}">
+                                                       href="/vehicle/spacecraft/{{ spacecraft_flight.spacecraft.spacecraft_config.id }}/">
                                                         {{ spacecraft_flight.spacecraft.spacecraft_config.name }}
                                                         Details</a>
                                                     <br>
@@ -644,7 +644,7 @@
                                                         <!-- Date/Time -->
                                                         <div class="col-lg-5 mx-auto my-auto mr-auto">
                                                             {% if astronaut_flight.astronaut.astronaut_image.image %}
-                                                                <a href="/astronaut/{{ astronaut_flight.astronaut.slug }}">
+                                                                <a href="/astronaut/{{ astronaut_flight.astronaut.slug }}/">
                                                                     <img class="img-raised rounded-circle img-fluid text-center"
                                                                             src="{{ astronaut_flight.astronaut.astronaut_image.image.url }}"
                                                                             style="padding:1px;border:1px solid #cccccc;max-height: 200px;max-width: 200px">
@@ -655,7 +655,7 @@
                                                             {% endif %}
                                                         </div>
                                                         <div class="col-lg-7 mx-auto my-auto text-left">
-                                                            <a href="/astronaut/{{ astronaut_flight.astronaut.slug }}">
+                                                            <a href="/astronaut/{{ astronaut_flight.astronaut.slug }}/">
                                                                 <h2 class="title">{{ astronaut_flight.astronaut.name }} </h2>
                                                             </a>
                                                             <h4 class="title"

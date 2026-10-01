@@ -73,29 +73,29 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item {% if request.path == '/launch/upcoming/' %} active {% endif %}"
-                               href="/launch/upcoming">Upcoming Launches</a>
+                               href="/launch/upcoming/">Upcoming Launches</a>
                             <a class="dropdown-item {% if request.path == '/launch/previous/' %} active {% endif %}"
-                               href="/launch/previous">Previous Launches</a>
+                               href="/launch/previous/">Previous Launches</a>
 
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="/launch/upcoming/spacex">SpaceX</a>
                             <a class="dropdown-item" href="/launch/upcoming/florida">Florida</a>
                             <a class="dropdown-item" href="/launch/upcoming/vandenberg">Vandenberg</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="/launch">Launch Database</a>
+                            <a class="dropdown-item" href="/launch/">Launch Database</a>
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/starship">Starship</a>
+                        <a class="nav-link" href="/starship/">Starship</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/event">Events</a>
+                        <a class="nav-link" href="/event/">Events</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/astronaut">Astronauts</a>
+                        <a class="nav-link" href="/astronaut/">Astronauts</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/vehicle">Vehicles</a>
+                        <a class="nav-link" href="/vehicle/">Vehicles</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link"
@@ -162,7 +162,7 @@
                                 <p class="card-description">
                                     {{ launch.mission.description|truncatewords:100 }}
                                 </p>
-                                <a href="/launch/{{ launch.slug }}" class="btn btn-primary btn-round mt-5">
+                                <a href="/launch/{{ launch.slug }}/" class="btn btn-primary btn-round mt-5">
                                     <i class="material-icons">subject</i> View Launch
                                 </a>
                             </div>
@@ -256,7 +256,7 @@
                         <div class="row">
                             <div class="col-md-5">
                                 <div class="card-header card-header-image">
-                                    <a href="/launch/{{ first_launch.slug }}">
+                                    <a href="/launch/{{ first_launch.slug }}/">
                                         <img class="img"
                                              src="{% if first_launch_image %}{{ first_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
                                         <div class="colored-shadow"
@@ -270,7 +270,7 @@
                                 </h6>
                                 <h6 class="card-category text-info">{{ first_launch.mission.type.name }}</h6>
                                 <h3 class="card-title">
-                                    <a href="/launch/{{ first_launch.slug }}">{{ first_launch.name }}</a>
+                                    <a href="/launch/{{ first_launch.slug }}/">{{ first_launch.name }}</a>
                                 </h3>
                                 <p class="author">
                                     <b>{{ first_launch.rocket.configuration.manufacturer.name }}</b>
@@ -282,7 +282,7 @@
                                 <p class="card-description mt-1">
                                     {{ first_launch.mission.description|truncatewords:50 }}
                                     <br>
-                                    <a href="/launch/{{ first_launch.slug }}"> View Launch </a>
+                                    <a href="/launch/{{ first_launch.slug }}/"> View Launch </a>
                                 </p>
                             </div>
                         </div>
@@ -295,7 +295,7 @@
                                 </h6>
                                 <h6 class="card-category text-info">{{ second_launch.mission.type.name }}</h6>
                                 <h3 class="card-title">
-                                    <a href="/launch/{{ second_launch.slug }}">{{ second_launch.name }}</a>
+                                    <a href="/launch/{{ second_launch.slug }}/">{{ second_launch.name }}</a>
                                 </h3>
                                 <p class="author">
                                     <b>{{ second_launch.rocket.configuration.manufacturer.name }}</b>
@@ -307,12 +307,12 @@
                                 <p class="card-description mt-1">
                                     {{ second_launch.mission.description|truncatewords:50 }}
                                     <br>
-                                    <a href="/launch/{{ second_launch.slug }}"> View Launch </a>
+                                    <a href="/launch/{{ second_launch.slug }}/"> View Launch </a>
                                 </p>
                             </div>
                             <div class="col-md-5">
                                 <div class="card-header card-header-image">
-                                    <a href="/launch/{{ second_launch.slug }}">
+                                    <a href="/launch/{{ second_launch.slug }}/">
                                         <img class="img"
                                              src="{% if second_launch_image %}{{ second_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
                                         <div class="colored-shadow"
@@ -323,7 +323,7 @@
                         </div>
                     </div>
                     <div class="text-center">
-                        <a class="btn btn-primary btn-round" href="/launch/upcoming">
+                        <a class="btn btn-primary btn-round" href="/launch/upcoming/">
                             View More Launches
                         </a>
                     </div>
@@ -379,7 +379,7 @@
                         </div>
                         <div class="col-md-4 mx-auto">
                             <div class="info info-horizontal">
-                                <a href="/launch/upcoming">
+                                <a href="/launch/upcoming/">
                                     <div class="icon icon-primary">
                                         <i class="fas fa-clipboard-list-check"></i>
                                     </div>
@@ -394,7 +394,7 @@
                         </div>
                         <div class="col-md-4 mx-auto">
                             <div class="info info-horizontal">
-                                <a href="/launch/previous">
+                                <a href="/launch/previous/">
                                     <div class="icon icon-rose">
                                         <i class="fas fa-history"></i>
                                     </div>
@@ -432,7 +432,7 @@
                             {% if event %}
                             <div class="card card-plain card-blog">
                                 <div class="card-header card-header-image">
-                                    <a href="/event/{{ event.slug }}">
+                                    <a href="/event/{{ event.slug }}/">
                                         {% if event.image.image %}
                                         <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
                                              src="{{ event.image.image.url }}">
@@ -447,7 +447,7 @@
                                     <h6 class="card-category"
                                         style="display:inline;">{{ event.date|date:'F d, Y' }}</h6>
                                     <h4 class="card-title">
-                                        <a href="/event/{{ event.slug }}">{{ event.name }}</a>
+                                        <a href="/event/{{ event.slug }}/">{{ event.name }}</a>
                                     </h4>
                                     {% if event.location %}
                                         <span class="badge badge-pill badge-primary">{{ event.location }}</span>
@@ -457,7 +457,7 @@
                                     </p>
                                     <div class="text-left">
                                         <a class="btn btn-primary"
-                                           href="/event/{{ event.slug }}">Explore</a>
+                                           href="/event/{{ event.slug }}/">Explore</a>
                                     </div>
                                 </div>
                             </div>
@@ -469,7 +469,7 @@
                                             <div class="card card-plain card-blog">
                                                 <div class="card-header card-header-image">
                                                     {% if event.image.image %}
-                                                    <a href="/event/{{ event.slug }}">
+                                                    <a href="/event/{{ event.slug }}/">
                                                         <img class="img img-raised"
                                                              style="height: 175px; object-fit: cover;"
                                                              src="{{ event.image.image.url }}">
@@ -485,7 +485,7 @@
                                                     <h6 class="card-category"
                                                         style="display:inline;">{{ event.date|date:'F d, Y' }}</h6>
                                                     <h4 class="card-title">
-                                                        <a href="/event/{{ event.slug }}">{{ event.name }}</a>
+                                                        <a href="/event/{{ event.slug }}/">{{ event.name }}</a>
                                                     </h4>
                                                     {% if event.location %}
                                                         <span class="badge badge-pill badge-primary">{{ event.location }}</span>
