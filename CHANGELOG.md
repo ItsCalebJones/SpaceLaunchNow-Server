@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## v4.46.2 (2026-10-01)
+
+### Performance
+
+* perf(api): round datetime range filters so launch-day queries hit cachalot ([`5975752`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/597575288e8787584ac69c710578e85b701a5b12))
+
+### Unknown
+
+* Merge pull request #331 from ItsCalebJones/fix/round-api-time-filters
+
+perf(api): round datetime range filters so launch-day queries hit cachalot ([`54c1e5c`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/54c1e5c6b476150e8f8770ed39f9d7c8e62e0296))
+
+* Merge pull request #330 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`965231f`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/965231fe29a0df23e86a8af2ad37e963f972b108))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`886d8ed`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/886d8edf4c5d18fadd3c05346f99789300127cad))
+
 ## v4.46.1 (2026-08-29)
 
 ### Fix
