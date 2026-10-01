@@ -11,7 +11,7 @@ class UpcomingLaunchSitemap(Sitemap):
         return obj.last_updated
 
     def location(self, obj):
-        return "/launch/" + obj.slug
+        return f"/launch/{obj.slug}/"
 
     def priority(self, obj):
         current_time = timezone.now()
@@ -56,7 +56,7 @@ class PreviousLaunchSitemap(Sitemap):
         return obj.last_updated
 
     def location(self, obj):
-        return "/launch/" + obj.slug
+        return f"/launch/{obj.slug}/"
 
     def priority(self, obj):
         current_time = timezone.now()
@@ -103,7 +103,7 @@ class EventSitemap(Sitemap):
         return obj.last_updated
 
     def location(self, obj):
-        return "/event/" + obj.slug
+        return f"/event/{obj.slug}/"
 
     def priority(self, obj):
         if obj.date is not None:
@@ -138,7 +138,7 @@ class AstronautSitemap(Sitemap):
         return timezone.now()
 
     def location(self, obj):
-        return "/astronaut/" + obj.slug
+        return f"/astronaut/{obj.slug}/"
 
     def priority(self, obj):
         return 0.5
@@ -154,7 +154,7 @@ class BoosterSitemap(Sitemap):
         return timezone.now()
 
     def location(self, obj):
-        return f"/vehicle/launcher/{obj.id}"
+        return f"/vehicle/launcher/{obj.id}/"
 
     def priority(self, obj):
         return 0.5
@@ -170,7 +170,7 @@ class SpacestationSitemap(Sitemap):
         return timezone.now()
 
     def location(self, obj):
-        return f"/vehicle/spacestation/{obj.id}"
+        return f"/vehicle/spacestation/{obj.id}/"
 
     def priority(self, obj):
         return 0.5
