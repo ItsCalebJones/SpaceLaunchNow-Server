@@ -1,1 +1,2 @@
 src/static/* linguist-vendored
+scripts/break_glass/*.sh text eol=lf
