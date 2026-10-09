@@ -17,6 +17,7 @@ Backend services and current web front end for Space Launch Now and API.
 
 * [Static assets](docs/runbooks/static-assets.md) — publishing CSS/JS to DigitalOcean Spaces; read this if a new static file 404s
 * [Remote diagnostics control](docs/runbooks/remote-diagnostics-control.md) — per-user Datadog logging
+* [Break-glass](docs/runbooks/break-glass.md) — build and restore when the LL package index or database login is gone
 
 ## Authors
 
