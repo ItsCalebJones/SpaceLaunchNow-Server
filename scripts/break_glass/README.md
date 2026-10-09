@@ -51,7 +51,15 @@ uv run --no-project --with boto3==1.39.12 python scripts/break_glass/fetch_ll_pa
 
 Options: `--download-dir` (default: a new temp folder), `--bucket`,
 `--prefix` (default `ll-package/`), `--overwrite` (replace existing keys;
-the default refuses).
+the default refuses), `--skip-existing` (leave existing keys alone and upload
+the rest; CI uses this).
+
+## Restore test
+
+`restore_test.sh <dump-folder>` restores one downloaded dump folder into a
+throwaway Postgres 18 container and checks that every table restores all the
+rows the dump holds. It also prints the row counts the dump job recorded in
+prod (`row_counts.csv`) next to the restored counts. It needs Docker only.
 
 The rebuilt copy: `git -C <LaunchLibrary-API> archive v21.73.2 | tar -x -C <dir>`,
 then `uv build --out-dir <dir>/dist` in the exported `<dir>`.

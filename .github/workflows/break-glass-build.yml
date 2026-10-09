@@ -1,7 +1,8 @@
 name: 🛟 Break-glass Build
 
-# Proves the image builds from the stored django-launch-library wheel with no
-# login to the private TSD index. Pushes nothing.
+# Stores the django-launch-library files poetry.lock pins (checked against the
+# lock hashes), then proves the image builds from the stored wheel with no
+# login to the private TSD index. Pushes no image.
 
 on:
   schedule:
@@ -29,8 +30,40 @@ env:
   IMAGE_TAG: sln-break-glass:ci
 
 jobs:
+  mirror-ll-package:
+    name: 📦 Store pinned LL package
+    # Pull requests from forks get no secrets, so they skip both jobs.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      # Downloads the files poetry.lock pins from the TSD index, checks each one
+      # against its lock hash, and uploads them to published/. Skips files that
+      # are already stored. The rebuilt/ copy needs the private LL repo, so it
+      # stays a manual step (docs/runbooks/break-glass.md).
+      - name: ⬆️ Fetch, check and upload
+        env:
+          POETRY_HTTP_BASIC_TSD_USERNAME: ${{ secrets.PRIVATE_USERNAME }}
+          POETRY_HTTP_BASIC_TSD_PASSWORD: ${{ secrets.PRIVATE_PASSWORD }}
+          SLN_BREAK_GLASS_ACCESS_KEY_ID: ${{ secrets.BREAK_GLASS_AWS_ACCESS_KEY_ID }}
+          SLN_BREAK_GLASS_SECRET_ACCESS_KEY: ${{ secrets.BREAK_GLASS_AWS_SECRET_ACCESS_KEY }}
+          SLN_BREAK_GLASS_ENDPOINT: ${{ env.SPACES_ENDPOINT }}
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+        run: |
+          set -euo pipefail
+          python3 -m venv /tmp/break-glass-venv
+          /tmp/break-glass-venv/bin/pip install --quiet "boto3==1.39.12"
+          /tmp/break-glass-venv/bin/python scripts/break_glass/fetch_ll_package.py \
+            --lock poetry.lock --bucket "$SPACES_BUCKET" --skip-existing
+
   break-glass-build:
     name: 🛟 Build from stored wheel
+    needs: mirror-ll-package
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -47,9 +80,11 @@ jobs:
 
       - name: ⬇️ Download wheel and SHA256SUMS from Spaces
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.BREAK_GLASS_SPACES_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.BREAK_GLASS_SPACES_SECRET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.BREAK_GLASS_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.BREAK_GLASS_AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-east-1
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
           AWS_EC2_METADATA_DISABLED: 'true'
           VERSION: ${{ steps.pin.outputs.version }}
         run: |

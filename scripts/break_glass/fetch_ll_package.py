@@ -146,7 +146,8 @@ def sums_file(artifacts: list[Artifact], dest: pathlib.Path) -> pathlib.Path:
     """Write a SHA256SUMS file in sha256sum format for one group."""
     target = dest / "SHA256SUMS"
     lines = [f"{a.sha256}  {a.name}" for a in artifacts]
-    target.write_text("\n".join(lines) + "\n", encoding="ascii")
+    # newline="\n": plain write_text writes CRLF on Windows; keep the file the same on every OS.
+    target.write_text("\n".join(lines) + "\n", encoding="ascii", newline="\n")
     return target
 
 
@@ -214,12 +215,17 @@ def main() -> None:
     parser.add_argument("--prefix", default=DEFAULT_PREFIX, help="key prefix, must end with /")
     parser.add_argument("--overwrite", action="store_true",
                         help="replace objects that already exist (default: refuse)")
+    parser.add_argument("--skip-existing", action="store_true",
+                        help="skip objects that already exist and upload the rest "
+                             "(default: refuse when any exists)")
     parser.add_argument("--dry-run", action="store_true",
                         help="download and verify, then print the upload plan; no uploads")
     args = parser.parse_args()
 
     if not args.prefix.endswith("/"):
         fail("--prefix must end with /")
+    if args.overwrite and args.skip_existing:
+        fail("--overwrite and --skip-existing cannot be used together")
 
     import tempfile
 
@@ -246,9 +252,13 @@ def main() -> None:
 
     client = make_s3_client()
     if not args.overwrite:
-        for _, key in plan:
-            if object_exists(client, args.bucket, key):
-                fail(f"s3://{args.bucket}/{key} already exists; rerun with --overwrite to replace it")
+        existing = {key for _, key in plan if object_exists(client, args.bucket, key)}
+        if existing and not args.skip_existing:
+            fail(f"s3://{args.bucket}/{sorted(existing)[0]} already exists; "
+                 "rerun with --skip-existing or --overwrite")
+        for key in sorted(existing):
+            print(f"exists, skipped s3://{args.bucket}/{key}")
+        plan = [(local, key) for local, key in plan if key not in existing]
     for local, key in plan:
         client.upload_file(str(local), args.bucket, key)
         print(f"uploaded s3://{args.bucket}/{key}")

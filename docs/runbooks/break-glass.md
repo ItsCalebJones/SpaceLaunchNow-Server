@@ -60,11 +60,16 @@ The bucket `sln-break-glass` holds the pinned `django-launch-library` wheel in t
    the GitOps repo. Push your image to that registry under a new tag, then follow the GitOps
    skill `deploying-an-image-update`. Check the exact registry path in those two files first.
 
-**Weekly proof.** The GitHub job `break-glass-build` (`.github/workflows/break-glass-build.yml`)
-runs these same steps on Mondays at 06:17 UTC and on each change to `poetry.lock`,
-`pyproject.toml` or the Dockerfile. It pushes nothing. It uses the GitHub secrets
-`BREAK_GLASS_SPACES_KEY` and `BREAK_GLASS_SPACES_SECRET`. If it is red, open the failed step:
+**Weekly proof.** The GitHub workflow `.github/workflows/break-glass-build.yml` runs on Mondays
+at 06:17 UTC and on each change to `poetry.lock`, `pyproject.toml` or the Dockerfile. Its first
+job, `mirror-ll-package`, stores the pinned version in `published/` if it is not there yet (it
+checks each file against `poetry.lock` first). Its second job, `break-glass-build`, runs the
+steps above. It pushes no image. It uses the GitHub secrets `BREAK_GLASS_AWS_ACCESS_KEY_ID` and
+`BREAK_GLASS_AWS_SECRET_ACCESS_KEY` (a CI key limited to the bucket), and `PRIVATE_USERNAME` /
+`PRIVATE_PASSWORD` for the TSD index. If it is red, open the failed step:
 
+- Fetch step fails: the TSD index is down or its login changed (this is scenario 1 starting),
+  a file does not match its `poetry.lock` hash, or only some files of the version are stored.
 - Download step fails: the wheel for the pinned version is missing, or the keys are wrong. See Upkeep.
 - Hash step fails: the stored wheel is damaged. Upload it again with `--overwrite`.
 - Build step fails: a dependency changed. Fix `docker/Dockerfile.break-glass`.
@@ -133,19 +138,26 @@ token as exposed and regenerate them all.
 
 ## Upkeep
 
-- When `poetry.lock` moves to a new LL version, upload that version (from the repo root, with the
-  `SLN_BREAK_GLASS_*` and `POETRY_HTTP_BASIC_TSD_*` variables set; see `scripts/break_glass/README.md`):
+- When `poetry.lock` moves to a new LL version, the `mirror-ll-package` job stores TSD's files
+  for it. The `rebuilt/` copy needs the private LL repo, so build it by hand for each new
+  version (from the repo root, with the `SLN_BREAK_GLASS_*` and `POETRY_HTTP_BASIC_TSD_*`
+  variables set; see `scripts/break_glass/README.md`). `--skip-existing` leaves the stored
+  `published/` files alone and uploads only what is missing:
   ```sh
   uv run --no-project --with boto3==1.39.12 python scripts/break_glass/fetch_ll_package.py \
-    --lock poetry.lock --rebuild-dir <rebuild/dist>
+    --lock poetry.lock --rebuild-dir <rebuild/dist> --skip-existing
   ```
-  Build `<rebuild/dist>` from the LL tag as the README describes. The `break-glass-build` job
-  stays red until you do this.
-- Lifecycle rules on the bucket are set by hand: daily dumps expire after 30 days, monthly
-  dumps after 370 days. Check them in the DigitalOcean console after any bucket change.
-- The Spaces key lives in Vault at `secret/sln-break-glass`. The dump CronJob reads it through
-  an ExternalSecret. GitHub holds a copy as `BREAK_GLASS_SPACES_KEY` and `BREAK_GLASS_SPACES_SECRET`.
-  Rotate all three together.
+- Retention: the dump job keeps the newest 30 folders in `dumps/daily/` and the newest 12 in
+  `dumps/monthly/`, and deletes older ones after each upload. `ll-package/` is never pruned.
+- Alert: `SLNBreakGlassDumpStale` fires when the dump job has had no successful run for 26 hours.
+  Check the job with `kubectl -n sln-prod get cronjob,jobs -l cron=break-glass-dump` and its logs.
+- Restore test: after the first dump, and after any change to the table list, restore the newest
+  dump into a throwaway Postgres 18 container and compare row counts with prod
+  (`scripts/break_glass/restore_test.sh`).
+- Two keys, both limited to `sln-break-glass`: the dump key in Vault at `secret/sln-break-glass`
+  (the CronJob reads it through an ExternalSecret; people use it for restores) and the CI key in
+  the GitHub secrets `BREAK_GLASS_AWS_ACCESS_KEY_ID` / `BREAK_GLASS_AWS_SECRET_ACCESS_KEY`.
+  Rotate each one on its own.
 
 ## Known limits
 
