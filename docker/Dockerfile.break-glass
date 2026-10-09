@@ -1,0 +1,55 @@
+# syntax=docker/dockerfile:1
+#
+# Break-glass build: installs django-launch-library from a stored wheel in
+# vendor/ instead of the private TSD index. No BuildKit secrets, no TSD
+# credentials, no TSD URL. Every other dependency comes from the lock file.
+#
+# Build from the repo root:
+#   docker build -f docker/Dockerfile.break-glass .
+FROM python:3.14.4-alpine AS builder
+
+ENV PYTHONUNBUFFERED=1
+ENV PIP_NO_CACHE_DIR=1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
+
+WORKDIR /code/
+COPY pyproject.toml poetry.lock /code/
+# Fails the build if no wheel is present.
+COPY vendor/*.whl /code/vendor/
+
+RUN apk add --no-cache curl bash && \
+    python -m venv /code/.venv && \
+    python -m venv /opt/export && \
+    /opt/export/bin/pip install --no-cache-dir "poetry==2.1.2" "poetry-plugin-export==1.9.0" && \
+    # Export locked requirements (with hashes), then drop the TSD index line
+    # and the django-launch-library entry. The lock hashes cover all other packages.
+    /opt/export/bin/poetry export --with ci --format requirements.txt --output /tmp/requirements.txt && \
+    awk '/^--extra-index-url/ {next} /^[^ \t]/ {skip = ($0 ~ /^django-launch-library==/)} !skip' \
+        /tmp/requirements.txt > /tmp/requirements-public.txt && \
+    if grep -q '^-' /tmp/requirements-public.txt; then \
+        echo "ERROR: index or option line left in exported requirements" >&2; exit 1; \
+    fi && \
+    LL_VERSION=$(python -c 'import tomllib; print(next(p["version"] for p in tomllib.load(open("poetry.lock", "rb"))["package"] if p["name"] == "django-launch-library"))') && \
+    echo "django-launch-library ${LL_VERSION} (from poetry.lock)" && \
+    ls /code/vendor/django_launch_library-"${LL_VERSION}"-py3-none-any.whl && \
+    /code/.venv/bin/pip install --require-hashes -r /tmp/requirements-public.txt && \
+    /code/.venv/bin/pip install --no-deps --no-index /code/vendor/django_launch_library-"${LL_VERSION}"-py3-none-any.whl && \
+    /code/.venv/bin/pip check && \
+    # settings read name and version from pyproject.toml at runtime. Drop the
+    # TSD index block so the image carries no index URL.
+    sed -i '/^\[\[tool.poetry.source\]\]/,$d' /code/pyproject.toml && \
+    rm -rf /opt/export /tmp/requirements.txt /tmp/requirements-public.txt /code/vendor /code/poetry.lock
+
+FROM python:3.14.4-alpine
+
+WORKDIR /code/
+COPY --from=builder /usr/bin/curl /usr/bin/curl
+COPY --from=builder /bin/bash /bin/bash
+# Runtime needs the venv and pyproject.toml (read by settings), not the lock file.
+COPY --from=builder /code/.venv /code/.venv
+COPY --from=builder /code/pyproject.toml /code/pyproject.toml
+
+COPY src/ /code/
+ENV PATH="/code/.venv/bin:$PATH"
+
+EXPOSE 8000

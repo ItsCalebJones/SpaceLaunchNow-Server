@@ -41,3 +41,4 @@ k8s/monitoring/auth
 *.htpasswd
 # Subagent-driven-development scratch (ledgers, briefs, review packages)
 .superpowers/
+vendor/

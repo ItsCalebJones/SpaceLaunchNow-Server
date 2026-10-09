@@ -1,0 +1,134 @@
+name: 🛟 Break-glass Build
+
+# Stores the django-launch-library files poetry.lock pins (checked against the
+# lock hashes), then proves the image builds from the stored wheel with no
+# login to the private TSD index. Pushes no image.
+
+on:
+  schedule:
+    - cron: '17 6 * * 1'  # weekly, Mondays 06:17 UTC
+  workflow_dispatch:
+  push:
+    paths:
+      - 'poetry.lock'
+      - 'pyproject.toml'
+      - 'docker/Dockerfile.break-glass'
+      - '.github/workflows/break-glass-build.yml'
+  pull_request:
+    paths:
+      - 'poetry.lock'
+      - 'pyproject.toml'
+      - 'docker/Dockerfile.break-glass'
+      - '.github/workflows/break-glass-build.yml'
+
+permissions:
+  contents: read
+
+env:
+  SPACES_ENDPOINT: https://nyc3.digitaloceanspaces.com
+  SPACES_BUCKET: sln-break-glass
+  IMAGE_TAG: sln-break-glass:ci
+
+jobs:
+  mirror-ll-package:
+    name: 📦 Store pinned LL package
+    # Pull requests from forks get no secrets, so they skip both jobs.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      # Downloads the files poetry.lock pins from the TSD index, checks each one
+      # against its lock hash, and uploads them to published/. Skips files that
+      # are already stored. The rebuilt/ copy needs the private LL repo, so it
+      # stays a manual step (docs/runbooks/break-glass.md).
+      - name: ⬆️ Fetch, check and upload
+        env:
+          POETRY_HTTP_BASIC_TSD_USERNAME: ${{ secrets.PRIVATE_USERNAME }}
+          POETRY_HTTP_BASIC_TSD_PASSWORD: ${{ secrets.PRIVATE_PASSWORD }}
+          SLN_BREAK_GLASS_ACCESS_KEY_ID: ${{ secrets.BREAK_GLASS_AWS_ACCESS_KEY_ID }}
+          SLN_BREAK_GLASS_SECRET_ACCESS_KEY: ${{ secrets.BREAK_GLASS_AWS_SECRET_ACCESS_KEY }}
+          SLN_BREAK_GLASS_ENDPOINT: ${{ env.SPACES_ENDPOINT }}
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+        run: |
+          set -euo pipefail
+          python3 -m venv /tmp/break-glass-venv
+          /tmp/break-glass-venv/bin/pip install --quiet "boto3==1.39.12"
+          /tmp/break-glass-venv/bin/python scripts/break_glass/fetch_ll_package.py \
+            --lock poetry.lock --bucket "$SPACES_BUCKET" --skip-existing
+
+  break-glass-build:
+    name: 🛟 Build from stored wheel
+    needs: mirror-ll-package
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: 🔎 Read pinned django-launch-library version
+        id: pin
+        run: |
+          VERSION=$(python3 -c 'import tomllib; print(next(p["version"] for p in tomllib.load(open("poetry.lock", "rb"))["package"] if p["name"] == "django-launch-library"))')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "📌 poetry.lock pins django-launch-library $VERSION"
+
+      - name: ⬇️ Download wheel and SHA256SUMS from Spaces
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.BREAK_GLASS_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.BREAK_GLASS_AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+          AWS_EC2_METADATA_DISABLED: 'true'
+          VERSION: ${{ steps.pin.outputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir -p vendor
+          aws s3 cp "s3://${SPACES_BUCKET}/ll-package/${VERSION}/published/" vendor/ \
+            --recursive --no-progress \
+            --exclude '*' --include '*.whl' --include 'SHA256SUMS' \
+            --endpoint-url "$SPACES_ENDPOINT"
+          WHEELS=$(find vendor -maxdepth 1 -name '*.whl' | wc -l)
+          if [ "$WHEELS" -ne 1 ]; then
+            echo "❌ Expected exactly one wheel, found $WHEELS"
+            exit 1
+          fi
+          ls -la vendor
+
+      - name: 🔐 Verify wheel hash
+        working-directory: vendor
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.pin.outputs.version }}"
+          WHEEL="django_launch_library-${VERSION}-py3-none-any.whl"
+          test -f "$WHEEL"
+          # SHA256SUMS also lists the sdist, which this job does not download.
+          sha256sum -c --ignore-missing SHA256SUMS | tee sums.log
+          grep -q "^${WHEEL}: OK$" sums.log
+          # The stored wheel must be the one poetry.lock pins, not only self-consistent.
+          LOCK_SHA=$(python3 -c 'import sys, tomllib; name=sys.argv[1]; pkg=next(p for p in tomllib.load(open("../poetry.lock", "rb"))["package"] if p["name"] == "django-launch-library"); print(next(f["hash"] for f in pkg["files"] if f["file"] == name).removeprefix("sha256:"))' "$WHEEL")
+          WHEEL_SHA=$(sha256sum "$WHEEL" | cut -d" " -f1)
+          test "$LOCK_SHA" = "$WHEEL_SHA"
+          echo "✅ Wheel hash matches SHA256SUMS and poetry.lock ($WHEEL_SHA)"
+
+      - name: 🐳 Build break-glass image (no push)
+        env:
+          DOCKER_BUILDKIT: '1'
+        run: docker build -f docker/Dockerfile.break-glass -t "$IMAGE_TAG" .
+
+      - name: 🧪 Smoke test
+        run: |
+          set -euo pipefail
+          docker run --rm "$IMAGE_TAG" python -c "import api, configurations, bot; print('ok')"
+          docker run --rm "$IMAGE_TAG" python -m django --version
+          if docker run --rm "$IMAGE_TAG" sh -c 'grep -rIl "pypi.thespacedevs" /code /code/.venv 2>/dev/null'; then
+            echo "❌ TSD index URL found in image"
+            exit 1
+          fi
+          echo "✅ No TSD index URL in image"
