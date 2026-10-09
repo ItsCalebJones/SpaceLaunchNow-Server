@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## v4.47.0 (2026-10-09)
+
+### Chore
+
+* chore(break-glass): keep LF endings for the break-glass shell scripts ([`b21cc11`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/b21cc11bc96bdef9f9194b1165710be519c1cb42))
+
+### Feature
+
+* feat(break-glass): store new LL builds from CI, add the restore test and the dump alert to the runbook ([`4a347c5`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/4a347c5dc51de1dfbd4b33addc2847bc8723fd5c))
+
+* feat(break-glass): store the LL package, build without the TSD index and add the day-1 runbook ([`83ef7fa`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/83ef7fa7506b9b5e7d578912d66ec021bc8ab06d))
+
+### Unknown
+
+* Merge pull request #334 from ItsCalebJones/feat/break-glass-build
+
+feat(break-glass): build SLN-Server without the TSD package index ([`afdfe7c`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/afdfe7c218f9bf2833183501963f67452531dabc))
+
 ## v4.46.3 (2026-10-01)
 
 ### Fix
