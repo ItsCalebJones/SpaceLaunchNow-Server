@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v4.47.1 (2026-10-10)
+
+### Fix
+
+* fix(notifications): retry V6 sends after transient FCM token-fetch failures ([`6d3b683`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/6d3b6830d3cd57918e7d9fc6bb34078d93b2bb09))
+
+### Unknown
+
+* Merge pull request #335 from ItsCalebJones/fix/v6-token-fetch-retry
+
+fix(notifications): retry V6 sends after transient FCM token-fetch failures ([`36cc188`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/36cc188b5d0e9e4934f8b1f74bc4b661de4f1cdf))
+
 ## v4.47.0 (2026-10-09)
 
 ### Chore
