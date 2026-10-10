@@ -9,8 +9,9 @@ import time
 from unittest import mock
 
 from django.test import SimpleTestCase
+from pyfcm.errors import InvalidDataError
 
-from bot.app.notifications.v6 import V6NotificationMixin, dual_send_v6_broadcast, send_v6_broadcast
+from bot.app.notifications.v6 import V6NotificationMixin, dual_send_v6_broadcast, send_v6, send_v6_broadcast
 
 # A real launch UUID, not a short placeholder: launch_uuid is the longest
 # component of the launch analytics label and 36 chars is what production sends.
@@ -277,6 +278,91 @@ class LaunchDispatchTests(SimpleTestCase):
         reasons = {reason for _, _, reason in _skip_calls(record_skip)}
         self.assertEqual(reasons, {"unknown_type"})
         self.assertEqual(len(record_skip.call_args_list), 12)
+
+
+class SendRetryTests(SimpleTestCase):
+    """Transient token-fetch failures must be retried, everything else must not.
+
+    pyfcm fetches an OAuth token before the FCM POST through a fresh,
+    retry-less google-auth Request, and wraps whatever that raised in
+    InvalidDataError -- the same type FCM 400s arrive in, except a 400 wraps
+    the response text (a str) where the token path wraps the exception
+    object. In production this lost 42 of 891 sends in 14 days to
+    SSLEOFError on oauth2.googleapis.com. The token fetch precedes the FCM
+    POST, so retrying it can never deliver a notification twice.
+    """
+
+    # What pyfcm raises when credentials.refresh() hits a transport failure:
+    # the underlying exception object, not a string.
+    TOKEN_FETCH_ERROR = InvalidDataError(Exception("SSLEOFError: EOF occurred in violation of protocol"))
+
+    def _send(self, fcm):
+        with mock.patch("bot.app.notifications.v6.time.sleep") as sleep:
+            result = send_v6(
+                fcm,
+                platform="android",
+                data=PAYLOAD,
+                condition="'v6_prod_android_all_oneHour' in topics",
+                audience_class="all",
+                category="launch",
+                collapse_id=LAUNCH_UUID,
+                analytics_label=f"v6_all_{LAUNCH_UUID}",
+            )
+        return result, sleep
+
+    def test_a_transient_token_failure_is_retried_and_the_send_succeeds(self):
+        fcm = mock.MagicMock()
+        fcm.notify.side_effect = [self.TOKEN_FETCH_ERROR, {"name": "projects/x/messages/y"}]
+        with mock.patch("bot.app.notifications.v6.record_v6_send") as record:
+            result, _ = self._send(fcm)
+        self.assertIsNone(result.error)
+        self.assertEqual(result.result, {"name": "projects/x/messages/y"})
+        self.assertEqual(fcm.notify.call_count, 2)
+        # One logical send: the failed attempt must not also count as an error.
+        record.assert_called_once_with(platform="android", category="launch", success=True, audience_class="all")
+
+    def test_a_retried_send_is_counted_so_a_retry_storm_is_visible(self):
+        fcm = mock.MagicMock()
+        fcm.notify.side_effect = [self.TOKEN_FETCH_ERROR, {"name": "projects/x/messages/y"}]
+        with mock.patch("bot.app.notifications.v6.record_v6_retry") as record_retry:
+            self._send(fcm)
+        record_retry.assert_called_once_with(platform="android", audience_class="all")
+
+    def test_a_persistent_token_failure_stops_at_the_attempt_cap(self):
+        fcm = mock.MagicMock()
+        fcm.notify.side_effect = self.TOKEN_FETCH_ERROR
+        with mock.patch("bot.app.notifications.v6.record_v6_send") as record:
+            result, sleep = self._send(fcm)
+        self.assertIs(result.error, self.TOKEN_FETCH_ERROR)
+        self.assertEqual(fcm.notify.call_count, 3)
+        self.assertEqual(sleep.call_count, 2)
+        record.assert_called_once_with(platform="android", category="launch", success=False, audience_class="all")
+
+    def test_backoff_grows_between_attempts(self):
+        # The sends sit on the latency-critical tracker loop: the delays must
+        # be short and bounded, not an unbounded exponential.
+        fcm = mock.MagicMock()
+        fcm.notify.side_effect = self.TOKEN_FETCH_ERROR
+        _, sleep = self._send(fcm)
+        self.assertEqual([call.args[0] for call in sleep.call_args_list], [1, 2])
+
+    def test_a_real_400_is_not_retried(self):
+        # A 400 wraps the response text. Retrying it would send the same bad
+        # payload three times and triple the error noise for zero deliveries.
+        fcm = mock.MagicMock()
+        fcm.notify.side_effect = InvalidDataError("analytics_label: must match [a-zA-Z0-9-_.~%]{1,50}")
+        result, sleep = self._send(fcm)
+        self.assertIsNotNone(result.error)
+        self.assertEqual(fcm.notify.call_count, 1)
+        sleep.assert_not_called()
+
+    def test_an_unrelated_exception_is_not_retried(self):
+        fcm = mock.MagicMock()
+        fcm.notify.side_effect = Exception("boom")
+        result, sleep = self._send(fcm)
+        self.assertIsNotNone(result.error)
+        self.assertEqual(fcm.notify.call_count, 1)
+        sleep.assert_not_called()
 
 
 class AnalyticsLabelTests(SimpleTestCase):

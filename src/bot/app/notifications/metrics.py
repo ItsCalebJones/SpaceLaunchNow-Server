@@ -53,6 +53,16 @@ NOTIFICATION_SENDS_SKIPPED = Counter(
     ["platform", "audience_class", "reason"],
 )
 
+# A V6 send re-attempted after a transient token-fetch failure. The final
+# outcome still lands in V6_NOTIFICATIONS_SENT exactly once, so this series is
+# what makes a retry storm (an oauth2.googleapis.com degradation) visible while
+# the success ratio still looks healthy.
+V6_SEND_RETRIES = Counter(
+    "sln_v6_send_retries_total",
+    "V6 sends retried after a transient OAuth token-fetch failure.",
+    ["platform", "audience_class"],
+)
+
 # A launch whose agency or location is absent from the curated group tables and
 # fell through to the catch-all group. This is the signal the group tables have
 # a gap: the send still happens, but only the catch-all subscribers match it.
@@ -97,6 +107,11 @@ def record_v6_send(platform: str, category: str, success: bool, audience_class: 
         result="success" if success else "error",
         audience_class=audience_class,
     ).inc()
+
+
+def record_v6_retry(platform: str, audience_class: str) -> None:
+    """Record one V6 send retry after a transient token-fetch failure."""
+    V6_SEND_RETRIES.labels(platform=platform, audience_class=audience_class).inc()
 
 
 def record_skip(platform: str, audience_class: str, reason: str) -> None:
