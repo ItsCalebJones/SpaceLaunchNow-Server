@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## v4.47.2 (2026-10-10)
+
+### Fix
+
+* fix(deps): bump oauthlib to 4.0.0 for Safety CVEs ([`13fe2f3`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/13fe2f301cfad3a8d644d668aefc78a9e8e0d22e))
+
+* fix(deps): bump django to 5.2.18 and multidict to 6.9.1 for Safety CVEs ([`28d314e`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/28d314e8279a8475d13682fd35651b8be49d1e87))
+
+### Unknown
+
+* Merge pull request #333 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`7031189`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/703118926b8c55142498e80f9433a6fc81dcf1fd))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`f194172`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/f1941722650bb5bb00a981ad4d908b430d875b1b))
+
+* Merge pull request #336 from ItsCalebJones/fix/safety-django-multidict
+
+fix(deps): bump django, multidict and oauthlib for Safety CVEs ([`a29ba53`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a29ba53885ff6a3220e0d58aab7ed9a29eca8f06))
+
 ## v4.47.1 (2026-10-10)
 
 ### Fix
