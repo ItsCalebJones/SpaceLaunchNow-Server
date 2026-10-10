@@ -16,10 +16,13 @@ send them share one implementation instead of four copies.
 """
 
 import logging
+import time
 from concurrent.futures import ThreadPoolExecutor
 
+from pyfcm.errors import InvalidDataError
+
 from bot.app.notifications.base import NotificationResult
-from bot.app.notifications.metrics import record_group_fallback, record_skip, record_v6_send
+from bot.app.notifications.metrics import record_group_fallback, record_skip, record_v6_retry, record_v6_send
 from bot.utils.notification_groups import (
     DEFAULT_AGENCY_GROUP,
     DEFAULT_LOCATION_GROUP,
@@ -51,6 +54,41 @@ SEND_TIMEOUT_SECONDS = 30
 # rounds instead of 12, while keeping the worst case (every send stalling to
 # its 30s timeout) at ~60s rather than 6 minutes on the tracker loop.
 MAX_CONCURRENT_SENDS = 6
+
+# Retry for the OAuth token fetch that precedes every FCM POST. pyfcm refreshes
+# the token through a fresh google-auth Request with no retry of its own (the
+# urllib3 Retry it mounts covers only the FCM send session), so one transient
+# TLS failure on oauth2.googleapis.com loses the whole send -- 42 of 891 sends
+# in the 14 days to 2026-09-28. The fetch happens before the FCM POST, so a
+# retry can never deliver twice. The backoff stays short and bounded because
+# these sends sit on the latency-critical tracker loop.
+MAX_SEND_ATTEMPTS = 3
+RETRY_BACKOFF_SECONDS = (1, 2)
+
+
+def _is_transient_token_failure(error: BaseException) -> bool:
+    """True when pyfcm wrapped a token-fetch transport failure.
+
+    pyfcm raises InvalidDataError for both: a failed credentials.refresh()
+    (wrapping the exception object) and a genuine FCM 400 (wrapping the
+    response text). Only the former is safe and useful to retry.
+    """
+    return isinstance(error, InvalidDataError) and bool(error.args) and isinstance(error.args[0], Exception)
+
+
+def _notify_with_retry(fcm, kwargs: dict, *, platform: str, audience_class: str):
+    for attempt in range(1, MAX_SEND_ATTEMPTS + 1):
+        try:
+            return fcm.notify(**kwargs)
+        except Exception as e:
+            if attempt == MAX_SEND_ATTEMPTS or not _is_transient_token_failure(e):
+                raise
+            logger.warning(
+                f"V6 {platform} [{audience_class}] transient token-fetch error "
+                f"(attempt {attempt}/{MAX_SEND_ATTEMPTS}), retrying: {e}"
+            )
+            record_v6_retry(platform=platform, audience_class=audience_class)
+            time.sleep(RETRY_BACKOFF_SECONDS[attempt - 1])
 
 
 def send_v6(
@@ -95,7 +133,7 @@ def send_v6(
     notification_type = data.get("notification_type")
 
     try:
-        result = fcm.notify(**kwargs)
+        result = _notify_with_retry(fcm, kwargs, platform=platform, audience_class=audience_class)
         logger.info(f"V6 {platform} [{audience_class}] result: {result}")
         record_v6_send(platform=platform, category=category, success=True, audience_class=audience_class)
         return NotificationResult(
