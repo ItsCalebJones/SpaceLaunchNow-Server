@@ -332,6 +332,14 @@ DATABASES = {
         "HOST": env.str("DATABASE_HOST"),
         "PORT": env.str("DATABASE_PORT"),
         "DISABLE_SERVER_SIDE_CURSORS": env.bool("DISABLE_SERVER_SIDE_CURSORS", default=False),
+        # 0 (the Django default) opens a new connection per request, and each new
+        # connection resolves DATABASE_HOST again. On 2026-10-11 one node with
+        # packet loss made that lookup fail for ~17 % of requests. PgBouncer in
+        # transaction mode owns the server side, so a long-lived client
+        # connection is cheap. Production sets 60; CONN_HEALTH_CHECKS drops a
+        # dead connection before a request uses it.
+        "CONN_MAX_AGE": env.int("CONN_MAX_AGE", 0),
+        "CONN_HEALTH_CHECKS": env.bool("CONN_HEALTH_CHECKS", default=False),
     }
 }
 
