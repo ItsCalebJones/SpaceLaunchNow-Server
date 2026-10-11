@@ -643,3 +643,60 @@ class BroadcastWiringTests(SimpleTestCase):
         v5_conditions = [c for c in _conditions(handler.fcm) if "v5_" in c]
         self.assertEqual(len(v5_conditions), 2)
         self.assertEqual(self._v6_conditions(handler.fcm), [])
+
+
+class StarshipMuteExemptionTests(SimpleTestCase):
+    """Starship carries program 25 but is not cadence noise: it must not be muted."""
+
+    def setUp(self):
+        self.handler = _Handler()
+        self.handler.fcm = mock.MagicMock()
+        self.handler.DEBUG = False
+
+    def _dispatch(self, payload, notification_type="oneHour"):
+        with (
+            mock.patch("bot.app.notifications.v6.agency_group", return_value="spacex"),
+            mock.patch("bot.app.notifications.v6.location_group", return_value="florida"),
+        ):
+            return self.handler.send_v6_launch_notification(
+                launch=mock.MagicMock(), notification_type=notification_type, data=payload
+            )
+
+    def test_a_starship_launch_is_not_muted_on_any_class(self):
+        self._dispatch(dict(PAYLOAD, program_id="25", launcher_config_id="527"))
+        conditions = _conditions(self.handler.fcm)
+        self.assertEqual(len(conditions), 12)
+        for condition in conditions:
+            self.assertNotIn("starlinkMuted", condition)
+
+    def test_every_known_starship_configuration_is_exempt(self):
+        for config_id in ("464", "522", "527", "528", "207"):
+            self.handler.fcm.reset_mock()
+            self._dispatch(dict(PAYLOAD, program_id="25", launcher_config_id=config_id))
+            for condition in _conditions(self.handler.fcm):
+                self.assertNotIn("starlinkMuted", condition, config_id)
+
+    def test_a_falcon_starlink_launch_stays_muted(self):
+        self._dispatch(dict(PAYLOAD, program_id="25", launcher_config_id="164"))
+        conditions = _conditions(self.handler.fcm)
+        self.assertTrue(conditions)
+        for condition in conditions:
+            self.assertIn("!('v6_prod_starlinkMuted' in topics)", condition)
+
+    def test_a_starlink_launch_with_no_config_id_stays_muted(self):
+        self._dispatch(dict(PAYLOAD, program_id="25"))
+        self._dispatch(dict(PAYLOAD, program_id="25", launcher_config_id=""))
+        conditions = _conditions(self.handler.fcm)
+        self.assertEqual(len(conditions), 24)
+        for condition in conditions:
+            self.assertIn("starlinkMuted", condition)
+
+    def test_starship_failure_types_still_reach_everyone(self):
+        for notification_type in ("failure", "partial_failure"):
+            self.handler.fcm.reset_mock()
+            payload = dict(PAYLOAD, program_id="25", launcher_config_id="527", notification_type=notification_type)
+            self._dispatch(payload, notification_type=notification_type)
+            conditions = _conditions(self.handler.fcm)
+            self.assertTrue(conditions)
+            for condition in conditions:
+                self.assertNotIn("starlinkMuted", condition)

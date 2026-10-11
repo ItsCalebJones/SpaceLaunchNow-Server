@@ -233,6 +233,9 @@ class V5NotificationMixin:
             "lsp_id": str(launch.launch_service_provider.id) if launch.launch_service_provider else "",
             "location_id": str(launch.pad.location.id) if launch.pad and launch.pad.location else "",
             "program_id": program_ids,
+            "launcher_config_id": (
+                str(launch.rocket.configuration.id) if launch.rocket and launch.rocket.configuration else ""
+            ),
             "status_id": str(launch.status.id) if launch.status else "",
             "orbit_id": str(launch.mission.orbit.id) if launch.mission and launch.mission.orbit else "",
             "mission_type_id": str(launch.mission.mission_type.id)

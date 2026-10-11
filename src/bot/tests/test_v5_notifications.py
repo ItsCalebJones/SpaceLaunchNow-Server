@@ -297,3 +297,27 @@ class CheckCustomTests(SimpleTestCase):
         # Mark-after-send means the flag was never set and save() never ran for this record.
         self.assertFalse(p.send_ios_complete)
         p.save.assert_not_called()
+
+
+# --------------------------------------------------------------------------- #
+# V5 launch payload: rocket configuration id (Starship vs Starlink mute)
+# --------------------------------------------------------------------------- #
+
+
+class BuildV5LaunchDataConfigIdTests(SimpleTestCase):
+    def _build(self, launch):
+        from bot.app.notifications.v5 import V5NotificationMixin
+
+        return V5NotificationMixin()._build_v5_data_payload(launch, "oneHour", "body")
+
+    def test_launcher_config_id_comes_from_the_rocket_configuration(self):
+        launch = mock.MagicMock()
+        launch.rocket.configuration.id = 527
+        data = self._build(launch)
+        self.assertEqual(data["launcher_config_id"], "527")
+
+    def test_launcher_config_id_is_empty_without_a_configuration(self):
+        launch = mock.MagicMock()
+        launch.rocket.configuration = None
+        data = self._build(launch)
+        self.assertEqual(data["launcher_config_id"], "")
