@@ -440,6 +440,14 @@ V6_BROADCAST_KINDS: tuple[str, ...] = (
 # ``program_id`` field. Verified against the live LL2 API (launch.program[].id).
 STARLINK_PROGRAM_ID = "25"
 
+# LL2 launcher configuration ids for Starship, as they appear in the payload's
+# ``launcher_config_id`` field (launch.rocket.configuration.id). Starship also
+# carries program 25, but a Starship flight is news, not Starlink cadence, so it
+# is exempt from the mute. Source: GET
+# https://ll.thespacedevs.com/2.3.0/launcher_configurations/?search=Starship
+# -> 464 V1, 527 V2, 522 V3, 528 (variant N/A), 207 Prototype.
+STARSHIP_CONFIG_IDS = frozenset({"207", "464", "522", "527", "528"})
+
 # Attribute-topic group a device subscribes to when the user mutes Starlink
 # launches. Opt-out by subscription: the send condition NEGATES this topic, so
 # existing subscribers need no migration -- only muted devices touch it.

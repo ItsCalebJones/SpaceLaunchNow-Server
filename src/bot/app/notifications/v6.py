@@ -31,6 +31,7 @@ from bot.utils.notification_groups import (
 )
 from bot.utils.util import (
     STARLINK_PROGRAM_ID,
+    STARSHIP_CONFIG_IDS,
     V6_AUDIENCE_CLASSES,
     build_v6_broadcast_condition,
     build_v6_condition,
@@ -241,7 +242,11 @@ class V6NotificationMixin:
 
         # Read the program from the payload the V5 builder already traversed the
         # ORM for -- no extra query on the latency-critical tracker loop.
-        mute_starlink = STARLINK_PROGRAM_ID in data.get("program_id", "").split(",")
+        # Starship carries program 25 too; it is exempt, told apart by rocket configuration id.
+        mute_starlink = (
+            STARLINK_PROGRAM_ID in data.get("program_id", "").split(",")
+            and data.get("launcher_config_id", "") not in STARSHIP_CONFIG_IDS
+        )
         if mute_starlink:
             logger.info(f"V6 launch {launch.id} is Starlink; conditions exclude starlinkMuted subscribers")
 
