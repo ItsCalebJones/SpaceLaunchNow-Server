@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v4.48.1 (2026-10-12)
+
+### Fix
+
+* fix(v6): exempt Starship from the Starlink mute ([`ef15bee`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/ef15beeda27512c5838383b6fc62eb1fb88e5428))
+
+### Unknown
+
+* Merge pull request #338 from ItsCalebJones/fix/v6-starship-starlink-mute-exempt
+
+fix(v6): exempt Starship from the Starlink mute ([`f4f3e4c`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/f4f3e4c7863c1746372ed0b7c7c923f63bfd2df2))
+
 ## v4.48.0 (2026-10-12)
 
 ### Feature
