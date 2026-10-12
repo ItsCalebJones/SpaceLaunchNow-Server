@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v4.48.0 (2026-10-12)
+
+### Feature
+
+* feat(db): read CONN_MAX_AGE and CONN_HEALTH_CHECKS from the environment
+
+Default stays 0 (one connection per request). Production will set 60 so a
+request no longer resolves DATABASE_HOST and reconnects every time; on
+2026-10-11 one lossy node made that lookup fail for ~17 % of requests. ([`2e5b326`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/2e5b326afbe64c1a43f2e8661c829b662d28add0))
+
+### Unknown
+
+* Merge pull request #337 from ItsCalebJones/feat/db-conn-max-age
+
+feat(db): read CONN_MAX_AGE and CONN_HEALTH_CHECKS from the environment ([`18d51d3`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/18d51d376b30e80ec910d70ecf1d73b78339b747))
+
 ## v4.47.2 (2026-10-10)
 
 ### Fix
