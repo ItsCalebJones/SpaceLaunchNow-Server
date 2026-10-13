@@ -249,7 +249,7 @@ jobs:
 
       - name: 📢 Notify Release Created
         if: steps.release.outputs.released == 'true'
-        uses: Ilshidur/action-discord@master
+        uses: Ilshidur/action-discord@d2594079a10f1d6739ee50a2471f0ca57418b554 # 0.4.0
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
@@ -370,12 +370,15 @@ jobs:
           path: gitops
           
       - name: 🔄 Update Image Tag
+        id: image-info
         run: |
           # Extract the sha-based tag (works for both main and master branches)
           IMAGE_TAG=$(echo '${{ needs.build.outputs.image-tag }}' | grep -E '(main-|master-)' | head -1)
-          
+
+          echo "image-tag=${IMAGE_TAG##*:}" >> $GITHUB_OUTPUT
+          echo "short-sha=${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
           echo "🏷️ Updating staging to image: ${IMAGE_TAG##*:}"
-          
+
           # Update the Helm values file in GitOps repo
           cd gitops/manifests/apps/staging
           sed -i "s|tag:.*|tag: ${IMAGE_TAG##*:}|" values-staging.yaml
@@ -402,18 +405,19 @@ jobs:
           done
           
       - name: 📢 Notify Staging Deployment
-        uses: Ilshidur/action-discord@master
+        uses: Ilshidur/action-discord@d2594079a10f1d6739ee50a2471f0ca57418b554 # 0.4.0
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         with:
+          # The action runs args through lodash _.template: <% %> and {{ }} execute as JS.
+          # Put only values we control here; pass free text through env as {{ VAR }}.
           args: |
             🚀 **Staging Deployment Complete**
-            
+
             **Branch:** main
-            **Commit:** ${GITHUB_SHA::8}
-            **Image:** ${IMAGE_TAG##*:}
-            **App Version:** ${{ needs.update-app-version.outputs.app-version }}
-            
+            **Commit:** ${{ steps.image-info.outputs.short-sha }}
+            **Image:** ${{ steps.image-info.outputs.image-tag }}
+
             🔗 **Staging URL:** https://staging.spacelaunchnow.app
             🔗 **ArgoCD:** https://argo.spacelaunchnow.app
 
@@ -432,21 +436,26 @@ jobs:
           IMAGE_TAG_CLEAN=${IMAGE_TAG##*:}
           
           echo "image-tag=$IMAGE_TAG_CLEAN" >> $GITHUB_OUTPUT
+          echo "short-sha=${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
           echo "🏷️ Production-ready image tag: $IMAGE_TAG_CLEAN"
-        
+
       - name: �📢 Notify Production Ready
-        uses: Ilshidur/action-discord@master
+        uses: Ilshidur/action-discord@d2594079a10f1d6739ee50a2471f0ca57418b554 # 0.4.0
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          COMMIT_AUTHOR: ${{ github.event.head_commit.author.name }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         with:
+          # The action runs args through lodash _.template: <% %> and {{ }} execute as JS.
+          # Commit text goes through env and {{ VAR }}, which inserts it without running it.
           args: |
             🎯 **Production Release Ready for Manual Deployment**
-            
+
             **Branch:** main
             **Commit:** ${{ github.sha }}
-            **Short Commit:** ${GITHUB_SHA::8}
-            **Author:** ${{ github.event.head_commit.author.name }}
-            **Message:** ${{ github.event.head_commit.message }}
+            **Short Commit:** ${{ steps.image-info.outputs.short-sha }}
+            **Author:** {{ COMMIT_AUTHOR }}
+            **Message:** {{ COMMIT_MESSAGE }}
             **Image Tag:** ${{ steps.image-info.outputs.image-tag }}
             
             ✅ Tests passed
