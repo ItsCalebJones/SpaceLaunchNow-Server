@@ -15,7 +15,9 @@ class LaunchFeedTextEscapingTests(LLAPITests):
     """Tasks#113: a raw newline in launch text made the feed 500 with
     "Content line can not contain unescaped new line characters"."""
 
-    def _seed(self, name="Falcon 9 Block 5 | Starlink\nGroup 1", description="Line one\nLine two\r\nLine three\rLine four"):
+    def _seed(
+        self, name="Falcon 9 Block 5 | Starlink\nGroup 1", description="Line one\nLine two\r\nLine three\rLine four"
+    ):
         launch = Launch.objects.order_by("id").first()
         Launch.objects.filter(pk=launch.pk).update(name=name, net=timezone.now() + timedelta(days=1))
         launch.refresh_from_db()
