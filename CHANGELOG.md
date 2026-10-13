@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v4.48.3 (2026-10-13)
+
+### Fix
+
+* fix(web): escape calendar-level text in launch ICS feed ([`6c9e855`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/6c9e855a11b39e5fe0e1006b4d582cbd9076d2bd))
+
+### Style
+
+* style(web): sort imports and wrap line in launch feed fix ([`5ad9319`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/5ad93196305cf1b89783459017a64449322698b2))
+
+### Unknown
+
+* Merge pull request #343 from ItsCalebJones/web-and-api/tasks-113
+
+fix(web): escape calendar-level text in launch ICS feed ([`e32f7c2`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/e32f7c2c6b211cca60a57aadf9022cf9c304925a))
+
 ## v4.48.2 (2026-10-13)
 
 ### Chore
