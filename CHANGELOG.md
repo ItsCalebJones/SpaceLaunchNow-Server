@@ -1,5 +1,33 @@
 # CHANGELOG
 
+## v4.48.2 (2026-10-13)
+
+### Chore
+
+* chore(ci): remove Safety Platform scan and safety dev dependency ([`1122538`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/1122538d9e34280abcffa6c757f622f32414b085))
+
+### Documentation
+
+* docs(notifications): note Starship exemption in muteGroups ([`144c3bc`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/144c3bc3562f7e111a3d491a354ca39a2a2ef801))
+
+### Fix
+
+* fix(ci): stop Discord notify running commit text as code; expand short SHA and image tag ([`e985927`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/e9859276468f49fcc481c09ae73b5035bb452429))
+
+### Unknown
+
+* Merge pull request #342 from ItsCalebJones:fix/ci-discord-notify
+
+fix(ci): stop Discord notify running commit text as code ([`f529059`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/f529059e8b12a4f3caec3b86efc2acaa24bf2aed))
+
+* Merge pull request #341 from ItsCalebJones/web-and-api/tasks-24
+
+chore(ci): remove Safety Platform scan ([`28a5e24`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/28a5e243fbc869297991a8ec909360b3c734834a))
+
+* Merge pull request #339 from ItsCalebJones/web-and-api/tasks-4
+
+docs(notifications): note Starship exemption in muteGroups ([`a0aef3a`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a0aef3a95665aab1aeb0e10368ea9d92a926ba35))
+
 ## v4.48.1 (2026-10-12)
 
 ### Fix
