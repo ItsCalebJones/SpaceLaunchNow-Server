@@ -55,7 +55,6 @@ radon = "^5.1.0"
 vulture = "^2.6"
 cohesion = "^1.0.0"
 ruff = "^0.16.2"
-safety = "^3.6.0"
 
 [tool.poetry.group.ci]
 optional = true
