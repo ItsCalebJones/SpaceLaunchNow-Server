@@ -33,8 +33,10 @@ from django.views.decorators.cache import cache_page
 
 # Create your views here.
 from django_filters.views import FilterView
+from django_ical.feedgenerator import ICal20Feed
 from django_ical.views import ICalFeed
 from django_tables2 import SingleTableMixin
+from icalendar import vText
 
 from bot.utils.util import get_SLN_url
 from prefetches import get_prefetched_launch_queryset
@@ -1144,11 +1146,38 @@ def astronaut_search_ajax(request):
     )
 
 
+def _ical_text(value):
+    """Return ``value`` as an RFC 5545 TEXT value (Tasks#113).
+
+    icalendar escapes newline, backslash, comma and semicolon only for values it types as
+    TEXT (SUMMARY, DESCRIPTION, LOCATION, ...). Unknown properties such as the calendar-level
+    X-WR-CALNAME and X-WR-CALDESC stay raw, and a newline there makes the writer assert.
+    ``vText`` forces the escape, once. A bare CR is not escaped by the library, so fold it
+    into LF first.
+    """
+    return vText(str(value).replace("\r\n", "\n").replace("\r", "\n"))
+
+
+class _EscapedTextICalFeed(ICal20Feed):
+    """ICal20Feed that escapes the calendar-level title and description as TEXT.
+
+    Django's SyndicationFeed runs str() over both, which drops any vText, so the escape
+    has to happen after its __init__.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for key in ("title", "description"):
+            if self.feed.get(key):
+                self.feed[key] = _ical_text(self.feed[key])
+
+
 class LaunchFeed(ICalFeed):
     """
     A simple Launch event calender.
     """
 
+    feed_type = _EscapedTextICalFeed
     product_id = "-//spacelaunchnow.me//launch//calendar//EN"
     timezone = "UTC"
     file_name = "launches.ics"
@@ -1165,7 +1194,7 @@ class LaunchFeed(ICalFeed):
         return "{}{}".format(item.id, "@spacelaunchnow")
 
     def item_title(self, item):
-        return f"{item.name}"
+        return _ical_text(item.name)
 
     def item_description(self, item: Launch):
         description = ""
@@ -1176,7 +1205,7 @@ class LaunchFeed(ICalFeed):
             description += "\n".join([f"• {iURL.type}\n  {iURL.info_url}" for iURL in item.info_urls.all()]) + "\n\n"
         description += "\n\nWatch Live: " + get_SLN_url(path="launch", object=item)
         description += "\n\n===============\nSpace Launch Now\n==============="
-        return description
+        return _ical_text(description)
 
     def item_start_datetime(self, item):
         if item.net_precision is not None and item.net_precision.id >= 5:  # Day-long event
@@ -1194,7 +1223,7 @@ class LaunchFeed(ICalFeed):
 
     def item_location(self, item):
         if item.pad is not None and item.pad.location is not None:
-            return item.pad.name + " | " + item.pad.location.name
+            return _ical_text(item.pad.name + " | " + item.pad.location.name)
 
     def item_geolocation(self, item):
         if item.pad is not None and item.pad.latitude is not None and item.pad.longitude is not None:
