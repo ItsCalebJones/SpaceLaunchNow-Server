@@ -94,6 +94,34 @@ or `@rc_user_id:"..."`. Two positive signals:
 2. `Push registration summary` lines with `push.*` attributes on each launch; at VERBOSE,
    debug-level `NotificationWorker` / topic-subscription logs appear.
 
+The summary (`push_summary`) is emitted once per app start, after the app-start reconcile
+ends. If no reconcile completes, or the startup records (token, permission, Play Services, diagnostic level) are not ready, within 15 seconds, it is emitted anyway with
+`push.reconcile_state:pending`. The `push_reconcile` event carries the same `push.*` state
+attributes with `push.reconcile_state:complete`. Both read persisted state and the
+subscription ledger at emit time. They hold counts and names only: no ID sets, no topic names.
+
+| Attribute | Type | Meaning |
+|---|---|---|
+| `push.reconcile_state` | string | `complete` (reconcile ended), `pending` (15 s fallback fired first), `skipped` (defined, not emitted yet) |
+| `push.enable_notifications` | boolean | Master notification toggle |
+| `push.audience_class` | string | Audience class the device subscribes under, as `V6Topics.audienceClass` computes it |
+| `push.follow_all` | boolean | "Follow all launches" toggle |
+| `push.strict` | boolean | Strict matching toggle |
+| `push.mute_starlink` | boolean | Starlink mute toggle |
+| `push.webcast_only` | boolean | Webcast-only toggle |
+| `push.enabled_types` | string | Comma-separated launch-type toggle ids that are on; empty if none |
+| `push.enabled_broadcasts` | string | Comma-separated broadcast tokens that are on (`events`, `news`, `announce`); empty if none |
+| `push.agency_count` | int | Number of followed agencies |
+| `push.location_count` | int | Number of followed locations |
+| `push.changeover_complete` | boolean | The V6 changeover has finished on this device |
+| `push.subscribed_topic_count` | int | Topics the ledger confirms as subscribed |
+| `push.pending_subscribe_count` | int | Ledger entries waiting to subscribe |
+| `push.pending_unsubscribe_count` | int | Ledger entries waiting to unsubscribe |
+
+A launch-time summary with `push.subscribed_topic_count:0` and `push.reconcile_state:complete`
+while `push.enable_notifications:true` means the device has no push topic. Check
+`push.pending_subscribe_count` and the matching `push_reconcile` severity next.
+
 ## 4. Revert
 
 Remove the override entry (or the whole parameter value) and **Publish** — or just let
