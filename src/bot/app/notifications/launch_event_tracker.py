@@ -31,10 +31,15 @@ class LaunchEventTracker:
             if current_time <= launch_time:
                 diff = int((launch_time - current_time).total_seconds())
                 logger.debug("Time to launch %s", seconds_to_time(diff))
-                if (
-                    notification.last_net_stamp is not None
-                    and abs(notification.last_net_stamp - launch.net).total_seconds() > 7200
-                ):
+                if notification.last_net_stamp is None:
+                    # Nothing else writes last_net_stamp, so seed it here. Without a baseline a later
+                    # reschedule is never detected and the countdown flags are never reset.
+                    logger.info("Seeding last_net_stamp for %s with %s", launch.name, launch.net)
+                    notification.last_net_stamp = launch.net
+                    notification.last_net_stamp_timestamp = current_time
+                    notification.save()
+                    return
+                if abs(notification.last_net_stamp - launch.net).total_seconds() > 7200:
                     logger.info(f"Netstamp changed from {notification.last_net_stamp} to {launch.net}")
                     self.netstamp.netstamp_changed(launch, notification, diff)
 
