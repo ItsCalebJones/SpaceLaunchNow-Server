@@ -1,5 +1,33 @@
 # CHANGELOG
 
+## v4.48.4 (2026-10-23)
+
+### Documentation
+
+* docs: list push state attributes in the remote diagnostics runbook ([`fb0c0d4`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/fb0c0d4fbe743b852fc124c50bfffecfc1bcb352))
+
+### Fix
+
+* fix: seed last_net_stamp so rescheduled launches reset countdown notifications ([`58b6ff2`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/58b6ff2655ce27e3135e84abf87a9a7632a31541))
+
+### Unknown
+
+* Merge pull request #346 from ItsCalebJones/task-438-fix-reschedule-notification-reset
+
+fix: seed last_net_stamp so rescheduled launches reset countdown notifications ([`a9b1fd7`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a9b1fd76455f64c968261335bd209ca470a4e96d))
+
+* Merge pull request #345 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`58d6045`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/58d60452869401c728796699ad57568daca7d8a7))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`03b69d7`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/03b69d720ebf3a64490937efe88860de5f5afe36))
+
+* Merge pull request #344 from ItsCalebJones/task-54-docs-remote-diagnostics-runbook
+
+docs: list push state attributes in the remote diagnostics runbook ([`a0ded09`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a0ded09116159350e0a09196bb13612fb71b0486))
+
 ## v4.48.3 (2026-10-13)
 
 ### Fix
