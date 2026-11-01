@@ -25,7 +25,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q
 from django.http import Http404, HttpResponse, JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader
 from django.utils import timezone
 from django.views import View
@@ -582,7 +582,7 @@ def spacecraft_list(request):
 
 @cache_page(600)
 def spacecraft_by_id(request, id):
-    spacecraft = SpacecraftConfiguration.objects.get(pk=id)
+    spacecraft = get_object_or_404(SpacecraftConfiguration, pk=id)
     previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")[:10]
     return render(
         request,
@@ -744,7 +744,7 @@ def booster_reuse_search(request):
 @cache_page(120)
 def booster_reuse_id(request, id):
     if id is not None:
-        vehicle = Launcher.objects.get(pk=id)
+        vehicle = get_object_or_404(Launcher, pk=id)
         upcoming_vehicle_launches = get_prefetched_launch_queryset(
             Launch.objects.filter(rocket__firststage__launcher_id=vehicle.id).filter(net__gte=utc_now())
         ).order_by("net")
@@ -846,7 +846,7 @@ def spacestation_list(request):
 @cache_page(600)
 def spacestation_by_id(request, id):
     if id is not None:
-        spacestation = SpaceStation.objects.get(pk=id)
+        spacestation = get_object_or_404(SpaceStation, pk=id)
         previous_launches = get_prefetched_launch_queryset(Launch.objects.filter(net__lte=utc_now())).order_by("-net")[
             :5
         ]
