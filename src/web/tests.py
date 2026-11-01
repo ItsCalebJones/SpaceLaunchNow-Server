@@ -253,3 +253,17 @@ class WebTests(LLAPITests):
         details = json.loads(response.content.decode())["applinks"]["details"]
         self.assertEqual(details[0]["appIDs"], ["4T4QRN2U5X.me.spacelaunchnow.spacelaunchnow"])
         self.assertIn("/launch/*", [component["/"] for component in details[0]["components"]])
+
+
+@override_settings(CACHES={"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}})
+class UnknownVehicleIdTests(LLAPITests):
+    """An id that matches no row must answer 404, not 500 (Tasks#732)."""
+
+    def test_unknown_booster_id_is_404(self):
+        self.assertEqual(self.client.get("/vehicle/launcher/999999999/").status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_unknown_spacecraft_id_is_404(self):
+        self.assertEqual(self.client.get("/vehicle/spacecraft/999999999/").status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_unknown_spacestation_id_is_404(self):
+        self.assertEqual(self.client.get("/vehicle/spacestation/999999999/").status_code, status.HTTP_404_NOT_FOUND)
