@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v4.48.5 (2026-11-01)
+
+### Fix
+
+* fix: return 404 for unknown booster, spacecraft and space station ids ([`894fc83`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/894fc832786b0bf87a4f8cb67f82fac8a983f729))
+
+### Unknown
+
+* Merge pull request #348 from ItsCalebJones/task-732-fix-unknown-id-404
+
+fix: 404 for unknown booster, spacecraft and space station ids ([`5b128be`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/5b128bed8a56b7eb067d00b418ba5483af172c70))
+
 ## v4.48.4 (2026-10-23)
 
 ### Documentation
