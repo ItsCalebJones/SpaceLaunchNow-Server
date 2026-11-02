@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v4.49.0 (2026-11-02)
+
+### Build
+
+* build: add OpenTelemetry sdk, OTLP exporter and Django/psycopg instrumentation ([`8eeeabf`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/8eeeabf1b13495e980f1a0cad1ad1d347cc43f10))
+
+### Feature
+
+* feat: export OpenTelemetry traces when OTEL_EXPORTER_OTLP_ENDPOINT is set ([`84ad255`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/84ad255215f27753700e7a0885aa764824bd45d1))
+
+### Unknown
+
+* Merge pull request #349 from ItsCalebJones/task-743-feat-server-otel-traces
+
+feat: export OpenTelemetry traces to Tempo ([`47b81fb`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/47b81fb6d879b15bf06fe9ba473b905a9dafa1a6))
+
 ## v4.48.5 (2026-11-01)
 
 ### Fix
