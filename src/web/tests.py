@@ -89,7 +89,7 @@ class WebTests(LLAPITests):
 
     def test_home_share_image_is_1200x630(self):
         html = self.client.get("/").content.decode()
-        self.assertEqual(len(re.findall(r"social_1200x630\.jpg", html)), 3 + 0)  # og, twitter, no more
+        self.assertEqual(len(re.findall(r"social_1200x630\.jpg", html)), 2)  # og:image, twitter:image
         self.assertIn('og:image:width" content="1200"', html)
         self.assertIn('og:image:height" content="630"', html)
 
