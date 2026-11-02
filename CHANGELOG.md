@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v4.49.1 (2026-11-02)
+
+### Fix
+
+* fix: update django-launch-library dependency to version 21.80.2 and remove redis dependency ([`4e37b31`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/4e37b314309ced96bb1be9869bd4056dc68f1749))
+
+### Unknown
+
+* Merge pull request #347 from ItsCalebJones/automated/dependency-updates
+
+🔄 Weekly Dependency Updates ([`f62cf91`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/f62cf9178317ed7a2ef44e01c05d340d3e1703fe))
+
+* 🔄 Update Python dependencies
+
+Automated dependency update via scheduled workflow. ([`76fa3b1`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/76fa3b1aca17b6da24aec6539fdc769ebd994573))
+
 ## v4.49.0 (2026-11-02)
 
 ### Build
