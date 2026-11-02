@@ -77,6 +77,22 @@ class WebTests(LLAPITests):
                 html = self.client.get("/", HTTP_USER_AGENT=ua).content.decode()
                 self.assertEqual(html.count("<h1"), 1)
 
+    def test_home_has_website_and_organization_json_ld(self):
+        html = self.client.get("/").content.decode()
+        blocks = re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)
+        self.assertEqual(len(blocks), 1)
+        graph = json.loads(blocks[0])["@graph"]
+        types = {node["@type"] for node in graph}
+        self.assertEqual(types, {"WebSite", "Organization"})
+        # /search?q= is 404 on this site, so no SearchAction may be advertised.
+        self.assertNotIn("SearchAction", blocks[0])
+
+    def test_home_share_image_is_1200x630(self):
+        html = self.client.get("/").content.decode()
+        self.assertEqual(len(re.findall(r"social_1200x630\.jpg", html)), 2)  # og:image, twitter:image
+        self.assertIn('og:image:width" content="1200"', html)
+        self.assertIn('og:image:height" content="630"', html)
+
     def _launch_detail_html(self, ua):
         """Fetch a launch detail page with the CSRF token masked.
 
