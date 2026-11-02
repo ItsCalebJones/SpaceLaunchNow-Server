@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## v4.50.0 (2026-11-02)
+
+### Feature
+
+* feat(web): add home JSON-LD and a 1200x630 share image ([`d6097ae`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/d6097ae502025bbd8d32289d27266a82923fdd37))
+
+### Test
+
+* test(web): keep CRLF line endings in web tests ([`1b18034`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/1b1803455faefaca22c8da185b6bf868d9c7a64a))
+
+* test(web): fix share image count ([`1099a6f`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/1099a6f66b9aefd302f390ef21ccc2237fddd7cc))
+
+### Unknown
+
+* Merge pull request #352 from ItsCalebJones/task-721-feat-home-jsonld
+
+feat(web): home JSON-LD and a small share image ([`0c5ec3a`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/0c5ec3a5d7001b9f69c2957861d107f0505c0216))
+
 ## v4.49.1 (2026-11-02)
 
 ### Fix
