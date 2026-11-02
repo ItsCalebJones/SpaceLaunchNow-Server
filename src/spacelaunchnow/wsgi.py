@@ -11,7 +11,11 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
+from spacelaunchnow.telemetry import init_telemetry
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "spacelaunchnow.settings")
 os.environ["HTTPS"] = "on"
+
+init_telemetry()
 
 application = get_wsgi_application()

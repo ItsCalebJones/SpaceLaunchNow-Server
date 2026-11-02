@@ -527,6 +527,11 @@ DO_TOKEN = env.str("DO_TOKEN", None)
 SLN_SENTRY_KEY = env.str("SLN_SENTRY_KEY", None)
 SLN_ENVIRONMENT = env.str("SLN_ENVIRONMENT", "development")
 
+# OpenTelemetry traces (see spacelaunchnow/telemetry.py). Empty endpoint = off.
+OTEL_EXPORTER_OTLP_ENDPOINT = env.str("OTEL_EXPORTER_OTLP_ENDPOINT", "")
+OTEL_SERVICE_NAME = env.str("OTEL_SERVICE_NAME", "spacelaunchnow-server")
+OTEL_TRACES_SAMPLER_RATIO = env.float("OTEL_TRACES_SAMPLER_RATIO", 0.05)
+
 
 # SENTRY SETTINGS
 
