@@ -17,7 +17,7 @@ python = ">=3.14.0,<3.15.0"
 # Django, DRF, sorl-thumbnail, sentry-sdk, environs, psycopg, etc. are
 # inherited transitively from it — do NOT re-declare them here, or the
 # server will pin versions that conflict with the library.
-django-launch-library = {version = "^21.67.0", source = "tsd"}
+django-launch-library = {version = "^21.80.2", source = "tsd"}
 
 # Server-only dependencies (not provided by django-launch-library):
 Collectfast = "==2.2.0"
@@ -36,7 +36,6 @@ python-dateutil = "==2.8.2"
 regex = "==2025.7.29 "
 tzlocal = "==4.2"
 toml = "^0.10.2"
-redis = "^6.2.0"
 hiredis = "^3.2.1"
 python-json-logger = "^3.3.0"
 kubernetes = "^33.1.0"
