@@ -17,16 +17,16 @@
             .sln-hero { background-image: url('{% static 'img/header_alt.jpg' %}'); }
         }
     </style>
-    <title>Space Launch Now</title>
-    <meta name="title" content="Space Launch Now - A Spaceflight Tracker">
+    <title>Space Launch Now: Rocket Launch Schedule and Countdowns</title>
+    <meta name="title" content="Space Launch Now: Rocket Launch Schedule and Countdowns">
     <link rel="canonical" href="https://spacelaunchnow.app/">
     <meta property="fb:app_id" content="746774215504127"/>
-    <meta property="og:title" content="Space Launch Now"/>
+    <meta property="og:title" content="Space Launch Now: Rocket Launch Schedule and Countdowns"/>
     <meta property="og:type" content="website"/>
     <meta name="description"
-          content="A Spaceflight tracker for keeping up to date on all of your favorite spaceflight missions from around the world.">
+          content="Live countdowns for every rocket launch: see the next launch, SpaceX and all providers, in your time zone, with webcasts and the free app.">
     <meta property="og:description"
-          content="A Spaceflight tracker for keeping up to date on all of your favorite spaceflight missions from around the world."/>
+          content="Live countdowns for every rocket launch: see the next launch, SpaceX and all providers, in your time zone, with webcasts and the free app."/>
     <meta property="og:url" content="https://spacelaunchnow.app/"/>
     <meta property="og:image" content="{% static  'img/social.png' %}"/>
     <meta property="og:image:width" content="3000"/>
@@ -36,9 +36,9 @@
     <meta property="og:site_name" content="Space Launch Now"/>
 
     <meta name="twitter:card" content="summary_large_image"/>
-    <meta name="twitter:title" content="Space Launch Now - A Spaceflight Tracker">
+    <meta name="twitter:title" content="Space Launch Now: Rocket Launch Schedule and Countdowns">
     <meta name="twitter:description"
-          content="A Spaceflight tracker for keeping up to date on all of your favorite spaceflight missions from around the world.">
+          content="Live countdowns for every rocket launch: see the next launch, SpaceX and all providers, in your time zone, with webcasts and the free app.">
     <meta name="twitter:image" content="{% static  'img/social.png' %}">
     <meta name="twitter:site" content="@SpaceLaunchNow">
     <meta name="twitter:creator" content="@SpaceLaunchNow">
@@ -123,7 +123,7 @@
                     >
                 </div>
                 <hr class="col-lg-8" style="background-color: white">
-                <h1 class="title mb-0">Space Launch Now</h1>
+                <h1 class="title mb-0">Space Launch Now: Rocket Launch Schedule</h1>
                 <h2 class="mt-0">Spaceflight News and Events</h2>
                 <div class="container mb-2">
                     <a style="margin: 5px"
@@ -186,7 +186,7 @@
                                                 <div class="col-md-5 mx-auto">
                                                     <div class="card-header card-header-image">
                                                         <a href="{{ item.vid_url }}">
-                                                            <img class="img"
+                                                            <img alt="{{ item.title|default:"Video" }}" class="img"
                                                                  src="{% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
                                                             <div class="colored-shadow"
                                                                  style="background-image: url('{% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
@@ -211,7 +211,7 @@
                                                     <div class="col-md-5 mx-auto">
                                                         <div class="card-header card-header-image">
                                                             <a href="{{ info.info_url }}">
-                                                                <img class="img"
+                                                                <img alt="{{ info.title|default:"Mission information" }}" class="img"
                                                                      src="{% if info.feature_image %}{{ info.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
                                                                 <div class="colored-shadow"
                                                                      style="background-image: url('{% if info.feature_image %}{{ info.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
@@ -257,7 +257,7 @@
                             <div class="col-md-5">
                                 <div class="card-header card-header-image">
                                     <a href="/launch/{{ first_launch.slug }}/">
-                                        <img class="img"
+                                        <img alt="{{ first_launch.name }}" class="img"
                                              src="{% if first_launch_image %}{{ first_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
                                         <div class="colored-shadow"
                                              style="background-image: url('{% if first_launch_image %}{{ first_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
@@ -313,7 +313,7 @@
                             <div class="col-md-5">
                                 <div class="card-header card-header-image">
                                     <a href="/launch/{{ second_launch.slug }}/">
-                                        <img class="img"
+                                        <img alt="{{ second_launch.name }}" class="img"
                                              src="{% if second_launch_image %}{{ second_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
                                         <div class="colored-shadow"
                                              style="background-image: url('{% if second_launch_image %}{{ second_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
@@ -434,7 +434,7 @@
                                 <div class="card-header card-header-image">
                                     <a href="/event/{{ event.slug }}/">
                                         {% if event.image.image %}
-                                        <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
+                                        <img alt="{{ event.name }}" class="img img-raised" style="max-height: 500px; object-fit: cover;"
                                              src="{{ event.image.image.url }}">
                                         <div class="colored-shadow"
                                              style="background-image: url({{ event.image.image.url }}); opacity: 1;"></div>
@@ -470,7 +470,7 @@
                                                 <div class="card-header card-header-image">
                                                     {% if event.image.image %}
                                                     <a href="/event/{{ event.slug }}/">
-                                                        <img class="img img-raised"
+                                                        <img alt="{{ event.name }}" class="img img-raised"
                                                              style="height: 175px; object-fit: cover;"
                                                              src="{{ event.image.image.url }}">
                                                         <div class="colored-shadow"

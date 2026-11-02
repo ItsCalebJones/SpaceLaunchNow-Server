@@ -77,6 +77,23 @@ class WebTests(LLAPITests):
                 html = self.client.get("/", HTTP_USER_AGENT=ua).content.decode()
                 self.assertEqual(html.count("<h1"), 1)
 
+    def test_home_seo_meta(self):
+        """Tasks#720: the home page carries a search-friendly title, description and h1."""
+        html = self.client.get("/", HTTP_USER_AGENT=self.DESKTOP_UA).content.decode()
+        title = re.search(r"<title>(.*?)</title>", html, re.S).group(1).strip()
+        self.assertEqual(title, "Space Launch Now: Rocket Launch Schedule and Countdowns")
+        self.assertLessEqual(len(title), 60)
+        description = re.search(r'<meta name="description"\s+content="([^"]*)"', html).group(1)
+        self.assertLessEqual(len(description), 160)
+        self.assertIn("rocket launch", description.lower())
+        self.assertEqual(len(re.findall(r"<h1[^>]*>[^<]*Rocket Launch Schedule", html)), 1)
+
+    def test_home_images_have_alt(self):
+        html = self.client.get("/", HTTP_USER_AGENT=self.DESKTOP_UA).content.decode()
+        for tag in re.findall(r"<img[^>]*>", html):
+            with self.subTest(tag=tag[:80]):
+                self.assertRegex(tag, r"\salt=")
+
     def _launch_detail_html(self, ua):
         """Fetch a launch detail page with the CSRF token masked.
 
