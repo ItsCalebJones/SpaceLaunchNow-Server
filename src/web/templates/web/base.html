@@ -45,7 +45,7 @@
            its own older jQuery overrides block core_plugins to keep them synchronous. -->
     <script src="{% static 'material_kit/js/core/jquery.min.js' %}" type="text/javascript"></script>
     {% block core_plugins %}
-    {% include "web/snippets/core_plugins.html" with script_attr=" defer" %}
+    {% include "web/snippets/core_plugins.html" with defer=True %}
     {% endblock core_plugins %}
     <!-- Converts server-rendered UTC launch times to the viewer's local timezone -->
     <script src="{% static 'material_kit/js/launch-time.js' %}" type="text/javascript" defer></script>
