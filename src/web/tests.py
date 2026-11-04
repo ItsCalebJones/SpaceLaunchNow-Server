@@ -283,3 +283,24 @@ class UnknownVehicleIdTests(LLAPITests):
 
     def test_unknown_spacestation_id_is_404(self):
         self.assertEqual(self.client.get("/vehicle/spacestation/999999999/").status_code, status.HTTP_404_NOT_FOUND)
+
+
+class RootIconRedirectTests(LLAPITests):
+    """Root icon paths redirect to static files instead of 404 (Tasks#65, O8)."""
+
+    def test_favicon_redirects_to_static_icon(self):
+        response = self.client.get("/favicon.ico")
+        self.assertEqual(response.status_code, status.HTTP_301_MOVED_PERMANENTLY)
+        self.assertTrue(response["Location"].endswith("img/favicon.ico"))
+
+    def test_apple_touch_icons_redirect_to_static_icon(self):
+        for path in (
+            "/apple-touch-icon.png",
+            "/apple-touch-icon-precomposed.png",
+            "/apple-touch-icon-180x180.png",
+            "/apple-touch-icon-120x120-precomposed.png",
+        ):
+            with self.subTest(path=path):
+                response = self.client.get(path)
+                self.assertEqual(response.status_code, status.HTTP_301_MOVED_PERMANENTLY)
+                self.assertTrue(response["Location"].endswith("img/launcher.png"))
