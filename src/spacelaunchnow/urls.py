@@ -29,7 +29,7 @@ from django.contrib.sitemaps import views as sitemaps_views
 from django.http import HttpResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView
+from django.views.generic import RedirectView, TemplateView
 from health_check.views import HealthCheckView
 
 import web
@@ -58,6 +58,10 @@ sitemaps = {
 }
 
 
+favicon_redirect = RedirectView.as_view(url=f"{settings.STATIC_URL}img/favicon.ico", permanent=True)
+apple_touch_icon_redirect = RedirectView.as_view(url=f"{settings.STATIC_URL}img/launcher.png", permanent=True)
+
+
 def health(request):
     return HttpResponse("ok", content_type="text/plain")
 
@@ -77,6 +81,10 @@ if not settings.TESTING:
 
 default_settings = [
     re_path(r"^robots\.txt", include("robots.urls")),
+    # Browsers and crawlers ask for these at the site root. Answer with a redirect to
+    # the static file, so the ingress caches it instead of Django logging a 404 (Tasks#65).
+    re_path(r"^favicon\.ico$", favicon_redirect),
+    re_path(r"^apple-touch-icon(?:-precomposed|-\d+x\d+(?:-precomposed)?)?\.png$", apple_touch_icon_redirect),
     path(
         "sitemap.xml/",
         sitemaps_views.index,
