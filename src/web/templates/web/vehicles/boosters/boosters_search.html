@@ -37,6 +37,11 @@
             type="text/javascript"></script>
 {% endblock %}
 
+    {% block core_plugins %}
+    {# This page loads jQuery 1.7.1 below; the plugins must bind to 3.2.1, so they stay synchronous. #}
+    {% include "web/snippets/core_plugins.html" with script_attr="" %}
+    {% endblock core_plugins %}
+
 
 {% block navigation %}
     {% include "web/navigation.html" %}
