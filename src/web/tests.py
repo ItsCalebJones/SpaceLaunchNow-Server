@@ -69,6 +69,14 @@ class WebTests(LLAPITests):
         self.assertEqual(mobile.status_code, status.HTTP_200_OK)
         self.assertEqual(desktop.content, mobile.content)
 
+    def test_home_loads_hero_early_and_keeps_scripts_off_the_critical_path(self):
+        """LCP is the CSS hero: it must be preloaded, the duplicate jQuery 1.10 must
+        be gone and plugin scripts must be deferred."""
+        html = self.client.get("/").content.decode()
+        self.assertEqual(html.count('rel="preload" as="image" fetchpriority="high"'), 2)
+        self.assertNotIn("ajax.googleapis.com/ajax/libs/jquery", html)
+        self.assertRegex(html, r'material-kit\.min\.js"[^>]*\sdefer')
+
     def test_home_has_exactly_one_h1(self):
         """Google indexes mobile-first. Pre-fix, Googlebot-smartphone received zero
         <h1> here while Googlebot-desktop received one."""

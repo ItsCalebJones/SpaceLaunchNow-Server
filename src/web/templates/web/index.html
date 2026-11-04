@@ -17,6 +17,10 @@
             .sln-hero { background-image: url('{% static 'img/header_alt.jpg' %}'); }
         }
     </style>
+    <link rel="preload" as="image" fetchpriority="high" media="(min-width: 768px)"
+          href="{% static 'img/header_starship.jpg' %}">
+    <link rel="preload" as="image" fetchpriority="high" media="(max-width: 767px)"
+          href="{% static 'img/header_alt.jpg' %}">
     <title>Space Launch Now</title>
     <meta name="title" content="Space Launch Now - A Spaceflight Tracker">
     <link rel="canonical" href="https://spacelaunchnow.app/">
@@ -209,7 +213,7 @@
                                                 <div class="col-md-5 mx-auto">
                                                     <div class="card-header card-header-image">
                                                         <a href="{{ item.vid_url }}">
-                                                            <img class="img"
+                                                            <img loading="lazy" decoding="async" class="img"
                                                                  src="{% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
                                                             <div class="colored-shadow"
                                                                  style="background-image: url('{% if item.feature_image %}{{ item.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
@@ -234,7 +238,7 @@
                                                     <div class="col-md-5 mx-auto">
                                                         <div class="card-header card-header-image">
                                                             <a href="{{ info.info_url }}">
-                                                                <img class="img"
+                                                                <img loading="lazy" decoding="async" class="img"
                                                                      src="{% if info.feature_image %}{{ info.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
                                                                 <div class="colored-shadow"
                                                                      style="background-image: url('{% if info.feature_image %}{{ info.feature_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
@@ -280,7 +284,7 @@
                             <div class="col-md-5">
                                 <div class="card-header card-header-image">
                                     <a href="/launch/{{ first_launch.slug }}/">
-                                        <img class="img"
+                                        <img loading="lazy" decoding="async" class="img"
                                              src="{% if first_launch_image %}{{ first_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
                                         <div class="colored-shadow"
                                              style="background-image: url('{% if first_launch_image %}{{ first_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
@@ -336,7 +340,7 @@
                             <div class="col-md-5">
                                 <div class="card-header card-header-image">
                                     <a href="/launch/{{ second_launch.slug }}/">
-                                        <img class="img"
+                                        <img loading="lazy" decoding="async" class="img"
                                              src="{% if second_launch_image %}{{ second_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}">
                                         <div class="colored-shadow"
                                              style="background-image: url('{% if second_launch_image %}{{ second_launch_image }}{% else %}{% static "img/placeholder.jpg" %}{% endif %}'); opacity: 1;"></div>
@@ -457,7 +461,7 @@
                                 <div class="card-header card-header-image">
                                     <a href="/event/{{ event.slug }}/">
                                         {% if event.image.image %}
-                                        <img class="img img-raised" style="max-height: 500px; object-fit: cover;"
+                                        <img loading="lazy" decoding="async" class="img img-raised" style="max-height: 500px; object-fit: cover;"
                                              src="{{ event.image.image.url }}">
                                         <div class="colored-shadow"
                                              style="background-image: url({{ event.image.image.url }}); opacity: 1;"></div>
@@ -493,7 +497,7 @@
                                                 <div class="card-header card-header-image">
                                                     {% if event.image.image %}
                                                     <a href="/event/{{ event.slug }}/">
-                                                        <img class="img img-raised"
+                                                        <img loading="lazy" decoding="async" class="img img-raised"
                                                              style="height: 175px; object-fit: cover;"
                                                              src="{{ event.image.image.url }}">
                                                         <div class="colored-shadow"
