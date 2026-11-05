@@ -77,6 +77,12 @@ class WebTests(LLAPITests):
         self.assertNotIn("ajax.googleapis.com/ajax/libs/jquery", html)
         self.assertRegex(html, r'material-kit\.min\.js"[^>]*\sdefer')
 
+    def test_home_hero_logo_reserves_its_size(self):
+        """The hero logo has no intrinsic size until it loads; without width and
+        height it shifts the hero (desktop CLS 0.108)."""
+        html = self.client.get("/").content.decode()
+        self.assertRegex(html, r'<img[^>]*launcher\.png[^>]*\swidth="200"[^>]*\sheight="200"')
+
     def test_home_has_exactly_one_h1(self):
         """Google indexes mobile-first. Pre-fix, Googlebot-smartphone received zero
         <h1> here while Googlebot-desktop received one."""
