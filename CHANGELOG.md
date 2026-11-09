@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v4.51.0 (2026-11-09)
+
+### Feature
+
+* feat(web): redirect root favicon and apple-touch icon paths to static files ([`e4e6668`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/e4e66685d0d6191469e2d23c084dde73bfc4c37a))
+
+### Unknown
+
+* Merge pull request #353 from ItsCalebJones/task-65-feat-origin-cache-headers
+
+feat(web): redirect root favicon and apple-touch icon paths (Tasks#65) ([`d8bb381`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/d8bb381e872436c53f4f3eb14464fc8e145c39eb))
+
 ## v4.50.0 (2026-11-02)
 
 ### Feature
