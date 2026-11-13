@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v4.51.1 (2026-11-13)
+
+### Fix
+
+* fix(autoscaler): keep main pool at 2+ nodes and never lower its count (#355) ([`a1f74ef`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/a1f74ef9f2f748211b56211bfeb5179cca258029))
+
 ## v4.51.0 (2026-11-09)
 
 ### Feature
