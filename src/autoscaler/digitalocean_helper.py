@@ -99,12 +99,18 @@ class DigitalOceanHelper:
                     logger.info(f"Updating scalable node pool '{pool_name}' (ID: {pool_id})")
 
                     path = f"/v2/kubernetes/clusters/{K8S_CLUSTER_ID}/node_pools/{pool_id}"
+                    # DOKS autoscaling owns the node count. This job only moves the floor
+                    # (min_nodes): it raises count to the new floor before a launch, but
+                    # never lowers count, so it cannot remove a node that pods still use.
+                    # The DOKS autoscaler removes idle nodes after a launch on its own.
+                    count = max(pool.get("count") or 0, min_nodes)
                     data = {
                         "name": pool["name"],
-                        "count": min_nodes,
+                        "count": count,
                         "tags": pool["tags"],
                         "labels": pool["labels"],
                         "taints": pool["taints"],
+                        "auto_scale": True,
                         "min_nodes": min_nodes,
                         "max_nodes": max_nodes,
                     }
