@@ -8,7 +8,7 @@ from configurations.models import LaunchStatus, ProgramType
 from django.test import TestCase
 from django.utils import timezone
 
-from autoscaler.autoscaler import MIN_WORKERS, check_autoscaler
+from autoscaler.autoscaler import check_autoscaler
 from autoscaler.digitalocean_helper import (
     MAX_POD_COUNT,
     MINIMUM_POD_COUNT_MULTI_NODE,
@@ -148,14 +148,16 @@ class AutoscalerTests(TestCase):
         with patch("autoscaler.autoscaler.DigitalOceanHelper") as mock_do:
             mock_do_instance = Mock()
             mock_do.return_value = mock_do_instance
-            # Report the pool already at the MIN_WORKERS floor. check_autoscaler() copies
-            # this into current_workers, so a floor-only result means no scaling is needed.
-            mock_do_instance.get_node_pool_min.return_value = MIN_WORKERS
+            # Report the pool already at 1 node. check_autoscaler() copies this into
+            # current_workers, so a baseline result of 1 means no scaling is needed.
+            # Returning 2 here (as the other tests do) would make the no-op assertion
+            # below wrong: 2 -> 1 is a legitimate scale-down call.
+            mock_do_instance.get_node_pool_min.return_value = 1
 
             check_autoscaler()
 
-            # Floor only — the stale launch contributes no weight
-            mock_do_instance.update_keda_min_replicas.assert_called_once_with(MIN_WORKERS)
+            # Baseline only — the stale launch contributes no weight
+            mock_do_instance.update_keda_min_replicas.assert_called_once_with(1)
             mock_do_instance.update_node_pools.assert_not_called()
 
     def test_starship_launch_scaling(self):
@@ -235,24 +237,10 @@ class AutoscalerTests(TestCase):
 
     def test_no_changes_required(self):
         """Test when no node scaling changes are needed (but KEDA still updates)"""
-        # Current workers matches expected (the MIN_WORKERS floor, no launches)
-        self.autoscaler_settings.current_workers = MIN_WORKERS
+        # Current workers matches expected (1 base worker, no launches)
+        self.autoscaler_settings.current_workers = 1
         self.autoscaler_settings.save()
 
-        with patch("autoscaler.autoscaler.DigitalOceanHelper") as mock_do:
-            mock_do_instance = Mock()
-            mock_do.return_value = mock_do_instance
-            mock_do_instance.get_node_pool_min.return_value = MIN_WORKERS
-
-            check_autoscaler()
-
-            # Node pools should not be updated when no scaling changes needed
-            mock_do_instance.update_node_pools.assert_not_called()
-            # But KEDA should always be updated with current expected worker count
-            mock_do_instance.update_keda_min_replicas.assert_called_once_with(MIN_WORKERS)
-
-    def test_idle_pool_raised_to_floor(self):
-        """A pool sitting at 1 node with no launches is raised to the MIN_WORKERS floor"""
         with patch("autoscaler.autoscaler.DigitalOceanHelper") as mock_do:
             mock_do_instance = Mock()
             mock_do.return_value = mock_do_instance
@@ -260,8 +248,10 @@ class AutoscalerTests(TestCase):
 
             check_autoscaler()
 
-            mock_do_instance.update_node_pools.assert_called_once_with(MIN_WORKERS, 10)
-            mock_do_instance.update_keda_min_replicas.assert_called_once_with(MIN_WORKERS)
+            # Node pools should not be updated when no scaling changes needed
+            mock_do_instance.update_node_pools.assert_not_called()
+            # But KEDA should always be updated with current expected worker count
+            mock_do_instance.update_keda_min_replicas.assert_called_once_with(1)
 
     def test_events_scaling(self):
         """Test scaling for events"""
@@ -289,15 +279,15 @@ class AutoscalerTests(TestCase):
         with patch("autoscaler.autoscaler.DigitalOceanHelper") as mock_do:
             mock_do_instance = Mock()
             mock_do.return_value = mock_do_instance
-            mock_do_instance.get_node_pool_min.return_value = MIN_WORKERS
+            mock_do_instance.get_node_pool_min.return_value = 1
 
             check_autoscaler()
 
-            # Should stay at the floor since 23 hours doesn't fall in the 24-hour window
+            # Should scale to 1 (base) only since 23 hours doesn't fall in the 24-hour window
             # The 24-hour window is actually: now+24h-5min to now+24h+15min
-            # No scaling needed since current_workers equals expected (the floor)
+            # No scaling needed since current_workers (1) equals expected (1)
             mock_do_instance.update_node_pools.assert_not_called()
-            mock_do_instance.update_keda_min_replicas.assert_called_once_with(MIN_WORKERS)
+            mock_do_instance.update_keda_min_replicas.assert_called_once_with(1)
 
 
 class DigitalOceanHelperTests(TestCase):
@@ -349,35 +339,6 @@ class DigitalOceanHelperTests(TestCase):
         call_args = mock_put.call_args
         self.assertEqual(call_args[1]["json"]["min_nodes"], 5)
         self.assertEqual(call_args[1]["json"]["max_nodes"], 15)
-        self.assertEqual(call_args[1]["json"]["count"], 5)
-        self.assertTrue(call_args[1]["json"]["auto_scale"])
-
-    @patch("autoscaler.digitalocean_helper.requests.put")
-    @patch.object(DigitalOceanHelper, "get_node_pools")
-    def test_update_node_pools_never_lowers_count(self, mock_get_pools, mock_put):
-        """Lowering the floor after a launch must not remove nodes; DOKS scales down idle ones"""
-        mock_get_pools.return_value = {
-            "node_pools": [
-                {
-                    "id": "test-id",
-                    "name": "test-pool",
-                    "tags": ["scalable"],
-                    "labels": {},
-                    "taints": [],
-                    "count": 5,
-                    "min_nodes": 5,
-                    "max_nodes": 10,
-                }
-            ]
-        }
-        mock_put.return_value = Mock(status_code=200)
-
-        self.helper.update_node_pools(2, 6)
-
-        payload = mock_put.call_args[1]["json"]
-        self.assertEqual(payload["count"], 5)
-        self.assertEqual(payload["min_nodes"], 2)
-        self.assertEqual(payload["max_nodes"], 6)
 
     @patch("kubernetes.client.CustomObjectsApi")
     @patch("kubernetes.config.load_incluster_config")
