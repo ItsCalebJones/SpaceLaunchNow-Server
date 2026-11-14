@@ -20,11 +20,6 @@ from autoscaler.models import AutoscalerSettings
 
 logger = logging.getLogger(__name__)
 
-# Floor for the main ("scalable") node pool. Production services (NGF, SLN web, Valkey,
-# Terminus, Tycho) all run on this pool, so one node is a single point of failure.
-# Tasks#1046 (2026-11-13): main pool autoscales from 2 to 6 nodes.
-MIN_WORKERS = 2
-
 
 def check_autoscaler():
     logger.info("Starting autoscaler check")
@@ -106,8 +101,11 @@ def check_autoscaler():
         logger.info(f"Found {events.count()} events in 1-hour window")
         logger.info(f"Total unique launches to process: {launches.count()}")
 
-        # Some providers have a heavier weight. Launch weights add to a base of 1; the
-        # MIN_WORKERS floor is applied after the weights (see below).
+        # Some providers have a heavier weight.
+        # Baseline of 1: on truly idle nights (no launches/events in the 24h window) the
+        # node pool can scale to a single node. Pairs with the KEDA <=2 nodes -> 5 pods
+        # floor in DigitalOceanHelper.update_keda_min_replicas so the 2nd node has the
+        # chance to evict.
         expected_worker_count = 1
         logger.debug("Starting launch processing - initial worker count: 1")
 
@@ -231,9 +229,6 @@ def check_autoscaler():
                 f"Expected worker count ({original_expected_count}) exceeds maximum "
                 f"({autoscaler_settings.max_workers}), capping at maximum"
             )
-
-        # Never ask for fewer than MIN_WORKERS nodes, so the main pool survives one node loss.
-        expected_worker_count = max(expected_worker_count, MIN_WORKERS)
 
         logger.info(f"Final calculated expected worker count: {expected_worker_count}")
         logger.debug(f"Expected workers calculated {expected_worker_count}")
