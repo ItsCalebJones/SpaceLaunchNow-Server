@@ -1,5 +1,33 @@
 # CHANGELOG
 
+## v4.52.0 (2026-11-23)
+
+### Feature
+
+* feat(scripts): add FCM delivery snapshot for the V5 retirement gate ([`254f3df`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/254f3df009385f476eb937029a1bac0f09953791))
+
+### Fix
+
+* fix(scripts): move snapshot logic into bot.utils so CI can import it ([`dea8c95`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/dea8c9583229aed73c4e42b5ea99b7f0293eccf8))
+
+* fix(scripts): pair V5 and V6 broadcast labels by collapse id ([`441fdcc`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/441fdcccc3707dce38753f78027308c2521964c9))
+
+### Unknown
+
+* Merge pull request #358 from ItsCalebJones/task-55-feat-fcm-delivery-snapshot
+
+feat(scripts): FCM delivery snapshot for the V5 retirement gate ([`82c19a0`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/82c19a04164b35b535aee1b9f0fc1a8e5a39b495))
+
+* 🔄 Update Python dependencies (#350)
+
+Automated dependency update via scheduled workflow.
+
+Co-authored-by: ItsCalebJones &lt;ItsCalebJones@users.noreply.github.com&gt; ([`956c24c`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/956c24cd350fc494920723cb63261be815099800))
+
+* Revert &#34;fix(autoscaler): keep main pool at 2+ nodes and never lower its count…&#34; (#356)
+
+This reverts commit a1f74ef9f2f748211b56211bfeb5179cca258029. ([`9cce4ff`](https://github.com/ItsCalebJones/SpaceLaunchNow-Server/commit/9cce4ff2044729aef3231886242af0a84b6f6515))
+
 ## v4.51.1 (2026-11-13)
 
 ### Fix
