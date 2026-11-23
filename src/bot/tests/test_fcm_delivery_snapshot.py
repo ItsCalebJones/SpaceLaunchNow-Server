@@ -46,7 +46,7 @@ SAMPLE = [
     _row(12, "v6_all_bbbb", 5000),
     _row(13, None),
     _row(15, "v5_android_event_42", 100),
-    _row(15, "v6_android_event_42", 3000),
+    _row(15, "v6_android_events_event_42", 3000),
     _row(15, "v6_all_orphan", 9999),  # no V5 leg: must not count
 ]
 
@@ -61,7 +61,14 @@ class ClassifyLabelTests(SimpleTestCase):
             self.assertEqual(snap.classify_label(label), ("v6", "aaaa"), label)
 
     def test_v6_broadcast_matches_v5_key(self):
-        self.assertEqual(snap.classify_label("v6_android_event_42"), ("v6", "event_42"))
+        pairs = {
+            "events_event_42": "event_42",
+            "news_news_7": "news_7",
+            "announce_custom_3": "custom_3",
+        }
+        for tail, key in pairs.items():
+            self.assertEqual(snap.classify_label(f"v6_android_{tail}"), ("v6", key), tail)
+            self.assertEqual(snap.classify_label(f"v5_android_{key}"), ("v5", key), key)
 
     def test_other_labels_are_ignored(self):
         for label in ("v5_ios_aaaa", "v6_ios_event_42", "something_else"):

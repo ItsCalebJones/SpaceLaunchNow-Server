@@ -53,9 +53,10 @@ API_ROOT = "https://fcmdata.googleapis.com/v1beta1"
 GATE_RATIO = 0.05
 GATE_DAYS = 14
 
-# `v6_<class>[_w]_<id>` for launch sends; `v6_<platform>_<kind>_<id>` for broadcasts.
+# `v6_<class>[_w]_<id>` for launch sends; `v6_<platform>_<kind>_<collapse_id>` for broadcasts,
+# where collapse_id (`event_<id>`, `news_<id>`, `custom_<id>`) is the V5 key.
 _V6_CLASS = re.compile(r"^v6_(?:all|flex|strict)(?:_w)?_(?P<key>.+)$")
-_V6_BROADCAST = re.compile(r"^v6_android_(?P<key>.+)$")
+_V6_BROADCAST = re.compile(r"^v6_android_(?:events|news|announce)_(?P<key>.+)$")
 _V5 = re.compile(r"^v5_android_(?P<key>.+)$")
 
 
@@ -158,6 +159,18 @@ def trailing_pass_streak(days: list[DayStats]) -> int:
     return streak
 
 
+def window_priority_lowered(days: list[DayStats]) -> float | None:
+    """V5 `priorityLowered` percent over a window, weighted by V5 accepted count."""
+    weighted = sum(s._lowered[0] for s in days)
+    total = sum(s._lowered[1] for s in days)
+    return weighted / total if total else None
+
+
+def _lowered_text(value: float | None) -> str:
+    # priorityLowered is already a percent, unlike the ratios `_pct` formats.
+    return "n/a" if value is None else f"{value:.1f}%"
+
+
 def _pct(value: float | None) -> str:
     return "n/a" if value is None else f"{value * 100:.1f}%"
 
@@ -165,7 +178,7 @@ def _pct(value: float | None) -> str:
 def format_report(days: list[DayStats]) -> str:
     lines = [f"{'day':<12}{'sends':>6}{'V5':>9}{'V6':>9}{'V5/V6':>9}{'empty V6':>10}{'V5 prioLow':>12}  gate"]
     for s in days:
-        lowered = "n/a" if s.v5_priority_lowered is None else f"{s.v5_priority_lowered:.1f}%"
+        lowered = _lowered_text(s.v5_priority_lowered)
         lines.append(
             f"{s.day.isoformat():<12}{s.paired_sends:>6}{s.v5:>9}{s.v6:>9}{_pct(s.ratio):>9}"
             f"{s.empty_v6_labels:>10}{lowered:>12}  {'pass' if s.passes else 'FAIL'}"
@@ -188,9 +201,7 @@ def markdown_row(days: list[DayStats], snapshot: date) -> str:
     v5 = sum(s.v5 for s in days)
     v6 = sum(s.v6 for s in days)
     ratios = [s.ratio for s in days if s.ratio is not None]
-    weighted = sum(s._lowered[0] for s in days)
-    total = sum(s._lowered[1] for s in days)
-    lowered = "n/a" if not total else f"{weighted / total:.1f}%"
+    lowered = _lowered_text(window_priority_lowered(days))
     return (
         f"| {snapshot.isoformat()} | {days[0].day.isoformat()} to {days[-1].day.isoformat()} ({len(days)} d) "
         f"| {v5} | {v6} | {_pct(v5 / v6 if v6 else None)} "
