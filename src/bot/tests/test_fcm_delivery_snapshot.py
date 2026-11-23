@@ -1,21 +1,14 @@
-"""Tests for scripts/fcm_delivery_snapshot.py (parsing and ratio math).
+"""Tests for bot.utils.fcm_delivery_snapshot (parsing and ratio math).
 
 Test-only. Uses a recorded, trimmed deliveryData response (UUIDs shortened); no
 live FCM call and no gcloud. Runs under the Django test runner.
 """
 
-import importlib.util
-import sys
 from datetime import date
-from pathlib import Path
 
 from django.test import SimpleTestCase
 
-_SCRIPT = Path(__file__).resolve().parents[3] / "scripts" / "fcm_delivery_snapshot.py"
-_spec = importlib.util.spec_from_file_location("fcm_delivery_snapshot", _SCRIPT)
-snap = importlib.util.module_from_spec(_spec)
-sys.modules[_spec.name] = snap  # dataclasses looks the module up by name
-_spec.loader.exec_module(snap)
+from bot.utils import fcm_delivery_snapshot as snap
 
 APP = "1:610310574961:android:4553f5c8ecd77279"
 
